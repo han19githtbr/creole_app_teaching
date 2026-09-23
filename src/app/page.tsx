@@ -27,8 +27,8 @@ export default function Home() {
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-[var(--border-strong)]">
             Curso completo de crioulo haitiano: comunicação, gramática, turismo,
-            cultura e linguagem cristã — com lições estruturadas, postagens da
-            professora e aulas ao vivo.
+            cultura e linguagem cristã — com lições estruturadas, postagens do
+            professor e aulas ao vivo.
           </p>
           <Button
             size="lg"
@@ -49,7 +49,7 @@ export default function Home() {
         <Feature
           icon={<Radio className="h-6 w-6" />}
           title="Aulas ao vivo"
-          description="Participe de aulas em tempo real com a professora, com chat e controle de câmera/microfone."
+          description="Participe de aulas em tempo real com o professor, com chat e controle de câmera/microfone."
         />
         <Feature
           icon={<GraduationCap className="h-6 w-6" />}
@@ -66,7 +66,7 @@ export default function Home() {
           </h2>
           <p className="mt-2 text-[var(--text-secondary)]">
             Entre com sua conta Google para acessar seu painel, acompanhar as
-            lições e receber avisos da professora em tempo real.
+            lições e receber avisos do professor em tempo real.
           </p>
         </div>
       </section>

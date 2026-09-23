@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   await connectDB();
   const body = await req.json();
   const { action, isRecording, title } = body as {
-    action: "start" | "stop";
+    action: "start" | "stop" | "toggle-recording";
     isRecording?: boolean;
     title?: string;
   };
@@ -81,6 +81,16 @@ export async function POST(req: NextRequest) {
       live.isLive = false;
       live.endedAt = new Date();
       await live.save();
+    }
+  } else if (action === "toggle-recording") {
+    if (live && live.isLive) {
+      live.isRecording = Boolean(isRecording);
+      await live.save();
+    } else {
+      return NextResponse.json(
+        { error: "Só é possível alternar a gravação com a aula ao vivo." },
+        { status: 400 }
+      );
     }
   }
 

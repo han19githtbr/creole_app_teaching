@@ -20,6 +20,7 @@ export function AdminLiveControl() {
   const [status, setStatus] = useState<LiveStatus | null>(null);
   const [recording, setRecording] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [recordingBusy, setRecordingBusy] = useState(false);
 
   async function refresh() {
     const res = await fetch("/api/live");
@@ -60,6 +61,43 @@ export function AdminLiveControl() {
     }
   }
 
+  async function toggleRecording(checked: boolean) {
+    // Optimistic update so the checkbox responds right away.
+    setRecording(checked);
+
+    if (!status?.isLive) {
+      // Aula ainda não começou: só guarda a preferência local,
+      // que será enviada no próximo "Ficar Online".
+      return;
+    }
+
+    setRecordingBusy(true);
+    try {
+      const res = await fetch("/api/live", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "toggle-recording",
+          isRecording: checked,
+        }),
+      });
+
+      if (!res.ok) {
+        // Reverte se o servidor recusar a mudança.
+        setRecording(!checked);
+        return;
+      }
+
+      const data = await refresh();
+      setStatus(data);
+      setRecording(data.isRecording);
+    } catch {
+      setRecording(!checked);
+    } finally {
+      setRecordingBusy(false);
+    }
+  }
+
   if (!status) {
     return <div className="py-8 text-center text-[#a8a29e]">Carregando...</div>;
   }
@@ -85,8 +123,8 @@ export function AdminLiveControl() {
               <input
                 type="checkbox"
                 checked={recording}
-                disabled={status.isLive}
-                onChange={(e) => setRecording(e.target.checked)}
+                disabled={recordingBusy}
+                onChange={(e) => toggleRecording(e.target.checked)}
                 className="h-4 w-4 rounded border-[#d6d3d1]"
               />
               <Circle className="h-3 w-3 text-[#dc2626]" /> Gravar esta aula

@@ -121,13 +121,13 @@ export default async function DashboardPage() {
                 <Link
                   key={cat}
                   href={`/dashboard/lessons?category=${encodeURIComponent(cat)}`}
-                  className="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-[var(--surface-2)]"
+                  className="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-[#f5f5f4]"
                 >
-                  <span className="flex items-center gap-2 text-[var(--text)]">
-                    <BookOpen className="h-4 w-4 text-[var(--text-muted)]" />
+                  <span className="flex items-center gap-2 text-[#1c1917]">
+                    <BookOpen className="h-4 w-4 text-[#78716c]" />
                     {cat}
                   </span>
-                  <span className="text-xs font-medium text-[var(--text-muted)]">{counts[cat] ?? 0}</span>
+                  <span className="text-xs font-medium text-[#78716c]">{counts[cat] ?? 0}</span>
                 </Link>
               ))}
             </CardContent>

@@ -63,6 +63,7 @@ npm install
    - **Authorized redirect URIs**:
      - Local: `http://localhost:3000/api/auth/callback/google`
      - Produção: `https://SEU-DOMINIO.vercel.app/api/auth/callback/google`
+                 `https://creole-app-teaching.vercel.app/api/auth/callback/google`
 5. Copie o **Client ID** e o **Client Secret** para `GOOGLE_CLIENT_ID` e
    `GOOGLE_CLIENT_SECRET` no `.env.local`.
 

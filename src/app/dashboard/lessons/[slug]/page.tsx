@@ -23,17 +23,21 @@ export default async function LessonDetailPage({
   const isAdmin = session.user.role === "admin";
   const lesson = await Lesson.findOne({
     slug,
-    ...(isAdmin ? {} : { isPublished: true }),
+    ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
   }).lean();
 
   if (!lesson) notFound();
 
+  const siblingMatch = isAdmin
+    ? { isPublished: true }
+    : { isPublished: true, announcedAt: { $ne: null } };
+
   const [prev, next] = await Promise.all([
-    Lesson.findOne({ order: { $lt: lesson.order }, isPublished: true })
+    Lesson.findOne({ order: { $lt: lesson.order }, ...siblingMatch })
       .sort({ order: -1 })
       .select("title slug")
       .lean(),
-    Lesson.findOne({ order: { $gt: lesson.order }, isPublished: true })
+    Lesson.findOne({ order: { $gt: lesson.order }, ...siblingMatch })
       .sort({ order: 1 })
       .select("title slug")
       .lean(),
@@ -43,13 +47,13 @@ export default async function LessonDetailPage({
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
       <Link
         href="/dashboard/lessons"
-        className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-[#57534e] hover:text-[#1c1917]"
+        className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)]"
       >
         <ChevronLeft className="h-4 w-4" /> Todas as lições
       </Link>
 
-      <div className="rounded-xl border border-[#e7e5e4] bg-white p-6 shadow-sm sm:p-8">
-        <span className="mb-2 inline-block rounded-full bg-[#eef2ff] px-2.5 py-1 text-xs font-medium text-[#3730a3]">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm sm:p-8">
+        <span className="mb-2 inline-block rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-xs font-medium text-[var(--accent)]">
           {lesson.category} · Seção {lesson.sectionNumber}
         </span>
         <Markdown content={lesson.content} />
@@ -59,9 +63,9 @@ export default async function LessonDetailPage({
         {prev ? (
           <Link
             href={`/dashboard/lessons/${prev.slug}`}
-            className="flex flex-1 items-center gap-2 rounded-lg border border-[#e7e5e4] bg-white px-4 py-3 text-sm hover:border-[#3730a3]/30"
+            className="flex flex-1 items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm hover:border-[var(--accent)]/30"
           >
-            <ArrowLeft className="h-4 w-4 text-[#a8a29e]" />
+            <ArrowLeft className="h-4 w-4 text-[var(--text-muted)]" />
             <span className="truncate">{prev.title}</span>
           </Link>
         ) : (
@@ -70,10 +74,10 @@ export default async function LessonDetailPage({
         {next ? (
           <Link
             href={`/dashboard/lessons/${next.slug}`}
-            className="flex flex-1 items-center justify-end gap-2 rounded-lg border border-[#e7e5e4] bg-white px-4 py-3 text-right text-sm hover:border-[#3730a3]/30"
+            className="flex flex-1 items-center justify-end gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-right text-sm hover:border-[var(--accent)]/30"
           >
             <span className="truncate">{next.title}</span>
-            <ArrowRight className="h-4 w-4 text-[#a8a29e]" />
+            <ArrowRight className="h-4 w-4 text-[var(--text-muted)]" />
           </Link>
         ) : (
           <div className="flex-1" />

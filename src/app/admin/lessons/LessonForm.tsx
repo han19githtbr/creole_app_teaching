@@ -62,11 +62,11 @@ export function LessonForm({ initial }: { initial?: LessonFormValues }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="sm:col-span-2">
-          <label className="mb-1 block text-sm font-medium text-[#44403c]">Título</label>
+          <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Título</label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-[#44403c]">Nº da seção</label>
+          <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Nº da seção</label>
           <Input
             type="number"
             value={sectionNumber}
@@ -77,7 +77,7 @@ export function LessonForm({ initial }: { initial?: LessonFormValues }) {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div>
-          <label className="mb-1 block text-sm font-medium text-[#44403c]">Categoria</label>
+          <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Categoria</label>
           <Select value={category} onChange={(e) => setCategory(e.target.value as LessonCategory)}>
             {LESSON_CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -87,20 +87,27 @@ export function LessonForm({ initial }: { initial?: LessonFormValues }) {
           </Select>
         </div>
         <div className="flex items-end">
-          <label className="flex items-center gap-2 text-sm text-[#44403c]">
+          <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
             <input
               type="checkbox"
               checked={isPublished}
               onChange={(e) => setIsPublished(e.target.checked)}
-              className="h-4 w-4 rounded border-[#d6d3d1]"
+              className="h-4 w-4 rounded border-[var(--border-strong)]"
             />
             Publicada
           </label>
         </div>
       </div>
 
+      {!isEdit && (
+        <p className="text-xs text-[var(--text-muted)]">
+          Salvar aqui não notifica os alunos. Depois de criada, use o botão de sino
+          “Anunciar” na lista de lições para publicá-la no painel dos alunos.
+        </p>
+      )}
+
       <div>
-        <label className="mb-1 block text-sm font-medium text-[#44403c]">Conteúdo (Markdown)</label>
+        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Conteúdo (Markdown)</label>
         <RichTextEditor value={content} onChange={setContent} />
       </div>
 

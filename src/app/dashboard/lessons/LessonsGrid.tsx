@@ -41,7 +41,7 @@ export function LessonsGrid({
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#a8a29e]" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -57,8 +57,8 @@ export function LessonsGrid({
               className={cn(
                 "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
                 category === cat
-                  ? "bg-[#3730a3] text-white"
-                  : "bg-[#f5f5f4] text-[#57534e] hover:bg-[#e7e5e4]"
+                  ? "bg-[var(--accent)] text-white"
+                  : "bg-[var(--surface-2)] text-[var(--text-secondary)] hover:bg-[var(--border)]"
               )}
             >
               {cat}
@@ -68,7 +68,7 @@ export function LessonsGrid({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-12 text-center text-sm text-[#a8a29e]">
+        <p className="py-12 text-center text-sm text-[var(--text-muted)]">
           Nenhuma lição encontrada.
         </p>
       ) : (

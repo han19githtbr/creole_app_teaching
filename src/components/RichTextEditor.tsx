@@ -20,8 +20,8 @@ export function RichTextEditor({
   const [mode, setMode] = useState<"edit" | "preview">("edit");
 
   return (
-    <div className="rounded-lg border border-[#d6d3d1] bg-white">
-      <div className="flex items-center gap-1 border-b border-[#f0efed] p-1.5">
+    <div className="rounded-lg border border-[var(--border-strong)] bg-[var(--surface)]">
+      <div className="flex items-center gap-1 border-b border-[var(--border-soft)] p-1.5">
         <Button
           type="button"
           size="sm"
@@ -38,7 +38,7 @@ export function RichTextEditor({
         >
           <Eye className="h-3.5 w-3.5" /> Pré-visualizar
         </Button>
-        <span className="ml-auto pr-2 text-xs text-[#a8a29e]">Markdown suportado</span>
+        <span className="ml-auto pr-2 text-xs text-[var(--text-muted)]">Markdown suportado</span>
       </div>
       {mode === "edit" ? (
         <Textarea

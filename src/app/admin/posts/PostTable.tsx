@@ -36,9 +36,9 @@ export function PostTable({ posts }: { posts: PostRow[] }) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-[#e7e5e4] bg-white shadow-sm">
+    <div className="overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
       <table className="w-full text-sm">
-        <thead className="border-b border-[#e7e5e4] bg-[#f5f5f4] text-left text-xs uppercase text-[#78716c]">
+        <thead className="border-b border-[var(--border)] bg-[var(--surface-2)] text-left text-xs uppercase text-[var(--text-muted)]">
           <tr>
             <th className="px-4 py-3">Título</th>
             <th className="px-4 py-3">Status</th>
@@ -50,8 +50,8 @@ export function PostTable({ posts }: { posts: PostRow[] }) {
           {posts.map((post) => {
             const expired = post.expired;
             return (
-              <tr key={post._id} className="border-b border-[#f0efed] last:border-0">
-                <td className="px-4 py-3 font-medium text-[#1c1917]">{post.title}</td>
+              <tr key={post._id} className="border-b border-[var(--border-soft)] last:border-0">
+                <td className="px-4 py-3 font-medium text-[var(--text)]">{post.title}</td>
                 <td className="px-4 py-3">
                   {!post.isPublished ? (
                     <Badge variant="outline">Rascunho</Badge>
@@ -61,7 +61,7 @@ export function PostTable({ posts }: { posts: PostRow[] }) {
                     <Badge variant="success">Ativa</Badge>
                   )}
                 </td>
-                <td className="px-4 py-3 text-[#78716c]">
+                <td className="px-4 py-3 text-[var(--text-muted)]">
                   {post.isPermanent
                     ? "Permanente"
                     : post.expiresAt

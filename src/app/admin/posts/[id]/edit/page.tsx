@@ -15,7 +15,7 @@ export default async function EditPostPage({
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-[#1c1917]">Editar postagem</h1>
+      <h1 className="mb-6 text-2xl font-bold text-[var(--text)]">Editar postagem</h1>
       <PostForm
         initial={{
           _id: String(post._id),

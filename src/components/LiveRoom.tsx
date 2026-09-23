@@ -17,7 +17,7 @@ export function LiveRoom({
   canPublish: boolean;
 }) {
   return (
-    <div className="h-[70vh] overflow-hidden rounded-xl border border-[#e7e5e4] bg-black">
+    <div className="h-[70vh] overflow-hidden rounded-xl border border-[var(--border)] bg-black">
       <LiveKitRoom
         token={token}
         serverUrl={serverUrl}

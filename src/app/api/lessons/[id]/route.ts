@@ -27,8 +27,10 @@ export async function GET(
   await connectDB();
   const { id } = await params;
   const lesson = await findLesson(id);
+  const isAdmin = session.user.role === "admin";
+  const hiddenFromUser = !lesson?.isPublished || !lesson?.announcedAt;
 
-  if (!lesson || (!lesson.isPublished && session.user.role !== "admin")) {
+  if (!lesson || (hiddenFromUser && !isAdmin)) {
     return NextResponse.json({ error: "Lição não encontrada." }, { status: 404 });
   }
 
@@ -47,7 +49,7 @@ export async function PUT(
   await connectDB();
   const { id } = await params;
   const body = await req.json();
-  const { title, sectionNumber, category, content, isPublished, order } = body;
+  const { title, sectionNumber, category, content, isPublished, order, announce } = body;
 
   const lesson = await Lesson.findById(id);
   if (!lesson) {
@@ -67,6 +69,15 @@ export async function PUT(
   if (content !== undefined) lesson.content = content;
   if (isPublished !== undefined) lesson.isPublished = isPublished;
   if (order !== undefined) lesson.order = order;
+
+  // Announcing is a distinct, explicit action: it's what makes the lesson
+  // show up for students (with a "new lesson" notice), separate from just
+  // saving/publishing the content.
+  if (announce === true && !lesson.announcedAt) {
+    lesson.announcedAt = new Date();
+  } else if (announce === false) {
+    lesson.announcedAt = null;
+  }
 
   await lesson.save();
 

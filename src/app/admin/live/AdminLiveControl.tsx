@@ -20,7 +20,6 @@ export function AdminLiveControl() {
   const [status, setStatus] = useState<LiveStatus | null>(null);
   const [recording, setRecording] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [recordingBusy, setRecordingBusy] = useState(false);
 
   async function refresh() {
     const res = await fetch("/api/live");
@@ -61,45 +60,8 @@ export function AdminLiveControl() {
     }
   }
 
-  async function toggleRecording(checked: boolean) {
-    // Optimistic update so the checkbox responds right away.
-    setRecording(checked);
-
-    if (!status?.isLive) {
-      // Aula ainda não começou: só guarda a preferência local,
-      // que será enviada no próximo "Ficar Online".
-      return;
-    }
-
-    setRecordingBusy(true);
-    try {
-      const res = await fetch("/api/live", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "toggle-recording",
-          isRecording: checked,
-        }),
-      });
-
-      if (!res.ok) {
-        // Reverte se o servidor recusar a mudança.
-        setRecording(!checked);
-        return;
-      }
-
-      const data = await refresh();
-      setStatus(data);
-      setRecording(data.isRecording);
-    } catch {
-      setRecording(!checked);
-    } finally {
-      setRecordingBusy(false);
-    }
-  }
-
   if (!status) {
-    return <div className="py-8 text-center text-[#a8a29e]">Carregando...</div>;
+    return <div className="py-8 text-center text-[var(--text-muted)]">Carregando...</div>;
   }
 
   return (
@@ -107,25 +69,25 @@ export function AdminLiveControl() {
       <Card>
         <CardContent className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#eef2ff] text-[#3730a3]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
               <Radio className="h-5 w-5" />
             </span>
             <div>
-              <p className="font-medium text-[#1c1917]">Status da aula</p>
-              <div className="flex items-center gap-2 text-sm text-[#78716c]">
+              <p className="font-medium text-[var(--text)]">Status da aula</p>
+              <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                 {status.isLive ? <LiveBadge isLive /> : "Offline"}
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 text-sm text-[#44403c]">
+            <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
               <input
                 type="checkbox"
                 checked={recording}
-                disabled={recordingBusy}
-                onChange={(e) => toggleRecording(e.target.checked)}
-                className="h-4 w-4 rounded border-[#d6d3d1]"
+                disabled={status.isLive}
+                onChange={(e) => setRecording(e.target.checked)}
+                className="h-4 w-4 rounded border-[var(--border-strong)]"
               />
               <Circle className="h-3 w-3 text-[#dc2626]" /> Gravar esta aula
             </label>

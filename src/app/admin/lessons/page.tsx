@@ -11,7 +11,7 @@ export default async function AdminLessonsPage() {
   await connectDB();
   const lessons = await Lesson.find()
     .sort({ order: 1, sectionNumber: 1 })
-    .select("title sectionNumber category isPublished")
+    .select("title sectionNumber category isPublished announcedAt")
     .lean();
 
   const rows = lessons.map((l) => ({
@@ -20,12 +20,13 @@ export default async function AdminLessonsPage() {
     sectionNumber: l.sectionNumber,
     category: l.category,
     isPublished: l.isPublished,
+    announcedAt: l.announcedAt ? l.announcedAt.toISOString() : null,
   }));
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#1c1917]">Lições</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">Lições</h1>
         <Link href="/admin/lessons/new">
           <Button size="sm">
             <Plus className="h-4 w-4" /> Nova lição

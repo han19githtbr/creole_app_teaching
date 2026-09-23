@@ -37,15 +37,15 @@ export function LiveClient({ isAdmin }: { isAdmin: boolean }) {
   }, []);
 
   if (loading) {
-    return <div className="py-16 text-center text-[#a8a29e]">Carregando...</div>;
+    return <div className="py-16 text-center text-[var(--text-muted)]">Carregando...</div>;
   }
 
   if (!status?.isLive) {
     return (
       <div className="mx-auto max-w-md py-20 text-center">
-        <Radio className="mx-auto mb-4 h-10 w-10 text-[#a8a29e]" />
-        <h2 className="text-lg font-semibold text-[#1c1917]">Nenhuma aula ao vivo agora</h2>
-        <p className="mt-2 text-sm text-[#78716c]">
+        <Radio className="mx-auto mb-4 h-10 w-10 text-[var(--text-muted)]" />
+        <h2 className="text-lg font-semibold text-[var(--text)]">Nenhuma aula ao vivo agora</h2>
+        <p className="mt-2 text-sm text-[var(--text-muted)]">
           Volte quando a professora iniciar a próxima aula. Avisos aparecem no seu painel.
         </p>
       </div>
@@ -55,7 +55,7 @@ export function LiveClient({ isAdmin }: { isAdmin: boolean }) {
   if (!status.livekitConfigured || !status.token || !status.livekitUrl) {
     return (
       <div className="mx-auto max-w-md py-20 text-center">
-        <p className="text-sm text-[#78716c]">
+        <p className="text-sm text-[var(--text-muted)]">
           A aula está ao vivo, mas o servidor de vídeo (LiveKit) ainda não foi configurado.
           Configure as variáveis <code>LIVEKIT_API_KEY</code>, <code>LIVEKIT_API_SECRET</code> e{" "}
           <code>NEXT_PUBLIC_LIVEKIT_URL</code> — veja o README.md.
@@ -67,7 +67,7 @@ export function LiveClient({ isAdmin }: { isAdmin: boolean }) {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-[#1c1917]">
+        <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--text)]">
           {status.title}
           <LiveBadge isLive={status.isLive} />
         </h1>

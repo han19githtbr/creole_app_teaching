@@ -15,7 +15,7 @@ export default async function EditLessonPage({
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-[#1c1917]">Editar lição</h1>
+      <h1 className="mb-6 text-2xl font-bold text-[var(--text)]">Editar lição</h1>
       <LessonForm
         initial={{
           _id: String(lesson._id),

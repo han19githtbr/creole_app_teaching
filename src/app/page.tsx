@@ -19,13 +19,13 @@ export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
       <section className="relative overflow-hidden bg-[#1c1917]">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#3730a3]/40 via-transparent to-[#dc2626]/20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/40 via-transparent to-[#dc2626]/20" />
         <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 py-24 text-center">
           <span className="mb-4 text-5xl">🇭🇹</span>
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
             Aprenda Kreyòl Ayisyen
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-[#d6d3d1]">
+          <p className="mt-4 max-w-2xl text-lg text-[var(--border-strong)]">
             Curso completo de crioulo haitiano: comunicação, gramática, turismo,
             cultura e linguagem cristã — com lições estruturadas, postagens da
             professora e aulas ao vivo.
@@ -59,12 +59,12 @@ export default function Home() {
       </section>
 
       <section className="mx-auto w-full max-w-3xl px-6 pb-20 text-center">
-        <div className="rounded-2xl border border-[#e7e5e4] bg-white p-8 shadow-sm">
-          <Users className="mx-auto h-8 w-8 text-[#3730a3]" />
-          <h2 className="mt-3 text-xl font-semibold text-[#1c1917]">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 shadow-sm">
+          <Users className="mx-auto h-8 w-8 text-[var(--accent)]" />
+          <h2 className="mt-3 text-xl font-semibold text-[var(--text)]">
             Feito para sala de aula e autoestudo
           </h2>
-          <p className="mt-2 text-[#57534e]">
+          <p className="mt-2 text-[var(--text-secondary)]">
             Entre com sua conta Google para acessar seu painel, acompanhar as
             lições e receber avisos da professora em tempo real.
           </p>
@@ -84,12 +84,12 @@ function Feature({
   description: string;
 }) {
   return (
-    <div className="rounded-xl border border-[#e7e5e4] bg-white p-6 shadow-sm">
-      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[#eef2ff] text-[#3730a3]">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
         {icon}
       </div>
-      <h3 className="font-semibold text-[#1c1917]">{title}</h3>
-      <p className="mt-1.5 text-sm text-[#57534e]">{description}</p>
+      <h3 className="font-semibold text-[var(--text)]">{title}</h3>
+      <p className="mt-1.5 text-sm text-[var(--text-secondary)]">{description}</p>
     </div>
   );
 }

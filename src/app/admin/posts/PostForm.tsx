@@ -62,28 +62,28 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="mb-1 block text-sm font-medium text-[#44403c]">Título</label>
+        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Título</label>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-[#44403c]">Conteúdo (Markdown)</label>
+        <label className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">Conteúdo (Markdown)</label>
         <RichTextEditor value={content} onChange={setContent} rows={10} />
       </div>
 
       <div className="flex flex-wrap items-center gap-6">
-        <label className="flex items-center gap-2 text-sm text-[#44403c]">
+        <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
             checked={isPermanent}
             onChange={(e) => setIsPermanent(e.target.checked)}
-            className="h-4 w-4 rounded border-[#d6d3d1]"
+            className="h-4 w-4 rounded border-[var(--border-strong)]"
           />
           Permanente
         </label>
         {!isPermanent && (
           <div>
-            <label className="mb-1 block text-xs font-medium text-[#78716c]">Expira em</label>
+            <label className="mb-1 block text-xs font-medium text-[var(--text-muted)]">Expira em</label>
             <Input
               type="date"
               value={expiresAt}
@@ -91,12 +91,12 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
             />
           </div>
         )}
-        <label className="flex items-center gap-2 text-sm text-[#44403c]">
+        <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
             checked={isPublished}
             onChange={(e) => setIsPublished(e.target.checked)}
-            className="h-4 w-4 rounded border-[#d6d3d1]"
+            className="h-4 w-4 rounded border-[var(--border-strong)]"
           />
           Publicada
         </label>

@@ -47,8 +47,8 @@ function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; va
           {icon}
         </div>
         <div>
-          <p className="text-2xl font-bold text-[var(--text)]">{value}</p>
-          <p className="text-sm text-[var(--text-secondary)]">{label}</p>
+          <p className="text-2xl font-bold text-[#1c1917]">{value}</p>
+          <p className="text-sm text-[#57534e]">{label}</p>
         </div>
       </CardContent>
     </Card>

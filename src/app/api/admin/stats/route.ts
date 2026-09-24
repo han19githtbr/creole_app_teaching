@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import Lesson from "@/models/Lesson";
 import Post from "@/models/Post";
 import User from "@/models/User";
+import VideoLesson from "@/models/VideoLesson";
 import { requireAdmin } from "@/lib/apiAuth";
 
 export async function GET() {
@@ -13,14 +14,15 @@ export async function GET() {
 
   await connectDB();
 
-  const [totalLessons, activePosts, totalUsers] = await Promise.all([
+  const [totalLessons, activePosts, totalUsers, totalVideos] = await Promise.all([
     Lesson.countDocuments(),
     Post.countDocuments({
       isPublished: true,
       $or: [{ isPermanent: true }, { expiresAt: { $gte: new Date() } }],
     }),
     User.countDocuments(),
+    VideoLesson.countDocuments(),
   ]);
 
-  return NextResponse.json({ totalLessons, activePosts, totalUsers });
+  return NextResponse.json({ totalLessons, activePosts, totalUsers, totalVideos });
 }

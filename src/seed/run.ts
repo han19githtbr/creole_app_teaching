@@ -41,6 +41,79 @@ async function main() {
   }
 
   console.log(`Concluído. ${created} lições criadas/atualizadas, ${updated} ignoradas.`);
+
+  // Seed sample video lessons if collection is empty
+  const VideoLesson = (await import("../models/VideoLesson")).default;
+  const User = (await import("../models/User")).default;
+
+  const adminEmail = (process.env.ADMIN_EMAIL || "admin@kreyol.app").toLowerCase().trim();
+  let adminUser = await User.findOne({ email: adminEmail });
+  if (!adminUser) {
+    adminUser = await User.create({
+      name: "Professor Kreyòl",
+      email: adminEmail,
+      role: "admin",
+    });
+  }
+
+  const existingVideosCount = await VideoLesson.countDocuments();
+  if (existingVideosCount === 0) {
+    console.log("Semeando vídeos de exemplo...");
+    await VideoLesson.create([
+      {
+        title: "Pronúncia e Sons Únicos do Kreyòl Ayisyen 🇭🇹",
+        description:
+          "Nesta aula curta, exploramos a pronúncia das vogais nasais (an, en, on) e consoantes especiais do crioulo haitiano com exemplos práticos.",
+        videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        duration: 240, // 4 mins
+        author: adminUser._id,
+        authorName: "Prof. Alex",
+        isPublished: true,
+        publishAt: null,
+        isLiveRecording: false,
+        customization: {
+          backgroundStyle: "haiti_flag",
+          avatarType: "prof_alex",
+          frameStyle: "rounded",
+          bannerText: "Fonética e Pronúncia",
+        },
+        likes: [adminEmail],
+        comments: [
+          {
+            userId: adminUser._id,
+            userName: "Aluno Pedro",
+            userEmail: "pedro@exemplo.com",
+            content: "Excelente explicação sobre as vogais nasais! Mèsi anpil!",
+            createdAt: new Date(Date.now() - 3600000),
+          },
+        ],
+        viewsCount: 15,
+      },
+      {
+        title: "60 Frases Mais Importantes no Mercado de Porto Príncipe 🛒",
+        description:
+          "Aprenda como perguntar preços, negociar e cumprimentar os vendedores com naturalidade no comércio haitiano.",
+        videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        duration: 380, // 6:20
+        author: adminUser._id,
+        authorName: "Profª. Marie",
+        isPublished: true,
+        publishAt: null,
+        isLiveRecording: false,
+        customization: {
+          backgroundStyle: "caribbean_sunset",
+          avatarType: "prof_marie",
+          frameStyle: "split",
+          bannerText: "Vocabulário de Compras",
+        },
+        likes: [],
+        comments: [],
+        viewsCount: 8,
+      },
+    ]);
+    console.log("Vídeos de exemplo semeados com sucesso.");
+  }
+
   await mongoose.disconnect();
   process.exit(0);
 }

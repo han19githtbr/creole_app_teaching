@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { upload } from "@vercel/blob/client";
+import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,6 +73,13 @@ export function StudioVideoRecorder() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
 
+  // Background segmentation (virtual background, estilo Google Meet)
+  type MaskImage = HTMLCanvasElement | HTMLImageElement | ImageBitmap;
+  const selfieSegmentationRef = useRef<SelfieSegmentation | null>(null);
+  const latestMaskRef = useRef<MaskImage | null>(null);
+  const segmentationOffscreenRef = useRef<HTMLCanvasElement | null>(null);
+  const segmentationReadyRef = useRef(false);
+
   const setupAudioAnalyser = useCallback((stream: MediaStream) => {
     try {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -136,6 +144,111 @@ export function StudioVideoRecorder() {
     };
   }, []);
 
+  // Virtual background: roda o modelo de segmentação de pessoa (MediaPipe)
+  // enquanto o modo "Câmera" estiver ativo, recortando você do fundo real
+  // da webcam para poder colocar o tema escolhido atrás.
+  useEffect(() => {
+    if (avatarType !== "webcam") {
+      latestMaskRef.current = null;
+      segmentationReadyRef.current = false;
+      return;
+    }
+
+    let cancelled = false;
+    let rafId: number | null = null;
+    const seg = new SelfieSegmentation({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+    });
+    seg.setOptions({ modelSelection: 1, selfieMode: true });
+    seg.onResults((results) => {
+      latestMaskRef.current = results.segmentationMask;
+      segmentationReadyRef.current = true;
+    });
+    selfieSegmentationRef.current = seg;
+
+    async function loop() {
+      if (cancelled) return;
+      const video = videoInputRef.current;
+      if (video && video.readyState >= 2) {
+        try {
+          await seg.send({ image: video });
+        } catch {
+          // Ignora falhas transitórias enquanto o grafo do modelo inicializa.
+        }
+      }
+      if (!cancelled) {
+        rafId = requestAnimationFrame(() => {
+          loop();
+        });
+      }
+    }
+    loop();
+
+    return () => {
+      cancelled = true;
+      if (rafId) cancelAnimationFrame(rafId);
+      latestMaskRef.current = null;
+      segmentationReadyRef.current = false;
+      selfieSegmentationRef.current = null;
+      seg.close().catch(() => {});
+    };
+  }, [avatarType]);
+
+  // Composita a pessoa (recortada pela máscara de segmentação) sobre o que
+  // já estiver desenhado no canvas (o tema de fundo). Sem máscara ainda
+  // pronta, cai de volta pra desenhar a câmera "crua" como antes.
+  const compositePersonOntoCanvas = useCallback(
+    (
+      ctx: CanvasRenderingContext2D,
+      video: HTMLVideoElement,
+      destX: number,
+      destY: number,
+      destWidth: number,
+      destHeight: number
+    ) => {
+      const mask = latestMaskRef.current;
+      if (!mask) {
+        ctx.drawImage(video, destX, destY, destWidth, destHeight);
+        return;
+      }
+
+      const nativeWidth = video.videoWidth || destWidth;
+      const nativeHeight = video.videoHeight || destHeight;
+
+      let offscreen = segmentationOffscreenRef.current;
+      if (!offscreen) {
+        offscreen = document.createElement("canvas");
+        segmentationOffscreenRef.current = offscreen;
+      }
+      if (offscreen.width !== nativeWidth || offscreen.height !== nativeHeight) {
+        offscreen.width = nativeWidth;
+        offscreen.height = nativeHeight;
+      }
+
+      const offCtx = offscreen.getContext("2d");
+      if (!offCtx) {
+        ctx.drawImage(video, destX, destY, destWidth, destHeight);
+        return;
+      }
+
+      offCtx.save();
+      offCtx.clearRect(0, 0, nativeWidth, nativeHeight);
+      // 1. Desenha a máscara (branco = pessoa, preto = fundo)
+      offCtx.drawImage(mask, 0, 0, nativeWidth, nativeHeight);
+      // 2. "source-in" mantém só os pixels da câmera onde a máscara é opaca
+      offCtx.globalCompositeOperation = "source-in";
+      offCtx.drawImage(video, 0, 0, nativeWidth, nativeHeight);
+      offCtx.globalCompositeOperation = "source-over";
+      offCtx.restore();
+
+      // 3. Desenha o recorte (fundo transparente ao redor da pessoa) por
+      // cima do tema que já está no canvas principal.
+      ctx.drawImage(offscreen, destX, destY, destWidth, destHeight);
+    },
+    []
+  );
+
   // Real-time Canvas Rendering Loop
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -188,7 +301,8 @@ export function StudioVideoRecorder() {
           ctx.stroke();
           ctx.clip();
 
-          ctx.drawImage(
+          compositePersonOntoCanvas(
+            ctx,
             videoInputRef.current,
             pipX - pipRadius,
             pipY - pipRadius,
@@ -203,20 +317,21 @@ export function StudioVideoRecorder() {
           ctx.beginPath();
           ctx.roundRect(width - splitWidth - 30, 40, splitWidth, height - 120, 24);
           ctx.clip();
-          ctx.drawImage(videoInputRef.current, width - splitWidth - 30, 40, splitWidth, height - 120);
+          compositePersonOntoCanvas(
+            ctx,
+            videoInputRef.current,
+            width - splitWidth - 30,
+            40,
+            splitWidth,
+            height - 120
+          );
           ctx.restore();
         } else {
-          // Camera video inset with a margin, so the selected background
-          // theme is visible as a frame around it (instead of being
-          // fully covered by a true fullscreen draw).
+          // Câmera em tela cheia: com a máscara de segmentação, isso já
+          // mostra o tema de fundo ocupando o espaço ao redor da pessoa,
+          // igual ao efeito de fundo virtual do Google Meet.
           ctx.save();
-          const margin = Math.round(Math.min(width, height) * 0.035);
-          const camWidth = width - margin * 2;
-          const camHeight = height - margin * 2;
-          ctx.beginPath();
-          ctx.roundRect(margin, margin, camWidth, camHeight, 20);
-          ctx.clip();
-          ctx.drawImage(videoInputRef.current, margin, margin, camWidth, camHeight);
+          compositePersonOntoCanvas(ctx, videoInputRef.current, 0, 0, width, height);
           ctx.restore();
         }
       } else {
@@ -262,7 +377,7 @@ export function StudioVideoRecorder() {
       isRunning = false;
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
-  }, [backgroundStyle, avatarType, frameStyle, bannerText]);
+  }, [backgroundStyle, avatarType, frameStyle, bannerText, compositePersonOntoCanvas]);
 
   // Recording timer control
   useEffect(() => {

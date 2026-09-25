@@ -399,13 +399,17 @@ export function StudioVideoRecorder() {
 
     try {
       // 1. Upload Video Blob directly to Vercel Blob (client-side, sem passar pela função serverless)
+      // O MediaRecorder retorna um MIME type completo (ex: "video/webm;codecs=vp9,opus"),
+      // então mantemos só a parte "video/webm" / "video/mp4" para o content type do blob.
+      const cleanContentType = (recordedBlob.type || "video/webm").split(";")[0];
+
       const blob = await upload(
         `studio_recording_${Date.now()}.webm`,
         recordedBlob,
         {
           access: "public",
           handleUploadUrl: "/api/videos/upload",
-          contentType: recordedBlob.type || "video/webm",
+          contentType: cleanContentType,
         }
       );
 

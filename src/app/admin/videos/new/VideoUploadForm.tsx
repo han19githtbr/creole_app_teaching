@@ -70,7 +70,7 @@ export function VideoUploadForm() {
         const blob = await upload(videoFile.name, videoFile, {
           access: "public",
           handleUploadUrl: "/api/videos/upload",
-          contentType: videoFile.type || "video/mp4",
+          contentType: (videoFile.type || "video/mp4").split(";")[0],
         });
 
         finalVideoUrl = blob.url;

@@ -206,9 +206,17 @@ export function StudioVideoRecorder() {
           ctx.drawImage(videoInputRef.current, width - splitWidth - 30, 40, splitWidth, height - 120);
           ctx.restore();
         } else {
-          // Fullscreen camera video
+          // Camera video inset with a margin, so the selected background
+          // theme is visible as a frame around it (instead of being
+          // fully covered by a true fullscreen draw).
           ctx.save();
-          ctx.drawImage(videoInputRef.current, 0, 0, width, height);
+          const margin = Math.round(Math.min(width, height) * 0.035);
+          const camWidth = width - margin * 2;
+          const camHeight = height - margin * 2;
+          ctx.beginPath();
+          ctx.roundRect(margin, margin, camWidth, camHeight, 20);
+          ctx.clip();
+          ctx.drawImage(videoInputRef.current, margin, margin, camWidth, camHeight);
           ctx.restore();
         }
       } else {

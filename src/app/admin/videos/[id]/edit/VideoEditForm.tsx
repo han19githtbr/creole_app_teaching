@@ -224,7 +224,7 @@ export function VideoEditForm({ initial }: { initial: VideoEditFormValues }) {
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
               Tema de Fundo
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid max-h-56 grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3">
               {Object.values(VIDEO_BACKGROUNDS).map((bg) => (
                 <button
                   key={bg.id}

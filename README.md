@@ -32,16 +32,20 @@ Todo o conteúdo da apostila original (28 páginas / 26 seções) já vem pré-c
   - 🌟 **Ti Kreyòl**: mascote alegre com chapéu de palha tradicional e expressões dinâmicas.
   - 🤖 **CreoleBot**: robô futurista assistente de ensino com visualizador de ondas de áudio.
   - 🎓 **Mestre Acadêmico**: personagem de professor clássico com capelo de formatura.
-- **Personalização de Fundos / Temas visuais**:
-  - 🇭🇹 **Bandeira do Haiti**: gradiente azul e vermelho com padrão sutil.
-  - 🌅 **Pôr do Sol no Caribe**: cores tropicais vibrantes.
-  - 🧑‍🏫 **Quadro de Sala de Aula**: quadro negro clássico com moldura de madeira.
-  - 🎙️ **Estúdio Moderno**: iluminação neon e estética de estúdio.
-  - 🌴 **Ilha Esmeralda**: tons verdes tropicais caribenhos.
-  - 🏰 **Citadelle Laferrière**: estética histórica em tons dourados e âmbar.
+  - Todos os 5 bonequinhos foram redesenhados com **acabamento mais realista**: pele com gradiente de luz/sombra em vez de cor chapada, orelhas, sobrancelhas expressivas, brilho especular nos olhos, blush e sombra de contato sob o busto para dar profundidade.
+- **Personalização de Fundos / Temas visuais animados**: os temas não são mais imagens estáticas — cada um é desenhado quadro a quadro no canvas (30fps), então a animação fica **gravada dentro do próprio vídeo exportado**, não é só um efeito da pré-visualização.
+  - **Clássicos de Estúdio**: 🇭🇹 Bandeira do Haiti, 🌅 Pôr do Sol no Caribe, 🧑‍🏫 Quadro de Sala de Aula, 🎙️ Estúdio Moderno, 🌴 Ilha Esmeralda, 🏰 Citadelle Laferrière — agora com uma leve camada de partículas ambiente (vaga-lumes, faíscas, folhas, nuvens) para dar vida.
+  - **Temas Animados por Assunto** (pedidos para representar o tema do vídeo, em estética pintada/suave): 🌿 Natureza (colinas e folhas caindo), ✈️ Turismo (balão e skyline), 🎉 Festas (holofotes e confete), ❄️ Inverno (neve e montanhas), 🌧️ Chuva (chuva caindo e relâmpago sutil), 🏖️ Praia (ondas animadas e bolhas), 💻 Tecnologia (grade digital com faíscas), ✈️ Aeroporto (avião cruzando o céu e luzes de pista), 🍲 Gastronomia (vapor subindo), 🎬 Cinema (cortinas e holofote pulsante), 🎭 Cultura (confete colorido e faixas decorativas), 🎓 Universidade (confete e emblema).
+  - O motor de partículas (`drawThemeParticles` em `src/lib/videoThemes.ts`) é compartilhado por todos os temas: chuva, neve, folhas, confete, vaga-lumes, bolhas, vapor, faíscas e nuvens — cada tema escolhe sua combinação de cores e tipo de partícula.
+  - Na página de reprodução (`VideoPlayer`), o fundo ambiente ao redor do vídeo também ganhou uma animação leve em CSS puro (gradiente "respirando" + partículas do mesmo tema), respeitando `prefers-reduced-motion`.
 - **Estilos de Enquadramento**:
   - Bordas arredondadas clássicas, *Picture-in-Picture (PiP)* flutuante circular, tela dividida (*split screen*), moldura *Glow* neon e faixa com o título do tópico.
 - **Controles de gravação**: Iniciar, Pausar, Retomar, Concluir, Descartar e opção de **Baixar Cópia Local (.webm)**.
+- **Áudio confiável na gravação**:
+  - Se a permissão de câmera+microfone combinada não devolver uma faixa de áudio, o app tenta automaticamente pedir o microfone separadamente antes de desistir.
+  - O botão **Iniciar Gravação** fica desabilitado quando não há microfone detectado, evitando publicar vídeos mudos sem perceber; existe um botão explícito **"Gravar sem áudio mesmo assim"** para quem realmente precisa gravar sem som.
+  - O medidor de áudio no estúdio mostra **"Sem áudio"** em vermelho quando o microfone não está disponível, em vez de só ficar parado em zero.
+- **Áudio confiável na reprodução** (`VideoPlayer`): o player nunca inicia mudo por engano (`muted={false}` explícito + reforço em `loadedmetadata`/`play`), e quando o próprio arquivo gravado não tem faixa de áudio (ex.: gravações antigas feitas antes desse ajuste), um aviso "Este vídeo foi gravado sem áudio" aparece sobre o player em vez de deixar o aluno achando que é um bug.
 
 ---
 

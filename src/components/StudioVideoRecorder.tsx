@@ -19,6 +19,8 @@ import {
   VIDEO_BACKGROUNDS,
   VIDEO_AVATARS,
   VIDEO_FRAME_STYLES,
+  THEME_CATEGORIES,
+  drawThemeParticles,
 } from "@/lib/videoThemes";
 import {
   Circle,
@@ -57,6 +59,9 @@ export function StudioVideoRecorder() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [audioLevel, setAudioLevel] = useState(0);
   const [permissionError, setPermissionError] = useState<string | null>(null);
+  // Só fica true se o usuário optar explicitamente por gravar sem microfone
+  // depois de já ter tentado (e falhado) obter permissão de áudio.
+  const [forceRecordWithoutAudio, setForceRecordWithoutAudio] = useState(false);
 
   // Output video state
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
@@ -92,6 +97,10 @@ export function StudioVideoRecorder() {
     try {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const audioCtx = new AudioCtx();
+      // Navegadores baseados em Chromium criam o AudioContext em estado
+      // "suspended" até haver um gesto do usuário. Sem retomar aqui, o
+      // medidor de volume fica zerado mesmo com o microfone funcionando.
+      audioCtx.resume().catch(() => {});
       const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 256;
@@ -103,6 +112,30 @@ export function StudioVideoRecorder() {
       console.warn("AudioContext initialization error:", e);
     }
   }, []);
+
+  // Tenta pegar só o áudio (microfone), separado da câmera. Usado quando a
+  // captura combinada (getUserMedia com video+audio de uma vez) devolve um
+  // stream sem faixa de áudio — alguns navegadores/dispositivos concedem a
+  // permissão de câmera mas rejeitam a de microfone na mesma chamada, e sem
+  // esse retry a gravação acaba saindo muda sem o usuário perceber.
+  const retryAudioOnly = useCallback(async () => {
+    try {
+      const aOnly = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true },
+      });
+      const audioTrack = aOnly.getAudioTracks()[0];
+      if (audioTrack) {
+        const aStream = new MediaStream([audioTrack]);
+        setAudioStream(aStream);
+        setupAudioAnalyser(aStream);
+        setPermissionError(null);
+        return true;
+      }
+    } catch (e) {
+      console.warn("Retry de áudio falhou:", e);
+    }
+    return false;
+  }, [setupAudioAnalyser]);
 
   const initMedia = useCallback(async () => {
     try {
@@ -128,14 +161,23 @@ export function StudioVideoRecorder() {
         const aStream = new MediaStream([audioTrack]);
         setAudioStream(aStream);
         setupAudioAnalyser(aStream);
+      } else {
+        // Câmera OK mas sem faixa de áudio: tenta capturar o microfone
+        // isoladamente antes de desistir e avisar o usuário.
+        const recovered = await retryAudioOnly();
+        if (!recovered) {
+          setPermissionError(
+            "Microfone não detectado. Sem áudio, o vídeo gravado ficará mudo. Verifique a permissão do microfone no navegador e clique em \"Tentar Novamente\"."
+          );
+        }
       }
     } catch (err) {
       console.warn("Media devices error:", err);
       setPermissionError(
-        "Permissão de câmera ou microfone não concedida. Você ainda pode gravar usando os Mascotes/Bonequinhos com áudio se permitir o microfone."
+        "Permissão de câmera ou microfone não concedida. Toque em \"Tentar Novamente\" após liberar o acesso nas configurações do navegador."
       );
     }
-  }, [setupAudioAnalyser]);
+  }, [setupAudioAnalyser, retryAudioOnly]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -311,11 +353,15 @@ export function StudioVideoRecorder() {
 
       const isSpeaking = currentAudioLevel > 0.04;
 
-      // 2. Clear canvas & draw background
+      // 2. Clear canvas & draw background (o tempo atual anima o fundo —
+      // como o canvas alimenta tanto a pré-visualização quanto a gravação,
+      // a animação fica gravada no vídeo final também).
       ctx.clearRect(0, 0, width, height);
 
+      const now = Date.now();
       const bg = VIDEO_BACKGROUNDS[backgroundStyle] || VIDEO_BACKGROUNDS.haiti_flag;
-      bg.canvasBg(ctx, width, height);
+      bg.canvasBg(ctx, width, height, now);
+      drawThemeParticles(ctx, width, height, now, bg.particles);
 
       // 3. Draw Avatar or Webcam feed based on avatarType
       if (avatarType === "webcam" && videoInputRef.current && videoInputRef.current.readyState >= 2) {
@@ -437,19 +483,24 @@ export function StudioVideoRecorder() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const audioTracks = audioStream?.getAudioTracks() ?? [];
+
+    // Trava de segurança: sem microfone e sem confirmação explícita do
+    // usuário, não inicia a gravação — é isso que evita publicar vídeos
+    // mudos sem o professor perceber até revisar a aula depois.
+    if (audioTracks.length === 0 && !forceRecordWithoutAudio) {
+      setPermissionError(
+        "Nenhum microfone detectado. Libere o acesso ao microfone e tente novamente, ou grave sem áudio por sua conta e risco."
+      );
+      return;
+    }
+
     recordedChunksRef.current = [];
     setElapsedSeconds(0);
     setSaveError(null);
 
     // Capture 30fps canvas stream
     const canvasStream = canvas.captureStream(30);
-    const audioTracks = audioStream?.getAudioTracks() ?? [];
-
-    if (audioTracks.length === 0) {
-      setSaveError(
-        "Nenhum microfone detectado — o vídeo será gravado sem áudio. Verifique a permissão do microfone e recarregue a página antes de gravar."
-      );
-    }
 
     // Monta um único MediaStream já com vídeo (canvas) + áudio (microfone),
     // em vez de usar addTrack() depois de criado — mais confiável entre navegadores.
@@ -638,12 +689,26 @@ export function StudioVideoRecorder() {
 
       {/* Permission alert if failed */}
       {permissionError && (
-        <div className="flex items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
           <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
-          <div className="flex-1">{permissionError}</div>
-          <Button size="sm" variant="outline" onClick={initMedia}>
-            Tentar Novamente
-          </Button>
+          <div className="flex-1 min-w-[200px]">{permissionError}</div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="outline" onClick={initMedia}>
+              Tentar Novamente
+            </Button>
+            {!audioStream && recordingState === "idle" && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  setForceRecordWithoutAudio(true);
+                  setPermissionError(null);
+                }}
+              >
+                Gravar sem áudio mesmo assim
+              </Button>
+            )}
+          </div>
         </div>
       )}
 
@@ -678,12 +743,16 @@ export function StudioVideoRecorder() {
                 {formatTime(elapsedSeconds)} / {formatTime(MAX_DURATION_SECONDS)}
               </span>
               <span className="text-white/40">|</span>
-              <span className="flex items-center gap-1 text-emerald-400">
+              <span className={`flex items-center gap-1 ${audioStream ? "text-emerald-400" : "text-red-400"}`}>
                 <Mic className="h-3 w-3" />
-                <span
-                  className="inline-block h-2 rounded-full bg-emerald-400 transition-all duration-75"
-                  style={{ width: `${Math.max(4, audioLevel * 60)}px` }}
-                />
+                {audioStream ? (
+                  <span
+                    className="inline-block h-2 rounded-full bg-emerald-400 transition-all duration-75"
+                    style={{ width: `${Math.max(4, audioLevel * 60)}px` }}
+                  />
+                ) : (
+                  <span className="text-[10px] font-semibold uppercase">Sem áudio</span>
+                )}
               </span>
             </div>
 
@@ -718,6 +787,12 @@ export function StudioVideoRecorder() {
                   onClick={startRecording}
                   variant="danger"
                   size="lg"
+                  disabled={!audioStream && !forceRecordWithoutAudio}
+                  title={
+                    !audioStream && !forceRecordWithoutAudio
+                      ? "Libere o microfone para gravar com áudio"
+                      : undefined
+                  }
                   className="gap-2 bg-[#dc2626] hover:bg-[#b91c1c] text-white shadow-lg shadow-red-500/20"
                 >
                   <Circle className="h-4 w-4 fill-current" /> Iniciar Gravação (Max 10 min)
@@ -806,7 +881,7 @@ export function StudioVideoRecorder() {
               <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
                 Apresentador / Bonequinho
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
                 {Object.values(VIDEO_AVATARS).map((av) => (
                   <button
                     key={av.id}
@@ -826,27 +901,42 @@ export function StudioVideoRecorder() {
               </div>
             </div>
 
-            {/* 2. Select Background Theme */}
+            {/* 2. Select Background Theme — agrupado por categoria, com
+                rolagem própria já que agora existem ~18 temas (os 6
+                clássicos + 12 animados por assunto). */}
             <div>
               <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
                 Imagem de Fundo / Tema
               </label>
-              <div className="grid grid-cols-2 gap-2">
-                {Object.values(VIDEO_BACKGROUNDS).map((bg) => (
-                  <button
-                    key={bg.id}
-                    type="button"
-                    onClick={() => setBackgroundStyle(bg.id)}
-                    className={`relative overflow-hidden rounded-xl border p-2 text-left transition-all cursor-pointer ${
-                      backgroundStyle === bg.id
-                        ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/40 shadow-sm"
-                        : "border-[var(--border)] hover:border-[var(--accent)]/40"
-                    }`}
-                  >
-                    <div className={`h-8 w-full rounded-lg bg-gradient-to-r ${bg.gradient} mb-1.5`} />
-                    <p className="text-xs font-semibold text-[var(--text)] line-clamp-1">{bg.name}</p>
-                  </button>
-                ))}
+              <div className="max-h-72 space-y-4 overflow-y-auto pr-1">
+                {THEME_CATEGORIES.map((cat) => {
+                  const themesInCat = Object.values(VIDEO_BACKGROUNDS).filter((bg) => bg.category === cat.id);
+                  if (themesInCat.length === 0) return null;
+                  return (
+                    <div key={cat.id}>
+                      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                        {cat.label}
+                      </p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
+                        {themesInCat.map((bg) => (
+                          <button
+                            key={bg.id}
+                            type="button"
+                            onClick={() => setBackgroundStyle(bg.id)}
+                            className={`relative overflow-hidden rounded-xl border p-2 text-left transition-all cursor-pointer ${
+                              backgroundStyle === bg.id
+                                ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/40 shadow-sm"
+                                : "border-[var(--border)] hover:border-[var(--accent)]/40"
+                            }`}
+                          >
+                            <div className={`h-8 w-full rounded-lg bg-gradient-to-r ${bg.gradient} mb-1.5`} />
+                            <p className="text-xs font-semibold text-[var(--text)] line-clamp-1">{bg.name}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

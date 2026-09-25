@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatDuration } from "@/components/VideoCard";
+import { formatDuration } from "@/lib/videoUtils";
 import { VIDEO_BACKGROUNDS, VIDEO_AVATARS } from "@/lib/videoThemes";
 import {
   Clock,

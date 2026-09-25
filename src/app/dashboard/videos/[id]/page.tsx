@@ -17,7 +17,7 @@ import {
   Radio,
   Sparkles,
 } from "lucide-react";
-import { formatDuration } from "@/components/VideoCard";
+import { formatDuration } from "@/lib/videoUtils";
 import { VIDEO_AVATARS } from "@/lib/videoThemes";
 
 export const dynamic = "force-dynamic";

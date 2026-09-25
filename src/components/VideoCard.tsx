@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Play, Heart, MessageSquare, Clock, Calendar, Radio } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { VIDEO_BACKGROUNDS, VIDEO_AVATARS } from "@/lib/videoThemes";
+import { formatDuration } from "@/lib/videoUtils";
 
 export interface VideoCardProps {
   _id: string;
@@ -30,12 +31,6 @@ export interface VideoCardProps {
   isAdmin?: boolean;
 }
 
-export function formatDuration(seconds: number): string {
-  if (!seconds || isNaN(seconds)) return "00:00";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-}
 
 export function VideoCard({
   _id,

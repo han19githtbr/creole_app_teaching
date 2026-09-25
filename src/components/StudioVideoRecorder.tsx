@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -389,21 +390,18 @@ export function StudioVideoRecorder() {
     setSaveError(null);
 
     try {
-      // 1. Upload Video Blob
-      const formData = new FormData();
-      formData.append("file", recordedBlob, "studio_recording.webm");
+      // 1. Upload Video Blob directly to Vercel Blob (client-side, sem passar pela função serverless)
+      const blob = await upload(
+        `studio_recording_${Date.now()}.webm`,
+        recordedBlob,
+        {
+          access: "public",
+          handleUploadUrl: "/api/videos/upload",
+          contentType: recordedBlob.type || "video/webm",
+        }
+      );
 
-      const uploadRes = await fetch("/api/videos/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!uploadRes.ok) {
-        const errorData = await uploadRes.json().catch(() => ({}));
-        throw new Error(errorData.error || "Erro no upload do vídeo.");
-      }
-
-      const { url: videoUrl } = await uploadRes.json();
+      const videoUrl = blob.url;
 
       // 2. Calculate Publish Date if Scheduled
       let publishAt: string | null = null;

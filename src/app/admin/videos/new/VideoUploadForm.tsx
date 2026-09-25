@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -66,21 +67,13 @@ export function VideoUploadForm() {
         if (!videoFile) {
           throw new Error("Selecione um arquivo de vídeo para enviar.");
         }
-        const formData = new FormData();
-        formData.append("file", videoFile);
-
-        const uploadRes = await fetch("/api/videos/upload", {
-          method: "POST",
-          body: formData,
+        const blob = await upload(videoFile.name, videoFile, {
+          access: "public",
+          handleUploadUrl: "/api/videos/upload",
+          contentType: videoFile.type || "video/mp4",
         });
 
-        if (!uploadRes.ok) {
-          const errData = await uploadRes.json().catch(() => ({}));
-          throw new Error(errData.error || "Erro ao fazer upload do arquivo de vídeo.");
-        }
-
-        const { url } = await uploadRes.json();
-        finalVideoUrl = url;
+        finalVideoUrl = blob.url;
       } else {
         if (!finalVideoUrl) {
           throw new Error("Informe o link do vídeo (YouTube, Vimeo ou URL direto).");

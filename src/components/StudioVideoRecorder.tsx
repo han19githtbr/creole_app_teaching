@@ -411,11 +411,20 @@ export function StudioVideoRecorder() {
 
     // Capture 30fps canvas stream
     const canvasStream = canvas.captureStream(30);
+    const audioTracks = audioStream?.getAudioTracks() ?? [];
 
-    // Add audio track
-    if (audioStream && audioStream.getAudioTracks().length > 0) {
-      canvasStream.addTrack(audioStream.getAudioTracks()[0]);
+    if (audioTracks.length === 0) {
+      setSaveError(
+        "Nenhum microfone detectado — o vídeo será gravado sem áudio. Verifique a permissão do microfone e recarregue a página antes de gravar."
+      );
     }
+
+    // Monta um único MediaStream já com vídeo (canvas) + áudio (microfone),
+    // em vez de usar addTrack() depois de criado — mais confiável entre navegadores.
+    const combinedStream = new MediaStream([
+      ...canvasStream.getVideoTracks(),
+      ...audioTracks,
+    ]);
 
     const mimeTypes = [
       "video/webm;codecs=vp9,opus",
@@ -431,9 +440,10 @@ export function StudioVideoRecorder() {
       }
     }
 
-    const recorder = new MediaRecorder(canvasStream, {
+    const recorder = new MediaRecorder(combinedStream, {
       mimeType: selectedMime || undefined,
       videoBitsPerSecond: 2500000,
+      audioBitsPerSecond: 128000,
     });
 
     recorder.ondataavailable = (event) => {

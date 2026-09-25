@@ -155,15 +155,20 @@ export function VideoTable({ videos }: { videos: VideoTableRow[] }) {
                     className="border-b border-[var(--border-soft)] last:border-0 hover:bg-[var(--surface-2)]/50 transition-colors"
                   >
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
+                      <Link
+                        href={`/dashboard/videos/${video._id}`}
+                        target="_blank"
+                        className="flex items-center gap-3 group"
+                        title="Assistir vídeo novamente"
+                      >
                         {/* Mini thumbnail */}
                         <div
-                          className={`flex h-12 w-20 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${bgTheme.gradient} text-white shadow-inner text-lg`}
+                          className={`flex h-12 w-20 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${bgTheme.gradient} text-white shadow-inner text-lg transition-transform group-hover:scale-105`}
                         >
                           {avatarPreset.icon}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-semibold text-[var(--text)] line-clamp-1">
+                          <p className="font-semibold text-[var(--text)] line-clamp-1 group-hover:text-[var(--accent)] transition-colors">
                             {video.title}
                           </p>
                           <p className="text-xs text-[var(--text-muted)] flex items-center gap-1.5">
@@ -175,7 +180,7 @@ export function VideoTable({ videos }: { videos: VideoTableRow[] }) {
                             )}
                           </p>
                         </div>
-                      </div>
+                      </Link>
                     </td>
 
                     <td className="px-4 py-3 font-mono text-xs text-[var(--text-secondary)]">

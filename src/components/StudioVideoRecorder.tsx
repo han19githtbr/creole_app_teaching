@@ -3,7 +3,15 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { upload } from "@vercel/blob/client";
-import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
+// @mediapipe/selfie_segmentation não usa `export` de verdade — ele só define
+// a classe numa variável global (window.SelfieSegmentation) quando o script
+// roda no navegador. Por isso importamos só os TIPOS aqui (apagados na
+// compilação, não quebram o build) e carregamos o script de verdade via
+// import() dinâmico dentro do useEffect mais abaixo.
+import type {
+  SelfieSegmentation as SelfieSegmentationClass,
+  Results as SelfieSegmentationResults,
+} from "@mediapipe/selfie_segmentation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -75,7 +83,7 @@ export function StudioVideoRecorder() {
 
   // Background segmentation (virtual background, estilo Google Meet)
   type MaskImage = HTMLCanvasElement | HTMLImageElement | ImageBitmap;
-  const selfieSegmentationRef = useRef<SelfieSegmentation | null>(null);
+  const selfieSegmentationRef = useRef<SelfieSegmentationClass | null>(null);
   const latestMaskRef = useRef<MaskImage | null>(null);
   const segmentationOffscreenRef = useRef<HTMLCanvasElement | null>(null);
   const segmentationReadyRef = useRef(false);
@@ -156,34 +164,58 @@ export function StudioVideoRecorder() {
 
     let cancelled = false;
     let rafId: number | null = null;
-    const seg = new SelfieSegmentation({
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
-    });
-    seg.setOptions({ modelSelection: 1, selfieMode: true });
-    seg.onResults((results) => {
-      latestMaskRef.current = results.segmentationMask;
-      segmentationReadyRef.current = true;
-    });
-    selfieSegmentationRef.current = seg;
+    let seg: SelfieSegmentationClass | null = null;
 
-    async function loop() {
+    async function setup() {
+      // Carrega o script só no navegador (ele define window.SelfieSegmentation
+      // como efeito colateral — não tem export ES module de verdade).
+      await import("@mediapipe/selfie_segmentation");
       if (cancelled) return;
-      const video = videoInputRef.current;
-      if (video && video.readyState >= 2) {
-        try {
-          await seg.send({ image: video });
-        } catch {
-          // Ignora falhas transitórias enquanto o grafo do modelo inicializa.
+
+      const SelfieSegmentationCtor = (
+        window as typeof window & {
+          SelfieSegmentation?: new (config?: {
+            locateFile?: (file: string, prefix?: string) => string;
+          }) => SelfieSegmentationClass;
+        }
+      ).SelfieSegmentation;
+
+      if (!SelfieSegmentationCtor) {
+        console.warn("SelfieSegmentation não carregou; usando câmera sem fundo virtual.");
+        return;
+      }
+
+      seg = new SelfieSegmentationCtor({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+      });
+      seg.setOptions({ modelSelection: 1, selfieMode: true });
+      seg.onResults((results: SelfieSegmentationResults) => {
+        latestMaskRef.current = results.segmentationMask;
+        segmentationReadyRef.current = true;
+      });
+      selfieSegmentationRef.current = seg;
+
+      async function loop() {
+        if (cancelled || !seg) return;
+        const video = videoInputRef.current;
+        if (video && video.readyState >= 2) {
+          try {
+            await seg.send({ image: video });
+          } catch {
+            // Ignora falhas transitórias enquanto o grafo do modelo inicializa.
+          }
+        }
+        if (!cancelled) {
+          rafId = requestAnimationFrame(() => {
+            loop();
+          });
         }
       }
-      if (!cancelled) {
-        rafId = requestAnimationFrame(() => {
-          loop();
-        });
-      }
+      loop();
     }
-    loop();
+
+    setup();
 
     return () => {
       cancelled = true;
@@ -191,7 +223,7 @@ export function StudioVideoRecorder() {
       latestMaskRef.current = null;
       segmentationReadyRef.current = false;
       selfieSegmentationRef.current = null;
-      seg.close().catch(() => {});
+      seg?.close().catch(() => {});
     };
   }, [avatarType]);
 

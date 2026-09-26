@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { VIDEO_BACKGROUNDS, VIDEO_AVATARS, ParticleKind } from "@/lib/videoThemes";
+import { VIDEO_BACKGROUNDS, VIDEO_AVATARS, ParticleKind, personalizeAvatarName } from "@/lib/videoThemes";
 import { Sparkles } from "lucide-react";
 
 interface VideoPlayerProps {
@@ -16,6 +16,8 @@ interface VideoPlayerProps {
     frameStyle?: string;
     bannerText?: string;
   };
+  /** Nome do usuário logado, para exibir no lugar de "Você (...)" no cabeçalho. */
+  viewerName?: string | null;
 }
 
 // Gera posições/atrasos determinísticos por partícula (mesmo efeito visual
@@ -86,6 +88,7 @@ export function VideoPlayer({
   title,
   thumbnailUrl,
   customization,
+  viewerName,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,10 +99,10 @@ export function VideoPlayer({
   const avatarTheme = VIDEO_AVATARS[avatarStyle] || VIDEO_AVATARS.webcam;
   const frameStyle = customization?.frameStyle || "rounded";
 
-  // Nome exibido no cabeçalho do player: os avatares "Você (...)" são todos
-  // fotos do próprio Handy, então mostramos o nome dele em vez do rótulo
-  // técnico do avatar (ex.: "Você (Noite)").
-  const displayName = avatarTheme.name.startsWith("Você") ? "Handy" : avatarTheme.name;
+  // Nome exibido no cabeçalho do player: para avatares "Você (...)",
+  // mostramos o nome de quem está logado, em vez do rótulo técnico do
+  // avatar (ex.: "Você (Noite)").
+  const displayName = personalizeAvatarName(avatarTheme.name, viewerName);
 
   // Apenas o emoji da bandeira do tema de fundo (ex.: 🇭🇹), sem o texto
   // "Bandeira do Haiti" etc.

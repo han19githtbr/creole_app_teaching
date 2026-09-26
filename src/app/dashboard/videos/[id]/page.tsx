@@ -18,7 +18,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { formatDuration } from "@/lib/videoUtils";
-import { VIDEO_AVATARS } from "@/lib/videoThemes";
+import { VIDEO_AVATARS, personalizeAvatarName } from "@/lib/videoThemes";
 
 export const dynamic = "force-dynamic";
 
@@ -86,6 +86,7 @@ export default async function VideoWatchPage({
   }));
 
   const avatarPreset = VIDEO_AVATARS[video.customization?.avatarType || "webcam"] || VIDEO_AVATARS.webcam;
+  const avatarDisplayName = personalizeAvatarName(avatarPreset.name, session.user.name);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 space-y-8">
@@ -106,6 +107,7 @@ export default async function VideoWatchPage({
             title={video.title}
             thumbnailUrl={video.thumbnailUrl}
             customization={video.customization}
+            viewerName={session.user.name}
           />
 
           {/* Video Metadata & Actions Bar */}
@@ -119,7 +121,7 @@ export default async function VideoWatchPage({
                     </span>
                   )}
                   <span className="flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-semibold text-[var(--accent)]">
-                    {avatarPreset.icon} {avatarPreset.name}
+                    {avatarPreset.icon} {avatarDisplayName}
                   </span>
                 </div>
 

@@ -1007,6 +1007,17 @@ export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
   },
 };
 
+/**
+ * Os avatares "Você (...)" (ex.: "Você (Noite)", "Você (Estúdio)") são todos
+ * fotos do usuário que gravou o vídeo. Em telas onde esse nome é exibido,
+ * trocamos "Você" pelo nome de quem está logado no momento, em vez de
+ * mostrar o rótulo técnico do avatar.
+ */
+export function personalizeAvatarName(name: string, viewerName?: string | null) {
+  if (!name.startsWith("Você")) return name;
+  return viewerName?.trim() || "Você";
+}
+
 export const VIDEO_FRAME_STYLES = [
   { id: "rounded", name: "Bordas Arredondadas (Padrão)", description: "Layout de estúdio elegante" },
   { id: "circle_pip", name: "Picture-in-Picture Flutuante", description: "Avatar no canto inferior sobre o fundo" },

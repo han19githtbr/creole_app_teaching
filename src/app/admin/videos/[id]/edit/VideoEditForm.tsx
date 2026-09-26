@@ -53,7 +53,7 @@ export function VideoEditForm({ initial }: { initial: VideoEditFormValues }) {
     initial.customization?.backgroundStyle || "haiti_flag"
   );
   const [avatarType, setAvatarType] = useState(
-    initial.customization?.avatarType || "prof_alex"
+    initial.customization?.avatarType || "you_sunset"
   );
   const [frameStyle, setFrameStyle] = useState(
     initial.customization?.frameStyle || "rounded"

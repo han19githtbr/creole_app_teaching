@@ -828,6 +828,118 @@ function drawEyeHighlight(ctx: CanvasRenderingContext2D, ex: number, ey: number,
   ctx.fill();
 }
 
+/* ------------------------------------------------------------------ */
+/* Avatares "Você" (foto real em estilo Ghibli)                        */
+/* ------------------------------------------------------------------ */
+
+// Cache simples de <img> por URL — evita recriar/recarregar a imagem a cada
+// frame (o drawAvatar roda a ~60fps). Como HTMLImageElement não existe no
+// servidor, o cache só é populado no browser (checagem `typeof Image`).
+const photoAvatarImageCache = new Map<string, HTMLImageElement>();
+
+function getPhotoAvatarImage(src: string): HTMLImageElement | null {
+  if (typeof Image === "undefined") return null;
+  let img = photoAvatarImageCache.get(src);
+  if (!img) {
+    img = new Image();
+    img.src = src;
+    photoAvatarImageCache.set(src, img);
+  }
+  return img;
+}
+
+// Desenha a imagem inteira dentro do quadrado [dx, dy, dSize, dSize] com
+// recorte "cover" (preenche todo o quadrado, cortando o excesso), do mesmo
+// jeito que `object-fit: cover` faria em HTML/CSS.
+function drawImageCover(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  dx: number,
+  dy: number,
+  dSize: number
+) {
+  const iw = img.naturalWidth;
+  const ih = img.naturalHeight;
+  const scale = Math.max(dSize / iw, dSize / ih);
+  const sw = dSize / scale;
+  const sh = dSize / scale;
+  const sx = (iw - sw) / 2;
+  const sy = (ih - sh) / 2;
+  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dSize, dSize);
+}
+
+/**
+ * Cria uma função `drawAvatar` para uma foto real (estilo Ghibli) do
+ * professor. `mouthY` é a posição vertical aproximada da boca na foto,
+ * como fração (0 a 1) da altura do quadro — usada para desenhar a "boca
+ * falando" por cima da foto quando o áudio detecta fala. Como é uma foto
+ * estática, a "animação de fala" é simulada com: (1) leve balanço vertical,
+ * (2) anel de brilho pulsante atrás do rosto, e (3) uma pequena boca aberta
+ * semi-transparente sobreposta na posição estimada — mesma linguagem visual
+ * usada nos demais avatares "bonequinho" acima.
+ */
+function makePhotoAvatarDrawer(src: string, mouthY: number) {
+  return (
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    size: number,
+    isSpeaking: boolean,
+    audioLevel = 0
+  ) => {
+    const speaking = isSpeaking || audioLevel > 0.05;
+    const r = size / 2;
+
+    ctx.save();
+    ctx.translate(x, y);
+
+    drawContactShadow(ctx, r);
+
+    const bounce = speaking ? Math.sin(Date.now() / 150) * 3 : 0;
+    ctx.translate(0, bounce);
+
+    // Anel de brilho pulsante quando fala (mesmo efeito dos outros avatares)
+    if (speaking) {
+      ctx.beginPath();
+      ctx.arc(0, 0, r + 8 + audioLevel * 20, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(99, 102, 241, 0.3)";
+      ctx.fill();
+    }
+
+    // Moldura circular
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fillStyle = "#1e1b4b";
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "#818cf8";
+    ctx.stroke();
+    ctx.clip();
+
+    const img = getPhotoAvatarImage(src);
+    if (img && img.complete && img.naturalWidth > 0) {
+      drawImageCover(ctx, img, -r, -r, size);
+
+      // Boca "falando" sobreposta na posição estimada da boca na foto
+      if (speaking) {
+        const mouthYAbs = -r + size * mouthY;
+        const openHalf = size * (0.012 + audioLevel * 0.05);
+        ctx.beginPath();
+        ctx.ellipse(0, mouthYAbs, size * 0.045, openHalf, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(60, 24, 24, 0.55)";
+        ctx.fill();
+      }
+    } else {
+      // Enquanto a imagem carrega (raro, já que fica em cache), mostra um
+      // fundo neutro em vez de deixar o quadro em branco.
+      ctx.fillStyle = "#334155";
+      ctx.fillRect(-r, -r, size, size);
+    }
+
+    ctx.restore();
+  };
+}
+
 export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
   webcam: {
     id: "webcam",
@@ -837,561 +949,53 @@ export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
     avatarSvg: "",
     drawAvatar: () => {},
   },
-  prof_alex: {
-    id: "prof_alex",
-    name: "Prof. Alex (Bonequinho)",
-    description: "Professor haitiano amigável com terno e óculos",
-    icon: "👨🏿‍🏫",
-    avatarSvg: "",
-    drawAvatar: (ctx, x, y, size, isSpeaking, audioLevel = 0) => {
-      ctx.save();
-      ctx.translate(x, y);
-
-      const bounce = isSpeaking ? Math.sin(Date.now() / 150) * 4 : 0;
-      const r = size / 2;
-
-      drawContactShadow(ctx, r);
-      ctx.translate(0, bounce);
-
-      if (isSpeaking || audioLevel > 0.05) {
-        ctx.beginPath();
-        ctx.arc(0, 0, r + 8 + audioLevel * 20, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(99, 102, 241, 0.3)";
-        ctx.fill();
-      }
-
-      // Frame
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fillStyle = "#1e1b4b";
-      ctx.fill();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#818cf8";
-      ctx.stroke();
-      ctx.clip();
-
-      const skinGrad = ctx.createRadialGradient(-r * 0.12, -r * 0.15, r * 0.05, 0, -r * 0.05, r * 0.5);
-      skinGrad.addColorStop(0, "#8a5a30");
-      skinGrad.addColorStop(1, "#5c3a1c");
-
-      drawEars(ctx, r, "#6b3e1b");
-
-      // Body / Suit (Haitian blue blazer) com sombra sutil
-      const suitGrad = ctx.createLinearGradient(0, r * 0.5, 0, r * 1.4);
-      suitGrad.addColorStop(0, "#274690");
-      suitGrad.addColorStop(1, "#152250");
-      ctx.beginPath();
-      ctx.ellipse(0, r * 0.95, r * 0.8, r * 0.5, 0, 0, Math.PI * 2);
-      ctx.fillStyle = suitGrad;
-      ctx.fill();
-
-      // Shirt collar (white)
-      ctx.beginPath();
-      ctx.moveTo(-r * 0.25, r * 0.55);
-      ctx.lineTo(0, r * 0.85);
-      ctx.lineTo(r * 0.25, r * 0.55);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-
-      // Red tie (Haitian red)
-      ctx.beginPath();
-      ctx.moveTo(-r * 0.08, r * 0.65);
-      ctx.lineTo(r * 0.08, r * 0.65);
-      ctx.lineTo(r * 0.12, r * 0.95);
-      ctx.lineTo(0, r * 1.05);
-      ctx.lineTo(-r * 0.12, r * 0.95);
-      ctx.closePath();
-      ctx.fillStyle = "#dc2626";
-      ctx.fill();
-
-      // Neck
-      ctx.beginPath();
-      ctx.rect(-r * 0.18, r * 0.25, r * 0.36, r * 0.35);
-      ctx.fillStyle = "#4a2e15";
-      ctx.fill();
-
-      // Head (gradient skin instead of flat fill)
-      ctx.beginPath();
-      ctx.ellipse(0, -r * 0.05, r * 0.42, r * 0.48, 0, 0, Math.PI * 2);
-      ctx.fillStyle = skinGrad;
-      ctx.fill();
-
-      // Hair
-      ctx.beginPath();
-      ctx.arc(0, -r * 0.2, r * 0.43, Math.PI, Math.PI * 2);
-      ctx.fillStyle = "#1c1917";
-      ctx.fill();
-
-      drawEyebrows(ctx, r, "#1c1917", isSpeaking || audioLevel > 0.05);
-
-      // Eyes
-      ctx.beginPath();
-      ctx.arc(-r * 0.16, -r * 0.06, r * 0.06, 0, Math.PI * 2);
-      ctx.arc(r * 0.16, -r * 0.06, r * 0.06, 0, Math.PI * 2);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(-r * 0.15, -r * 0.06, r * 0.035, 0, Math.PI * 2);
-      ctx.arc(r * 0.17, -r * 0.06, r * 0.035, 0, Math.PI * 2);
-      ctx.fillStyle = "#1c1917";
-      ctx.fill();
-      drawEyeHighlight(ctx, -r * 0.14, -r * 0.075, r);
-      drawEyeHighlight(ctx, r * 0.18, -r * 0.075, r);
-
-      // Glasses
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = "#fbbf24";
-      ctx.strokeRect(-r * 0.26, -r * 0.14, r * 0.2, r * 0.16);
-      ctx.strokeRect(r * 0.06, -r * 0.14, r * 0.2, r * 0.16);
-      ctx.beginPath();
-      ctx.moveTo(-r * 0.06, -r * 0.06);
-      ctx.lineTo(r * 0.06, -r * 0.06);
-      ctx.stroke();
-
-      // Nose
-      ctx.beginPath();
-      ctx.arc(0, r * 0.04, r * 0.05, 0, Math.PI);
-      ctx.strokeStyle = "#3a2010";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Mouth (animated speaking)
-      ctx.beginPath();
-      if (isSpeaking || audioLevel > 0.05) {
-        const mouthOpen = Math.min(r * 0.15, r * 0.06 + audioLevel * 30);
-        ctx.ellipse(0, r * 0.18, r * 0.14, mouthOpen, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "#450a0a";
-        ctx.fill();
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(-r * 0.08, r * 0.18 - mouthOpen * 0.7, r * 0.16, mouthOpen * 0.6);
-      } else {
-        ctx.arc(0, r * 0.15, r * 0.12, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    },
+  you_sunset: {
+    id: "you_sunset",
+    name: "Você (Pôr do Sol)",
+    description: "Sua foto estilo Ghibli com a Baía de Guanabara ao entardecer",
+    icon: "🌅",
+    avatarSvg: "/avatars/you-sunset.png",
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-sunset.png", 0.56),
   },
-  prof_marie: {
-    id: "prof_marie",
-    name: "Profª. Marie (Bonequinha)",
-    description: "Professora carismática com turbante colorido tradicional",
-    icon: "👩🏿‍🏫",
-    avatarSvg: "",
-    drawAvatar: (ctx, x, y, size, isSpeaking, audioLevel = 0) => {
-      ctx.save();
-      ctx.translate(x, y);
-
-      const bounce = isSpeaking ? Math.sin(Date.now() / 140) * 4 : 0;
-      const r = size / 2;
-
-      drawContactShadow(ctx, r);
-      ctx.translate(0, bounce);
-
-      if (isSpeaking || audioLevel > 0.05) {
-        ctx.beginPath();
-        ctx.arc(0, 0, r + 8 + audioLevel * 20, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(244, 63, 94, 0.3)";
-        ctx.fill();
-      }
-
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fillStyle = "#2e1065";
-      ctx.fill();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#f43f5e";
-      ctx.stroke();
-      ctx.clip();
-
-      const skinGrad = ctx.createRadialGradient(-r * 0.1, -r * 0.12, r * 0.05, 0, -r * 0.02, r * 0.48);
-      skinGrad.addColorStop(0, "#8a5a30");
-      skinGrad.addColorStop(1, "#5c3a1c");
-
-      drawEars(ctx, r, "#6b3e1b");
-
-      // Body dress (vibrant red & gold) com leve gradiente
-      const dressGrad = ctx.createLinearGradient(0, r * 0.5, 0, r * 1.4);
-      dressGrad.addColorStop(0, "#ef4444");
-      dressGrad.addColorStop(1, "#9f1239");
-      ctx.beginPath();
-      ctx.ellipse(0, r * 0.95, r * 0.75, r * 0.45, 0, 0, Math.PI * 2);
-      ctx.fillStyle = dressGrad;
-      ctx.fill();
-
-      // Gold necklace
-      ctx.beginPath();
-      ctx.arc(0, r * 0.55, r * 0.25, 0.2 * Math.PI, 0.8 * Math.PI);
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#fbbf24";
-      ctx.stroke();
-
-      // Neck
-      ctx.beginPath();
-      ctx.rect(-r * 0.16, r * 0.25, r * 0.32, r * 0.35);
-      ctx.fillStyle = "#4a2e15";
-      ctx.fill();
-
-      // Head
-      ctx.beginPath();
-      ctx.ellipse(0, -r * 0.02, r * 0.4, r * 0.45, 0, 0, Math.PI * 2);
-      ctx.fillStyle = skinGrad;
-      ctx.fill();
-
-      // Traditional Haitian Headwrap (Maré Tèt) - blue, red & gold
-      ctx.beginPath();
-      ctx.ellipse(0, -r * 0.32, r * 0.46, r * 0.32, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#0284c7";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(0, -r * 0.28, r * 0.42, r * 0.18, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#e11d48";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(r * 0.25, -r * 0.45, r * 0.12, 0, Math.PI * 2);
-      ctx.fillStyle = "#fbbf24";
-      ctx.fill();
-
-      // Earrings (gold hoops)
-      ctx.beginPath();
-      ctx.arc(-r * 0.42, 0, r * 0.08, 0, Math.PI * 2);
-      ctx.arc(r * 0.42, 0, r * 0.08, 0, Math.PI * 2);
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = "#fbbf24";
-      ctx.stroke();
-
-      drawEyebrows(ctx, r * 0.95, "#2b1608", isSpeaking || audioLevel > 0.05);
-
-      // Eyes with lashes
-      ctx.beginPath();
-      ctx.arc(-r * 0.15, -r * 0.04, r * 0.055, 0, Math.PI * 2);
-      ctx.arc(r * 0.15, -r * 0.04, r * 0.055, 0, Math.PI * 2);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(-r * 0.14, -r * 0.04, r * 0.035, 0, Math.PI * 2);
-      ctx.arc(r * 0.16, -r * 0.04, r * 0.035, 0, Math.PI * 2);
-      ctx.fillStyle = "#26150b";
-      ctx.fill();
-      drawEyeHighlight(ctx, -r * 0.13, -r * 0.055, r);
-      drawEyeHighlight(ctx, r * 0.17, -r * 0.055, r);
-
-      // Blush
-      ctx.beginPath();
-      ctx.arc(-r * 0.27, r * 0.1, r * 0.06, 0, Math.PI * 2);
-      ctx.arc(r * 0.27, r * 0.1, r * 0.06, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(244, 63, 94, 0.25)";
-      ctx.fill();
-
-      // Smile / Speaking mouth
-      ctx.beginPath();
-      if (isSpeaking || audioLevel > 0.05) {
-        const mouthOpen = Math.min(r * 0.14, r * 0.05 + audioLevel * 25);
-        ctx.ellipse(0, r * 0.18, r * 0.12, mouthOpen, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "#be123c";
-        ctx.fill();
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(-r * 0.07, r * 0.18 - mouthOpen * 0.6, r * 0.14, mouthOpen * 0.5);
-      } else {
-        ctx.arc(0, r * 0.15, r * 0.11, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.strokeStyle = "#fb7185";
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    },
+  you_studio: {
+    id: "you_studio",
+    name: "Você (Estúdio)",
+    description: "Sua foto estilo Ghibli, ambiente de estúdio com estante de livros",
+    icon: "📚",
+    avatarSvg: "/avatars/you-studio.png",
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-studio.png", 0.6),
   },
-  ti_kreyol: {
-    id: "ti_kreyol",
-    name: "Ti Kreyòl (Mascote)",
-    description: "Mascote alegre com chapéu de palha e sorriso contagiante",
-    icon: "🌟",
-    avatarSvg: "",
-    drawAvatar: (ctx, x, y, size, isSpeaking, audioLevel = 0) => {
-      ctx.save();
-      ctx.translate(x, y);
-
-      const bounce = isSpeaking ? Math.sin(Date.now() / 120) * 6 : 0;
-      const r = size / 2;
-
-      drawContactShadow(ctx, r);
-      ctx.translate(0, bounce);
-
-      if (isSpeaking || audioLevel > 0.05) {
-        ctx.beginPath();
-        ctx.arc(0, 0, r + 8 + audioLevel * 20, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(251, 191, 36, 0.4)";
-        ctx.fill();
-      }
-
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fillStyle = "#064e3b";
-      ctx.fill();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#fbbf24";
-      ctx.stroke();
-      ctx.clip();
-
-      const skinGrad = ctx.createRadialGradient(-r * 0.1, -r * 0.05, r * 0.03, 0, 0, r * 0.5);
-      skinGrad.addColorStop(0, "#a8712f");
-      skinGrad.addColorStop(1, "#6b4118");
-
-      // Shirt (tropical)
-      const shirtGrad = ctx.createLinearGradient(0, r * 0.5, 0, r * 1.4);
-      shirtGrad.addColorStop(0, "#34d399");
-      shirtGrad.addColorStop(1, "#059669");
-      ctx.beginPath();
-      ctx.ellipse(0, r * 0.95, r * 0.75, r * 0.45, 0, 0, Math.PI * 2);
-      ctx.fillStyle = shirtGrad;
-      ctx.fill();
-
-      drawEars(ctx, r * 0.85, "#78350f");
-
-      // Head
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.45, 0, Math.PI * 2);
-      ctx.fillStyle = skinGrad;
-      ctx.fill();
-
-      // Straw hat
-      ctx.beginPath();
-      ctx.ellipse(0, -r * 0.25, r * 0.55, r * 0.18, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#fef08a";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(0, -r * 0.35, r * 0.3, Math.PI, Math.PI * 2);
-      ctx.fillStyle = "#fde047";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.rect(-r * 0.3, -r * 0.38, r * 0.6, r * 0.08);
-      ctx.fillStyle = "#dc2626";
-      ctx.fill();
-
-      // Big expressive eyes
-      ctx.beginPath();
-      ctx.arc(-r * 0.16, -r * 0.02, r * 0.08, 0, Math.PI * 2);
-      ctx.arc(r * 0.16, -r * 0.02, r * 0.08, 0, Math.PI * 2);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(-r * 0.14, -r * 0.02, r * 0.05, 0, Math.PI * 2);
-      ctx.arc(r * 0.18, -r * 0.02, r * 0.05, 0, Math.PI * 2);
-      ctx.fillStyle = "#0284c7";
-      ctx.fill();
-      drawEyeHighlight(ctx, -r * 0.12, -r * 0.04, r * 1.4);
-      drawEyeHighlight(ctx, r * 0.2, -r * 0.04, r * 1.4);
-
-      // Cheeks (blush)
-      ctx.beginPath();
-      ctx.arc(-r * 0.28, r * 0.12, r * 0.06, 0, Math.PI * 2);
-      ctx.arc(r * 0.28, r * 0.12, r * 0.06, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(239, 68, 68, 0.4)";
-      ctx.fill();
-
-      // Animated mouth
-      ctx.beginPath();
-      if (isSpeaking || audioLevel > 0.05) {
-        const mouthOpen = Math.min(r * 0.18, r * 0.08 + audioLevel * 30);
-        ctx.ellipse(0, r * 0.18, r * 0.15, mouthOpen, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "#991b1b";
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(0, r * 0.18 + mouthOpen * 0.3, r * 0.07, 0, Math.PI);
-        ctx.fillStyle = "#f87171";
-        ctx.fill();
-      } else {
-        ctx.arc(0, r * 0.14, r * 0.14, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 3;
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    },
+  you_thinking: {
+    id: "you_thinking",
+    name: "Você (Pensativo)",
+    description: "Sua foto estilo Ghibli em close, mão no queixo",
+    icon: "🤔",
+    avatarSvg: "/avatars/you-thinking.png",
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-thinking.png", 0.6),
   },
-  creole_bot: {
-    id: "creole_bot",
-    name: "CreoleBot (Robô)",
-    description: "Assistente de ensino inteligente e futurista",
-    icon: "🤖",
-    avatarSvg: "",
-    drawAvatar: (ctx, x, y, size, isSpeaking, _audioLevel = 0) => {
-      ctx.save();
-      ctx.translate(x, y);
-
-      const r = size / 2;
-      drawContactShadow(ctx, r);
-
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fillStyle = "#0f172a";
-      ctx.fill();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#38bdf8";
-      ctx.stroke();
-      ctx.clip();
-
-      // Antenna
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 0.45);
-      ctx.lineTo(0, -r * 0.7);
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#94a3b8";
-      ctx.stroke();
-      const antennaPulse = isSpeaking ? 1 + Math.sin(Date.now() / 100) * 0.15 : 1;
-      ctx.beginPath();
-      ctx.arc(0, -r * 0.72, r * 0.08 * antennaPulse, 0, Math.PI * 2);
-      ctx.fillStyle = isSpeaking ? "#f43f5e" : "#38bdf8";
-      ctx.shadowColor = isSpeaking ? "#f43f5e" : "#38bdf8";
-      ctx.shadowBlur = 8;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Bot Head (rounded rectangle) com leve gradiente metálico
-      const bw = r * 0.8;
-      const bh = r * 0.65;
-      const headGrad = ctx.createLinearGradient(-bw / 2, -bh / 2, bw / 2, bh / 2);
-      headGrad.addColorStop(0, "#334155");
-      headGrad.addColorStop(1, "#0f172a");
-      ctx.beginPath();
-      ctx.roundRect(-bw / 2, -bh / 2, bw, bh, 16);
-      ctx.fillStyle = headGrad;
-      ctx.fill();
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#38bdf8";
-      ctx.stroke();
-
-      // Screen Face
-      ctx.beginPath();
-      ctx.roundRect(-bw / 2 + 10, -bh / 2 + 10, bw - 20, bh - 20, 10);
-      ctx.fillStyle = "#020617";
-      ctx.fill();
-
-      // LED Eyes
-      ctx.beginPath();
-      ctx.arc(-r * 0.18, -r * 0.06, r * 0.07, 0, Math.PI * 2);
-      ctx.arc(r * 0.18, -r * 0.06, r * 0.07, 0, Math.PI * 2);
-      ctx.fillStyle = "#38bdf8";
-      ctx.shadowColor = "#38bdf8";
-      ctx.shadowBlur = 6;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // LED Sound Wave Mouth
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = isSpeaking ? "#22c55e" : "#38bdf8";
-      ctx.beginPath();
-      const waveBars = 5;
-      for (let i = 0; i < waveBars; i++) {
-        const bx = -r * 0.2 + (i * r * 0.4) / (waveBars - 1);
-        const barHeight = isSpeaking ? Math.abs(Math.sin(Date.now() / 100 + i)) * r * 0.15 + 4 : 4;
-        ctx.moveTo(bx, r * 0.12 - barHeight / 2);
-        ctx.lineTo(bx, r * 0.12 + barHeight / 2);
-      }
-      ctx.stroke();
-
-      // Pequenos parafusos/rebites decorativos
-      ctx.fillStyle = "#475569";
-      ctx.beginPath();
-      ctx.arc(-bw / 2 + 6, -bh / 2 + 6, 2, 0, Math.PI * 2);
-      ctx.arc(bw / 2 - 6, -bh / 2 + 6, 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
-    },
+  you_trail: {
+    id: "you_trail",
+    name: "Você (Trilha)",
+    description: "Sua foto estilo Ghibli ao ar livre, com o Corcovado ao fundo",
+    icon: "🏞️",
+    avatarSvg: "/avatars/you-trail.png",
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-trail.png", 0.62),
   },
-  cartoon_scholar: {
-    id: "cartoon_scholar",
-    name: "Mestre Acadêmico (Cartoon)",
-    description: "Professor sábio com capelo de formatura",
-    icon: "🎓",
-    avatarSvg: "",
-    drawAvatar: (ctx, x, y, size, isSpeaking, audioLevel = 0) => {
-      ctx.save();
-      ctx.translate(x, y);
-
-      const r = size / 2;
-      drawContactShadow(ctx, r);
-
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fillStyle = "#1e1b4b";
-      ctx.fill();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#fbbf24";
-      ctx.stroke();
-      ctx.clip();
-
-      const skinGrad = ctx.createRadialGradient(-r * 0.08, -r * 0.1, r * 0.03, 0, -r * 0.05, r * 0.42);
-      skinGrad.addColorStop(0, "#8a5a30");
-      skinGrad.addColorStop(1, "#5c3a1c");
-
-      drawEars(ctx, r * 0.88, "#6b3e1b");
-
-      // Capelo (Graduation Hat)
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 0.85);
-      ctx.lineTo(r * 0.45, -r * 0.65);
-      ctx.lineTo(0, -r * 0.45);
-      ctx.lineTo(-r * 0.45, -r * 0.65);
-      ctx.closePath();
-      ctx.fillStyle = "#0f172a";
-      ctx.fill();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "#fbbf24";
-      ctx.stroke();
-
-      // Tassel
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 0.65);
-      ctx.lineTo(r * 0.35, -r * 0.5);
-      ctx.strokeStyle = "#fbbf24";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Head
-      ctx.beginPath();
-      ctx.arc(0, -r * 0.05, r * 0.4, 0, Math.PI * 2);
-      ctx.fillStyle = skinGrad;
-      ctx.fill();
-
-      drawEyebrows(ctx, r * 0.9, "#e2e8f0", isSpeaking || audioLevel > 0.05);
-
-      // Round Glasses
-      ctx.beginPath();
-      ctx.arc(-r * 0.16, -r * 0.08, r * 0.09, 0, Math.PI * 2);
-      ctx.arc(r * 0.16, -r * 0.08, r * 0.09, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-      ctx.fill();
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = "#fbbf24";
-      ctx.stroke();
-      drawEyeHighlight(ctx, -r * 0.14, -r * 0.1, r * 1.3);
-      drawEyeHighlight(ctx, r * 0.18, -r * 0.1, r * 1.3);
-
-      // White Beard
-      ctx.beginPath();
-      ctx.arc(0, r * 0.12, r * 0.28, 0, Math.PI);
-      const beardGrad = ctx.createLinearGradient(0, r * 0.05, 0, r * 0.4);
-      beardGrad.addColorStop(0, "#ffffff");
-      beardGrad.addColorStop(1, "#cbd5e1");
-      ctx.fillStyle = beardGrad;
-      ctx.fill();
-
-      // Speaking mouth inside beard
-      ctx.beginPath();
-      if (isSpeaking || audioLevel > 0.05) {
-        ctx.ellipse(0, r * 0.12, r * 0.08, r * 0.06, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "#1e293b";
-        ctx.fill();
-      }
-
-      ctx.restore();
-    },
+  you_night: {
+    id: "you_night",
+    name: "Você (Noite)",
+    description: "Sua foto estilo Ghibli em close, à beira-mar à noite",
+    icon: "🌙",
+    avatarSvg: "/avatars/you-night.png",
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-night.png", 0.56),
+  },
+  you_headphones: {
+    id: "you_headphones",
+    name: "Você (Fones)",
+    description: "Sua foto estilo Ghibli em close, com fones de ouvido",
+    icon: "🎧",
+    avatarSvg: "/avatars/you-headphones.png",
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-headphones.png", 0.58),
   },
 };
 

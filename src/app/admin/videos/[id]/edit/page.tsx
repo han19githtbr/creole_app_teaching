@@ -28,7 +28,7 @@ export default async function EditVideoPage({
     publishAt: video.publishAt ? new Date(video.publishAt).toISOString() : null,
     customization: video.customization || {
       backgroundStyle: "haiti_flag",
-      avatarType: "prof_alex",
+      avatarType: "you_sunset",
       frameStyle: "rounded",
     },
   };

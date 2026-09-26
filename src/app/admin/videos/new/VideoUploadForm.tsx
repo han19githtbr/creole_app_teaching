@@ -37,7 +37,7 @@ export function VideoUploadForm() {
 
   // Customization
   const [backgroundStyle, setBackgroundStyle] = useState("haiti_flag");
-  const [avatarType, setAvatarType] = useState("prof_alex");
+  const [avatarType, setAvatarType] = useState("you_sunset");
   const [frameStyle, setFrameStyle] = useState("rounded");
   const [bannerText, setBannerText] = useState("");
 

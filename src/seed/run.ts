@@ -73,7 +73,7 @@ async function main() {
         isLiveRecording: false,
         customization: {
           backgroundStyle: "haiti_flag",
-          avatarType: "prof_alex",
+          avatarType: "you_sunset",
           frameStyle: "rounded",
           bannerText: "Fonética e Pronúncia",
         },
@@ -102,7 +102,7 @@ async function main() {
         isLiveRecording: false,
         customization: {
           backgroundStyle: "caribbean_sunset",
-          avatarType: "prof_marie",
+          avatarType: "you_studio",
           frameStyle: "split",
           bannerText: "Vocabulário de Compras",
         },

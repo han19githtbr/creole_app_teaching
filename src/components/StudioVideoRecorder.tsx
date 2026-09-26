@@ -46,7 +46,7 @@ export function StudioVideoRecorder() {
 
   // Customization state
   const [backgroundStyle, setBackgroundStyle] = useState<string>("haiti_flag");
-  const [avatarType, setAvatarType] = useState<string>("prof_alex");
+  const [avatarType, setAvatarType] = useState<string>("you_sunset");
   const [frameStyle, setFrameStyle] = useState<string>("rounded");
   const [bannerText, setBannerText] = useState<string>("Aprenda Crioulo Haitiano");
 
@@ -404,17 +404,76 @@ export function StudioVideoRecorder() {
             height - 120
           );
           ctx.restore();
-        } else {
-          // Câmera em tela cheia: com a máscara de segmentação, isso já
-          // mostra o tema de fundo ocupando o espaço ao redor da pessoa,
-          // igual ao efeito de fundo virtual do Google Meet.
+        } else if (frameStyle === "glow") {
+          // Moldura retangular com brilho neon ao redor. Fica com uma
+          // margem visível (não ocupa a tela inteira) para o tema de
+          // fundo escolhido aparecer ao redor da câmera.
           ctx.save();
-          compositePersonOntoCanvas(ctx, videoInputRef.current, 0, 0, width, height);
+          const pad = Math.min(width, height) * 0.05;
+          const boxX = pad;
+          const boxY = pad;
+          const boxW = width - pad * 2;
+          const boxH = height - pad * 2 - 70;
+          const glowColor = isSpeaking ? "#22d3ee" : "#818cf8";
+          ctx.shadowColor = glowColor;
+          ctx.shadowBlur = isSpeaking ? 28 + currentAudioLevel * 30 : 16;
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, 28);
+          ctx.strokeStyle = glowColor;
+          ctx.lineWidth = 5;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, 28);
+          ctx.clip();
+          compositePersonOntoCanvas(ctx, videoInputRef.current, boxX, boxY, boxW, boxH);
+          ctx.restore();
+        } else if (frameStyle === "banner") {
+          // Estúdio quase em tela cheia, mas com uma margem fina para o
+          // tema de fundo continuar visível ao redor, mais espaço embaixo
+          // para a faixa de título.
+          ctx.save();
+          const pad = Math.min(width, height) * 0.02;
+          const boxX = pad;
+          const boxY = pad;
+          const boxW = width - pad * 2;
+          const boxH = height - pad * 2 - 70;
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, 18);
+          ctx.clip();
+          compositePersonOntoCanvas(ctx, videoInputRef.current, boxX, boxY, boxW, boxH);
+          ctx.restore();
+        } else {
+          // Padrão "Bordas Arredondadas": moldura com cantos arredondados
+          // e uma margem visível ao redor — é essa margem que mostra o
+          // tema de fundo escolhido em volta da câmera. Antes, este modo
+          // desenhava a câmera ocupando o quadro inteiro (0,0,width,height)
+          // e dependia só da segmentação por IA pra "recortar" a pessoa;
+          // quando a segmentação não carregava a tempo (ou falhava), a
+          // imagem crua da webcam cobria o quadro todo e trocar de tema
+          // não tinha nenhum efeito visível — era exatamente o bug
+          // reportado. Com a moldura recuada, o tema aparece sempre,
+          // mesmo antes da segmentação terminar de carregar.
+          ctx.save();
+          const pad = Math.min(width, height) * 0.07;
+          const boxX = pad;
+          const boxY = pad * 0.8;
+          const boxW = width - pad * 2;
+          const boxH = height - pad * 1.8 - 70;
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, 32);
+          ctx.strokeStyle = "rgba(255,255,255,0.35)";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, 32);
+          ctx.clip();
+          compositePersonOntoCanvas(ctx, videoInputRef.current, boxX, boxY, boxW, boxH);
           ctx.restore();
         }
       } else {
         // Draw Animated Mascot / Bonequinho
-        const avatarPreset = VIDEO_AVATARS[avatarType] || VIDEO_AVATARS.prof_alex;
+        const avatarPreset = VIDEO_AVATARS[avatarType] || VIDEO_AVATARS.you_sunset;
         const centerX = frameStyle === "split" ? width * 0.32 : width / 2;
         const centerY = frameStyle === "banner" ? height * 0.44 : height * 0.48;
         const avatarSize = Math.min(width, height) * 0.65;
@@ -893,7 +952,16 @@ export function StudioVideoRecorder() {
                         : "border-[var(--border)] bg-[var(--surface-2)] hover:border-[var(--accent)]/40"
                     }`}
                   >
-                    <span className="text-2xl mb-1">{av.icon}</span>
+                    {av.avatarSvg ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={av.avatarSvg}
+                        alt={av.name}
+                        className="mb-1 h-10 w-10 rounded-full object-cover border border-[var(--border)]"
+                      />
+                    ) : (
+                      <span className="text-2xl mb-1">{av.icon}</span>
+                    )}
                     <span className="text-xs font-bold text-[var(--text)]">{av.name.split(" ")[0]}</span>
                     <span className="text-[10px] text-[var(--text-muted)] line-clamp-1">{av.name.split("(")[1]?.replace(")", "") || "Vídeo"}</span>
                   </button>

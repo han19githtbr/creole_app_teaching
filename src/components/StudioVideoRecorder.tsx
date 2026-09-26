@@ -476,7 +476,7 @@ export function StudioVideoRecorder() {
         const avatarPreset = VIDEO_AVATARS[avatarType] || VIDEO_AVATARS.you_sunset;
         const centerX = frameStyle === "split" ? width * 0.32 : width / 2;
         const centerY = frameStyle === "banner" ? height * 0.44 : height * 0.48;
-        const avatarSize = Math.min(width, height) * 0.65;
+        const avatarSize = Math.min(width, height) * 0.78;
 
         avatarPreset.drawAvatar(ctx, centerX, centerY, avatarSize, isSpeaking, currentAudioLevel);
       }

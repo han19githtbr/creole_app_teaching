@@ -850,13 +850,18 @@ function getPhotoAvatarImage(src: string): HTMLImageElement | null {
 
 // Desenha a imagem inteira dentro do quadrado [dx, dy, dSize, dSize] com
 // recorte "cover" (preenche todo o quadrado, cortando o excesso), do mesmo
-// jeito que `object-fit: cover` faria em HTML/CSS.
+// jeito que `object-fit: cover` faria em HTML/CSS. `focusY` (0 a 1) desloca
+// o recorte verticalmente: 0.5 corta bem no meio da foto, valores menores
+// puxam o recorte pra cima (pra não cortar o topo da cabeça em fotos onde o
+// rosto fica na parte de cima do enquadramento, com ombro/tronco sobrando
+// embaixo).
 function drawImageCover(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
   dx: number,
   dy: number,
-  dSize: number
+  dSize: number,
+  focusY = 0.5
 ) {
   const iw = img.naturalWidth;
   const ih = img.naturalHeight;
@@ -864,21 +869,24 @@ function drawImageCover(
   const sw = dSize / scale;
   const sh = dSize / scale;
   const sx = (iw - sw) / 2;
-  const sy = (ih - sh) / 2;
+  const sy = Math.min(Math.max(focusY * ih - sh / 2, 0), Math.max(ih - sh, 0));
   ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dSize, dSize);
 }
 
 /**
  * Cria uma função `drawAvatar` para uma foto real (estilo Ghibli) do
- * professor. `mouthY` é a posição vertical aproximada da boca na foto,
- * como fração (0 a 1) da altura do quadro — usada para desenhar a "boca
- * falando" por cima da foto quando o áudio detecta fala. Como é uma foto
- * estática, a "animação de fala" é simulada com: (1) leve balanço vertical,
- * (2) anel de brilho pulsante atrás do rosto, e (3) uma pequena boca aberta
- * semi-transparente sobreposta na posição estimada — mesma linguagem visual
- * usada nos demais avatares "bonequinho" acima.
+ * professor. `mouthY` é a posição vertical aproximada da boca DENTRO DO
+ * QUADRO JÁ RECORTADO (fração 0 a 1 da altura do círculo desenhado) —
+ * usada para desenhar a "boca falando" por cima da foto quando o áudio
+ * detecta fala. `focusY` (fração 0 a 1 da altura ORIGINAL da foto) marca
+ * onde fica o centro do rosto na imagem enviada, para o recorte "cover"
+ * ficar centrado no rosto em vez de cortar o topo da cabeça. Como é uma
+ * foto estática, a "animação de fala" é simulada com: (1) leve balanço
+ * vertical, (2) anel de brilho pulsante atrás do rosto, e (3) uma pequena
+ * boca aberta semi-transparente sobreposta na posição estimada — mesma
+ * linguagem visual usada nos demais avatares "bonequinho" acima.
  */
-function makePhotoAvatarDrawer(src: string, mouthY: number) {
+function makePhotoAvatarDrawer(src: string, mouthY: number, focusY = 0.5) {
   return (
     ctx: CanvasRenderingContext2D,
     x: number,
@@ -918,7 +926,7 @@ function makePhotoAvatarDrawer(src: string, mouthY: number) {
 
     const img = getPhotoAvatarImage(src);
     if (img && img.complete && img.naturalWidth > 0) {
-      drawImageCover(ctx, img, -r, -r, size);
+      drawImageCover(ctx, img, -r, -r, size, focusY);
 
       // Boca "falando" sobreposta na posição estimada da boca na foto
       if (speaking) {
@@ -955,7 +963,7 @@ export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
     description: "Sua foto estilo Ghibli com a Baía de Guanabara ao entardecer",
     icon: "🌅",
     avatarSvg: "/avatars/you-sunset.png",
-    drawAvatar: makePhotoAvatarDrawer("/avatars/you-sunset.png", 0.56),
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-sunset.png", 0.77, 0.3),
   },
   you_studio: {
     id: "you_studio",
@@ -963,7 +971,7 @@ export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
     description: "Sua foto estilo Ghibli, ambiente de estúdio com estante de livros",
     icon: "📚",
     avatarSvg: "/avatars/you-studio.png",
-    drawAvatar: makePhotoAvatarDrawer("/avatars/you-studio.png", 0.6),
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-studio.png", 0.67, 0.265),
   },
   you_thinking: {
     id: "you_thinking",
@@ -971,7 +979,7 @@ export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
     description: "Sua foto estilo Ghibli em close, mão no queixo",
     icon: "🤔",
     avatarSvg: "/avatars/you-thinking.png",
-    drawAvatar: makePhotoAvatarDrawer("/avatars/you-thinking.png", 0.6),
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-thinking.png", 0.57, 0.266),
   },
   you_trail: {
     id: "you_trail",
@@ -979,7 +987,7 @@ export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
     description: "Sua foto estilo Ghibli ao ar livre, com o Corcovado ao fundo",
     icon: "🏞️",
     avatarSvg: "/avatars/you-trail.png",
-    drawAvatar: makePhotoAvatarDrawer("/avatars/you-trail.png", 0.62),
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-trail.png", 0.65, 0.257),
   },
   you_night: {
     id: "you_night",
@@ -987,7 +995,7 @@ export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
     description: "Sua foto estilo Ghibli em close, à beira-mar à noite",
     icon: "🌙",
     avatarSvg: "/avatars/you-night.png",
-    drawAvatar: makePhotoAvatarDrawer("/avatars/you-night.png", 0.56),
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-night.png", 0.85, 0.356),
   },
   you_headphones: {
     id: "you_headphones",
@@ -995,7 +1003,7 @@ export const VIDEO_AVATARS: Record<string, VideoAvatarPreset> = {
     description: "Sua foto estilo Ghibli em close, com fones de ouvido",
     icon: "🎧",
     avatarSvg: "/avatars/you-headphones.png",
-    drawAvatar: makePhotoAvatarDrawer("/avatars/you-headphones.png", 0.58),
+    drawAvatar: makePhotoAvatarDrawer("/avatars/you-headphones.png", 0.84, 0.363),
   },
 };
 

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { VIDEO_BACKGROUNDS, VIDEO_AVATARS, ParticleKind } from "@/lib/videoThemes";
-import { Sparkles, VolumeX } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -89,14 +89,21 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [audioMissing, setAudioMissing] = useState(false);
 
   const bgStyle = customization?.backgroundStyle || "haiti_flag";
   const bgTheme = VIDEO_BACKGROUNDS[bgStyle] || VIDEO_BACKGROUNDS.haiti_flag;
   const avatarStyle = customization?.avatarType || "webcam";
   const avatarTheme = VIDEO_AVATARS[avatarStyle] || VIDEO_AVATARS.webcam;
   const frameStyle = customization?.frameStyle || "rounded";
-  const bannerText = customization?.bannerText || "";
+
+  // Nome exibido no cabeçalho do player: os avatares "Você (...)" são todos
+  // fotos do próprio Handy, então mostramos o nome dele em vez do rótulo
+  // técnico do avatar (ex.: "Você (Noite)").
+  const displayName = avatarTheme.name.startsWith("Você") ? "Handy" : avatarTheme.name;
+
+  // Apenas o emoji da bandeira do tema de fundo (ex.: 🇭🇹), sem o texto
+  // "Bandeira do Haiti" etc.
+  const bgFlag = bgTheme.name.split(" ").pop();
 
   const isYouTube = videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
   const isVimeo = videoUrl.includes("vimeo.com");
@@ -119,46 +126,6 @@ export function VideoPlayer({
     const videoId = match ? match[1] : "";
     return `https://player.vimeo.com/video/${videoId}`;
   }
-
-  // Guarda contra qualquer estado de "mudo" herdado (preferência salva pelo
-  // navegador para o domínio, ou volume zerado de uma sessão anterior) e
-  // detecta, de forma visível, quando o próprio arquivo não tem faixa de
-  // áudio — em vez de deixar o usuário achando que é só um bug de UI.
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || isYouTube || isVimeo) return;
-
-    function ensureUnmuted() {
-      if (!video) return;
-      video.muted = false;
-      if (video.volume === 0) video.volume = 1;
-    }
-
-    function checkAudioTrack() {
-      if (!video) return;
-      type MaybeAudioTracks = HTMLVideoElement & {
-        webkitAudioDecodedByteCount?: number;
-        audioTracks?: { length: number };
-        mozHasAudio?: boolean;
-      };
-      const v = video as MaybeAudioTracks;
-      const hasAudio =
-        v.mozHasAudio ??
-        (v.audioTracks ? v.audioTracks.length > 0 : undefined) ??
-        (typeof v.webkitAudioDecodedByteCount === "number" ? v.webkitAudioDecodedByteCount > 0 : undefined);
-      if (hasAudio === false) setAudioMissing(true);
-    }
-
-    video.addEventListener("loadedmetadata", ensureUnmuted);
-    video.addEventListener("loadeddata", checkAudioTrack);
-    video.addEventListener("play", ensureUnmuted);
-
-    return () => {
-      video.removeEventListener("loadedmetadata", ensureUnmuted);
-      video.removeEventListener("loadeddata", checkAudioTrack);
-      video.removeEventListener("play", ensureUnmuted);
-    };
-  }, [isYouTube, isVimeo, videoUrl]);
 
   return (
     <div
@@ -193,8 +160,8 @@ export function VideoPlayer({
             {avatarTheme.icon}
           </span>
           <div className="min-w-0">
-            <p className="truncate text-xs font-semibold drop-shadow">{avatarTheme.name}</p>
-            <p className="truncate text-[10px] text-white/70">{bgTheme.name}</p>
+            <p className="truncate text-xs font-semibold drop-shadow">{displayName}</p>
+            <p className="truncate text-[10px] text-white/70">{bgFlag}</p>
           </div>
         </div>
 
@@ -231,31 +198,11 @@ export function VideoPlayer({
             className="h-full w-full object-contain"
           />
         )}
-
-        {/* Aviso visível quando o próprio arquivo não tem trilha de áudio —
-            em vez do usuário achar que é um bug ao clicar no play sem som. */}
-        {audioMissing && (
-          <div className="pointer-events-none absolute left-3 top-3 z-20 flex items-center gap-1.5 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-medium text-amber-300 backdrop-blur-md">
-            <VolumeX className="h-3 w-3" /> Este vídeo foi gravado sem áudio
-          </div>
-        )}
-
-        {/* Optional Subtitle / Banner Overlay */}
-        {bannerText && (
-          <div className="pointer-events-none absolute bottom-12 left-2 right-2 sm:left-4 sm:right-4 z-20 flex justify-center">
-            <div className="max-w-full rounded-xl bg-black/80 px-3 sm:px-4 py-1.5 text-center text-xs sm:text-sm font-semibold text-white backdrop-blur-md shadow-lg border border-white/10 line-clamp-2">
-              {bannerText}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Floating Bottom Studio Badge */}
       <div className="relative z-10 mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-2 text-xs text-white/80">
         <span className="min-w-0 flex-1 truncate font-medium">{title}</span>
-        <div className="flex shrink-0 items-center gap-2">
-          <span className="text-[11px] opacity-80">Estilo: {frameStyle}</span>
-        </div>
       </div>
 
       <style jsx>{`

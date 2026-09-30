@@ -74,6 +74,7 @@ export default async function LessonDetailPage({
 
       <LessonCompleteButton
         lessonId={String(lesson._id)}
+        lessonTitle={lesson.title}
         initialCompleted={completedIds.includes(String(lesson._id))}
         initialCount={visibleCompleted}
         total={visibleTotal}

@@ -59,11 +59,11 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 
 async function renderCard(
   canvas: HTMLCanvasElement,
-  opts: { completed: number; total: number; name: string; bgSrc: string; host: string }
+  opts: { completed: number; total: number; name: string; lessonTitle?: string; bgSrc: string; host: string }
 ) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
-  const { completed, total, name, bgSrc, host } = opts;
+  const { completed, total, name, lessonTitle, bgSrc, host } = opts;
   canvas.width = CARD_W;
   canvas.height = CARD_H;
 
@@ -100,32 +100,45 @@ async function renderCard(
   // Selo/emoji
   ctx.font = "150px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
   ctx.fillStyle = "#ffffff";
-  ctx.fillText(milestone?.emoji ?? "🌱", CARD_W / 2, 700);
+  ctx.fillText(milestone?.emoji ?? "🌱", CARD_W / 2, 610);
 
   // Título
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 104px -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
-  ctx.fillText(milestone?.kreyol ?? "Felisitasyon!", CARD_W / 2, 850);
+  ctx.fillText(milestone?.kreyol ?? "Felisitasyon!", CARD_W / 2, 750);
 
   ctx.font = "600 46px -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
   ctx.fillStyle = "#fde68a";
-  ctx.fillText(milestone?.title ?? "Começando a jornada", CARD_W / 2, 918);
+  ctx.fillText(milestone?.title ?? "Começando a jornada", CARD_W / 2, 818);
 
   // Texto principal
   ctx.fillStyle = "#ffffff";
-  ctx.font = "500 54px -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
   const firstName = name.trim().split(" ")[0] || "Aluno";
-  const message = done
+  const lesson = lessonTitle?.trim();
+  const message = lesson
+    ? `${firstName} concluiu a lição “${lesson}” de Kreyòl Ayisyen.`
+    : done
     ? `${firstName} concluiu todas as ${total} lições de Kreyòl Ayisyen!`
     : `${firstName} concluiu ${completed} de ${total} lições de Kreyòl Ayisyen`;
-  const lines = wrapText(ctx, message, CARD_W - 200);
-  lines.forEach((l, i) => ctx.fillText(l, CARD_W / 2, 1000 + i * 66));
+  // Reduz a fonte quando o título da lição é longo, para nunca invadir a barra/rodapé.
+  let fontSize = 54;
+  let lines: string[] = [];
+  for (const size of [54, 46, 40]) {
+    fontSize = size;
+    ctx.font = `500 ${size}px -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`;
+    lines = wrapText(ctx, message, CARD_W - 200);
+    if (lines.length <= 3) break;
+  }
+  lines = lines.slice(0, 4);
+  const lineH = Math.round(fontSize * 1.22);
+  const textTop = 900;
+  lines.forEach((l, i) => ctx.fillText(l, CARD_W / 2, textTop + i * lineH));
 
   // Barra de progresso
   ctx.shadowBlur = 0;
   const barW = CARD_W - 240;
   const barX = 120;
-  const barY = 1000 + lines.length * 66 + 30;
+  const barY = textTop + lines.length * lineH + 8;
   ctx.fillStyle = "rgba(255,255,255,0.22)";
   ctx.beginPath();
   ctx.roundRect(barX, barY, barW, 26, 13);
@@ -141,7 +154,7 @@ async function renderCard(
   }
   ctx.fillStyle = "#ffffff";
   ctx.font = "600 34px -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
-  ctx.fillText(`${Math.round(pct * 100)}% do curso`, CARD_W / 2, barY + 78);
+  ctx.fillText(`${completed} de ${total} lições · ${Math.round(pct * 100)}%`, CARD_W / 2, barY + 76);
 
   // Rodapé
   ctx.fillStyle = "rgba(255,255,255,0.85)";
@@ -161,12 +174,14 @@ export function ShareAchievementModal({
   completed,
   total,
   name,
+  lessonTitle,
 }: {
   open: boolean;
   onClose: () => void;
   completed: number;
   total: number;
   name: string;
+  lessonTitle?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [bgId, setBgId] = useState<string>("natureza");
@@ -177,7 +192,7 @@ export function ShareAchievementModal({
 
   const host = typeof window !== "undefined" ? window.location.host : "";
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  const caption = shareCaption(completed, total, origin);
+  const caption = shareCaption(completed, total, origin, lessonTitle);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -212,17 +227,17 @@ export function ShareAchievementModal({
   const bgSrc = IMAGE_BANK.find((i) => i.id === bgId)?.src ?? IMAGE_BANK[0].src;
 
   useEffect(() => {
-    if (!open || !canvasRef.current) return;
-    renderCard(canvasRef.current, { completed, total, name, bgSrc, host });
-  }, [open, completed, total, name, bgSrc, host]);
+    if (!open || !mounted || !canvasRef.current) return;
+    renderCard(canvasRef.current, { completed, total, name, lessonTitle, bgSrc, host });
+  }, [open, mounted, completed, total, name, lessonTitle, bgSrc, host]);
 
   const getFile = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) throw new Error("Imagem indisponível.");
-    await renderCard(canvas, { completed, total, name, bgSrc, host });
+    await renderCard(canvas, { completed, total, name, lessonTitle, bgSrc, host });
     const blob = await canvasToBlob(canvas);
     return new File([blob], `conquista-kreyol-${completed}-licoes.png`, { type: "image/png" });
-  }, [completed, total, name, bgSrc, host]);
+  }, [completed, total, name, lessonTitle, bgSrc, host]);
 
   async function copyCaption() {
     try {
@@ -406,6 +421,7 @@ export function ShareAchievementButton({
   completed,
   total,
   name,
+  lessonTitle,
   className,
   children,
   variant = "primary",
@@ -413,6 +429,7 @@ export function ShareAchievementButton({
   completed: number;
   total: number;
   name: string;
+  lessonTitle?: string;
   className?: string;
   children?: React.ReactNode;
   variant?: "primary" | "outline" | "secondary";
@@ -441,6 +458,7 @@ export function ShareAchievementButton({
         completed={completed}
         total={total}
         name={name}
+        lessonTitle={lessonTitle}
       />
     </>
   );

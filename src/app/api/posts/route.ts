@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
     isPermanent = true,
     expiresAt = null,
     isPublished = true,
+    acceptsAnswers = true,
   } = body;
 
   if (!title || !String(title).trim()) {
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
     isPermanent,
     expiresAt: isPermanent ? null : expiresAt,
     isPublished,
+    acceptsAnswers: Boolean(acceptsAnswers),
   });
 
   return NextResponse.json({ post }, { status: 201 });

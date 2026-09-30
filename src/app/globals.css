@@ -320,3 +320,52 @@ body {
 html {
   scrollbar-gutter: stable;
 }
+
+/* ------------------------------------------------------------------ */
+/* Respostas às postagens (status, animações)                          */
+/* ------------------------------------------------------------------ */
+@keyframes answer-pop {
+  0% { transform: scale(0.85); opacity: 0; }
+  60% { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes answer-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@keyframes answer-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes answer-hourglass {
+  0%, 40% { transform: rotate(0deg); }
+  60%, 100% { transform: rotate(180deg); }
+}
+@keyframes answer-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.35); }
+  50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+}
+@keyframes answer-confetti {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+}
+@keyframes answer-slide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.answer-pop { animation: answer-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+.answer-shake { animation: answer-shake 0.5s ease-in-out both; }
+.answer-hourglass { animation: answer-hourglass 2.4s ease-in-out infinite; }
+.answer-glow { animation: answer-glow 2s ease-in-out infinite; }
+.answer-slide { animation: answer-slide 0.25s ease-out both; }
+.answer-draw path { stroke-dasharray: 30; stroke-dashoffset: 30; animation: answer-draw 0.5s 0.15s ease-out forwards; }
+.answer-confetti > i {
+  position: absolute; left: 50%; top: 50%; width: 7px; height: 11px; border-radius: 2px;
+  animation: answer-confetti 1s ease-out forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .answer-pop, .answer-shake, .answer-hourglass, .answer-glow, .answer-slide, .answer-confetti > i { animation: none !important; }
+  .answer-draw path { animation: none; stroke-dashoffset: 0; }
+}

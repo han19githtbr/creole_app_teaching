@@ -11,6 +11,7 @@ export function PostCard({
   createdAt,
   isPermanent,
   expiresAt,
+  footer,
 }: {
   title: string;
   content: string;
@@ -19,6 +20,8 @@ export function PostCard({
   createdAt: string | Date;
   isPermanent: boolean;
   expiresAt?: string | Date | null;
+  /** Área extra abaixo do texto (ex.: caixa de resposta do aluno). */
+  footer?: React.ReactNode;
 }) {
   return (
     <article className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
@@ -44,6 +47,7 @@ export function PostCard({
         <p className="mt-3 text-xs text-[var(--text-muted)]">
           {formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: ptBR })}
         </p>
+        {footer && <div className="mt-4 border-t border-[var(--border-soft)] pt-4">{footer}</div>}
       </div>
     </article>
   );

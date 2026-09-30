@@ -21,6 +21,7 @@ export default async function EditPostPage({
           _id: String(post._id),
           title: post.title,
           content: post.content,
+          acceptsAnswers: post.acceptsAnswers !== false,
           imageUrl: post.imageUrl ?? "",
           imageAlt: post.imageAlt ?? "",
           isPermanent: post.isPermanent,

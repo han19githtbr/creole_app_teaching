@@ -3,6 +3,7 @@ import Lesson from "@/models/Lesson";
 import Post from "@/models/Post";
 import User from "@/models/User";
 import VideoLesson from "@/models/VideoLesson";
+import PostAnswer from "@/models/PostAnswer";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { BookOpen, MessageSquare, Users, Plus, Radio, Video, Camera } from "lucide-react";
@@ -11,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminHomePage() {
   await connectDB();
-  const [totalLessons, totalVideos, activePosts, totalUsers] = await Promise.all([
+  const [totalLessons, totalVideos, activePosts, totalUsers, pendingAnswers] = await Promise.all([
     Lesson.countDocuments(),
     VideoLesson.countDocuments(),
     Post.countDocuments({
@@ -19,6 +20,7 @@ export default async function AdminHomePage() {
       $or: [{ isPermanent: true }, { expiresAt: { $gte: new Date() } }],
     }),
     User.countDocuments(),
+    PostAnswer.countDocuments({ status: "pending" }),
   ]);
 
   return (
@@ -29,6 +31,18 @@ export default async function AdminHomePage() {
           Visão geral do conteúdo, aulas gravadas, lições e estatísticas da plataforma.
         </p>
       </div>
+
+      {pendingAnswers > 0 && (
+        <Link
+          href="/admin/answers"
+          className="flex items-center justify-between gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm transition-colors hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-950/30"
+        >
+          <span className="font-medium text-amber-900 dark:text-amber-200">
+            ⏳ {pendingAnswers} {pendingAnswers === 1 ? "resposta aguardando" : "respostas aguardando"} sua correção
+          </span>
+          <span className="text-xs font-semibold text-amber-800 dark:text-amber-300">Corrigir agora →</span>
+        </Link>
+      )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat icon={<BookOpen className="h-5 w-5" />} label="Lições" value={totalLessons} />

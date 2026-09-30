@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
+import PostAnswer from "@/models/PostAnswer";
 import { requireAdmin } from "@/lib/apiAuth";
 import { isAllowedPostImageUrl } from "@/lib/imageBank";
 
@@ -16,7 +17,7 @@ export async function PUT(
   await connectDB();
   const { id } = await params;
   const body = await req.json();
-  const { title, content, imageUrl, imageAlt, isPermanent, expiresAt, isPublished } = body;
+  const { title, content, imageUrl, imageAlt, isPermanent, expiresAt, isPublished, acceptsAnswers } = body;
 
   const post = await Post.findById(id);
   if (!post) {
@@ -36,6 +37,7 @@ export async function PUT(
   if (isPermanent !== undefined) post.isPermanent = isPermanent;
   if (expiresAt !== undefined) post.expiresAt = isPermanent ? null : expiresAt;
   if (isPublished !== undefined) post.isPublished = isPublished;
+  if (acceptsAnswers !== undefined) post.acceptsAnswers = Boolean(acceptsAnswers);
 
   if (!String(post.content || "").trim() && !post.imageUrl) {
     return NextResponse.json(
@@ -65,6 +67,8 @@ export async function DELETE(
   if (!deleted) {
     return NextResponse.json({ error: "Postagem não encontrada." }, { status: 404 });
   }
+
+  await PostAnswer.deleteMany({ post: id });
 
   return NextResponse.json({ success: true });
 }

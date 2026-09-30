@@ -8,10 +8,13 @@ export function ProgressCard({
   completed,
   total,
   name,
+  lastLessonTitle,
 }: {
   completed: number;
   total: number;
   name: string;
+  /** Título da última lição concluída — usado no cartão de conquista. */
+  lastLessonTitle?: string;
 }) {
   const pct = total > 0 ? Math.min(100, Math.round((completed / total) * 100)) : 0;
   const milestone = currentMilestone(completed, total);
@@ -53,7 +56,7 @@ export function ProgressCard({
               : "Você concluiu tudo — felisitasyon!"}
           </p>
         </div>
-        <ShareAchievementButton completed={completed} total={total} name={name} />
+        <ShareAchievementButton completed={completed} total={total} name={name} lessonTitle={lastLessonTitle} />
       </CardContent>
     </Card>
   );

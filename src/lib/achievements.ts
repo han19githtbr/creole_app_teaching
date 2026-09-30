@@ -18,7 +18,7 @@ const MILESTONES: Milestone[] = [
 export function currentMilestone(completed: number, total: number): Milestone | null {
   if (completed <= 0) return null;
   if (total > 0 && completed >= total) {
-    return { at: total, title: "Curso completo!", kreyol: "Felisitasyon!", emoji: "🏆" };
+    return { at: total, title: "Lição finalizada", kreyol: "Felisitasyon!", emoji: "🏆" };
   }
   let found: Milestone | null = null;
   for (const m of MILESTONES) if (completed >= m.at) found = m;
@@ -31,10 +31,18 @@ export function nextMilestoneAt(completed: number, total: number): number | null
   return next ? next.at : total || null;
 }
 
-export function shareCaption(completed: number, total: number, appUrl?: string) {
+export function shareCaption(completed: number, total: number, appUrl?: string, lessonTitle?: string) {
   const done = total > 0 && completed >= total;
-  const base = done
-    ? `🏆 Felisitasyon! Concluí TODAS as ${total} lições de Kreyòl Ayisyen (crioulo haitiano)!`
-    : `🎉 Felisitasyon! Já concluí ${completed} de ${total} lições de Kreyòl Ayisyen (crioulo haitiano)! 🇭🇹`;
+  const lesson = lessonTitle?.trim();
+  let base: string;
+  if (lesson) {
+    base = `🎉 Felisitasyon! Concluí a lição “${lesson}” de Kreyòl Ayisyen (crioulo haitiano)! 🇭🇹 Já são ${completed} de ${total} lições.`;
+    if (done && total > 1) base = `🏆 Felisitasyon! Concluí a lição “${lesson}” de Kreyòl Ayisyen (crioulo haitiano) e terminei TODAS as ${total} lições! 🇭🇹`;
+    else if (total <= 1) base = `🎉 Felisitasyon! Concluí a lição “${lesson}” de Kreyòl Ayisyen (crioulo haitiano)! 🇭🇹`;
+  } else {
+    base = done
+      ? `🏆 Felisitasyon! Concluí TODAS as ${total} lições de Kreyòl Ayisyen (crioulo haitiano)!`
+      : `🎉 Felisitasyon! Já concluí ${completed} de ${total} lições de Kreyòl Ayisyen (crioulo haitiano)! 🇭🇹`;
+  }
   return `${base} Vem aprender comigo${appUrl ? `: ${appUrl}` : "."}\n\n#kreyolayisyen #crioulohaitiano #aprendendoidiomas #haiti`;
 }

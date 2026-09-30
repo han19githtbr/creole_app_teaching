@@ -10,12 +10,14 @@ import { currentMilestone } from "@/lib/achievements";
 /** Botão "Marcar como concluída" no rodapé da lição + convite para compartilhar. */
 export function LessonCompleteButton({
   lessonId,
+  lessonTitle,
   initialCompleted,
   initialCount,
   total,
   userName,
 }: {
   lessonId: string;
+  lessonTitle: string;
   initialCompleted: boolean;
   initialCount: number;
   total: number;
@@ -27,7 +29,6 @@ export function LessonCompleteButton({
   const [totalLessons, setTotalLessons] = useState(total);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [justCompleted, setJustCompleted] = useState(false);
 
   async function toggle() {
     setBusy(true);
@@ -47,7 +48,6 @@ export function LessonCompleteButton({
       setCompleted(next);
       setCount(data.completed);
       setTotalLessons(data.total);
-      setJustCompleted(next);
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro ao salvar.");
@@ -88,13 +88,13 @@ export function LessonCompleteButton({
         </Button>
       </div>
 
-      {completed && justCompleted && milestone && (
+      {completed && milestone && (
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[var(--accent-soft)] p-4">
           <p className="flex items-center gap-2 text-sm font-medium text-[var(--text)]">
             <PartyPopper className="h-5 w-5 text-amber-500" />
             {milestone.kreyol} {milestone.emoji} {milestone.title}
           </p>
-          <ShareAchievementButton completed={count} total={totalLessons} name={userName} />
+          <ShareAchievementButton completed={count} total={totalLessons} name={userName} lessonTitle={lessonTitle} />
         </div>
       )}
 

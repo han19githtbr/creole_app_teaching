@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, BookOpen, MessageSquare, Radio, Video } from "lucide-react";
+import { LayoutDashboard, BookOpen, MessageSquare, MessageCircleQuestion, Radio, Video } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Painel geral", icon: LayoutDashboard },
   { href: "/admin/videos", label: "Vídeos e Gravações", icon: Video },
   { href: "/admin/lessons", label: "Lições", icon: BookOpen },
   { href: "/admin/posts", label: "Postagens", icon: MessageSquare },
+  { href: "/admin/answers", label: "Respostas", icon: MessageCircleQuestion },
   { href: "/admin/live", label: "Ao vivo", icon: Radio },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ pendingAnswers = 0 }: { pendingAnswers?: number }) {
   const pathname = usePathname();
 
   return (
@@ -35,6 +36,11 @@ export function AdminSidebar() {
             >
               <Icon className="h-4 w-4" />
               {label}
+              {href === "/admin/answers" && pendingAnswers > 0 && (
+                <span className="ml-auto rounded-full bg-amber-400 px-1.5 text-[11px] font-bold leading-5 text-amber-950">
+                  {pendingAnswers > 99 ? "99+" : pendingAnswers}
+                </span>
+              )}
             </Link>
           );
         })}

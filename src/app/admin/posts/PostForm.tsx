@@ -21,6 +21,7 @@ interface PostFormValues {
   isPermanent: boolean;
   expiresAt?: string | null;
   isPublished: boolean;
+  acceptsAnswers?: boolean;
 }
 
 export function PostForm({ initial }: { initial?: PostFormValues }) {
@@ -36,6 +37,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
   const [isPermanent, setIsPermanent] = useState(initial?.isPermanent ?? true);
   const [expiresAt, setExpiresAt] = useState(initial?.expiresAt?.slice(0, 10) ?? "");
   const [isPublished, setIsPublished] = useState(initial?.isPublished ?? true);
+  const [acceptsAnswers, setAcceptsAnswers] = useState(initial?.acceptsAnswers ?? true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,6 +106,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
           isPermanent,
           expiresAt: isPermanent ? null : expiresAt || null,
           isPublished,
+          acceptsAnswers,
         }),
       });
 
@@ -265,6 +268,15 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
             className="h-4 w-4 rounded border-[var(--border-strong)]"
           />
           Publicada
+        </label>
+        <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+          <input
+            type="checkbox"
+            checked={acceptsAnswers}
+            onChange={(e) => setAcceptsAnswers(e.target.checked)}
+            className="h-4 w-4 rounded border-[var(--border-strong)]"
+          />
+          Alunos podem responder
         </label>
       </div>
 

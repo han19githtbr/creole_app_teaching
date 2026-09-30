@@ -21,6 +21,8 @@ export default async function EditPostPage({
           _id: String(post._id),
           title: post.title,
           content: post.content,
+          imageUrl: post.imageUrl ?? "",
+          imageAlt: post.imageAlt ?? "",
           isPermanent: post.isPermanent,
           expiresAt: post.expiresAt ? post.expiresAt.toISOString() : null,
           isPublished: post.isPublished,

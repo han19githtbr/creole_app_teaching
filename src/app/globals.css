@@ -137,3 +137,186 @@ body {
   border-top: 1px solid var(--border);
   margin: 1.5rem 0;
 }
+
+/* ------------------------------------------------------------------ */
+/* Ambiente animado do player de vídeo                                 */
+/* (antes vivia num <style jsx> escopado, que não alcançava as         */
+/*  partículas renderizadas pelo componente filho — por isso elas      */
+/*  nunca se moviam.)                                                  */
+/* ------------------------------------------------------------------ */
+.ambient-gradient-pan {
+  background-size: 160% 160%;
+  animation: ambientPan 18s ease-in-out infinite;
+}
+@keyframes ambientPan {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+.ambient-particle {
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.ambient-rain {
+  animation-name: ambientFall;
+  opacity: 0.45;
+}
+.ambient-snow {
+  animation-name: ambientDrift;
+}
+.ambient-leaves {
+  animation-name: ambientDrift;
+}
+.ambient-confetti {
+  animation-name: ambientDrift;
+}
+.ambient-fireflies {
+  animation-name: ambientTwinkle;
+  animation-timing-function: ease-in-out;
+}
+.ambient-bubbles {
+  animation-name: ambientRise;
+}
+.ambient-steam {
+  animation-name: ambientRise;
+}
+.ambient-sparks {
+  animation-name: ambientRise;
+}
+.ambient-clouds {
+  animation-name: ambientSideways;
+  animation-timing-function: ease-in-out;
+}
+@keyframes ambientFall {
+  0% {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+}
+@keyframes ambientDrift {
+  0% {
+    transform: translate(0, -10%) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(20px, 120%) rotate(180deg);
+    opacity: 0;
+  }
+}
+@keyframes ambientRise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+}
+@keyframes ambientTwinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+@keyframes ambientSideways {
+  0% {
+    transform: translateX(-10%);
+  }
+  100% {
+    transform: translateX(10%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambient-gradient-pan,
+  .ambient-particle {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Melhorias gerais de layout e acessibilidade                         */
+/* ------------------------------------------------------------------ */
+.prose-kreyol img,
+.prose-kreyol video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 0.5rem 0 1rem;
+}
+.prose-kreyol a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+.prose-kreyol code {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.85em;
+}
+.prose-kreyol pre {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  margin: 0 0 1rem;
+  overflow-x: auto;
+}
+.prose-kreyol pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+.prose-kreyol p,
+.prose-kreyol li {
+  overflow-wrap: anywhere;
+}
+
+/* Foco visível para navegação por teclado */
+:where(a, button, [role="button"], summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Respeita quem prefere menos movimento (as ilustrações SVG animadas
+   dentro de <img> não podem ser pausadas por CSS, então o banco de imagens
+   avisa isso na documentação). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Evita "pulo" de layout quando a barra de rolagem aparece */
+html {
+  scrollbar-gutter: stable;
+}

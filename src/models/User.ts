@@ -1,4 +1,4 @@
-import { Schema, models, model, type Document } from "mongoose";
+import mongoose, { Schema, models, model, type Document } from "mongoose";
 
 export type UserRole = "admin" | "user";
 
@@ -9,6 +9,8 @@ export interface IUser extends Document {
   role: UserRole;
   /** Last time this user viewed the lessons list — used to detect new announced lessons. */
   lastSeenLessonsAt?: Date | null;
+  /** Lições concluídas pelo aluno (ids de Lesson) — base das conquistas. */
+  completedLessons: mongoose.Types.ObjectId[];
   createdAt: Date;
 }
 
@@ -19,6 +21,7 @@ const UserSchema = new Schema<IUser>(
     image: { type: String },
     role: { type: String, enum: ["admin", "user"], default: "user" },
     lastSeenLessonsAt: { type: Date, default: null },
+    completedLessons: { type: [Schema.Types.ObjectId], ref: "Lesson", default: [] },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

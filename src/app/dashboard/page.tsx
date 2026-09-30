@@ -11,6 +11,7 @@ import { LIVEKIT_ROOM_NAME } from "@/lib/livekit";
 import { PostCard } from "@/components/PostCard";
 import { LiveBadge } from "@/components/LiveBadge";
 import { VideoCard } from "@/components/VideoCard";
+import { ProgressCard } from "@/components/ProgressCard";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Radio, BookOpen, Bell, Video, ArrowRight } from "lucide-react";
@@ -55,8 +56,8 @@ export default async function DashboardPage() {
     isAdmin || !session.user.email
       ? null
       : User.findOne({ email: session.user.email.toLowerCase().trim() })
-          .select("lastSeenLessonsAt")
-          .lean<{ lastSeenLessonsAt: Date | null }>(),
+          .select("lastSeenLessonsAt completedLessons")
+          .lean<{ lastSeenLessonsAt: Date | null; completedLessons?: unknown[] }>(),
     VideoLesson.find(videoMatch)
       .sort({ createdAt: -1 })
       .limit(3)
@@ -65,6 +66,13 @@ export default async function DashboardPage() {
 
   const counts: Record<string, number> = {};
   for (const c of categoryCounts) counts[c._id] = c.count;
+
+  const totalLessons = Object.values(counts).reduce((a, b) => a + b, 0);
+  const completedIds = (currentUser?.completedLessons ?? []).map(String);
+  const completedCount =
+    !isAdmin && completedIds.length
+      ? await Lesson.countDocuments({ ...lessonMatch, _id: { $in: completedIds } })
+      : 0;
 
   let hasNewLesson = false;
   if (!isAdmin) {
@@ -95,6 +103,15 @@ export default async function DashboardPage() {
           </Link>
         )}
       </div>
+
+      {/* Progresso e conquistas (alunos) */}
+      {!isAdmin && totalLessons > 0 && (
+        <ProgressCard
+          completed={completedCount}
+          total={totalLessons}
+          name={session.user?.name ?? "Aluno"}
+        />
+      )}
 
       {/* Featured Section: Aulas Gravadas e Vídeos */}
       <div className="space-y-4">
@@ -157,6 +174,8 @@ export default async function DashboardPage() {
                 key={String(post._id)}
                 title={post.title}
                 content={post.content}
+                imageUrl={post.imageUrl}
+                imageAlt={post.imageAlt}
                 createdAt={post.createdAt}
                 isPermanent={post.isPermanent}
                 expiresAt={post.expiresAt}

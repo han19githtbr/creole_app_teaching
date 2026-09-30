@@ -1,0 +1,37 @@
+import fs from "node:fs";
+import path from "node:path";
+import { PAL, rng, wrap } from "./lib.mjs";
+import * as A from "./scenes-a.mjs";
+import * as B from "./scenes-b.mjs";
+
+const OUT = path.resolve("../../public/ghibli");
+fs.mkdirSync(OUT, { recursive: true });
+
+const SCENES = [
+  { id: "tecnologia", fn: A.tecnologia, theme: "Tecnologia", title: "Oficina tecnológica no campo", pal: "dia", opts: { sunX: 1010, sunY: 170 } },
+  { id: "natureza", fn: A.natureza, theme: "Natureza", title: "Árvore ancestral e prado florido", pal: "dia", opts: { sunX: 930, sunY: 170 } },
+  { id: "cultura", fn: A.cultura, theme: "Cultura", title: "Festa na praça com bandeirolas", pal: "entardecer", opts: { sunX: 620, sunY: 420, sunR: 60 } },
+  { id: "turismo", fn: A.turismo, theme: "Turismo", title: "Vila costeira, farol e balão", pal: "dia", opts: { sunX: 820, sunY: 160 } },
+  { id: "interior", fn: A.interior, theme: "Vida no interior", title: "Fazenda ao meio-dia", pal: "dia", opts: { sunX: 1000, sunY: 150 } },
+  { id: "danca", fn: A.danca, theme: "Dança", title: "Dança sob as lanternas", pal: "entardecer", opts: { sunX: 180, sunY: 400, sunR: 50 } },
+  { id: "geografia", fn: A.geografia, theme: "Geografia", title: "Montanhas, rio e bússola", pal: "dia", opts: { sunX: 1010, sunY: 140, clouds: true } },
+  { id: "historia", fn: B.historia, theme: "História", title: "Fortaleza de pedra no alto do morro", pal: "entardecer", opts: { sunX: 240, sunY: 380, sunR: 56 } },
+  { id: "cinema", fn: B.cinema, theme: "Cinema", title: "Cinema de bairro ao entardecer", pal: "entardecer", opts: { sunX: 1050, sunY: 300, sunR: 52 } },
+  { id: "musica", fn: B.musica, theme: "Música", title: "Palco ao ar livre", pal: "entardecer", opts: { sunX: 1000, sunY: 380, sunR: 54 } },
+  { id: "lazeres", fn: B.lazeres, theme: "Lazeres", title: "Tarde de piquenique e pipas", pal: "dia", opts: { sunX: 180, sunY: 150 } },
+  { id: "estoicismo", fn: B.estoicismo, theme: "Estoicismo", title: "Pórtico de pedra e oliveiras", pal: "dia", opts: { sunX: 1000, sunY: 180 } },
+  { id: "religiao", fn: B.religiao, theme: "Religião", title: "Capela na colina e luz sagrada", pal: "dia", opts: { sunX: 600, sunY: 130, sunR: 46 } },
+  { id: "gastronomia", fn: B.gastronomia, theme: "Gastronomia", title: "Cozinha aconchegante", pal: "dia", opts: { sunX: 0, sunY: -999 } },
+];
+
+const manifest = [];
+SCENES.forEach((s, i) => {
+  const p = PAL[s.pal];
+  const r = rng(1000 + i * 77);
+  const body = s.fn(p, r);
+  const svg = wrap(p, rng(5 + i), body, { ...s.opts, title: s.title, desc: `Ilustração original em estilo aquarela de animação: ${s.title}.` });
+  fs.writeFileSync(path.join(OUT, `${s.id}.svg`), svg);
+  manifest.push({ id: s.id, theme: s.theme, title: s.title, src: `/ghibli/${s.id}.svg` });
+});
+fs.writeFileSync("manifest.json", JSON.stringify(manifest, null, 2));
+console.log("gerado:", manifest.length, "cenas em", OUT);

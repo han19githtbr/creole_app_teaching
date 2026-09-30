@@ -40,7 +40,15 @@ export default async function LessonsPage({
     );
   }
 
+  const me = session.user.email
+    ? await User.findOne({ email: session.user.email.toLowerCase().trim() })
+        .select("completedLessons")
+        .lean<{ completedLessons?: unknown[] }>()
+    : null;
+  const completedIds = new Set((me?.completedLessons ?? []).map(String));
+
   const serialized = lessons.map((l) => ({
+    completed: completedIds.has(String(l._id)),
     _id: String(l._id),
     slug: l.slug,
     title: l.title,

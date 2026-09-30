@@ -20,8 +20,8 @@ export function RichTextEditor({
   const [mode, setMode] = useState<"edit" | "preview">("edit");
 
   return (
-    <div className="rounded-lg border border-[var(--border-strong)] bg-[var(--surface)]">
-      <div className="flex items-center gap-1 border-b border-[var(--border-soft)] p-1.5">
+    <div className="overflow-hidden rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/30">
+      <div className="flex flex-wrap items-center gap-1 border-b border-[var(--border-soft)] p-1.5">
         <Button
           type="button"
           size="sm"
@@ -46,7 +46,7 @@ export function RichTextEditor({
           onChange={(e) => onChange(e.target.value)}
           rows={rows}
           placeholder={placeholder}
-          className="rounded-none border-0 focus:ring-0"
+          className="resize-y rounded-none border-0 focus:ring-0 focus:border-0"
         />
       ) : (
         <div className="max-h-[32rem] overflow-y-auto p-4">

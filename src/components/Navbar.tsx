@@ -11,7 +11,7 @@ import { BookOpen, LayoutDashboard, Menu, Radio, ShieldCheck, Video, X } from "l
 const NAV_LINKS = [
   { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
   { href: "/dashboard/lessons", label: "Lições", icon: BookOpen },
-  { href: "/dashboard/videos", label: "Vídeos Gravados", icon: Video },
+  { href: "/dashboard/videos", label: "Vídeos", icon: Video },
   { href: "/live", label: "Ao vivo", icon: Radio },
 ];
 
@@ -39,16 +39,16 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-[var(--text)]">
           <span className="text-xl">🇭🇹</span>
-          <span className="bg-gradient-to-r from-[var(--text)] via-[var(--accent)] to-[var(--text)] bg-clip-text">
+          <span className="bg-gradient-to-r from-[var(--text)] via-[var(--accent)] to-[var(--text)] bg-clip-text text-transparent">
             Kreyòl Ayisyen
           </span>
         </Link>
 
         {status === "authenticated" && (
-          <nav className="hidden items-center gap-5 sm:flex">
+          <nav className="hidden items-center gap-5 md:flex">
             {NAV_LINKS.map(({ href, label, icon: Icon }) => (
               <Link key={href} href={href} className={linkClass(href)}>
                 <Icon className="h-4 w-4" /> {label}
@@ -62,7 +62,7 @@ export function Navbar() {
           </nav>
         )}
 
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex items-center gap-2.5 md:gap-3">
           <ThemeToggle />
 
           {status === "authenticated" ? (
@@ -78,7 +78,7 @@ export function Navbar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="hidden sm:inline-flex"
+                className="hidden md:inline-flex"
                 onClick={() => signOut()}
               >
                 Sair
@@ -87,7 +87,7 @@ export function Navbar() {
                 type="button"
                 aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
                 onClick={() => setMobileOpen((v) => !v)}
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] sm:hidden cursor-pointer"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] md:hidden cursor-pointer"
               >
                 {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
@@ -103,7 +103,7 @@ export function Navbar() {
       </div>
 
       {status === "authenticated" && mobileOpen && (
-        <nav className="flex flex-col gap-1 border-t border-[var(--border)] bg-[var(--surface)] p-3 sm:hidden shadow-lg">
+        <nav className="flex flex-col gap-1 border-t border-[var(--border)] bg-[var(--surface)] p-3 md:hidden shadow-lg">
           {NAV_LINKS.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}

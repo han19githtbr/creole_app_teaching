@@ -10,6 +10,7 @@ import { Pencil, Trash2 } from "lucide-react";
 interface PostRow {
   _id: string;
   title: string;
+  imageUrl?: string;
   isPermanent: boolean;
   expiresAt?: string | null;
   isPublished: boolean;
@@ -51,7 +52,15 @@ export function PostTable({ posts }: { posts: PostRow[] }) {
             const expired = post.expired;
             return (
               <tr key={post._id} className="border-b border-[var(--border-soft)] last:border-0">
-                <td className="px-4 py-3 font-medium text-[var(--text)]">{post.title}</td>
+                <td className="px-4 py-3 font-medium text-[var(--text)]">
+                  <div className="flex items-center gap-3">
+                    {post.imageUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={post.imageUrl} alt="" className="h-10 w-14 shrink-0 rounded-md object-cover" />
+                    )}
+                    <span className="min-w-0 break-words">{post.title}</span>
+                  </div>
+                </td>
                 <td className="px-4 py-3">
                   {!post.isPublished ? (
                     <Badge variant="outline">Rascunho</Badge>

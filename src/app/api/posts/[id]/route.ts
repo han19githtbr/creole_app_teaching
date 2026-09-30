@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
 import { requireAdmin } from "@/lib/apiAuth";
+import { isAllowedPostImageUrl } from "@/lib/imageBank";
 
 export async function PUT(
   req: NextRequest,
@@ -15,7 +16,7 @@ export async function PUT(
   await connectDB();
   const { id } = await params;
   const body = await req.json();
-  const { title, content, isPermanent, expiresAt, isPublished } = body;
+  const { title, content, imageUrl, imageAlt, isPermanent, expiresAt, isPublished } = body;
 
   const post = await Post.findById(id);
   if (!post) {
@@ -24,9 +25,24 @@ export async function PUT(
 
   if (title !== undefined) post.title = title;
   if (content !== undefined) post.content = content;
+  if (imageUrl !== undefined) {
+    if (imageUrl && !isAllowedPostImageUrl(imageUrl)) {
+      return NextResponse.json({ error: "Imagem inválida." }, { status: 400 });
+    }
+    post.imageUrl = imageUrl || "";
+    if (!imageUrl) post.imageAlt = "";
+  }
+  if (imageAlt !== undefined && post.imageUrl) post.imageAlt = String(imageAlt).slice(0, 200);
   if (isPermanent !== undefined) post.isPermanent = isPermanent;
   if (expiresAt !== undefined) post.expiresAt = isPermanent ? null : expiresAt;
   if (isPublished !== undefined) post.isPublished = isPublished;
+
+  if (!String(post.content || "").trim() && !post.imageUrl) {
+    return NextResponse.json(
+      { error: "Escreva uma legenda/conteúdo ou escolha uma imagem." },
+      { status: 400 }
+    );
+  }
 
   await post.save();
 

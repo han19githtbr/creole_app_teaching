@@ -12,6 +12,8 @@ export interface IVideoComment {
 
 export interface IVideoCustomization {
   backgroundStyle: string;
+  /** Fundo virtual estilo Meet: none | blur | blur_light | theme:<id> | image:<id> */
+  virtualBackground?: string;
   customBackgroundUrl?: string;
   avatarType: string;
   customAvatarUrl?: string;
@@ -53,6 +55,7 @@ const VideoCommentSchema = new Schema<IVideoComment>(
 const VideoCustomizationSchema = new Schema<IVideoCustomization>(
   {
     backgroundStyle: { type: String, default: "haiti_flag" },
+    virtualBackground: { type: String, default: "" },
     customBackgroundUrl: { type: String, default: "" },
     avatarType: { type: String, default: "webcam" },
     customAvatarUrl: { type: String, default: "" },

@@ -15,6 +15,7 @@ export default async function AdminPostsPage() {
   const rows = posts.map((p) => ({
     _id: String(p._id),
     title: p.title,
+    imageUrl: p.imageUrl || "",
     isPermanent: p.isPermanent,
     expiresAt: p.expiresAt ? p.expiresAt.toISOString() : null,
     isPublished: p.isPublished,

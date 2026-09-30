@@ -3,25 +3,22 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { upload } from "@vercel/blob/client";
-// @mediapipe/selfie_segmentation não usa `export` de verdade — ele só define
-// a classe numa variável global (window.SelfieSegmentation) quando o script
-// roda no navegador. Por isso importamos só os TIPOS aqui (apagados na
-// compilação, não quebram o build) e carregamos o script de verdade via
-// import() dinâmico dentro do useEffect mais abaixo.
-import type {
-  SelfieSegmentation as SelfieSegmentationClass,
-  Results as SelfieSegmentationResults,
-} from "@mediapipe/selfie_segmentation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { VIDEO_AVATARS, VIDEO_FRAME_STYLES } from "@/lib/videoThemes";
+import { getBankImage } from "@/lib/imageBank";
 import {
-  VIDEO_BACKGROUNDS,
-  VIDEO_AVATARS,
-  VIDEO_FRAME_STYLES,
-  THEME_CATEGORIES,
-  drawThemeParticles,
-} from "@/lib/videoThemes";
+  PersonSegmenter,
+  createScratch,
+  drawBackgroundLayer,
+  drawVirtualBackground,
+  parseVirtualBg,
+  preloadBankImages,
+  VIRTUAL_BG_STORAGE_KEY,
+  type VirtualBgScratch,
+} from "@/lib/virtualBackground";
+import { VirtualBackgroundPicker } from "@/components/VirtualBackgroundPicker";
 import {
   Circle,
   Clock,
@@ -45,13 +42,15 @@ export function StudioVideoRecorder() {
   const router = useRouter();
 
   // Customization state
-  const [backgroundStyle, setBackgroundStyle] = useState<string>("haiti_flag");
+  // Fundo virtual estilo Meet: none | blur | blur_light | theme:<id> | image:<id>
+  const [virtualBg, setVirtualBg] = useState<string>("theme:haiti_flag");
+  const [segStatus, setSegStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [avatarType, setAvatarType] = useState<string>("you_sunset");
-  const [frameStyle, setFrameStyle] = useState<string>("rounded");
+  const [frameStyle, setFrameStyle] = useState<string>("meet");
   const [bannerText, setBannerText] = useState<string>("Aprenda Crioulo Haitiano");
 
   // Media & Recording state
-  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [, setCameraStream] = useState<MediaStream | null>(null);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
   const [recordingState, setRecordingState] = useState<
     "idle" | "recording" | "paused" | "recorded"
@@ -84,14 +83,16 @@ export function StudioVideoRecorder() {
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  // Refs espelham os streams para o cleanup de desmontagem conseguir desligar
+  // câmera e microfone (o state ficaria "congelado" em null dentro do cleanup).
+  const cameraStreamRef = useRef<MediaStream | null>(null);
+  const audioStreamRef = useRef<MediaStream | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
 
-  // Background segmentation (virtual background, estilo Google Meet)
-  type MaskImage = HTMLCanvasElement | HTMLImageElement | ImageBitmap;
-  const selfieSegmentationRef = useRef<SelfieSegmentationClass | null>(null);
-  const latestMaskRef = useRef<MaskImage | null>(null);
+  // Fundo virtual (estilo Google Meet): segmentação da pessoa + fundo escolhido
+  const segmenterRef = useRef<PersonSegmenter | null>(null);
+  const scratchRef = useRef<VirtualBgScratch | null>(null);
   const segmentationOffscreenRef = useRef<HTMLCanvasElement | null>(null);
-  const segmentationReadyRef = useRef(false);
 
   const setupAudioAnalyser = useCallback((stream: MediaStream) => {
     try {
@@ -127,6 +128,7 @@ export function StudioVideoRecorder() {
       if (audioTrack) {
         const aStream = new MediaStream([audioTrack]);
         setAudioStream(aStream);
+        audioStreamRef.current = aStream;
         setupAudioAnalyser(aStream);
         setPermissionError(null);
         return true;
@@ -151,6 +153,7 @@ export function StudioVideoRecorder() {
       if (videoTrack) {
         const vStream = new MediaStream([videoTrack]);
         setCameraStream(vStream);
+        cameraStreamRef.current = vStream;
         if (videoInputRef.current) {
           videoInputRef.current.srcObject = vStream;
           videoInputRef.current.play().catch(() => {});
@@ -160,6 +163,7 @@ export function StudioVideoRecorder() {
       if (audioTrack) {
         const aStream = new MediaStream([audioTrack]);
         setAudioStream(aStream);
+        audioStreamRef.current = aStream;
         setupAudioAnalyser(aStream);
       } else {
         // Câmera OK mas sem faixa de áudio: tenta capturar o microfone
@@ -186,86 +190,69 @@ export function StudioVideoRecorder() {
 
     return () => {
       clearTimeout(timer);
-      if (cameraStream) cameraStream.getTracks().forEach((t) => t.stop());
-      if (audioStream) audioStream.getTracks().forEach((t) => t.stop());
+      cameraStreamRef.current?.getTracks().forEach((t) => t.stop());
+      audioStreamRef.current?.getTracks().forEach((t) => t.stop());
       if (audioContextRef.current) audioContextRef.current.close().catch(() => {});
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
   }, []);
 
-  // Virtual background: roda o modelo de segmentação de pessoa (MediaPipe)
-  // enquanto o modo "Câmera" estiver ativo, recortando você do fundo real
-  // da webcam para poder colocar o tema escolhido atrás.
+  // Lembra o último fundo escolhido e pré-carrega as ilustrações do banco.
+  useEffect(() => {
+    preloadBankImages();
+    try {
+      const saved = localStorage.getItem(VIRTUAL_BG_STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (saved) setVirtualBg(saved === "none" || saved === "blur" || saved === "blur_light" || saved.startsWith("theme:") || saved.startsWith("image:") ? saved : "theme:haiti_flag");
+    } catch {
+      /* localStorage indisponível */
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(VIRTUAL_BG_STORAGE_KEY, virtualBg);
+    } catch {
+      /* ignora */
+    }
+  }, [virtualBg]);
+
+  // Roda o modelo de segmentação de pessoa (MediaPipe) enquanto o modo
+  // "Câmera" estiver ativo, recortando você do fundo real da webcam.
   useEffect(() => {
     if (avatarType !== "webcam") {
-      latestMaskRef.current = null;
-      segmentationReadyRef.current = false;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSegStatus("idle");
       return;
     }
 
     let cancelled = false;
-    let rafId: number | null = null;
-    let seg: SelfieSegmentationClass | null = null;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const seg = new PersonSegmenter();
+    segmenterRef.current = seg;
+    setSegStatus("loading");
 
-    async function setup() {
-      // Carrega o script só no navegador (ele define window.SelfieSegmentation
-      // como efeito colateral — não tem export ES module de verdade).
-      await import("@mediapipe/selfie_segmentation");
-      if (cancelled) return;
-
-      const SelfieSegmentationCtor = (
-        window as typeof window & {
-          SelfieSegmentation?: new (config?: {
-            locateFile?: (file: string, prefix?: string) => string;
-          }) => SelfieSegmentationClass;
-        }
-      ).SelfieSegmentation;
-
-      if (!SelfieSegmentationCtor) {
-        console.warn("SelfieSegmentation não carregou; usando câmera sem fundo virtual.");
-        return;
-      }
-
-      seg = new SelfieSegmentationCtor({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+    seg
+      .init()
+      .then(() => {
+        if (cancelled) return;
+        setSegStatus("ready");
+        timer = setInterval(() => {
+          const video = videoInputRef.current;
+          if (video) void seg.update(video);
+        }, 1000 / 30);
+      })
+      .catch((e) => {
+        console.warn("Fundo virtual indisponível; usando câmera sem recorte.", e);
+        if (!cancelled) setSegStatus("error");
       });
-      seg.setOptions({ modelSelection: 1, selfieMode: true });
-      seg.onResults((results: SelfieSegmentationResults) => {
-        latestMaskRef.current = results.segmentationMask;
-        segmentationReadyRef.current = true;
-      });
-      selfieSegmentationRef.current = seg;
-
-      async function loop() {
-        if (cancelled || !seg) return;
-        const video = videoInputRef.current;
-        if (video && video.readyState >= 2) {
-          try {
-            await seg.send({ image: video });
-          } catch {
-            // Ignora falhas transitórias enquanto o grafo do modelo inicializa.
-          }
-        }
-        if (!cancelled) {
-          rafId = requestAnimationFrame(() => {
-            loop();
-          });
-        }
-      }
-      loop();
-    }
-
-    setup();
 
     return () => {
       cancelled = true;
-      if (rafId) cancelAnimationFrame(rafId);
-      latestMaskRef.current = null;
-      segmentationReadyRef.current = false;
-      selfieSegmentationRef.current = null;
-      seg?.close().catch(() => {});
+      if (timer) clearInterval(timer);
+      seg.close();
+      segmenterRef.current = null;
     };
   }, [avatarType]);
 
@@ -281,7 +268,8 @@ export function StudioVideoRecorder() {
       destWidth: number,
       destHeight: number
     ) => {
-      const mask = latestMaskRef.current;
+      const seg = segmenterRef.current;
+      const mask = seg?.ready ? seg.mask : null;
       if (!mask) {
         ctx.drawImage(video, destX, destY, destWidth, destHeight);
         return;
@@ -359,12 +347,34 @@ export function StudioVideoRecorder() {
       ctx.clearRect(0, 0, width, height);
 
       const now = Date.now();
-      const bg = VIDEO_BACKGROUNDS[backgroundStyle] || VIDEO_BACKGROUNDS.haiti_flag;
-      bg.canvasBg(ctx, width, height, now);
-      drawThemeParticles(ctx, width, height, now, bg.particles);
+      if (!scratchRef.current) scratchRef.current = createScratch();
+      const scratch = scratchRef.current;
+      const camReady =
+        avatarType === "webcam" && !!videoInputRef.current && videoInputRef.current.readyState >= 2;
+      const isMeetFrame = camReady && frameStyle === "meet";
+
+      if (isMeetFrame && videoInputRef.current) {
+        // Modo Meet: câmera em tela cheia; a pessoa é recortada e colocada
+        // sobre o fundo escolhido (desfoque, tema animado ou ilustração).
+        const seg = segmenterRef.current;
+        drawVirtualBackground(
+          ctx,
+          videoInputRef.current,
+          seg?.ready ? seg.mask : null,
+          virtualBg,
+          scratch,
+          width,
+          height,
+          now
+        );
+      } else {
+        drawBackgroundLayer(ctx, parseVirtualBg(virtualBg), videoInputRef.current, scratch, width, height, now);
+      }
 
       // 3. Draw Avatar or Webcam feed based on avatarType
-      if (avatarType === "webcam" && videoInputRef.current && videoInputRef.current.readyState >= 2) {
+      if (isMeetFrame) {
+        // já desenhado acima (pessoa + fundo virtual)
+      } else if (camReady && videoInputRef.current) {
         if (frameStyle === "circle_pip") {
           // Circular PiP in bottom-right
           ctx.save();
@@ -514,7 +524,7 @@ export function StudioVideoRecorder() {
       isRunning = false;
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
-  }, [backgroundStyle, avatarType, frameStyle, bannerText, compositePersonOntoCanvas]);
+  }, [virtualBg, avatarType, frameStyle, bannerText, compositePersonOntoCanvas]);
 
   // Recording timer control
   useEffect(() => {
@@ -710,6 +720,7 @@ export function StudioVideoRecorder() {
           isLiveRecording: false,
           customization: {
             backgroundStyle,
+            virtualBackground: virtualBg,
             avatarType,
             frameStyle,
             bannerText,
@@ -737,6 +748,16 @@ export function StudioVideoRecorder() {
     const s = secs % 60;
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   }
+
+  // Tema animado equivalente ao fundo escolhido — usado como ambiente ao redor
+  // do player e nos cards (compatível com vídeos antigos).
+  const virtualParsed = parseVirtualBg(virtualBg);
+  const backgroundStyle =
+    virtualParsed.kind === "theme"
+      ? virtualParsed.ref || "haiti_flag"
+      : virtualParsed.kind === "image"
+      ? getBankImage(virtualParsed.ref)?.ambientTheme || "haiti_flag"
+      : "haiti_flag";
 
   const remainingSeconds = MAX_DURATION_SECONDS - elapsedSeconds;
   const progressPercent = (elapsedSeconds / MAX_DURATION_SECONDS) * 100;
@@ -969,43 +990,27 @@ export function StudioVideoRecorder() {
               </div>
             </div>
 
-            {/* 2. Select Background Theme — agrupado por categoria, com
-                rolagem própria já que agora existem ~18 temas (os 6
-                clássicos + 12 animados por assunto). */}
+            {/* 2. Fundo virtual (estilo Google Meet) */}
             <div>
               <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-                Imagem de Fundo / Tema
+                Fundo Virtual (estilo Meet)
               </label>
-              <div className="max-h-72 space-y-4 overflow-y-auto pr-1">
-                {THEME_CATEGORIES.map((cat) => {
-                  const themesInCat = Object.values(VIDEO_BACKGROUNDS).filter((bg) => bg.category === cat.id);
-                  if (themesInCat.length === 0) return null;
-                  return (
-                    <div key={cat.id}>
-                      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-                        {cat.label}
-                      </p>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
-                        {themesInCat.map((bg) => (
-                          <button
-                            key={bg.id}
-                            type="button"
-                            onClick={() => setBackgroundStyle(bg.id)}
-                            className={`relative overflow-hidden rounded-xl border p-2 text-left transition-all cursor-pointer ${
-                              backgroundStyle === bg.id
-                                ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/40 shadow-sm"
-                                : "border-[var(--border)] hover:border-[var(--accent)]/40"
-                            }`}
-                          >
-                            <div className={`h-8 w-full rounded-lg bg-gradient-to-r ${bg.gradient} mb-1.5`} />
-                            <p className="text-xs font-semibold text-[var(--text)] line-clamp-1">{bg.name}</p>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              {avatarType !== "webcam" && (
+                <p className="mb-2 rounded-lg bg-[var(--surface-2)] p-2 text-[11px] text-[var(--text-secondary)]">
+                  Desfoque só funciona com a câmera. Com bonequinhos, o fundo escolhido aparece atrás do personagem.
+                </p>
+              )}
+              {avatarType === "webcam" && virtualParsed.kind !== "none" && segStatus === "loading" && (
+                <p className="mb-2 rounded-lg bg-amber-50 p-2 text-[11px] text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+                  Carregando o recorte da pessoa… enquanto isso, a câmera aparece sem trocar o fundo.
+                </p>
+              )}
+              {avatarType === "webcam" && virtualParsed.kind !== "none" && segStatus === "error" && (
+                <p className="mb-2 rounded-lg bg-red-50 p-2 text-[11px] text-red-700 dark:bg-red-950/30 dark:text-red-300">
+                  Não foi possível carregar o modelo de recorte (verifique a conexão). A câmera será gravada sem trocar o fundo.
+                </p>
+              )}
+              <VirtualBackgroundPicker value={virtualBg} onChange={setVirtualBg} maxHeightClass="max-h-96" />
             </div>
 
             {/* 3. Frame / Layout Style */}

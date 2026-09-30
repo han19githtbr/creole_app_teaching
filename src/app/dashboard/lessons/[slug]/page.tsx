@@ -4,6 +4,8 @@ import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Lesson from "@/models/Lesson";
+import User from "@/models/User";
+import { LessonCompleteButton } from "@/components/LessonCompleteButton";
 import { Markdown } from "@/components/Markdown";
 import { ArrowLeft, ArrowRight, ChevronLeft } from "lucide-react";
 
@@ -43,6 +45,17 @@ export default async function LessonDetailPage({
       .lean(),
   ]);
 
+  const me = session.user.email
+    ? await User.findOne({ email: session.user.email.toLowerCase().trim() })
+        .select("completedLessons")
+        .lean<{ completedLessons?: unknown[] }>()
+    : null;
+  const completedIds = (me?.completedLessons ?? []).map(String);
+  const [visibleTotal, visibleCompleted] = await Promise.all([
+    Lesson.countDocuments(siblingMatch),
+    completedIds.length ? Lesson.countDocuments({ ...siblingMatch, _id: { $in: completedIds } }) : 0,
+  ]);
+
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
       <Link
@@ -58,6 +71,14 @@ export default async function LessonDetailPage({
         </span>
         <Markdown content={lesson.content} />
       </div>
+
+      <LessonCompleteButton
+        lessonId={String(lesson._id)}
+        initialCompleted={completedIds.includes(String(lesson._id))}
+        initialCount={visibleCompleted}
+        total={visibleTotal}
+        userName={session.user?.name ?? "Aluno"}
+      />
 
       <div className="mt-6 flex items-center justify-between gap-4">
         {prev ? (

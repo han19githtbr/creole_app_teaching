@@ -1019,6 +1019,7 @@ export function personalizeAvatarName(name: string, viewerName?: string | null) 
 }
 
 export const VIDEO_FRAME_STYLES = [
+  { id: "meet", name: "Tela cheia com fundo virtual (estilo Meet)", description: "Você recortado sobre o fundo escolhido" },
   { id: "rounded", name: "Bordas Arredondadas (Padrão)", description: "Layout de estúdio elegante" },
   { id: "circle_pip", name: "Picture-in-Picture Flutuante", description: "Avatar no canto inferior sobre o fundo" },
   { id: "split", name: "Divisão com Fundo Temático", description: "Avatar e área temática lado a lado" },

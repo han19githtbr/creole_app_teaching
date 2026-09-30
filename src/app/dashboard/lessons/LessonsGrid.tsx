@@ -13,6 +13,7 @@ interface LessonItem {
   title: string;
   sectionNumber: number;
   category: LessonCategory;
+  completed?: boolean;
 }
 
 export function LessonsGrid({
@@ -80,6 +81,7 @@ export function LessonsGrid({
               title={lesson.title}
               sectionNumber={lesson.sectionNumber}
               category={lesson.category}
+              completed={lesson.completed}
             />
           ))}
         </div>

@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
 import User from "@/models/User";
 import { requireAdmin, requireUser } from "@/lib/apiAuth";
+import { isAllowedPostImageUrl } from "@/lib/imageBank";
 
 export async function GET() {
   const session = await requireUser();
@@ -33,10 +34,27 @@ export async function POST(req: NextRequest) {
 
   await connectDB();
   const body = await req.json();
-  const { title, content, isPermanent = true, expiresAt = null, isPublished = true } = body;
+  const {
+    title,
+    content = "",
+    imageUrl = "",
+    imageAlt = "",
+    isPermanent = true,
+    expiresAt = null,
+    isPublished = true,
+  } = body;
 
-  if (!title || !content) {
-    return NextResponse.json({ error: "Título e conteúdo são obrigatórios." }, { status: 400 });
+  if (!title || !String(title).trim()) {
+    return NextResponse.json({ error: "O título é obrigatório." }, { status: 400 });
+  }
+  if (imageUrl && !isAllowedPostImageUrl(imageUrl)) {
+    return NextResponse.json({ error: "Imagem inválida." }, { status: 400 });
+  }
+  if (!String(content).trim() && !imageUrl) {
+    return NextResponse.json(
+      { error: "Escreva uma legenda/conteúdo ou escolha uma imagem." },
+      { status: 400 }
+    );
   }
 
   const author = await User.findOne({ email: session.user.email.toLowerCase() });
@@ -47,6 +65,8 @@ export async function POST(req: NextRequest) {
   const post = await Post.create({
     title,
     content,
+    imageUrl: imageUrl || "",
+    imageAlt: imageUrl ? String(imageAlt).slice(0, 200) : "",
     author: author._id,
     isPermanent,
     expiresAt: isPermanent ? null : expiresAt,

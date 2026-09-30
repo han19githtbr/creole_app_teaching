@@ -1,0 +1,86 @@
+[
+  {
+    "id": "tecnologia",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo",
+    "src": "/ghibli/tecnologia.svg"
+  },
+  {
+    "id": "natureza",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido",
+    "src": "/ghibli/natureza.svg"
+  },
+  {
+    "id": "cultura",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas",
+    "src": "/ghibli/cultura.svg"
+  },
+  {
+    "id": "turismo",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão",
+    "src": "/ghibli/turismo.svg"
+  },
+  {
+    "id": "interior",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia",
+    "src": "/ghibli/interior.svg"
+  },
+  {
+    "id": "danca",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas",
+    "src": "/ghibli/danca.svg"
+  },
+  {
+    "id": "geografia",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola",
+    "src": "/ghibli/geografia.svg"
+  },
+  {
+    "id": "historia",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro",
+    "src": "/ghibli/historia.svg"
+  },
+  {
+    "id": "cinema",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer",
+    "src": "/ghibli/cinema.svg"
+  },
+  {
+    "id": "musica",
+    "theme": "Música",
+    "title": "Palco ao ar livre",
+    "src": "/ghibli/musica.svg"
+  },
+  {
+    "id": "lazeres",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas",
+    "src": "/ghibli/lazeres.svg"
+  },
+  {
+    "id": "estoicismo",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras",
+    "src": "/ghibli/estoicismo.svg"
+  },
+  {
+    "id": "religiao",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada",
+    "src": "/ghibli/religiao.svg"
+  },
+  {
+    "id": "gastronomia",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante",
+    "src": "/ghibli/gastronomia.svg"
+  }
+]

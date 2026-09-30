@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronRight } from "lucide-react";
 import type { LessonCategory } from "@/lib/lessonCategories";
 
 const categoryColors: Record<LessonCategory, string> = {
@@ -16,11 +16,13 @@ export function LessonCard({
   title,
   sectionNumber,
   category,
+  completed = false,
 }: {
   slug: string;
   title: string;
   sectionNumber: number;
   category: LessonCategory;
+  completed?: boolean;
 }) {
   return (
     <Link
@@ -28,10 +30,17 @@ export function LessonCard({
       className="group flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm transition-all hover:border-[var(--accent)]/30 hover:shadow-md"
     >
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--surface-2)] text-sm font-semibold text-[var(--text-secondary)]">
-          {sectionNumber}
+        <span
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ${
+            completed
+              ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
+              : "bg-[var(--surface-2)] text-[var(--text-secondary)]"
+          }`}
+          title={completed ? "Lição concluída" : undefined}
+        >
+          {completed ? <CheckCircle2 className="h-5 w-5" /> : sectionNumber}
         </span>
-        <div>
+        <div className="min-w-0">
           <p className="font-medium text-[var(--text)]">{title}</p>
           <span
             className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${categoryColors[category]}`}

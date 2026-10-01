@@ -188,7 +188,7 @@ export default async function DashboardPage() {
       {/* Main Grid: Posts and Categories */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
-          <h2 className="text-lg font-semibold text-[var(--text)]">Avisos do professor</h2>
+          <h2 className="text-lg font-semibold text-[var(--text)]">Postagens do professor</h2>
           {posts.length === 0 ? (
             <Card>
               <CardContent className="text-center text-sm text-[var(--text-muted)]">

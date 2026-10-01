@@ -24,6 +24,7 @@ Todo o conteúdo da apostila original (28 páginas / 26 seções) já vem pré-c
 
 ### 1. 🎬 Estúdio de Gravação de Vídeos Curtos (Admin)
 - **Gravação direta no navegador (até 10 minutos / 600s)**: grave vídeos de dicas rápidas, pronúncia ou explicações de gramática sem precisar de programas externos.
+- **Webcam em alta definição**: solicita até 1920×1080 a 30 fps, compõe e grava em canvas Full HD e ajusta o bitrate ao tamanho real da câmera (até 6 Mbps). O estúdio mostra a resolução recebida e avisa quando a webcam fornece menos de 720p; luz frontal ajuda a deixar o rosto visível.
 - **Timer inteligente com barra de progresso**: contador de tempo em tempo real com alertas visuais ao se aproximar dos 10 minutos e finalização automática.
 - **Personalização de Mascotes / Avatares (Bonequinhos animados)**:
   - 📹 **Câmera Real (Webcam)**: use seu vídeo ao vivo.

@@ -58,6 +58,7 @@ export function StudioVideoRecorder() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [audioLevel, setAudioLevel] = useState(0);
   const [permissionError, setPermissionError] = useState<string | null>(null);
+  const [cameraResolution, setCameraResolution] = useState<{ width: number; height: number } | null>(null);
   // Só fica true se o usuário optar explicitamente por gravar sem microfone
   // depois de já ter tentado (e falhado) obter permissão de áudio.
   const [forceRecordWithoutAudio, setForceRecordWithoutAudio] = useState(false);
@@ -142,8 +143,14 @@ export function StudioVideoRecorder() {
   const initMedia = useCallback(async () => {
     try {
       setPermissionError(null);
+      setCameraResolution(null);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: {
+          width: { ideal: 1920, max: 1920 },
+          height: { ideal: 1080, max: 1080 },
+          frameRate: { ideal: 30, max: 30 },
+          aspectRatio: { ideal: 16 / 9 },
+        },
         audio: { echoCancellation: true, noiseSuppression: true },
       });
 
@@ -151,6 +158,8 @@ export function StudioVideoRecorder() {
       const audioTrack = stream.getAudioTracks()[0];
 
       if (videoTrack) {
+        const { width, height } = videoTrack.getSettings();
+        if (width && height) setCameraResolution({ width, height });
         const vStream = new MediaStream([videoTrack]);
         setCameraStream(vStream);
         cameraStreamRef.current = vStream;
@@ -592,9 +601,13 @@ export function StudioVideoRecorder() {
       }
     }
 
+    const sourceHeight = cameraResolution?.height ?? 1080;
+    const videoBitsPerSecond = sourceHeight >= 1080
+      ? 6000000
+      : sourceHeight >= 720 ? 4000000 : 2500000;
     const recorder = new MediaRecorder(combinedStream, {
       mimeType: selectedMime || undefined,
-      videoBitsPerSecond: 2500000,
+      videoBitsPerSecond,
       audioBitsPerSecond: 128000,
     });
 
@@ -797,12 +810,12 @@ export function StudioVideoRecorder() {
         {/* Left/Main Column: Canvas / Video Studio Player */}
         <div className="space-y-4 lg:col-span-8">
           <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-black shadow-2xl">
-            {/* Live Synthesis Canvas (1280x720 internal resolution) */}
+            {/* Live Synthesis Canvas (Full HD internal resolution) */}
             {recordingState !== "recorded" ? (
               <canvas
                 ref={canvasRef}
-                width={1280}
-                height={720}
+                width={1920}
+                height={1080}
                 className="aspect-video w-full object-contain"
               />
             ) : (
@@ -811,6 +824,19 @@ export function StudioVideoRecorder() {
                 controls
                 className="aspect-video w-full object-contain"
               />
+            )}
+
+            {avatarType === "webcam" && cameraResolution && (
+              <div className="absolute right-4 top-4 z-20 rounded-full border border-white/15 bg-black/75 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+                {cameraResolution.height >= 1080 ? "Full HD" : cameraResolution.height >= 720 ? "HD" : "Resolução baixa"}
+                <span className="ml-1.5 text-white/70">{cameraResolution.width} × {cameraResolution.height}</span>
+              </div>
+            )}
+
+            {avatarType === "webcam" && cameraResolution && cameraResolution.height < 720 && (
+              <p className="absolute bottom-4 left-4 right-4 z-20 rounded-lg bg-amber-950/85 px-3 py-2 text-xs text-amber-100" role="status">
+                A webcam está fornecendo baixa resolução. Confira se outro aplicativo não está limitando a câmera e use luz de frente para melhorar a imagem.
+              </p>
             )}
 
             {/* Timer Badge and Sound Meter during recording */}

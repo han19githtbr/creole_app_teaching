@@ -12,6 +12,7 @@ import { PostCard } from "@/components/PostCard";
 import { LiveBadge } from "@/components/LiveBadge";
 import { VideoCard } from "@/components/VideoCard";
 import { ProgressCard } from "@/components/ProgressCard";
+import { getBankImage } from "@/lib/imageBank";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Radio, BookOpen, Bell, Video, ArrowRight } from "lucide-react";
@@ -179,6 +180,7 @@ export default async function DashboardPage() {
                 createdAt={post.createdAt}
                 isPermanent={post.isPermanent}
                 expiresAt={post.expiresAt}
+                gamePostId={post.imageUrl && (post.imageQuiz || getBankImage(post.imageUrl)) ? String(post._id) : undefined}
               />
             ))
           )}

@@ -10,6 +10,7 @@ import { RichTextEditor } from "@/components/RichTextEditor";
 import { ImageBankPicker } from "@/components/ImageBankPicker";
 import { PostCard } from "@/components/PostCard";
 import { getBankImage, type BankImage } from "@/lib/imageBank";
+import { getDefaultImageQuiz, isValidImageQuiz, type ImageQuizConfig } from "@/lib/imageQuiz";
 import { cn } from "@/lib/utils";
 
 interface PostFormValues {
@@ -22,6 +23,7 @@ interface PostFormValues {
   expiresAt?: string | null;
   isPublished: boolean;
   acceptsAnswers?: boolean;
+  imageQuiz?: ImageQuizConfig;
 }
 
 export function PostForm({ initial }: { initial?: PostFormValues }) {
@@ -38,6 +40,10 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
   const [expiresAt, setExpiresAt] = useState(initial?.expiresAt?.slice(0, 10) ?? "");
   const [isPublished, setIsPublished] = useState(initial?.isPublished ?? true);
   const [acceptsAnswers, setAcceptsAnswers] = useState(initial?.acceptsAnswers ?? true);
+  const initialQuiz = initial?.imageQuiz ?? getDefaultImageQuiz(getBankImage(initial?.imageUrl)?.theme ?? "");
+  const [quizEnabled, setQuizEnabled] = useState(Boolean(initialQuiz));
+  const [quizOptions, setQuizOptions] = useState<string[]>(initialQuiz?.options ?? Array(10).fill(""));
+  const [quizAnswers, setQuizAnswers] = useState<string[]>(initialQuiz?.answers ?? []);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,10 +54,17 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
     if (!img) {
       setImageUrl("");
       setImageAlt("");
+      setQuizOptions(Array(10).fill(""));
+      setQuizAnswers([]);
+      setQuizEnabled(false);
       return;
     }
     setImageUrl(img.src);
     setImageAlt(img.title);
+    const quiz = getDefaultImageQuiz(img.theme);
+    setQuizOptions(quiz?.options ?? Array(10).fill(""));
+    setQuizAnswers(quiz?.answers ?? []);
+    setQuizEnabled(Boolean(quiz));
   }
 
   function useSuggestedCaption() {
@@ -82,6 +95,9 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
       });
       setImageUrl(blob.url);
       if (!imageAlt) setImageAlt(file.name.replace(/\.[^.]+$/, ""));
+      setQuizOptions(Array(10).fill(""));
+      setQuizAnswers([]);
+      setQuizEnabled(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar a imagem.");
     } finally {
@@ -91,6 +107,13 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const imageQuiz = imageUrl && quizEnabled
+      ? { options: quizOptions, answers: quizAnswers }
+      : null;
+    if (imageUrl && quizEnabled && !isValidImageQuiz(imageQuiz)) {
+      setError("Preencha as dez palavras e marque pelo menos uma resposta correta.");
+      return;
+    }
     setSaving(true);
     setError(null);
 
@@ -103,6 +126,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
           content,
           imageUrl,
           imageAlt,
+          imageQuiz,
           isPermanent,
           expiresAt: isPermanent ? null : expiresAt || null,
           isPublished,
@@ -243,6 +267,61 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
           placeholder={imageUrl ? "Escreva a legenda que acompanha a imagem..." : undefined}
         />
       </div>
+
+      {imageUrl && (
+        <label className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
+          <input
+            type="checkbox"
+            checked={quizEnabled}
+            onChange={(event) => setQuizEnabled(event.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--border-strong)]"
+          />
+          <span>
+            <span className="block font-medium text-[var(--text)]">Ativar jogo de palavras para esta imagem</span>
+            <span className="mt-0.5 block text-xs text-[var(--text-muted)]">As imagens do banco já vêm com opções e gabarito; em uploads, informe as dez opções corretas manualmente.</span>
+          </span>
+        </label>
+      )}
+
+      {imageUrl && quizEnabled && (
+        <section className="space-y-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <div>
+            <h3 className="text-sm font-semibold text-[var(--text)]">Jogo de palavras em Kreyòl</h3>
+            <p className="mt-1 text-xs text-[var(--text-muted)]">
+              Defina dez opções e marque todas as palavras que representam elementos visíveis na imagem.
+            </p>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {quizOptions.map((word, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  aria-label={`Palavra correta ${index + 1}`}
+                  type="checkbox"
+                  checked={quizAnswers.includes(word) && Boolean(word.trim())}
+                  disabled={!word.trim()}
+                  onChange={(event) => setQuizAnswers((answers) => event.target.checked
+                    ? [...answers, word]
+                    : answers.filter((answer) => answer !== word))}
+                  className="h-4 w-4 shrink-0 rounded border-[var(--border-strong)] accent-[var(--accent)]"
+                />
+                <Input
+                  value={word}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setQuizOptions((options) => options.map((item, itemIndex) => itemIndex === index ? value : item));
+                    setQuizAnswers((answers) => answers.filter((answer) => answer !== word));
+                  }}
+                  placeholder={`Opção ${index + 1} em Kreyòl`}
+                  maxLength={40}
+                  required
+                  className="h-9 text-sm"
+                />
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-[var(--text-muted)]">Caixa marcada = resposta correta. O aluno terá três tentativas.</p>
+        </section>
+      )}
 
       <div className="flex flex-wrap items-center gap-6">
         <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">

@@ -24,6 +24,7 @@ export default async function EditPostPage({
           acceptsAnswers: post.acceptsAnswers !== false,
           imageUrl: post.imageUrl ?? "",
           imageAlt: post.imageAlt ?? "",
+          imageQuiz: post.imageQuiz,
           isPermanent: post.isPermanent,
           expiresAt: post.expiresAt ? post.expiresAt.toISOString() : null,
           isPublished: post.isPublished,

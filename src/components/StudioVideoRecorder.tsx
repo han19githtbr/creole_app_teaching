@@ -196,7 +196,7 @@ export function StudioVideoRecorder() {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, []);
+  }, [initMedia]);
 
   // Lembra o último fundo escolhido e pré-carrega as ilustrações do banco.
   useEffect(() => {
@@ -1007,7 +1007,7 @@ export function StudioVideoRecorder() {
               )}
               {avatarType === "webcam" && virtualParsed.kind !== "none" && segStatus === "error" && (
                 <p className="mb-2 rounded-lg bg-red-50 p-2 text-[11px] text-red-700 dark:bg-red-950/30 dark:text-red-300">
-                  Não foi possível carregar o modelo de recorte (verifique a conexão). A câmera será gravada sem trocar o fundo.
+                  O recorte automático não iniciou neste navegador. A câmera continuará funcionando sem trocar o fundo.
                 </p>
               )}
               <VirtualBackgroundPicker value={virtualBg} onChange={setVirtualBg} maxHeightClass="max-h-96" />

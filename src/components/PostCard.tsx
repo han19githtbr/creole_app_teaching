@@ -2,6 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Markdown } from "@/components/Markdown";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import Link from "next/link";
+import { Gamepad2 } from "lucide-react";
 
 export function PostCard({
   title,
@@ -12,6 +14,7 @@ export function PostCard({
   isPermanent,
   expiresAt,
   footer,
+  gamePostId,
 }: {
   title: string;
   content: string;
@@ -22,6 +25,7 @@ export function PostCard({
   expiresAt?: string | Date | null;
   /** Área extra abaixo do texto (ex.: caixa de resposta do aluno). */
   footer?: React.ReactNode;
+  gamePostId?: string;
 }) {
   return (
     <article className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
@@ -44,6 +48,11 @@ export function PostCard({
           )}
         </div>
         {content.trim() && <Markdown content={content} />}
+        {gamePostId && (
+          <Link href={`/dashboard/jogo?post=${encodeURIComponent(gamePostId)}`} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[var(--accent-soft)] px-3.5 py-2.5 text-sm font-semibold text-[var(--accent)] transition hover:brightness-95">
+            <Gamepad2 className="h-4 w-4" /> Jogar: encontre as palavras em Kreyòl
+          </Link>
+        )}
         <p className="mt-3 text-xs text-[var(--text-muted)]">
           {formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: ptBR })}
         </p>

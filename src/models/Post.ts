@@ -1,4 +1,5 @@
 import mongoose, { Schema, models, model, type Document } from "mongoose";
+import type { ImageQuizConfig } from "@/lib/imageQuiz";
 
 export interface IPost extends Document {
   title: string;
@@ -6,6 +7,7 @@ export interface IPost extends Document {
   /** Imagem da postagem: ilustração do banco (/ghibli/*.svg) ou upload (Vercel Blob). */
   imageUrl?: string;
   imageAlt?: string;
+  imageQuiz?: ImageQuizConfig;
   author: mongoose.Types.ObjectId;
   isPermanent: boolean;
   expiresAt?: Date | null;
@@ -23,6 +25,10 @@ const PostSchema = new Schema<IPost>(
     content: { type: String, default: "" },
     imageUrl: { type: String, default: "" },
     imageAlt: { type: String, default: "" },
+    imageQuiz: {
+      options: { type: [String], default: undefined },
+      answers: { type: [String], default: undefined },
+    },
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     isPermanent: { type: Boolean, default: true },
     expiresAt: { type: Date, default: null },

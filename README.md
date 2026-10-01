@@ -80,7 +80,12 @@ Todo o conteúdo da apostila original (28 páginas / 26 seções) já vem pré-c
 
 ### 5. 📢 Avisos e Postagens do Professor
 - Postagens permanentes ou com **data de expiração programada** (avisos expirados somem do feed dos alunos).
-- Editor rico em Markdown.
+- Editor rico em Markdown, banco de imagens por tema e envio de imagens próprias.
+- O banco reúne **14 temas com dez ilustrações SVG originais por tema (140 imagens)**. As variações são produzidas por `scripts/ghibli/build.mjs`; o seletor de fundos do estúdio continua exibindo uma imagem principal por tema.
+- Cada postagem com imagem pode oferecer um desafio de vocabulário em Kreyòl. Imagens do banco recebem opções e gabarito por tema. Para imagens enviadas, o administrador informa dez palavras e marca as respostas corretas no formulário da postagem.
+- No painel do aluno, cada postagem compatível tem um botão para jogar com aquela imagem. A rota `/dashboard/jogo` também inicia uma rodada aleatória com imagens do banco.
+- O jogo permite selecionar várias respostas, oferece três tentativas, feedback sonoro de acerto/erro, placar e sequência de acertos. O gabarito é conferido no servidor e não é enviado ao navegador.
+- Conquistas podem ser compartilhadas pelo Facebook e pelo menu de compartilhamento do dispositivo. Quando o compartilhamento nativo não está disponível, o texto da conquista pode ser copiado para publicação no Instagram.
 
 ---
 
@@ -93,6 +98,8 @@ Todo o conteúdo da apostila original (28 páginas / 26 seções) já vem pré-c
 ### 7. 🌓 Dark Mode & Acessibilidade
 - Seletor de tema **Claro / Escuro** integrado na barra de navegação com persistência local e inicialização sem *flash*.
 - Componentes estilizados com variáveis CSS para contraste e legibilidade ideais.
+- O login Google retorna diretamente ao dashboard, sem manter a landing page visível durante uma segunda navegação client-side.
+- Os arquivos do MediaPipe usados no recorte de fundo virtual são servidos localmente em `public/mediapipe`, sem depender do CDN jsDelivr.
 
 ---
 
@@ -106,6 +113,7 @@ src/
 │   ├── globals.css                    # Configuração de temas (Dark/Light) e Tailwind
 │   ├── dashboard/                     # Área do Aluno
 │   │   ├── page.tsx                   # Feed principal + vídeos recentes + lições
+│   │   ├── jogo/page.tsx              # Jogo de identificação de elementos em imagens
 │   │   ├── lessons/                   # Catálogo e visualização de lições
 │   │   └── videos/                    # Catálogo e player de aulas gravadas
 │   │       ├── page.tsx               # Catálogo de vídeos gravados
@@ -128,6 +136,7 @@ src/
 │       ├── admin/stats/               # Estatísticas (lições, vídeos, posts, usuários)
 │       ├── lessons/                   # API de lições
 │       ├── posts/                     # API de postagens
+│       ├── image-quiz/route.ts        # Entrega opções e confere respostas no servidor
 │       ├── live/                      # API de status e tokens LiveKit
 │       └── videos/                    # API de vídeos gravados
 │           ├── route.ts               # Listagem e criação de vídeos
@@ -138,6 +147,7 @@ src/
 │               └── comments/          # Adicionar e remover comentários
 ├── components/                        # Componentes reutilizáveis
 │   ├── Navbar.tsx                     # Barra de navegação com links e ThemeToggle
+│   ├── ImageQuizGame.tsx               # Jogo, tentativas, sons e compartilhamento
 │   ├── ThemeToggle.tsx                # Botão para alternar Modo Claro / Modo Escuro
 │   ├── VideoCard.tsx                  # Card de vídeo com tema e estatísticas
 │   ├── VideoPlayer.tsx                # Player com moldura e temas personalizados
@@ -148,6 +158,8 @@ src/
 │   └── ui/                            # Botões, Cards, Badges, Inputs, Selects, Textareas
 ├── lib/                               # Utilitários, conexões e configurações
 │   ├── auth.ts                        # Configuração do NextAuth
+│   ├── imageBank.ts                   # Banco com 140 imagens em 14 temas
+│   ├── imageQuiz.ts                   # Gabaritos por tema e validação das dez opções
 │   ├── mongodb.ts                     # Conexão Mongoose com cache
 │   ├── livekit.ts                     # Geração de tokens LiveKit
 │   ├── videoThemes.ts                 # Definição dos fundos, avatares e molduras
@@ -162,6 +174,8 @@ src/
     ├── lessons.ts                     # 26 lições extraídas da apostila
     └── run.ts                         # Script de execução do seed
 ```
+
+  As ilustrações ficam em `public/ghibli/` e os modelos/binários do recorte virtual em `public/mediapipe/`.
 
 ---
 

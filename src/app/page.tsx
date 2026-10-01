@@ -16,6 +16,14 @@ export default function Home() {
     }
   }, [status, router]);
 
+  if (status === "authenticated") {
+    return (
+      <div className="flex flex-1 items-center justify-center text-sm text-[var(--text-secondary)]">
+        Abrindo seu painel...
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       <section className="relative overflow-hidden bg-[#1c1917]">
@@ -33,7 +41,7 @@ export default function Home() {
           <Button
             size="lg"
             className="mt-8"
-            onClick={() => signIn("google")}
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           >
             Começar a Aprender
           </Button>

@@ -62,7 +62,7 @@ export class PersonSegmenter {
     if (!Ctor) throw new Error("SelfieSegmentation não carregou.");
 
     const seg = new Ctor({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+      locateFile: (file) => `/mediapipe/${file.split("/").pop()}`,
     });
     // selfieMode=false: a máscara sai alinhada com a imagem ORIGINAL da câmera
     // (com selfieMode=true ela viria espelhada e o recorte ficaria trocado).
@@ -72,6 +72,7 @@ export class PersonSegmenter {
       this.ready = true;
     });
     this.seg = seg;
+    await seg.initialize();
   }
 
   /** Envia um quadro para o modelo (ignora se o anterior ainda está processando). */

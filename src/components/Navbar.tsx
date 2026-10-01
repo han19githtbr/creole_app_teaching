@@ -6,12 +6,13 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { BookOpen, LayoutDashboard, Menu, Radio, ShieldCheck, Video, X } from "lucide-react";
+import { BookOpen, Gamepad2, LayoutDashboard, Menu, Radio, ShieldCheck, Video, X } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
   { href: "/dashboard/lessons", label: "Lições", icon: BookOpen },
   { href: "/dashboard/videos", label: "Vídeos", icon: Video },
+  { href: "/dashboard/jogo", label: "Jogo", icon: Gamepad2 },
   { href: "/live", label: "Ao vivo", icon: Radio },
 ];
 
@@ -95,7 +96,7 @@ export function Navbar() {
           ) : status === "loading" ? (
             <div className="h-9 w-24 animate-pulse rounded-lg bg-[var(--surface-2)]" />
           ) : (
-            <Button size="sm" onClick={() => signIn("google")}>
+            <Button size="sm" onClick={() => signIn("google", { callbackUrl: "/dashboard" })}>
               Entrar com Google
             </Button>
           )}

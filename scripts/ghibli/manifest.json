@@ -6,10 +6,118 @@
     "src": "/ghibli/tecnologia.svg"
   },
   {
+    "id": "tecnologia-02",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 2",
+    "src": "/ghibli/tecnologia-02.svg"
+  },
+  {
+    "id": "tecnologia-03",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 3",
+    "src": "/ghibli/tecnologia-03.svg"
+  },
+  {
+    "id": "tecnologia-04",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 4",
+    "src": "/ghibli/tecnologia-04.svg"
+  },
+  {
+    "id": "tecnologia-05",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 5",
+    "src": "/ghibli/tecnologia-05.svg"
+  },
+  {
+    "id": "tecnologia-06",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 6",
+    "src": "/ghibli/tecnologia-06.svg"
+  },
+  {
+    "id": "tecnologia-07",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 7",
+    "src": "/ghibli/tecnologia-07.svg"
+  },
+  {
+    "id": "tecnologia-08",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 8",
+    "src": "/ghibli/tecnologia-08.svg"
+  },
+  {
+    "id": "tecnologia-09",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 9",
+    "src": "/ghibli/tecnologia-09.svg"
+  },
+  {
+    "id": "tecnologia-10",
+    "theme": "Tecnologia",
+    "title": "Oficina tecnológica no campo — Cena 10",
+    "src": "/ghibli/tecnologia-10.svg"
+  },
+  {
     "id": "natureza",
     "theme": "Natureza",
     "title": "Árvore ancestral e prado florido",
     "src": "/ghibli/natureza.svg"
+  },
+  {
+    "id": "natureza-02",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 2",
+    "src": "/ghibli/natureza-02.svg"
+  },
+  {
+    "id": "natureza-03",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 3",
+    "src": "/ghibli/natureza-03.svg"
+  },
+  {
+    "id": "natureza-04",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 4",
+    "src": "/ghibli/natureza-04.svg"
+  },
+  {
+    "id": "natureza-05",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 5",
+    "src": "/ghibli/natureza-05.svg"
+  },
+  {
+    "id": "natureza-06",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 6",
+    "src": "/ghibli/natureza-06.svg"
+  },
+  {
+    "id": "natureza-07",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 7",
+    "src": "/ghibli/natureza-07.svg"
+  },
+  {
+    "id": "natureza-08",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 8",
+    "src": "/ghibli/natureza-08.svg"
+  },
+  {
+    "id": "natureza-09",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 9",
+    "src": "/ghibli/natureza-09.svg"
+  },
+  {
+    "id": "natureza-10",
+    "theme": "Natureza",
+    "title": "Árvore ancestral e prado florido — Cena 10",
+    "src": "/ghibli/natureza-10.svg"
   },
   {
     "id": "cultura",
@@ -18,10 +126,118 @@
     "src": "/ghibli/cultura.svg"
   },
   {
+    "id": "cultura-02",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 2",
+    "src": "/ghibli/cultura-02.svg"
+  },
+  {
+    "id": "cultura-03",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 3",
+    "src": "/ghibli/cultura-03.svg"
+  },
+  {
+    "id": "cultura-04",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 4",
+    "src": "/ghibli/cultura-04.svg"
+  },
+  {
+    "id": "cultura-05",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 5",
+    "src": "/ghibli/cultura-05.svg"
+  },
+  {
+    "id": "cultura-06",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 6",
+    "src": "/ghibli/cultura-06.svg"
+  },
+  {
+    "id": "cultura-07",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 7",
+    "src": "/ghibli/cultura-07.svg"
+  },
+  {
+    "id": "cultura-08",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 8",
+    "src": "/ghibli/cultura-08.svg"
+  },
+  {
+    "id": "cultura-09",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 9",
+    "src": "/ghibli/cultura-09.svg"
+  },
+  {
+    "id": "cultura-10",
+    "theme": "Cultura",
+    "title": "Festa na praça com bandeirolas — Cena 10",
+    "src": "/ghibli/cultura-10.svg"
+  },
+  {
     "id": "turismo",
     "theme": "Turismo",
     "title": "Vila costeira, farol e balão",
     "src": "/ghibli/turismo.svg"
+  },
+  {
+    "id": "turismo-02",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 2",
+    "src": "/ghibli/turismo-02.svg"
+  },
+  {
+    "id": "turismo-03",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 3",
+    "src": "/ghibli/turismo-03.svg"
+  },
+  {
+    "id": "turismo-04",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 4",
+    "src": "/ghibli/turismo-04.svg"
+  },
+  {
+    "id": "turismo-05",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 5",
+    "src": "/ghibli/turismo-05.svg"
+  },
+  {
+    "id": "turismo-06",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 6",
+    "src": "/ghibli/turismo-06.svg"
+  },
+  {
+    "id": "turismo-07",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 7",
+    "src": "/ghibli/turismo-07.svg"
+  },
+  {
+    "id": "turismo-08",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 8",
+    "src": "/ghibli/turismo-08.svg"
+  },
+  {
+    "id": "turismo-09",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 9",
+    "src": "/ghibli/turismo-09.svg"
+  },
+  {
+    "id": "turismo-10",
+    "theme": "Turismo",
+    "title": "Vila costeira, farol e balão — Cena 10",
+    "src": "/ghibli/turismo-10.svg"
   },
   {
     "id": "interior",
@@ -30,10 +246,118 @@
     "src": "/ghibli/interior.svg"
   },
   {
+    "id": "interior-02",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 2",
+    "src": "/ghibli/interior-02.svg"
+  },
+  {
+    "id": "interior-03",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 3",
+    "src": "/ghibli/interior-03.svg"
+  },
+  {
+    "id": "interior-04",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 4",
+    "src": "/ghibli/interior-04.svg"
+  },
+  {
+    "id": "interior-05",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 5",
+    "src": "/ghibli/interior-05.svg"
+  },
+  {
+    "id": "interior-06",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 6",
+    "src": "/ghibli/interior-06.svg"
+  },
+  {
+    "id": "interior-07",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 7",
+    "src": "/ghibli/interior-07.svg"
+  },
+  {
+    "id": "interior-08",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 8",
+    "src": "/ghibli/interior-08.svg"
+  },
+  {
+    "id": "interior-09",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 9",
+    "src": "/ghibli/interior-09.svg"
+  },
+  {
+    "id": "interior-10",
+    "theme": "Vida no interior",
+    "title": "Fazenda ao meio-dia — Cena 10",
+    "src": "/ghibli/interior-10.svg"
+  },
+  {
     "id": "danca",
     "theme": "Dança",
     "title": "Dança sob as lanternas",
     "src": "/ghibli/danca.svg"
+  },
+  {
+    "id": "danca-02",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 2",
+    "src": "/ghibli/danca-02.svg"
+  },
+  {
+    "id": "danca-03",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 3",
+    "src": "/ghibli/danca-03.svg"
+  },
+  {
+    "id": "danca-04",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 4",
+    "src": "/ghibli/danca-04.svg"
+  },
+  {
+    "id": "danca-05",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 5",
+    "src": "/ghibli/danca-05.svg"
+  },
+  {
+    "id": "danca-06",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 6",
+    "src": "/ghibli/danca-06.svg"
+  },
+  {
+    "id": "danca-07",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 7",
+    "src": "/ghibli/danca-07.svg"
+  },
+  {
+    "id": "danca-08",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 8",
+    "src": "/ghibli/danca-08.svg"
+  },
+  {
+    "id": "danca-09",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 9",
+    "src": "/ghibli/danca-09.svg"
+  },
+  {
+    "id": "danca-10",
+    "theme": "Dança",
+    "title": "Dança sob as lanternas — Cena 10",
+    "src": "/ghibli/danca-10.svg"
   },
   {
     "id": "geografia",
@@ -42,10 +366,118 @@
     "src": "/ghibli/geografia.svg"
   },
   {
+    "id": "geografia-02",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 2",
+    "src": "/ghibli/geografia-02.svg"
+  },
+  {
+    "id": "geografia-03",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 3",
+    "src": "/ghibli/geografia-03.svg"
+  },
+  {
+    "id": "geografia-04",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 4",
+    "src": "/ghibli/geografia-04.svg"
+  },
+  {
+    "id": "geografia-05",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 5",
+    "src": "/ghibli/geografia-05.svg"
+  },
+  {
+    "id": "geografia-06",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 6",
+    "src": "/ghibli/geografia-06.svg"
+  },
+  {
+    "id": "geografia-07",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 7",
+    "src": "/ghibli/geografia-07.svg"
+  },
+  {
+    "id": "geografia-08",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 8",
+    "src": "/ghibli/geografia-08.svg"
+  },
+  {
+    "id": "geografia-09",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 9",
+    "src": "/ghibli/geografia-09.svg"
+  },
+  {
+    "id": "geografia-10",
+    "theme": "Geografia",
+    "title": "Montanhas, rio e bússola — Cena 10",
+    "src": "/ghibli/geografia-10.svg"
+  },
+  {
     "id": "historia",
     "theme": "História",
     "title": "Fortaleza de pedra no alto do morro",
     "src": "/ghibli/historia.svg"
+  },
+  {
+    "id": "historia-02",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 2",
+    "src": "/ghibli/historia-02.svg"
+  },
+  {
+    "id": "historia-03",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 3",
+    "src": "/ghibli/historia-03.svg"
+  },
+  {
+    "id": "historia-04",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 4",
+    "src": "/ghibli/historia-04.svg"
+  },
+  {
+    "id": "historia-05",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 5",
+    "src": "/ghibli/historia-05.svg"
+  },
+  {
+    "id": "historia-06",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 6",
+    "src": "/ghibli/historia-06.svg"
+  },
+  {
+    "id": "historia-07",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 7",
+    "src": "/ghibli/historia-07.svg"
+  },
+  {
+    "id": "historia-08",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 8",
+    "src": "/ghibli/historia-08.svg"
+  },
+  {
+    "id": "historia-09",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 9",
+    "src": "/ghibli/historia-09.svg"
+  },
+  {
+    "id": "historia-10",
+    "theme": "História",
+    "title": "Fortaleza de pedra no alto do morro — Cena 10",
+    "src": "/ghibli/historia-10.svg"
   },
   {
     "id": "cinema",
@@ -54,10 +486,118 @@
     "src": "/ghibli/cinema.svg"
   },
   {
+    "id": "cinema-02",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 2",
+    "src": "/ghibli/cinema-02.svg"
+  },
+  {
+    "id": "cinema-03",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 3",
+    "src": "/ghibli/cinema-03.svg"
+  },
+  {
+    "id": "cinema-04",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 4",
+    "src": "/ghibli/cinema-04.svg"
+  },
+  {
+    "id": "cinema-05",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 5",
+    "src": "/ghibli/cinema-05.svg"
+  },
+  {
+    "id": "cinema-06",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 6",
+    "src": "/ghibli/cinema-06.svg"
+  },
+  {
+    "id": "cinema-07",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 7",
+    "src": "/ghibli/cinema-07.svg"
+  },
+  {
+    "id": "cinema-08",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 8",
+    "src": "/ghibli/cinema-08.svg"
+  },
+  {
+    "id": "cinema-09",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 9",
+    "src": "/ghibli/cinema-09.svg"
+  },
+  {
+    "id": "cinema-10",
+    "theme": "Cinema",
+    "title": "Cinema de bairro ao entardecer — Cena 10",
+    "src": "/ghibli/cinema-10.svg"
+  },
+  {
     "id": "musica",
     "theme": "Música",
     "title": "Palco ao ar livre",
     "src": "/ghibli/musica.svg"
+  },
+  {
+    "id": "musica-02",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 2",
+    "src": "/ghibli/musica-02.svg"
+  },
+  {
+    "id": "musica-03",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 3",
+    "src": "/ghibli/musica-03.svg"
+  },
+  {
+    "id": "musica-04",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 4",
+    "src": "/ghibli/musica-04.svg"
+  },
+  {
+    "id": "musica-05",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 5",
+    "src": "/ghibli/musica-05.svg"
+  },
+  {
+    "id": "musica-06",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 6",
+    "src": "/ghibli/musica-06.svg"
+  },
+  {
+    "id": "musica-07",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 7",
+    "src": "/ghibli/musica-07.svg"
+  },
+  {
+    "id": "musica-08",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 8",
+    "src": "/ghibli/musica-08.svg"
+  },
+  {
+    "id": "musica-09",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 9",
+    "src": "/ghibli/musica-09.svg"
+  },
+  {
+    "id": "musica-10",
+    "theme": "Música",
+    "title": "Palco ao ar livre — Cena 10",
+    "src": "/ghibli/musica-10.svg"
   },
   {
     "id": "lazeres",
@@ -66,10 +606,118 @@
     "src": "/ghibli/lazeres.svg"
   },
   {
+    "id": "lazeres-02",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 2",
+    "src": "/ghibli/lazeres-02.svg"
+  },
+  {
+    "id": "lazeres-03",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 3",
+    "src": "/ghibli/lazeres-03.svg"
+  },
+  {
+    "id": "lazeres-04",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 4",
+    "src": "/ghibli/lazeres-04.svg"
+  },
+  {
+    "id": "lazeres-05",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 5",
+    "src": "/ghibli/lazeres-05.svg"
+  },
+  {
+    "id": "lazeres-06",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 6",
+    "src": "/ghibli/lazeres-06.svg"
+  },
+  {
+    "id": "lazeres-07",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 7",
+    "src": "/ghibli/lazeres-07.svg"
+  },
+  {
+    "id": "lazeres-08",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 8",
+    "src": "/ghibli/lazeres-08.svg"
+  },
+  {
+    "id": "lazeres-09",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 9",
+    "src": "/ghibli/lazeres-09.svg"
+  },
+  {
+    "id": "lazeres-10",
+    "theme": "Lazeres",
+    "title": "Tarde de piquenique e pipas — Cena 10",
+    "src": "/ghibli/lazeres-10.svg"
+  },
+  {
     "id": "estoicismo",
     "theme": "Estoicismo",
     "title": "Pórtico de pedra e oliveiras",
     "src": "/ghibli/estoicismo.svg"
+  },
+  {
+    "id": "estoicismo-02",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 2",
+    "src": "/ghibli/estoicismo-02.svg"
+  },
+  {
+    "id": "estoicismo-03",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 3",
+    "src": "/ghibli/estoicismo-03.svg"
+  },
+  {
+    "id": "estoicismo-04",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 4",
+    "src": "/ghibli/estoicismo-04.svg"
+  },
+  {
+    "id": "estoicismo-05",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 5",
+    "src": "/ghibli/estoicismo-05.svg"
+  },
+  {
+    "id": "estoicismo-06",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 6",
+    "src": "/ghibli/estoicismo-06.svg"
+  },
+  {
+    "id": "estoicismo-07",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 7",
+    "src": "/ghibli/estoicismo-07.svg"
+  },
+  {
+    "id": "estoicismo-08",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 8",
+    "src": "/ghibli/estoicismo-08.svg"
+  },
+  {
+    "id": "estoicismo-09",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 9",
+    "src": "/ghibli/estoicismo-09.svg"
+  },
+  {
+    "id": "estoicismo-10",
+    "theme": "Estoicismo",
+    "title": "Pórtico de pedra e oliveiras — Cena 10",
+    "src": "/ghibli/estoicismo-10.svg"
   },
   {
     "id": "religiao",
@@ -78,9 +726,117 @@
     "src": "/ghibli/religiao.svg"
   },
   {
+    "id": "religiao-02",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 2",
+    "src": "/ghibli/religiao-02.svg"
+  },
+  {
+    "id": "religiao-03",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 3",
+    "src": "/ghibli/religiao-03.svg"
+  },
+  {
+    "id": "religiao-04",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 4",
+    "src": "/ghibli/religiao-04.svg"
+  },
+  {
+    "id": "religiao-05",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 5",
+    "src": "/ghibli/religiao-05.svg"
+  },
+  {
+    "id": "religiao-06",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 6",
+    "src": "/ghibli/religiao-06.svg"
+  },
+  {
+    "id": "religiao-07",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 7",
+    "src": "/ghibli/religiao-07.svg"
+  },
+  {
+    "id": "religiao-08",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 8",
+    "src": "/ghibli/religiao-08.svg"
+  },
+  {
+    "id": "religiao-09",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 9",
+    "src": "/ghibli/religiao-09.svg"
+  },
+  {
+    "id": "religiao-10",
+    "theme": "Religião",
+    "title": "Capela na colina e luz sagrada — Cena 10",
+    "src": "/ghibli/religiao-10.svg"
+  },
+  {
     "id": "gastronomia",
     "theme": "Gastronomia",
     "title": "Cozinha aconchegante",
     "src": "/ghibli/gastronomia.svg"
+  },
+  {
+    "id": "gastronomia-02",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 2",
+    "src": "/ghibli/gastronomia-02.svg"
+  },
+  {
+    "id": "gastronomia-03",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 3",
+    "src": "/ghibli/gastronomia-03.svg"
+  },
+  {
+    "id": "gastronomia-04",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 4",
+    "src": "/ghibli/gastronomia-04.svg"
+  },
+  {
+    "id": "gastronomia-05",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 5",
+    "src": "/ghibli/gastronomia-05.svg"
+  },
+  {
+    "id": "gastronomia-06",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 6",
+    "src": "/ghibli/gastronomia-06.svg"
+  },
+  {
+    "id": "gastronomia-07",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 7",
+    "src": "/ghibli/gastronomia-07.svg"
+  },
+  {
+    "id": "gastronomia-08",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 8",
+    "src": "/ghibli/gastronomia-08.svg"
+  },
+  {
+    "id": "gastronomia-09",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 9",
+    "src": "/ghibli/gastronomia-09.svg"
+  },
+  {
+    "id": "gastronomia-10",
+    "theme": "Gastronomia",
+    "title": "Cozinha aconchegante — Cena 10",
+    "src": "/ghibli/gastronomia-10.svg"
   }
 ]

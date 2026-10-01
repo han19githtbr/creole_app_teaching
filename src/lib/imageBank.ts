@@ -13,9 +13,10 @@ export interface BankImage {
   caption: string;
   /** Tema animado do estúdio (VIDEO_BACKGROUNDS) mais parecido — usado como fundo ambiente. */
   ambientTheme: string;
+  isPrimary: boolean;
 }
 
-export const IMAGE_BANK: BankImage[] = [
+const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary">[] = [
   { id: "tecnologia", theme: "Tecnologia", title: "Oficina tecnológica no campo", src: "/ghibli/tecnologia.svg", kreyol: "Teknoloji", caption: "Teknoloji ede nou aprann pi vit. Você já usa tecnologia para estudar Kreyòl?", ambientTheme: "tecnologia" },
   { id: "natureza", theme: "Natureza", title: "Árvore ancestral e prado florido", src: "/ghibli/natureza.svg", kreyol: "Lanati", caption: "Lanati (natureza) é linda em qualquer idioma. Que palavras você já sabe sobre ela?", ambientTheme: "natureza" },
   { id: "cultura", theme: "Cultura", title: "Festa na praça com bandeirolas", src: "/ghibli/cultura.svg", kreyol: "Kilti", caption: "Kilti ayisyen (cultura haitiana) vive nas festas, na música e nas cores da praça.", ambientTheme: "cultura" },
@@ -32,7 +33,21 @@ export const IMAGE_BANK: BankImage[] = [
   { id: "gastronomia", theme: "Gastronomia", title: "Cozinha aconchegante", src: "/ghibli/gastronomia.svg", kreyol: "Manje", caption: "Manje ayisyen (comida haitiana): que prato você quer aprender a pedir em Kreyòl?", ambientTheme: "gastronomia" },
 ];
 
-export const IMAGE_THEMES = IMAGE_BANK.map((i) => i.theme);
+export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
+  Array.from({ length: 10 }, (_, variantIndex) => {
+    const variant = variantIndex + 1;
+    const id = variant === 1 ? image.id : `${image.id}-${String(variant).padStart(2, "0")}`;
+    return {
+      ...image,
+      id,
+      title: variant === 1 ? image.title : `${image.title} — Cena ${variant}`,
+      src: `/ghibli/${id}.svg`,
+      isPrimary: variant === 1,
+    };
+  })
+);
+
+export const IMAGE_THEMES = IMAGE_THEMES_DATA.map((image) => image.theme);
 
 export function getBankImage(idOrSrc: string | null | undefined): BankImage | undefined {
   if (!idOrSrc) return undefined;

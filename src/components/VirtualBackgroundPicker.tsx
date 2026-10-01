@@ -92,7 +92,7 @@ export function VirtualBackgroundPicker({ value, onChange, maxHeightClass = "max
       <div>
         <SectionTitle>Ilustrações animadas (estilo aquarela)</SectionTitle>
         <div className={cn("grid gap-2", grid)}>
-          {IMAGE_BANK.map((img) => (
+          {IMAGE_BANK.filter((img) => img.isPrimary).map((img) => (
             <Tile
               key={img.id}
               selected={value === `image:${img.id}`}

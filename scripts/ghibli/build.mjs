@@ -25,13 +25,31 @@ const SCENES = [
 ];
 
 const manifest = [];
-SCENES.forEach((s, i) => {
-  const p = PAL[s.pal];
-  const r = rng(1000 + i * 77);
-  const body = s.fn(p, r);
-  const svg = wrap(p, rng(5 + i), body, { ...s.opts, title: s.title, desc: `Ilustração original em estilo aquarela de animação: ${s.title}.` });
-  fs.writeFileSync(path.join(OUT, `${s.id}.svg`), svg);
-  manifest.push({ id: s.id, theme: s.theme, title: s.title, src: `/ghibli/${s.id}.svg` });
+SCENES.forEach((s, sceneIndex) => {
+  for (let variant = 1; variant <= 10; variant++) {
+    const id = variant === 1 ? s.id : `${s.id}-${String(variant).padStart(2, "0")}`;
+    const title = variant === 1 ? s.title : `${s.title} — Cena ${variant}`;
+    const paletteName = variant === 1 || variant % 2 === 1
+      ? s.pal
+      : s.pal === "dia" ? "entardecer" : "dia";
+    const p = PAL[paletteName];
+    const r = rng(variant === 1 ? 1000 + sceneIndex * 77 : 1000 + sceneIndex * 77 + variant * 3413);
+    const body = s.fn(p, r);
+    const opts = variant === 1
+      ? s.opts
+      : {
+          ...s.opts,
+          sunX: (s.opts.sunX ?? 900) + ((sceneIndex + variant) % 5 - 2) * 52,
+          sunY: (s.opts.sunY ?? 190) + ((sceneIndex * variant) % 3 - 1) * 28,
+        };
+    const svg = wrap(p, rng(variant === 1 ? 5 + sceneIndex : 5 + sceneIndex + variant * 197), body, {
+      ...opts,
+      title,
+      desc: `Ilustração original em estilo aquarela de animação: ${title}.`,
+    });
+    fs.writeFileSync(path.join(OUT, `${id}.svg`), svg);
+    manifest.push({ id, theme: s.theme, title, src: `/ghibli/${id}.svg` });
+  }
 });
 fs.writeFileSync("manifest.json", JSON.stringify(manifest, null, 2));
 console.log("gerado:", manifest.length, "cenas em", OUT);

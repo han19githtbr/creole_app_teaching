@@ -4,6 +4,7 @@ import Post from "@/models/Post";
 import User from "@/models/User";
 import { requireAdmin, requireUser } from "@/lib/apiAuth";
 import { isAllowedPostImageUrl } from "@/lib/imageBank";
+import { isValidImageQuiz, normalizeImageQuiz } from "@/lib/imageQuiz";
 
 export async function GET() {
   const session = await requireUser();
@@ -39,6 +40,7 @@ export async function POST(req: NextRequest) {
     content = "",
     imageUrl = "",
     imageAlt = "",
+    imageQuiz,
     isPermanent = true,
     expiresAt = null,
     isPublished = true,
@@ -50,6 +52,9 @@ export async function POST(req: NextRequest) {
   }
   if (imageUrl && !isAllowedPostImageUrl(imageUrl)) {
     return NextResponse.json({ error: "Imagem inválida." }, { status: 400 });
+  }
+  if (imageQuiz != null && !isValidImageQuiz(imageQuiz)) {
+    return NextResponse.json({ error: "Configure dez opções e marque ao menos uma resposta correta para a imagem." }, { status: 400 });
   }
   if (!String(content).trim() && !imageUrl) {
     return NextResponse.json(
@@ -68,6 +73,7 @@ export async function POST(req: NextRequest) {
     content,
     imageUrl: imageUrl || "",
     imageAlt: imageUrl ? String(imageAlt).slice(0, 200) : "",
+    imageQuiz: imageUrl && imageQuiz ? normalizeImageQuiz(imageQuiz) : undefined,
     author: author._id,
     isPermanent,
     expiresAt: isPermanent ? null : expiresAt,

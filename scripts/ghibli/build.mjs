@@ -42,9 +42,10 @@ SCENES.forEach((s, sceneIndex) => {
     const svg = wrap(p, rng(variant === 1 ? 5 + sceneIndex : 5 + sceneIndex + variant * 197), body, {
       ...opts,
       title,
-      desc: `Ilustração original em estilo aquarela de animação: ${title}.`,
+      desc: `Ilustração original de animação 2D com luz cinematográfica e elementos reconhecíveis: ${title}.`,
     });
-    fs.writeFileSync(path.join(OUT, `${id}.svg`), svg);
+    const staticSvg = svg.replace(/<animate(?:Transform)?\b[^>]*\/>/g, "");
+    fs.writeFileSync(path.join(OUT, `${id}.svg`), staticSvg);
     manifest.push({ id, theme: s.theme, title, src: `/ghibli/${id}.svg` });
   }
 });

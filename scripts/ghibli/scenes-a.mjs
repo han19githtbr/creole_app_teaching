@@ -1,4 +1,4 @@
-import { W, H, f, ridge, tree, pine, house, bird, sparkles, flowers, butterfly, sway, bob, spin, pulse, drift, steamPath } from "./lib.mjs";
+import { W, f, ridge, tree, pine, house, bird, sparkles, flowers, butterfly, sway, bob, spin, pulse } from "./lib.mjs";
 
 const hills = (p, r, far = 470, mid = 560, near = 650) => `
 <path d="${ridge(r, far, 40)}" fill="${p.hillFar}"/>
@@ -49,12 +49,7 @@ export function natureza(p, r) {
   return hills(p, r, 480, 570, 650) +
     `<g transform="translate(0,0)"><ellipse cx="820" cy="700" rx="230" ry="46" fill="url(#gWater)"/><ellipse cx="820" cy="694" rx="200" ry="30" fill="#ffffff" opacity=".18"><animate attributeName="rx" values="190;214;190" dur="5s" repeatCount="indefinite"/></ellipse></g>` +
     front(p, r, 730) +
-    // árvore grande
-    `<g transform="translate(290,720)"><path d="M-40,0 Q-26,-90 -14,-190 L22,-190 Q36,-90 52,0 Z" fill="${p.wood}"/><path d="M-6,-30 Q30,-100 22,-190 L10,-190 Q18,-100 -6,-30Z" fill="${p.woodLight}" opacity=".35"/>
-<g>${sway(1.4, 6, 0, -190)}
-<circle cx="-130" cy="-250" r="86" fill="${p.leafDark}"/><circle cx="150" cy="-262" r="92" fill="${p.leafDark}"/>
-<circle cx="0" cy="-330" r="118" fill="${p.leaf}"/><circle cx="-110" cy="-290" r="78" fill="${p.leaf}"/><circle cx="130" cy="-300" r="82" fill="${p.leaf}"/>
-<circle cx="-20" cy="-370" r="70" fill="${p.leafLight}" opacity=".85"/><circle cx="70" cy="-340" r="46" fill="${p.leafLight}" opacity=".7"/><circle cx="-90" cy="-330" r="40" fill="${p.leafLight}" opacity=".6"/></g></g>` +
+    tree(290, 720, 2.4, p, 1.4) +
     pine(560, 690, 0.9, p) + pine(1010, 672, 0.7, p) +
     flowers(r, 70, p, 705, 790) +
     butterfly(520, 560, 1.2, 6, 0, p.accent1) + butterfly(700, 500, 1.0, 7.5, 2, p.accent2) + butterfly(880, 590, 0.9, 5.5, 4, "#ffffff") +

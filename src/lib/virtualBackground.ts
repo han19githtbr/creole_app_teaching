@@ -39,6 +39,31 @@ export const VIRTUAL_BG_STORAGE_KEY = "kreyol:virtual-bg";
 /* ------------------------------------------------------------------ */
 
 type MaskImage = HTMLCanvasElement | HTMLImageElement | ImageBitmap;
+type SegmenterConstructor = new (config?: {
+  locateFile?: (file: string, prefix?: string) => string;
+}) => SelfieSegmentationClass;
+type MediaPipeWindow = Window & { SelfieSegmentation?: SegmenterConstructor };
+
+let mediaPipeScriptPromise: Promise<void> | null = null;
+
+function loadMediaPipeScript() {
+  if ((window as MediaPipeWindow).SelfieSegmentation) return Promise.resolve();
+  if (!mediaPipeScriptPromise) {
+    mediaPipeScriptPromise = new Promise<void>((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "/mediapipe/selfie_segmentation.js";
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => {
+        mediaPipeScriptPromise = null;
+        script.remove();
+        reject(new Error("Não foi possível carregar o script local do MediaPipe."));
+      };
+      document.head.appendChild(script);
+    });
+  }
+  return mediaPipeScriptPromise;
+}
 
 export class PersonSegmenter {
   private seg: SelfieSegmentationClass | null = null;
@@ -48,17 +73,9 @@ export class PersonSegmenter {
   ready = false;
 
   async init() {
-    // O pacote do MediaPipe só define window.SelfieSegmentation como efeito
-    // colateral (não tem export ES de verdade) — por isso o import dinâmico.
-    await import("@mediapipe/selfie_segmentation");
+    await loadMediaPipeScript();
     if (this.closed) return;
-    const Ctor = (
-      window as typeof window & {
-        SelfieSegmentation?: new (config?: {
-          locateFile?: (file: string, prefix?: string) => string;
-        }) => SelfieSegmentationClass;
-      }
-    ).SelfieSegmentation;
+    const Ctor = (window as MediaPipeWindow).SelfieSegmentation;
     if (!Ctor) throw new Error("SelfieSegmentation não carregou.");
 
     const seg = new Ctor({

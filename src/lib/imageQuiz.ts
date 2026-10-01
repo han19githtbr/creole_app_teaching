@@ -1,3 +1,5 @@
+import imageSceneVariants from "./imageSceneVariants.json";
+
 export interface ImageQuizConfig {
   options: string[];
   answers: string[];
@@ -10,7 +12,7 @@ const THEME_QUIZZES: Record<string, ImageQuizConfig> = {
   Turismo: { options: ["bato", "lanmè", "balon", "fa", "tanbou", "òdinatè", "legliz", "pòm", "liv", "papiyon"], answers: ["bato", "lanmè", "balon", "fa"] },
   "Vida no interior": { options: ["kay", "pyebwa", "jaden", "kloti", "dròn", "tanbou", "legliz", "balon", "liv", "lanp"], answers: ["kay", "pyebwa", "jaden", "kloti"] },
   Dança: { options: ["dansè", "lanp", "riban", "flè", "òdinatè", "bato", "pòm", "fa", "liv", "kloti"], answers: ["dansè", "lanp", "riban", "flè"] },
-  Geografia: { options: ["mòn", "rivyè", "konpa", "drapo", "tanbou", "pòm", "legliz", "liv", "bato", "bouji"], answers: ["mòn", "rivyè", "konpa", "drapo"] },
+  Geografia: { options: ["mòn", "rivyè", "bousòl", "drapo", "tanbou", "pòm", "legliz", "liv", "bato", "bouji"], answers: ["mòn", "rivyè", "bousòl", "drapo"] },
   História: { options: ["fò", "drapo", "kanon", "flanbo", "òdinatè", "pòm", "bisiklèt", "balon", "chodyè", "papiyon"], answers: ["fò", "drapo", "kanon", "flanbo"] },
   Cinema: { options: ["sinema", "pòp-kòn", "zetwal", "pyebwa", "tanbou", "legliz", "bato", "kloti", "konpa", "bouji"], answers: ["sinema", "pòp-kòn", "zetwal", "pyebwa"] },
   Música: { options: ["gita", "tanbou", "nòt mizik", "opalè", "bato", "legliz", "pòm", "kloti", "fa", "rivyè"], answers: ["gita", "tanbou", "nòt mizik", "opalè"] },
@@ -20,7 +22,22 @@ const THEME_QUIZZES: Record<string, ImageQuizConfig> = {
   Gastronomia: { options: ["chodyè", "pen", "fwi", "piman", "dròn", "legliz", "bisiklèt", "konpa", "fa", "papiyon"], answers: ["chodyè", "pen", "fwi", "piman"] },
 };
 
-export function getDefaultImageQuiz(theme: string): ImageQuizConfig | undefined {
+const sceneData = imageSceneVariants as Record<string, {
+  options: string[];
+  labels: Record<string, string>;
+  scenes: { objects: string[] }[];
+}>;
+
+export function getDefaultImageQuiz(theme: string, imageId?: string): ImageQuizConfig | undefined {
+  const variant = Number(imageId?.match(/-(\d{2})$/)?.[1] ?? 1);
+  const themeData = sceneData[theme];
+  const scene = variant > 1 ? themeData?.scenes[variant - 2] : undefined;
+  if (scene && themeData) {
+    return {
+      options: themeData.options,
+      answers: scene.objects.map((object) => themeData.labels[object]),
+    };
+  }
   return THEME_QUIZZES[theme];
 }
 

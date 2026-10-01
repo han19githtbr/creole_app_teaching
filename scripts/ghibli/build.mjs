@@ -3,8 +3,10 @@ import path from "node:path";
 import { PAL, rng, wrap } from "./lib.mjs";
 import * as A from "./scenes-a.mjs";
 import * as B from "./scenes-b.mjs";
+import { renderSceneVariation } from "./scene-variations.mjs";
 
 const OUT = path.resolve("../../public/ghibli");
+const VARIANTS = JSON.parse(fs.readFileSync(path.resolve("../../src/lib/imageSceneVariants.json"), "utf8"));
 fs.mkdirSync(OUT, { recursive: true });
 
 const SCENES = [
@@ -28,20 +30,15 @@ const manifest = [];
 SCENES.forEach((s, sceneIndex) => {
   for (let variant = 1; variant <= 10; variant++) {
     const id = variant === 1 ? s.id : `${s.id}-${String(variant).padStart(2, "0")}`;
-    const title = variant === 1 ? s.title : `${s.title} — Cena ${variant}`;
-    const paletteName = variant === 1 || variant % 2 === 1
-      ? s.pal
-      : s.pal === "dia" ? "entardecer" : "dia";
+    const plan = variant === 1 ? null : VARIANTS[s.theme].scenes[variant - 2];
+    const title = plan?.title ?? s.title;
+    const paletteName = plan?.palette === "night" ? "entardecer" : plan?.palette ?? s.pal;
     const p = PAL[paletteName];
-    const r = rng(variant === 1 ? 1000 + sceneIndex * 77 : 1000 + sceneIndex * 77 + variant * 3413);
-    const body = s.fn(p, r);
-    const opts = variant === 1
-      ? s.opts
-      : {
-          ...s.opts,
-          sunX: (s.opts.sunX ?? 900) + ((sceneIndex + variant) % 5 - 2) * 52,
-          sunY: (s.opts.sunY ?? 190) + ((sceneIndex * variant) % 3 - 1) * 28,
-        };
+    const sceneRandom = rng(variant === 1 ? 1000 + sceneIndex * 77 : 1000 + sceneIndex * 77 + variant * 3413);
+    const body = plan ? renderSceneVariation(plan, p, sceneRandom, variant - 2) : s.fn(p, sceneRandom);
+    const opts = plan
+      ? { sunX: (sceneIndex * 137 + variant * 83) % 1050 + 75, sunY: p.night ? 390 : 145 + (variant % 3) * 30, clouds: variant % 3 !== 0 }
+      : s.opts;
     const svg = wrap(p, rng(variant === 1 ? 5 + sceneIndex : 5 + sceneIndex + variant * 197), body, {
       ...opts,
       title,

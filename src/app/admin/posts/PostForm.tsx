@@ -40,7 +40,8 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
   const [expiresAt, setExpiresAt] = useState(initial?.expiresAt?.slice(0, 10) ?? "");
   const [isPublished, setIsPublished] = useState(initial?.isPublished ?? true);
   const [acceptsAnswers, setAcceptsAnswers] = useState(initial?.acceptsAnswers ?? true);
-  const initialQuiz = initial?.imageQuiz ?? getDefaultImageQuiz(getBankImage(initial?.imageUrl)?.theme ?? "");
+  const initialBankImage = getBankImage(initial?.imageUrl);
+  const initialQuiz = initial?.imageQuiz ?? getDefaultImageQuiz(initialBankImage?.theme ?? "", initialBankImage?.id);
   const [quizEnabled, setQuizEnabled] = useState(Boolean(initialQuiz));
   const [quizOptions, setQuizOptions] = useState<string[]>(initialQuiz?.options ?? Array(10).fill(""));
   const [quizAnswers, setQuizAnswers] = useState<string[]>(initialQuiz?.answers ?? []);
@@ -61,7 +62,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
     }
     setImageUrl(img.src);
     setImageAlt(img.title);
-    const quiz = getDefaultImageQuiz(img.theme);
+    const quiz = getDefaultImageQuiz(img.theme, img.id);
     setQuizOptions(quiz?.options ?? Array(10).fill(""));
     setQuizAnswers(quiz?.answers ?? []);
     setQuizEnabled(Boolean(quiz));

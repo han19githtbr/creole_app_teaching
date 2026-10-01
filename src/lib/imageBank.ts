@@ -1,6 +1,7 @@
 // Banco de imagens em estilo aquarela de animação (ilustrações ORIGINAIS geradas
 // por scripts/ghibli/build.mjs — arquivos SVG em /public/ghibli, com animação
 // embutida: nuvens, folhas, chamas, ondas, notas musicais etc.).
+import generatedImages from "../../scripts/ghibli/manifest.json";
 
 export interface BankImage {
   id: string;
@@ -33,6 +34,8 @@ const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary">[] = [
   { id: "gastronomia", theme: "Gastronomia", title: "Cozinha aconchegante", src: "/ghibli/gastronomia.svg", kreyol: "Manje", caption: "Manje ayisyen (comida haitiana): que prato você quer aprender a pedir em Kreyòl?", ambientTheme: "gastronomia" },
 ];
 
+const generatedTitles = new Map(generatedImages.map((image) => [image.id, image.title]));
+
 export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
   Array.from({ length: 10 }, (_, variantIndex) => {
     const variant = variantIndex + 1;
@@ -40,7 +43,7 @@ export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
     return {
       ...image,
       id,
-      title: variant === 1 ? image.title : `${image.title} — Cena ${variant}`,
+      title: variant === 1 ? image.title : generatedTitles.get(id) ?? `${image.title} — Cena ${variant}`,
       src: `/ghibli/${id}.svg`,
       isPrimary: variant === 1,
     };

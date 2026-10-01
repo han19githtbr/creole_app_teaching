@@ -12,7 +12,7 @@ async function getQuiz(postId?: string, imageId?: string, isAdmin = false) {
     if (!post?.imageUrl) return null;
     if (!isAdmin && (!post.isPublished || (!post.isPermanent && post.expiresAt && post.expiresAt < new Date()))) return null;
     const image = getBankImage(post.imageUrl);
-    const quiz = post.imageQuiz ?? (image ? getDefaultImageQuiz(image.theme) : undefined);
+    const quiz = post.imageQuiz ?? (image ? getDefaultImageQuiz(image.theme, image.id) : undefined);
     if (!quiz) return null;
     return {
       id: String(post._id),
@@ -28,7 +28,7 @@ async function getQuiz(postId?: string, imageId?: string, isAdmin = false) {
 
   const image = getBankImage(imageId);
   if (!image) return null;
-  const quiz = getDefaultImageQuiz(image.theme);
+  const quiz = getDefaultImageQuiz(image.theme, image.id);
   if (!quiz) return null;
   return {
     id: image.id,
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Desafio não encontrado." }, { status: 404 });
     }
     const image = getBankImage(post.imageUrl);
-    const quiz = post.imageQuiz ?? (image ? getDefaultImageQuiz(image.theme) : undefined);
+    const quiz = post.imageQuiz ?? (image ? getDefaultImageQuiz(image.theme, image.id) : undefined);
     if (!quiz) return NextResponse.json({ error: "Este desafio ainda não foi configurado." }, { status: 404 });
     const expected = new Set<string>((quiz.answers as string[]).map((word) => word.toLocaleLowerCase()));
     const selectedWords = body.selected as string[];
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
   }
 
   const image = getBankImage(body.imageId);
-  const quiz = image ? getDefaultImageQuiz(image.theme) : undefined;
+  const quiz = image ? getDefaultImageQuiz(image.theme, image.id) : undefined;
   if (!quiz) return NextResponse.json({ error: "Desafio não encontrado." }, { status: 404 });
   const expected = new Set(quiz.answers.map((word) => word.toLocaleLowerCase()));
   const selected = new Set((body.selected as string[]).map((word) => word.toLocaleLowerCase()));

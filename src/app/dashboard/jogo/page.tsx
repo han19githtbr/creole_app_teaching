@@ -22,7 +22,7 @@ export default async function ImageQuizPage({
   const requestedImage = imageId ? getBankImage(imageId) : undefined;
   if (imageId && !requestedImage) notFound();
   const randomImage = requestedImage ?? IMAGE_BANK[randomInt(IMAGE_BANK.length)];
-  const randomQuiz = getDefaultImageQuiz(randomImage.theme)!;
+  const randomQuiz = getDefaultImageQuiz(randomImage.theme, randomImage.id)!;
   let challenge: ImageQuizChallenge = {
     id: randomImage.id,
     theme: randomImage.theme,
@@ -41,7 +41,7 @@ export default async function ImageQuizPage({
     if (!post.imageUrl) notFound();
 
     const image = getBankImage(post.imageUrl);
-    const quiz = post.imageQuiz ?? (image ? getDefaultImageQuiz(image.theme) : undefined);
+    const quiz = post.imageQuiz ?? (image ? getDefaultImageQuiz(image.theme, image.id) : undefined);
     if (!quiz || quiz.options.length !== 10 || !quiz.answers.length) notFound();
     challenge = {
       id: String(post._id),

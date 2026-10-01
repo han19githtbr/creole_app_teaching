@@ -1,0 +1,212 @@
+{
+  "Tecnologia": {
+    "options": ["òdinatè", "robo", "dròn", "moulen van", "satelit", "panno solè", "telefòn", "laboratwa", "ekran", "antèn"],
+    "labels": { "computer": "òdinatè", "robot": "robo", "drone": "dròn", "turbine": "moulen van", "satellite": "satelit", "solar": "panno solè", "phone": "telefòn", "lab": "laboratwa", "monitor": "ekran", "antenna": "antèn" },
+    "scenes": [
+      { "title": "Laboratório de robótica", "setting": "lab", "palette": "dia", "objects": ["robot", "monitor", "lab", "phone"] },
+      { "title": "Parque de energia solar", "setting": "hill", "palette": "entardecer", "objects": ["solar", "turbine", "computer", "drone"] },
+      { "title": "Estação de satélites", "setting": "mountain", "palette": "dia", "objects": ["satellite", "antenna", "monitor", "solar"] },
+      { "title": "Oficina de pequenos robôs", "setting": "workshop", "palette": "entardecer", "objects": ["robot", "computer", "phone", "turbine"] },
+      { "title": "Satélite em órbita", "setting": "launch", "palette": "night", "objects": ["satellite", "antenna", "monitor", "solar"] },
+      { "title": "Centro de controle digital", "setting": "control", "palette": "night", "objects": ["monitor", "computer", "phone", "robot"] },
+      { "title": "Drones sobre a cidade", "setting": "town", "palette": "dia", "objects": ["drone", "antenna", "phone", "solar"] },
+      { "title": "Invenções na escola", "setting": "classroom", "palette": "dia", "objects": ["computer", "robot", "lab", "monitor"] },
+      { "title": "Moinho e sensores no campo", "setting": "farmland", "palette": "entardecer", "objects": ["turbine", "drone", "solar", "phone"] }
+    ]
+  },
+  "Natureza": {
+    "options": ["pyebwa", "flè", "papiyon", "zwazo", "mòn", "rivyè", "kaskad", "lanmè", "palmis", "tòti"],
+    "labels": { "tree": "pyebwa", "flower": "flè", "butterfly": "papiyon", "bird": "zwazo", "mountain": "mòn", "river": "rivyè", "waterfall": "kaskad", "ocean": "lanmè", "palm": "palmis", "turtle": "tòti" },
+    "scenes": [
+      { "title": "Cachoeira na floresta", "setting": "waterfall", "palette": "dia", "objects": ["waterfall", "palm", "bird", "flower"] },
+      { "title": "Praia das tartarugas", "setting": "beach", "palette": "entardecer", "objects": ["turtle", "ocean", "palm", "flower"] },
+      { "title": "Trilha entre montanhas", "setting": "mountain", "palette": "dia", "objects": ["mountain", "river", "bird", "tree"] },
+      { "title": "Jardim de borboletas", "setting": "garden", "palette": "dia", "objects": ["butterfly", "flower", "tree", "bird"] },
+      { "title": "Rio entre palmeiras", "setting": "river", "palette": "entardecer", "objects": ["river", "palm", "turtle", "flower"] },
+      { "title": "Clareira florida", "setting": "meadow", "palette": "dia", "objects": ["flower", "butterfly", "mountain", "tree"] },
+      { "title": "Costa dos pássaros", "setting": "coast", "palette": "dia", "objects": ["ocean", "bird", "palm", "turtle"] },
+      { "title": "Vale verde depois da chuva", "setting": "forest", "palette": "entardecer", "objects": ["tree", "waterfall", "flower", "mountain"] },
+      { "title": "Ilha tropical", "setting": "island", "palette": "dia", "objects": ["turtle", "palm", "ocean", "bird"] }
+    ]
+  },
+  "Cultura": {
+    "options": ["tanbou", "drapo", "lanp", "kay", "mask", "machann", "dansè", "manje", "rad", "parapli"],
+    "labels": { "drum": "tanbou", "flag": "drapo", "lantern": "lanp", "house": "kay", "mask": "mask", "vendor": "machann", "dancer": "dansè", "food": "manje", "clothing": "rad", "parasol": "parapli" },
+    "scenes": [
+      { "title": "Karnaval na praça", "setting": "festival", "palette": "entardecer", "objects": ["mask", "dancer", "drum", "flag"] },
+      { "title": "Mercado de artesanato", "setting": "market", "palette": "dia", "objects": ["vendor", "clothing", "food", "parasol"] },
+      { "title": "Festa das lanternas", "setting": "square", "palette": "night", "objects": ["lantern", "flag", "house", "drum"] },
+      { "title": "Música no vilarejo", "setting": "village", "palette": "entardecer", "objects": ["drum", "house", "dancer", "food"] },
+      { "title": "Desfile de roupas tradicionais", "setting": "parade", "palette": "dia", "objects": ["clothing", "flag", "dancer", "lantern"] },
+      { "title": "Barracas de comida haitiana", "setting": "market", "palette": "entardecer", "objects": ["food", "vendor", "parasol", "house"] },
+      { "title": "Máscaras e tambores", "setting": "stage", "palette": "night", "objects": ["mask", "drum", "lantern", "dancer"] },
+      { "title": "Celebração sob as bandeiras", "setting": "festival", "palette": "dia", "objects": ["flag", "food", "vendor", "house"] },
+      { "title": "Dança no pátio", "setting": "courtyard", "palette": "entardecer", "objects": ["dancer", "drum", "clothing", "parasol"] }
+    ]
+  },
+  "Turismo": {
+    "options": ["bato", "lanmè", "balon", "fa", "avyon", "valiz", "kat", "otèl", "mòn", "plaj"],
+    "labels": { "boat": "bato", "ocean": "lanmè", "balloon": "balon", "lighthouse": "fa", "airplane": "avyon", "suitcase": "valiz", "map": "kat", "hotel": "otèl", "mountain": "mòn", "beach": "plaj" },
+    "scenes": [
+      { "title": "Porto de veleiros", "setting": "harbor", "palette": "dia", "objects": ["boat", "ocean", "lighthouse", "map"] },
+      { "title": "Viagem de avião", "setting": "airport", "palette": "entardecer", "objects": ["airplane", "suitcase", "map", "hotel"] },
+      { "title": "Passeio de balão", "setting": "valley", "palette": "dia", "objects": ["balloon", "mountain", "map", "hotel"] },
+      { "title": "Travessia costeira", "setting": "coast", "palette": "entardecer", "objects": ["suitcase", "ocean", "boat", "beach"] },
+      { "title": "Farol da ilha", "setting": "island", "palette": "night", "objects": ["lighthouse", "boat", "ocean", "hotel"] },
+      { "title": "Chegada ao hotel", "setting": "town", "palette": "dia", "objects": ["hotel", "suitcase", "map", "airplane"] },
+      { "title": "Descanso na praia", "setting": "beach", "palette": "dia", "objects": ["beach", "ocean", "boat", "balloon"] },
+      { "title": "Roteiro pelas montanhas", "setting": "mountain", "palette": "entardecer", "objects": ["map", "suitcase", "hotel", "mountain"] },
+      { "title": "Travessia pelo porto", "setting": "harbor", "palette": "night", "objects": ["boat", "lighthouse", "suitcase", "ocean"] }
+    ]
+  },
+  "Vida no interior": {
+    "options": ["kay", "pyebwa", "jaden", "kloti", "fèm", "ble", "kabrit", "pi", "poul", "traktè"],
+    "labels": { "house": "kay", "tree": "pyebwa", "garden": "jaden", "fence": "kloti", "farm": "fèm", "wheat": "ble", "goat": "kabrit", "well": "pi", "chicken": "poul", "tractor": "traktè" },
+    "scenes": [
+      { "title": "Colheita no campo", "setting": "farmland", "palette": "dia", "objects": ["wheat", "tractor", "farm", "tree"] },
+      { "title": "Horta da fazenda", "setting": "garden", "palette": "entardecer", "objects": ["garden", "farm", "fence", "chicken"] },
+      { "title": "Cabras perto do poço", "setting": "meadow", "palette": "dia", "objects": ["goat", "well", "tree", "fence"] },
+      { "title": "Casa entre árvores", "setting": "village", "palette": "entardecer", "objects": ["house", "tree", "garden", "chicken"] },
+      { "title": "Trator na plantação", "setting": "farmland", "palette": "dia", "objects": ["tractor", "wheat", "fence", "goat"] },
+      { "title": "Manhã no galinheiro", "setting": "farmyard", "palette": "dia", "objects": ["chicken", "farm", "well", "tree"] },
+      { "title": "Caminho da roça", "setting": "hill", "palette": "entardecer", "objects": ["house", "wheat", "goat", "fence"] },
+      { "title": "Jardim com poço antigo", "setting": "garden", "palette": "dia", "objects": ["garden", "well", "house", "tree"] },
+      { "title": "Fazenda ao pôr do sol", "setting": "farmyard", "palette": "entardecer", "objects": ["farm", "tractor", "chicken", "wheat"] }
+    ]
+  },
+  "Dança": {
+    "options": ["dansè", "lanp", "riban", "flè", "tanbou", "rad", "mizik", "zetwal", "fan", "sèn"],
+    "labels": { "dancer": "dansè", "lantern": "lanp", "ribbon": "riban", "flower": "flè", "drum": "tanbou", "costume": "rad", "music": "mizik", "star": "zetwal", "fan": "fan", "stage": "sèn" },
+    "scenes": [
+      { "title": "Baile sob as lanternas", "setting": "stage", "palette": "night", "objects": ["dancer", "lantern", "ribbon", "drum"] },
+      { "title": "Ensaio no salão", "setting": "studio", "palette": "dia", "objects": ["dancer", "music", "costume", "stage"] },
+      { "title": "Dança das fitas", "setting": "festival", "palette": "entardecer", "objects": ["ribbon", "flower", "dancer", "star"] },
+      { "title": "Ritmo dos tambores", "setting": "courtyard", "palette": "night", "objects": ["drum", "dancer", "lantern", "music"] },
+      { "title": "Apresentação colorida", "setting": "stage", "palette": "dia", "objects": ["costume", "stage", "fan", "flower"] },
+      { "title": "Festa no jardim", "setting": "garden", "palette": "entardecer", "objects": ["dancer", "flower", "lantern", "ribbon"] },
+      { "title": "Dança ao ar livre", "setting": "square", "palette": "dia", "objects": ["stage", "music", "star", "dancer"] },
+      { "title": "Noite de konpa", "setting": "festival", "palette": "night", "objects": ["drum", "fan", "costume", "lantern"] },
+      { "title": "Festival de dança", "setting": "parade", "palette": "entardecer", "objects": ["dancer", "ribbon", "flower", "music"] }
+    ]
+  },
+  "Geografia": {
+    "options": ["mòn", "rivyè", "bousòl", "drapo", "zile", "vòlkan", "pon", "forè", "lanmè", "kat"],
+    "labels": { "mountain": "mòn", "river": "rivyè", "compass": "bousòl", "flag": "drapo", "island": "zile", "volcano": "vòlkan", "bridge": "pon", "forest": "forè", "ocean": "lanmè", "map": "kat" },
+    "scenes": [
+      { "title": "Vulcão na ilha", "setting": "island", "palette": "entardecer", "objects": ["volcano", "island", "ocean", "flag"] },
+      { "title": "Rio e ponte de pedra", "setting": "river", "palette": "dia", "objects": ["river", "bridge", "mountain", "map"] },
+      { "title": "Exploração da floresta", "setting": "forest", "palette": "entardecer", "objects": ["forest", "compass", "river", "flag"] },
+      { "title": "Mapa das montanhas", "setting": "mountain", "palette": "dia", "objects": ["mountain", "map", "compass", "river"] },
+      { "title": "Costa e arquipélago", "setting": "coast", "palette": "dia", "objects": ["island", "ocean", "map", "flag"] },
+      { "title": "Travessia da garganta", "setting": "canyon", "palette": "entardecer", "objects": ["bridge", "river", "mountain", "compass"] },
+      { "title": "Mirante do vulcão", "setting": "volcano", "palette": "night", "objects": ["volcano", "mountain", "flag", "map"] },
+      { "title": "Nascente na floresta", "setting": "forest", "palette": "dia", "objects": ["river", "forest", "bridge", "ocean"] },
+      { "title": "Bússola para a ilha", "setting": "island", "palette": "entardecer", "objects": ["compass", "island", "mountain", "ocean"] }
+    ]
+  },
+  "História": {
+    "options": ["fò", "drapo", "kanon", "flanbo", "bato", "wòch", "chwal", "liv", "ansyen kay", "moniman"],
+    "labels": { "fortress": "fò", "flag": "drapo", "cannon": "kanon", "torch": "flanbo", "boat": "bato", "stone": "wòch", "horse": "chwal", "book": "liv", "oldhouse": "ansyen kay", "monument": "moniman" },
+    "scenes": [
+      { "title": "Escavação arqueológica", "setting": "ruins", "palette": "dia", "objects": ["stone", "book", "monument", "oldhouse"] },
+      { "title": "Caravela histórica", "setting": "harbor", "palette": "entardecer", "objects": ["boat", "flag", "stone", "torch"] },
+      { "title": "Portões da fortaleza", "setting": "ruins", "palette": "night", "objects": ["fortress", "torch", "cannon", "flag"] },
+      { "title": "Cavaleiros no castelo", "setting": "castle", "palette": "dia", "objects": ["horse", "fortress", "flag", "stone"] },
+      { "title": "Monumento da praça", "setting": "square", "palette": "entardecer", "objects": ["monument", "flag", "book", "oldhouse"] },
+      { "title": "Biblioteca antiga", "setting": "library", "palette": "night", "objects": ["book", "torch", "stone", "monument"] },
+      { "title": "Muralhas e canhões", "setting": "castle", "palette": "dia", "objects": ["cannon", "fortress", "horse", "flag"] },
+      { "title": "Ruínas de pedra", "setting": "ruins", "palette": "entardecer", "objects": ["stone", "oldhouse", "torch", "book"] },
+      { "title": "Praça dos heróis", "setting": "square", "palette": "dia", "objects": ["monument", "horse", "flag", "fortress"] }
+    ]
+  },
+  "Cinema": {
+    "options": ["sinema", "pòp-kòn", "zetwal", "pyebwa", "kamera", "projèktè", "tikè", "ekran", "chèz", "lanp"],
+    "labels": { "cinema": "sinema", "popcorn": "pòp-kòn", "star": "zetwal", "tree": "pyebwa", "camera": "kamera", "projector": "projèktè", "ticket": "tikè", "screen": "ekran", "chair": "chèz", "lantern": "lanp" },
+    "scenes": [
+      { "title": "Cinema ao ar livre", "setting": "openCinema", "palette": "entardecer", "objects": ["screen", "chair", "tree", "star"] },
+      { "title": "Cabine de projeção", "setting": "studio", "palette": "night", "objects": ["projector", "camera", "screen", "lantern"] },
+      { "title": "Noite de estreia", "setting": "cinema", "palette": "entardecer", "objects": ["cinema", "ticket", "star", "popcorn"] },
+      { "title": "Filmagem no bosque", "setting": "forest", "palette": "dia", "objects": ["camera", "tree", "chair", "star"] },
+      { "title": "Sala de cinema clássica", "setting": "cinema", "palette": "night", "objects": ["screen", "chair", "popcorn", "lantern"] },
+      { "title": "Festival de curtas", "setting": "festival", "palette": "entardecer", "objects": ["ticket", "camera", "star", "tree"] },
+      { "title": "Projetor sob as estrelas", "setting": "openCinema", "palette": "night", "objects": ["projector", "screen", "star", "chair"] },
+      { "title": "Bilheteria do cinema", "setting": "town", "palette": "dia", "objects": ["cinema", "ticket", "lantern", "popcorn"] },
+      { "title": "Estúdio de gravação", "setting": "studio", "palette": "entardecer", "objects": ["camera", "projector", "screen", "chair"] }
+    ]
+  },
+  "Música": {
+    "options": ["gita", "tanbou", "nòt mizik", "opalè", "dansè", "mikwofòn", "piano", "klavye", "kas", "limyè"],
+    "labels": { "guitar": "gita", "drum": "tanbou", "note": "nòt mizik", "speaker": "opalè", "dancer": "dansè", "mic": "mikwofòn", "piano": "piano", "keyboard": "klavye", "headphones": "kas", "light": "limyè" },
+    "scenes": [
+      { "title": "Concerto na praça", "setting": "stage", "palette": "entardecer", "objects": ["guitar", "drum", "speaker", "note"] },
+      { "title": "Estúdio de gravação musical", "setting": "studio", "palette": "night", "objects": ["mic", "headphones", "keyboard", "light"] },
+      { "title": "Piano ao entardecer", "setting": "concertHall", "palette": "entardecer", "objects": ["piano", "note", "light", "speaker"] },
+      { "title": "Banda de rua", "setting": "square", "palette": "dia", "objects": ["drum", "guitar", "dancer", "note"] },
+      { "title": "Palco de konpa", "setting": "stage", "palette": "night", "objects": ["mic", "speaker", "dancer", "drum"] },
+      { "title": "Aula de teclado", "setting": "classroom", "palette": "dia", "objects": ["keyboard", "piano", "headphones", "light"] },
+      { "title": "Música no jardim", "setting": "garden", "palette": "entardecer", "objects": ["guitar", "dancer", "speaker", "note"] },
+      { "title": "Show de luzes e som", "setting": "stage", "palette": "night", "objects": ["light", "speaker", "mic", "note"] },
+      { "title": "Ensaio da banda", "setting": "studio", "palette": "dia", "objects": ["guitar", "drum", "keyboard", "headphones"] }
+    ]
+  },
+  "Lazeres": {
+    "options": ["kap", "bisiklèt", "pyebwa", "dra", "boul", "balanse", "piknik", "kanna", "flè", "liv"],
+    "labels": { "kite": "kap", "bike": "bisiklèt", "tree": "pyebwa", "blanket": "dra", "ball": "boul", "swing": "balanse", "picnic": "piknik", "duck": "kanna", "flower": "flè", "book": "liv" },
+    "scenes": [
+      { "title": "Piquenique no parque", "setting": "park", "palette": "dia", "objects": ["blanket", "picnic", "tree", "flower"] },
+      { "title": "Pipas no campo", "setting": "meadow", "palette": "entardecer", "objects": ["kite", "tree", "ball", "flower"] },
+      { "title": "Passeio de bicicleta", "setting": "park", "palette": "dia", "objects": ["bike", "tree", "book", "flower"] },
+      { "title": "Tarde no lago", "setting": "lake", "palette": "entardecer", "objects": ["duck", "blanket", "book", "tree"] },
+      { "title": "Balanço no jardim", "setting": "garden", "palette": "dia", "objects": ["swing", "flower", "tree", "ball"] },
+      { "title": "Jogos ao ar livre", "setting": "park", "palette": "entardecer", "objects": ["ball", "picnic", "kite", "blanket"] },
+      { "title": "Leitura sob a árvore", "setting": "grove", "palette": "dia", "objects": ["book", "tree", "blanket", "duck"] },
+      { "title": "Passeio entre flores", "setting": "meadow", "palette": "entardecer", "objects": ["bike", "flower", "kite", "tree"] },
+      { "title": "Domingo no parque", "setting": "park", "palette": "dia", "objects": ["swing", "picnic", "duck", "ball"] }
+    ]
+  },
+  "Estoicismo": {
+    "options": ["kolòn", "liv", "pye oliv", "moun saj", "lanp", "pòtay", "chemen", "estati", "krich", "woulo"],
+    "labels": { "column": "kolòn", "book": "liv", "olive": "pye oliv", "sage": "moun saj", "lamp": "lanp", "gate": "pòtay", "path": "chemen", "statue": "estati", "jar": "krich", "scroll": "woulo" },
+    "scenes": [
+      { "title": "Pórtico entre oliveiras", "setting": "columns", "palette": "dia", "objects": ["column", "olive", "book", "sage"] },
+      { "title": "Estudo à luz da lamparina", "setting": "library", "palette": "night", "objects": ["lamp", "scroll", "book", "jar"] },
+      { "title": "Jardim da reflexão", "setting": "grove", "palette": "entardecer", "objects": ["sage", "olive", "path", "statue"] },
+      { "title": "Portão do templo antigo", "setting": "columns", "palette": "dia", "objects": ["gate", "column", "jar", "olive"] },
+      { "title": "Leitura no pátio", "setting": "courtyard", "palette": "entardecer", "objects": ["book", "sage", "lamp", "path"] },
+      { "title": "Estátua entre colunas", "setting": "ruins", "palette": "dia", "objects": ["statue", "column", "scroll", "olive"] },
+      { "title": "Caminho da sabedoria", "setting": "hill", "palette": "entardecer", "objects": ["path", "sage", "olive", "jar"] },
+      { "title": "Biblioteca serena", "setting": "library", "palette": "dia", "objects": ["book", "scroll", "column", "lamp"] },
+      { "title": "Pátio das meditações", "setting": "courtyard", "palette": "night", "objects": ["sage", "statue", "gate", "lamp"] }
+    ]
+  },
+  "Religião": {
+    "options": ["legliz", "bouji", "pijon", "kwa", "liv", "vitral", "klòch", "chèz", "flè", "limyè"],
+    "labels": { "church": "legliz", "candle": "bouji", "dove": "pijon", "cross": "kwa", "book": "liv", "window": "vitral", "bell": "klòch", "chair": "chèz", "flower": "flè", "light": "limyè" },
+    "scenes": [
+      { "title": "Capela na montanha", "setting": "chapel", "palette": "dia", "objects": ["church", "cross", "window", "flower"] },
+      { "title": "Velas ao anoitecer", "setting": "chapel", "palette": "night", "objects": ["candle", "book", "light", "chair"] },
+      { "title": "Pomba sobre o jardim", "setting": "garden", "palette": "entardecer", "objects": ["dove", "flower", "church", "light"] },
+      { "title": "Sinos da igreja", "setting": "village", "palette": "dia", "objects": ["bell", "church", "cross", "window"] },
+      { "title": "Interior da capela", "setting": "chapelInterior", "palette": "entardecer", "objects": ["chair", "candle", "book", "window"] },
+      { "title": "Caminho de flores", "setting": "chapel", "palette": "dia", "objects": ["flower", "cross", "dove", "church"] },
+      { "title": "Vitral iluminado", "setting": "chapelInterior", "palette": "night", "objects": ["window", "light", "candle", "book"] },
+      { "title": "Pequena igreja da vila", "setting": "village", "palette": "entardecer", "objects": ["church", "bell", "chair", "flower"] },
+      { "title": "Celebração ao ar livre", "setting": "square", "palette": "dia", "objects": ["dove", "book", "cross", "candle"] }
+    ]
+  },
+  "Gastronomia": {
+    "options": ["chodyè", "pen", "fwi", "piman", "legim", "tab", "asyèt", "kouto", "fouchèt", "boutèy"],
+    "labels": { "pot": "chodyè", "bread": "pen", "fruit": "fwi", "pepper": "piman", "vegetable": "legim", "table": "tab", "plate": "asyèt", "knife": "kouto", "fork": "fouchèt", "bottle": "boutèy" },
+    "scenes": [
+      { "title": "Mercado de frutas", "setting": "market", "palette": "dia", "objects": ["fruit", "vegetable", "pepper", "table"] },
+      { "title": "Panela no fogão", "setting": "kitchen", "palette": "entardecer", "objects": ["pot", "vegetable", "table", "bottle"] },
+      { "title": "Mesa posta para o jantar", "setting": "dining", "palette": "night", "objects": ["table", "plate", "knife", "fork"] },
+      { "title": "Pães recém-assados", "setting": "bakery", "palette": "dia", "objects": ["bread", "table", "fruit", "bottle"] },
+      { "title": "Colheita de pimentas", "setting": "garden", "palette": "entardecer", "objects": ["pepper", "vegetable", "fruit", "table"] },
+      { "title": "Cozinha haitiana", "setting": "kitchen", "palette": "dia", "objects": ["pot", "pepper", "bread", "vegetable"] },
+      { "title": "Café da manhã no campo", "setting": "farmhouse", "palette": "dia", "objects": ["bread", "fruit", "plate", "table"] },
+      { "title": "Feira de legumes", "setting": "market", "palette": "entardecer", "objects": ["vegetable", "bottle", "pepper", "fruit"] },
+      { "title": "Banquete sob as lanternas", "setting": "dining", "palette": "night", "objects": ["plate", "fork", "pot", "bread"] }
+    ]
+  }
+}

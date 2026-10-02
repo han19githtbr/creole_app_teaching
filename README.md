@@ -64,6 +64,7 @@ O mesmo critério é usado nas listagens de lições, na página individual e no
 - Estúdio de gravação com câmera, microfone e opções de fundo virtual.
 - Publicação e agendamento de vídeos, likes e comentários.
 - XP, moedas Goud, níveis, conquistas e títulos honoríficos.
+- A evolução da gamificação é salva por conta e sincronizada entre dispositivos autenticados; mudanças feitas offline são mantidas no navegador e reenviadas quando a conexão volta.
 - Quiz de imagens com feedback visual e sonoro.
 - Nas postagens com imagem, as palavras e o gabarito podem ser ajustados no editor; corrigir a grafia de uma resposta marcada mantém essa palavra como correta.
 

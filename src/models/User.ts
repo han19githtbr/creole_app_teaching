@@ -1,4 +1,5 @@
 import mongoose, { Schema, models, model, type Document } from "mongoose";
+import type { GamificationState } from "@/lib/gamification";
 
 export type UserRole = "admin" | "user";
 
@@ -15,6 +16,8 @@ export interface IUser extends Document {
   lastSeenVideosAt?: Date | null;
   /** Lições concluídas pelo aluno (ids de Lesson) — base das conquistas. */
   completedLessons: mongoose.Types.ObjectId[];
+  gamificationState?: GamificationState;
+  gamificationRevision?: number;
   createdAt: Date;
 }
 
@@ -28,6 +31,8 @@ const UserSchema = new Schema<IUser>(
     lastSeenPostsAt: { type: Date, default: null },
     lastSeenVideosAt: { type: Date, default: null },
     completedLessons: { type: [Schema.Types.ObjectId], ref: "Lesson", default: [] },
+    gamificationState: { type: Schema.Types.Mixed, default: undefined },
+    gamificationRevision: { type: Number, default: 0 },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

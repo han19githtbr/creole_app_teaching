@@ -313,6 +313,10 @@ export function saveGamificationState(state: GamificationState): void {
   } catch {}
 }
 
+export function applySyncedGamificationState(state: GamificationState): void {
+  saveGamificationState(state);
+}
+
 export function buyTitle(titleId: string): {
   success: boolean;
   message: string;
@@ -352,6 +356,7 @@ export function buyTitle(titleId: string): {
     xp: newXp,
     unlockedTitles: [...current.unlockedTitles, titleId],
     activeTitleId: titleId,
+    lastPlayedAt: new Date().toISOString(),
   };
 
   saveGamificationState(updated);
@@ -374,6 +379,7 @@ export function equipTitle(titleId: string): GamificationState {
   const updated: GamificationState = {
     ...current,
     activeTitleId: titleId,
+    lastPlayedAt: new Date().toISOString(),
   };
 
   saveGamificationState(updated);

@@ -24,7 +24,7 @@ export default async function LessonsPage({
   const isAdmin = session.user.role === "admin";
   const filter: Record<string, unknown> = isAdmin
     ? {}
-    : { isPublished: true };
+    : { isPublished: true, announcedAt: { $ne: null } };
 
   if (category) filter.category = category;
 

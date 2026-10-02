@@ -33,10 +33,10 @@ export default async function DashboardPage() {
   const isAdmin = session.user.role === "admin";
   const now = new Date();
 
-  // Alunos veem todas as lições publicadas; admins veem todas (incluindo rascunhos)
+  // Alunos veem somente lições publicadas e anunciadas; admins veem todas (incluindo rascunhos)
   const lessonMatch = isAdmin
     ? {}
-    : { isPublished: true };
+    : { isPublished: true, announcedAt: { $ne: null } };
 
   const videoMatch = isAdmin
     ? {}

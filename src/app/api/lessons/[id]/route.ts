@@ -28,7 +28,7 @@ export async function GET(
   const { id } = await params;
   const lesson = await findLesson(id);
   const isAdmin = session.user.role === "admin";
-  const hiddenFromUser = !lesson?.isPublished;
+  const hiddenFromUser = !lesson?.isPublished || !lesson?.announcedAt;
 
   if (!lesson || (hiddenFromUser && !isAdmin)) {
     return NextResponse.json({ error: "Lição não encontrada." }, { status: 404 });

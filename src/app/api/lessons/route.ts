@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
   }
   if (!isAdmin) {
     query.isPublished = true;
+    query.announcedAt = { $ne: null };
   }
 
   const lessons = await Lesson.find(query)

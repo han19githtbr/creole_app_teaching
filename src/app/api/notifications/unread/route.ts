@@ -36,6 +36,7 @@ export async function GET() {
 
   const lessonFilter = {
       isPublished: true,
+      announcedAt: { $ne: null },
       $or: [
         { announcedAt: { $gt: lessonsThreshold } },
         { createdAt: { $gt: lessonsThreshold } },

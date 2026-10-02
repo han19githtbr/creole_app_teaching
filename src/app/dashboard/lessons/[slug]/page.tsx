@@ -25,14 +25,14 @@ export default async function LessonDetailPage({
   const isAdmin = session.user.role === "admin";
   const lesson = await Lesson.findOne({
     slug,
-    ...(isAdmin ? {} : { isPublished: true }),
+    ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
   }).lean();
 
   if (!lesson) notFound();
 
   const siblingMatch = isAdmin
     ? {}
-    : { isPublished: true };
+    : { isPublished: true, announcedAt: { $ne: null } };
 
   const [prev, next] = await Promise.all([
     Lesson.findOne({ order: { $lt: lesson.order }, ...siblingMatch })

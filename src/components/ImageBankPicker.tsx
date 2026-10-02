@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useState } from "react";
@@ -86,7 +87,7 @@ export function ImageBankPicker({
                 : "text-[var(--text-muted)] hover:text-[var(--text)]"
             )}
           >
-            Todas as Cenas ({IMAGE_BANK.length})
+            Todas as Cenas (140)
           </button>
         </div>
       </div>

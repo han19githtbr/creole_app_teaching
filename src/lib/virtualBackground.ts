@@ -157,6 +157,8 @@ function drawCover(
   const h = sh * scale;
   const x = dx + (dw - w) / 2 + panX;
   const y = dy + (dh - h) / 2 + panY;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   ctx.drawImage(src, x, y, w, h);
 }
 
@@ -276,15 +278,19 @@ export function drawVirtualBackground(
   if (!pctx) return;
   pctx.save();
   pctx.clearRect(0, 0, w, h);
+  pctx.imageSmoothingEnabled = true;
+  pctx.imageSmoothingQuality = "high";
   pctx.globalCompositeOperation = "source-over";
   // Leve suavização da borda da máscara (onde o navegador suporta ctx.filter).
   const supportsFilter = "filter" in pctx;
-  if (supportsFilter) pctx.filter = "blur(2px)";
+  if (supportsFilter) pctx.filter = "blur(1.5px)";
   drawCover(pctx, mask as CanvasImageSource, mask.width || vw, mask.height || vh, 0, 0, w, h);
   if (supportsFilter) pctx.filter = "none";
   pctx.globalCompositeOperation = "source-in";
   drawCover(pctx, video, vw, vh, 0, 0, w, h);
   pctx.restore();
 
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   ctx.drawImage(pc, 0, 0, w, h);
 }

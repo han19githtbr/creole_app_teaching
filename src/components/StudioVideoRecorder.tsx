@@ -48,6 +48,8 @@ export function StudioVideoRecorder() {
   const [avatarType, setAvatarType] = useState<string>("you_sunset");
   const [frameStyle, setFrameStyle] = useState<string>("meet");
   const [bannerText, setBannerText] = useState<string>("Aprenda Crioulo Haitiano");
+  const [recordingQuality, setRecordingQuality] = useState<"ultra" | "balanced">("ultra");
+  const [enhancedClarity, setEnhancedClarity] = useState<boolean>(true);
 
   // Media & Recording state
   const [, setCameraStream] = useState<MediaStream | null>(null);
@@ -144,15 +146,30 @@ export function StudioVideoRecorder() {
     try {
       setPermissionError(null);
       setCameraResolution(null);
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 1920, max: 1920 },
-          height: { ideal: 1080, max: 1080 },
-          frameRate: { ideal: 30, max: 30 },
-          aspectRatio: { ideal: 16 / 9 },
-        },
-        audio: { echoCancellation: true, noiseSuppression: true },
-      });
+      let stream: MediaStream;
+      try {
+        // Tenta Full HD prioritário com fidelidade 1080p nativa
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1920, min: 1280 },
+            height: { ideal: 1080, min: 720 },
+            frameRate: { ideal: 30, max: 60 },
+            aspectRatio: { ideal: 16 / 9 },
+          },
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+        });
+      } catch {
+        // Fallback resiliente para webcams convencionais sem restrição min
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1920, max: 1920 },
+            height: { ideal: 1080, max: 1080 },
+            frameRate: { ideal: 30, max: 30 },
+            aspectRatio: { ideal: 16 / 9 },
+          },
+          audio: { echoCancellation: true, noiseSuppression: true },
+        });
+      }
 
       const videoTrack = stream.getVideoTracks()[0];
       const audioTrack = stream.getAudioTracks()[0];
@@ -277,10 +294,20 @@ export function StudioVideoRecorder() {
       destWidth: number,
       destHeight: number
     ) => {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+
       const seg = segmenterRef.current;
       const mask = seg?.ready ? seg.mask : null;
       if (!mask) {
-        ctx.drawImage(video, destX, destY, destWidth, destHeight);
+        if (enhancedClarity) {
+          ctx.save();
+          ctx.filter = "contrast(106%) saturate(104%) brightness(102%)";
+          ctx.drawImage(video, destX, destY, destWidth, destHeight);
+          ctx.restore();
+        } else {
+          ctx.drawImage(video, destX, destY, destWidth, destHeight);
+        }
         return;
       }
 
@@ -305,19 +332,26 @@ export function StudioVideoRecorder() {
 
       offCtx.save();
       offCtx.clearRect(0, 0, nativeWidth, nativeHeight);
+      offCtx.imageSmoothingEnabled = true;
+      offCtx.imageSmoothingQuality = "high";
       // 1. Desenha a máscara (branco = pessoa, preto = fundo)
       offCtx.drawImage(mask, 0, 0, nativeWidth, nativeHeight);
       // 2. "source-in" mantém só os pixels da câmera onde a máscara é opaca
       offCtx.globalCompositeOperation = "source-in";
+      if (enhancedClarity) {
+        offCtx.filter = "contrast(106%) saturate(104%) brightness(102%)";
+      }
       offCtx.drawImage(video, 0, 0, nativeWidth, nativeHeight);
       offCtx.globalCompositeOperation = "source-over";
       offCtx.restore();
 
       // 3. Desenha o recorte (fundo transparente ao redor da pessoa) por
       // cima do tema que já está no canvas principal.
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       ctx.drawImage(offscreen, destX, destY, destWidth, destHeight);
     },
-    []
+    [enhancedClarity]
   );
 
   // Real-time Canvas Rendering Loop
@@ -332,6 +366,9 @@ export function StudioVideoRecorder() {
 
     function renderFrame() {
       if (!isRunning || !ctx || !canvas) return;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
 
       const width = canvas.width;
       const height = canvas.height;
@@ -601,14 +638,15 @@ export function StudioVideoRecorder() {
       }
     }
 
+    const isUltra = recordingQuality === "ultra";
     const sourceHeight = cameraResolution?.height ?? 1080;
-    const videoBitsPerSecond = sourceHeight >= 1080
-      ? 6000000
-      : sourceHeight >= 720 ? 4000000 : 2500000;
+    const videoBitsPerSecond = isUltra
+      ? (sourceHeight >= 1080 ? 12000000 : sourceHeight >= 720 ? 8000000 : 4000000)
+      : (sourceHeight >= 1080 ? 6000000 : sourceHeight >= 720 ? 4000000 : 2500000);
     const recorder = new MediaRecorder(combinedStream, {
       mimeType: selectedMime || undefined,
       videoBitsPerSecond,
-      audioBitsPerSecond: 128000,
+      audioBitsPerSecond: 192000,
     });
 
     recorder.ondataavailable = (event) => {

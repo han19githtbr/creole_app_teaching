@@ -33,6 +33,7 @@ async function getUnreadCount(user: {
   const [lessons, posts, videos] = await Promise.all([
     Lesson.countDocuments({
       isPublished: true,
+      announcedAt: { $ne: null },
       $or: [
         { announcedAt: { $gt: user.lastSeenLessonsAt ?? fallback } },
         { createdAt: { $gt: user.lastSeenLessonsAt ?? fallback } },
@@ -68,6 +69,41 @@ async function getUnreadCount(user: {
   return lessons + posts + videos;
 }
 
+export async function sendPendingContentPush(userId: string, endpoint: string): Promise<void> {
+  try {
+    if (!configureWebPush()) return;
+    await connectDB();
+
+    const [subscription, user] = await Promise.all([
+      AppPushSubscription.findOne({ userId, endpoint }).lean(),
+      User.findById(userId)
+        .select("createdAt lastSeenLessonsAt lastSeenPostsAt lastSeenVideosAt")
+        .lean(),
+    ]);
+    if (!subscription || !user) return;
+
+    const count = await getUnreadCount(user);
+    if (count === 0) return;
+
+    await webpush.sendNotification(
+      { endpoint: subscription.endpoint, keys: subscription.keys },
+      JSON.stringify({
+        title: "Novidades não lidas",
+        body: `Você tem ${count} ${count === 1 ? "novidade" : "novidades"} no Kreyòl Ayisyen.`,
+        url: "/dashboard",
+        count,
+      })
+    );
+  } catch (error) {
+    const statusCode = (error as { statusCode?: number }).statusCode;
+    if (statusCode === 404 || statusCode === 410) {
+      await AppPushSubscription.deleteOne({ userId, endpoint });
+      return;
+    }
+    console.error("Falha ao enviar notificação push pendente:", error);
+  }
+}
+
 export async function sendContentPush(message: PushMessage): Promise<void> {
   try {
     if (!configureWebPush()) return;
@@ -77,7 +113,7 @@ export async function sendContentPush(message: PushMessage): Promise<void> {
     if (subscriptions.length === 0) return;
 
     const userIds = [...new Set(subscriptions.map((subscription) => String(subscription.userId)))];
-    const users = await User.find({ _id: { $in: userIds }, role: "user" })
+    const users = await User.find({ _id: { $in: userIds } })
       .select("createdAt lastSeenLessonsAt lastSeenPostsAt lastSeenVideosAt")
       .lean();
 

@@ -54,10 +54,10 @@ O mesmo critério é usado nas listagens de lições, na página individual e no
 
 - O sino mostra itens não lidos dentro do app; a contagem é consultada ao abrir/retornar ao app e periodicamente enquanto ele está aberto.
 - Web Push pode entregar notificações em segundo plano. É necessário configurar VAPID e cada usuário/dispositivo precisa ativar as notificações no sino e conceder permissão ao navegador.
-- O service worker tenta atualizar o badge do ícone com a Badging API ao receber push; com o app aberto, o app também sincroniza o badge usando a contagem da central.
-- O número ou ponto no ícone depende do suporte do navegador, da instalação como PWA e do launcher Android. Não é garantido que todo aparelho mostre um número.
+- Ao ativar push em um dispositivo, se já houver novidades não lidas, o servidor envia um alerta de recuperação para esse aparelho; dispositivos já ativados podem usar **Enviar alerta de novidades** no sino.
+- Cada push cria uma notificação do sistema. No Android, o ponto no ícone é controlado pelo sistema/launcher e depende das permissões de notificação; o Chrome Android não oferece a Badging API para forçar um número no ícone.
+- Em navegadores que suportam a Badging API, o app também tenta sincronizar a contagem numérica; a aparência final depende do navegador, da instalação como PWA e do launcher.
 - Há também fallback de favicon e título com contagem enquanto a página está aberta; esses fallbacks não substituem o badge do ícone da tela inicial.
-- Observação da implementação atual: o cálculo do contador enviado junto ao push não exige `announcedAt` para lições, enquanto a central de notificações exige. Por isso, em alguns casos, o badge recebido em segundo plano pode divergir da contagem mostrada dentro do app.
 
 ### Vídeos e gamificação
 

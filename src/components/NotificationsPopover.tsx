@@ -318,7 +318,21 @@ export function NotificationsPopover() {
               </button>
             )}
             {pushState === "enabled" && (
-              <p className="text-xs text-emerald-600 dark:text-emerald-400">Notificações ativadas neste dispositivo</p>
+              <div className="space-y-1.5">
+                <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                  Notificações ativadas neste dispositivo
+                </p>
+                {count > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleEnablePush}
+                    disabled={pushBusy}
+                    className="text-xs font-semibold text-[var(--accent)] hover:underline disabled:opacity-60"
+                  >
+                    {pushBusy ? "Enviando alerta..." : `Enviar alerta de ${count} ${count === 1 ? "novidade" : "novidades"}`}
+                  </button>
+                )}
+              </div>
             )}
             {pushState === "blocked" && (
               <p className="text-xs text-[var(--text-muted)]">Permissão bloqueada nas configurações do navegador</p>

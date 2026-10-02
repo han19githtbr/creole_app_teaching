@@ -60,6 +60,9 @@ export async function POST(req: NextRequest) {
     { upsert: true, runValidators: true }
   );
 
+  const { sendPendingContentPush } = await import("@/lib/pushNotifications");
+  await sendPendingContentPush(String(user._id), endpoint);
+
   return NextResponse.json({ success: true });
 }
 

@@ -38,9 +38,9 @@
   --text-secondary: #b3b4c4;
   --text-muted: #82839a;
 
-  --accent: #818cf8;
+  --accent: #280ed1;
   --accent-hover: #a5b0fa;
-  --accent-soft: #1e1b4b;
+  --accent-soft: #3a1df4;
 }
 
 @theme inline {

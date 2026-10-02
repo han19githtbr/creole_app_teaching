@@ -62,6 +62,12 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
     }
     setImageUrl(img.src);
     setImageAlt(img.title);
+    if (!title.trim()) {
+      setTitle(img.title);
+    }
+    if (!content.trim()) {
+      setContent(img.caption);
+    }
     const quiz = getDefaultImageQuiz(img.theme, img.id);
     setQuizOptions(quiz?.options ?? Array(10).fill(""));
     setQuizAnswers(quiz?.answers ?? []);
@@ -189,7 +195,16 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
         {(showImagePanel || imageUrl) && (
           <div className="mt-4 space-y-4">
             {imageUrl && (
-              <div className="overflow-hidden rounded-xl border border-[var(--border)]">
+              <div className="overflow-hidden rounded-xl border border-[var(--border)] shadow-sm">
+                <div className="flex items-center justify-between bg-emerald-500/10 px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border-b border-emerald-500/20">
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    Imagem escolhida para a postagem! Pré-visualização pronta para montagem.
+                  </span>
+                  <span className="text-[11px] text-emerald-700/80 dark:text-emerald-300/80 hidden sm:inline font-normal">
+                    {bankImage ? `Tema: ${bankImage.theme}` : "Imagem personalizada"}
+                  </span>
+                </div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={imageUrl} alt={imageAlt || "Imagem da postagem"} className="max-h-72 w-full object-cover" />
                 <div className="flex flex-wrap items-center gap-2 bg-[var(--surface-2)] p-2.5">

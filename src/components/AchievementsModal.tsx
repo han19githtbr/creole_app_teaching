@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   X,
   Trophy,
@@ -9,9 +10,12 @@ import {
   Check,
   Lock,
   Award,
+  Zap,
+  Gamepad2,
 } from "lucide-react";
 import { useGamification } from "@/hooks/useGamification";
 import { soundEffects } from "@/lib/soundEffects";
+import { Confetti } from "@/components/Confetti";
 import { cn } from "@/lib/utils";
 
 interface AchievementsModalProps {
@@ -32,31 +36,39 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
 
   const [activeTab, setActiveTab] = useState<"badges" | "titles">("badges");
   const [purchaseMsg, setPurchaseMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   if (!isOpen) return null;
 
   function handleBuy(titleId: string) {
     const result = buyTitle(titleId);
     if (result.success) {
-      soundEffects.playReward();
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 2500);
+      if (result.leveledUp) {
+        soundEffects.playLevelUp();
+      } else {
+        soundEffects.playReward();
+      }
       setPurchaseMsg({ type: "success", text: result.message });
     } else {
       soundEffects.playError();
       setPurchaseMsg({ type: "error", text: result.message });
     }
-    setTimeout(() => setPurchaseMsg(null), 3500);
+    setTimeout(() => setPurchaseMsg(null), 4000);
   }
 
   function handleEquip(titleId: string) {
     soundEffects.playTap();
     equipTitle(titleId);
-    setPurchaseMsg({ type: "success", text: "Título equipado com sucesso!" });
+    setPurchaseMsg({ type: "success", text: "Nível/Título equipado com sucesso!" });
     setTimeout(() => setPurchaseMsg(null), 2500);
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-2xl animate-in zoom-in-95 duration-200">
+      <Confetti active={showConfetti} onComplete={() => setShowConfetti(false)} />
+      <div className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-2xl animate-in zoom-in-95 duration-200">
         {/* Cabeçalho do Modal */}
         <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface-2)]/60 px-6 py-4">
           <div className="flex items-center gap-2.5">
@@ -68,7 +80,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                 Koleksyon & Onè Kreyòl
               </h2>
               <p className="text-xs text-[var(--text-secondary)]">
-                Conquistas, insígnias de honra e loja de títulos
+                Conquistas, insígnias de honra e níveis desbloqueáveis do jogo
               </p>
             </div>
           </div>
@@ -76,7 +88,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--surface)] hover:text-[var(--text)] transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--surface)] hover:text-[var(--text)] transition-colors cursor-pointer"
             aria-label="Fechar modal"
           >
             <X className="h-5 w-5" />
@@ -84,7 +96,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
         </div>
 
         {/* Resumo do Jogador */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--surface)] px-6 py-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--surface)] px-6 py-3">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">{levelInfo.current.badgeEmoji}</span>
             <div>
@@ -98,14 +110,33 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400">
+            <div className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400" title="Goud: Moeda fictícia do jogo ganha ao acertar palavras">
               <Coins className="h-4 w-4 text-amber-500" />
               <span>{state.goud} Goud</span>
+              <span className="hidden sm:inline rounded bg-amber-500/20 px-1 py-0.2 text-[9px] font-extrabold text-amber-700 dark:text-amber-300">
+                Fictícia
+              </span>
             </div>
             <div className="flex items-center gap-1.5 rounded-xl border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs font-bold text-blue-600 dark:text-blue-400">
               <Award className="h-4 w-4 text-blue-500" />
               <span>{state.xp} XP</span>
             </div>
+          </div>
+        </div>
+
+        {/* Banner Explicativo da Moeda Fictícia e Desbloqueio de Níveis */}
+        <div className="border-b border-amber-500/20 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent px-6 py-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              🪙 <strong className="text-[var(--text)]">Moeda Fictícia do Jogo:</strong> As <em>Gourdes (Goud)</em> são moedas virtuais gratuitas. A cada postagem com palavras acertadas você ganha <strong>+10 Goud</strong>! Ao somar <strong>50, 100, 200 Goud</strong>, desbloqueie os próximos níveis para aumentar seu <strong>XP</strong>!
+            </p>
+            <Link
+              href="/dashboard/jogo"
+              onClick={onClose}
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-amber-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm hover:bg-amber-600 transition self-start sm:self-auto cursor-pointer"
+            >
+              <Gamepad2 className="h-3.5 w-3.5" /> +10 Goud por cena
+            </Link>
           </div>
         </div>
 
@@ -129,7 +160,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
             type="button"
             onClick={() => setActiveTab("badges")}
             className={cn(
-              "flex items-center gap-2 border-b-2 py-3 text-xs font-bold transition-colors",
+              "flex items-center gap-2 border-b-2 py-3 text-xs font-bold transition-colors cursor-pointer",
               activeTab === "badges"
                 ? "border-[var(--accent)] text-[var(--accent)]"
                 : "border-transparent text-[var(--text-muted)] hover:text-[var(--text)]"
@@ -142,13 +173,13 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
             type="button"
             onClick={() => setActiveTab("titles")}
             className={cn(
-              "ml-6 flex items-center gap-2 border-b-2 py-3 text-xs font-bold transition-colors",
+              "ml-6 flex items-center gap-2 border-b-2 py-3 text-xs font-bold transition-colors cursor-pointer",
               activeTab === "titles"
                 ? "border-[var(--accent)] text-[var(--accent)]"
                 : "border-transparent text-[var(--text-muted)] hover:text-[var(--text)]"
             )}
           >
-            <Sparkles className="h-4 w-4" /> Loja de Títulos Kreyòl (
+            <Sparkles className="h-4 w-4 text-amber-500" /> Desbloquear Níveis & Títulos (
             {state.unlockedTitles.length}/{allTitles.length})
           </button>
         </div>
@@ -269,23 +300,30 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                         </p>
                       </div>
 
-                      <div className="mt-4 flex items-center justify-between border-t border-[var(--border)] pt-3">
-                        <div className="text-xs font-bold">
+                      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border)] pt-3">
+                        <div className="space-y-0.5">
                           {title.price === 0 ? (
-                            <span className="text-emerald-600 dark:text-emerald-400">
-                              Gratuito
+                            <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">
+                              Nível Inicial Gratuito
                             </span>
                           ) : (
-                            <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                              <Coins className="h-3.5 w-3.5" />
-                              {title.price} Goud
-                            </span>
+                            <div className="flex flex-col">
+                              <span className="flex items-center gap-1 text-xs font-black text-amber-600 dark:text-amber-400">
+                                <Coins className="h-3.5 w-3.5" />
+                                {title.price} Goud <span className="text-[10px] font-normal text-[var(--text-muted)]">(fictícios)</span>
+                              </span>
+                              {title.xpReward > 0 && (
+                                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">
+                                  +{title.xpReward} XP ao desbloquear
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
 
                         {isEquipped ? (
                           <span className="flex items-center gap-1 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-bold text-white shadow-sm">
-                            <Check className="h-3.5 w-3.5" /> Equipado
+                            <Check className="h-3.5 w-3.5" /> Nível Equipado
                           </span>
                         ) : isOwned ? (
                           <button
@@ -301,13 +339,24 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                             disabled={!canAfford}
                             onClick={() => handleBuy(title.id)}
                             className={cn(
-                              "rounded-lg px-3 py-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer",
+                              "flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer",
                               canAfford
-                                ? "bg-amber-500 text-white hover:bg-amber-600"
+                                ? "bg-amber-500 text-white hover:bg-amber-600 hover:scale-105 active:scale-95"
                                 : "bg-gray-200 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed"
                             )}
+                            title={
+                              canAfford
+                                ? `Desbloquear este nível e ganhar +${title.xpReward} XP`
+                                : `Faltam ${title.price - state.goud} Goud. Acerte palavras nas postagens para acumular!`
+                            }
                           >
-                            Comprar
+                            {canAfford ? (
+                              <>
+                                <Zap className="h-3.5 w-3.5" /> Desbloquear (+{title.xpReward} XP)
+                              </>
+                            ) : (
+                              `Faltam ${title.price - state.goud} Goud`
+                            )}
                           </button>
                         )}
                       </div>

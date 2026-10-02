@@ -42,7 +42,11 @@ export function GamificationCard() {
 
             {/* Moedas e Sequência */}
             <div className="flex items-center gap-2.5">
-              <div className="flex items-center gap-1.5 rounded-xl border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400 shadow-sm">
+              <div
+                className="flex items-center gap-1.5 rounded-xl border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400 shadow-sm cursor-pointer hover:bg-amber-500/20 transition"
+                title="Goud: Moeda fictícia do jogo. Ganhe +10 Goud ao acertar palavras nas postagens para desbloquear novos níveis!"
+                onClick={() => setModalOpen(true)}
+              >
                 <Coins className="h-4 w-4 text-amber-500" />
                 <span>{state.goud} Goud</span>
               </div>

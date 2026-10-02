@@ -608,13 +608,28 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
 
                 {/* Banner de Recompensa Coletada */}
                 {earnedReward && (
-                  <div className="mt-3 flex items-center justify-center gap-3">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/15 border border-blue-500/25 px-3 py-1 text-xs font-extrabold text-blue-600 dark:text-blue-400">
-                      <Award className="h-3.5 w-3.5" /> +{earnedReward.xp} XP
-                    </span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/25 px-3 py-1 text-xs font-extrabold text-amber-600 dark:text-amber-400">
-                      💰 +{earnedReward.goud} Goud
-                    </span>
+                  <div className="mt-3 space-y-2">
+                    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/15 border border-blue-500/25 px-3 py-1 text-xs font-extrabold text-blue-600 dark:text-blue-400">
+                        <Award className="h-3.5 w-3.5" /> +{earnedReward.xp} XP
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/25 px-3 py-1 text-xs font-extrabold text-amber-600 dark:text-amber-400">
+                        🪙 +{earnedReward.goud} Goud (Moeda Fictícia)
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[var(--text-muted)]">
+                      Parabéns! Você ganhou +10 Goud por acertar esta postagem. Use seus Gouds para desbloquear novos níveis!
+                    </p>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setAchievementsOpen(true)}
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 transition cursor-pointer"
+                      >
+                        <Trophy className="h-3.5 w-3.5 text-amber-500" />
+                        Desbloquear Próximos Níveis (Saldo: {gamificationState.goud} Goud)
+                      </button>
+                    </div>
                   </div>
                 )}
 

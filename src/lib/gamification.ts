@@ -179,6 +179,8 @@ export interface HonoraryTitle {
   portuguese: string;
   description: string;
   price: number;
+  xpReward: number; // XP de bônus concedido ao desbloquear este nível/título com Goud
+  levelTarget: number; // Nível correspondente
   icon: string;
   gradientClass: string;
 }
@@ -187,54 +189,66 @@ export const HONORARY_TITLES: HonoraryTitle[] = [
   {
     id: "title_inisyate",
     kreyol: "Inisyatè Kreyòl",
-    portuguese: "Iniciante Kreyòl",
-    description: "Título inicial concedido a todo estudante apaixonado pela língua.",
+    portuguese: "Nível 1 • Iniciante Kreyòl",
+    description: "Nível inicial concedido a todo estudante apaixonado pela língua.",
     price: 0,
+    xpReward: 0,
+    levelTarget: 1,
     icon: "🌱",
     gradientClass: "from-blue-500/20 to-indigo-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30",
   },
   {
     id: "title_zanmi",
     kreyol: "Zanmi Ayiti",
-    portuguese: "Amigo do Haiti",
-    description: "Dedicado a quem abraça com carinho a cultura e o povo haitiano.",
+    portuguese: "Nível 2 • Amigo do Haiti",
+    description: "Desbloqueie com 50 Gouds virtuais acumulados nas postagens para avançar ao Nível 2.",
     price: 50,
+    xpReward: 120, // Garante que o aluno atinja o Nível 2 (Aprendiz: 120 XP)
+    levelTarget: 2,
     icon: "🤝",
     gradientClass: "from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
   },
   {
     id: "title_flanm",
     kreyol: "Flanm Kreyòl",
-    portuguese: "Chama Kreyòl",
-    description: "Para estudantes com entusiasmo ardente e ritmo constante de prática.",
+    portuguese: "Nível 3 • Chama Kreyòl",
+    description: "Desbloqueie com 100 Gouds virtuais. Para estudantes constantes, avançando ao Nível 3.",
     price: 100,
+    xpReward: 200, // Leva o XP a 300+ (Nível 3: Explorador)
+    levelTarget: 3,
     icon: "🔥",
     gradientClass: "from-orange-500/20 to-amber-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30",
   },
   {
     id: "title_anbasade",
     kreyol: "Anbasadè Lang",
-    portuguese: "Embaixador da Língua",
-    description: "Fluente e comunicador, promovendo o Kreyòl onde quer que vá.",
+    portuguese: "Nível 4 • Embaixador da Língua",
+    description: "Desbloqueie com 200 Gouds virtuais. Fluência, liderança e comunicação em Kreyòl.",
     price: 200,
+    xpReward: 350, // Leva a 600+ (Nível 4: Conversador)
+    levelTarget: 4,
     icon: "📜",
     gradientClass: "from-purple-500/20 to-pink-500/20 text-purple-600 dark:text-purple-400 border-purple-500/30",
   },
   {
     id: "title_sitadel",
     kreyol: "Gadyen Sitadèl",
-    portuguese: "Guardião da Citadelle",
-    description: "Inabalável como a histórica fortaleza Citadelle Laferrière.",
+    portuguese: "Nível 5 • Guardião da Citadelle",
+    description: "Desbloqueie com 350 Gouds virtuais. Inabalável como a fortaleza Citadelle Laferrière.",
     price: 350,
+    xpReward: 500, // Leva a 1050+ (Nível 5: Conhecedor)
+    levelTarget: 5,
     icon: "🏰",
     gradientClass: "from-amber-500/25 to-yellow-500/25 text-amber-600 dark:text-amber-400 border-amber-500/40",
   },
   {
     id: "title_gran_met",
     kreyol: "Gran Mèt Sajès",
-    portuguese: "Grão-Mestre da Sabedoria",
-    description: "O mais alto título honorífico da plataforma, símbolo de dedicação suprema.",
+    portuguese: "Nível 6 • Grão-Mestre da Sabedoria",
+    description: "Desbloqueie com 500 Gouds virtuais. O mais alto patamar de sabedoria e prestígio da comunidade.",
     price: 500,
+    xpReward: 800, // Leva a 1650+ (Nível 6: Mestre da Língua)
+    levelTarget: 6,
     icon: "👑",
     gradientClass: "from-rose-500/25 to-purple-600/25 text-rose-600 dark:text-rose-400 border-rose-500/40",
   },
@@ -299,35 +313,58 @@ export function saveGamificationState(state: GamificationState): void {
   } catch {}
 }
 
-export function buyTitle(titleId: string): { success: boolean; message: string; state: GamificationState } {
+export function buyTitle(titleId: string): {
+  success: boolean;
+  message: string;
+  state: GamificationState;
+  gainedXp?: number;
+  leveledUp?: boolean;
+  newLevel?: LevelInfo;
+} {
   const current = getGamificationState();
   const target = HONORARY_TITLES.find((t) => t.id === titleId);
 
   if (!target) {
-    return { success: false, message: "Título não encontrado.", state: current };
+    return { success: false, message: "Nível não encontrado.", state: current };
   }
 
   if (current.unlockedTitles.includes(titleId)) {
-    return { success: false, message: "Você já possui este título!", state: current };
+    return { success: false, message: "Você já possui este nível desbloqueado!", state: current };
   }
 
   if (current.goud < target.price) {
     return {
       success: false,
-      message: `Você precisa de ${target.price} Gouds (saldo: ${current.goud} Gouds).`,
+      message: `Você precisa de ${target.price} Gouds fictícios (saldo: ${current.goud} Goud). Acerte palavras nas postagens para acumular +10 Goud por acerto!`,
       state: current,
     };
   }
 
+  const oldLevel = getLevelInfo(current.xp).current;
+  const gainedXp = target.xpReward || 0;
+  const newXp = current.xp + gainedXp;
+  const newLevel = getLevelInfo(newXp).current;
+  const leveledUp = newLevel.level > oldLevel.level;
+
   const updated: GamificationState = {
     ...current,
     goud: current.goud - target.price,
+    xp: newXp,
     unlockedTitles: [...current.unlockedTitles, titleId],
     activeTitleId: titleId,
   };
 
   saveGamificationState(updated);
-  return { success: true, message: `Título “${target.kreyol}” adquirido e equipado!`, state: updated };
+  return {
+    success: true,
+    message: gainedXp > 0
+      ? `Parabéns! Nível “${target.kreyol}” desbloqueado! Ganhou +${gainedXp} XP e aumentou seu progresso!`
+      : `Nível “${target.kreyol}” desbloqueado e equipado!`,
+    state: updated,
+    gainedXp,
+    leveledUp,
+    newLevel,
+  };
 }
 
 export function equipTitle(titleId: string): GamificationState {

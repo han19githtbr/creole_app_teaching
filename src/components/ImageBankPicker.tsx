@@ -118,11 +118,20 @@ export function ImageBankPicker({
           return (
             <div
               key={img.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => onSelect(selected ? null : img)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect(selected ? null : img);
+                }
+              }}
               className={cn(
-                "group relative flex flex-col overflow-hidden rounded-xl border text-left transition-all",
+                "group relative flex flex-col overflow-hidden rounded-xl border text-left transition-all cursor-pointer select-none",
                 selected
-                  ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/50 bg-[var(--accent)]/5"
-                  : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--accent)]/50 hover:shadow-md"
+                  ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/50 bg-[var(--accent)]/5 shadow-md"
+                  : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--accent)]/60 hover:shadow-md"
               )}
             >
               {/* Image Preview with overlay actions */}
@@ -136,7 +145,7 @@ export function ImageBankPicker({
                 />
                 
                 {/* Ghibli style badge */}
-                <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-amber-300 backdrop-blur-sm">
+                <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-amber-300 backdrop-blur-sm pointer-events-none">
                   Ghibli Art
                 </span>
 
@@ -147,25 +156,36 @@ export function ImageBankPicker({
                     e.stopPropagation();
                     setPreviewImage(img);
                   }}
-                  title="Ver imagem em tamanho grande e detalhes dos elementos"
-                  className="absolute right-2 bottom-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                  title="Ver imagem ampliada e detalhes dos elementos"
+                  className="absolute right-2 bottom-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black hover:scale-110"
                 >
                   <Eye className="h-3.5 w-3.5" />
                 </button>
 
+                {/* Selection indicator overlay on hover/active */}
+                <div
+                  className={cn(
+                    "absolute inset-0 flex items-center justify-center transition-opacity pointer-events-none",
+                    selected
+                      ? "bg-[var(--accent)]/15 opacity-100"
+                      : "bg-black/20 opacity-0 group-hover:opacity-100"
+                  )}
+                >
+                  <span className="rounded-lg bg-black/75 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg backdrop-blur-sm">
+                    {selected ? "✓ Selecionada" : "Clique para usar na postagem"}
+                  </span>
+                </div>
+
                 {/* Selected Check Badge */}
                 {selected && (
-                  <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent)] text-white shadow">
+                  <span className="absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent)] text-white shadow-md">
                     <Check className="h-3.5 w-3.5 stroke-[3]" />
                   </span>
                 )}
               </div>
 
-              {/* Card Details & Select trigger */}
-              <div
-                onClick={() => onSelect(selected ? null : img)}
-                className="flex flex-1 flex-col justify-between p-2.5 cursor-pointer"
-              >
+              {/* Card Details */}
+              <div className="flex flex-1 flex-col justify-between p-2.5">
                 <div>
                   <div className="flex items-center justify-between gap-1">
                     <span className="font-semibold text-xs text-[var(--text)]">{img.theme}</span>
@@ -204,81 +224,93 @@ export function ImageBankPicker({
         </div>
       )}
 
-      {/* Inspect Scene Modal */}
+      {/* Inspect Scene Modal - With fixed header, scrollable body, and fixed footer (buttons always visible!) */}
       {previewImage && (
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in duration-150"
           onClick={() => setPreviewImage(null)}
         >
           <div
-            className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-2xl"
+            className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-2xl animate-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-3 flex items-center justify-between">
+            {/* Header - Fixed */}
+            <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface-2)]/50 px-5 py-3.5 shrink-0">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
                   Estilo Studio Ghibli • {previewImage.theme} ({previewImage.kreyol})
                 </span>
-                <h3 className="text-lg font-bold text-[var(--text)]">{previewImage.title}</h3>
+                <h3 className="text-base sm:text-lg font-bold text-[var(--text)]">{previewImage.title}</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setPreviewImage(null)}
-                className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
+                className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--surface-2)] hover:text-[var(--text)] transition-colors cursor-pointer"
+                aria-label="Fechar pré-visualização"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Large Image View */}
-            <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-black/10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={previewImage.src}
-                alt={previewImage.title}
-                className="aspect-[3/2] w-full object-cover"
-              />
-            </div>
+            {/* Large Image & Details - Scrollable Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+              <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-black/10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={previewImage.src}
+                  alt={previewImage.title}
+                  className="max-h-[46vh] w-full object-contain bg-black/20"
+                />
+              </div>
 
-            {/* Recognized Elements Legend */}
-            <div className="mt-3.5 space-y-2">
-              <p className="text-xs font-semibold text-[var(--text)]">
-                Elementos identificáveis na cena (Kreyòl / Português):
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {previewImage.elements?.map((el) => (
-                  <span
-                    key={el.kreyol}
-                    className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 text-xs"
-                  >
-                    <span className="font-bold text-[var(--accent)]">{el.kreyol}</span>
-                    <span className="text-[var(--text-muted)]">({el.pt})</span>
-                  </span>
-                ))}
+              {/* Recognized Elements Legend */}
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-[var(--text)]">
+                  Elementos identificáveis na cena (Kreyòl / Português):
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {previewImage.elements?.map((el) => (
+                    <span
+                      key={el.kreyol}
+                      className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 text-xs"
+                    >
+                      <span className="font-bold text-[var(--accent)]">{el.kreyol}</span>
+                      <span className="text-[var(--text-muted)]">({el.pt})</span>
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Action buttons */}
-            <div className="mt-4 flex justify-end gap-2 border-t border-[var(--border-soft)] pt-3">
-              <button
-                type="button"
-                onClick={() => setPreviewImage(null)}
-                className="rounded-lg px-3.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-2)] cursor-pointer"
-              >
-                Fechar
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  onSelect(previewImage);
-                  setPreviewImage(null);
-                }}
-                className="rounded-lg bg-[var(--accent)] px-4 py-1.5 text-xs font-semibold text-white shadow transition hover:brightness-105 cursor-pointer"
-              >
-                {selectedSrc === previewImage.src ? "Imagem já selecionada" : "Selecionar esta imagem"}
-              </button>
+            {/* Action buttons Footer - FIXED at bottom, ALWAYS VISIBLE */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border)] bg-[var(--surface-2)]/60 px-5 py-3.5 shrink-0">
+              <span className="text-xs font-medium text-[var(--text-muted)]">
+                {selectedSrc === previewImage.src
+                  ? "✓ Imagem atualmente em uso na sua postagem"
+                  : "Pronta para ser usada na pré-visualização da postagem"}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPreviewImage(null)}
+                  className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-xs font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors cursor-pointer"
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSelect(previewImage);
+                    setPreviewImage(null);
+                  }}
+                  className="flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-bold text-white shadow transition hover:brightness-110 cursor-pointer"
+                >
+                  <Check className="h-4 w-4" />
+                  {selectedSrc === previewImage.src ? "Imagem já selecionada" : "Selecionar esta imagem"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

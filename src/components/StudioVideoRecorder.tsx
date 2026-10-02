@@ -34,7 +34,16 @@ import {
   Calendar,
   Layers,
   Palette,
+  Camera,
 } from "lucide-react";
+import {
+  CLARITY_PRESETS,
+  RECORDING_QUALITIES,
+  getAvailableVideoDevices,
+  drawVirtualRingLight,
+  type VideoDeviceOption,
+} from "@/lib/cameraEnhancer";
+import { cn } from "@/lib/utils";
 
 const MAX_DURATION_SECONDS = 600; // 10 minutes maximum
 
@@ -48,8 +57,11 @@ export function StudioVideoRecorder() {
   const [avatarType, setAvatarType] = useState<string>("you_sunset");
   const [frameStyle, setFrameStyle] = useState<string>("meet");
   const [bannerText, setBannerText] = useState<string>("Aprenda Crioulo Haitiano");
-  const [recordingQuality, setRecordingQuality] = useState<"ultra" | "balanced">("ultra");
-  const [enhancedClarity, setEnhancedClarity] = useState<boolean>(true);
+  const [availableCameras, setAvailableCameras] = useState<VideoDeviceOption[]>([]);
+  const [selectedCameraId, setSelectedCameraId] = useState<string>("");
+  const [clarityPreset, setClarityPreset] = useState<string>("studio_bright");
+  const [virtualRingLight, setVirtualRingLight] = useState<boolean>(true);
+  const [recordingQuality, setRecordingQuality] = useState<"ultra" | "high" | "balanced">("ultra");
 
   // Media & Recording state
   const [, setCameraStream] = useState<MediaStream | null>(null);
@@ -142,31 +154,42 @@ export function StudioVideoRecorder() {
     return false;
   }, [setupAudioAnalyser]);
 
-  const initMedia = useCallback(async () => {
+  const initMedia = useCallback(async (overrideCameraId?: string) => {
     try {
       setPermissionError(null);
       setCameraResolution(null);
+      const targetCamId = overrideCameraId || selectedCameraId;
+
+      const baseVideoConstraints: MediaTrackConstraints = {
+        width: { ideal: 1920, min: 1280 },
+        height: { ideal: 1080, min: 720 },
+        frameRate: { ideal: 30, max: 60 },
+        aspectRatio: { ideal: 16 / 9 },
+      };
+      if (targetCamId) {
+        baseVideoConstraints.deviceId = { exact: targetCamId };
+      }
+
       let stream: MediaStream;
       try {
         // Tenta Full HD prioritário com fidelidade 1080p nativa
         stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 1920, min: 1280 },
-            height: { ideal: 1080, min: 720 },
-            frameRate: { ideal: 30, max: 60 },
-            aspectRatio: { ideal: 16 / 9 },
-          },
+          video: baseVideoConstraints,
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
         });
       } catch {
         // Fallback resiliente para webcams convencionais sem restrição min
+        const fallbackConstraints: MediaTrackConstraints = {
+          width: { ideal: 1920, max: 1920 },
+          height: { ideal: 1080, max: 1080 },
+          frameRate: { ideal: 30, max: 30 },
+          aspectRatio: { ideal: 16 / 9 },
+        };
+        if (targetCamId) {
+          fallbackConstraints.deviceId = { exact: targetCamId };
+        }
         stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 1920, max: 1920 },
-            height: { ideal: 1080, max: 1080 },
-            frameRate: { ideal: 30, max: 30 },
-            aspectRatio: { ideal: 16 / 9 },
-          },
+          video: fallbackConstraints,
           audio: { echoCancellation: true, noiseSuppression: true },
         });
       }
@@ -177,6 +200,15 @@ export function StudioVideoRecorder() {
       if (videoTrack) {
         const { width, height } = videoTrack.getSettings();
         if (width && height) setCameraResolution({ width, height });
+
+        // Tenta ativar foco contínuo e exposição contínua por hardware se suportado
+        try {
+          const caps = videoTrack.getCapabilities?.() as Record<string, unknown> | undefined;
+          if (caps && Array.isArray(caps.focusMode) && caps.focusMode.includes("continuous")) {
+            void videoTrack.applyConstraints({ advanced: [{ focusMode: "continuous" } as MediaTrackConstraintSet] });
+          }
+        } catch {}
+
         const vStream = new MediaStream([videoTrack]);
         setCameraStream(vStream);
         cameraStreamRef.current = vStream;
@@ -184,6 +216,11 @@ export function StudioVideoRecorder() {
           videoInputRef.current.srcObject = vStream;
           videoInputRef.current.play().catch(() => {});
         }
+
+        // Atualiza a lista de câmeras detectadas agora com rótulos permitidos
+        getAvailableVideoDevices().then((devices) => {
+          if (devices.length > 0) setAvailableCameras(devices);
+        });
       }
 
       if (audioTrack) {
@@ -207,9 +244,20 @@ export function StudioVideoRecorder() {
         "Permissão de câmera ou microfone não concedida. Toque em \"Tentar Novamente\" após liberar o acesso nas configurações do navegador."
       );
     }
-  }, [setupAudioAnalyser, retryAudioOnly]);
+  }, [selectedCameraId, setupAudioAnalyser, retryAudioOnly]);
 
   useEffect(() => {
+    // Carrega câmeras disponíveis
+    getAvailableVideoDevices().then((devices) => {
+      if (devices.length > 0) {
+        setAvailableCameras(devices);
+        const saved = localStorage.getItem("kreyol:preferred-camera");
+        if (saved && devices.some((d) => d.deviceId === saved)) {
+          setSelectedCameraId(saved);
+        }
+      }
+    });
+
     const timer = setTimeout(() => {
       initMedia();
     }, 50);
@@ -297,12 +345,16 @@ export function StudioVideoRecorder() {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
 
+      const activePreset =
+        CLARITY_PRESETS.find((p) => p.id === clarityPreset) || CLARITY_PRESETS[0];
+      const activeFilter = activePreset.filter;
+
       const seg = segmenterRef.current;
       const mask = seg?.ready ? seg.mask : null;
       if (!mask) {
-        if (enhancedClarity) {
+        if (activeFilter && activeFilter !== "none") {
           ctx.save();
-          ctx.filter = "contrast(106%) saturate(104%) brightness(102%)";
+          ctx.filter = activeFilter;
           ctx.drawImage(video, destX, destY, destWidth, destHeight);
           ctx.restore();
         } else {
@@ -338,8 +390,8 @@ export function StudioVideoRecorder() {
       offCtx.drawImage(mask, 0, 0, nativeWidth, nativeHeight);
       // 2. "source-in" mantém só os pixels da câmera onde a máscara é opaca
       offCtx.globalCompositeOperation = "source-in";
-      if (enhancedClarity) {
-        offCtx.filter = "contrast(106%) saturate(104%) brightness(102%)";
+      if (activeFilter && activeFilter !== "none") {
+        offCtx.filter = activeFilter;
       }
       offCtx.drawImage(video, 0, 0, nativeWidth, nativeHeight);
       offCtx.globalCompositeOperation = "source-over";
@@ -351,7 +403,7 @@ export function StudioVideoRecorder() {
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(offscreen, destX, destY, destWidth, destHeight);
     },
-    [enhancedClarity]
+    [clarityPreset]
   );
 
   // Real-time Canvas Rendering Loop
@@ -387,9 +439,7 @@ export function StudioVideoRecorder() {
 
       const isSpeaking = currentAudioLevel > 0.04;
 
-      // 2. Clear canvas & draw background (o tempo atual anima o fundo —
-      // como o canvas alimenta tanto a pré-visualização quanto a gravação,
-      // a animação fica gravada no vídeo final também).
+      // 2. Clear canvas & draw background
       ctx.clearRect(0, 0, width, height);
 
       const now = Date.now();
@@ -399,9 +449,12 @@ export function StudioVideoRecorder() {
         avatarType === "webcam" && !!videoInputRef.current && videoInputRef.current.readyState >= 2;
       const isMeetFrame = camReady && frameStyle === "meet";
 
+      const activePreset =
+        CLARITY_PRESETS.find((p) => p.id === clarityPreset) || CLARITY_PRESETS[0];
+      const activeFilter = activePreset.filter;
+
       if (isMeetFrame && videoInputRef.current) {
-        // Modo Meet: câmera em tela cheia; a pessoa é recortada e colocada
-        // sobre o fundo escolhido (desfoque, tema animado ou ilustração).
+        // Modo Meet: câmera em tela cheia com recorte da pessoa e filtro de clareza
         const seg = segmenterRef.current;
         drawVirtualBackground(
           ctx,
@@ -411,7 +464,8 @@ export function StudioVideoRecorder() {
           scratch,
           width,
           height,
-          now
+          now,
+          activeFilter
         );
       } else {
         drawBackgroundLayer(ctx, parseVirtualBg(virtualBg), videoInputRef.current, scratch, width, height, now);
@@ -537,6 +591,11 @@ export function StudioVideoRecorder() {
         avatarPreset.drawAvatar(ctx, centerX, centerY, avatarSize, isSpeaking, currentAudioLevel);
       }
 
+      // 3.5 Luz Frontal Virtual de Estúdio (Ring Light para iluminar o orador e preencher sombras)
+      if (camReady && virtualRingLight) {
+        drawVirtualRingLight(ctx, width, height, 0.16);
+      }
+
       // 4. Draw Topic Banner / Title Overlay if present
       if (bannerText.trim()) {
         ctx.save();
@@ -570,7 +629,7 @@ export function StudioVideoRecorder() {
       isRunning = false;
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
-  }, [virtualBg, avatarType, frameStyle, bannerText, compositePersonOntoCanvas]);
+  }, [virtualBg, avatarType, frameStyle, bannerText, clarityPreset, virtualRingLight, compositePersonOntoCanvas]);
 
   // Recording timer control
   useEffect(() => {
@@ -638,15 +697,20 @@ export function StudioVideoRecorder() {
       }
     }
 
-    const isUltra = recordingQuality === "ultra";
+    const quality =
+      RECORDING_QUALITIES.find((q) => q.id === recordingQuality) || RECORDING_QUALITIES[0];
     const sourceHeight = cameraResolution?.height ?? 1080;
-    const videoBitsPerSecond = isUltra
-      ? (sourceHeight >= 1080 ? 12000000 : sourceHeight >= 720 ? 8000000 : 4000000)
-      : (sourceHeight >= 1080 ? 6000000 : sourceHeight >= 720 ? 4000000 : 2500000);
+    const videoBitsPerSecond =
+      sourceHeight >= 1080
+        ? quality.videoBitrate
+        : sourceHeight >= 720
+        ? Math.min(quality.videoBitrate, 8000000)
+        : Math.min(quality.videoBitrate, 4000000);
+
     const recorder = new MediaRecorder(combinedStream, {
       mimeType: selectedMime || undefined,
       videoBitsPerSecond,
-      audioBitsPerSecond: 192000,
+      audioBitsPerSecond: quality.audioBitrate,
     });
 
     recorder.ondataavailable = (event) => {
@@ -824,7 +888,7 @@ export function StudioVideoRecorder() {
           <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
           <div className="flex-1 min-w-[200px]">{permissionError}</div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button size="sm" variant="outline" onClick={initMedia}>
+            <Button size="sm" variant="outline" onClick={() => initMedia()}>
               Tentar Novamente
             </Button>
             {!audioStream && recordingState === "idle" && (
@@ -1053,6 +1117,127 @@ export function StudioVideoRecorder() {
                 ))}
               </div>
             </div>
+
+            {/* Painel de Clareza da Câmera & Qualidade de Imagem */}
+            {avatarType === "webcam" && (
+              <div className="rounded-2xl border border-[var(--accent)]/30 bg-[var(--surface-2)]/60 p-4 space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--text)]">
+                    <Camera className="h-4 w-4 text-[var(--accent)]" /> Clareza & Ajustes da Imagem
+                  </h4>
+                  {cameraResolution && (
+                    <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                      {cameraResolution.width}×{cameraResolution.height}
+                    </span>
+                  )}
+                </div>
+
+                {/* Seletor de Câmera */}
+                {availableCameras.length > 1 && (
+                  <div>
+                    <label className="mb-1 block text-[11px] font-semibold text-[var(--text-secondary)]">
+                      Selecionar Dispositivo de Câmera
+                    </label>
+                    <select
+                      value={selectedCameraId}
+                      onChange={(e) => {
+                        const newId = e.target.value;
+                        setSelectedCameraId(newId);
+                        try {
+                          localStorage.setItem("kreyol:preferred-camera", newId);
+                        } catch {}
+                        initMedia(newId);
+                      }}
+                      className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2 text-xs text-[var(--text)] font-medium"
+                    >
+                      {availableCameras.map((cam, i) => (
+                        <option key={cam.deviceId || i} value={cam.deviceId}>
+                          {cam.label || `Câmera ${i + 1}`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Presets de Nitidez e Iluminação de Estúdio */}
+                <div>
+                  <label className="mb-1.5 block text-[11px] font-semibold text-[var(--text-secondary)]">
+                    Preset de Nitidez & Tom de Pele
+                  </label>
+                  <div className="grid grid-cols-1 gap-1.5">
+                    {CLARITY_PRESETS.map((preset) => (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => setClarityPreset(preset.id)}
+                        className={cn(
+                          "flex items-center justify-between rounded-xl border p-2 text-left transition-all cursor-pointer",
+                          clarityPreset === preset.id
+                            ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-bold shadow-sm"
+                            : "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)]/40"
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">{preset.icon}</span>
+                          <div>
+                            <p className="text-xs font-bold leading-tight">{preset.name}</p>
+                            <p className="text-[10px] text-[var(--text-muted)] leading-tight">
+                              {preset.shortDesc}
+                            </p>
+                          </div>
+                        </div>
+                        {clarityPreset === preset.id && (
+                          <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--accent)]" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Luz Frontal Virtual (Ring Light) */}
+                <label className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2.5 cursor-pointer hover:border-[var(--accent)]/40 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={virtualRingLight}
+                    onChange={(e) => setVirtualRingLight(e.target.checked)}
+                    className="h-4 w-4 rounded text-[var(--accent)] accent-[var(--accent)] cursor-pointer"
+                  />
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-[var(--text)]">
+                      💡 Luz Frontal de Estúdio (Ring Light)
+                    </p>
+                    <p className="text-[10px] text-[var(--text-muted)]">
+                      Iluminação difusa suave para clarear e remover sombras do rosto
+                    </p>
+                  </div>
+                </label>
+
+                {/* Qualidade e Bitrate de Gravação */}
+                <div>
+                  <label className="mb-1.5 block text-[11px] font-semibold text-[var(--text-secondary)]">
+                    Taxa de Bits / Qualidade de Gravação
+                  </label>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {RECORDING_QUALITIES.map((q) => (
+                      <button
+                        key={q.id}
+                        type="button"
+                        onClick={() => setRecordingQuality(q.id)}
+                        className={cn(
+                          "flex flex-col items-center rounded-xl border p-2 text-center transition-all cursor-pointer",
+                          recordingQuality === q.id
+                            ? "border-[var(--accent)] bg-[var(--accent-soft)] shadow-sm font-bold text-[var(--accent)]"
+                            : "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)]/40"
+                        )}
+                      >
+                        <span className="text-xs font-bold">{q.name.split(" ")[0]}</span>
+                        <span className="text-[9px] text-[var(--text-muted)]">{q.tag}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* 2. Fundo virtual (estilo Google Meet) */}
             <div>

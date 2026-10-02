@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import VideoLesson from "@/models/VideoLesson";
 import { VideosGrid } from "./VideosGrid";
-import { Video, Sparkles } from "lucide-react";
+import { Video } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 

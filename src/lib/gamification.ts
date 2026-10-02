@@ -1,4 +1,4 @@
-// Motor de Gamificação, Níveis de Fluência e Recompensas em Kreyòl Ayisyen
+// Motor de Gamificação, Níveis de Fluência, Conquistas e Recompensas em Kreyòl Ayisyen
 
 export interface Badge {
   id: string;
@@ -8,6 +8,7 @@ export interface Badge {
   emoji: string;
   xpReward: number;
   goudReward: number;
+  category: "streak" | "precision" | "collection" | "economy" | "vocabulary";
 }
 
 export const BADGES: Badge[] = [
@@ -17,8 +18,9 @@ export const BADGES: Badge[] = [
     kreyol: "Premye Viktwa!",
     description: "Acertou todos os elementos da sua primeira cena.",
     emoji: "🌱",
-    xpReward: 30,
-    goudReward: 15,
+    xpReward: 35,
+    goudReward: 20,
+    category: "collection",
   },
   {
     id: "streak_3",
@@ -26,8 +28,9 @@ export const BADGES: Badge[] = [
     kreyol: "Sou Dife!",
     description: "Alcançou 3 acertos consecutivos.",
     emoji: "🔥",
-    xpReward: 50,
-    goudReward: 25,
+    xpReward: 60,
+    goudReward: 30,
+    category: "streak",
   },
   {
     id: "streak_5",
@@ -35,17 +38,19 @@ export const BADGES: Badge[] = [
     kreyol: "Enpresyonan!",
     description: "Alcançou 5 acertos consecutivos sem errar.",
     emoji: "⚡",
-    xpReward: 100,
-    goudReward: 50,
+    xpReward: 120,
+    goudReward: 60,
+    category: "streak",
   },
   {
     id: "streak_10",
     title: "Imbatível",
     kreyol: "Endomptab!",
-    description: "Sequência incrível de 10 rodadas sem perder.",
+    description: "Sequência épica de 10 rodadas sem perder.",
     emoji: "👑",
-    xpReward: 250,
-    goudReward: 100,
+    xpReward: 300,
+    goudReward: 150,
+    category: "streak",
   },
   {
     id: "first_try",
@@ -53,8 +58,19 @@ export const BADGES: Badge[] = [
     kreyol: "Je Klè!",
     description: "Acertou a cena de primeira com todas as 3 vidas intactas.",
     emoji: "🎯",
-    xpReward: 40,
-    goudReward: 20,
+    xpReward: 45,
+    goudReward: 25,
+    category: "precision",
+  },
+  {
+    id: "perfectionist",
+    title: "Mestre da Precisão",
+    kreyol: "Mèt Presizyon!",
+    description: "Conquistou 3 rodadas perfeitas consecutivas com 3 corações.",
+    emoji: "💎",
+    xpReward: 150,
+    goudReward: 80,
+    category: "precision",
   },
   {
     id: "collector_5",
@@ -63,16 +79,48 @@ export const BADGES: Badge[] = [
     description: "Dominou 5 cenas distintas no jogo.",
     emoji: "🎨",
     xpReward: 80,
-    goudReward: 40,
+    goudReward: 45,
+    category: "collection",
   },
   {
-    id: "collector_20",
-    title: "Mestre do Banco Ghibli",
-    kreyol: "Mèt Galeri",
-    description: "Dominou 20 cenas distintas no jogo.",
+    id: "collector_15",
+    title: "Conhecedor Cultural",
+    kreyol: "Konè Kilti",
+    description: "Dominou 15 cenas distintas na galeria ilustrada.",
     emoji: "🏛️",
-    xpReward: 200,
-    goudReward: 100,
+    xpReward: 180,
+    goudReward: 90,
+    category: "collection",
+  },
+  {
+    id: "collector_30",
+    title: "Mestre da Galeria",
+    kreyol: "Gran Mèt Galeri",
+    description: "Dominou 30 cenas com riqueza de vocabulário.",
+    emoji: "🌟",
+    xpReward: 350,
+    goudReward: 160,
+    category: "collection",
+  },
+  {
+    id: "words_25",
+    title: "Caçador de Palavras",
+    kreyol: "Chasè Mo",
+    description: "Acertou mais de 25 palavras em Kreyòl nas cenas.",
+    emoji: "🏹",
+    xpReward: 75,
+    goudReward: 40,
+    category: "vocabulary",
+  },
+  {
+    id: "words_100",
+    title: "Dicionário Vivo",
+    kreyol: "Diksyonè Vivant",
+    description: "Identificou mais de 100 palavras em Kreyòl.",
+    emoji: "📚",
+    xpReward: 250,
+    goudReward: 120,
+    category: "vocabulary",
   },
   {
     id: "rich_goud",
@@ -82,6 +130,27 @@ export const BADGES: Badge[] = [
     emoji: "💰",
     xpReward: 100,
     goudReward: 50,
+    category: "economy",
+  },
+  {
+    id: "tycoon_goud",
+    title: "Tesouro Nacional",
+    kreyol: "Trezò Nasyonal",
+    description: "Acumulou 500 moedas Goud em sua carteira.",
+    emoji: "🪙",
+    xpReward: 300,
+    goudReward: 150,
+    category: "economy",
+  },
+  {
+    id: "heritage_master",
+    title: "Alma Haitiana",
+    kreyol: "Nanm Ayisyen",
+    description: "Dominou cenas com temas culturais de festa, história e natureza haitiana.",
+    emoji: "🇭🇹",
+    xpReward: 120,
+    goudReward: 60,
+    category: "collection",
   },
 ];
 
@@ -104,14 +173,85 @@ export const LEVELS: LevelInfo[] = [
   { level: 7, title: "Grão-Mestre Kreyòl", kreyol: "Gran Mèt Kreyòl", badgeEmoji: "👑", minXp: 2500, nextXp: 4000 },
 ];
 
+export interface HonoraryTitle {
+  id: string;
+  kreyol: string;
+  portuguese: string;
+  description: string;
+  price: number;
+  icon: string;
+  gradientClass: string;
+}
+
+export const HONORARY_TITLES: HonoraryTitle[] = [
+  {
+    id: "title_inisyate",
+    kreyol: "Inisyatè Kreyòl",
+    portuguese: "Iniciante Kreyòl",
+    description: "Título inicial concedido a todo estudante apaixonado pela língua.",
+    price: 0,
+    icon: "🌱",
+    gradientClass: "from-blue-500/20 to-indigo-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30",
+  },
+  {
+    id: "title_zanmi",
+    kreyol: "Zanmi Ayiti",
+    portuguese: "Amigo do Haiti",
+    description: "Dedicado a quem abraça com carinho a cultura e o povo haitiano.",
+    price: 50,
+    icon: "🤝",
+    gradientClass: "from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+  },
+  {
+    id: "title_flanm",
+    kreyol: "Flanm Kreyòl",
+    portuguese: "Chama Kreyòl",
+    description: "Para estudantes com entusiasmo ardente e ritmo constante de prática.",
+    price: 100,
+    icon: "🔥",
+    gradientClass: "from-orange-500/20 to-amber-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30",
+  },
+  {
+    id: "title_anbasade",
+    kreyol: "Anbasadè Lang",
+    portuguese: "Embaixador da Língua",
+    description: "Fluente e comunicador, promovendo o Kreyòl onde quer que vá.",
+    price: 200,
+    icon: "📜",
+    gradientClass: "from-purple-500/20 to-pink-500/20 text-purple-600 dark:text-purple-400 border-purple-500/30",
+  },
+  {
+    id: "title_sitadel",
+    kreyol: "Gadyen Sitadèl",
+    portuguese: "Guardião da Citadelle",
+    description: "Inabalável como a histórica fortaleza Citadelle Laferrière.",
+    price: 350,
+    icon: "🏰",
+    gradientClass: "from-amber-500/25 to-yellow-500/25 text-amber-600 dark:text-amber-400 border-amber-500/40",
+  },
+  {
+    id: "title_gran_met",
+    kreyol: "Gran Mèt Sajès",
+    portuguese: "Grão-Mestre da Sabedoria",
+    description: "O mais alto título honorífico da plataforma, símbolo de dedicação suprema.",
+    price: 500,
+    icon: "👑",
+    gradientClass: "from-rose-500/25 to-purple-600/25 text-rose-600 dark:text-rose-400 border-rose-500/40",
+  },
+];
+
 export interface GamificationState {
   xp: number;
   goud: number;
   totalSolved: number;
   highestStreak: number;
   currentStreak: number;
+  perfectRoundsCount: number;
+  totalWordsFound: number;
   unlockedBadges: string[];
   scenesSolved: string[];
+  unlockedTitles: string[];
+  activeTitleId: string;
   lastPlayedAt?: string;
 }
 
@@ -125,8 +265,12 @@ export function getDefaultGamificationState(): GamificationState {
     totalSolved: 0,
     highestStreak: 0,
     currentStreak: 0,
+    perfectRoundsCount: 0,
+    totalWordsFound: 0,
     unlockedBadges: [],
     scenesSolved: [],
+    unlockedTitles: ["title_inisyate"],
+    activeTitleId: "title_inisyate",
   };
 }
 
@@ -135,7 +279,13 @@ export function getGamificationState(): GamificationState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return getDefaultGamificationState();
-    return { ...getDefaultGamificationState(), ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    return {
+      ...getDefaultGamificationState(),
+      ...parsed,
+      unlockedTitles: parsed.unlockedTitles || ["title_inisyate"],
+      activeTitleId: parsed.activeTitleId || "title_inisyate",
+    };
   } catch {
     return getDefaultGamificationState();
   }
@@ -149,7 +299,56 @@ export function saveGamificationState(state: GamificationState): void {
   } catch {}
 }
 
-export function getLevelInfo(xp: number): { current: LevelInfo; progressPct: number; xpInLevel: number; xpForLevel: number } {
+export function buyTitle(titleId: string): { success: boolean; message: string; state: GamificationState } {
+  const current = getGamificationState();
+  const target = HONORARY_TITLES.find((t) => t.id === titleId);
+
+  if (!target) {
+    return { success: false, message: "Título não encontrado.", state: current };
+  }
+
+  if (current.unlockedTitles.includes(titleId)) {
+    return { success: false, message: "Você já possui este título!", state: current };
+  }
+
+  if (current.goud < target.price) {
+    return {
+      success: false,
+      message: `Você precisa de ${target.price} Gouds (saldo: ${current.goud} Gouds).`,
+      state: current,
+    };
+  }
+
+  const updated: GamificationState = {
+    ...current,
+    goud: current.goud - target.price,
+    unlockedTitles: [...current.unlockedTitles, titleId],
+    activeTitleId: titleId,
+  };
+
+  saveGamificationState(updated);
+  return { success: true, message: `Título “${target.kreyol}” adquirido e equipado!`, state: updated };
+}
+
+export function equipTitle(titleId: string): GamificationState {
+  const current = getGamificationState();
+  if (!current.unlockedTitles.includes(titleId)) return current;
+
+  const updated: GamificationState = {
+    ...current,
+    activeTitleId: titleId,
+  };
+
+  saveGamificationState(updated);
+  return updated;
+}
+
+export function getLevelInfo(xp: number): {
+  current: LevelInfo;
+  progressPct: number;
+  xpInLevel: number;
+  xpForLevel: number;
+} {
   let current = LEVELS[0];
   for (const lvl of LEVELS) {
     if (xp >= lvl.minXp) {
@@ -169,6 +368,7 @@ export interface QuizWinResult {
   gainedGoud: number;
   newBadges: Badge[];
   leveledUp: boolean;
+  isPerfect: boolean;
   oldLevel: LevelInfo;
   newLevel: LevelInfo;
   updatedState: GamificationState;
@@ -179,6 +379,8 @@ export interface QuizWinResult {
  */
 export function recordQuizWin(params: {
   sceneId: string;
+  theme?: string;
+  wordsCount: number;
   attemptsLeft: number;
   streak: number;
 }): QuizWinResult {
@@ -186,20 +388,20 @@ export function recordQuizWin(params: {
   const oldLevel = getLevelInfo(current.xp).current;
 
   // Cálculo de recompensas
-  // Base: 25 XP
+  // Base: 25 XP + 10 Goud
   let gainedXp = 25;
   let gainedGoud = 10;
 
-  // Bônus por vida cheia (acertou de primeira sem erros)
+  // Bônus por vida cheia (acertou de primeira sem erros: 3 vidas)
   const isPerfect = params.attemptsLeft === 3;
   if (isPerfect) {
-    gainedXp += 15;
-    gainedGoud += 5;
+    gainedXp += 20;
+    gainedGoud += 10;
   }
 
-  // Bônus por sequência
+  // Bônus por sequência (Combo)
   if (params.streak >= 2) {
-    const streakBonus = Math.min(params.streak * 5, 50);
+    const streakBonus = Math.min(params.streak * 6, 60);
     gainedXp += streakBonus;
     gainedGoud += Math.floor(streakBonus / 2);
   }
@@ -211,6 +413,9 @@ export function recordQuizWin(params: {
   const totalSolved = current.totalSolved + 1;
   const newStreak = params.streak;
   const highestStreak = Math.max(current.highestStreak, newStreak);
+  const perfectRoundsCount = current.perfectRoundsCount + (isPerfect ? 1 : 0);
+  const totalWordsFound = current.totalWordsFound + params.wordsCount;
+
   let totalXp = current.xp + gainedXp;
   let totalGoud = current.goud + gainedGoud;
 
@@ -233,9 +438,15 @@ export function recordQuizWin(params: {
   checkBadge("streak_5", newStreak >= 5);
   checkBadge("streak_10", newStreak >= 10);
   checkBadge("first_try", isPerfect);
+  checkBadge("perfectionist", perfectRoundsCount >= 3);
   checkBadge("collector_5", updatedScenes.length >= 5);
-  checkBadge("collector_20", updatedScenes.length >= 20);
+  checkBadge("collector_15", updatedScenes.length >= 15);
+  checkBadge("collector_30", updatedScenes.length >= 30);
+  checkBadge("words_25", totalWordsFound >= 25);
+  checkBadge("words_100", totalWordsFound >= 100);
   checkBadge("rich_goud", totalGoud >= 100);
+  checkBadge("tycoon_goud", totalGoud >= 500);
+  checkBadge("heritage_master", updatedScenes.length >= 4);
 
   const updatedUnlockedBadges = [
     ...current.unlockedBadges,
@@ -248,8 +459,12 @@ export function recordQuizWin(params: {
     totalSolved,
     highestStreak,
     currentStreak: newStreak,
+    perfectRoundsCount,
+    totalWordsFound,
     unlockedBadges: updatedUnlockedBadges,
     scenesSolved: updatedScenes,
+    unlockedTitles: current.unlockedTitles,
+    activeTitleId: current.activeTitleId,
     lastPlayedAt: new Date().toISOString(),
   };
 
@@ -263,6 +478,7 @@ export function recordQuizWin(params: {
     gainedGoud,
     newBadges,
     leveledUp,
+    isPerfect,
     oldLevel,
     newLevel,
     updatedState,

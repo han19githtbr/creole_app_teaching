@@ -7,17 +7,17 @@ import {
   getLevelInfo,
   BADGES,
   LEVELS,
+  HONORARY_TITLES,
+  buyTitle as buyTitleUtil,
+  equipTitle as equipTitleUtil,
   type Badge,
-  type LevelInfo,
+  type HonoraryTitle,
 } from "@/lib/gamification";
 
 export function useGamification() {
   const [state, setState] = useState<GamificationState>(() => getGamificationState());
 
   useEffect(() => {
-    // Sincroniza inicial
-    setState(getGamificationState());
-
     function handleUpdate(e: Event) {
       const customEvent = e as CustomEvent<GamificationState>;
       if (customEvent.detail) {
@@ -52,12 +52,32 @@ export function useGamification() {
     (b) => !state.unlockedBadges.includes(b.id)
   );
 
+  const activeTitle: HonoraryTitle =
+    HONORARY_TITLES.find((t) => t.id === state.activeTitleId) || HONORARY_TITLES[0];
+
+  const buyTitle = useCallback((titleId: string) => {
+    const res = buyTitleUtil(titleId);
+    if (res.success && res.state) {
+      setState(res.state);
+    }
+    return res;
+  }, []);
+
+  const equipTitle = useCallback((titleId: string) => {
+    const next = equipTitleUtil(titleId);
+    setState(next);
+  }, []);
+
   return {
     state,
     levelInfo,
+    activeTitle,
     unlockedBadgeList,
     lockedBadgeList,
     allBadges: BADGES,
     allLevels: LEVELS,
+    allTitles: HONORARY_TITLES,
+    buyTitle,
+    equipTitle,
   };
 }

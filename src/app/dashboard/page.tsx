@@ -12,6 +12,7 @@ import { PostCard } from "@/components/PostCard";
 import { LiveBadge } from "@/components/LiveBadge";
 import { VideoCard } from "@/components/VideoCard";
 import { ProgressCard } from "@/components/ProgressCard";
+import { GamificationCard } from "@/components/GamificationCard";
 import { getBankImage } from "@/lib/imageBank";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
@@ -113,6 +114,9 @@ export default async function DashboardPage() {
           name={session.user?.name ?? "Aluno"}
         />
       )}
+
+      {/* Gamificação: Nível, Conquistas e Jogo das Imagens */}
+      <GamificationCard />
 
       {/* Featured Section: Aulas Gravadas e Vídeos */}
       <div className="space-y-4">

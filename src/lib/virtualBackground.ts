@@ -253,14 +253,22 @@ export function drawVirtualBackground(
   scratch: VirtualBgScratch,
   w: number,
   h: number,
-  now: number
+  now: number,
+  personFilter?: string
 ) {
   const bg = parseVirtualBg(bgId);
   const { vw, vh } = videoSize(video, w, h);
 
   if (bg.kind === "none" || !mask) {
     ctx.clearRect(0, 0, w, h);
-    drawCover(ctx, video, vw, vh, 0, 0, w, h);
+    if (personFilter && personFilter !== "none") {
+      ctx.save();
+      ctx.filter = personFilter;
+      drawCover(ctx, video, vw, vh, 0, 0, w, h);
+      ctx.restore();
+    } else {
+      drawCover(ctx, video, vw, vh, 0, 0, w, h);
+    }
     return;
   }
 
@@ -287,6 +295,9 @@ export function drawVirtualBackground(
   drawCover(pctx, mask as CanvasImageSource, mask.width || vw, mask.height || vh, 0, 0, w, h);
   if (supportsFilter) pctx.filter = "none";
   pctx.globalCompositeOperation = "source-in";
+  if (personFilter && personFilter !== "none") {
+    pctx.filter = personFilter;
+  }
   drawCover(pctx, video, vw, vh, 0, 0, w, h);
   pctx.restore();
 

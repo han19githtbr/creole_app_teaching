@@ -66,8 +66,8 @@ export function PostCard({
             href={`/dashboard/jogo?post=${encodeURIComponent(gamePostId)}`}
             className="mt-4 inline-flex items-center gap-2 rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-[var(--accent-soft)] to-[var(--accent-soft)] px-3.5 py-2.5 text-xs sm:text-sm font-bold text-[var(--accent)] transition hover:brightness-95 shadow-sm"
           >
-            <Gamepad2 className="h-4 w-4 text-amber-500" strokeWidth={3} />
-            <span className="font-extrabold">Jogar desafio desta postagem</span>
+            <Gamepad2 className="h-4 w-4 text-amber-500" />
+            <span className="font-black">Jogar desafio desta postagem</span>
             <span className="rounded-lg bg-amber-500/20 px-2 py-0.5 text-[11px] font-extrabold text-amber-600 dark:text-amber-400">
               +10 Goud
             </span>

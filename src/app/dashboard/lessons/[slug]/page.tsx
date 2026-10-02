@@ -66,7 +66,7 @@ export default async function LessonDetailPage({
       </Link>
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm sm:p-8">
-        <span className="mb-2 inline-block rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-xs font-bold text-[var(--accent)]">
+        <span className="mb-2 inline-block rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-xs font-black text-[var(--accent-ink)]">
           {lesson.category} · Seção {lesson.sectionNumber}
         </span>
         <Markdown content={lesson.content} />

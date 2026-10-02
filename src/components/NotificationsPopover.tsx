@@ -136,7 +136,7 @@ export function NotificationsPopover() {
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         aria-label={count > 0 ? `${count} novas notificações` : "Notificações"}
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] transition-colors cursor-pointer"
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] transition-colors cursor-pointer"
       >
         <Bell className="h-4 w-4" />
         {count > 0 && (

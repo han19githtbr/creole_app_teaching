@@ -167,22 +167,22 @@ export default async function DashboardPage() {
 
       {/* Featured Section: Novas Lições & Lições Recentes */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-[var(--text)]">
-              <BookOpen className="h-5 w-5 text-[var(--accent)]" /> Lições Recentes
-            </h2>
-            {hasNewLesson && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm animate-pulse">
-                <Bell className="h-3 w-3" /> Nova lição disponível!
-              </span>
-            )}
-          </div>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 md:flex md:justify-between">
+          <h2 className="col-start-1 flex items-center gap-2 whitespace-nowrap text-base font-bold text-[var(--text)] md:text-lg">
+            <BookOpen className="h-5 w-5 shrink-0 text-[var(--accent)]" /> Lições Recentes
+          </h2>
+          {hasNewLesson && (
+            <span className="col-span-2 row-start-2 inline-flex w-fit items-center gap-1 whitespace-nowrap rounded-full bg-red-600 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm animate-pulse md:col-auto md:row-auto">
+              <Bell className="h-3 w-3 shrink-0" /> Nova lição disponível!
+            </span>
+          )}
           <Link
             href="/dashboard/lessons"
-            className="flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline"
+            className="col-start-2 row-start-1 flex items-center gap-1 whitespace-nowrap text-xs font-semibold text-[var(--accent)] hover:underline"
           >
-            Ver todas as lições ({totalLessons}) <ArrowRight className="h-3.5 w-3.5" />
+            <span className="md:hidden">Ver todas</span>
+            <span className="hidden md:inline">Ver todas as lições ({totalLessons})</span>
+            <ArrowRight className="h-3.5 w-3.5 shrink-0" />
           </Link>
         </div>
 
@@ -218,15 +218,19 @@ export default async function DashboardPage() {
 
       {/* Featured Section: Aulas Gravadas e Vídeos */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-[var(--text)]">
-            <Video className="h-5 w-5 text-[var(--accent)]" /> Aulas Gravadas e Dicas em Vídeo
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:justify-between">
+          <h2 className="flex min-w-0 items-center gap-2 text-base font-bold text-[var(--text)] md:text-lg">
+            <Video className="h-5 w-5 shrink-0 text-[var(--accent)]" />
+            <span className="md:hidden">Aulas em vídeo</span>
+            <span className="hidden md:inline">Aulas Gravadas e Dicas em Vídeo</span>
           </h2>
           <Link
             href="/dashboard/videos"
-            className="flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline"
+            className="flex items-center gap-1 whitespace-nowrap text-xs font-semibold text-[var(--accent)] hover:underline"
           >
-            Ver todas as aulas <ArrowRight className="h-3.5 w-3.5" />
+            <span className="md:hidden">Ver todas</span>
+            <span className="hidden md:inline">Ver todas as aulas</span>
+            <ArrowRight className="h-3.5 w-3.5 shrink-0" />
           </Link>
         </div>
 

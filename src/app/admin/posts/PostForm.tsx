@@ -73,6 +73,20 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
     setContent(bankImage.caption);
   }
 
+  function useSuggestedTitle() {
+    if (!bankImage) return;
+    setTitle(bankImage.title);
+  }
+
+  function handleAutoSelectQuizAnswers() {
+    if (!bankImage?.elements) return;
+    const elementWords = bankImage.elements.map((el) => el.kreyol.toLowerCase());
+    const matched = quizOptions.filter((opt) => elementWords.includes(opt.trim().toLowerCase()));
+    if (matched.length > 0) {
+      setQuizAnswers(matched);
+    }
+  }
+
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -187,9 +201,14 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
                     maxLength={200}
                   />
                   {bankImage && (
-                    <Button type="button" size="sm" variant="outline" onClick={useSuggestedCaption}>
-                      <Sparkles className="h-3.5 w-3.5" /> Usar legenda sugerida
-                    </Button>
+                    <>
+                      <Button type="button" size="sm" variant="outline" onClick={useSuggestedTitle}>
+                        <Sparkles className="h-3.5 w-3.5 text-amber-500" /> Sugerir título
+                      </Button>
+                      <Button type="button" size="sm" variant="outline" onClick={useSuggestedCaption}>
+                        <Sparkles className="h-3.5 w-3.5 text-amber-500" /> Usar legenda sugerida
+                      </Button>
+                    </>
                   )}
                   <Button
                     type="button"
@@ -203,6 +222,22 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
                     <Trash2 className="h-3.5 w-3.5" /> Remover
                   </Button>
                 </div>
+                {bankImage && bankImage.elements && bankImage.elements.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 bg-[var(--surface)] px-3 py-2 border-t border-[var(--border)]">
+                    <span className="text-[11px] font-semibold text-[var(--accent)]">
+                      Elementos identificáveis na cena:
+                    </span>
+                    {bankImage.elements.map((el) => (
+                      <span
+                        key={el.kreyol}
+                        className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 text-[10px] font-medium text-[var(--text)] border border-[var(--border-soft)]"
+                      >
+                        <strong>{el.kreyol}</strong>{" "}
+                        <span className="text-[var(--text-muted)]">({el.pt})</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -286,41 +321,74 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
 
       {imageUrl && quizEnabled && (
         <section className="space-y-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-          <div>
-            <h3 className="text-sm font-semibold text-[var(--text)]">Jogo de palavras em Kreyòl</h3>
-            <p className="mt-1 text-xs text-[var(--text-muted)]">
-              Defina dez opções e marque todas as palavras que representam elementos visíveis na imagem.
-            </p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 className="text-sm font-semibold text-[var(--text)]">Jogo de palavras em Kreyòl</h3>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
+                Defina dez opções e marque todas as palavras que representam elementos visíveis na imagem.
+              </p>
+            </div>
+            {bankImage?.elements && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleAutoSelectQuizAnswers}
+                className="text-xs"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-amber-500" /> Marcar elementos visíveis ({quizAnswers.length} marcadas)
+              </Button>
+            )}
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
-            {quizOptions.map((word, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <input
-                  aria-label={`Palavra correta ${index + 1}`}
-                  type="checkbox"
-                  checked={quizAnswers.includes(word) && Boolean(word.trim())}
-                  disabled={!word.trim()}
-                  onChange={(event) => setQuizAnswers((answers) => event.target.checked
-                    ? [...answers, word]
-                    : answers.filter((answer) => answer !== word))}
-                  className="h-4 w-4 shrink-0 rounded border-[var(--border-strong)] accent-[var(--accent)]"
-                />
-                <Input
-                  value={word}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setQuizOptions((options) => options.map((item, itemIndex) => itemIndex === index ? value : item));
-                    setQuizAnswers((answers) => answers.filter((answer) => answer !== word));
-                  }}
-                  placeholder={`Opção ${index + 1} em Kreyòl`}
-                  maxLength={40}
-                  required
-                  className="h-9 text-sm"
-                />
-              </div>
-            ))}
+            {quizOptions.map((word, index) => {
+              const isVisibleInGhibli = bankImage?.elements?.some(
+                (el) => el.kreyol.toLowerCase() === word.trim().toLowerCase()
+              );
+              return (
+                <div key={index} className="flex items-center gap-2">
+                  <input
+                    aria-label={`Palavra correta ${index + 1}`}
+                    type="checkbox"
+                    checked={quizAnswers.includes(word) && Boolean(word.trim())}
+                    disabled={!word.trim()}
+                    onChange={(event) =>
+                      setQuizAnswers((answers) =>
+                        event.target.checked
+                          ? [...answers, word]
+                          : answers.filter((answer) => answer !== word)
+                      )
+                    }
+                    className="h-4 w-4 shrink-0 rounded border-[var(--border-strong)] accent-[var(--accent)] cursor-pointer"
+                  />
+                  <div className="relative flex-1">
+                    <Input
+                      value={word}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setQuizOptions((options) =>
+                          options.map((item, itemIndex) => (itemIndex === index ? value : item))
+                        );
+                        setQuizAnswers((answers) => answers.filter((answer) => answer !== word));
+                      }}
+                      placeholder={`Opção ${index + 1} em Kreyòl`}
+                      maxLength={40}
+                      required
+                      className="h-9 text-sm pr-16"
+                    />
+                    {isVisibleInGhibli && (
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 rounded bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-bold text-amber-600 dark:text-amber-400">
+                        visível
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <p className="text-[11px] text-[var(--text-muted)]">Caixa marcada = resposta correta. O aluno terá três tentativas.</p>
+          <p className="text-[11px] text-[var(--text-muted)]">
+            Caixa marcada = resposta correta. O aluno terá três tentativas para encontrar as palavras certas na ilustração Ghibli.
+          </p>
         </section>
       )}
 

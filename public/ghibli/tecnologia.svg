@@ -1,68 +1,342 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" preserveAspectRatio="xMidYMid slice">
-<title>Oficina tecnológica no campo</title><desc>Ilustração original de animação 2D com luz cinematográfica e elementos reconhecíveis: Oficina tecnológica no campo.</desc>
-<defs>
-<linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5798b8"/><stop offset=".55" stop-color="#c0d1cb"/><stop offset="1" stop-color="#f1e1c1"/></linearGradient>
-<radialGradient id="gSun"><stop offset="0" stop-color="#f7e0aa"/><stop offset=".35" stop-color="#f2c779" stop-opacity=".85"/><stop offset="1" stop-color="#f2c779" stop-opacity="0"/></radialGradient>
-<linearGradient id="gCloud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0f1eb"/><stop offset="1" stop-color="#b8c2c1"/></linearGradient>
-<linearGradient id="gLeaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a0b96f"/><stop offset=".55" stop-color="#688c4e"/><stop offset="1" stop-color="#405d3b"/></linearGradient>
-<linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#705b49"/><stop offset=".42" stop-color="#9a8063"/><stop offset=".68" stop-color="#705b49"/><stop offset="1" stop-color="#9a8063"/></linearGradient>
-<linearGradient id="gWall" x1="0" y1="0" x2="1" y2="0.8"><stop offset="0" stop-color="#e4ded0"/><stop offset=".62" stop-color="#e4ded0"/><stop offset="1" stop-color="#c7c0b1"/></linearGradient>
-<linearGradient id="gRoof" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#946c5c"/><stop offset=".58" stop-color="#946c5c"/><stop offset="1" stop-color="#6d5147"/></linearGradient>
-<linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b6d1d2"/><stop offset=".42" stop-color="#6f929d"/><stop offset="1" stop-color="#394f5b"/></linearGradient>
-<linearGradient id="gSkin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c98a62"/><stop offset=".48" stop-color="#986044"/><stop offset="1" stop-color="#674334"/></linearGradient>
-<linearGradient id="gFruit" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0ad6c"/><stop offset=".36" stop-color="#c45b48"/><stop offset="1" stop-color="#85443b"/></linearGradient>
-<linearGradient id="gPepper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#efaa70"/><stop offset=".42" stop-color="#c45b48"/><stop offset="1" stop-color="#784038"/></linearGradient>
-<linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#72aeb6"/><stop offset="1" stop-color="#477d8b"/></linearGradient>
-<linearGradient id="gShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#211d16" stop-opacity=".18"/></linearGradient>
-<linearGradient id="gRay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3e5c3" stop-opacity=".75"/><stop offset="1" stop-color="#f3e5c3" stop-opacity="0"/></linearGradient>
-<filter id="fGrain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="2" seed="17" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .34  0 0 0 0 .34  0 0 0 0 .32  0 0 0 .24 -.08"/></filter>
-<filter id="fSoft"><feGaussianBlur stdDeviation="6"/></filter>
-<filter id="fSoft2"><feGaussianBlur stdDeviation="14"/></filter>
-<filter id="fObject" x="-30%" y="-20%" width="160%" height="150%"><feDropShadow dx="2" dy="7" stdDeviation="5" flood-color="#29251f" flood-opacity=".24"/></filter>
-</defs>
-<rect width="1200" height="800" fill="url(#gSky)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Oficina tecnológica no campo - Teknoloji</title>
+  <desc>Ghibli anime art: Oficina com computador, robô, drone e moinho de vento.</desc>
+  
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
 
-<circle cx="1010" cy="170" r="204.8" fill="url(#gSun)"></circle>
-<g transform="translate(245,149.28410322964191)" opacity="0.95"><g><g transform="scale(0.72)">
-<path d="M-158,25 C-150,4 -126,-4 -101,2 C-91,-30 -54,-45 -23,-28 C-5,-60 43,-61 66,-35 C101,-48 133,-27 135,2 C157,6 171,17 174,31 C125,43 -103,43 -158,25Z" fill="#b8c2c1" opacity=".5"/>
-<path d="M-166,14 C-157,-7 -131,-13 -107,-6 C-99,-38 -64,-50 -33,-35 C-15,-65 29,-69 57,-45 C89,-57 121,-37 126,-9 C151,-6 168,7 171,22 C131,35 -122,36 -166,14Z" fill="url(#gCloud)"/>
-<path d="M-99,-8 C-96,-34 -69,-47 -43,-35 C-30,-57 4,-62 25,-43 C45,-45 62,-32 66,-12 C19,-2 -50,-1 -99,-8Z" fill="#f0f1eb" opacity=".54"/>
-</g></g></g><g transform="translate(710,263.17754321871325)" opacity="0.85"><g><g transform="scale(0.52)">
-<path d="M-158,25 C-150,4 -126,-4 -101,2 C-91,-30 -54,-45 -23,-28 C-5,-60 43,-61 66,-35 C101,-48 133,-27 135,2 C157,6 171,17 174,31 C125,43 -103,43 -158,25Z" fill="#b8c2c1" opacity=".5"/>
-<path d="M-166,14 C-157,-7 -131,-13 -107,-6 C-99,-38 -64,-50 -33,-35 C-15,-65 29,-69 57,-45 C89,-57 121,-37 126,-9 C151,-6 168,7 171,22 C131,35 -122,36 -166,14Z" fill="url(#gCloud)"/>
-<path d="M-99,-8 C-96,-34 -69,-47 -43,-35 C-30,-57 4,-62 25,-43 C45,-45 62,-32 66,-12 C19,-2 -50,-1 -99,-8Z" fill="#f0f1eb" opacity=".54"/>
-</g></g></g><g transform="translate(1010,92.37535218987614)" opacity="0.7"><g><g transform="scale(0.62)">
-<path d="M-158,25 C-150,4 -126,-4 -101,2 C-91,-30 -54,-45 -23,-28 C-5,-60 43,-61 66,-35 C101,-48 133,-27 135,2 C157,6 171,17 174,31 C125,43 -103,43 -158,25Z" fill="#b8c2c1" opacity=".5"/>
-<path d="M-166,14 C-157,-7 -131,-13 -107,-6 C-99,-38 -64,-50 -33,-35 C-15,-65 29,-69 57,-45 C89,-57 121,-37 126,-9 C151,-6 168,7 171,22 C131,35 -122,36 -166,14Z" fill="url(#gCloud)"/>
-<path d="M-99,-8 C-96,-34 -69,-47 -43,-35 C-30,-57 4,-62 25,-43 C45,-45 62,-32 66,-12 C19,-2 -50,-1 -99,-8Z" fill="#f0f1eb" opacity=".54"/>
-</g></g></g>
+    <!-- Soft diffuse drop shadow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
 
-<path d="M-130,800 L-130,479.9 Q-130,479.9 -65,494.2 Q0,508.6 65,490.4 Q130,472.2 195,478.5 Q260,484.7 325,491.4 Q390,498 455,477.3 Q520,456.6 585,458.5 Q650,460.5 715,477 Q780,493.4 845,470.6 Q910,447.8 975,440.1 Q1040,432.4 1105,452.1 Q1170,471.8 1235,472.9 L1300,474 L1300,800 Z" fill="#9cac91"/>
-<path d="M-130,800 L-130,557.9 Q-130,557.9 -65,567.5 Q0,577 65,561.5 Q130,546 195,557.6 Q260,569.2 325,579.8 Q390,590.4 455,575.7 Q520,561 585,580.2 Q650,599.3 715,576.5 Q780,553.7 845,561.6 Q910,569.4 975,559.3 Q1040,549.1 1105,560.1 Q1170,571.2 1235,584.8 L1300,598.4 L1300,800 Z" fill="#7f9b70"/>
-<path d="M-130,800 L-130,633.9 Q-130,633.9 -65,622.5 Q0,611.2 65,619.2 Q130,627.1 195,639.9 Q260,652.7 325,639.8 Q390,626.8 455,631.6 Q520,636.3 585,653.4 Q650,670.4 715,643.1 Q780,615.8 845,634.1 Q910,652.5 975,655.4 Q1040,658.3 1105,644.6 Q1170,630.8 1235,631.1 L1300,631.5 L1300,800 Z" fill="#64834e"/><g transform="translate(240,500) scale(1)"><path d="M-3,0 L-1.5,-120 L1.5,-120 L3,0 Z" fill="#e4ded0"/>
-<g transform="translate(0,-120)"><g><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0"/><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0" transform="rotate(120)"/><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0" transform="rotate(240)"/></g><circle r="5" fill="#c7c0b1"/></g></g><g transform="translate(470,520) scale(0.8)"><path d="M-3,0 L-1.5,-120 L1.5,-120 L3,0 Z" fill="#e4ded0"/>
-<g transform="translate(0,-120)"><g><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0"/><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0" transform="rotate(120)"/><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0" transform="rotate(240)"/></g><circle r="5" fill="#c7c0b1"/></g></g><g transform="translate(980,500) scale(0.9)"><path d="M-3,0 L-1.5,-120 L1.5,-120 L3,0 Z" fill="#e4ded0"/>
-<g transform="translate(0,-120)"><g><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0"/><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0" transform="rotate(120)"/><ellipse cx="0" cy="-34" rx="4" ry="34" fill="#e4ded0" transform="rotate(240)"/></g><circle r="5" fill="#c7c0b1"/></g></g><path d="M-150,800 L-150,647.3 Q-150,647.3 -75,647.1 Q0,646.9 75,651.9 Q150,656.9 225,650.1 Q300,643.3 375,656.2 Q450,669.1 525,668.8 Q600,668.5 675,657.9 Q750,647.2 825,651.3 Q900,655.4 975,648 Q1050,640.6 1125,645.7 Q1200,650.9 1275,647.2 L1350,643.4 L1350,800 Z" fill="#4e6c43" opacity=".0"/><g transform="translate(770,660)">
-<rect x="-110" y="-110" width="220" height="110" fill="#e4ded0"/><rect x="50" y="-110" width="60" height="110" fill="#c7c0b1" opacity=".6"/>
-<path d="M-128,-110 L0,-190 L128,-110 Z" fill="#946c5c"/><path d="M0,-190 L128,-110 L70,-110 Z" fill="#6d5147" opacity=".4"/>
-<path d="M-70,-128 L-20,-158 L-8,-146 L-58,-116 Z" fill="#26386b"/><path d="M8,-158 L58,-128 L46,-116 L-4,-146 Z" fill="#26386b" transform="translate(8,0)"/>
-<rect x="-92" y="-84" width="60" height="44" rx="4" fill="#e6c17f"></rect>
-<rect x="-84" y="-76" width="44" height="12" fill="#2b3d6b" opacity=".75"/><rect x="-84" y="-60" width="30" height="6" fill="#2b3d6b" opacity=".5"/>
-<rect x="-10" y="-70" width="46" height="70" rx="23" fill="#705b49"/><circle cx="24" cy="-34" r="3" fill="#e6c17f"/>
-<rect x="60" y="-84" width="34" height="34" rx="3" fill="#bfe4f2"/></g><g transform="translate(846,548)"><path d="M0,0 L0,-26" stroke="#898273" stroke-width="3"/><path d="M-14,-30 Q0,-16 14,-30 Z" fill="#e4ded0" transform="rotate(-25 0 -26)"/></g><path d="M-150,800 L-150,714.7 Q-150,714.7 -75,709.9 Q0,705.1 75,714.8 Q150,724.6 225,721.4 Q300,718.2 375,729.8 Q450,741.4 525,727.2 Q600,713 675,707.4 Q750,701.8 825,717.1 Q900,732.4 975,731.9 Q1050,731.5 1125,727.7 Q1200,724 1275,711.4 L1350,698.8 L1350,800 Z" fill="#4e6c43"/><g transform="translate(330,686)"><g>
-<ellipse cx="0" cy="44" rx="34" ry="7" fill="#000" opacity=".18"/>
-<rect x="-30" y="-6" width="60" height="50" rx="24" fill="#e4ded0"/><rect x="4" y="-6" width="26" height="50" rx="13" fill="#c7c0b1" opacity=".6"/>
-<rect x="-26" y="-58" width="52" height="46" rx="20" fill="#e4ded0"/><circle cx="-10" cy="-36" r="7" fill="#343c37"/><circle cx="10" cy="-36" r="7" fill="#343c37"/>
-<circle cx="-8" cy="-38" r="2.2" fill="#fff"/><circle cx="12" cy="-38" r="2.2" fill="#fff"/>
-<path d="M0,-58 L0,-76" stroke="#898273" stroke-width="3"/><circle cx="0" cy="-80" r="6" fill="#c45b48"></circle>
-<rect x="-46" y="4" width="16" height="30" rx="8" fill="#c7c0b1"/><rect x="30" y="4" width="16" height="30" rx="8" fill="#c7c0b1"/>
-<rect x="-14" y="8" width="28" height="18" rx="4" fill="#3e7596" opacity=".85"/></g></g><g transform="translate(600,290)"><g>
-<ellipse cx="0" cy="0" rx="34" ry="14" fill="#e4ded0"/><ellipse cx="6" cy="4" rx="26" ry="9" fill="#c7c0b1" opacity=".6"/>
-<circle cx="0" cy="-2" r="7" fill="#3e7596"/>
-<path d="M-32,-8 L-56,-16 M32,-8 L56,-16" stroke="#898273" stroke-width="3"/>
-<ellipse cx="-56" cy="-18" rx="20" ry="3" fill="#343c37" opacity=".55"></ellipse>
-<ellipse cx="56" cy="-18" rx="20" ry="3" fill="#343c37" opacity=".55"></ellipse>
-<path d="M0,14 L0,36" stroke="#898273" stroke-width="2"/><circle cx="0" cy="44" r="12" fill="#e6c17f"></circle></g></g><circle cx="650.5" cy="554.7" r="3" fill="#9ff3ff" opacity=".0"></circle><circle cx="137.7" cy="509.3" r="1.9" fill="#9ff3ff" opacity=".0"></circle><circle cx="593.7" cy="678.2" r="3.2" fill="#9ff3ff" opacity=".0"></circle><circle cx="270.4" cy="500.7" r="3.9" fill="#9ff3ff" opacity=".0"></circle><circle cx="300.2" cy="452.1" r="3.8" fill="#9ff3ff" opacity=".0"></circle><circle cx="995.1" cy="515.9" r="4" fill="#9ff3ff" opacity=".0"></circle><circle cx="102.1" cy="512.8" r="3.6" fill="#9ff3ff" opacity=".0"></circle><circle cx="180.6" cy="308.2" r="2.5" fill="#9ff3ff" opacity=".0"></circle><circle cx="907" cy="328.2" r="3.6" fill="#9ff3ff" opacity=".0"></circle><circle cx="119.1" cy="570.8" r="1.8" fill="#9ff3ff" opacity=".0"></circle><circle cx="966.4" cy="346.6" r="1.8" fill="#9ff3ff" opacity=".0"></circle><circle cx="525.6" cy="439.3" r="2.3" fill="#9ff3ff" opacity=".0"></circle><circle cx="372.2" cy="363.2" r="3" fill="#9ff3ff" opacity=".0"></circle><circle cx="810" cy="646.1" r="2.4" fill="#9ff3ff" opacity=".0"></circle><circle cx="240.5" cy="498.2" r="1.9" fill="#9ff3ff" opacity=".0"></circle><circle cx="334.4" cy="370" r="3.6" fill="#9ff3ff" opacity=".0"></circle><circle cx="1084.4" cy="479.6" r="3.6" fill="#9ff3ff" opacity=".0"></circle><circle cx="755.1" cy="326" r="1.8" fill="#9ff3ff" opacity=".0"></circle>
-<rect width="1200" height="800" fill="url(#gShade)" opacity=".34"/>
-<rect width="1200" height="800" filter="url(#fGrain)" opacity=".16" style="mix-blend-mode:soft-light"/>
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <!-- Sky Gradients -->
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#236ca7"/>
+      <stop offset="35%" stop-color="#5fa3d6"/>
+      <stop offset="70%" stop-color="#b8e1f2"/>
+      <stop offset="100%" stop-color="#fdf3dc"/>
+    </linearGradient>
+
+    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#31396b"/>
+      <stop offset="35%" stop-color="#73507b"/>
+      <stop offset="65%" stop-color="#cb6b5c"/>
+      <stop offset="85%" stop-color="#f29e5a"/>
+      <stop offset="100%" stop-color="#fedaa2"/>
+    </linearGradient>
+
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#121832"/>
+      <stop offset="40%" stop-color="#262f56"/>
+      <stop offset="70%" stop-color="#4e3d64"/>
+      <stop offset="90%" stop-color="#915264"/>
+      <stop offset="100%" stop-color="#d6846c"/>
+    </linearGradient>
+
+    <!-- Cloud Gradients -->
+    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fcf8f0"/>
+      <stop offset="80%" stop-color="#d9e4ec"/>
+      <stop offset="100%" stop-color="#b6c8d7"/>
+    </linearGradient>
+
+    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5e6"/>
+      <stop offset="40%" stop-color="#fbd0a5"/>
+      <stop offset="75%" stop-color="#cf8ca0"/>
+      <stop offset="100%" stop-color="#7e607c"/>
+    </linearGradient>
+
+    <!-- Sun / Glow Gradients -->
+    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Hills / Mountains Gradients -->
+    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e94a8"/>
+      <stop offset="100%" stop-color="#93b9c7"/>
+    </linearGradient>
+
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c4f"/>
+      <stop offset="50%" stop-color="#3c6a40"/>
+      <stop offset="100%" stop-color="#2d5231"/>
+    </linearGradient>
+
+    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#699e4c"/>
+      <stop offset="60%" stop-color="#4c7e33"/>
+      <stop offset="100%" stop-color="#2f5720"/>
+    </linearGradient>
+
+    <!-- Materials: Wood, Brass, Stone, Water -->
+    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9c6d48"/>
+      <stop offset="50%" stop-color="#784f30"/>
+      <stop offset="100%" stop-color="#55341c"/>
+    </linearGradient>
+
+    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#d9a536"/>
+      <stop offset="70%" stop-color="#996c14"/>
+      <stop offset="100%" stop-color="#5e4007"/>
+    </linearGradient>
+
+    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c5beb3"/>
+      <stop offset="60%" stop-color="#999184"/>
+      <stop offset="100%" stop-color="#6c6458"/>
+    </linearGradient>
+
+    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#47a5be"/>
+      <stop offset="50%" stop-color="#2a7796"/>
+      <stop offset="100%" stop-color="#144d6a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky -->
+  <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
+  
+  <!-- Sun & Clouds -->
+  
+  <g>
+    <circle cx="980" cy="160" r="168" fill="url(#sunGlowDay)" />
+    <circle cx="980" cy="160" r="48" fill="#fffded" />
+    <!-- Subtle sun rays -->
+    <polygon points="980,160 680,800 860,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="980,160 1030,800 1220,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="980,160 1340,800 1540,800" fill="#fffbe6" opacity="0.06" />
+  </g>
+  
+  <g transform="translate(300, 140) scale(0.95)" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+  
+  <g transform="translate(820, 200) scale(0.85)" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+  
+  <g transform="translate(1120, 120) scale(0.7)" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+
+  <!-- Distant Blue Mountains -->
+  <path d="M-50,520 Q220,380 480,470 T1050,420 Q1180,450 1250,500 L1250,800 L-50,800 Z" fill="url(#hillDistant)" opacity="0.65"/>
+
+  <!-- Mid Green Hills -->
+  <path d="M-30,580 Q180,470 420,530 T950,500 Q1120,540 1230,570 L1230,800 L-30,800 Z" fill="url(#hillMid)"/>
+
+  <!-- MOULEN VAN (Moinho de Vento) on middle hill -->
+  <g transform="translate(360, 460)" filter="url(#dropShadow)">
+    <!-- Tower Body -->
+    <path d="M-36,90 L-22,-45 Q0,-55 22,-45 L36,90 Z" fill="url(#stoneTone)"/>
+    <path d="M-28,-45 L0,-80 L28,-45 Z" fill="#6e3f28"/>
+    <!-- Small arched windows -->
+    <rect x="-6" y="-15" width="12" height="18" rx="6" fill="#2d3748"/>
+    <rect x="-8" y="30" width="16" height="22" rx="8" fill="#2d3748"/>
+    <!-- Windmill Blades / Rotor (Moulen van) -->
+    <g transform="translate(0, -50)">
+      <circle cx="0" cy="0" r="10" fill="#3a2312"/>
+      <!-- Blade 1 -->
+      <line x1="0" y1="0" x2="0" y2="-95" stroke="#4a301a" stroke-width="5"/>
+      <rect x="3" y="-90" width="22" height="75" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+      <!-- Blade 2 -->
+      <line x1="0" y1="0" x2="95" y2="0" stroke="#4a301a" stroke-width="5"/>
+      <rect x="15" y="3" width="75" height="22" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+      <!-- Blade 3 -->
+      <line x1="0" y1="0" x2="0" y2="95" stroke="#4a301a" stroke-width="5"/>
+      <rect x="-25" y="15" width="22" height="75" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+      <!-- Blade 4 -->
+      <line x1="0" y1="0" x2="-95" y2="0" stroke="#4a301a" stroke-width="5"/>
+      <rect x="-90" y="-25" width="75" height="22" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <!-- Rolling Lush Foreground Hill -->
+  <path d="M-50,660 Q280,590 620,640 T1250,620 L1250,800 L-50,800 Z" fill="url(#hillNear)"/>
+
+  <!-- DRÒN (Drone) hovering in sky -->
+  <g transform="translate(680, 260)" filter="url(#dropShadow)">
+    <!-- Carbon/wood cross arms -->
+    <line x1="-55" y1="-25" x2="55" y2="25" stroke="#333f48" stroke-width="7" stroke-linecap="round"/>
+    <line x1="-55" y1="25" x2="55" y2="-25" stroke="#333f48" stroke-width="7" stroke-linecap="round"/>
+    <!-- Center fuselage -->
+    <rect x="-22" y="-16" width="44" height="32" rx="10" fill="#d9a536" stroke="#222" stroke-width="2"/>
+    <ellipse cx="0" cy="0" rx="12" ry="8" fill="#1b2a38"/>
+    <!-- Cyan sensor lens -->
+    <circle cx="0" cy="14" r="6" fill="#38bdf8"/>
+    <!-- 4 Rotors with motion blur disks -->
+    <g transform="translate(-55, -25)">
+      <circle cx="0" cy="0" r="5" fill="#111"/>
+      <ellipse cx="0" cy="0" rx="30" ry="8" fill="#e2e8f0" opacity="0.6" stroke="#94a3b8" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(55, -25)">
+      <circle cx="0" cy="0" r="5" fill="#111"/>
+      <ellipse cx="0" cy="0" rx="30" ry="8" fill="#e2e8f0" opacity="0.6" stroke="#94a3b8" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(-55, 25)">
+      <circle cx="0" cy="0" r="5" fill="#111"/>
+      <ellipse cx="0" cy="0" rx="30" ry="8" fill="#e2e8f0" opacity="0.6" stroke="#94a3b8" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(55, 25)">
+      <circle cx="0" cy="0" r="5" fill="#111"/>
+      <ellipse cx="0" cy="0" rx="30" ry="8" fill="#e2e8f0" opacity="0.6" stroke="#94a3b8" stroke-width="1.5"/>
+    </g>
+    <!-- Landing legs -->
+    <path d="M-18,16 L-24,34 M18,16 L24,34" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- WORKSHOP TERRACE / BENCH in foreground -->
+  <g transform="translate(180, 570)" filter="url(#dropShadow)">
+    <!-- Wooden table top -->
+    <rect x="0" y="70" width="460" height="24" rx="4" fill="url(#woodTone)" stroke="#3e2515" stroke-width="2"/>
+    <rect x="30" y="94" width="22" height="140" fill="#5c381e"/>
+    <rect x="408" y="94" width="22" height="140" fill="#5c381e"/>
+    
+    <!-- ÒDINATÈ (Computador Retro CRT) on desk -->
+    <g transform="translate(140, -40)">
+      <!-- CRT Monitor Housing -->
+      <rect x="0" y="0" width="130" height="106" rx="14" fill="#e8dec8" stroke="#8c785d" stroke-width="3"/>
+      <!-- Inner Screen Bezel -->
+      <rect x="12" y="10" width="106" height="82" rx="8" fill="#1e2822" stroke="#4a554d" stroke-width="2"/>
+      <!-- Glowing CRT Display with code -->
+      <rect x="16" y="14" width="98" height="74" rx="6" fill="#0f1f17"/>
+      <text x="24" y="36" font-family="monospace" font-size="11" font-weight="bold" fill="#34d399">> KREYÒL v2.0</text>
+      <text x="24" y="52" font-family="monospace" font-size="10" fill="#10b981">> Teknoloji...</text>
+      <text x="24" y="68" font-family="monospace" font-size="9" fill="#059669">> Aprann pi vit!</text>
+      <rect x="24" y="72" width="7" height="9" fill="#34d399">
+        <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Monitor Stand -->
+      <rect x="48" y="106" width="34" height="12" fill="#cfc2a9"/>
+      <rect x="36" y="118" width="58" height="8" rx="2" fill="#b8a88c"/>
+      <!-- Computer Tower -->
+      <rect x="-56" y="24" width="46" height="102" rx="4" fill="#e0d4bc" stroke="#8c785d" stroke-width="2.5"/>
+      <rect x="-48" y="36" width="30" height="8" rx="2" fill="#504537"/>
+      <rect x="-48" y="50" width="30" height="8" rx="2" fill="#504537"/>
+      <circle cx="-33" cy="74" r="3" fill="#10b981"/>
+      <circle cx="-33" cy="86" r="4" fill="#dc2626"/>
+      <!-- Keyboard -->
+      <polygon points="10,124 120,124 130,146 0,146" fill="#ded3bc" stroke="#8c785d" stroke-width="2"/>
+      <!-- Key rows -->
+      <line x1="8" y1="130" x2="122" y2="130" stroke="#78674d" stroke-width="2" stroke-dasharray="5 3"/>
+      <line x1="6" y1="137" x2="124" y2="137" stroke="#78674d" stroke-width="2" stroke-dasharray="5 3"/>
+      <line x1="38" y1="142" x2="92" y2="142" stroke="#78674d" stroke-width="2.5"/>
+    </g>
+
+    <!-- ROBO (Robô Automaton Steampunk Ghibli) standing right -->
+    <g transform="translate(360, -30)" filter="url(#dropShadow)">
+      <!-- Shadow on desk/floor -->
+      <ellipse cx="2" cy="144" rx="38" ry="10" fill="#000000" opacity="0.25"/>
+      <!-- Legs -->
+      <rect x="-24" y="90" width="16" height="50" rx="8" fill="#8c6227" stroke="#4a320f" stroke-width="2"/>
+      <rect x="8" y="90" width="16" height="50" rx="8" fill="#8c6227" stroke="#4a320f" stroke-width="2"/>
+      <!-- Brass Torso -->
+      <rect x="-34" y="25" width="68" height="68" rx="22" fill="url(#brassTone)" stroke="#52390a" stroke-width="2.5"/>
+      <!-- Torso gauge / dial -->
+      <circle cx="0" cy="54" r="14" fill="#f8fafc" stroke="#52390a" stroke-width="2"/>
+      <line x1="0" y1="54" x2="8" y2="48" stroke="#dc2626" stroke-width="2"/>
+      <circle cx="0" cy="54" r="3" fill="#1e293b"/>
+      <!-- Brass Collar -->
+      <rect x="-18" y="16" width="36" height="12" rx="4" fill="#a17521"/>
+      <!-- Round Head -->
+      <ellipse cx="0" cy="-6" rx="30" ry="26" fill="url(#brassTone)" stroke="#52390a" stroke-width="2.5"/>
+      <!-- Gentle glowing eye lens -->
+      <circle cx="-10" cy="-6" r="9" fill="#1e293b" stroke="#52390a" stroke-width="1.5"/>
+      <circle cx="-10" cy="-6" r="6" fill="#38bdf8"/>
+      <circle cx="-12" cy="-8" r="2" fill="#ffffff"/>
+      <circle cx="10" cy="-6" r="9" fill="#1e293b" stroke="#52390a" stroke-width="1.5"/>
+      <circle cx="10" cy="-6" r="6" fill="#38bdf8"/>
+      <circle cx="8" cy="-8" r="2" fill="#ffffff"/>
+      <!-- Robot Antenna with friendly red light -->
+      <line x1="0" y1="-32" x2="0" y2="-48" stroke="#52390a" stroke-width="3"/>
+      <circle cx="0" cy="-52" r="6" fill="#ef4444"/>
+      <!-- Articulated Arms holding a seedling -->
+      <path d="M-32,38 Q-54,58 -38,82 Q-20,84 -14,70" fill="none" stroke="#785315" stroke-width="7" stroke-linecap="round"/>
+      <path d="M32,38 Q52,58 38,80 Q20,84 14,70" fill="none" stroke="#785315" stroke-width="7" stroke-linecap="round"/>
+      <!-- Tiny green sprout in hands -->
+      <path d="M0,66 Q0,50 4,44 Q14,46 12,58 Z" fill="#22c55e"/>
+      <path d="M0,66 Q0,50 -4,44 Q-14,46 -12,58 Z" fill="#4ade80"/>
+    </g>
+  </g>
+
+  <!-- Foreground Grass & Flowers -->
+  <g transform="translate(0, 750)">
+    <circle cx="80" cy="10" r="14" fill="#facc15"/>
+    <circle cx="80" cy="10" r="6" fill="#ea580c"/>
+    <circle cx="150" cy="20" r="16" fill="#f43f5e"/>
+    <circle cx="750" cy="15" r="15" fill="#facc15"/>
+    <circle cx="920" cy="10" r="18" fill="#38bdf8"/>
+    <circle cx="1080" cy="20" r="16" fill="#ec4899"/>
+  </g>
 </svg>

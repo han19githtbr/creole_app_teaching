@@ -1,37 +1,239 @@
-// Banco de imagens em estilo aquarela de animação (ilustrações ORIGINAIS geradas
-// por scripts/ghibli/build.mjs — arquivos SVG em /public/ghibli, com animação
-// embutida: nuvens, folhas, chamas, ondas, notas musicais etc.).
+// Banco de imagens em estilo Studio Ghibli (ilustrações artísticas
+// com elementos realistas e reconhecíveis, arquivos SVG em /public/ghibli).
 import generatedImages from "../../scripts/ghibli/manifest.json";
+
+export interface BankElement {
+  kreyol: string;
+  pt: string;
+}
 
 export interface BankImage {
   id: string;
   theme: string;
   title: string;
   src: string;
-  /** Vocabulário em Kreyòl para inspirar a legenda (edite à vontade). */
+  /** Vocabulário principal em Kreyòl */
   kreyol: string;
-  /** Legenda sugerida em português. */
+  /** Legenda sugerida em português com vocabulário em Kreyòl */
   caption: string;
-  /** Tema animado do estúdio (VIDEO_BACKGROUNDS) mais parecido — usado como fundo ambiente. */
+  /** Tema animado do estúdio (VIDEO_BACKGROUNDS) mais parecido */
   ambientTheme: string;
   isPrimary: boolean;
+  /** Elementos reconhecíveis na cena para o jogo e lições */
+  elements: BankElement[];
 }
 
 const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary">[] = [
-  { id: "tecnologia", theme: "Tecnologia", title: "Oficina tecnológica no campo", src: "/ghibli/tecnologia.svg", kreyol: "Teknoloji", caption: "Teknoloji ede nou aprann pi vit. Você já usa tecnologia para estudar Kreyòl?", ambientTheme: "tecnologia" },
-  { id: "natureza", theme: "Natureza", title: "Árvore ancestral e prado florido", src: "/ghibli/natureza.svg", kreyol: "Lanati", caption: "Lanati (natureza) é linda em qualquer idioma. Que palavras você já sabe sobre ela?", ambientTheme: "natureza" },
-  { id: "cultura", theme: "Cultura", title: "Festa na praça com bandeirolas", src: "/ghibli/cultura.svg", kreyol: "Kilti", caption: "Kilti ayisyen (cultura haitiana) vive nas festas, na música e nas cores da praça.", ambientTheme: "cultura" },
-  { id: "turismo", theme: "Turismo", title: "Vila costeira, farol e balão", src: "/ghibli/turismo.svg", kreyol: "Touris", caption: "Vai viajar? Aprenda o essencial de Kreyòl para se virar como touris.", ambientTheme: "turismo" },
-  { id: "interior", theme: "Vida no interior", title: "Fazenda ao meio-dia", src: "/ghibli/interior.svg", kreyol: "Andeyò", caption: "A vida nan andeyò (no interior) tem outro ritmo — e muito vocabulário novo.", ambientTheme: "natureza" },
-  { id: "danca", theme: "Dança", title: "Dança sob as lanternas", src: "/ghibli/danca.svg", kreyol: "Dans", caption: "Dans é alegria! Que tal aprender os verbos de movimento em Kreyòl?", ambientTheme: "festas" },
-  { id: "geografia", theme: "Geografia", title: "Montanhas, rio e bússola", src: "/ghibli/geografia.svg", kreyol: "Jewografi", caption: "Jewografi: montanhas, rios e pontos cardeais — vocabulário para se orientar.", ambientTheme: "natureza" },
-  { id: "historia", theme: "História", title: "Fortaleza de pedra no alto do morro", src: "/ghibli/historia.svg", kreyol: "Istwa", caption: "Istwa (história) explica quem somos. Um pedacinho da história do Haiti para hoje.", ambientTheme: "citadelle_gold" },
-  { id: "cinema", theme: "Cinema", title: "Cinema de bairro ao entardecer", src: "/ghibli/cinema.svg", kreyol: "Sinema", caption: "Sinema é ótimo para treinar o ouvido. Vamos assistir e aprender juntos?", ambientTheme: "cinema" },
-  { id: "musica", theme: "Música", title: "Palco ao ar livre", src: "/ghibli/musica.svg", kreyol: "Mizik", caption: "Mizik ayisyen: ritmo, tambor e vocabulário novo a cada refrão.", ambientTheme: "festas" },
-  { id: "lazeres", theme: "Lazeres", title: "Tarde de piquenique e pipas", src: "/ghibli/lazeres.svg", kreyol: "Lwazi", caption: "Lwazi (lazer) também é hora de praticar: descreva seu fim de semana em Kreyòl!", ambientTheme: "natureza" },
-  { id: "estoicismo", theme: "Estoicismo", title: "Pórtico de pedra e oliveiras", src: "/ghibli/estoicismo.svg", kreyol: "Sajès", caption: "Sajès (sabedoria): o que está sob nosso controle? Uma reflexão para o dia.", ambientTheme: "universidade" },
-  { id: "religiao", theme: "Religião", title: "Capela na colina e luz sagrada", src: "/ghibli/religiao.svg", kreyol: "Relijyon", caption: "Relijyon e fé fazem parte do dia a dia — e do vocabulário — no Haiti.", ambientTheme: "caribbean_sunset" },
-  { id: "gastronomia", theme: "Gastronomia", title: "Cozinha aconchegante", src: "/ghibli/gastronomia.svg", kreyol: "Manje", caption: "Manje ayisyen (comida haitiana): que prato você quer aprender a pedir em Kreyòl?", ambientTheme: "gastronomia" },
+  {
+    id: "tecnologia",
+    theme: "Tecnologia",
+    title: "Oficina tecnológica no campo",
+    src: "/ghibli/tecnologia.svg",
+    kreyol: "Teknoloji",
+    caption: "Teknoloji ede nou aprann pi vit. Você já usa tecnologia para estudar Kreyòl? Identifique o computador (òdinatè), robô (robo), drone (dròn) e o moinho (moulen van)!",
+    ambientTheme: "tecnologia",
+    elements: [
+      { kreyol: "òdinatè", pt: "computador" },
+      { kreyol: "robo", pt: "robô" },
+      { kreyol: "dròn", pt: "drone" },
+      { kreyol: "moulen van", pt: "moinho de vento" },
+    ],
+  },
+  {
+    id: "natureza",
+    theme: "Natureza",
+    title: "Árvore ancestral e prado florido",
+    src: "/ghibli/natureza.svg",
+    kreyol: "Lanati",
+    caption: "Lanati (natureza) é linda em qualquer idioma! Veja a grande árvore (pyebwa), as flores (flè), as borboletas (papiyon) e o pássaro tropical (zwazo).",
+    ambientTheme: "natureza",
+    elements: [
+      { kreyol: "pyebwa", pt: "árvore" },
+      { kreyol: "flè", pt: "flores" },
+      { kreyol: "papiyon", pt: "borboleta" },
+      { kreyol: "zwazo", pt: "pássaro" },
+    ],
+  },
+  {
+    id: "cultura",
+    theme: "Cultura",
+    title: "Festa na praça com bandeirolas",
+    src: "/ghibli/cultura.svg",
+    kreyol: "Kilti",
+    caption: "Kilti ayisyen (cultura haitiana) brilha com o tambor tradicional (tanbou), a bandeira (drapo), as lanternas acolhedoras (lanp) e as casas típicas (kay).",
+    ambientTheme: "cultura",
+    elements: [
+      { kreyol: "tanbou", pt: "tambor" },
+      { kreyol: "drapo", pt: "bandeira" },
+      { kreyol: "lanp", pt: "lanterna/lâmpada" },
+      { kreyol: "kay", pt: "casa" },
+    ],
+  },
+  {
+    id: "turismo",
+    theme: "Turismo",
+    title: "Vila costeira, farol e balão",
+    src: "/ghibli/turismo.svg",
+    kreyol: "Touris",
+    caption: "Touris (turismo): explore o mar caribenho (lanmè), o barco a vela (bato), o farol na falésia (fa) e o balão de ar quente (balon).",
+    ambientTheme: "turismo",
+    elements: [
+      { kreyol: "bato", pt: "barco" },
+      { kreyol: "lanmè", pt: "mar" },
+      { kreyol: "balon", pt: "balão" },
+      { kreyol: "fa", pt: "farol" },
+    ],
+  },
+  {
+    id: "interior",
+    theme: "Vida no interior",
+    title: "Fazenda ao meio-dia",
+    src: "/ghibli/interior.svg",
+    kreyol: "Andeyò",
+    caption: "Nan andeyò (no interior): sinta a tranquilidade da casa da fazenda (kay), árvores frutíferas (pyebwa), plantação/jardim (jaden) e cerca de madeira (kloti).",
+    ambientTheme: "natureza",
+    elements: [
+      { kreyol: "kay", pt: "casa" },
+      { kreyol: "pyebwa", pt: "árvore" },
+      { kreyol: "jaden", pt: "jardim/plantação" },
+      { kreyol: "kloti", pt: "cerca" },
+    ],
+  },
+  {
+    id: "danca",
+    theme: "Dança",
+    title: "Dança sob as lanternas",
+    src: "/ghibli/danca.svg",
+    kreyol: "Dans",
+    caption: "Dans se lavi! Dançarinos festivos (dansè) giram sob o brilho das lanternas (lanp), com fitas coloridas (riban) e flores (flè).",
+    ambientTheme: "festas",
+    elements: [
+      { kreyol: "dansè", pt: "dançarinos" },
+      { kreyol: "lanp", pt: "lanternas" },
+      { kreyol: "riban", pt: "fitas" },
+      { kreyol: "flè", pt: "flores" },
+    ],
+  },
+  {
+    id: "geografia",
+    theme: "Geografia",
+    title: "Montanhas, rio e bússola",
+    src: "/ghibli/geografia.svg",
+    kreyol: "Jewografi",
+    caption: "Jewografi: aprenda a se orientar com montanhas imponentes (mòn), o rio cristalino (rivyè), a bússola de latão (bousòl) e a bandeira no topo (drapo).",
+    ambientTheme: "natureza",
+    elements: [
+      { kreyol: "mòn", pt: "montanhas" },
+      { kreyol: "rivyè", pt: "rio" },
+      { kreyol: "bousòl", pt: "bússola" },
+      { kreyol: "drapo", pt: "bandeira" },
+    ],
+  },
+  {
+    id: "historia",
+    theme: "História",
+    title: "Fortaleza de pedra no alto do morro",
+    src: "/ghibli/historia.svg",
+    kreyol: "Istwa",
+    caption: "Istwa (história) e resistência: a imponente fortaleza Citadelle (fò), a bandeira do Haiti (drapo), os canhões históricos (kanon) e a tocha de fogo (flanbo).",
+    ambientTheme: "citadelle_gold",
+    elements: [
+      { kreyol: "fò", pt: "fortaleza" },
+      { kreyol: "drapo", pt: "bandeira" },
+      { kreyol: "kanon", pt: "canhão" },
+      { kreyol: "flanbo", pt: "tocha" },
+    ],
+  },
+  {
+    id: "cinema",
+    theme: "Cinema",
+    title: "Cinema de bairro ao entardecer",
+    src: "/ghibli/cinema.svg",
+    kreyol: "Sinema",
+    caption: "Sinema é maravilhoso para treinar o ouvido: a fachada do cinema iluminado (sinema), pipoca quentinha (pòp-kòn), estrelas no céu (zetwal) e árvores (pyebwa).",
+    ambientTheme: "cinema",
+    elements: [
+      { kreyol: "sinema", pt: "cinema" },
+      { kreyol: "pòp-kòn", pt: "pipoca" },
+      { kreyol: "zetwal", pt: "estrelas" },
+      { kreyol: "pyebwa", pt: "árvores" },
+    ],
+  },
+  {
+    id: "musica",
+    theme: "Música",
+    title: "Palco ao ar livre",
+    src: "/ghibli/musica.svg",
+    kreyol: "Mizik",
+    caption: "Mizik ayisyen tem alma e ritmo: o violão acústico (gita), o tambor tradicional (tanbou), as notas musicais no ar (nòt mizik) e a caixa de som (opalè).",
+    ambientTheme: "festas",
+    elements: [
+      { kreyol: "gita", pt: "violão" },
+      { kreyol: "tanbou", pt: "tambor" },
+      { kreyol: "nòt mizik", pt: "notas musicais" },
+      { kreyol: "opalè", pt: "alto-falante" },
+    ],
+  },
+  {
+    id: "lazeres",
+    theme: "Lazeres",
+    title: "Tarde de piquenique e pipas",
+    src: "/ghibli/lazeres.svg",
+    kreyol: "Lwazi",
+    caption: "Lwazi (lazer) num dia de sol: pipa colorida no céu (kap), bicicleta retrô (bisiklèt), sombra da grande árvore (pyebwa) e toalha na grama (dra).",
+    ambientTheme: "natureza",
+    elements: [
+      { kreyol: "kap", pt: "pipa" },
+      { kreyol: "bisiklèt", pt: "bicicleta" },
+      { kreyol: "pyebwa", pt: "árvore" },
+      { kreyol: "dra", pt: "toalha de piquenique" },
+    ],
+  },
+  {
+    id: "estoicismo",
+    theme: "Estoicismo",
+    title: "Pórtico de pedra e oliveiras",
+    src: "/ghibli/estoicismo.svg",
+    kreyol: "Sajès",
+    caption: "Sajès (sabedoria): colunas clássicas (kolòn), livro aberto de reflexões (liv), oliveira centenária (pye oliv) e o sábio contemplando a vida (moun saj).",
+    ambientTheme: "universidade",
+    elements: [
+      { kreyol: "kolòn", pt: "colunas" },
+      { kreyol: "liv", pt: "livro" },
+      { kreyol: "pye oliv", pt: "oliveira" },
+      { kreyol: "moun saj", pt: "filósofo sábio" },
+    ],
+  },
+  {
+    id: "religiao",
+    theme: "Religião",
+    title: "Capela na colina e luz sagrada",
+    src: "/ghibli/religiao.svg",
+    kreyol: "Relijyon",
+    caption: "Fé e esperança: a capela histórica (legliz), a cruz sagrada (kwa), velas acesas acolhedoras (bouji) e pombas brancas voando para a luz (pijon).",
+    ambientTheme: "caribbean_sunset",
+    elements: [
+      { kreyol: "legliz", pt: "igreja/capela" },
+      { kreyol: "bouji", pt: "velas" },
+      { kreyol: "pijon", pt: "pombas" },
+      { kreyol: "kwa", pt: "cruz" },
+    ],
+  },
+  {
+    id: "gastronomia",
+    theme: "Gastronomia",
+    title: "Cozinha aconchegante",
+    src: "/ghibli/gastronomia.svg",
+    kreyol: "Manje",
+    caption: "Manje ayisyen saboroso: o caldeirão fumegante no fogão (chodyè), pão artesanal crocante (pen), frutas tropicais frescas (fwi) e pimentas aromáticas (piman).",
+    ambientTheme: "gastronomia",
+    elements: [
+      { kreyol: "chodyè", pt: "panela/caldeirão" },
+      { kreyol: "pen", pt: "pão" },
+      { kreyol: "fwi", pt: "frutas" },
+      { kreyol: "piman", pt: "pimentas" },
+    ],
+  },
 ];
 
 const generatedTitles = new Map(generatedImages.map((image) => [image.id, image.title]));
@@ -57,14 +259,19 @@ export function getBankImage(idOrSrc: string | null | undefined): BankImage | un
   return IMAGE_BANK.find((i) => i.id === idOrSrc || i.src === idOrSrc);
 }
 
-/** URLs de imagem aceitas em postagens: banco interno ou upload no Vercel Blob. */
+/** URLs de imagem aceitas em postagens: banco Ghibli (/ghibli/* em svg, png, webp, jpg) ou upload Vercel Blob. */
 export function isAllowedPostImageUrl(url: unknown): url is string {
   if (typeof url !== "string" || !url) return false;
-  if (/^\/ghibli\/[a-z0-9_-]+\.svg$/.test(url)) return true;
+  if (/^\/(ghibli|images)\/[a-z0-9_-]+\.(svg|png|webp|jpg|jpeg)$/i.test(url)) return true;
   try {
     const u = new URL(url);
-    return u.protocol === "https:" && u.hostname.endsWith(".public.blob.vercel-storage.com");
+    return (
+      u.protocol === "https:" &&
+      (u.hostname.endsWith(".public.blob.vercel-storage.com") ||
+        u.hostname.endsWith(".vercel-storage.com"))
+    );
   } catch {
     return false;
   }
 }
+

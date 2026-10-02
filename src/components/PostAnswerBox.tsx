@@ -118,10 +118,10 @@ export function PostAnswerBox({ postId, initialAnswer }: { postId: string; initi
           className="group flex w-full items-center gap-3 rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)]/50 px-4 py-3 text-left transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] cursor-pointer"
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)] transition-transform group-hover:scale-110">
-            <MessageCircle className="h-4 w-4" />
+            <MessageCircle className="h-4 w-4" strokeWidth={3} />
           </span>
           <span className="min-w-0">
-            <span className="block text-sm font-semibold text-[var(--text)]">Responder ao professor</span>
+            <span className="block text-sm font-bold text-[var(--text)]">Responder ao professor</span>
             <span className="block text-xs text-[var(--text-muted)]">Escreva sua resposta — ela será corrigida em breve.</span>
           </span>
         </button>

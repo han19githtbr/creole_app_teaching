@@ -29,7 +29,7 @@ const LessonSchema = new Schema<ILesson>(
     category: { type: String, enum: LESSON_CATEGORIES, required: true },
     content: { type: String, required: true },
     order: { type: Number, required: true, default: 0 },
-    isPublished: { type: Boolean, default: true },
+    isPublished: { type: Boolean, default: false },
     announcedAt: { type: Date, default: null },
   },
   { timestamps: true }

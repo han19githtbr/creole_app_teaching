@@ -23,8 +23,8 @@ export function LessonForm({ initial }: { initial?: LessonFormValues }) {
   const [sectionNumber, setSectionNumber] = useState(initial?.sectionNumber ?? 0);
   const [category, setCategory] = useState<LessonCategory>(initial?.category ?? "Gramática");
   const [content, setContent] = useState(initial?.content ?? "");
-  const [isPublished, setIsPublished] = useState(initial?.isPublished ?? true);
-  const [announce, setAnnounce] = useState(!initial?._id);
+  const [isPublished, setIsPublished] = useState(initial?.isPublished ?? false);
+  const [announce, setAnnounce] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

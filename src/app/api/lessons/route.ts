@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   await connectDB();
   const body = await req.json();
-  const { title, sectionNumber, category, content, isPublished = true, announce = true } = body;
+  const { title, sectionNumber, category, content, isPublished = false, announce = false } = body;
 
   if (!title || !category || !content) {
     return NextResponse.json({ error: "Título, categoria e conteúdo são obrigatórios." }, { status: 400 });

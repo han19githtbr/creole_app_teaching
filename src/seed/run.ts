@@ -29,7 +29,7 @@ async function main() {
           category: lesson.category,
           content: lesson.content,
           order: lesson.order,
-          isPublished: true,
+          isPublished: false,
         },
         $setOnInsert: { slug: lesson.slug },
       },

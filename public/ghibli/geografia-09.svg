@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Montanhas, rio e bússola - Jewografi</title>
-  <desc>Ghibli anime art: Cordilheira majestosa, rio sinuoso, bússola dourada e bandeira.</desc>
+  <title>Nascente na floresta - Jewografi</title>
+  <desc>Ghibli anime art: Nascente na floresta com relevo, mapas e natureza geográfica.</desc>
   
   <defs>
     <!-- Paper watercolor texture filter -->
@@ -119,19 +119,18 @@
     </linearGradient>
   </defs>
   
-  <!-- Bright Mountain Blue Sky -->
   <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
   
   <g>
-    <circle cx="1020" cy="140" r="175" fill="url(#sunGlowDay)" />
-    <circle cx="1020" cy="140" r="50" fill="#fffded" />
+    <circle cx="880" cy="150" r="168" fill="url(#sunGlowDay)" />
+    <circle cx="880" cy="150" r="48" fill="#fffded" />
     <!-- Subtle sun rays -->
-    <polygon points="1020,140 720,800 900,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="1020,140 1070,800 1260,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="1020,140 1380,800 1580,800" fill="#fffbe6" opacity="0.06" />
+    <polygon points="880,150 580,800 760,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="880,150 930,800 1120,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="880,150 1240,800 1440,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(200, 120) scale(1)" opacity="0.95">
+  <g transform="translate(240, 180) scale(0.9)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -150,7 +149,7 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
   
-  <g transform="translate(720, 160) scale(0.85)" opacity="0.95">
+  <g transform="translate(600, 120) scale(0.75)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -168,88 +167,97 @@
     <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
-
-  <!-- MÒN (Grandiosas Montanhas Majestosas em Camadas - Estilo Cordilheira do Haiti) -->
-  <!-- Layer 1: Distant Misty Peaks -->
-  <polygon points="-50,480 180,240 380,480" fill="#6488a0" opacity="0.6"/>
-  <polygon points="260,480 520,190 760,480" fill="#4d728a" opacity="0.7"/>
-  <polygon points="650,480 880,220 1150,480" fill="#6488a0" opacity="0.6"/>
-
-  <!-- DRAPO (Bandeira de Agrimensor no Cume da Montanha) -->
-  <g transform="translate(520, 190)" filter="url(#dropShadow)">
-    <line x1="0" y1="0" x2="0" y2="-45" stroke="#ffffff" stroke-width="2.5"/>
-    <polygon points="0,-45 28,-36 0,-27" fill="#dc2626"/>
-  </g>
-
-  <!-- Layer 2: Mid Lush Forest Ridges -->
-  <path d="M-50,540 Q250,420 580,490 T1250,460 L1250,800 L-50,800 Z" fill="url(#hillMid)"/>
-
-  <!-- RIVYÈ (Rio Cristalino Sinuoso Serpenteando pelo Vale) -->
-  <path d="M540,490 
-    Q480,550 560,600 
-    T460,690 
-    T580,800 L760,800 
-    Q660,700 700,640 
-    T640,560 
-    T620,490 Z" 
-    fill="url(#waterTone)"/>
-  <!-- River Rapids & Foamy Waterlines -->
-  <path d="M510,540 Q570,580 500,630 T540,730" stroke="#e0f2fe" stroke-width="4" fill="none" opacity="0.8"/>
-  <path d="M570,530 Q630,590 580,670 T660,780" stroke="#e0f2fe" stroke-width="4" fill="none" opacity="0.75"/>
-
-  <!-- Layer 3: Closer Green Foothills -->
-  <path d="M-50,620 Q240,540 500,620 L-50,800 Z" fill="url(#hillNear)"/>
-  <path d="M720,620 Q950,550 1250,610 L1250,800 L680,800 Z" fill="url(#hillNear)"/>
-
-  <!-- Foreground Overlook Stone Outcrop -->
-  <path d="M-50,710 Q400,630 850,720 T1250,690 L1250,800 L-50,800 Z" fill="url(#stoneTone)"/>
-
-  <!-- BOUSÒL (Bússola Antiga de Latão e Ouro em Destaque Nítido) -->
-  <g transform="translate(360, 680)" filter="url(#dropShadow)">
-    <!-- Shadow on rock -->
-    <ellipse cx="0" cy="50" rx="85" ry="24" fill="#000000" opacity="0.4"/>
+  
+  
+        <path d="M-50,480 L1250,480 L1250,800 L-50,800 Z" fill="url(#waterTone)"/>
+        <g transform="translate(240, 580) scale(1.3)">
     
-    <!-- Outer Heavy Brass Casing -->
-    <circle cx="0" cy="0" r="76" fill="url(#brassTone)" stroke="#52390a" stroke-width="5"/>
-    <!-- Top Attachment Ring -->
-    <circle cx="0" cy="-86" r="16" fill="none" stroke="url(#brassTone)" stroke-width="6"/>
-
-    <!-- Compass Dial Face (Parchment Ivory) -->
-    <circle cx="0" cy="0" r="62" fill="#fffdf5" stroke="#785315" stroke-width="2"/>
-    <!-- Outer Degree Ring with Ticks -->
-    <circle cx="0" cy="0" r="56" fill="none" stroke="#a17521" stroke-width="1.5" stroke-dasharray="3 3"/>
-
-    <!-- 8-Point Compass Rose Star -->
-    <!-- North Point (Dark Blue/Black) -->
-    <polygon points="0,0 -8,-20 0,-50 8,-20" fill="#1e293b"/>
-    <!-- South Point -->
-    <polygon points="0,0 -8,20 0,50 8,20" fill="#b45309"/>
-    <!-- East Point -->
-    <polygon points="0,0 20,-8 50,0 20,8" fill="#b45309"/>
-    <!-- West Point -->
-    <polygon points="0,0 -20,-8 -50,0 -20,8" fill="#b45309"/>
-    <!-- Diagonals -->
-    <polygon points="0,0 -6,-16 -34,-34 -16,-6" fill="#ca8a04"/>
-    <polygon points="0,0 6,-16 34,-34 16,-6" fill="#ca8a04"/>
-    <polygon points="0,0 -6,16 -34,34 -16,6" fill="#ca8a04"/>
-    <polygon points="0,0 6,16 34,34 16,6" fill="#ca8a04"/>
-
-    <!-- Cardinal Direction Letters -->
-    <text x="0" y="-36" font-family="serif" font-size="14" font-weight="bold" fill="#dc2626" text-anchor="middle">N</text>
-    <text x="0" y="46" font-family="serif" font-size="13" font-weight="bold" fill="#1e293b" text-anchor="middle">S</text>
-    <text x="40" y="5" font-family="serif" font-size="13" font-weight="bold" fill="#1e293b" text-anchor="middle">E</text>
-    <text x="-40" y="5" font-family="serif" font-size="13" font-weight="bold" fill="#1e293b" text-anchor="middle">O</text>
-
-    <!-- Magnetic Needle (Red North, Silver South) -->
-    <g transform="rotate(-28)">
-      <polygon points="0,0 -6,-10 0,-56 6,-10" fill="#ef4444" stroke="#991b1b" stroke-width="1.5"/>
-      <polygon points="0,0 -6,10 0,56 6,10" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>
-      <!-- Brass center pivot pin -->
-      <circle cx="0" cy="0" r="7" fill="url(#brassTone)" stroke="#452a13" stroke-width="1.5"/>
-      <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
-    </g>
-
-    <!-- Glass Lens Highlight -->
-    <path d="M-45,-45 A 62 62 0 0 1 45,-45 Z" fill="#ffffff" opacity="0.3"/>
+      <g transform="translate(-60, 0)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+      <g transform="translate(-20, 15)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+      <g transform="translate(20, 0)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+      <g transform="translate(60, 15)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+      <g transform="translate(100, 0)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
   </g>
+        <g transform="translate(960, 580) scale(1.3)">
+    
+      <g transform="translate(-60, 0)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+      <g transform="translate(-20, 15)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+      <g transform="translate(20, 0)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+      <g transform="translate(60, 15)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+      <g transform="translate(100, 0)">
+        <polygon points="0,-75 -25,0 25,0" fill="#14532d"/>
+        <polygon points="0,-95 -20,-25 20,-25" fill="#166534"/>
+        <polygon points="0,-115 -15,-50 15,-50" fill="#15803d"/>
+        <rect x="-4" y="0" width="8" height="15" fill="#78350f"/>
+      </g>
+    
+  </g>
+        <!-- Winding River -->
+  <path d="M680,480 Q620,560 720,630 T850,800 L1020,800 Q900,650 820,560 T860,480 Z" fill="url(#waterTone)" opacity="0.85"/>
+  <path d="M700,500 Q650,570 740,640 T880,800" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.6"/>
+        <g transform="translate(700, 600) scale(1.3)" filter="url(#dropShadow)">
+      <!-- Deck -->
+      <path d="M-130,-10 Q0,-35 130,-10 L130,25 Q0,5 -130,25 Z" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2.5"/>
+      <!-- Arch cutouts -->
+      <path d="M-90,25 Q-60,-20 -30,25 Z" fill="#0f766e"/>
+      <path d="M-20,25 Q10,-20 40,25 Z" fill="#0f766e"/>
+      <path d="M50,25 Q80,-20 110,25 Z" fill="#0f766e"/>
+      <!-- Railing -->
+      <path d="M-130,-18 Q0,-43 130,-18" stroke="#78716c" stroke-width="4" fill="none"/>
+    </g>
+      
 </svg>

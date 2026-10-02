@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Ninho dos pássaros no manguezal - Lanati</title>
+  <desc>Ghibli anime art: Manguezal sereno com raízes aéreas, rio calmo, ninho de aves e borboletas.</desc>
+  
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Soft diffuse drop shadow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <!-- Sky Gradients -->
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#236ca7"/>
+      <stop offset="35%" stop-color="#5fa3d6"/>
+      <stop offset="70%" stop-color="#b8e1f2"/>
+      <stop offset="100%" stop-color="#fdf3dc"/>
+    </linearGradient>
+
+    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#31396b"/>
+      <stop offset="35%" stop-color="#73507b"/>
+      <stop offset="65%" stop-color="#cb6b5c"/>
+      <stop offset="85%" stop-color="#f29e5a"/>
+      <stop offset="100%" stop-color="#fedaa2"/>
+    </linearGradient>
+
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#121832"/>
+      <stop offset="40%" stop-color="#262f56"/>
+      <stop offset="70%" stop-color="#4e3d64"/>
+      <stop offset="90%" stop-color="#915264"/>
+      <stop offset="100%" stop-color="#d6846c"/>
+    </linearGradient>
+
+    <!-- Cloud Gradients -->
+    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fcf8f0"/>
+      <stop offset="80%" stop-color="#d9e4ec"/>
+      <stop offset="100%" stop-color="#b6c8d7"/>
+    </linearGradient>
+
+    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5e6"/>
+      <stop offset="40%" stop-color="#fbd0a5"/>
+      <stop offset="75%" stop-color="#cf8ca0"/>
+      <stop offset="100%" stop-color="#7e607c"/>
+    </linearGradient>
+
+    <!-- Sun / Glow Gradients -->
+    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Hills / Mountains Gradients -->
+    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e94a8"/>
+      <stop offset="100%" stop-color="#93b9c7"/>
+    </linearGradient>
+
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c4f"/>
+      <stop offset="50%" stop-color="#3c6a40"/>
+      <stop offset="100%" stop-color="#2d5231"/>
+    </linearGradient>
+
+    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#699e4c"/>
+      <stop offset="60%" stop-color="#4c7e33"/>
+      <stop offset="100%" stop-color="#2f5720"/>
+    </linearGradient>
+
+    <!-- Materials: Wood, Brass, Stone, Water -->
+    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9c6d48"/>
+      <stop offset="50%" stop-color="#784f30"/>
+      <stop offset="100%" stop-color="#55341c"/>
+    </linearGradient>
+
+    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#d9a536"/>
+      <stop offset="70%" stop-color="#996c14"/>
+      <stop offset="100%" stop-color="#5e4007"/>
+    </linearGradient>
+
+    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c5beb3"/>
+      <stop offset="60%" stop-color="#999184"/>
+      <stop offset="100%" stop-color="#6c6458"/>
+    </linearGradient>
+
+    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#47a5be"/>
+      <stop offset="50%" stop-color="#2a7796"/>
+      <stop offset="100%" stop-color="#144d6a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#skySunset)" filter="url(#ghibliPaper)" />
+  
+  <g>
+    <circle cx="320" cy="220" r="175" fill="url(#sunGlowSunset)" />
+    <circle cx="320" cy="220" r="50" fill="#ffdf99" />
+    <!-- Subtle sun rays -->
+    <polygon points="320,220 20,800 200,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="320,220 370,800 560,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="320,220 680,800 880,800" fill="#fffbe6" opacity="0.06" />
+  </g>
+  <!-- RIVYÈ (Rio Estuarino Refletindo o Céu Quente) -->
+  <path d="M-50,480 Q450,420 850,470 T1250,450 L1250,800 L-50,800 Z" fill="url(#waterTone)"/>
+  <!-- PYEBWA (Mangue com Raízes Aéreas Entrelaçadas) -->
+  <g transform="translate(740, 520)" filter="url(#dropShadow)">
+    <!-- Stilt Roots Arching Down into Water -->
+    <path d="M0,-80 Q-80,40 -120,160" stroke="#78350f" stroke-width="12" fill="none"/>
+    <path d="M0,-80 Q-40,60 -60,160" stroke="#78350f" stroke-width="10" fill="none"/>
+    <path d="M0,-80 Q40,60 60,160" stroke="#78350f" stroke-width="10" fill="none"/>
+    <path d="M0,-80 Q80,40 120,160" stroke="#78350f" stroke-width="12" fill="none"/>
+    <!-- Trunk & Canopy -->
+    <path d="M0,-80 L0,-240" stroke="#78350f" stroke-width="20"/>
+    <circle cx="0" cy="-260" r="110" fill="#15803d"/>
+    <circle cx="-60" cy="-280" r="90" fill="#16a34a"/>
+    <circle cx="60" cy="-280" r="90" fill="#16a34a"/>
+  </g>
+  <!-- ZWAZO (Garças Tropicais Pousadas nos Galhos e Ninhos) -->
+  <g transform="translate(680, 280)" filter="url(#dropShadow)">
+    <ellipse cx="0" cy="0" rx="20" ry="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M12,-8 Q24,-24 20,-40" stroke="#ffffff" stroke-width="5" fill="none"/>
+    <polygon points="20,-40 36,-36 20,-32" fill="#f59e0b"/>
+  </g>
+  <g transform="translate(780, 320)" filter="url(#dropShadow)">
+    <ellipse cx="0" cy="0" rx="18" ry="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <polygon points="16,-4 30,-2 16,2" fill="#f59e0b"/>
+  </g>
+  <!-- PAPIYON (Borboletas Amarelas Flutuando Sobre o Rio) -->
+  <g transform="translate(380, 560)" filter="url(#dropShadow)">
+    <ellipse cx="-12" cy="-10" rx="14" ry="10" fill="#facc15"/>
+    <ellipse cx="12" cy="-10" rx="14" ry="10" fill="#facc15"/>
+    <ellipse cx="-8" cy="8" rx="10" ry="7" fill="#fbbf24"/>
+    <ellipse cx="8" cy="8" rx="10" ry="7" fill="#fbbf24"/>
+    <line x1="0" y1="-14" x2="0" y2="14" stroke="#451a03" stroke-width="2"/>
+  </g>
+</svg>

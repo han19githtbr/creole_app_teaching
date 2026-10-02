@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Oficina móvel no trem - Teknoloji</title>
+  <desc>Ghibli anime art: Vagão de trem envidraçado ao pôr do sol, robô articulado, comunicador e bancada de pesquisa.</desc>
+  
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Soft diffuse drop shadow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <!-- Sky Gradients -->
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#236ca7"/>
+      <stop offset="35%" stop-color="#5fa3d6"/>
+      <stop offset="70%" stop-color="#b8e1f2"/>
+      <stop offset="100%" stop-color="#fdf3dc"/>
+    </linearGradient>
+
+    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#31396b"/>
+      <stop offset="35%" stop-color="#73507b"/>
+      <stop offset="65%" stop-color="#cb6b5c"/>
+      <stop offset="85%" stop-color="#f29e5a"/>
+      <stop offset="100%" stop-color="#fedaa2"/>
+    </linearGradient>
+
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#121832"/>
+      <stop offset="40%" stop-color="#262f56"/>
+      <stop offset="70%" stop-color="#4e3d64"/>
+      <stop offset="90%" stop-color="#915264"/>
+      <stop offset="100%" stop-color="#d6846c"/>
+    </linearGradient>
+
+    <!-- Cloud Gradients -->
+    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fcf8f0"/>
+      <stop offset="80%" stop-color="#d9e4ec"/>
+      <stop offset="100%" stop-color="#b6c8d7"/>
+    </linearGradient>
+
+    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5e6"/>
+      <stop offset="40%" stop-color="#fbd0a5"/>
+      <stop offset="75%" stop-color="#cf8ca0"/>
+      <stop offset="100%" stop-color="#7e607c"/>
+    </linearGradient>
+
+    <!-- Sun / Glow Gradients -->
+    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Hills / Mountains Gradients -->
+    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e94a8"/>
+      <stop offset="100%" stop-color="#93b9c7"/>
+    </linearGradient>
+
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c4f"/>
+      <stop offset="50%" stop-color="#3c6a40"/>
+      <stop offset="100%" stop-color="#2d5231"/>
+    </linearGradient>
+
+    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#699e4c"/>
+      <stop offset="60%" stop-color="#4c7e33"/>
+      <stop offset="100%" stop-color="#2f5720"/>
+    </linearGradient>
+
+    <!-- Materials: Wood, Brass, Stone, Water -->
+    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9c6d48"/>
+      <stop offset="50%" stop-color="#784f30"/>
+      <stop offset="100%" stop-color="#55341c"/>
+    </linearGradient>
+
+    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#d9a536"/>
+      <stop offset="70%" stop-color="#996c14"/>
+      <stop offset="100%" stop-color="#5e4007"/>
+    </linearGradient>
+
+    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c5beb3"/>
+      <stop offset="60%" stop-color="#999184"/>
+      <stop offset="100%" stop-color="#6c6458"/>
+    </linearGradient>
+
+    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#47a5be"/>
+      <stop offset="50%" stop-color="#2a7796"/>
+      <stop offset="100%" stop-color="#144d6a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#skySunset)" filter="url(#ghibliPaper)" />
+  
+  <g>
+    <circle cx="880" cy="240" r="175" fill="url(#sunGlowSunset)" />
+    <circle cx="880" cy="240" r="50" fill="#ffdf99" />
+    <!-- Subtle sun rays -->
+    <polygon points="880,240 580,800 760,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="880,240 930,800 1120,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="880,240 1240,800 1440,800" fill="#fffbe6" opacity="0.06" />
+  </g>
+  <!-- Passing Hills through Train Windows -->
+  <path d="M-50,500 Q350,420 750,480 T1250,450 L1250,800 L-50,800 Z" fill="url(#hillMid)"/>
+  <!-- Train Carriage Wooden Window Frames -->
+  <rect x="80" y="60" width="1040" height="380" rx="20" fill="none" stroke="#78350f" stroke-width="18"/>
+  <line x1="600" y1="60" x2="600" y2="440" stroke="#78350f" stroke-width="14"/>
+  <!-- Train Workbench -->
+  <rect x="0" y="440" width="1200" height="40" fill="url(#woodTone)" stroke="#3e2515" stroke-width="3"/>
+  <rect x="0" y="480" width="1200" height="320" fill="#451a03"/>
+  <!-- ROBO (Pequeno robô de latão sentado na bancada do trem) -->
+  <g transform="translate(360, 420)" filter="url(#dropShadow)">
+    <rect x="-35" y="-30" width="70" height="55" rx="8" fill="#eab308" stroke="#78350f" stroke-width="3"/>
+    <circle cx="-14" cy="-8" r="7" fill="#0284c7"/>
+    <circle cx="14" cy="-8" r="7" fill="#0284c7"/>
+    <line x1="-25" y1="12" x2="25" y2="12" stroke="#451a03" stroke-width="3"/>
+    <path d="M35,0 Q60,-20 50,-40" stroke="#eab308" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- EKRAN (Monitor de trilhos e telemetria) -->
+  <g transform="translate(620, 400)" filter="url(#dropShadow)">
+    <rect x="-60" y="-45" width="120" height="80" rx="6" fill="#0f172a" stroke="#64748b" stroke-width="3"/>
+    <rect x="-52" y="-38" width="104" height="66" rx="4" fill="#0f766e"/>
+    <line x1="-40" y1="10" x2="40" y2="10" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="0" cy="10" r="5" fill="#facc15"/>
+  </g>
+  <!-- LABORATWA (Tubos de ensaio presos no suporte móvel de madeira) -->
+  <g transform="translate(860, 410)" filter="url(#dropShadow)">
+    <rect x="-50" y="0" width="100" height="35" rx="4" fill="url(#woodTone)" stroke="#3e2515" stroke-width="2"/>
+    <rect x="-35" y="-35" width="16" height="38" rx="3" fill="#38bdf8" opacity="0.8"/>
+    <rect x="-5" y="-35" width="16" height="38" rx="3" fill="#ec4899" opacity="0.8"/>
+    <rect x="25" y="-35" width="16" height="38" rx="3" fill="#22c55e" opacity="0.8"/>
+  </g>
+  <!-- TELEFÒN (Smartphone descansando sobre a mesa do trem) -->
+  <g transform="translate(180, 520)" filter="url(#dropShadow)">
+    <rect x="0" y="0" width="55" height="95" rx="8" fill="#0f172a" stroke="#f8fafc" stroke-width="2"/>
+    <rect x="4" y="6" width="47" height="83" rx="4" fill="#1e293b"/>
+    <circle cx="27" cy="40" r="14" fill="#22c55e"/>
+  </g>
+</svg>

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Palco ao ar livre - Mizik</title>
-  <desc>Ghibli anime art: Violão acústico, tambor haitiano, notas musicais e alto-falante.</desc>
+  <title>Ensaio da banda - Mizik</title>
+  <desc>Ghibli anime art: Ensaio da banda com instrumentos musicais, som e harmonia caribenha.</desc>
   
   <defs>
     <!-- Paper watercolor texture filter -->
@@ -119,19 +119,18 @@
     </linearGradient>
   </defs>
   
-  <!-- Evening Musical Concert Sky -->
-  <rect width="1200" height="800" fill="url(#skyDusk)" filter="url(#ghibliPaper)" />
+  <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
   
   <g>
-    <circle cx="600" cy="380" r="182" fill="url(#sunGlowSunset)" />
-    <circle cx="600" cy="380" r="52" fill="#ffdf99" />
+    <circle cx="930" cy="150" r="175" fill="url(#sunGlowDay)" />
+    <circle cx="930" cy="150" r="50" fill="#fffded" />
     <!-- Subtle sun rays -->
-    <polygon points="600,380 300,800 480,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="600,380 650,800 840,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="600,380 960,800 1160,800" fill="#fffbe6" opacity="0.06" />
+    <polygon points="930,150 630,800 810,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="930,150 980,800 1170,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="930,150 1290,800 1490,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(220, 160) scale(0.9)" opacity="0.95">
+  <g transform="translate(240, 180) scale(0.9)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -142,7 +141,7 @@
       C270,40 250,90 200,95 
       L-150,95 
       C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodySunset)" filter="url(#dropShadow)" />
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
     <!-- Bright inner highlights (Ghibli fluff) -->
     <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
     <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
@@ -150,7 +149,7 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
   
-  <g transform="translate(960, 170) scale(0.85)" opacity="0.95">
+  <g transform="translate(600, 120) scale(0.75)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -161,121 +160,88 @@
       C270,40 250,90 200,95 
       L-150,95 
       C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodySunset)" filter="url(#dropShadow)" />
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
     <!-- Bright inner highlights (Ghibli fluff) -->
     <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
     <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
     <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
-
-  <!-- Distant Blue Ridge Hills -->
-  <path d="M-50,530 Q320,460 650,510 T1250,480 L1250,800 L-50,800 Z" fill="#3b2b4a" opacity="0.6"/>
-
-  <!-- Festival Lights Strung overhead -->
-  <path d="M-20,240 Q600,320 1220,250" stroke="#475569" stroke-width="2.5" fill="none"/>
-  <circle cx="120" cy="264.7213595499958" r="8" fill="#facc15" filter="url(#softGlow)"/><circle cx="240" cy="287.02282018339787" r="8" fill="#f43f5e" filter="url(#softGlow)"/><circle cx="360" cy="304.7213595499958" r="8" fill="#38bdf8" filter="url(#softGlow)"/><circle cx="480" cy="316.0845213036123" r="8" fill="#4ade80" filter="url(#softGlow)"/><circle cx="600" cy="320" r="8" fill="#facc15" filter="url(#softGlow)"/><circle cx="720" cy="316.0845213036123" r="8" fill="#f43f5e" filter="url(#softGlow)"/><circle cx="840" cy="304.7213595499958" r="8" fill="#38bdf8" filter="url(#softGlow)"/><circle cx="960" cy="287.02282018339787" r="8" fill="#4ade80" filter="url(#softGlow)"/><circle cx="1080" cy="264.7213595499958" r="8" fill="#facc15" filter="url(#softGlow)"/>
-
-  <!-- Wooden Outdoor Festival Concert Stage -->
-  <path d="M-50,600 L1250,600 L1250,800 L-50,800 Z" fill="#78350f"/>
-  <rect x="0" y="600" width="1200" height="22" fill="#92400e" stroke="#451a03" stroke-width="2"/>
-  <line x1="0" y1="620" x2="0" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="120" y1="620" x2="120" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="240" y1="620" x2="240" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="360" y1="620" x2="360" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="480" y1="620" x2="480" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="600" y1="620" x2="600" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="720" y1="620" x2="720" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="840" y1="620" x2="840" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="960" y1="620" x2="960" y2="800" stroke="#451a03" stroke-width="2.5"/><line x1="1080" y1="620" x2="1080" y2="800" stroke="#451a03" stroke-width="2.5"/>
-
-  <!-- NÒT MIZIK (Notas Musicais e Pauta Dourada Flutuando no Ar) -->
-  <g filter="url(#softGlow)">
-    <!-- Swirling melody trails -->
-    <path d="M460,540 Q550,380 680,440 T920,300" stroke="#facc15" stroke-width="3" fill="none" opacity="0.8"/>
-    <path d="M480,555 Q570,395 700,455 T940,315" stroke="#facc15" stroke-width="1.5" fill="none" opacity="0.5"/>
-    
-    <!-- Treble Clef -->
-    <g transform="translate(680, 420) scale(0.9)">
-      <path d="M0,35 C0,45 -12,45 -12,35 C-12,25 0,25 0,15 L0,-35 C0,-55 18,-55 18,-35 C18,-15 -25,-10 -25,18 C-25,45 15,45 15,18 C15,0 -5,-15 -5,-25" stroke="#fde047" stroke-width="4" fill="none" stroke-linecap="round"/>
-    </g>
-
-    <!-- Quaver & Semiquaver Notes -->
-    <g transform="translate(560, 420)">
-      <ellipse cx="0" cy="0" rx="10" ry="7" fill="#facc15" transform="rotate(-20)"/>
-      <line x1="8" y1="-2" x2="8" y2="-36" stroke="#facc15" stroke-width="3"/>
-      <path d="M8,-36 Q20,-30 22,-18" stroke="#facc15" stroke-width="3" fill="none"/>
-    </g>
-
-    <g transform="translate(790, 340)">
-      <ellipse cx="0" cy="0" rx="10" ry="7" fill="#facc15" transform="rotate(-20)"/>
-      <line x1="8" y1="-2" x2="8" y2="-36" stroke="#facc15" stroke-width="3"/>
-      <ellipse cx="32" cy="-8" rx="10" ry="7" fill="#facc15" transform="rotate(-20)"/>
-      <line x1="40" y1="-10" x2="40" y2="-44" stroke="#facc15" stroke-width="3"/>
-      <polygon points="8,-36 40,-44 40,-36 8,-28" fill="#facc15"/>
-    </g>
-
-    <g transform="translate(900, 290)">
-      <ellipse cx="0" cy="0" rx="8" ry="6" fill="#facc15" transform="rotate(-20)"/>
-      <line x1="6" y1="-2" x2="6" y2="-28" stroke="#facc15" stroke-width="2.5"/>
-    </g>
+  
+  
+        <!-- Wooden Stage Floor -->
+  <polygon points="-50,600 1250,600 1250,800 -50,800" fill="#78350f"/>
+  <line x1="-50" y1="600" x2="1250" y2="600" stroke="#b45309" stroke-width="8"/>
+  <line x1="0" y1="600" x2="-40" y2="800" stroke="#451a03" stroke-width="2" opacity="0.6"/><line x1="200" y1="600" x2="160" y2="800" stroke="#451a03" stroke-width="2" opacity="0.6"/><line x1="400" y1="600" x2="360" y2="800" stroke="#451a03" stroke-width="2" opacity="0.6"/><line x1="600" y1="600" x2="560" y2="800" stroke="#451a03" stroke-width="2" opacity="0.6"/><line x1="800" y1="600" x2="760" y2="800" stroke="#451a03" stroke-width="2" opacity="0.6"/><line x1="1000" y1="600" x2="960" y2="800" stroke="#451a03" stroke-width="2" opacity="0.6"/><line x1="1200" y1="600" x2="1160" y2="800" stroke="#451a03" stroke-width="2" opacity="0.6"/>
+        <g transform="translate(260, 660) scale(1.3)" filter="url(#dropShadow)">
+    <ellipse cx="0" cy="55" rx="45" ry="12" fill="#000000" opacity="0.3"/>
+    <path d="M-38,-45 L38,-45 Q48,10 32,50 L-32,50 Q-48,10 -38,-45 Z" fill="url(#woodTone)" stroke="#451a03" stroke-width="2.5"/>
+    <ellipse cx="0" cy="-45" rx="38" ry="12" fill="#fef3c7" stroke="#78350f" stroke-width="2"/>
+    <path d="M-34,-35 L-18,12 L0,-35 L18,12 L34,-35" stroke="#facc15" stroke-width="2.5" fill="none"/>
   </g>
-
-  <!-- OPALÈ (Alto-Falante / Caixa de Som Vintage de Madeira) on left stage -->
-  <g transform="translate(180, 560)" filter="url(#dropShadow)">
-    <rect x="-45" y="-120" width="90" height="150" rx="6" fill="#1e293b" stroke="#0f172a" stroke-width="3"/>
-    <!-- Speaker cones -->
-    <circle cx="0" cy="-75" r="28" fill="#0f172a" stroke="#334155" stroke-width="3"/>
-    <circle cx="0" cy="-75" r="12" fill="#475569"/>
-    <circle cx="0" cy="-15" r="20" fill="#0f172a" stroke="#334155" stroke-width="3"/>
-    <circle cx="0" cy="-15" r="8" fill="#475569"/>
+        <g transform="translate(580, 610) scale(1.3)" filter="url(#dropShadow)">
+    <!-- X-Stand -->
+    <line x1="-50" y1="65" x2="50" y2="10" stroke="#475569" stroke-width="5"/>
+    <line x1="50" y1="65" x2="-50" y2="10" stroke="#475569" stroke-width="5"/>
+    <!-- Synth Body -->
+    <rect x="-75" y="-5" width="150" height="22" rx="4" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
+    <rect x="-65" y="0" width="130" height="14" fill="#ffffff"/>
+    
+      <rect x="-60" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="-49" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="-38" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="-27" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="-16" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="-5" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="6" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="17" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="28" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="39" y="0" width="6" height="9" fill="#0f172a"/>
+    
+      <rect x="50" y="0" width="6" height="9" fill="#0f172a"/>
+    
+    <!-- Controls & display screen -->
+    <rect x="-20" y="-14" width="40" height="9" rx="2" fill="#0284c7"/>
+    <circle cx="40" cy="-9" r="3" fill="#ef4444"/>
+    <circle cx="50" cy="-9" r="3" fill="#22c55e"/>
   </g>
-
-  <!-- GITA (Violão Acústico de Madeira Clássico em Grande Destaque) -->
-  <g transform="translate(480, 610) rotate(-18)" filter="url(#dropShadow)">
-    <!-- Shadow -->
-    <ellipse cx="0" cy="90" rx="65" ry="18" fill="#000000" opacity="0.35"/>
-    
-    <!-- Wooden Chair resting on -->
-    <rect x="-35" y="40" width="70" height="15" rx="3" fill="#543317"/>
-
-    <!-- Guitar Body (Figure-8 contour) -->
-    <path d="M-42,-30 
-      C-60,-15 -62,20 -44,45 
-      C-32,60 -56,90 -45,120 
-      C-30,150 30,150 45,120 
-      C56,90 32,60 44,45 
-      C62,20 60,-15 42,-30 
-      C28,-40 -28,-40 -42,-30 Z" 
-      fill="#d97706" stroke="#78350f" stroke-width="3.5"/>
-    <!-- Rosewood sides rim -->
-    <path d="M-38,-26 C-54,-12 -56,18 -40,42 C-28,56 -50,86 -40,114 C-26,142 26,142 40,114 C50,86 28,56 40,42 C56,18 54,-12 38,-26" fill="none" stroke="#b45309" stroke-width="4"/>
-    
-    <!-- Soundhole Rosette & Hole -->
-    <circle cx="0" cy="15" r="22" fill="#fffbeb" stroke="#78350f" stroke-width="4"/>
-    <circle cx="0" cy="15" r="16" fill="#1c1917"/>
-
-    <!-- Bridge & Saddle -->
-    <rect x="-24" y="85" width="48" height="14" rx="3" fill="#451a03" stroke="#1c1917" stroke-width="1.5"/>
-    <rect x="-18" y="88" width="36" height="4" fill="#f8fafc"/>
-
+        <g transform="translate(880, 590) scale(1.35) rotate(10)" filter="url(#dropShadow)">
+    <!-- Acoustic Guitar Body -->
+    <ellipse cx="0" cy="50" rx="42" ry="50" fill="url(#woodTone)" stroke="#451a03" stroke-width="2.5"/>
+    <ellipse cx="0" cy="-5" rx="32" ry="32" fill="url(#woodTone)" stroke="#451a03" stroke-width="2.5"/>
+    <!-- Sound hole rosette -->
+    <circle cx="0" cy="8" r="14" fill="#1c1917" stroke="#b45309" stroke-width="2"/>
+    <circle cx="0" cy="8" r="17" fill="none" stroke="#facc15" stroke-width="1"/>
+    <!-- Bridge -->
+    <rect x="-18" y="55" width="36" height="8" rx="2" fill="#292524"/>
     <!-- Neck & Fretboard -->
-    <rect x="-12" y="-170" width="24" height="140" fill="#451a03" stroke="#292524" stroke-width="2"/>
-    <!-- Frets -->
-    <line x1="-12" y1="-155" x2="12" y2="-155" stroke="#d6d3d1" stroke-width="1.5"/><line x1="-12" y1="-140" x2="12" y2="-140" stroke="#d6d3d1" stroke-width="1.5"/><line x1="-12" y1="-125" x2="12" y2="-125" stroke="#d6d3d1" stroke-width="1.5"/><line x1="-12" y1="-110" x2="12" y2="-110" stroke="#d6d3d1" stroke-width="1.5"/><line x1="-12" y1="-95" x2="12" y2="-95" stroke="#d6d3d1" stroke-width="1.5"/><line x1="-12" y1="-80" x2="12" y2="-80" stroke="#d6d3d1" stroke-width="1.5"/><line x1="-12" y1="-65" x2="12" y2="-65" stroke="#d6d3d1" stroke-width="1.5"/><line x1="-12" y1="-50" x2="12" y2="-50" stroke="#d6d3d1" stroke-width="1.5"/>
-
-    <!-- Headstock & Tuning Pegs -->
-    <polygon points="-14,-170 14,-170 16,-220 -16,-220" fill="#92400e" stroke="#451a03" stroke-width="2"/>
-    <!-- 6 Tuning pegs -->
-    <circle cx="-22" cy="-205" r="4.5" fill="#facc15"/>
-    <circle cx="-22" cy="-192" r="4.5" fill="#facc15"/>
-    <circle cx="-22" cy="-179" r="4.5" fill="#facc15"/>
-    <circle cx="22" cy="-205" r="4.5" fill="#facc15"/>
-    <circle cx="22" cy="-192" r="4.5" fill="#facc15"/>
-    <circle cx="22" cy="-179" r="4.5" fill="#facc15"/>
-
-    <!-- 6 Silver Strings -->
-    <line x1="-8" y1="-210" x2="-12" y2="90" stroke="#f8fafc" stroke-width="1.2" opacity="0.9"/><line x1="-5" y1="-210" x2="-7.5" y2="90" stroke="#f8fafc" stroke-width="1.2" opacity="0.9"/><line x1="-2" y1="-210" x2="-3" y2="90" stroke="#f8fafc" stroke-width="1.2" opacity="0.9"/><line x1="2" y1="-210" x2="3" y2="90" stroke="#f8fafc" stroke-width="1.2" opacity="0.9"/><line x1="5" y1="-210" x2="7.5" y2="90" stroke="#f8fafc" stroke-width="1.2" opacity="0.9"/><line x1="8" y1="-210" x2="12" y2="90" stroke="#f8fafc" stroke-width="1.2" opacity="0.9"/>
+    <rect x="-7" y="-120" width="14" height="115" fill="#292524"/>
+    <line x1="-7" y1="-100" x2="7" y2="-100" stroke="#cbd5e1" stroke-width="1"/><line x1="-7" y1="-80" x2="7" y2="-80" stroke="#cbd5e1" stroke-width="1"/><line x1="-7" y1="-60" x2="7" y2="-60" stroke="#cbd5e1" stroke-width="1"/><line x1="-7" y1="-40" x2="7" y2="-40" stroke="#cbd5e1" stroke-width="1"/><line x1="-7" y1="-20" x2="7" y2="-20" stroke="#cbd5e1" stroke-width="1"/><line x1="-7" y1="0" x2="7" y2="0" stroke="#cbd5e1" stroke-width="1"/>
+    <!-- Headstock & Tuning pegs -->
+    <rect x="-9" y="-145" width="18" height="25" rx="3" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+    <circle cx="-13" cy="-140" r="3" fill="#facc15"/>
+    <circle cx="-13" cy="-130" r="3" fill="#facc15"/>
+    <circle cx="13" cy="-140" r="3" fill="#facc15"/>
+    <circle cx="13" cy="-130" r="3" fill="#facc15"/>
+    <!-- Strings -->
+    <line x1="-4" y1="-140" x2="-4" y2="55" stroke="#fef08a" stroke-width="1"/>
+    <line x1="4" y1="-140" x2="4" y2="55" stroke="#fef08a" stroke-width="1"/>
   </g>
-
-  <!-- TANBOU (Tambor Haitiano ao Lado do Violão) -->
-  <g transform="translate(680, 650)" filter="url(#dropShadow)">
-    <ellipse cx="0" cy="55" rx="55" ry="15" fill="#000000" opacity="0.35"/>
-    <path d="M-40,-50 L40,-50 Q50,10 32,50 L-32,50 Q-50,10 -40,-50 Z" fill="url(#woodTone)" stroke="#451a03" stroke-width="2.5"/>
-    <ellipse cx="0" cy="-50" rx="40" ry="12" fill="#fef3c7" stroke="#78350f" stroke-width="2.5"/>
-    <!-- Tension cords -->
-    <path d="M-38,-42 L-20,10 L0,-42 L20,10 L38,-42" stroke="#facc15" stroke-width="3" fill="none"/>
+        <g transform="translate(680, 680) scale(1.15)" filter="url(#dropShadow)">
+    <!-- Headband arch -->
+    <path d="M-35,15 Q-40,-45 0,-45 Q40,-45 35,15" stroke="#1e293b" stroke-width="6" fill="none"/>
+    <!-- Earcups with padding -->
+    <ellipse cx="-35" cy="15" rx="14" ry="22" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+    <ellipse cx="35" cy="15" rx="14" ry="22" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
   </g>
+      
 </svg>

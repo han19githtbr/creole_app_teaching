@@ -86,7 +86,7 @@ export function ImageBankPicker({
                 : "text-[var(--text-muted)] hover:text-[var(--text)]"
             )}
           >
-            Todas as Cenas (140)
+            Todas as Cenas ({IMAGE_BANK.length})
           </button>
         </div>
       </div>

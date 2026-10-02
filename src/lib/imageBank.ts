@@ -372,7 +372,7 @@ const sceneVariantsTyped = imageSceneVariants as Record<
 const generatedTitles = new Map(generatedImages.map((image) => [image.id, image.title]));
 
 export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
-  Array.from({ length: 10 }, (_, variantIndex) => {
+  Array.from({ length: 20 }, (_, variantIndex) => {
     const variant = variantIndex + 1;
     const id = variant === 1 ? image.id : `${image.id}-${String(variant).padStart(2, "0")}`;
     const variantScene = variant > 1 ? sceneVariantsTyped[image.theme]?.scenes[variant - 2] : undefined;

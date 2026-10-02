@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Observatório espacial no platô - Teknoloji</title>
+  <desc>Ghibli anime art: Céu noturno estrelado sobre platô montanhoso, antena gigante, satélite e computadores.</desc>
+  
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Soft diffuse drop shadow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <!-- Sky Gradients -->
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#236ca7"/>
+      <stop offset="35%" stop-color="#5fa3d6"/>
+      <stop offset="70%" stop-color="#b8e1f2"/>
+      <stop offset="100%" stop-color="#fdf3dc"/>
+    </linearGradient>
+
+    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#31396b"/>
+      <stop offset="35%" stop-color="#73507b"/>
+      <stop offset="65%" stop-color="#cb6b5c"/>
+      <stop offset="85%" stop-color="#f29e5a"/>
+      <stop offset="100%" stop-color="#fedaa2"/>
+    </linearGradient>
+
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#121832"/>
+      <stop offset="40%" stop-color="#262f56"/>
+      <stop offset="70%" stop-color="#4e3d64"/>
+      <stop offset="90%" stop-color="#915264"/>
+      <stop offset="100%" stop-color="#d6846c"/>
+    </linearGradient>
+
+    <!-- Cloud Gradients -->
+    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fcf8f0"/>
+      <stop offset="80%" stop-color="#d9e4ec"/>
+      <stop offset="100%" stop-color="#b6c8d7"/>
+    </linearGradient>
+
+    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5e6"/>
+      <stop offset="40%" stop-color="#fbd0a5"/>
+      <stop offset="75%" stop-color="#cf8ca0"/>
+      <stop offset="100%" stop-color="#7e607c"/>
+    </linearGradient>
+
+    <!-- Sun / Glow Gradients -->
+    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Hills / Mountains Gradients -->
+    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e94a8"/>
+      <stop offset="100%" stop-color="#93b9c7"/>
+    </linearGradient>
+
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c4f"/>
+      <stop offset="50%" stop-color="#3c6a40"/>
+      <stop offset="100%" stop-color="#2d5231"/>
+    </linearGradient>
+
+    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#699e4c"/>
+      <stop offset="60%" stop-color="#4c7e33"/>
+      <stop offset="100%" stop-color="#2f5720"/>
+    </linearGradient>
+
+    <!-- Materials: Wood, Brass, Stone, Water -->
+    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9c6d48"/>
+      <stop offset="50%" stop-color="#784f30"/>
+      <stop offset="100%" stop-color="#55341c"/>
+    </linearGradient>
+
+    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#d9a536"/>
+      <stop offset="70%" stop-color="#996c14"/>
+      <stop offset="100%" stop-color="#5e4007"/>
+    </linearGradient>
+
+    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c5beb3"/>
+      <stop offset="60%" stop-color="#999184"/>
+      <stop offset="100%" stop-color="#6c6458"/>
+    </linearGradient>
+
+    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#47a5be"/>
+      <stop offset="50%" stop-color="#2a7796"/>
+      <stop offset="100%" stop-color="#144d6a"/>
+    </linearGradient>
+  </defs>
+  <!-- Starry Night Sky -->
+  <rect width="1200" height="800" fill="#090d16" filter="url(#ghibliPaper)" />
+  <circle cx="0" cy="0" r="1.2" fill="#ffffff" opacity="0.4"/><circle cx="31" cy="19" r="2.2" fill="#ffffff" opacity="0.52"/><circle cx="62" cy="38" r="3.2" fill="#ffffff" opacity="0.64"/><circle cx="93" cy="57" r="1.2" fill="#ffffff" opacity="0.76"/><circle cx="124" cy="76" r="2.2" fill="#ffffff" opacity="0.88"/><circle cx="155" cy="95" r="3.2" fill="#ffffff" opacity="0.4"/><circle cx="186" cy="114" r="1.2" fill="#ffffff" opacity="0.52"/><circle cx="217" cy="133" r="2.2" fill="#ffffff" opacity="0.64"/><circle cx="248" cy="152" r="3.2" fill="#ffffff" opacity="0.76"/><circle cx="279" cy="171" r="1.2" fill="#ffffff" opacity="0.88"/><circle cx="310" cy="190" r="2.2" fill="#ffffff" opacity="0.4"/><circle cx="341" cy="209" r="3.2" fill="#ffffff" opacity="0.52"/><circle cx="372" cy="228" r="1.2" fill="#ffffff" opacity="0.64"/><circle cx="403" cy="247" r="2.2" fill="#ffffff" opacity="0.76"/><circle cx="434" cy="266" r="3.2" fill="#ffffff" opacity="0.88"/><circle cx="465" cy="285" r="1.2" fill="#ffffff" opacity="0.4"/><circle cx="496" cy="304" r="2.2" fill="#ffffff" opacity="0.52"/><circle cx="527" cy="323" r="3.2" fill="#ffffff" opacity="0.64"/><circle cx="558" cy="342" r="1.2" fill="#ffffff" opacity="0.76"/><circle cx="589" cy="1" r="2.2" fill="#ffffff" opacity="0.88"/><circle cx="620" cy="20" r="3.2" fill="#ffffff" opacity="0.4"/><circle cx="651" cy="39" r="1.2" fill="#ffffff" opacity="0.52"/><circle cx="682" cy="58" r="2.2" fill="#ffffff" opacity="0.64"/><circle cx="713" cy="77" r="3.2" fill="#ffffff" opacity="0.76"/><circle cx="744" cy="96" r="1.2" fill="#ffffff" opacity="0.88"/><circle cx="775" cy="115" r="2.2" fill="#ffffff" opacity="0.4"/><circle cx="806" cy="134" r="3.2" fill="#ffffff" opacity="0.52"/><circle cx="837" cy="153" r="1.2" fill="#ffffff" opacity="0.64"/><circle cx="868" cy="172" r="2.2" fill="#ffffff" opacity="0.76"/><circle cx="899" cy="191" r="3.2" fill="#ffffff" opacity="0.88"/><circle cx="930" cy="210" r="1.2" fill="#ffffff" opacity="0.4"/><circle cx="961" cy="229" r="2.2" fill="#ffffff" opacity="0.52"/><circle cx="992" cy="248" r="3.2" fill="#ffffff" opacity="0.64"/><circle cx="1023" cy="267" r="1.2" fill="#ffffff" opacity="0.76"/><circle cx="1054" cy="286" r="2.2" fill="#ffffff" opacity="0.88"/><circle cx="1085" cy="305" r="3.2" fill="#ffffff" opacity="0.4"/><circle cx="1116" cy="324" r="1.2" fill="#ffffff" opacity="0.52"/><circle cx="1147" cy="343" r="2.2" fill="#ffffff" opacity="0.64"/><circle cx="1178" cy="2" r="3.2" fill="#ffffff" opacity="0.76"/><circle cx="9" cy="21" r="1.2" fill="#ffffff" opacity="0.88"/>
+  <circle cx="1000" cy="140" r="42" fill="#fef08a" opacity="0.9"/>
+  <!-- Mountain Plateau -->
+  <path d="M-50,560 Q280,480 650,530 T1250,500 L1250,800 L-50,800 Z" fill="#1e293b"/>
+  <path d="M-50,640 Q320,580 720,620 T1250,600 L1250,800 L-50,800 Z" fill="#0f172a"/>
+  <!-- ANTÈN (Grande Antena Parabólica de Rádio-Astronomia) -->
+  <g transform="translate(380, 440)" filter="url(#dropShadow)">
+    <path d="M-110,-50 Q0,-140 110,-50 Q0,0 -110,-50 Z" fill="#e2e8f0" stroke="#334155" stroke-width="4"/>
+    <line x1="0" y1="-80" x2="35" y2="-120" stroke="#ef4444" stroke-width="3"/>
+    <circle cx="35" cy="-120" r="6" fill="#ef4444"/>
+    <polygon points="-25,0 25,0 40,160 -40,160" fill="#475569" stroke="#1e293b" stroke-width="3"/>
+  </g>
+  <!-- SATELIT (Satélite de órbita baixa passando no céu) -->
+  <g transform="translate(750, 150)">
+    <rect x="-14" y="-10" width="28" height="20" rx="4" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+    <polygon points="-40,-12 -18,-10 -18,10 -40,12" fill="#38bdf8"/>
+    <polygon points="18,-10 40,-12 40,12 18,10" fill="#38bdf8"/>
+    <line x1="0" y1="10" x2="0" y2="28" stroke="#ffffff" stroke-width="2"/>
+  </g>
+  <!-- EKRAN & ÒDINATÈ (Terminal e Monitor dos Astrônomos no Pátio) -->
+  <g transform="translate(860, 620)" filter="url(#dropShadow)">
+    <rect x="-60" y="-45" width="120" height="80" rx="6" fill="#0f172a" stroke="#64748b" stroke-width="3"/>
+    <rect x="-52" y="-38" width="104" height="66" rx="4" fill="#1e1b4b"/>
+    <circle cx="-10" cy="-5" r="14" fill="#a855f7" opacity="0.8"/>
+    <text x="0" y="20" font-family="monospace" font-size="8" fill="#38bdf8" text-anchor="middle">KOSMOS: OK</text>
+  </g>
+</svg>

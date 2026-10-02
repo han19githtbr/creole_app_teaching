@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Confecção de tambores tradicionais - Kilti</title>
+  <desc>Ghibli anime art: Oficina de luthier com troncos entalhados, tambor em amarração, casinha, máscara e lamparina.</desc>
+  
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Soft diffuse drop shadow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <!-- Sky Gradients -->
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#236ca7"/>
+      <stop offset="35%" stop-color="#5fa3d6"/>
+      <stop offset="70%" stop-color="#b8e1f2"/>
+      <stop offset="100%" stop-color="#fdf3dc"/>
+    </linearGradient>
+
+    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#31396b"/>
+      <stop offset="35%" stop-color="#73507b"/>
+      <stop offset="65%" stop-color="#cb6b5c"/>
+      <stop offset="85%" stop-color="#f29e5a"/>
+      <stop offset="100%" stop-color="#fedaa2"/>
+    </linearGradient>
+
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#121832"/>
+      <stop offset="40%" stop-color="#262f56"/>
+      <stop offset="70%" stop-color="#4e3d64"/>
+      <stop offset="90%" stop-color="#915264"/>
+      <stop offset="100%" stop-color="#d6846c"/>
+    </linearGradient>
+
+    <!-- Cloud Gradients -->
+    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fcf8f0"/>
+      <stop offset="80%" stop-color="#d9e4ec"/>
+      <stop offset="100%" stop-color="#b6c8d7"/>
+    </linearGradient>
+
+    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5e6"/>
+      <stop offset="40%" stop-color="#fbd0a5"/>
+      <stop offset="75%" stop-color="#cf8ca0"/>
+      <stop offset="100%" stop-color="#7e607c"/>
+    </linearGradient>
+
+    <!-- Sun / Glow Gradients -->
+    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Hills / Mountains Gradients -->
+    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e94a8"/>
+      <stop offset="100%" stop-color="#93b9c7"/>
+    </linearGradient>
+
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c4f"/>
+      <stop offset="50%" stop-color="#3c6a40"/>
+      <stop offset="100%" stop-color="#2d5231"/>
+    </linearGradient>
+
+    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#699e4c"/>
+      <stop offset="60%" stop-color="#4c7e33"/>
+      <stop offset="100%" stop-color="#2f5720"/>
+    </linearGradient>
+
+    <!-- Materials: Wood, Brass, Stone, Water -->
+    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9c6d48"/>
+      <stop offset="50%" stop-color="#784f30"/>
+      <stop offset="100%" stop-color="#55341c"/>
+    </linearGradient>
+
+    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#d9a536"/>
+      <stop offset="70%" stop-color="#996c14"/>
+      <stop offset="100%" stop-color="#5e4007"/>
+    </linearGradient>
+
+    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c5beb3"/>
+      <stop offset="60%" stop-color="#999184"/>
+      <stop offset="100%" stop-color="#6c6458"/>
+    </linearGradient>
+
+    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#47a5be"/>
+      <stop offset="50%" stop-color="#2a7796"/>
+      <stop offset="100%" stop-color="#144d6a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="#fef3c7" filter="url(#ghibliPaper)" />
+  <!-- KAY (Oficina de Madeira Aconchegante) -->
+  <rect x="0" y="180" width="1200" height="30" fill="#78350f"/>
+  <rect x="0" y="210" width="1200" height="350" fill="#fed7aa" opacity="0.3"/>
+  <!-- Workbench -->
+  <rect x="0" y="520" width="1200" height="40" fill="url(#woodTone)" stroke="#3e2515" stroke-width="3"/>
+  <rect x="0" y="560" width="1200" height="240" fill="#451a03"/>
+  <!-- LANP (Lanterna de Querosene Suspensa no Teto da Oficina) -->
+  <g transform="translate(300, 280)" filter="url(#dropShadow)">
+    <line x1="0" y1="-100" x2="0" y2="0" stroke="#0f172a" stroke-width="3"/>
+    <circle cx="0" cy="0" r="50" fill="url(#sunGlowSunset)" opacity="0.8"/>
+    <rect x="-16" y="-22" width="32" height="44" rx="6" fill="#fef08a" stroke="#78350f" stroke-width="2"/>
+    <circle cx="0" cy="0" r="8" fill="#ef4444"/>
+  </g>
+  <!-- MASK (Máscara Talhada em Madeira na Parede da Oficina) -->
+  <g transform="translate(900, 320)" filter="url(#dropShadow)">
+    <path d="M-30,-45 Q0,-65 30,-45 Q40,30 0,60 Q-40,30 -30,-45 Z" fill="#78350f" stroke="#451a03" stroke-width="3"/>
+    <ellipse cx="-12" cy="-10" rx="8" ry="4" fill="#fef08a"/>
+    <ellipse cx="12" cy="-10" rx="8" ry="4" fill="#fef08a"/>
+  </g>
+  <!-- TANBOU (Tambor Mestre Sendo Montado com Cordas e Couro) -->
+  <g transform="translate(600, 500)" filter="url(#dropShadow)">
+    <!-- Carved Solid Wood Body -->
+    <path d="M-55,-70 L55,-70 Q70,20 42,75 L-42,75 Q-70,20 -55,-70 Z" fill="url(#woodTone)" stroke="#3e2515" stroke-width="3"/>
+    <ellipse cx="0" cy="-70" rx="55" ry="18" fill="#fef3c7" stroke="#78350f" stroke-width="3"/>
+    <!-- Tension Rope Pattern -->
+    <path d="M-50,-55 L-25,25 L0,-55 L25,25 L50,-55" stroke="#f59e0b" stroke-width="4" fill="none"/>
+    <path d="M-38,25 L0,-25 L38,25" stroke="#f59e0b" stroke-width="3" fill="none"/>
+    <!-- Wooden Tuning Pegs -->
+    <rect x="-45" y="15" width="12" height="22" rx="3" fill="#78350f"/><rect x="-20" y="15" width="12" height="22" rx="3" fill="#78350f"/><rect x="10" y="15" width="12" height="22" rx="3" fill="#78350f"/><rect x="35" y="15" width="12" height="22" rx="3" fill="#78350f"/>
+  </g>
+</svg>

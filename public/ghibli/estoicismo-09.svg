@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Pórtico de pedra e oliveiras - Sajès</title>
-  <desc>Ghibli anime art: Colunas clássicas, filósofo sábio, oliveiras e livro aberto.</desc>
+  <title>Biblioteca serena - Sajès</title>
+  <desc>Ghibli anime art: Biblioteca serena com colunas clássicas, oliveiras e sabedoria estóica.</desc>
   
   <defs>
     <!-- Paper watercolor texture filter -->
@@ -119,19 +119,18 @@
     </linearGradient>
   </defs>
   
-  <!-- Warm Contemplative Sunset Sky -->
-  <rect width="1200" height="800" fill="url(#skySunset)" filter="url(#ghibliPaper)" />
+  <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
   
   <g>
-    <circle cx="850" cy="240" r="182" fill="url(#sunGlowSunset)" />
-    <circle cx="850" cy="240" r="52" fill="#ffdf99" />
+    <circle cx="880" cy="140" r="168" fill="url(#sunGlowDay)" />
+    <circle cx="880" cy="140" r="48" fill="#fffded" />
     <!-- Subtle sun rays -->
-    <polygon points="850,240 550,800 730,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="850,240 900,800 1090,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="850,240 1210,800 1410,800" fill="#fffbe6" opacity="0.06" />
+    <polygon points="880,140 580,800 760,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="880,140 930,800 1120,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="880,140 1240,800 1440,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(240, 170) scale(0.95)" opacity="0.95">
+  <g transform="translate(240, 180) scale(0.9)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -142,7 +141,7 @@
       C270,40 250,90 200,95 
       L-150,95 
       C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodySunset)" filter="url(#dropShadow)" />
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
     <!-- Bright inner highlights (Ghibli fluff) -->
     <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
     <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
@@ -150,7 +149,7 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
   
-  <g transform="translate(980, 180) scale(0.85)" opacity="0.95">
+  <g transform="translate(600, 120) scale(0.75)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -161,115 +160,64 @@
       C270,40 250,90 200,95 
       L-150,95 
       C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodySunset)" filter="url(#dropShadow)" />
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
     <!-- Bright inner highlights (Ghibli fluff) -->
     <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
     <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
     <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
-
-  <!-- Tranquil Distant Sea & Horizon Islands -->
-  <path d="M-50,510 L1250,510 L1250,800 L-50,800 Z" fill="url(#waterTone)"/>
-  <ellipse cx="600" cy="520" rx="350" ry="15" fill="#fde047" opacity="0.4" filter="url(#softGlow)"/> <!-- Sunset path on water -->
-
-  <!-- PYE OLIV (Oliveiras Centenárias com Folhagem Prateada) on left -->
-  <g transform="translate(180, 560)" filter="url(#dropShadow)">
-    <path d="M-18,0 Q-35,-110 -12,-220 Q15,-110 18,0 Z" fill="url(#woodTone)"/>
-    <!-- Twisted gnarled olive branches -->
-    <ellipse cx="0" cy="-250" rx="100" ry="85" fill="#3f6212"/>
-    <ellipse cx="-45" cy="-230" rx="80" ry="70" fill="#4d7c0f"/>
-    <ellipse cx="45" cy="-230" rx="80" ry="70" fill="#65a30d"/>
-    <ellipse cx="0" cy="-290" rx="70" ry="60" fill="#84cc16" opacity="0.8"/>
-    <!-- Small dark olives -->
-    <circle cx="-30" cy="-240" r="5" fill="#1e293b"/>
-    <circle cx="20" cy="-260" r="5" fill="#1e293b"/>
-    <circle cx="40" cy="-220" r="5" fill="#1e293b"/>
+  
+  
+        <rect width="1200" height="800" fill="#292524" filter="url(#ghibliPaper)" />
+        <rect x="0" y="580" width="1200" height="220" fill="url(#stoneTone)"/>
+        <g transform="translate(200, 580) scale(1.3)" filter="url(#dropShadow)">
+    <!-- Classical Fluted Column -->
+    <!-- Base -->
+    <rect x="-26" y="80" width="52" height="15" rx="2" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2"/>
+    <rect x="-22" y="70" width="44" height="10" fill="url(#stoneTone)" stroke="#44403c" stroke-width="1.5"/>
+    <!-- Shaft with fluting grooves -->
+    <rect x="-18" y="-120" width="36" height="190" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <line x1="-10" y1="-120" x2="-10" y2="70" stroke="#94a3b8" stroke-width="1.5"/><line x1="-3" y1="-120" x2="-3" y2="70" stroke="#94a3b8" stroke-width="1.5"/><line x1="4" y1="-120" x2="4" y2="70" stroke="#94a3b8" stroke-width="1.5"/><line x1="11" y1="-120" x2="11" y2="70" stroke="#94a3b8" stroke-width="1.5"/>
+    <!-- Capital (Ionic scroll) -->
+    <rect x="-24" y="-132" width="48" height="12" rx="3" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2"/>
+    <circle cx="-20" cy="-126" r="6" fill="#cbd5e1" stroke="#44403c" stroke-width="1.5"/>
+    <circle cx="20" cy="-126" r="6" fill="#cbd5e1" stroke="#44403c" stroke-width="1.5"/>
   </g>
-
-  <!-- KOLÒN (Colunas Clássicas de Mármore e Pórtico de Pedra) on right terrace -->
-  <g transform="translate(760, 480)" filter="url(#dropShadow)">
-    <!-- Entablature / Architrave beam on top -->
-    <rect x="-80" y="-240" width="460" height="35" rx="3" fill="url(#stoneTone)" stroke="#44403c" stroke-width="3"/>
-    
-    <!-- Column 1 -->
-    <g transform="translate(0, 0)">
-      <!-- Capital -->
-      <rect x="-24" y="-205" width="48" height="15" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
-      <!-- Fluted Column Shaft -->
-      <rect x="-18" y="-190" width="36" height="230" fill="#e7e5e4" stroke="#44403c" stroke-width="2.5"/>
-      <line x1="-8" y1="-190" x2="-8" y2="40" stroke="#a8a29e" stroke-width="2"/>
-      <line x1="8" y1="-190" x2="8" y2="40" stroke="#a8a29e" stroke-width="2"/>
-      <!-- Base -->
-      <rect x="-24" y="40" width="48" height="18" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
-    </g>
-
-    <!-- Column 2 -->
-    <g transform="translate(140, 0)">
-      <rect x="-24" y="-205" width="48" height="15" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
-      <rect x="-18" y="-190" width="36" height="230" fill="#e7e5e4" stroke="#44403c" stroke-width="2.5"/>
-      <line x1="-8" y1="-190" x2="-8" y2="40" stroke="#a8a29e" stroke-width="2"/>
-      <line x1="8" y1="-190" x2="8" y2="40" stroke="#a8a29e" stroke-width="2"/>
-      <rect x="-24" y="40" width="48" height="18" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
-    </g>
-
-    <!-- Column 3 -->
-    <g transform="translate(280, 0)">
-      <rect x="-24" y="-205" width="48" height="15" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
-      <rect x="-18" y="-190" width="36" height="230" fill="#e7e5e4" stroke="#44403c" stroke-width="2.5"/>
-      <line x1="-8" y1="-190" x2="-8" y2="40" stroke="#a8a29e" stroke-width="2"/>
-      <line x1="8" y1="-190" x2="8" y2="40" stroke="#a8a29e" stroke-width="2"/>
-      <rect x="-24" y="40" width="48" height="18" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
-    </g>
+        <g transform="translate(1000, 580) scale(1.3)" filter="url(#dropShadow)">
+    <!-- Classical Fluted Column -->
+    <!-- Base -->
+    <rect x="-26" y="80" width="52" height="15" rx="2" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2"/>
+    <rect x="-22" y="70" width="44" height="10" fill="url(#stoneTone)" stroke="#44403c" stroke-width="1.5"/>
+    <!-- Shaft with fluting grooves -->
+    <rect x="-18" y="-120" width="36" height="190" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <line x1="-10" y1="-120" x2="-10" y2="70" stroke="#94a3b8" stroke-width="1.5"/><line x1="-3" y1="-120" x2="-3" y2="70" stroke="#94a3b8" stroke-width="1.5"/><line x1="4" y1="-120" x2="4" y2="70" stroke="#94a3b8" stroke-width="1.5"/><line x1="11" y1="-120" x2="11" y2="70" stroke="#94a3b8" stroke-width="1.5"/>
+    <!-- Capital (Ionic scroll) -->
+    <rect x="-24" y="-132" width="48" height="12" rx="3" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2"/>
+    <circle cx="-20" cy="-126" r="6" fill="#cbd5e1" stroke="#44403c" stroke-width="1.5"/>
+    <circle cx="20" cy="-126" r="6" fill="#cbd5e1" stroke="#44403c" stroke-width="1.5"/>
   </g>
-
-  <!-- Stone Terrace Platform -->
-  <path d="M-50,620 L1250,620 L1250,800 L-50,800 Z" fill="url(#stoneTone)"/>
-  <rect x="0" y="620" width="1200" height="20" fill="#57534e"/>
-
-  <!-- MOUN SAJ (Filósofo Sábio Estoico em Túnica Branca e Contemplação Serena) -->
-  <g transform="translate(560, 610)" filter="url(#dropShadow)">
-    <ellipse cx="0" cy="15" rx="35" ry="10" fill="#000000" opacity="0.35"/>
-    
-    <!-- Flowing Classical Linen Robes (Himation) -->
-    <path d="M-18,-70 
-      C-30,-20 -40,30 -25,12 
-      L25,12 
-      C40,30 30,-20 18,-70 Z" 
-      fill="#f5f5f4" stroke="#d6d3d1" stroke-width="2"/>
-    <!-- Draped fabric folds -->
-    <path d="M-15,-60 Q0,-30 18,-50" stroke="#a8a29e" stroke-width="3" fill="none"/>
-    <path d="M-22,-30 Q0,0 20,-20" stroke="#a8a29e" stroke-width="3" fill="none"/>
-    
-    <!-- Head with thoughtful profile and wise beard -->
-    <circle cx="0" cy="-90" r="14" fill="#d7a179"/>
-    <!-- Silver/grey hair and beard -->
-    <path d="M-12,-95 Q0,-112 14,-95 Q18,-80 8,-75 Q0,-65 -8,-75 Z" fill="#e7e5e4" stroke="#a8a29e" stroke-width="1.5"/>
-    <!-- Serene gaze toward sunset -->
+        <g transform="translate(520, 670) scale(1.5)" filter="url(#dropShadow)">
+    <path d="M-60,-10 Q-30,-22 0,-12 Q30,-22 60,-10 L55,30 Q30,18 0,26 Q-30,18 -55,30 Z" fill="#fef3c7" stroke="#78350f" stroke-width="2.5"/>
+    <line x1="0" y1="-12" x2="0" y2="26" stroke="#78350f" stroke-width="2"/>
   </g>
-
-  <!-- LIV (Livro / Manuscrito Aberto sobre Pedestal de Pedra em Destaque) -->
-  <g transform="translate(380, 640)" filter="url(#dropShadow)">
-    <!-- Carved Stone Lectern -->
-    <polygon points="-40,40 40,40 25,-20 -25,-20" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2.5"/>
-    <rect x="-35" y="-30" width="70" height="12" rx="2" fill="#78716c"/>
-    
-    <!-- Open Bound Leather Book -->
-    <!-- Leather cover backing -->
-    <path d="M-48,-32 L0,-24 L48,-32 L52,-60 L0,-52 L-52,-60 Z" fill="#78350f" stroke="#451a03" stroke-width="2"/>
-    <!-- Left open page -->
-    <polygon points="-46,-34 -2,-26 -2,-54 -48,-58" fill="#fffbeb" stroke="#d6d3d1" stroke-width="1.5"/>
-    <!-- Right open page -->
-    <polygon points="2,-26 46,-34 48,-58 2,-54" fill="#fef3c7" stroke="#d6d3d1" stroke-width="1.5"/>
-    <!-- Text lines in book -->
-    <line x1="-38" y1="-50" x2="-8" y2="-47" stroke="#78350f" stroke-width="1.5"/>
-    <line x1="-38" y1="-44" x2="-8" y2="-41" stroke="#78350f" stroke-width="1.5"/>
-    <line x1="-38" y1="-38" x2="-14" y2="-35" stroke="#78350f" stroke-width="1.5"/>
-    
-    <line x1="8" y1="-47" x2="38" y2="-50" stroke="#78350f" stroke-width="1.5"/>
-    <line x1="8" y1="-41" x2="38" y2="-44" stroke="#78350f" stroke-width="1.5"/>
-    <line x1="8" y1="-35" x2="32" y2="-38" stroke="#78350f" stroke-width="1.5"/>
-    <!-- Red ribbon bookmark -->
-    <path d="M0,-24 Q6,-10 4,8" stroke="#dc2626" stroke-width="3" fill="none"/>
+        <g transform="translate(720, 670) scale(1.4)" filter="url(#dropShadow)">
+    <!-- Rolled Papyrus Scroll -->
+    <rect x="-35" y="-8" width="70" height="16" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+    <ellipse cx="-35" cy="0" rx="4" ry="8" fill="#fde68a" stroke="#b45309" stroke-width="1.5"/>
+    <ellipse cx="35" cy="0" rx="4" ry="8" fill="#fde68a" stroke="#b45309" stroke-width="1.5"/>
+    <!-- Red ribbon tied in middle -->
+    <rect x="-4" y="-9" width="8" height="18" fill="#dc2626"/>
   </g>
+        <g transform="translate(620, 630) scale(1.4)" filter="url(#dropShadow)">
+    <!-- Bronze Oil Lamp (Lamparina) -->
+    <circle cx="-25" cy="-12" r="30" fill="#facc15" opacity="0.35" filter="url(#softGlow)"/>
+    <path d="M-30,-5 Q-20,15 0,15 Q20,15 30,-5 L25,-12 Q0,-10 -25,-12 Z" fill="url(#brassTone)" stroke="#78350f" stroke-width="2"/>
+    <path d="M-35,-10 Q-30,-2 -25,-5" stroke="#78350f" stroke-width="3" fill="none"/>
+    <ellipse cx="-28" cy="-14" rx="4" ry="7" fill="#f97316"/>
+    <ellipse cx="-28" cy="-14" rx="2" ry="4" fill="#fef08a"/>
+    <!-- Curved handle -->
+    <path d="M25,-8 Q38,-15 32,5 Q26,15 18,12" stroke="#78350f" stroke-width="3" fill="none"/>
+  </g>
+      
 </svg>

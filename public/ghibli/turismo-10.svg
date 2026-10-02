@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Vila costeira, farol e balão - Touris</title>
-  <desc>Ghibli anime art: Mar caribenho, veleiro, farol na falésia e balão de ar quente.</desc>
+  <title>Travessia pelo porto - Touris</title>
+  <desc>Ghibli anime art: Travessia pelo porto com elementos de turismo e mar caribenho.</desc>
   
   <defs>
     <!-- Paper watercolor texture filter -->
@@ -119,19 +119,18 @@
     </linearGradient>
   </defs>
   
-  <!-- Bright Tropical Sea Sky -->
-  <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
+  <rect width="1200" height="800" fill="url(#skyDusk)" filter="url(#ghibliPaper)" />
   
   <g>
-    <circle cx="880" cy="140" r="175" fill="url(#sunGlowDay)" />
-    <circle cx="880" cy="140" r="50" fill="#fffded" />
+    <circle cx="850" cy="210" r="154" fill="url(#sunGlowDay)" />
+    <circle cx="850" cy="210" r="44" fill="#fffded" />
     <!-- Subtle sun rays -->
-    <polygon points="880,140 580,800 760,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="880,140 930,800 1120,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="880,140 1240,800 1440,800" fill="#fffbe6" opacity="0.06" />
+    <polygon points="850,210 550,800 730,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="850,210 900,800 1090,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="850,210 1210,800 1410,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(180, 130) scale(0.95)" opacity="0.95">
+  <g transform="translate(240, 140) scale(0.9)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -150,7 +149,7 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
   
-  <g transform="translate(680, 190) scale(0.85)" opacity="0.95">
+  <g transform="translate(600, 120) scale(0.75)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -168,90 +167,68 @@
     <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
-
-  <!-- BALON (Balão de Ar Quente Majestoso) floating high in sky -->
-  <g transform="translate(320, 190)" filter="url(#dropShadow)">
-    <!-- Striped Balloon Envelope -->
-    <path d="M0,-120 
-      C-75,-120 -85,-50 -60,20 
-      C-45,60 -25,95 -14,105 
-      L14,105 
-      C25,95 45,60 60,20 
-      C85,-50 75,-120 0,-120 Z" 
-      fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
-    <!-- Rainbow vertical stripes -->
-    <path d="M-40,-112 C-60,-50 -35,50 -10,105 L10,105 C35,50 60,-50 40,-112 Z" fill="#facc15"/>
-    <path d="M-20,-118 C-30,-50 -15,50 -6,105 L6,105 C15,50 30,-50 20,-118 Z" fill="#3b82f6"/>
-    <!-- Burner ring with flame -->
-    <line x1="-12" y1="105" x2="-8" y2="125" stroke="#475569" stroke-width="2"/>
-    <line x1="12" y1="105" x2="8" y2="125" stroke="#475569" stroke-width="2"/>
-    <ellipse cx="0" cy="116" rx="6" ry="10" fill="#f97316"/>
-    <ellipse cx="0" cy="118" rx="3" ry="5" fill="#fef08a"/>
-    <!-- Woven Wicker Basket -->
-    <rect x="-14" y="125" width="28" height="22" rx="4" fill="#92400e" stroke="#451a03" stroke-width="2"/>
-    <line x1="-14" y1="134" x2="14" y2="134" stroke="#78350f" stroke-width="2"/>
-  </g>
-
-  <!-- Distant Tropical Island Cliffs -->
-  <path d="M-50,490 Q240,430 520,480 T1150,450 L1250,510 L1250,800 L-50,800 Z" fill="url(#hillDistant)" opacity="0.6"/>
-
-  <!-- LANMÈ (Mar Caribenho Azul-Turquesa e Cristalino) -->
-  <path d="M-50,500 L1250,500 L1250,800 L-50,800 Z" fill="url(#waterTone)"/>
-  <!-- Turquoise shallow waters gradient overlay -->
-  <path d="M-50,560 Q300,520 650,560 T1250,540 L1250,800 L-50,800 Z" fill="#2dd4bf" opacity="0.75"/>
-  <path d="M-50,640 Q400,600 800,650 T1250,620 L1250,800 L-50,800 Z" fill="#5eead4" opacity="0.6"/>
-  <!-- Gentle White Foamy Surf Waves -->
-  <path d="M0,580 Q250,565 500,585 T1000,575 T1200,585" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>
-  <path d="M0,640 Q220,625 450,645 T900,635 T1200,645" stroke="#ffffff" stroke-width="3.5" fill="none" opacity="0.75"/>
-
-  <!-- FA (Farol Costeiro na Falésia de Pedra) on right cliff -->
-  <g transform="translate(1020, 310)" filter="url(#dropShadow)">
-    <!-- Sea Cliff Rock -->
-    <path d="M-100,420 L-80,220 Q-20,180 80,210 L160,250 L160,420 Z" fill="url(#stoneTone)" stroke="#44403c" stroke-width="3"/>
-    
+  
+  
+        <!-- Caribbean Ocean Waters -->
+  <path d="M-50,480 L1250,480 L1250,800 L-50,800 Z" fill="url(#waterTone)"/>
+  <path d="M-50,540 Q300,500 650,540 T1250,520 L1250,800 L-50,800 Z" fill="#2dd4bf" opacity="0.8"/>
+  <path d="M-50,620 Q400,580 800,630 T1250,600 L1250,800 L-50,800 Z" fill="#5eead4" opacity="0.6"/>
+  <!-- Surf foam lines -->
+  <path d="M0,550 Q250,535 500,555 T1000,545 T1200,555" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>
+  <path d="M0,610 Q220,595 450,615 T900,605 T1200,615" stroke="#ffffff" stroke-width="3.5" fill="none" opacity="0.75"/>
+        <g transform="translate(980, 310) scale(0.95)" filter="url(#dropShadow)">
+    <!-- Cliff Rock Base -->
+    <path d="M-90,260 L-70,120 Q-20,90 70,110 L130,150 L130,260 Z" fill="url(#stoneTone)" stroke="#44403c" stroke-width="3"/>
     <!-- Lighthouse Tower Body -->
-    <polygon points="-28,200 -18,-70 18,-70 28,200" fill="#ffffff" stroke="#475569" stroke-width="3"/>
-    <!-- Red Broad Stripe in Middle -->
-    <polygon points="-24,70 -20,-10 20,-10 24,70" fill="#dc2626"/>
-    <!-- Catwalk & Railing -->
-    <rect x="-26" y="-76" width="52" height="6" fill="#1e293b"/>
-    <line x1="-24" y1="-86" x2="24" y2="-86" stroke="#1e293b" stroke-width="2"/>
-    <line x1="-20" y1="-86" x2="-20" y2="-76" stroke="#1e293b" stroke-width="2"/>
-    <line x1="0" y1="-86" x2="0" y2="-76" stroke="#1e293b" stroke-width="2"/>
-    <line x1="20" y1="-86" x2="20" y2="-76" stroke="#1e293b" stroke-width="2"/>
-    <!-- Glass Lantern Room & Fresnel Dome -->
-    <rect x="-16" y="-106" width="32" height="30" rx="3" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-    <path d="M-18,-106 Q0,-130 18,-106 Z" fill="#991b1b" stroke="#7f1d1d" stroke-width="2"/>
-    <circle cx="0" cy="-90" r="8" fill="#ffffff" filter="url(#softGlow)"/>
-    <!-- Beacon Light Ray sweeping over water -->
-    <polygon points="0,-90 -600,-40 -600,100" fill="#fef08a" opacity="0.22" filter="url(#softGlow)"/>
+    <polygon points="-26,130 -16,-80 16,-80 26,130" fill="#ffffff" stroke="#475569" stroke-width="3"/>
+    <!-- Red Broad Middle Stripe -->
+    <polygon points="-23,35 -19,-25 19,-25 23,35" fill="#dc2626"/>
+    <!-- Gallery platform & railing -->
+    <rect x="-24" y="-86" width="48" height="6" fill="#1e293b"/>
+    <line x1="-22" y1="-96" x2="22" y2="-96" stroke="#1e293b" stroke-width="2"/>
+    <line x1="-18" y1="-96" x2="-18" y2="-86" stroke="#1e293b" stroke-width="1.5"/><line x1="-6" y1="-96" x2="-6" y2="-86" stroke="#1e293b" stroke-width="1.5"/><line x1="6" y1="-96" x2="6" y2="-86" stroke="#1e293b" stroke-width="1.5"/><line x1="18" y1="-96" x2="18" y2="-86" stroke="#1e293b" stroke-width="1.5"/>
+    <!-- Lantern Room Glass -->
+    <rect x="-14" y="-116" width="28" height="28" rx="3" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+    <path d="M-16,-116 Q0,-138 16,-116 Z" fill="#991b1b" stroke="#7f1d1d" stroke-width="2"/>
+    <circle cx="0" cy="-102" r="7" fill="#ffffff" filter="url(#softGlow)"/>
+    <polygon points="0,-102 -700,-60 -700,80" fill="#fef08a" opacity="0.35" filter="url(#softGlow)"/>
   </g>
-
-  <!-- BATO (Barco a Vela Tradicional de Madeira) floating on clear waters -->
-  <g transform="translate(480, 590)" filter="url(#dropShadow)">
-    <!-- Water Ripple reflection -->
-    <ellipse cx="0" cy="64" rx="80" ry="16" fill="#0f766e" opacity="0.5"/>
-    <path d="M-70,72 Q0,82 70,72" stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.8"/>
-    
-    <!-- Wooden Hull with Colorful Trim -->
-    <path d="M-85,25 Q-60,65 0,65 Q60,65 85,25 L75,20 Q0,25 -75,20 Z" fill="#0284c7" stroke="#0c4a6e" stroke-width="3"/>
-    <!-- Red sheer line stripe -->
-    <path d="M-82,28 Q0,34 82,28 L80,36 Q0,42 -80,36 Z" fill="#ef4444"/>
-    <rect x="-40" y="10" width="35" height="15" rx="3" fill="#78350f"/>
-    
-    <!-- Mast -->
-    <line x1="5" y1="25" x2="5" y2="-150" stroke="#5a381e" stroke-width="6" stroke-linecap="round"/>
-    <!-- Bowsprit pole -->
-    <line x1="5" y1="20" x2="95" y2="10" stroke="#5a381e" stroke-width="4"/>
-
-    <!-- Billowing Canvas Sail (Vwal) -->
-    <!-- Mainsail -->
-    <path d="M5,-140 Q-35,-80 -65,-10 L5,-5 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.5"/>
-    <line x1="5" y1="-75" x2="-35" y2="-75" stroke="#cbd5e1" stroke-width="1.5"/>
-    <!-- Jib triangular front sail -->
-    <path d="M5,-130 Q45,-60 85,12 L5,-5 Z" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2.5"/>
+        <g transform="translate(480, 560) scale(1.25)" filter="url(#dropShadow)">
+      <!-- Sloop Sailboat -->
+      <ellipse cx="0" cy="50" rx="70" ry="14" fill="#0f766e" opacity="0.4"/>
+      <path d="M-75,20 Q-50,55 0,55 Q50,55 75,20 L65,15 Q0,20 -65,15 Z" fill="#0284c7" stroke="#0c4a6e" stroke-width="2.5"/>
+      <path d="M-70,22 Q0,28 70,22 L68,30 Q0,35 -68,30 Z" fill="#ef4444"/>
+      <line x1="0" y1="20" x2="0" y2="-130" stroke="#5a381e" stroke-width="5" stroke-linecap="round"/>
+      <line x1="0" y1="15" x2="75" y2="8" stroke="#5a381e" stroke-width="3"/>
+      <!-- Mainsail -->
+      <path d="M0,-120 Q-30,-70 -55,-5 L0,0 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="0" y1="-65" x2="-30" y2="-65" stroke="#cbd5e1" stroke-width="1.5"/>
+      <!-- Jib sail -->
+      <path d="M0,-110 Q35,-50 68,10 L0,0 Z" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    </g>
+        <!-- Golden Sand Shoreline -->
+  <path d="M-50,670 Q280,620 620,680 T1250,650 L1250,800 L-50,800 Z" fill="#fde68a"/>
+  <!-- Starfish & shells -->
+  <polygon points="520,730 525,745 540,745 528,755 532,770 520,760 508,770 512,755 500,745 515,745" fill="#f97316"/>
+  <circle cx="680" cy="740" r="8" fill="#f43f5e"/>
+  <circle cx="686" cy="738" r="6" fill="#fecdd3"/>
+        <g transform="translate(220, 690) scale(1.35)" filter="url(#dropShadow)">
+    <!-- Bottom Big Leather Luggage -->
+    <rect x="-45" y="-10" width="90" height="55" rx="6" fill="#92400e" stroke="#451a03" stroke-width="2.5"/>
+    <line x1="-25" y1="-10" x2="-25" y2="45" stroke="#78350f" stroke-width="4"/>
+    <line x1="25" y1="-10" x2="25" y2="45" stroke="#78350f" stroke-width="4"/>
+    <!-- Corner brass reinforcements -->
+    <rect x="-45" y="-10" width="10" height="10" fill="#facc15"/>
+    <rect x="35" y="-10" width="10" height="10" fill="#facc15"/>
+    <rect x="-45" y="35" width="10" height="10" fill="#facc15"/>
+    <rect x="35" y="35" width="10" height="10" fill="#facc15"/>
+    <!-- Top Smaller Teal Suitcase -->
+    <rect x="-35" y="-55" width="70" height="45" rx="6" fill="#0d9488" stroke="#115e59" stroke-width="2.5"/>
+    <path d="M-10,-55 L-10,-68 Q0,-74 10,-68 L10,-55" fill="none" stroke="#451a03" stroke-width="4" stroke-linecap="round"/>
+    <!-- Travel Stickers -->
+    <circle cx="-16" cy="-32" r="8" fill="#f97316"/>
+    <rect x="8" y="-40" width="14" height="14" rx="2" fill="#eab308"/>
+    <polygon points="12,-20 18,-28 24,-20" fill="#ec4899"/>
   </g>
-
-  <!-- Golden Sandy Shoreline in front -->
-  <path d="M-50,710 Q280,660 620,720 T1250,690 L1250,800 L-50,800 Z" fill="#fde68a"/>
+      
 </svg>

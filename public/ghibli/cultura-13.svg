@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Oficina de escultura em ferro - Kilti</title>
+  <desc>Ghibli anime art: Ateliê de ferro batido de Noailles, esculturas de máscara, artesão, galpão e bandeira.</desc>
+  
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Soft diffuse drop shadow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <!-- Sky Gradients -->
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#236ca7"/>
+      <stop offset="35%" stop-color="#5fa3d6"/>
+      <stop offset="70%" stop-color="#b8e1f2"/>
+      <stop offset="100%" stop-color="#fdf3dc"/>
+    </linearGradient>
+
+    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#31396b"/>
+      <stop offset="35%" stop-color="#73507b"/>
+      <stop offset="65%" stop-color="#cb6b5c"/>
+      <stop offset="85%" stop-color="#f29e5a"/>
+      <stop offset="100%" stop-color="#fedaa2"/>
+    </linearGradient>
+
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#121832"/>
+      <stop offset="40%" stop-color="#262f56"/>
+      <stop offset="70%" stop-color="#4e3d64"/>
+      <stop offset="90%" stop-color="#915264"/>
+      <stop offset="100%" stop-color="#d6846c"/>
+    </linearGradient>
+
+    <!-- Cloud Gradients -->
+    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fcf8f0"/>
+      <stop offset="80%" stop-color="#d9e4ec"/>
+      <stop offset="100%" stop-color="#b6c8d7"/>
+    </linearGradient>
+
+    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5e6"/>
+      <stop offset="40%" stop-color="#fbd0a5"/>
+      <stop offset="75%" stop-color="#cf8ca0"/>
+      <stop offset="100%" stop-color="#7e607c"/>
+    </linearGradient>
+
+    <!-- Sun / Glow Gradients -->
+    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Hills / Mountains Gradients -->
+    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e94a8"/>
+      <stop offset="100%" stop-color="#93b9c7"/>
+    </linearGradient>
+
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c4f"/>
+      <stop offset="50%" stop-color="#3c6a40"/>
+      <stop offset="100%" stop-color="#2d5231"/>
+    </linearGradient>
+
+    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#699e4c"/>
+      <stop offset="60%" stop-color="#4c7e33"/>
+      <stop offset="100%" stop-color="#2f5720"/>
+    </linearGradient>
+
+    <!-- Materials: Wood, Brass, Stone, Water -->
+    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9c6d48"/>
+      <stop offset="50%" stop-color="#784f30"/>
+      <stop offset="100%" stop-color="#55341c"/>
+    </linearGradient>
+
+    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#d9a536"/>
+      <stop offset="70%" stop-color="#996c14"/>
+      <stop offset="100%" stop-color="#5e4007"/>
+    </linearGradient>
+
+    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c5beb3"/>
+      <stop offset="60%" stop-color="#999184"/>
+      <stop offset="100%" stop-color="#6c6458"/>
+    </linearGradient>
+
+    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#47a5be"/>
+      <stop offset="50%" stop-color="#2a7796"/>
+      <stop offset="100%" stop-color="#144d6a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
+  
+  <g>
+    <circle cx="880" cy="160" r="168" fill="url(#sunGlowDay)" />
+    <circle cx="880" cy="160" r="48" fill="#fffded" />
+    <!-- Subtle sun rays -->
+    <polygon points="880,160 580,800 760,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="880,160 930,800 1120,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="880,160 1240,800 1440,800" fill="#fffbe6" opacity="0.06" />
+  </g>
+  
+  <g transform="translate(300, 140) scale(0.9)" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+  <!-- KAY (Galpão Rústico de Artesanato com Paredes de Pedra) -->
+  <g transform="translate(300, 420)" filter="url(#dropShadow)">
+    <polygon points="-220,20 0,-80 220,20" fill="#78350f"/>
+    <rect x="-180" y="20" width="360" height="240" fill="url(#stoneTone)" stroke="#3e2515" stroke-width="3"/>
+    <rect x="-50" y="80" width="100" height="180" fill="#451a03"/>
+  </g>
+  <!-- DRAPO (Bandeira Tremulando no Mastro ao Lado da Oficina) -->
+  <g transform="translate(560, 340)" filter="url(#dropShadow)">
+    <line x1="0" y1="0" x2="0" y2="340" stroke="#334155" stroke-width="5"/>
+    <polygon points="0,0 90,15 90,75 0,60" fill="#0284c7"/>
+    <polygon points="0,60 90,75 90,135 0,120" fill="#dc2626"/>
+  </g>
+  <!-- MASK (Grande Escultura de Máscara em Ferro Batido / Fer Découpé) -->
+  <g transform="translate(860, 460)" filter="url(#dropShadow)">
+    <circle cx="0" cy="0" r="90" fill="#1e293b" stroke="#0f172a" stroke-width="4"/>
+    <!-- Chiseled cutouts -->
+    <ellipse cx="-30" cy="-20" rx="18" ry="12" fill="#ffffff"/>
+    <ellipse cx="30" cy="-20" rx="18" ry="12" fill="#ffffff"/>
+    <circle cx="-30" cy="-20" r="6" fill="#0f172a"/>
+    <circle cx="30" cy="-20" r="6" fill="#0f172a"/>
+    <path d="M-40,40 Q0,70 40,40" stroke="#ffffff" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- Iron Sunburst Rays -->
+    <line x1="90" y1="0" x2="130" y2="0" stroke="#1e293b" stroke-width="6"/><line x1="77.94228634059948" y1="44.99999999999999" x2="112.58330249197704" y2="64.99999999999999" stroke="#1e293b" stroke-width="6"/><line x1="45.00000000000001" y1="77.94228634059948" x2="65.00000000000001" y2="112.58330249197702" stroke="#1e293b" stroke-width="6"/><line x1="5.5109105961630896e-15" y1="90" x2="7.960204194457796e-15" y2="130" stroke="#1e293b" stroke-width="6"/><line x1="-44.99999999999998" y1="77.94228634059948" x2="-64.99999999999997" y2="112.58330249197704" stroke="#1e293b" stroke-width="6"/><line x1="-77.94228634059948" y1="44.99999999999999" x2="-112.58330249197704" y2="64.99999999999999" stroke="#1e293b" stroke-width="6"/><line x1="-90" y1="1.1021821192326179e-14" x2="-130" y2="1.592040838891559e-14" stroke="#1e293b" stroke-width="6"/><line x1="-77.94228634059948" y1="-45.00000000000001" x2="-112.58330249197702" y2="-65.00000000000001" stroke="#1e293b" stroke-width="6"/><line x1="-45.00000000000004" y1="-77.94228634059947" x2="-65.00000000000006" y2="-112.58330249197701" stroke="#1e293b" stroke-width="6"/><line x1="-1.6532731788489267e-14" y1="-90" x2="-2.3880612583373385e-14" y2="-130" stroke="#1e293b" stroke-width="6"/><line x1="45.00000000000001" y1="-77.94228634059948" x2="65.00000000000001" y2="-112.58330249197702" stroke="#1e293b" stroke-width="6"/><line x1="77.94228634059945" y1="-45.00000000000004" x2="112.583302491977" y2="-65.00000000000006" stroke="#1e293b" stroke-width="6"/>
+  </g>
+  <!-- MACHANN (Artesão Escultor Trabalhando com Martelo e Cinzel) -->
+  <g transform="translate(680, 600)" filter="url(#dropShadow)">
+    <ellipse cx="0" cy="80" rx="45" ry="15" fill="#000000" opacity="0.3"/>
+    <rect x="-25" y="-40" width="50" height="90" rx="10" fill="#1d4ed8"/>
+    <circle cx="0" cy="-70" r="22" fill="#8c5836"/>
+    <!-- Straw hat -->
+    <ellipse cx="0" cy="-85" rx="35" ry="10" fill="#facc15"/>
+    <circle cx="0" cy="-92" r="18" fill="#facc15"/>
+    <!-- Hammer in hand -->
+    <line x1="25" y1="-20" x2="55" y2="-50" stroke="#78350f" stroke-width="6"/>
+    <rect x="45" y="-62" width="22" height="16" fill="#475569"/>
+  </g>
+</svg>

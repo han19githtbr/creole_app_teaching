@@ -60,6 +60,66 @@
     "src": "/ghibli/tecnologia-10.svg"
   },
   {
+    "id": "tecnologia-11",
+    "theme": "Tecnologia",
+    "title": "Estufa inteligente",
+    "src": "/ghibli/tecnologia-11.svg"
+  },
+  {
+    "id": "tecnologia-12",
+    "theme": "Tecnologia",
+    "title": "Torre de comunicação na colina",
+    "src": "/ghibli/tecnologia-12.svg"
+  },
+  {
+    "id": "tecnologia-13",
+    "theme": "Tecnologia",
+    "title": "Fábrica de drones artesanais",
+    "src": "/ghibli/tecnologia-13.svg"
+  },
+  {
+    "id": "tecnologia-14",
+    "theme": "Tecnologia",
+    "title": "Barco de pesquisa oceanográfica",
+    "src": "/ghibli/tecnologia-14.svg"
+  },
+  {
+    "id": "tecnologia-15",
+    "theme": "Tecnologia",
+    "title": "Laboratório de energias limpas",
+    "src": "/ghibli/tecnologia-15.svg"
+  },
+  {
+    "id": "tecnologia-16",
+    "theme": "Tecnologia",
+    "title": "Observatório espacial no platô",
+    "src": "/ghibli/tecnologia-16.svg"
+  },
+  {
+    "id": "tecnologia-17",
+    "theme": "Tecnologia",
+    "title": "Oficina móvel no trem",
+    "src": "/ghibli/tecnologia-17.svg"
+  },
+  {
+    "id": "tecnologia-18",
+    "theme": "Tecnologia",
+    "title": "Central hidrelétrica ecológica",
+    "src": "/ghibli/tecnologia-18.svg"
+  },
+  {
+    "id": "tecnologia-19",
+    "theme": "Tecnologia",
+    "title": "Biblioteca digital comunitária",
+    "src": "/ghibli/tecnologia-19.svg"
+  },
+  {
+    "id": "tecnologia-20",
+    "theme": "Tecnologia",
+    "title": "Feira de robótica juvenil",
+    "src": "/ghibli/tecnologia-20.svg"
+  },
+  {
     "id": "natureza",
     "theme": "Natureza",
     "title": "Árvore ancestral e prado florido",
@@ -118,6 +178,66 @@
     "theme": "Natureza",
     "title": "Ilha tropical",
     "src": "/ghibli/natureza-10.svg"
+  },
+  {
+    "id": "natureza-11",
+    "theme": "Natureza",
+    "title": "Lagoa dos lírios ao amanhecer",
+    "src": "/ghibli/natureza-11.svg"
+  },
+  {
+    "id": "natureza-12",
+    "theme": "Natureza",
+    "title": "Cânion verde e rio caudaloso",
+    "src": "/ghibli/natureza-12.svg"
+  },
+  {
+    "id": "natureza-13",
+    "theme": "Natureza",
+    "title": "Recife de corais e tartarugas",
+    "src": "/ghibli/natureza-13.svg"
+  },
+  {
+    "id": "natureza-14",
+    "theme": "Natureza",
+    "title": "Pico da montanha ao pôr do sol",
+    "src": "/ghibli/natureza-14.svg"
+  },
+  {
+    "id": "natureza-15",
+    "theme": "Natureza",
+    "title": "Floresta tropical de bambus e palmeiras",
+    "src": "/ghibli/natureza-15.svg"
+  },
+  {
+    "id": "natureza-16",
+    "theme": "Natureza",
+    "title": "Ninho dos pássaros no manguezal",
+    "src": "/ghibli/natureza-16.svg"
+  },
+  {
+    "id": "natureza-17",
+    "theme": "Natureza",
+    "title": "Enseada secreta com falésias",
+    "src": "/ghibli/natureza-17.svg"
+  },
+  {
+    "id": "natureza-18",
+    "theme": "Natureza",
+    "title": "Bosque das borboletas azuis",
+    "src": "/ghibli/natureza-18.svg"
+  },
+  {
+    "id": "natureza-19",
+    "theme": "Natureza",
+    "title": "Gruta com cascata sagrada",
+    "src": "/ghibli/natureza-19.svg"
+  },
+  {
+    "id": "natureza-20",
+    "theme": "Natureza",
+    "title": "Dunas costeiras com palmeiras",
+    "src": "/ghibli/natureza-20.svg"
   },
   {
     "id": "cultura",
@@ -180,6 +300,66 @@
     "src": "/ghibli/cultura-10.svg"
   },
   {
+    "id": "cultura-11",
+    "theme": "Cultura",
+    "title": "Ateliê de pintura e arte naïf",
+    "src": "/ghibli/cultura-11.svg"
+  },
+  {
+    "id": "cultura-12",
+    "theme": "Cultura",
+    "title": "Roda de contadores de histórias",
+    "src": "/ghibli/cultura-12.svg"
+  },
+  {
+    "id": "cultura-13",
+    "theme": "Cultura",
+    "title": "Oficina de escultura em ferro",
+    "src": "/ghibli/cultura-13.svg"
+  },
+  {
+    "id": "cultura-14",
+    "theme": "Cultura",
+    "title": "Feira de tecidos e roupas madan sara",
+    "src": "/ghibli/cultura-14.svg"
+  },
+  {
+    "id": "cultura-15",
+    "theme": "Cultura",
+    "title": "Procissão festiva de Rara",
+    "src": "/ghibli/cultura-15.svg"
+  },
+  {
+    "id": "cultura-16",
+    "theme": "Cultura",
+    "title": "Banquete comunitário no quintal",
+    "src": "/ghibli/cultura-16.svg"
+  },
+  {
+    "id": "cultura-17",
+    "theme": "Cultura",
+    "title": "Confecção de tambores tradicionais",
+    "src": "/ghibli/cultura-17.svg"
+  },
+  {
+    "id": "cultura-18",
+    "theme": "Cultura",
+    "title": "Dança Yanvalou na praia",
+    "src": "/ghibli/cultura-18.svg"
+  },
+  {
+    "id": "cultura-19",
+    "theme": "Cultura",
+    "title": "Noite de carnaval com fantasias",
+    "src": "/ghibli/cultura-19.svg"
+  },
+  {
+    "id": "cultura-20",
+    "theme": "Cultura",
+    "title": "Mercado sob sombrinhas floridas",
+    "src": "/ghibli/cultura-20.svg"
+  },
+  {
     "id": "turismo",
     "theme": "Turismo",
     "title": "Vila costeira, farol e balão",
@@ -238,6 +418,66 @@
     "theme": "Turismo",
     "title": "Travessia pelo porto",
     "src": "/ghibli/turismo-10.svg"
+  },
+  {
+    "id": "turismo-11",
+    "theme": "Turismo",
+    "title": "Mirante sobre o oceano",
+    "src": "/ghibli/turismo-11.svg"
+  },
+  {
+    "id": "turismo-12",
+    "theme": "Turismo",
+    "title": "Voo panorâmico sobre o mar",
+    "src": "/ghibli/turismo-12.svg"
+  },
+  {
+    "id": "turismo-13",
+    "theme": "Turismo",
+    "title": "Passeio de catamarã ao pôr do sol",
+    "src": "/ghibli/turismo-13.svg"
+  },
+  {
+    "id": "turismo-14",
+    "theme": "Turismo",
+    "title": "Resort tropical à beira-mar",
+    "src": "/ghibli/turismo-14.svg"
+  },
+  {
+    "id": "turismo-15",
+    "theme": "Turismo",
+    "title": "Farol sob as estrelas",
+    "src": "/ghibli/turismo-15.svg"
+  },
+  {
+    "id": "turismo-16",
+    "theme": "Turismo",
+    "title": "Enseada dos pescadores",
+    "src": "/ghibli/turismo-16.svg"
+  },
+  {
+    "id": "turismo-17",
+    "theme": "Turismo",
+    "title": "Aeroporto na ilha caribenha",
+    "src": "/ghibli/turismo-17.svg"
+  },
+  {
+    "id": "turismo-18",
+    "theme": "Turismo",
+    "title": "Aventura de balão no litoral",
+    "src": "/ghibli/turismo-18.svg"
+  },
+  {
+    "id": "turismo-19",
+    "theme": "Turismo",
+    "title": "Recepção elegante do hotel",
+    "src": "/ghibli/turismo-19.svg"
+  },
+  {
+    "id": "turismo-20",
+    "theme": "Turismo",
+    "title": "Caminhada ao longo da falésia",
+    "src": "/ghibli/turismo-20.svg"
   },
   {
     "id": "interior",
@@ -300,6 +540,66 @@
     "src": "/ghibli/interior-10.svg"
   },
   {
+    "id": "interior-11",
+    "theme": "Vida no interior",
+    "title": "Pastoreio no campo verde",
+    "src": "/ghibli/interior-11.svg"
+  },
+  {
+    "id": "interior-12",
+    "theme": "Vida no interior",
+    "title": "Pomar de frutas no sítio",
+    "src": "/ghibli/interior-12.svg"
+  },
+  {
+    "id": "interior-13",
+    "theme": "Vida no interior",
+    "title": "Descanso sob a figueira",
+    "src": "/ghibli/interior-13.svg"
+  },
+  {
+    "id": "interior-14",
+    "theme": "Vida no interior",
+    "title": "Galinheiro ao entardecer",
+    "src": "/ghibli/interior-14.svg"
+  },
+  {
+    "id": "interior-15",
+    "theme": "Vida no interior",
+    "title": "Manhã de arado na terra",
+    "src": "/ghibli/interior-15.svg"
+  },
+  {
+    "id": "interior-16",
+    "theme": "Vida no interior",
+    "title": "Poço de água na encosta",
+    "src": "/ghibli/interior-16.svg"
+  },
+  {
+    "id": "interior-17",
+    "theme": "Vida no interior",
+    "title": "Celeiro e fardos de trigo",
+    "src": "/ghibli/interior-17.svg"
+  },
+  {
+    "id": "interior-18",
+    "theme": "Vida no interior",
+    "title": "Cabritos brincando na cerca",
+    "src": "/ghibli/interior-18.svg"
+  },
+  {
+    "id": "interior-19",
+    "theme": "Vida no interior",
+    "title": "Horta irrigada ao amanhecer",
+    "src": "/ghibli/interior-19.svg"
+  },
+  {
+    "id": "interior-20",
+    "theme": "Vida no interior",
+    "title": "Noite serena na fazenda",
+    "src": "/ghibli/interior-20.svg"
+  },
+  {
     "id": "danca",
     "theme": "Dança",
     "title": "Dança sob as lanternas",
@@ -358,6 +658,66 @@
     "theme": "Dança",
     "title": "Festival de dança",
     "src": "/ghibli/danca-10.svg"
+  },
+  {
+    "id": "danca-11",
+    "theme": "Dança",
+    "title": "Dança folclórica na praça",
+    "src": "/ghibli/danca-11.svg"
+  },
+  {
+    "id": "danca-12",
+    "theme": "Dança",
+    "title": "Performance no teatro iluminado",
+    "src": "/ghibli/danca-12.svg"
+  },
+  {
+    "id": "danca-13",
+    "theme": "Dança",
+    "title": "Dança com leques coloridos",
+    "src": "/ghibli/danca-13.svg"
+  },
+  {
+    "id": "danca-14",
+    "theme": "Dança",
+    "title": "Tambores e dança sob a lua",
+    "src": "/ghibli/danca-14.svg"
+  },
+  {
+    "id": "danca-15",
+    "theme": "Dança",
+    "title": "Bailarinas de fitas e flores",
+    "src": "/ghibli/danca-15.svg"
+  },
+  {
+    "id": "danca-16",
+    "theme": "Dança",
+    "title": "Salão de konpa iluminado",
+    "src": "/ghibli/danca-16.svg"
+  },
+  {
+    "id": "danca-17",
+    "theme": "Dança",
+    "title": "Dança das sombrinhas e leques",
+    "src": "/ghibli/danca-17.svg"
+  },
+  {
+    "id": "danca-18",
+    "theme": "Dança",
+    "title": "Celebração sob as lanternas",
+    "src": "/ghibli/danca-18.svg"
+  },
+  {
+    "id": "danca-19",
+    "theme": "Dança",
+    "title": "Cortejo carnavalesco vibrante",
+    "src": "/ghibli/danca-19.svg"
+  },
+  {
+    "id": "danca-20",
+    "theme": "Dança",
+    "title": "Valsa sob as estrelas",
+    "src": "/ghibli/danca-20.svg"
   },
   {
     "id": "geografia",
@@ -420,6 +780,66 @@
     "src": "/ghibli/geografia-10.svg"
   },
   {
+    "id": "geografia-11",
+    "theme": "Geografia",
+    "title": "Delta do grande rio",
+    "src": "/ghibli/geografia-11.svg"
+  },
+  {
+    "id": "geografia-12",
+    "theme": "Geografia",
+    "title": "Cume nevado e bandeira guia",
+    "src": "/ghibli/geografia-12.svg"
+  },
+  {
+    "id": "geografia-13",
+    "theme": "Geografia",
+    "title": "Lago da caldeira vulcânica",
+    "src": "/ghibli/geografia-13.svg"
+  },
+  {
+    "id": "geografia-14",
+    "theme": "Geografia",
+    "title": "Estreito marítimo e arquipélago",
+    "src": "/ghibli/geografia-14.svg"
+  },
+  {
+    "id": "geografia-15",
+    "theme": "Geografia",
+    "title": "Floresta equatorial densa",
+    "src": "/ghibli/geografia-15.svg"
+  },
+  {
+    "id": "geografia-16",
+    "theme": "Geografia",
+    "title": "Ponte suspensa no desfiladeiro",
+    "src": "/ghibli/geografia-16.svg"
+  },
+  {
+    "id": "geografia-17",
+    "theme": "Geografia",
+    "title": "Enseada do vulcão adormecido",
+    "src": "/ghibli/geografia-17.svg"
+  },
+  {
+    "id": "geografia-18",
+    "theme": "Geografia",
+    "title": "Cartografia dos três picos",
+    "src": "/ghibli/geografia-18.svg"
+  },
+  {
+    "id": "geografia-19",
+    "theme": "Geografia",
+    "title": "Encontro das águas no manguezal",
+    "src": "/ghibli/geografia-19.svg"
+  },
+  {
+    "id": "geografia-20",
+    "theme": "Geografia",
+    "title": "Vista aérea das ilhas caribenhas",
+    "src": "/ghibli/geografia-20.svg"
+  },
+  {
     "id": "historia",
     "theme": "História",
     "title": "Fortaleza de pedra no alto do morro",
@@ -478,6 +898,66 @@
     "theme": "História",
     "title": "Praça dos heróis",
     "src": "/ghibli/historia-10.svg"
+  },
+  {
+    "id": "historia-11",
+    "theme": "História",
+    "title": "Bastilha da cidadela sob o sol",
+    "src": "/ghibli/historia-11.svg"
+  },
+  {
+    "id": "historia-12",
+    "theme": "História",
+    "title": "Nau capitânia no ancoradouro",
+    "src": "/ghibli/historia-12.svg"
+  },
+  {
+    "id": "historia-13",
+    "theme": "História",
+    "title": "Manuscrito dos patriotas",
+    "src": "/ghibli/historia-13.svg"
+  },
+  {
+    "id": "historia-14",
+    "theme": "História",
+    "title": "Sentinela a cavalo na colina",
+    "src": "/ghibli/historia-14.svg"
+  },
+  {
+    "id": "historia-15",
+    "theme": "História",
+    "title": "Obelisco da independência",
+    "src": "/ghibli/historia-15.svg"
+  },
+  {
+    "id": "historia-16",
+    "theme": "História",
+    "title": "Mansão colonial preservada",
+    "src": "/ghibli/historia-16.svg"
+  },
+  {
+    "id": "historia-17",
+    "theme": "História",
+    "title": "Canhoneira na muralha alta",
+    "src": "/ghibli/historia-17.svg"
+  },
+  {
+    "id": "historia-18",
+    "theme": "História",
+    "title": "Arquivo de tratados históricos",
+    "src": "/ghibli/historia-18.svg"
+  },
+  {
+    "id": "historia-19",
+    "theme": "História",
+    "title": "Tochas acesas na fortaleza",
+    "src": "/ghibli/historia-19.svg"
+  },
+  {
+    "id": "historia-20",
+    "theme": "História",
+    "title": "Cerimônia junto ao monumento",
+    "src": "/ghibli/historia-20.svg"
   },
   {
     "id": "cinema",
@@ -540,6 +1020,66 @@
     "src": "/ghibli/cinema-10.svg"
   },
   {
+    "id": "cinema-11",
+    "theme": "Cinema",
+    "title": "Cineclube na praça florida",
+    "src": "/ghibli/cinema-11.svg"
+  },
+  {
+    "id": "cinema-12",
+    "theme": "Cinema",
+    "title": "Rolo de filme e câmera retrô",
+    "src": "/ghibli/cinema-12.svg"
+  },
+  {
+    "id": "cinema-13",
+    "theme": "Cinema",
+    "title": "Sacola de pipoca e ingressos",
+    "src": "/ghibli/cinema-13.svg"
+  },
+  {
+    "id": "cinema-14",
+    "theme": "Cinema",
+    "title": "Sessão cinema na praia à noite",
+    "src": "/ghibli/cinema-14.svg"
+  },
+  {
+    "id": "cinema-15",
+    "theme": "Cinema",
+    "title": "Iluminação de cena no estúdio",
+    "src": "/ghibli/cinema-15.svg"
+  },
+  {
+    "id": "cinema-16",
+    "theme": "Cinema",
+    "title": "Fachada neon do cinema",
+    "src": "/ghibli/cinema-16.svg"
+  },
+  {
+    "id": "cinema-17",
+    "theme": "Cinema",
+    "title": "Filmagem no jardim arborizado",
+    "src": "/ghibli/cinema-17.svg"
+  },
+  {
+    "id": "cinema-18",
+    "theme": "Cinema",
+    "title": "Sala com poltronas confortáveis",
+    "src": "/ghibli/cinema-18.svg"
+  },
+  {
+    "id": "cinema-19",
+    "theme": "Cinema",
+    "title": "Projetor no piquenique do parque",
+    "src": "/ghibli/cinema-19.svg"
+  },
+  {
+    "id": "cinema-20",
+    "theme": "Cinema",
+    "title": "Noite de gala do festival",
+    "src": "/ghibli/cinema-20.svg"
+  },
+  {
     "id": "musica",
     "theme": "Música",
     "title": "Palco ao ar livre",
@@ -598,6 +1138,66 @@
     "theme": "Música",
     "title": "Ensaio da banda",
     "src": "/ghibli/musica-10.svg"
+  },
+  {
+    "id": "musica-11",
+    "theme": "Música",
+    "title": "Violão acústico ao luar",
+    "src": "/ghibli/musica-11.svg"
+  },
+  {
+    "id": "musica-12",
+    "theme": "Música",
+    "title": "Roda de tambor comunitária",
+    "src": "/ghibli/musica-12.svg"
+  },
+  {
+    "id": "musica-13",
+    "theme": "Música",
+    "title": "Cabine de mixagem com fones",
+    "src": "/ghibli/musica-13.svg"
+  },
+  {
+    "id": "musica-14",
+    "theme": "Música",
+    "title": "Piano de cauda na sala nobre",
+    "src": "/ghibli/musica-14.svg"
+  },
+  {
+    "id": "musica-15",
+    "theme": "Música",
+    "title": "Palco do festival ao entardecer",
+    "src": "/ghibli/musica-15.svg"
+  },
+  {
+    "id": "musica-16",
+    "theme": "Música",
+    "title": "Serenata sob as estrelas",
+    "src": "/ghibli/musica-16.svg"
+  },
+  {
+    "id": "musica-17",
+    "theme": "Música",
+    "title": "Oficina de tambores tradicionais",
+    "src": "/ghibli/musica-17.svg"
+  },
+  {
+    "id": "musica-18",
+    "theme": "Música",
+    "title": "Teclado eletrônico e fones",
+    "src": "/ghibli/musica-18.svg"
+  },
+  {
+    "id": "musica-19",
+    "theme": "Música",
+    "title": "Trio acústico no parque",
+    "src": "/ghibli/musica-19.svg"
+  },
+  {
+    "id": "musica-20",
+    "theme": "Música",
+    "title": "Grande orquestra e percussão",
+    "src": "/ghibli/musica-20.svg"
   },
   {
     "id": "lazeres",
@@ -660,6 +1260,66 @@
     "src": "/ghibli/lazeres-10.svg"
   },
   {
+    "id": "lazeres-11",
+    "theme": "Lazeres",
+    "title": "Revoada de pipas na colina",
+    "src": "/ghibli/lazeres-11.svg"
+  },
+  {
+    "id": "lazeres-12",
+    "theme": "Lazeres",
+    "title": "Piquenique com cesta de vime",
+    "src": "/ghibli/lazeres-12.svg"
+  },
+  {
+    "id": "lazeres-13",
+    "theme": "Lazeres",
+    "title": "Bicicleta no caminho florido",
+    "src": "/ghibli/lazeres-13.svg"
+  },
+  {
+    "id": "lazeres-14",
+    "theme": "Lazeres",
+    "title": "Balanço de corda no bosque",
+    "src": "/ghibli/lazeres-14.svg"
+  },
+  {
+    "id": "lazeres-15",
+    "theme": "Lazeres",
+    "title": "Lago dos patos ao entardecer",
+    "src": "/ghibli/lazeres-15.svg"
+  },
+  {
+    "id": "lazeres-16",
+    "theme": "Lazeres",
+    "title": "Jogo de bola no gramado",
+    "src": "/ghibli/lazeres-16.svg"
+  },
+  {
+    "id": "lazeres-17",
+    "theme": "Lazeres",
+    "title": "Cantinho de leitura no jardim",
+    "src": "/ghibli/lazeres-17.svg"
+  },
+  {
+    "id": "lazeres-18",
+    "theme": "Lazeres",
+    "title": "Pipa colorida sobre os campos",
+    "src": "/ghibli/lazeres-18.svg"
+  },
+  {
+    "id": "lazeres-19",
+    "theme": "Lazeres",
+    "title": "Tarde ensolarada na lagoa",
+    "src": "/ghibli/lazeres-19.svg"
+  },
+  {
+    "id": "lazeres-20",
+    "theme": "Lazeres",
+    "title": "Passeio de bicicleta no fim da tarde",
+    "src": "/ghibli/lazeres-20.svg"
+  },
+  {
     "id": "estoicismo",
     "theme": "Estoicismo",
     "title": "Pórtico de pedra e oliveiras",
@@ -718,6 +1378,66 @@
     "theme": "Estoicismo",
     "title": "Pátio das meditações",
     "src": "/ghibli/estoicismo-10.svg"
+  },
+  {
+    "id": "estoicismo-11",
+    "theme": "Estoicismo",
+    "title": "Ágora clássica sob o céu azul",
+    "src": "/ghibli/estoicismo-11.svg"
+  },
+  {
+    "id": "estoicismo-12",
+    "theme": "Estoicismo",
+    "title": "Escadaria do templo antigo",
+    "src": "/ghibli/estoicismo-12.svg"
+  },
+  {
+    "id": "estoicismo-13",
+    "theme": "Estoicismo",
+    "title": "Leitura meditativa na oliveira",
+    "src": "/ghibli/estoicismo-13.svg"
+  },
+  {
+    "id": "estoicismo-14",
+    "theme": "Estoicismo",
+    "title": "Lamparina acesa sobre o papiro",
+    "src": "/ghibli/estoicismo-14.svg"
+  },
+  {
+    "id": "estoicismo-15",
+    "theme": "Estoicismo",
+    "title": "Busto de mármore do filósofo",
+    "src": "/ghibli/estoicismo-15.svg"
+  },
+  {
+    "id": "estoicismo-16",
+    "theme": "Estoicismo",
+    "title": "Portão de pedra para o templo",
+    "src": "/ghibli/estoicismo-16.svg"
+  },
+  {
+    "id": "estoicismo-17",
+    "theme": "Estoicismo",
+    "title": "Diálogo filosófico ao ar livre",
+    "src": "/ghibli/estoicismo-17.svg"
+  },
+  {
+    "id": "estoicismo-18",
+    "theme": "Estoicismo",
+    "title": "Pátio circular com ânforas",
+    "src": "/ghibli/estoicismo-18.svg"
+  },
+  {
+    "id": "estoicismo-19",
+    "theme": "Estoicismo",
+    "title": "Vigília filosófica noturna",
+    "src": "/ghibli/estoicismo-19.svg"
+  },
+  {
+    "id": "estoicismo-20",
+    "theme": "Estoicismo",
+    "title": "Passeio sereno entre oliveiras",
+    "src": "/ghibli/estoicismo-20.svg"
   },
   {
     "id": "religiao",
@@ -780,6 +1500,66 @@
     "src": "/ghibli/religiao-10.svg"
   },
   {
+    "id": "religiao-11",
+    "theme": "Religião",
+    "title": "Campanário ao amanhecer",
+    "src": "/ghibli/religiao-11.svg"
+  },
+  {
+    "id": "religiao-12",
+    "theme": "Religião",
+    "title": "Vitral gótico multicolorido",
+    "src": "/ghibli/religiao-12.svg"
+  },
+  {
+    "id": "religiao-13",
+    "theme": "Religião",
+    "title": "Altar com velas e escrituras",
+    "src": "/ghibli/religiao-13.svg"
+  },
+  {
+    "id": "religiao-14",
+    "theme": "Religião",
+    "title": "Revoada de pombas brancas",
+    "src": "/ghibli/religiao-14.svg"
+  },
+  {
+    "id": "religiao-15",
+    "theme": "Religião",
+    "title": "Procissão com flores e velas",
+    "src": "/ghibli/religiao-15.svg"
+  },
+  {
+    "id": "religiao-16",
+    "theme": "Religião",
+    "title": "Interior sereno do santuário",
+    "src": "/ghibli/religiao-16.svg"
+  },
+  {
+    "id": "religiao-17",
+    "theme": "Religião",
+    "title": "Capela costeira com cruz de pedra",
+    "src": "/ghibli/religiao-17.svg"
+  },
+  {
+    "id": "religiao-18",
+    "theme": "Religião",
+    "title": "Grande sino de bronze",
+    "src": "/ghibli/religiao-18.svg"
+  },
+  {
+    "id": "religiao-19",
+    "theme": "Religião",
+    "title": "Jardim de oração com lírios",
+    "src": "/ghibli/religiao-19.svg"
+  },
+  {
+    "id": "religiao-20",
+    "theme": "Religião",
+    "title": "Vigília de velas sob as estrelas",
+    "src": "/ghibli/religiao-20.svg"
+  },
+  {
     "id": "gastronomia",
     "theme": "Gastronomia",
     "title": "Cozinha aconchegante",
@@ -838,5 +1618,65 @@
     "theme": "Gastronomia",
     "title": "Banquete sob as lanternas",
     "src": "/ghibli/gastronomia-10.svg"
+  },
+  {
+    "id": "gastronomia-11",
+    "theme": "Gastronomia",
+    "title": "Fogão a lenha com caldeirão",
+    "src": "/ghibli/gastronomia-11.svg"
+  },
+  {
+    "id": "gastronomia-12",
+    "theme": "Gastronomia",
+    "title": "Pães artesanais crocantes",
+    "src": "/ghibli/gastronomia-12.svg"
+  },
+  {
+    "id": "gastronomia-13",
+    "theme": "Gastronomia",
+    "title": "Mesa com frutas tropicais",
+    "src": "/ghibli/gastronomia-13.svg"
+  },
+  {
+    "id": "gastronomia-14",
+    "theme": "Gastronomia",
+    "title": "Caldo saboroso na panela",
+    "src": "/ghibli/gastronomia-14.svg"
+  },
+  {
+    "id": "gastronomia-15",
+    "theme": "Gastronomia",
+    "title": "Mesa posta para banquete",
+    "src": "/ghibli/gastronomia-15.svg"
+  },
+  {
+    "id": "gastronomia-16",
+    "theme": "Gastronomia",
+    "title": "Banca de pimentas e temperos",
+    "src": "/ghibli/gastronomia-16.svg"
+  },
+  {
+    "id": "gastronomia-17",
+    "theme": "Gastronomia",
+    "title": "Café da manhã com pão e frutas",
+    "src": "/ghibli/gastronomia-17.svg"
+  },
+  {
+    "id": "gastronomia-18",
+    "theme": "Gastronomia",
+    "title": "Cozinhando ao ar livre no quintal",
+    "src": "/ghibli/gastronomia-18.svg"
+  },
+  {
+    "id": "gastronomia-19",
+    "theme": "Gastronomia",
+    "title": "Garrafas artesanais e pimentas",
+    "src": "/ghibli/gastronomia-19.svg"
+  },
+  {
+    "id": "gastronomia-20",
+    "theme": "Gastronomia",
+    "title": "Jantar especial acolhedor",
+    "src": "/ghibli/gastronomia-20.svg"
   }
 ]

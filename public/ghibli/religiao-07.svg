@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Capela na colina e luz sagrada - Relijyon</title>
-  <desc>Ghibli anime art: Capela de pedra com cruz, pombas brancas, velas acesas e luz divina.</desc>
+  <title>Caminho de flores - Relijyon</title>
+  <desc>Ghibli anime art: Caminho de flores com capelas históricas, fé e iluminação sagrada.</desc>
   
   <defs>
     <!-- Paper watercolor texture filter -->
@@ -119,19 +119,18 @@
     </linearGradient>
   </defs>
   
-  <!-- Sacred Morning Blue Sky with Divine Sunbeams -->
   <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
   
   <g>
-    <circle cx="600" cy="160" r="196" fill="url(#sunGlowDay)" />
-    <circle cx="600" cy="160" r="56" fill="#fffded" />
+    <circle cx="940" cy="160" r="175" fill="url(#sunGlowDay)" />
+    <circle cx="940" cy="160" r="50" fill="#fffded" />
     <!-- Subtle sun rays -->
-    <polygon points="600,160 300,800 480,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="600,160 650,800 840,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="600,160 960,800 1160,800" fill="#fffbe6" opacity="0.06" />
+    <polygon points="940,160 640,800 820,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="940,160 990,800 1180,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="940,160 1300,800 1500,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(200, 140) scale(1)" opacity="0.95">
+  <g transform="translate(240, 180) scale(0.9)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -150,7 +149,7 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
   
-  <g transform="translate(980, 160) scale(0.9)" opacity="0.95">
+  <g transform="translate(600, 120) scale(0.75)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -168,93 +167,72 @@
     <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
-
-  <!-- Celestial Sunbeams (God Rays) breaking through clouds -->
-  <polygon points="600,160 100,800 350,800" fill="#fef08a" opacity="0.16" filter="url(#softGlow)"/>
-  <polygon points="600,160 480,800 720,800" fill="#fef08a" opacity="0.22" filter="url(#softGlow)"/>
-  <polygon points="600,160 850,800 1100,800" fill="#fef08a" opacity="0.16" filter="url(#softGlow)"/>
-
-  <!-- Distant Hilltops -->
-  <path d="M-50,520 Q320,440 680,490 T1250,470 L1250,800 L-50,800 Z" fill="url(#hillDistant)" opacity="0.65"/>
-  <path d="M-30,580 Q280,510 600,560 T1250,530 L1250,800 L-30,800 Z" fill="url(#hillMid)"/>
-
-  <!-- LEGLIZ (Capela Histórica de Pedra Branca no Alto da Colina) -->
-  <g transform="translate(600, 550)" filter="url(#dropShadow)">
-    <!-- Whitewashed stone chapel body -->
-    <rect x="-140" y="-140" width="280" height="140" fill="#fafaf9" stroke="#78716c" stroke-width="3"/>
+  
+  
+        <path d="M-50,580 Q350,530 750,580 T1250,560 L1250,800 L-50,800 Z" fill="url(#hillNear)"/>
+        <g transform="translate(860, 530) scale(1.15)" filter="url(#dropShadow)">
+    <!-- Church Nave -->
+    <rect x="-90" y="-70" width="180" height="140" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2.5"/>
+    <polygon points="-105,-70 0,-150 105,-70" fill="#991b1b" stroke="#7f1d1d" stroke-width="2.5"/>
+    <!-- Belfry Steeple Tower on Left -->
+    <rect x="-115" y="-180" width="55" height="180" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2.5"/>
+    <polygon points="-125,-180 -87,-260 -50,-180" fill="#991b1b" stroke="#7f1d1d" stroke-width="2.5"/>
+    <!-- Cross atop steeple -->
+    <line x1="-87" y1="-260" x2="-87" y2="-290" stroke="#facc15" stroke-width="4"/>
+    <line x1="-97" y1="-278" x2="-77" y2="-278" stroke="#facc15" stroke-width="4"/>
+    <!-- Belfry bell arched window -->
+    <path d="M-100,-120 L-100,-150 Q-87,-165 -75,-150 L-75,-120 Z" fill="#1e293b"/>
+    <ellipse cx="-87" cy="-135" rx="7" ry="10" fill="#facc15"/>
+    <!-- Arched Portal Door -->
+    <path d="M-22,70 L-22,0 Q0,-20 22,0 L22,70 Z" fill="#78350f" stroke="#451a03" stroke-width="2"/>
+    <!-- Rose stained glass window -->
+    <circle cx="0" cy="-45" r="24" fill="#0284c7" stroke="#b45309" stroke-width="2"/>
+    <line x1="0" y1="-45" x2="0" y2="-69" stroke="#facc15" stroke-width="2"/><line x1="0" y1="-45" x2="20.784609690826528" y2="-57" stroke="#facc15" stroke-width="2"/><line x1="0" y1="-45" x2="20.784609690826528" y2="-33.00000000000001" stroke="#facc15" stroke-width="2"/><line x1="0" y1="-45" x2="2.9391523179536475e-15" y2="-21" stroke="#facc15" stroke-width="2"/><line x1="0" y1="-45" x2="-20.784609690826525" y2="-32.999999999999986" stroke="#facc15" stroke-width="2"/><line x1="0" y1="-45" x2="-20.784609690826528" y2="-57" stroke="#facc15" stroke-width="2"/>
+  </g>
+        <g transform="translate(320, 610) scale(1.4)" filter="url(#dropShadow)">
+    <!-- Sacred Cross on stone plinth -->
+    <rect x="-25" y="45" width="50" height="20" rx="3" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2"/>
+    <!-- Wooden / Gold cross -->
+    <line x1="0" y1="45" x2="0" y2="-80" stroke="#78350f" stroke-width="12" stroke-linecap="round"/>
+    <line x1="-35" y1="-40" x2="35" y2="-40" stroke="#78350f" stroke-width="12" stroke-linecap="round"/>
+    <!-- Inner gold inlay -->
+    <line x1="0" y1="40" x2="0" y2="-75" stroke="#facc15" stroke-width="4"/>
+    <line x1="-30" y1="-40" x2="30" y2="-40" stroke="#facc15" stroke-width="4"/>
+  </g>
+        <g transform="translate(520, 360) scale(1.35) rotate(10)" filter="url(#dropShadow)">
+    <ellipse cx="0" cy="0" rx="28" ry="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <!-- Swept Wings -->
+    <path d="M-6,0 Q-15,-45 -40,-35 Q-25,-10 4,-5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M-6,0 Q15,-45 40,-35 Q25,-10 -4,-5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <!-- Tail -->
+    <polygon points="-25,0 -48,-8 -44,8 -25,4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <!-- Head & Olive twig -->
+    <circle cx="28" cy="-5" r="9" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+    <polygon points="36,-5 44,-2 36,0" fill="#f59e0b"/>
+    <circle cx="31" cy="-7" r="1.5" fill="#0f172a"/>
+    <path d="M42,-1 Q48,-6 54,-2" stroke="#15803d" stroke-width="2" fill="none"/>
+    <circle cx="50" cy="-5" r="2.5" fill="#22c55e"/>
+  </g>
+        <g transform="translate(500, 680) scale(1.4)" filter="url(#dropShadow)">
     
-    <!-- Terracotta Tiled Roof -->
-    <polygon points="-165,-140 0,-240 165,-140" fill="#b45309" stroke="#78350f" stroke-width="3"/>
-
-    <!-- Central Stone Bell Tower Spire -->
-    <rect x="-35" y="-310" width="70" height="90" fill="#fafaf9" stroke="#78716c" stroke-width="3"/>
-    <!-- Belfry Arch & Bell -->
-    <path d="M-18,-240 L-18,-275 Q0,-295 18,-275 L18,-240 Z" fill="#292524"/>
-    <ellipse cx="0" cy="-260" rx="10" ry="12" fill="#d97706"/> <!-- Bronze Bell -->
-
-    <!-- Pyramidal Tower Spire -->
-    <polygon points="-42,-310 0,-390 42,-310" fill="#78350f" stroke="#451a03" stroke-width="2.5"/>
-
-    <!-- KWA (Cruz de Madeira / Ouro no Topo do Campanário) -->
-    <g transform="translate(0, -390)">
-      <line x1="0" y1="0" x2="0" y2="-45" stroke="#facc15" stroke-width="6" stroke-linecap="round"/>
-      <line x1="-16" y1="-32" x2="16" y2="-32" stroke="#facc15" stroke-width="6" stroke-linecap="round"/>
-      <!-- Soft sacred glow -->
-      <circle cx="0" cy="-32" r="16" fill="#fef08a" opacity="0.4" filter="url(#softGlow)"/>
-    </g>
-
-    <!-- Arched Wooden Chapel Door -->
-    <path d="M-28,0 L-28,-75 Q0,-105 28,-75 L28,0 Z" fill="#78350f" stroke="#451a03" stroke-width="3"/>
-    <circle cx="16" cy="-38" r="3.5" fill="#facc15"/>
-
-    <!-- Stained Glass Windows with Warm Radiant Light -->
-    <g transform="translate(-85, -90)">
-      <path d="M-16,35 L-16,-10 Q0,-28 16,-10 L16,35 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
-      <path d="M-16,35 L-16,10 Q0,2 16,10 L16,35 Z" fill="#f43f5e"/>
-      <circle cx="0" cy="-2" r="6" fill="#facc15"/>
-    </g>
-    <g transform="translate(85, -90)">
-      <path d="M-16,35 L-16,-10 Q0,-28 16,-10 L16,35 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
-      <path d="M-16,35 L-16,10 Q0,2 16,10 L16,35 Z" fill="#f43f5e"/>
-      <circle cx="0" cy="-2" r="6" fill="#facc15"/>
-    </g>
-  </g>
-
-  <!-- PIJON (Pombas Brancas da Paz Voando em Direção à Luz Divina) -->
-  <g transform="translate(360, 280) scale(1.1)" filter="url(#softGlow)">
-    <path d="M0,0 Q-15,-30 20,-35 Q30,-15 15,0" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
-    <path d="M0,0 Q-15,30 20,35 Q30,15 15,0" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
-    <ellipse cx="10" cy="0" rx="18" ry="6" fill="#ffffff"/>
-    <circle cx="24" cy="0" r="4" fill="#ffffff"/>
-    <polygon points="28,-1 36,0 28,1" fill="#f59e0b"/>
-  </g>
-  <g transform="translate(840, 240) scale(0.9)" filter="url(#softGlow)">
-    <path d="M0,0 Q-15,-30 20,-35 Q30,-15 15,0" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
-    <path d="M0,0 Q-15,30 20,35 Q30,15 15,0" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
-    <ellipse cx="10" cy="0" rx="18" ry="6" fill="#ffffff"/>
-    <circle cx="24" cy="0" r="4" fill="#ffffff"/>
-    <polygon points="28,-1 36,0 28,1" fill="#f59e0b"/>
-  </g>
-
-  <!-- Grassy Hillside with Stone Pathway -->
-  <path d="M-50,660 Q320,600 650,650 T1250,630 L1250,800 L-50,800 Z" fill="url(#hillNear)"/>
-
-  <!-- BOUJI (Velas / Lanternas com Chamas Acolhedoras) in foreground garden altar -->
-  <g transform="translate(360, 680)" filter="url(#dropShadow)">
-    <rect x="-40" y="30" width="80" height="40" rx="4" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2"/>
+      <g transform="translate(-25, 0)">
+        <line x1="0" y1="0" x2="0" y2="40" stroke="#15803d" stroke-width="2.5"/>
+        <polygon points="0,-15 12,5 -12,5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+        <circle cx="0" cy="0" r="3" fill="#facc15"/>
+      </g>
     
-    <!-- Candle 1 -->
-    <rect x="-24" y="-10" width="16" height="40" rx="2" fill="#fffbeb" stroke="#d6d3d1" stroke-width="1.5"/>
-    <line x1="-16" y1="-10" x2="-16" y2="-18" stroke="#1c1917" stroke-width="2"/>
-    <circle cx="-16" cy="-24" r="16" fill="#fef08a" opacity="0.4" filter="url(#softGlow)"/>
-    <ellipse cx="-16" cy="-24" rx="4" ry="8" fill="#f59e0b"/>
-    <ellipse cx="-16" cy="-22" rx="2" ry="4" fill="#ffffff"/>
-
-    <!-- Candle 2 (Taller) -->
-    <rect x="8" y="-25" width="18" height="55" rx="2" fill="#fffbeb" stroke="#d6d3d1" stroke-width="1.5"/>
-    <line x1="17" y1="-25" x2="17" y2="-34" stroke="#1c1917" stroke-width="2"/>
-    <circle cx="17" cy="-40" r="18" fill="#fef08a" opacity="0.4" filter="url(#softGlow)"/>
-    <ellipse cx="17" cy="-40" rx="5" ry="9" fill="#f59e0b"/>
-    <ellipse cx="17" cy="-38" rx="2.5" ry="5" fill="#ffffff"/>
+      <g transform="translate(0, 0)">
+        <line x1="0" y1="0" x2="0" y2="40" stroke="#15803d" stroke-width="2.5"/>
+        <polygon points="0,-15 12,5 -12,5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+        <circle cx="0" cy="0" r="3" fill="#facc15"/>
+      </g>
+    
+      <g transform="translate(25, 0)">
+        <line x1="0" y1="0" x2="0" y2="40" stroke="#15803d" stroke-width="2.5"/>
+        <polygon points="0,-15 12,5 -12,5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+        <circle cx="0" cy="0" r="3" fill="#facc15"/>
+      </g>
+    
   </g>
+      
 </svg>

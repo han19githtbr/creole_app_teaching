@@ -43,6 +43,16 @@ const TECNOLOGIA_FNS = [
   tecnologiaVariants.renderTecnologia08,
   tecnologiaVariants.renderTecnologia09,
   tecnologiaVariants.renderTecnologia10,
+  tecnologiaVariants.renderTecnologia11,
+  tecnologiaVariants.renderTecnologia12,
+  tecnologiaVariants.renderTecnologia13,
+  tecnologiaVariants.renderTecnologia14,
+  tecnologiaVariants.renderTecnologia15,
+  tecnologiaVariants.renderTecnologia16,
+  tecnologiaVariants.renderTecnologia17,
+  tecnologiaVariants.renderTecnologia18,
+  tecnologiaVariants.renderTecnologia19,
+  tecnologiaVariants.renderTecnologia20,
 ];
 
 const NATUREZA_FNS = [
@@ -56,6 +66,16 @@ const NATUREZA_FNS = [
   naturezaVariants.renderNatureza08,
   naturezaVariants.renderNatureza09,
   naturezaVariants.renderNatureza10,
+  naturezaVariants.renderNatureza11,
+  naturezaVariants.renderNatureza12,
+  naturezaVariants.renderNatureza13,
+  naturezaVariants.renderNatureza14,
+  naturezaVariants.renderNatureza15,
+  naturezaVariants.renderNatureza16,
+  naturezaVariants.renderNatureza17,
+  naturezaVariants.renderNatureza18,
+  naturezaVariants.renderNatureza19,
+  naturezaVariants.renderNatureza20,
 ];
 
 const CULTURA_FNS = [
@@ -69,6 +89,16 @@ const CULTURA_FNS = [
   culturaVariants.renderCultura08,
   culturaVariants.renderCultura09,
   culturaVariants.renderCultura10,
+  culturaVariants.renderCultura11,
+  culturaVariants.renderCultura12,
+  culturaVariants.renderCultura13,
+  culturaVariants.renderCultura14,
+  culturaVariants.renderCultura15,
+  culturaVariants.renderCultura16,
+  culturaVariants.renderCultura17,
+  culturaVariants.renderCultura18,
+  culturaVariants.renderCultura19,
+  culturaVariants.renderCultura20,
 ];
 
 const DEDICATED_VARIANTS = {
@@ -111,10 +141,10 @@ for (const scene of MASTER_SCENES) {
     src: `/ghibli/${scene.id}.svg`,
   });
 
-  // Variants 2 through 10
-  for (let variant = 2; variant <= 10; variant++) {
+  // Variants 2 through 20
+  for (let variant = 2; variant <= 20; variant++) {
     const variantId = `${scene.id}-${String(variant).padStart(2, "0")}`;
-    const variantSvg = customFns ? customFns[variant - 1]() : masterSvg;
+    const variantSvg = customFns && customFns[variant - 1] ? customFns[variant - 1]() : masterSvg;
     const variantPath = path.join(OUT, `${variantId}.svg`);
     fs.writeFileSync(variantPath, variantSvg, "utf8");
 
@@ -136,4 +166,3 @@ fs.writeFileSync(
   "utf8"
 );
 console.log(`Geradas ${manifest.length} ilustrações Ghibli realistas em ${OUT}`);
-

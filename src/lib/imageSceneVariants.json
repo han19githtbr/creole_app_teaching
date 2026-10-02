@@ -11,7 +11,17 @@
       { "title": "Centro de controle digital", "setting": "control", "palette": "night", "objects": ["monitor", "computer", "phone", "robot"] },
       { "title": "Drones sobre a cidade", "setting": "town", "palette": "dia", "objects": ["drone", "antenna", "phone", "solar"] },
       { "title": "Invenções na escola", "setting": "classroom", "palette": "dia", "objects": ["computer", "robot", "lab", "monitor"] },
-      { "title": "Moinho e sensores no campo", "setting": "farmland", "palette": "entardecer", "objects": ["turbine", "drone", "solar", "phone"] }
+      { "title": "Moinho e sensores no campo", "setting": "farmland", "palette": "entardecer", "objects": ["turbine", "drone", "solar", "phone"] },
+      { "title": "Estufa inteligente", "setting": "greenhouse", "palette": "dia", "objects": ["solar", "lab", "drone", "computer"] },
+      { "title": "Torre de comunicação na colina", "setting": "hill", "palette": "entardecer", "objects": ["antenna", "satellite", "solar", "phone"] },
+      { "title": "Fábrica de drones artesanais", "setting": "workshop", "palette": "dia", "objects": ["drone", "robot", "monitor", "computer"] },
+      { "title": "Barco de pesquisa oceanográfica", "setting": "ocean", "palette": "dia", "objects": ["satellite", "antenna", "monitor", "solar"] },
+      { "title": "Laboratório de energias limpas", "setting": "lab", "palette": "dia", "objects": ["turbine", "solar", "lab", "computer"] },
+      { "title": "Observatório espacial no platô", "setting": "mountain", "palette": "night", "objects": ["satellite", "antenna", "monitor", "computer"] },
+      { "title": "Oficina móvel no trem", "setting": "train", "palette": "entardecer", "objects": ["robot", "phone", "monitor", "lab"] },
+      { "title": "Central hidrelétrica ecológica", "setting": "river", "palette": "dia", "objects": ["turbine", "monitor", "solar", "drone"] },
+      { "title": "Biblioteca digital comunitária", "setting": "library", "palette": "entardecer", "objects": ["computer", "monitor", "phone", "antenna"] },
+      { "title": "Feira de robótica juvenil", "setting": "festival", "palette": "dia", "objects": ["robot", "drone", "computer", "phone"] }
     ]
   },
   "Natureza": {
@@ -26,7 +36,17 @@
       { "title": "Clareira florida", "setting": "meadow", "palette": "dia", "objects": ["flower", "butterfly", "mountain", "tree"] },
       { "title": "Costa dos pássaros", "setting": "coast", "palette": "dia", "objects": ["ocean", "bird", "palm", "turtle"] },
       { "title": "Vale verde depois da chuva", "setting": "forest", "palette": "entardecer", "objects": ["tree", "waterfall", "flower", "mountain"] },
-      { "title": "Ilha tropical", "setting": "island", "palette": "dia", "objects": ["turtle", "palm", "ocean", "bird"] }
+      { "title": "Ilha tropical", "setting": "island", "palette": "dia", "objects": ["turtle", "palm", "ocean", "bird"] },
+      { "title": "Lagoa dos lírios ao amanhecer", "setting": "lake", "palette": "dia", "objects": ["flower", "bird", "tree", "river"] },
+      { "title": "Cânion verde e rio caudaloso", "setting": "canyon", "palette": "dia", "objects": ["mountain", "river", "waterfall", "bird"] },
+      { "title": "Recife de corais e tartarugas", "setting": "reef", "palette": "dia", "objects": ["turtle", "ocean", "palm", "bird"] },
+      { "title": "Pico da montanha ao pôr do sol", "setting": "peak", "palette": "entardecer", "objects": ["mountain", "tree", "bird", "butterfly"] },
+      { "title": "Floresta tropical de bambus e palmeiras", "setting": "jungle", "palette": "dia", "objects": ["palm", "waterfall", "tree", "flower"] },
+      { "title": "Ninho dos pássaros no manguezal", "setting": "mangrove", "palette": "entardecer", "objects": ["bird", "tree", "river", "butterfly"] },
+      { "title": "Enseada secreta com falésias", "setting": "cove", "palette": "dia", "objects": ["ocean", "mountain", "palm", "turtle"] },
+      { "title": "Bosque das borboletas azuis", "setting": "forest", "palette": "dia", "objects": ["butterfly", "tree", "flower", "river"] },
+      { "title": "Gruta com cascata sagrada", "setting": "grotto", "palette": "entardecer", "objects": ["waterfall", "mountain", "flower", "bird"] },
+      { "title": "Dunas costeiras com palmeiras", "setting": "dunes", "palette": "entardecer", "objects": ["palm", "ocean", "butterfly", "turtle"] }
     ]
   },
   "Cultura": {
@@ -41,7 +61,17 @@
       { "title": "Barracas de comida haitiana", "setting": "market", "palette": "entardecer", "objects": ["food", "vendor", "parasol", "house"] },
       { "title": "Máscaras e tambores", "setting": "stage", "palette": "night", "objects": ["mask", "drum", "lantern", "dancer"] },
       { "title": "Celebração sob as bandeiras", "setting": "festival", "palette": "dia", "objects": ["flag", "food", "vendor", "house"] },
-      { "title": "Dança no pátio", "setting": "courtyard", "palette": "entardecer", "objects": ["dancer", "drum", "clothing", "parasol"] }
+      { "title": "Dança no pátio", "setting": "courtyard", "palette": "entardecer", "objects": ["dancer", "drum", "clothing", "parasol"] },
+      { "title": "Ateliê de pintura e arte naïf", "setting": "atelier", "palette": "dia", "objects": ["house", "flag", "mask", "clothing"] },
+      { "title": "Roda de contadores de histórias", "setting": "circle", "palette": "night", "objects": ["lantern", "drum", "house", "food"] },
+      { "title": "Oficina de escultura em ferro", "setting": "sculpture", "palette": "dia", "objects": ["mask", "vendor", "house", "flag"] },
+      { "title": "Feira de tecidos e roupas madan sara", "setting": "market", "palette": "dia", "objects": ["vendor", "clothing", "parasol", "food"] },
+      { "title": "Procissão festiva de Rara", "setting": "parade", "palette": "entardecer", "objects": ["flag", "drum", "dancer", "lantern"] },
+      { "title": "Banquete comunitário no quintal", "setting": "courtyard", "palette": "entardecer", "objects": ["food", "house", "parasol", "drum"] },
+      { "title": "Confecção de tambores tradicionais", "setting": "workshop", "palette": "dia", "objects": ["drum", "house", "mask", "lantern"] },
+      { "title": "Dança Yanvalou na praia", "setting": "beach", "palette": "entardecer", "objects": ["dancer", "drum", "clothing", "flag"] },
+      { "title": "Noite de carnaval com fantasias", "setting": "festival", "palette": "night", "objects": ["mask", "dancer", "lantern", "clothing"] },
+      { "title": "Mercado sob sombrinhas floridas", "setting": "market", "palette": "entardecer", "objects": ["parasol", "vendor", "food", "house"] }
     ]
   },
   "Turismo": {

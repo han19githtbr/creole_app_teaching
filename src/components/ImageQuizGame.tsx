@@ -334,7 +334,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border)] pb-5">
         <div>
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <span className="flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-bold text-[var(--accent)]">
+            <span className="flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-black text-[var(--accent-ink)]">
               <Sparkles className="h-3.5 w-3.5" /> Pratik Kreyòl
             </span>
             <span className="text-xs font-bold text-[var(--text-muted)]">
@@ -501,7 +501,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
                 {challenge.title}
               </h2>
             </div>
-            <span className="shrink-0 rounded-xl bg-[var(--accent-soft)] px-3.5 py-1.5 text-xs font-extrabold text-[var(--accent)]">
+            <span className="shrink-0 rounded-xl bg-[var(--accent-soft)] px-3.5 py-1.5 text-xs font-black text-[var(--accent-ink)]">
               {challenge.answerCount} palavras certas
             </span>
           </div>

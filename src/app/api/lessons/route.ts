@@ -20,12 +20,11 @@ export async function GET(req: NextRequest) {
   }
   if (!isAdmin) {
     query.isPublished = true;
-    query.announcedAt = { $ne: null };
   }
 
   const lessons = await Lesson.find(query)
     .sort({ order: 1, sectionNumber: 1 })
-    .select("title slug sectionNumber category isPublished order")
+    .select("title slug sectionNumber category isPublished announcedAt order")
     .lean();
 
   return NextResponse.json({ lessons });
@@ -39,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   await connectDB();
   const body = await req.json();
-  const { title, sectionNumber, category, content, isPublished = true } = body;
+  const { title, sectionNumber, category, content, isPublished = true, announce = true } = body;
 
   if (!title || !category || !content) {
     return NextResponse.json({ error: "Título, categoria e conteúdo são obrigatórios." }, { status: 400 });
@@ -59,9 +58,19 @@ export async function POST(req: NextRequest) {
     sectionNumber: sectionNumber ?? 0,
     category,
     content,
-    isPublished,
+    isPublished: Boolean(isPublished),
+    announcedAt: isPublished && announce !== false ? new Date() : null,
     order: (maxOrder?.order ?? 0) + 1,
   });
+
+  if (lesson.isPublished && lesson.announcedAt) {
+    const { sendContentPush } = await import("@/lib/pushNotifications");
+    await sendContentPush({
+      title: "Nova lição disponível",
+      body: lesson.title,
+      url: `/dashboard/lessons/${lesson.slug}`,
+    });
+  }
 
   return NextResponse.json({ lesson }, { status: 201 });
 }

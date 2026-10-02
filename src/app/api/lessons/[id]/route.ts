@@ -28,7 +28,7 @@ export async function GET(
   const { id } = await params;
   const lesson = await findLesson(id);
   const isAdmin = session.user.role === "admin";
-  const hiddenFromUser = !lesson?.isPublished || !lesson?.announcedAt;
+  const hiddenFromUser = !lesson?.isPublished;
 
   if (!lesson || (hiddenFromUser && !isAdmin)) {
     return NextResponse.json({ error: "Lição não encontrada." }, { status: 404 });
@@ -56,6 +56,9 @@ export async function PUT(
     return NextResponse.json({ error: "Lição não encontrada." }, { status: 404 });
   }
 
+  const wasPublished = lesson.isPublished;
+  const previousAnnouncedAt = lesson.announcedAt?.getTime() ?? null;
+
   if (title && title !== lesson.title) {
     lesson.title = title;
     const newSlug = slugify(title);
@@ -67,19 +70,31 @@ export async function PUT(
   if (sectionNumber !== undefined) lesson.sectionNumber = sectionNumber;
   if (category) lesson.category = category;
   if (content !== undefined) lesson.content = content;
-  if (isPublished !== undefined) lesson.isPublished = isPublished;
+  if (isPublished !== undefined) lesson.isPublished = Boolean(isPublished);
   if (order !== undefined) lesson.order = order;
 
-  // Announcing is a distinct, explicit action: it's what makes the lesson
-  // show up for students (with a "new lesson" notice), separate from just
-  // saving/publishing the content.
-  if (announce === true && !lesson.announcedAt) {
+  if (announce === true) {
     lesson.announcedAt = new Date();
   } else if (announce === false) {
     lesson.announcedAt = null;
+  } else if (isPublished === true && !wasPublished) {
+    lesson.announcedAt = new Date();
   }
 
   await lesson.save();
+
+  if (
+    lesson.isPublished &&
+    lesson.announcedAt &&
+    lesson.announcedAt.getTime() !== previousAnnouncedAt
+  ) {
+    const { sendContentPush } = await import("@/lib/pushNotifications");
+    await sendContentPush({
+      title: "Nova lição disponível",
+      body: lesson.title,
+      url: `/dashboard/lessons/${lesson.slug}`,
+    });
+  }
 
   return NextResponse.json({ lesson });
 }

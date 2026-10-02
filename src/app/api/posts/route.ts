@@ -5,6 +5,7 @@ import User from "@/models/User";
 import { requireAdmin, requireUser } from "@/lib/apiAuth";
 import { isAllowedPostImageUrl } from "@/lib/imageBank";
 import { isValidImageQuiz, normalizeImageQuiz } from "@/lib/imageQuiz";
+import { sendContentPush } from "@/lib/pushNotifications";
 
 export async function GET() {
   const session = await requireUser();
@@ -68,6 +69,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Usuário administrador não encontrado." }, { status: 404 });
   }
 
+  function parseExpirationDate(val: unknown): Date | null {
+    if (!val) return null;
+    if (val instanceof Date) return val;
+    if (typeof val === "string") {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        const d = new Date(`${val}T23:59:59.999Z`);
+        return isNaN(d.getTime()) ? null : d;
+      }
+      const d = new Date(val);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+
   const post = await Post.create({
     title,
     content,
@@ -75,11 +90,16 @@ export async function POST(req: NextRequest) {
     imageAlt: imageUrl ? String(imageAlt).slice(0, 200) : "",
     imageQuiz: imageUrl && imageQuiz ? normalizeImageQuiz(imageQuiz) : undefined,
     author: author._id,
-    isPermanent,
-    expiresAt: isPermanent ? null : expiresAt,
-    isPublished,
+    isPermanent: Boolean(isPermanent),
+    expiresAt: isPermanent ? null : parseExpirationDate(expiresAt),
+    isPublished: Boolean(isPublished),
+    announcedAt: isPublished ? new Date() : null,
     acceptsAnswers: Boolean(acceptsAnswers),
   });
+
+  if (post.isPublished) {
+    await sendContentPush({ title: "Novo aviso do professor", body: post.title, url: `/dashboard#post-${post.id}` });
+  }
 
   return NextResponse.json({ post }, { status: 201 });
 }

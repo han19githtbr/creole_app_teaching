@@ -6,6 +6,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationsPopover } from "@/components/NotificationsPopover";
 import { BookOpen, Gamepad2, LayoutDashboard, Menu, Radio, ShieldCheck, Video, X } from "lucide-react";
 
 const NAV_LINKS = [
@@ -65,6 +66,8 @@ export function Navbar() {
 
         <div className="flex items-center gap-2.5 md:gap-3">
           <ThemeToggle />
+
+          {status === "authenticated" && <NotificationsPopover />}
 
           {status === "authenticated" ? (
             <>

@@ -6,7 +6,7 @@ import Lesson from "@/models/Lesson";
 import { requireUser } from "@/lib/apiAuth";
 
 function visibleLessons(isAdmin: boolean) {
-  return isAdmin ? { isPublished: true } : { isPublished: true, announcedAt: { $ne: null } };
+  return isAdmin ? {} : { isPublished: true };
 }
 
 async function summary(userEmail: string, isAdmin: boolean) {

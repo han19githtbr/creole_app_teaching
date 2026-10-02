@@ -8,6 +8,7 @@ import { Gamepad2 } from "lucide-react";
 import { getBankImage } from "@/lib/imageBank";
 
 export function PostCard({
+  id,
   title,
   content,
   imageUrl,
@@ -18,6 +19,7 @@ export function PostCard({
   footer,
   gamePostId,
 }: {
+  id?: string;
   title: string;
   content: string;
   imageUrl?: string | null;
@@ -32,7 +34,7 @@ export function PostCard({
   const bankImg = getBankImage(imageUrl);
 
   return (
-    <article className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
+    <article id={id} className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
       {imageUrl && (
         <div className="relative aspect-[3/2] w-full overflow-hidden bg-[var(--surface-2)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}

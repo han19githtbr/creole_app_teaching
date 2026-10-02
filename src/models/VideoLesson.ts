@@ -31,6 +31,7 @@ export interface IVideoLesson extends Document {
   authorName: string;
   isPublished: boolean;
   publishAt?: Date | null;
+  announcedAt?: Date | null;
   isLiveRecording: boolean;
   customization: IVideoCustomization;
   likes: string[]; // array of user emails
@@ -76,6 +77,7 @@ const VideoLessonSchema = new Schema<IVideoLesson>(
     authorName: { type: String, default: "Professor(a)" },
     isPublished: { type: Boolean, default: true },
     publishAt: { type: Date, default: null },
+    announcedAt: { type: Date, default: null },
     isLiveRecording: { type: Boolean, default: false },
     customization: { type: VideoCustomizationSchema, default: () => ({}) },
     likes: { type: [String], default: [] },

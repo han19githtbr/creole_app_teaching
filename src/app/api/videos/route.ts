@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import VideoLesson from "@/models/VideoLesson";
 import User from "@/models/User";
 import { requireAdmin, requireUser } from "@/lib/apiAuth";
+import { sendContentPush } from "@/lib/pushNotifications";
 
 export async function GET(req: NextRequest) {
   const session = await requireUser();
@@ -120,6 +121,11 @@ export async function POST(req: NextRequest) {
     authorName: authorUser.name || "Professor(a)",
     isPublished: Boolean(isPublished),
     publishAt: parsedPublishAt && !isNaN(parsedPublishAt.getTime()) ? parsedPublishAt : null,
+    announcedAt: isPublished
+      ? parsedPublishAt && parsedPublishAt > new Date()
+        ? parsedPublishAt
+        : new Date()
+      : null,
     isLiveRecording: Boolean(isLiveRecording),
     customization: customization || {
       backgroundStyle: "haiti_flag",
@@ -131,6 +137,14 @@ export async function POST(req: NextRequest) {
     comments: [],
     viewsCount: 0,
   });
+
+  if (video.isPublished && (!video.publishAt || video.publishAt <= new Date())) {
+    await sendContentPush({
+      title: "Nova aula em vídeo",
+      body: video.title,
+      url: `/dashboard/videos/${video.id}`,
+    });
+  }
 
   return NextResponse.json(video, { status: 201 });
 }

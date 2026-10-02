@@ -12,6 +12,7 @@ export interface IPost extends Document {
   isPermanent: boolean;
   expiresAt?: Date | null;
   isPublished: boolean;
+  announcedAt?: Date | null;
   /** Alunos podem responder à legenda/pergunta (padrão: sim). */
   acceptsAnswers?: boolean;
   createdAt: Date;
@@ -33,6 +34,7 @@ const PostSchema = new Schema<IPost>(
     isPermanent: { type: Boolean, default: true },
     expiresAt: { type: Date, default: null },
     isPublished: { type: Boolean, default: true },
+    announcedAt: { type: Date, default: null },
     acceptsAnswers: { type: Boolean, default: true },
   },
   { timestamps: true }

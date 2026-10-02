@@ -7,10 +7,14 @@ import Lesson, { LESSON_CATEGORIES } from "@/models/Lesson";
 import User from "@/models/User";
 import LiveSession from "@/models/LiveSession";
 import VideoLesson from "@/models/VideoLesson";
+import PostAnswer from "@/models/PostAnswer";
+import { toAnswerDTO } from "@/lib/postAnswers";
 import { LIVEKIT_ROOM_NAME } from "@/lib/livekit";
 import { PostCard } from "@/components/PostCard";
+import { PostAnswerBox } from "@/components/PostAnswerBox";
 import { LiveBadge } from "@/components/LiveBadge";
 import { VideoCard } from "@/components/VideoCard";
+import { LessonCard } from "@/components/LessonCard";
 import { ProgressCard } from "@/components/ProgressCard";
 import { GamificationCard } from "@/components/GamificationCard";
 import { getBankImage } from "@/lib/imageBank";
@@ -29,11 +33,10 @@ export default async function DashboardPage() {
   const isAdmin = session.user.role === "admin";
   const now = new Date();
 
-  // Admins see every lesson they've written, published or not. Students only
-  // ever see lessons that have been explicitly announced to them.
+  // Alunos veem todas as lições publicadas; admins veem todas (incluindo rascunhos)
   const lessonMatch = isAdmin
-    ? { isPublished: true }
-    : { isPublished: true, announcedAt: { $ne: null } };
+    ? {}
+    : { isPublished: true };
 
   const videoMatch = isAdmin
     ? {}
@@ -42,7 +45,7 @@ export default async function DashboardPage() {
         $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
       };
 
-  const [posts, live, categoryCounts, currentUser, recentVideos] = await Promise.all([
+  const [posts, live, categoryCounts, currentUser, recentVideos, recentLessons] = await Promise.all([
     Post.find({
       isPublished: true,
       $or: [{ isPermanent: true }, { expiresAt: { $gte: now } }],
@@ -58,12 +61,29 @@ export default async function DashboardPage() {
     isAdmin || !session.user.email
       ? null
       : User.findOne({ email: session.user.email.toLowerCase().trim() })
-          .select("lastSeenLessonsAt completedLessons")
-          .lean<{ lastSeenLessonsAt: Date | null; completedLessons?: unknown[] }>(),
+          .select("lastSeenLessonsAt completedLessons createdAt")
+          .lean<{
+            _id: unknown;
+            lastSeenLessonsAt: Date | null;
+            createdAt?: Date;
+            completedLessons?: unknown[];
+          }>(),
     VideoLesson.find(videoMatch)
       .sort({ createdAt: -1 })
       .limit(3)
       .lean(),
+    Lesson.aggregate([
+      { $match: lessonMatch },
+      {
+        $addFields: {
+          activityAt: {
+            $max: [{ $ifNull: ["$announcedAt", "$createdAt"] }, "$createdAt"],
+          },
+        },
+      },
+      { $sort: { activityAt: -1, sectionNumber: -1 } },
+      { $limit: 4 },
+    ]),
   ]);
 
   const counts: Record<string, number> = {};
@@ -76,13 +96,40 @@ export default async function DashboardPage() {
       ? await Lesson.countDocuments({ ...lessonMatch, _id: { $in: completedIds } })
       : 0;
 
+  // Notificação de lição nova para o aluno
+  const lastSeen = currentUser?.lastSeenLessonsAt ?? currentUser?.createdAt ?? null;
   let hasNewLesson = false;
   if (!isAdmin) {
-    const lastSeen = currentUser?.lastSeenLessonsAt ?? null;
     hasNewLesson = await Lesson.exists({
       isPublished: true,
-      announcedAt: lastSeen ? { $ne: null, $gt: lastSeen } : { $ne: null },
+      $or: [
+        { announcedAt: lastSeen ? { $gt: lastSeen } : { $ne: null } },
+        { createdAt: lastSeen ? { $gt: lastSeen } : { $ne: null } },
+      ],
     }).then(Boolean);
+  }
+
+  // Respostas às postagens
+  const postIds = posts.map((p) => p._id);
+  const myAnswers = new Map<string, ReturnType<typeof toAnswerDTO>>();
+  const answerCounts = new Map<string, { total: number; pending: number }>();
+  if (postIds.length) {
+    if (!isAdmin && currentUser) {
+      const mine = await PostAnswer.find({ user: currentUser._id, post: { $in: postIds } }).lean();
+      for (const a of mine) myAnswers.set(String(a.post), toAnswerDTO(a));
+    } else if (isAdmin) {
+      const grouped = await PostAnswer.aggregate([
+        { $match: { post: { $in: postIds } } },
+        {
+          $group: {
+            _id: "$post",
+            total: { $sum: 1 },
+            pending: { $sum: { $cond: [{ $eq: ["$status", "pending"] }, 1, 0] } },
+          },
+        },
+      ]);
+      for (const g of grouped) answerCounts.set(String(g._id), { total: g.total, pending: g.pending });
+    }
   }
 
   return (
@@ -117,6 +164,57 @@ export default async function DashboardPage() {
 
       {/* Gamificação: Nível, Conquistas e Jogo das Imagens */}
       <GamificationCard />
+
+      {/* Featured Section: Novas Lições & Lições Recentes */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-[var(--text)]">
+              <BookOpen className="h-5 w-5 text-[var(--accent)]" /> Lições Recentes
+            </h2>
+            {hasNewLesson && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm animate-pulse">
+                <Bell className="h-3 w-3" /> Nova lição disponível!
+              </span>
+            )}
+          </div>
+          <Link
+            href="/dashboard/lessons"
+            className="flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline"
+          >
+            Ver todas as lições ({totalLessons}) <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+
+        {recentLessons.length === 0 ? (
+          <Card>
+            <CardContent className="py-8 text-center text-sm text-[var(--text-muted)]">
+              Nenhuma lição publicada no momento. O professor publicará conteúdos em breve!
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {recentLessons.map((lesson) => {
+              const isNew = Boolean(
+                lastSeen &&
+                  ((lesson.announcedAt && new Date(lesson.announcedAt) > lastSeen) ||
+                    (lesson.createdAt && new Date(lesson.createdAt) > lastSeen))
+              );
+              return (
+                <LessonCard
+                  key={String(lesson._id)}
+                  slug={lesson.slug}
+                  title={lesson.title}
+                  sectionNumber={lesson.sectionNumber}
+                  category={lesson.category}
+                  completed={completedIds.includes(String(lesson._id))}
+                  isNew={isNew}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Featured Section: Aulas Gravadas e Vídeos */}
       <div className="space-y-4">
@@ -166,7 +264,7 @@ export default async function DashboardPage() {
       {/* Main Grid: Posts and Categories */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
-          <h2 className="text-lg font-semibold text-[var(--text)]">Avisos do professor</h2>
+          <h2 className="text-lg font-semibold text-[var(--text)]">Avisos e Postagens do professor</h2>
           {posts.length === 0 ? (
             <Card>
               <CardContent className="text-center text-sm text-[var(--text-muted)]">
@@ -176,6 +274,7 @@ export default async function DashboardPage() {
           ) : (
             posts.map((post) => (
               <PostCard
+                id={`post-${String(post._id)}`}
                 key={String(post._id)}
                 title={post.title}
                 content={post.content}
@@ -184,7 +283,31 @@ export default async function DashboardPage() {
                 createdAt={post.createdAt}
                 isPermanent={post.isPermanent}
                 expiresAt={post.expiresAt}
-                gamePostId={post.imageUrl && (post.imageQuiz || getBankImage(post.imageUrl)) ? String(post._id) : undefined}
+                gamePostId={
+                  post.imageUrl && (post.imageQuiz?.options?.length || getBankImage(post.imageUrl))
+                    ? String(post._id)
+                    : undefined
+                }
+                footer={
+                  post.acceptsAnswers === false ? undefined : isAdmin ? (
+                    <Link
+                      href={`/admin/answers?post=${String(post._id)}`}
+                      className="inline-flex items-center gap-2 text-sm font-medium text-[var(--accent)] hover:underline"
+                    >
+                      💬 {answerCounts.get(String(post._id))?.total ?? 0} respostas
+                      {(answerCounts.get(String(post._id))?.pending ?? 0) > 0 && (
+                        <span className="rounded-full bg-amber-400 px-2 text-xs font-bold text-amber-950">
+                          {answerCounts.get(String(post._id))?.pending} em análise
+                        </span>
+                      )}
+                    </Link>
+                  ) : (
+                    <PostAnswerBox
+                      postId={String(post._id)}
+                      initialAnswer={myAnswers.get(String(post._id)) ?? null}
+                    />
+                  )
+                }
               />
             ))
           )}
@@ -196,7 +319,7 @@ export default async function DashboardPage() {
             {hasNewLesson && (
               <Link
                 href="/dashboard/lessons"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-xs font-medium text-[var(--accent)]"
+                className="inline-flex items-center gap-1.5 rounded-full bg-red-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm"
               >
                 <Bell className="h-3 w-3" /> Nova lição disponível
               </Link>
@@ -223,7 +346,7 @@ export default async function DashboardPage() {
             href="/dashboard/lessons"
             className="block rounded-lg bg-[var(--accent)] px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-[var(--accent-hover)] transition-colors shadow-sm"
           >
-            Ver todas as lições
+            Ver todas as lições ({totalLessons})
           </Link>
         </div>
       </div>

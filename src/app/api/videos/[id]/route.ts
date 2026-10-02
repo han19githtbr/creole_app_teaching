@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import VideoLesson from "@/models/VideoLesson";
 import { requireAdmin, requireUser } from "@/lib/apiAuth";
+import { sendContentPush } from "@/lib/pushNotifications";
 
 export async function GET(
   req: NextRequest,
@@ -110,6 +111,14 @@ export async function PUT(
     customization,
   } = body;
 
+  const existing = await VideoLesson.findById(id).select("isPublished publishAt");
+  if (!existing) {
+    return NextResponse.json({ error: "Vídeo não encontrado." }, { status: 404 });
+  }
+  const previousAvailable = Boolean(
+    existing.isPublished && (!existing.publishAt || existing.publishAt <= new Date())
+  );
+
   const updateData: Record<string, unknown> = {};
 
   if (title !== undefined) updateData.title = title.trim();
@@ -128,6 +137,25 @@ export async function PUT(
   const updated = await VideoLesson.findByIdAndUpdate(id, { $set: updateData }, { new: true });
   if (!updated) {
     return NextResponse.json({ error: "Vídeo não encontrado." }, { status: 404 });
+  }
+
+  const nowAvailable = Boolean(updated.isPublished && (!updated.publishAt || updated.publishAt <= new Date()));
+  const newlyAvailable = nowAvailable && !previousAvailable;
+  const scheduleChanged = Boolean(
+    updated.publishAt &&
+      updated.publishAt > new Date() &&
+      (!existing.isPublished || existing.publishAt?.getTime() !== updated.publishAt.getTime())
+  );
+  if (newlyAvailable || scheduleChanged) {
+    updated.announcedAt = nowAvailable ? new Date() : updated.publishAt;
+    await updated.save();
+  }
+  if (newlyAvailable) {
+    await sendContentPush({
+      title: "Nova aula em vídeo",
+      body: updated.title,
+      url: `/dashboard/videos/${updated.id}`,
+    });
   }
 
   return NextResponse.json(updated);

@@ -5,6 +5,7 @@ import PostAnswer from "@/models/PostAnswer";
 import { requireAdmin } from "@/lib/apiAuth";
 import { isAllowedPostImageUrl } from "@/lib/imageBank";
 import { isValidImageQuiz, normalizeImageQuiz } from "@/lib/imageQuiz";
+import { sendContentPush } from "@/lib/pushNotifications";
 
 export async function PUT(
   req: NextRequest,
@@ -24,6 +25,7 @@ export async function PUT(
   if (!post) {
     return NextResponse.json({ error: "Postagem não encontrada." }, { status: 404 });
   }
+  const wasPublished = post.isPublished;
   const imageChanged = imageUrl !== undefined && imageUrl !== post.imageUrl;
 
   if (title !== undefined) post.title = title;
@@ -50,9 +52,25 @@ export async function PUT(
       post.imageQuiz = normalizeImageQuiz(imageQuiz);
     }
   }
-  if (isPermanent !== undefined) post.isPermanent = isPermanent;
-  if (expiresAt !== undefined) post.expiresAt = isPermanent ? null : expiresAt;
-  if (isPublished !== undefined) post.isPublished = isPublished;
+  function parseExpirationDate(val: unknown): Date | null {
+    if (!val) return null;
+    if (val instanceof Date) return val;
+    if (typeof val === "string") {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        const d = new Date(`${val}T23:59:59.999Z`);
+        return isNaN(d.getTime()) ? null : d;
+      }
+      const d = new Date(val);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+
+  if (isPermanent !== undefined) post.isPermanent = Boolean(isPermanent);
+  if (expiresAt !== undefined) post.expiresAt = post.isPermanent ? null : parseExpirationDate(expiresAt);
+  if (isPublished !== undefined) post.isPublished = Boolean(isPublished);
+  const newlyPublished = !wasPublished && post.isPublished;
+  if (newlyPublished) post.announcedAt = new Date();
   if (acceptsAnswers !== undefined) post.acceptsAnswers = Boolean(acceptsAnswers);
 
   if (!String(post.content || "").trim() && !post.imageUrl) {
@@ -63,6 +81,10 @@ export async function PUT(
   }
 
   await post.save();
+
+  if (newlyPublished) {
+    await sendContentPush({ title: "Novo aviso do professor", body: post.title, url: `/dashboard#post-${post.id}` });
+  }
 
   return NextResponse.json({ post });
 }

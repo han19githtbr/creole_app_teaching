@@ -12,13 +12,13 @@
   --border-soft: #f0efed;
   --border-strong: #d6d3d1;
 
-  --text: #0f0e0e;
+  --text: #1c1917;
   --text-secondary: #57534e;
   --text-muted: #a8a29e;
 
-  --accent: #2493d8;
+  --accent: #280ed1;
   --accent-hover: #2f2a8f;
-  --accent-soft: #4fbbff;
+  --accent-soft: #3a1df4;
 
   --background: var(--bg);
   --foreground: var(--text);
@@ -38,9 +38,9 @@
   --text-secondary: #b3b4c4;
   --text-muted: #82839a;
 
-  --accent: #2493d8;
+  --accent: #280ed1;
   --accent-hover: #a5b0fa;
-  --accent-soft: #4fbbff;
+  --accent-soft: #3a1df4;
 }
 
 @theme inline {

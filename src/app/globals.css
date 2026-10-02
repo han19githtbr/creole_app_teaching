@@ -19,6 +19,7 @@
   --accent: #280ed1;
   --accent-hover: #2f2a8f;
   --accent-soft: #3a1df4;
+  --accent-ink: #000000;
 
   --background: var(--bg);
   --foreground: var(--text);
@@ -41,6 +42,7 @@
   --accent: #280ed1;
   --accent-hover: #a5b0fa;
   --accent-soft: #3a1df4;
+  --accent-ink: #000000;
 }
 
 @theme inline {

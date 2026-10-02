@@ -24,7 +24,7 @@ export function GamificationCard() {
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-md bg-[var(--accent-soft)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[var(--accent)]">
+                  <span className="rounded-md bg-[var(--accent-soft)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[var(--accent-ink)]">
                     Nivo {levelInfo.current.level}
                   </span>
                   <span className="text-xs font-semibold text-[var(--text-muted)]">

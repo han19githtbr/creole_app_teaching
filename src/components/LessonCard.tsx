@@ -3,7 +3,7 @@ import { CheckCircle2, ChevronRight } from "lucide-react";
 import type { LessonCategory } from "@/lib/lessonCategories";
 
 const categoryColors: Record<LessonCategory, string> = {
-  Gramática: "bg-[var(--accent-soft)] text-[var(--accent)]",
+  Gramática: "bg-[var(--accent-soft)] text-[var(--accent-ink)]",
   Vocabulário: "bg-[#ecfdf5] text-[#047857]",
   Diálogos: "bg-[#fef3f2] text-[#c2410c]",
   Exercícios: "bg-[#fffbeb] text-[#b45309]",

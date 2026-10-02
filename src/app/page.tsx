@@ -93,7 +93,7 @@ function Feature({
 }) {
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
-      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent-ink)]">
         {icon}
       </div>
       <h3 className="font-semibold text-[var(--text)]">{title}</h3>

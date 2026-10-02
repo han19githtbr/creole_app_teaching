@@ -19,10 +19,63 @@ import {
   renderGastronomia,
 } from "./master-scenes-2.mjs";
 
+import * as tecnologiaVariants from "./theme-tecnologia-variants.mjs";
+import * as naturezaVariants from "./theme-natureza-variants.mjs";
+import * as culturaVariants from "./theme-cultura-variants.mjs";
+
 const OUT = path.resolve("./public/ghibli");
 if (!fs.existsSync(OUT)) {
   fs.mkdirSync(OUT, { recursive: true });
 }
+
+const variantsData = JSON.parse(
+  fs.readFileSync(path.resolve("./src/lib/imageSceneVariants.json"), "utf8")
+);
+
+const TECNOLOGIA_FNS = [
+  tecnologiaVariants.renderTecnologia01,
+  tecnologiaVariants.renderTecnologia02,
+  tecnologiaVariants.renderTecnologia03,
+  tecnologiaVariants.renderTecnologia04,
+  tecnologiaVariants.renderTecnologia05,
+  tecnologiaVariants.renderTecnologia06,
+  tecnologiaVariants.renderTecnologia07,
+  tecnologiaVariants.renderTecnologia08,
+  tecnologiaVariants.renderTecnologia09,
+  tecnologiaVariants.renderTecnologia10,
+];
+
+const NATUREZA_FNS = [
+  naturezaVariants.renderNatureza01,
+  naturezaVariants.renderNatureza02,
+  naturezaVariants.renderNatureza03,
+  naturezaVariants.renderNatureza04,
+  naturezaVariants.renderNatureza05,
+  naturezaVariants.renderNatureza06,
+  naturezaVariants.renderNatureza07,
+  naturezaVariants.renderNatureza08,
+  naturezaVariants.renderNatureza09,
+  naturezaVariants.renderNatureza10,
+];
+
+const CULTURA_FNS = [
+  culturaVariants.renderCultura01,
+  culturaVariants.renderCultura02,
+  culturaVariants.renderCultura03,
+  culturaVariants.renderCultura04,
+  culturaVariants.renderCultura05,
+  culturaVariants.renderCultura06,
+  culturaVariants.renderCultura07,
+  culturaVariants.renderCultura08,
+  culturaVariants.renderCultura09,
+  culturaVariants.renderCultura10,
+];
+
+const DEDICATED_VARIANTS = {
+  tecnologia: TECNOLOGIA_FNS,
+  natureza: NATUREZA_FNS,
+  cultura: CULTURA_FNS,
+};
 
 const MASTER_SCENES = [
   { id: "tecnologia", theme: "Tecnologia", title: "Oficina tecnológica no campo", fn: renderTecnologia },
@@ -44,9 +97,11 @@ const MASTER_SCENES = [
 const manifest = [];
 
 for (const scene of MASTER_SCENES) {
-  const masterSvg = scene.fn();
-  
-  // Write master theme file
+  const customFns = DEDICATED_VARIANTS[scene.id];
+  const themeVariants = variantsData[scene.theme]?.scenes || [];
+
+  // Variant 1 (Primary)
+  const masterSvg = customFns ? customFns[0]() : scene.fn();
   const masterPath = path.join(OUT, `${scene.id}.svg`);
   fs.writeFileSync(masterPath, masterSvg, "utf8");
   manifest.push({
@@ -56,20 +111,29 @@ for (const scene of MASTER_SCENES) {
     src: `/ghibli/${scene.id}.svg`,
   });
 
-  // Write high quality variant files (02 through 10) so all 140 image slots render the master art
+  // Variants 2 through 10
   for (let variant = 2; variant <= 10; variant++) {
     const variantId = `${scene.id}-${String(variant).padStart(2, "0")}`;
+    const variantSvg = customFns ? customFns[variant - 1]() : masterSvg;
     const variantPath = path.join(OUT, `${variantId}.svg`);
-    fs.writeFileSync(variantPath, masterSvg, "utf8");
+    fs.writeFileSync(variantPath, variantSvg, "utf8");
+
+    const variantTitle =
+      themeVariants[variant - 2]?.title || `${scene.title} — Cena ${variant}`;
+
     manifest.push({
       id: variantId,
       theme: scene.theme,
-      title: `${scene.title} — Cena ${variant}`,
+      title: variantTitle,
       src: `/ghibli/${variantId}.svg`,
     });
   }
 }
 
-fs.writeFileSync(path.resolve("./scripts/ghibli/manifest.json"), JSON.stringify(manifest, null, 2), "utf8");
+fs.writeFileSync(
+  path.resolve("./scripts/ghibli/manifest.json"),
+  JSON.stringify(manifest, null, 2),
+  "utf8"
+);
 console.log(`Geradas ${manifest.length} ilustrações Ghibli realistas em ${OUT}`);
 

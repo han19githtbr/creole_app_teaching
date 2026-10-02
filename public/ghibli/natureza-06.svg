@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Árvore ancestral e prado florido - Lanati</title>
-  <desc>Ghibli anime art: Árvore grandiosa, prado com flores, borboletas e pássaro.</desc>
+  <title>Rio sereno entre palmeiras - Lanati</title>
+  <desc>Ghibli anime art: Rio tropical, palmeiras imperiais, tartaruga na margem e flores aquáticas.</desc>
   
   <defs>
     <!-- Paper watercolor texture filter -->
@@ -119,21 +119,18 @@
     </linearGradient>
   </defs>
   
-  <!-- Sky -->
-  <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
-  
-  <!-- Sun & Volumetric Clouds -->
+  <rect width="1200" height="800" fill="url(#skySunset)" filter="url(#ghibliPaper)" />
   
   <g>
-    <circle cx="950" cy="150" r="182" fill="url(#sunGlowDay)" />
-    <circle cx="950" cy="150" r="52" fill="#fffded" />
+    <circle cx="600" cy="260" r="182" fill="url(#sunGlowSunset)" />
+    <circle cx="600" cy="260" r="52" fill="#ffdf99" />
     <!-- Subtle sun rays -->
-    <polygon points="950,150 650,800 830,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="950,150 1000,800 1190,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="950,150 1310,800 1510,800" fill="#fffbe6" opacity="0.06" />
+    <polygon points="600,260 300,800 480,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="600,260 650,800 840,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="600,260 960,800 1160,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(220, 160) scale(1.05)" opacity="0.95">
+  <g transform="translate(200, 160) scale(0.95)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -144,7 +141,7 @@
       C270,40 250,90 200,95 
       L-150,95 
       C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+      fill="url(#cloudBodySunset)" filter="url(#dropShadow)" />
     <!-- Bright inner highlights (Ghibli fluff) -->
     <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
     <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
@@ -152,7 +149,7 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
   
-  <g transform="translate(760, 180) scale(0.9)" opacity="0.95">
+  <g transform="translate(960, 170) scale(0.85)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -163,26 +160,7 @@
       C270,40 250,90 200,95 
       L-150,95 
       C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
-    <!-- Bright inner highlights (Ghibli fluff) -->
-    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
-    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
-    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
-    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
-  </g>
-  
-  <g transform="translate(1060, 110) scale(0.75)" opacity="0.95">
-    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
-    <path d="M-180,40 
-      C-200,10 -180,-30 -140,-40 
-      C-150,-80 -100,-110 -50,-100 
-      C-30,-150 40,-160 80,-130 
-      C120,-160 180,-140 200,-90 
-      C240,-80 260,-40 240,10 
-      C270,40 250,90 200,95 
-      L-150,95 
-      C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+      fill="url(#cloudBodySunset)" filter="url(#dropShadow)" />
     <!-- Bright inner highlights (Ghibli fluff) -->
     <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
     <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
@@ -190,151 +168,42 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
 
-  <!-- Distant Blue Ridge Mountains -->
-  <path d="M-50,480 Q240,360 520,440 T1150,390 Q1220,410 1250,440 L1250,800 L-50,800 Z" fill="url(#hillDistant)" opacity="0.6"/>
+  <!-- RIVYÈ (Rio Tropical Largo Espelhando o Céu Dourado) -->
+  <path d="M-50,440 L1250,440 L1250,800 L-50,800 Z" fill="url(#waterTone)"/>
+  <ellipse cx="600" cy="460" rx="350" ry="18" fill="#fde047" opacity="0.4" filter="url(#softGlow)"/>
 
-  <!-- Mid Forest Hills -->
-  <path d="M-30,550 Q280,480 600,530 T1250,510 L1250,800 L-30,800 Z" fill="url(#hillMid)"/>
-
-  <!-- Sparkling River curving through meadow -->
-  <path d="M720,530 Q680,600 780,680 T880,800 L1020,800 Q920,680 840,600 T860,530 Z" fill="url(#waterTone)" opacity="0.85"/>
-  <path d="M740,550 Q710,610 800,690" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6"/>
-
-  <!-- PYEBWA (Árvore Ancestral Ghibli Colossal) on the left -->
-  <g transform="translate(190, 800)" filter="url(#dropShadow)">
-    <!-- Massive Gnarled Roots and Trunk -->
-    <path d="M-130,0 
-      C-110,-120 -150,-240 -120,-380 
-      C-100,-460 -140,-540 -70,-620 
-      C-40,-650 30,-640 60,-590 
-      C120,-500 80,-420 110,-320 
-      C140,-200 170,-100 210,0 Z" 
-      fill="url(#woodTone)" stroke="#382110" stroke-width="4"/>
-    <!-- Bark Texture Grooves & Moss -->
-    <path d="M-70,-100 Q-80,-280 -40,-420" stroke="#361e0f" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <path d="M0,-80 Q-20,-260 20,-450" stroke="#361e0f" stroke-width="9" fill="none" stroke-linecap="round"/>
-    <path d="M70,-90 Q60,-240 70,-380" stroke="#361e0f" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <!-- Moss patches on bark -->
-    <ellipse cx="-45" cy="-220" rx="18" ry="40" fill="#4d7c0f" opacity="0.7"/>
-    <ellipse cx="35" cy="-300" rx="14" ry="32" fill="#4d7c0f" opacity="0.65"/>
-    <!-- Major Sprawling Canopy Branches -->
-    <path d="M-100,-420 Q-240,-460 -320,-540 Q-200,-510 -70,-460" fill="url(#woodTone)"/>
-    <path d="M70,-400 Q220,-440 330,-500 Q200,-470 50,-430" fill="url(#woodTone)"/>
-
-    <!-- Lush Foliage Billows (Ghibli painted leaf canopy) -->
-    <!-- Back layer (Dark Forest Green) -->
-    <ellipse cx="-80" cy="-620" rx="260" ry="190" fill="#14532d"/>
-    <ellipse cx="140" cy="-580" rx="240" ry="180" fill="#166534"/>
-    <ellipse cx="-220" cy="-540" rx="170" ry="130" fill="#14532d"/>
-    <ellipse cx="260" cy="-510" rx="160" ry="120" fill="#166534"/>
-    <!-- Mid layer (Rich Emerald / Olive) -->
-    <ellipse cx="-60" cy="-640" rx="220" ry="160" fill="#15803d"/>
-    <ellipse cx="120" cy="-610" rx="200" ry="150" fill="#22c55e"/>
-    <ellipse cx="-190" cy="-560" rx="140" ry="110" fill="#16a34a"/>
-    <ellipse cx="230" cy="-530" rx="130" ry="100" fill="#15803d"/>
-    <!-- Top Highlights (Sun-kissed Chartreuse Green) -->
-    <ellipse cx="-40" cy="-680" rx="160" ry="110" fill="#4ade80" opacity="0.8"/>
-    <ellipse cx="100" cy="-650" rx="150" ry="100" fill="#86efac" opacity="0.75"/>
-    <ellipse cx="-160" cy="-590" rx="100" ry="70" fill="#4ade80" opacity="0.75"/>
-    <ellipse cx="200" cy="-560" rx="90" ry="60" fill="#86efac" opacity="0.7"/>
-
-    <!-- ZWAZO (Pássaro Tropical Haitiano) perched on branch -->
-    <g transform="translate(180, -435)">
-      <!-- Branch perch -->
-      <line x1="-30" y1="10" x2="40" y2="10" stroke="#361e0f" stroke-width="8" stroke-linecap="round"/>
-      <!-- Bird Body -->
-      <ellipse cx="0" cy="-14" rx="22" ry="14" fill="#0284c7" transform="rotate(-15)"/>
-      <ellipse cx="-6" cy="-8" rx="14" ry="10" fill="#ef4444"/> <!-- Crimson chest -->
-      <!-- Head -->
-      <circle cx="16" cy="-24" r="11" fill="#047857"/>
-      <!-- Beak -->
-      <polygon points="26,-26 38,-22 26,-18" fill="#eab308"/>
-      <!-- Eye -->
-      <circle cx="20" cy="-25" r="2.5" fill="#000000"/>
-      <circle cx="21" cy="-26" r="0.8" fill="#ffffff"/>
-      <!-- Tail feathers -->
-      <polygon points="-20,-10 -52,6 -44,12 -15,-6" fill="#0369a1"/>
+  <!-- PALMIS (Bosque de Palmeiras Reais com Troncos Elegantes) -->
+  <g transform="translate(240, 540)" filter="url(#dropShadow)">
+    <line x1="0" y1="0" x2="0" y2="-220" stroke="#78350f" stroke-width="14"/>
+    <g transform="translate(0, -220)">
+      <path d="M0,0 Q-108,-80 -156,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q-63,-80 -91,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q-18,-80 -26,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q27,-80 39,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q72,-80 104,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q117,-80 169,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/>
+    </g>
+  </g>
+  <g transform="translate(940, 520)" filter="url(#dropShadow)">
+    <line x1="0" y1="0" x2="0" y2="-240" stroke="#78350f" stroke-width="14"/>
+    <g transform="translate(0, -240)">
+      <path d="M0,0 Q-108,-80 -156,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q-63,-80 -91,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q-18,-80 -26,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q27,-80 39,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q72,-80 104,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M0,0 Q117,-80 169,-40" stroke="#15803d" stroke-width="9" stroke-linecap="round" fill="none"/>
     </g>
   </g>
 
-  <!-- Rolling Fore Meadow -->
-  <path d="M-50,680 Q320,620 680,670 T1250,650 L1250,800 L-50,800 Z" fill="url(#hillNear)"/>
+  <!-- Green Riverbank in Foreground -->
+  <path d="M-50,620 Q320,560 680,610 T1250,590 L1250,800 L-50,800 Z" fill="url(#hillNear)"/>
 
-  <!-- PAPIYON (Borboletas) fluttering over meadow -->
-  <!-- Butterfly 1: Monarch (Orange & Black) -->
-  <g transform="translate(560, 520) scale(1.1)" filter="url(#dropShadow)">
-    <!-- Wings left -->
-    <path d="M0,0 Q-42,-38 -36,-72 Q-10,-68 0,-24" fill="#f97316" stroke="#0f172a" stroke-width="3"/>
-    <path d="M0,-12 Q-38,-4 -28,32 Q-6,22 0,0" fill="#ea580c" stroke="#0f172a" stroke-width="3"/>
-    <!-- Wings right -->
-    <path d="M0,0 Q42,-38 36,-72 Q10,-68 0,-24" fill="#f97316" stroke="#0f172a" stroke-width="3"/>
-    <path d="M0,-12 Q38,-4 28,32 Q6,22 0,0" fill="#ea580c" stroke="#0f172a" stroke-width="3"/>
-    <!-- Wing White dots -->
-    <circle cx="-30" cy="-60" r="2.5" fill="#ffffff"/>
-    <circle cx="-24" cy="-48" r="2" fill="#ffffff"/>
-    <circle cx="30" cy="-60" r="2.5" fill="#ffffff"/>
-    <circle cx="24" cy="-48" r="2" fill="#ffffff"/>
-    <!-- Body & Antennae -->
-    <ellipse cx="0" cy="-8" rx="4" ry="18" fill="#0f172a"/>
-    <path d="M-2,-24 Q-8,-40 -14,-46 M2,-24 Q8,-40 14,-46" stroke="#0f172a" stroke-width="1.5" fill="none"/>
+  <!-- TÒTI (Tartaruga Descansando Sobre uma Pedra na Beira do Rio) -->
+  <g transform="translate(620, 630)" filter="url(#dropShadow)">
+    <!-- Flat River Boulder -->
+    <ellipse cx="0" cy="35" rx="80" ry="25" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2.5"/>
+    
+    <!-- Turtle Body on rock -->
+    <ellipse cx="0" cy="10" rx="42" ry="32" fill="#65a30d" stroke="#365314" stroke-width="2.5"/>
+    <ellipse cx="0" cy="10" rx="32" ry="24" fill="#84cc16"/>
+    <circle cx="36" cy="10" r="10" fill="#65a30d"/> <!-- Head -->
   </g>
 
-  <!-- Butterfly 2: Blue Morpho -->
-  <g transform="translate(740, 460) scale(0.9)" filter="url(#dropShadow)">
-    <path d="M0,0 Q-38,-34 -32,-64 Q-8,-60 0,-20" fill="#0284c7" stroke="#0f172a" stroke-width="2.5"/>
-    <path d="M0,-10 Q-32,-4 -24,28 Q-4,18 0,0" fill="#0369a1" stroke="#0f172a" stroke-width="2.5"/>
-    <path d="M0,0 Q38,-34 32,-64 Q8,-60 0,-20" fill="#0284c7" stroke="#0f172a" stroke-width="2.5"/>
-    <path d="M0,-10 Q32,-4 24,28 Q4,18 0,0" fill="#0369a1" stroke="#0f172a" stroke-width="2.5"/>
-    <!-- Iridescent Blue highlights -->
-    <ellipse cx="-16" cy="-42" rx="10" ry="16" fill="#38bdf8" opacity="0.8"/>
-    <ellipse cx="16" cy="-42" rx="10" ry="16" fill="#38bdf8" opacity="0.8"/>
-    <ellipse cx="0" cy="-6" rx="3.5" ry="16" fill="#0f172a"/>
-  </g>
-
-  <!-- FLÈ (Flores exuberantes e detalhadas) in foreground -->
-  <g transform="translate(0, 680)">
-    <!-- Red Hibiscus 1 -->
-    <g transform="translate(380, 40) scale(1.3)" filter="url(#dropShadow)">
-      <circle cx="-16" cy="-10" r="18" fill="#e11d48"/>
-      <circle cx="16" cy="-10" r="18" fill="#e11d48"/>
-      <circle cx="-12" cy="14" r="18" fill="#be123c"/>
-      <circle cx="12" cy="14" r="18" fill="#be123c"/>
-      <circle cx="0" cy="-20" r="18" fill="#f43f5e"/>
-      <circle cx="0" cy="0" r="10" fill="#9f1239"/>
-      <!-- Golden stamen -->
-      <line x1="0" y1="0" x2="6" y2="-28" stroke="#facc15" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="6" cy="-28" r="4" fill="#ea580c"/>
-    </g>
-
-    <!-- Red Hibiscus 2 -->
-    <g transform="translate(680, 60) scale(1.1)" filter="url(#dropShadow)">
-      <circle cx="-14" cy="-8" r="16" fill="#e11d48"/>
-      <circle cx="14" cy="-8" r="16" fill="#e11d48"/>
-      <circle cx="-10" cy="12" r="16" fill="#be123c"/>
-      <circle cx="10" cy="12" r="16" fill="#be123c"/>
-      <circle cx="0" cy="-16" r="16" fill="#f43f5e"/>
-      <circle cx="0" cy="0" r="8" fill="#9f1239"/>
-      <line x1="0" y1="0" x2="-4" y2="-24" stroke="#facc15" stroke-width="2.5" stroke-linecap="round"/>
-    </g>
-
-    <!-- Daisies cluster -->
-    <g transform="translate(510, 60)">
-      <circle cx="0" cy="0" r="10" fill="#eab308"/>
-      <ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(45 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(90 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(135 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(180 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(225 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(270 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(315 0 0)"/>
-      <circle cx="0" cy="0" r="9" fill="#f59e0b"/>
-    </g>
-
-    <g transform="translate(860, 40) scale(0.9)">
-      <circle cx="0" cy="0" r="10" fill="#eab308"/>
-      <ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(45 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(90 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(135 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(180 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(225 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(270 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(315 0 0)"/>
-      <circle cx="0" cy="0" r="9" fill="#f59e0b"/>
-    </g>
-
-    <!-- Bluebell flowers -->
-    <g transform="translate(1020, 50) scale(1.2)">
-      <path d="M0,30 Q-10,0 20,-20" stroke="#15803d" stroke-width="3" fill="none"/>
-      <circle cx="20" cy="-20" r="12" fill="#3b82f6"/>
-      <circle cx="10" cy="-5" r="10" fill="#60a5fa"/>
-    </g>
+  <!-- FLÈ (Vitórias-régias e Flores na Beira do Rio) -->
+  <g transform="translate(380, 680)">
+    <ellipse cx="0" cy="0" rx="35" ry="14" fill="#15803d"/>
+    <circle cx="0" cy="-6" r="14" fill="#f43f5e"/>
+    <circle cx="0" cy="-6" r="5" fill="#fde047"/>
   </g>
 </svg>

@@ -236,18 +236,176 @@ const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary">[] = [
   },
 ];
 
+import imageSceneVariants from "./imageSceneVariants.json";
+
+const KREYOL_TO_PT: Record<string, string> = {
+  // Tecnologia
+  "òdinatè": "computador",
+  "robo": "robô",
+  "dròn": "drone",
+  "moulen van": "moinho de vento",
+  "satelit": "satélite",
+  "panno solè": "painel solar",
+  "telefòn": "celular/telefone",
+  "laboratwa": "laboratório",
+  "ekran": "tela/monitor",
+  "antèn": "antena",
+  // Natureza
+  "pyebwa": "árvore",
+  "flè": "flores",
+  "papiyon": "borboleta",
+  "zwazo": "pássaro",
+  "mòn": "montanha",
+  "rivyè": "rio",
+  "kaskad": "cachoeira",
+  "lanmè": "mar",
+  "palmis": "palmeira",
+  "tòti": "tartaruga",
+  // Cultura
+  "tanbou": "tambor",
+  "drapo": "bandeira",
+  "lanp": "lanterna",
+  "kay": "casa",
+  "mask": "máscara",
+  "machann": "comerciante/feira",
+  "dansè": "dançarinos",
+  "manje": "comida típica",
+  "rad": "vestimentas",
+  "parapli": "guarda-sol/sombrinha",
+  // Turismo
+  "bato": "barco",
+  "balon": "balão",
+  "fa": "farol",
+  "avyon": "avião",
+  "valiz": "mala de viagem",
+  "kat": "mapa",
+  "otèl": "hotel",
+  "plaj": "praia",
+  // Vida no interior
+  "jaden": "jardim/plantação",
+  "kloti": "cerca",
+  "fèm": "fazenda",
+  "ble": "trigo",
+  "kabrit": "cabra",
+  "pi": "poço",
+  "poul": "galinha",
+  "traktè": "trator",
+  // Dança
+  "riban": "fitas",
+  "mizik": "música",
+  "fan": "leque",
+  "sèn": "palco",
+  // Geografia
+  "bousòl": "bússola",
+  "zile": "ilha",
+  "vòlkan": "vulcão",
+  "pon": "ponte",
+  "forè": "floresta",
+  // História
+  "fò": "fortaleza",
+  "kanon": "canhão",
+  "flanbo": "tocha",
+  "wòch": "pedra/rocha",
+  "chwal": "cavalo",
+  "liv": "livro",
+  "ansyen kay": "casa histórica",
+  "moniman": "monumento",
+  // Cinema
+  "sinema": "cinema",
+  "pòp-kòn": "pipoca",
+  "zetwal": "estrelas",
+  "kamera": "câmera",
+  "projèktè": "projetor",
+  "tikè": "ingresso",
+  "chèz": "cadeiras",
+  // Música
+  "gita": "violão/guitarra",
+  "nòt mizik": "notas musicais",
+  "opalè": "alto-falante",
+  "mikwofòn": "microfone",
+  "piano": "piano",
+  "klavye": "teclado musical",
+  "kas": "fones de ouvido",
+  "limyè": "luzes/holofotes",
+  // Lazeres
+  "kap": "pipa",
+  "bisiklèt": "bicicleta",
+  "dra": "toalha de piquenique",
+  "boul": "bola",
+  "balanse": "balanço",
+  "piknik": "cesta de piquenique",
+  "kanna": "pato",
+  // Estoicismo
+  "kolòn": "colunas",
+  "pye oliv": "oliveira",
+  "moun saj": "sábio/filósofo",
+  "pòtay": "portão",
+  "chemen": "caminho",
+  "estati": "estátua",
+  "krich": "jarro/ânfora",
+  "woulo": "pergaminho",
+  // Religião
+  "legliz": "igreja",
+  "bouji": "velas",
+  "pijon": "pomba branca",
+  "kwa": "cruz",
+  "vitral": "vitral",
+  "klòch": "sino",
+  // Gastronomia
+  "legim": "legumes",
+  "tab": "mesa",
+  "asyèt": "prato",
+  "kouto": "faca",
+  "fouchèt": "garfo",
+  "boutèy": "garrafa",
+};
+
+const sceneVariantsTyped = imageSceneVariants as Record<
+  string,
+  {
+    options: string[];
+    labels: Record<string, string>;
+    scenes: { title: string; setting: string; palette: string; objects: string[] }[];
+  }
+>;
+
 const generatedTitles = new Map(generatedImages.map((image) => [image.id, image.title]));
 
 export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
   Array.from({ length: 10 }, (_, variantIndex) => {
     const variant = variantIndex + 1;
     const id = variant === 1 ? image.id : `${image.id}-${String(variant).padStart(2, "0")}`;
+    const variantScene = variant > 1 ? sceneVariantsTyped[image.theme]?.scenes[variant - 2] : undefined;
+    const title =
+      variant === 1
+        ? image.title
+        : generatedTitles.get(id) ?? variantScene?.title ?? `${image.title} — Cena ${variant}`;
+
+    let elements = image.elements;
+    let caption = image.caption;
+
+    if (variantScene && sceneVariantsTyped[image.theme]) {
+      const themeLabels = sceneVariantsTyped[image.theme].labels;
+      elements = variantScene.objects.map((obj) => {
+        const kreyol = themeLabels[obj] ?? obj;
+        return {
+          kreyol,
+          pt: KREYOL_TO_PT[kreyol] ?? kreyol,
+        };
+      });
+      caption = `${title} (${image.theme}): identifique na cena ${elements
+        .map((e) => `${e.pt} (${e.kreyol})`)
+        .join(", ")}.`;
+    }
+
     return {
       ...image,
       id,
-      title: variant === 1 ? image.title : generatedTitles.get(id) ?? `${image.title} — Cena ${variant}`,
+      title,
       src: `/ghibli/${id}.svg`,
+      caption,
       isPrimary: variant === 1,
+      elements,
     };
   })
 );

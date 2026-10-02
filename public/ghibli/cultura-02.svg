@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Festa na praça com bandeirolas - Kilti</title>
-  <desc>Ghibli anime art: Praça haitiana com tambor, bandeira, lanternas e casas coloniais.</desc>
+  <title>Karnaval na praça - Kilti</title>
+  <desc>Ghibli anime art: Carnaval haitiano, máscaras de papier-mâché, dançarinos, tambor e bandeira.</desc>
   
   <defs>
     <!-- Paper watercolor texture filter -->
@@ -119,12 +119,11 @@
     </linearGradient>
   </defs>
   
-  <!-- Warm Golden Sunset Sky -->
   <rect width="1200" height="800" fill="url(#skySunset)" filter="url(#ghibliPaper)" />
   
   <g>
-    <circle cx="600" cy="360" r="189" fill="url(#sunGlowSunset)" />
-    <circle cx="600" cy="360" r="54" fill="#ffdf99" />
+    <circle cx="600" cy="360" r="182" fill="url(#sunGlowSunset)" />
+    <circle cx="600" cy="360" r="52" fill="#ffdf99" />
     <!-- Subtle sun rays -->
     <polygon points="600,360 300,800 480,800" fill="#fffbe6" opacity="0.08" />
     <polygon points="600,360 650,800 840,800" fill="#fffbe6" opacity="0.08" />
@@ -150,7 +149,7 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
   
-  <g transform="translate(960, 180) scale(0.85)" opacity="0.95">
+  <g transform="translate(960, 170) scale(0.85)" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -169,111 +168,49 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
 
-  <!-- Distant Hilltops -->
-  <path d="M-50,530 Q300,460 600,510 T1250,480 L1250,800 L-50,800 Z" fill="#6a3e5c" opacity="0.6"/>
-
-  <!-- BUNTING FESTIVE FLAGS (Bandeirolas coloridas) -->
+  <!-- DRAPO (Bandeiras Bicolores do Haiti e Estandartes do Carnaval em Toda a Praça) -->
   <g>
-    <!-- String 1 -->
-    <path d="M-20,240 Q600,340 1220,260" stroke="#334155" stroke-width="2.5" fill="none"/>
-    <polygon points="46,254.07910185362078 74,254.07910185362078 60,292.0791018536208" fill="#00209f" stroke="#1e293b" stroke-width="1"/><polygon points="146,276.606297876822 174,276.606297876822 160,314.606297876822" fill="#d21034" stroke="#1e293b" stroke-width="1"/><polygon points="246,296.63883519448535 274,296.63883519448535 260,334.63883519448535" fill="#f59e0b" stroke="#1e293b" stroke-width="1"/><polygon points="346,312.8115294937453 374,312.8115294937453 360,350.8115294937453" fill="#10b981" stroke="#1e293b" stroke-width="1"/><polygon points="446,324.02223838474816 474,324.02223838474816 460,362.02223838474816" fill="#ffffff" stroke="#1e293b" stroke-width="1"/><polygon points="546,329.5069705831446 574,329.5069705831446 560,367.5069705831446" fill="#00209f" stroke="#1e293b" stroke-width="1"/><polygon points="646,328.8919506535624 674,328.8919506535624 660,366.8919506535624" fill="#d21034" stroke="#1e293b" stroke-width="1"/><polygon points="746,322.21909118783407 774,322.21909118783407 760,360.21909118783407" fill="#f59e0b" stroke="#1e293b" stroke-width="1"/><polygon points="846,309.9431365311274 874,309.9431365311274 860,347.9431365311274" fill="#10b981" stroke="#1e293b" stroke-width="1"/><polygon points="946,292.9006727063226 974,292.9006727063226 960,330.9006727063226" fill="#ffffff" stroke="#1e293b" stroke-width="1"/><polygon points="1046,272.25311545907704 1074,272.25311545907704 1060,310.25311545907704" fill="#00209f" stroke="#1e293b" stroke-width="1"/><polygon points="1146,249.40756169408883 1174,249.40756169408883 1160,287.4075616940888" fill="#d21034" stroke="#1e293b" stroke-width="1"/>
-
-    <!-- String 2 -->
-    <path d="M-20,320 Q600,410 1220,330" stroke="#334155" stroke-width="2.5" fill="none"/>
-    <polygon points="88,341.99961883371424 112,341.99961883371424 100,373.99961883371424" fill="#d21034" stroke="#1e293b" stroke-width="1"/><polygon points="188,362.5 212,362.5 200,394.5" fill="#00209f" stroke="#1e293b" stroke-width="1"/><polygon points="288,380.1040764008565 312,380.1040764008565 300,412.1040764008565" fill="#ffffff" stroke="#1e293b" stroke-width="1"/><polygon points="388,393.61215932167727 412,393.61215932167727 400,425.61215932167727" fill="#f59e0b" stroke="#1e293b" stroke-width="1"/><polygon points="488,402.1036952345708 512,402.1036952345708 500,434.1036952345708" fill="#8b5cf6" stroke="#1e293b" stroke-width="1"/><polygon points="588,405 612,405 600,437" fill="#d21034" stroke="#1e293b" stroke-width="1"/><polygon points="688,402.1036952345708 712,402.1036952345708 700,434.1036952345708" fill="#00209f" stroke="#1e293b" stroke-width="1"/><polygon points="788,393.61215932167727 812,393.61215932167727 800,425.61215932167727" fill="#ffffff" stroke="#1e293b" stroke-width="1"/><polygon points="888,380.10407640085657 912,380.10407640085657 900,412.10407640085657" fill="#f59e0b" stroke="#1e293b" stroke-width="1"/><polygon points="988,362.5 1012,362.5 1000,394.5" fill="#8b5cf6" stroke="#1e293b" stroke-width="1"/><polygon points="1088,341.9996188337143 1112,341.9996188337143 1100,373.9996188337143" fill="#d21034" stroke="#1e293b" stroke-width="1"/>
+    <path d="M-20,240 Q600,320 1220,250" stroke="#334155" stroke-width="2.5" fill="none"/>
+    <polygon points="105,264.7213595499958 135,264.7213595499958 120,300.7213595499958" fill="#00209f"/><polygon points="225,287.02282018339787 255,287.02282018339787 240,323.02282018339787" fill="#d21034"/><polygon points="345,304.7213595499958 375,304.7213595499958 360,340.7213595499958" fill="#facc15"/><polygon points="465,316.0845213036123 495,316.0845213036123 480,352.0845213036123" fill="#00209f"/><polygon points="585,320 615,320 600,356" fill="#d21034"/><polygon points="705,316.0845213036123 735,316.0845213036123 720,352.0845213036123" fill="#facc15"/><polygon points="825,304.7213595499958 855,304.7213595499958 840,340.7213595499958" fill="#00209f"/><polygon points="945,287.02282018339787 975,287.02282018339787 960,323.02282018339787" fill="#d21034"/><polygon points="1065,264.7213595499958 1095,264.7213595499958 1080,300.7213595499958" fill="#facc15"/>
   </g>
 
-  <!-- KAY (Casas Tradicionais Gingerbread Haitianas) in background -->
-  <!-- Left House (Turquoise & Coral) -->
-  <g transform="translate(180, 560)" filter="url(#dropShadow)">
-    <rect x="-120" y="-140" width="240" height="140" fill="#2dd4bf" stroke="#0f766e" stroke-width="3"/>
-    <!-- Pitch Roof with lace trim -->
-    <polygon points="-140,-140 0,-240 140,-140" fill="#f43f5e" stroke="#be123c" stroke-width="3"/>
-    <!-- Dentelle lace fretwork -->
-    <path d="M-130,-140 Q-115,-125 -100,-140 Q-85,-125 -70,-140 Q-55,-125 -40,-140 Q-25,-125 -10,-140 Q5,-125 20,-140 Q35,-125 50,-140 Q65,-125 80,-140 Q95,-125 110,-140 Q125,-125 130,-140" stroke="#ffffff" stroke-width="4" fill="none"/>
-    <!-- Arched Door & Louvered Windows -->
-    <path d="M-24,0 L-24,-70 Q0,-95 24,-70 L24,0 Z" fill="#92400e" stroke="#451a03" stroke-width="2"/>
-    <rect x="-90" y="-85" width="40" height="50" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-    <rect x="50" y="-85" width="40" height="50" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+  <!-- Plaza Cobblestones -->
+  <path d="M-50,580 L1250,580 L1250,800 L-50,800 Z" fill="#78716c"/>
+
+  <!-- MASK (Máscaras Festivas Tradicionais de Jacmel em Destaque) -->
+  <!-- Mask 1 (Carnival Lion/Dragon Mask on pole) -->
+  <g transform="translate(320, 480)" filter="url(#dropShadow)">
+    <line x1="0" y1="0" x2="0" y2="180" stroke="#543317" stroke-width="6"/>
+    <!-- Sculpted Papier-Mâché Head -->
+    <ellipse cx="0" cy="0" rx="60" ry="50" fill="#dc2626" stroke="#991b1b" stroke-width="3"/>
+    <!-- Yellow mane points -->
+    <polygon points="0,-40 -12,-70 12,-70" fill="#facc15" transform="rotate(-45 0 0)"/><polygon points="0,-40 -12,-70 12,-70" fill="#facc15" transform="rotate(-25 0 0)"/><polygon points="0,-40 -12,-70 12,-70" fill="#facc15" transform="rotate(0 0 0)"/><polygon points="0,-40 -12,-70 12,-70" fill="#facc15" transform="rotate(25 0 0)"/><polygon points="0,-40 -12,-70 12,-70" fill="#facc15" transform="rotate(45 0 0)"/>
+    <!-- Eyes -->
+    <circle cx="-22" cy="-8" r="14" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+    <circle cx="-22" cy="-8" r="6" fill="#0f172a"/>
+    <circle cx="22" cy="-8" r="14" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+    <circle cx="22" cy="-8" r="6" fill="#0f172a"/>
+    <!-- Snout & Teeth -->
+    <polygon points="-12,14 0,32 12,14" fill="#facc15"/>
+    <path d="M-30,28 Q0,48 30,28" stroke="#ffffff" stroke-width="6" fill="none"/>
   </g>
 
-  <!-- Right House (Golden Yellow & Cobalt Blue) -->
-  <g transform="translate(980, 560)" filter="url(#dropShadow)">
-    <rect x="-110" y="-150" width="220" height="150" fill="#fde047" stroke="#ca8a04" stroke-width="3"/>
-    <polygon points="-130,-150 0,-250 130,-150" fill="#2563eb" stroke="#1d4ed8" stroke-width="3"/>
-    <path d="M-120,-150 Q-105,-135 -90,-150 Q-75,-135 -60,-150 Q-45,-135 -30,-150 Q-15,-135 0,-150 Q15,-135 30,-150 Q45,-135 60,-150 Q75,-135 90,-150 Q105,-135 120,-150" stroke="#ffffff" stroke-width="4" fill="none"/>
-    <path d="M-22,0 L-22,-70 Q0,-90 22,-70 L22,0 Z" fill="#92400e" stroke="#451a03" stroke-width="2"/>
-    <rect x="-85" y="-95" width="38" height="52" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-    <rect x="47" y="-95" width="38" height="52" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+  <!-- DANSÈ (Dançarinos do Carnaval com Fantasias de Plumas e Fitas) -->
+  <g transform="translate(620, 520)" filter="url(#dropShadow)">
+    <ellipse cx="0" cy="180" rx="60" ry="16" fill="#000000" opacity="0.35"/>
+    <!-- Dancing Figure with Feathers & Colorful Skirt -->
+    <path d="M-15,-20 C-60,30 -80,100 -50,110 C0,120 40,110 60,80 C70,40 30,-20 15,-20 Z" fill="#facc15" stroke="#ca8a04" stroke-width="2.5"/>
+    <path d="M-40,85 Q0,105 40,85" stroke="#ef4444" stroke-width="6" fill="none"/>
+    <circle cx="0" cy="-55" r="14" fill="#8c5836"/>
+    <!-- Headdress with Tall Colorful Carnival Feathers -->
+    <path d="M0,-65 Q-60,-140 -88,-110" stroke="#ef4444" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M0,-65 Q-30,-140 -44,-110" stroke="#3b82f6" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M0,-65 Q0,-140 0,-110" stroke="#10b981" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M0,-65 Q30,-140 44,-110" stroke="#facc15" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M0,-65 Q60,-140 88,-110" stroke="#ec4899" stroke-width="7" stroke-linecap="round" fill="none"/>
   </g>
 
-  <!-- Cobblestone Town Square Plaza -->
-  <path d="M-50,620 Q600,560 1250,620 L1250,800 L-50,800 Z" fill="#78716c"/>
-  <ellipse cx="600" cy="740" rx="480" ry="120" fill="#a8a29e" opacity="0.4"/>
-
-  <!-- DRAPO (Bandeira do Haiti) on central flagpole -->
-  <g transform="translate(380, 240)" filter="url(#dropShadow)">
-    <!-- Flagpole -->
-    <line x1="0" y1="0" x2="0" y2="400" stroke="#d6d3d1" stroke-width="7" stroke-linecap="round"/>
-    <circle cx="0" cy="0" r="9" fill="#f59e0b"/>
-    <!-- Flag waving -->
-    <!-- Top Blue -->
-    <path d="M0,10 Q50,-4 100,10 T200,10 L200,75 Q150,60 100,75 T0,75 Z" fill="#00209f"/>
-    <!-- Bottom Red -->
-    <path d="M0,75 Q50,60 100,75 T200,75 L200,140 Q150,126 100,140 T0,140 Z" fill="#d21034"/>
-    <!-- White center panel with Arms silhouette -->
-    <rect x="75" y="55" width="50" height="40" rx="3" fill="#ffffff"/>
-    <circle cx="100" cy="72" r="10" fill="#15803d"/>
-    <line x1="100" y1="62" x2="100" y2="82" stroke="#854d0e" stroke-width="2.5"/>
-  </g>
-
-  <!-- LANP (Lanternas / Lâmpadas Festivas) hanging with warm glow -->
-  <g transform="translate(480, 420)" filter="url(#dropShadow)">
-    <line x1="0" y1="-80" x2="0" y2="0" stroke="#334155" stroke-width="2"/>
-    <!-- Glow halo -->
-    <circle cx="0" cy="15" r="42" fill="#fef08a" opacity="0.3" filter="url(#softGlow)"/>
-    <!-- Glass & Brass Kerosene Lamp (Lanp tèt gridap) -->
-    <ellipse cx="0" cy="18" rx="20" ry="24" fill="#fef08a" opacity="0.85" stroke="#b45309" stroke-width="2"/>
-    <ellipse cx="0" cy="16" rx="6" ry="12" fill="#f97316"/> <!-- Flame -->
-    <ellipse cx="0" cy="18" rx="3" ry="7" fill="#ffffff"/>
-    <rect x="-14" y="38" width="28" height="12" rx="3" fill="#78350f"/>
-    <rect x="-10" y="-8" width="20" height="8" rx="2" fill="#78350f"/>
-  </g>
-
-  <g transform="translate(740, 400)" filter="url(#dropShadow)">
-    <line x1="0" y1="-70" x2="0" y2="0" stroke="#334155" stroke-width="2"/>
-    <circle cx="0" cy="15" r="42" fill="#fef08a" opacity="0.3" filter="url(#softGlow)"/>
-    <ellipse cx="0" cy="18" rx="20" ry="24" fill="#fef08a" opacity="0.85" stroke="#b45309" stroke-width="2"/>
-    <ellipse cx="0" cy="16" rx="6" ry="12" fill="#f97316"/>
-    <ellipse cx="0" cy="18" rx="3" ry="7" fill="#ffffff"/>
-    <rect x="-14" y="38" width="28" height="12" rx="3" fill="#78350f"/>
-    <rect x="-10" y="-8" width="20" height="8" rx="2" fill="#78350f"/>
-  </g>
-
-  <!-- TANBOU (Tambor Tradicional Haitiano Grandioso) in foreground -->
-  <g transform="translate(620, 680)" filter="url(#dropShadow)">
-    <!-- Shadow on cobblestones -->
-    <ellipse cx="0" cy="72" rx="68" ry="18" fill="#000000" opacity="0.35"/>
-    
-    <!-- Wooden Drum Body (Hand-carved Mahogany) -->
-    <path d="M-52,-70 L52,-70 Q62,10 42,70 L-42,70 Q-62,10 -52,-70 Z" fill="url(#woodTone)" stroke="#451a03" stroke-width="3"/>
-    
-    <!-- Natural Goatskin Drumhead Top -->
-    <ellipse cx="0" cy="-70" rx="52" ry="16" fill="#fef3c7" stroke="#78350f" stroke-width="3"/>
-    <ellipse cx="0" cy="-70" rx="46" ry="13" fill="#fde68a" opacity="0.7"/>
-    <ellipse cx="-4" cy="-71" rx="26" ry="8" fill="#d97706" opacity="0.25"/> <!-- Playing wear -->
-
-    <!-- Metal hoops and tuning ropes (Kòd tanbou) -->
-    <ellipse cx="0" cy="-56" rx="54" ry="16" fill="none" stroke="#292524" stroke-width="5"/>
-    <ellipse cx="0" cy="20" rx="51" ry="15" fill="none" stroke="#292524" stroke-width="4"/>
-    <ellipse cx="0" cy="66" rx="43" ry="12" fill="none" stroke="#292524" stroke-width="4"/>
-
-    <!-- V-laced tension cords -->
-    <path d="M-50,-56 L-30,20 L-10,-56 L10,20 L30,-56 L50,20" stroke="#facc15" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    <path d="M-40,20 L-20,66 L0,20 L20,66 L40,20" stroke="#facc15" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-
-    <!-- Drum tuning peg -->
-    <polygon points="52,-20 68,-14 66,-24" fill="#a16207"/>
-    <polygon points="-52,-20 -68,-14 -66,-24" fill="#a16207"/>
+  <!-- TANBOU (Tambores Rara / Tanbou Vibrando com a Multidão) -->
+  <g transform="translate(860, 600)" filter="url(#dropShadow)">
+    <ellipse cx="0" cy="65" rx="55" ry="16" fill="#000000" opacity="0.35"/>
+    <path d="M-42,-60 L42,-60 Q52,10 32,60 L-32,60 Q-52,10 -42,-60 Z" fill="url(#woodTone)" stroke="#451a03" stroke-width="3"/>
+    <ellipse cx="0" cy="-60" rx="42" ry="14" fill="#fef3c7" stroke="#78350f" stroke-width="2.5"/>
+    <path d="M-40,-50 L-20,15 L0,-50 L20,15 L40,-50" stroke="#facc15" stroke-width="3.5" fill="none"/>
   </g>
 </svg>

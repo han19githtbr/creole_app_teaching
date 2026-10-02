@@ -16,9 +16,9 @@
   --text-secondary: #57534e;
   --text-muted: #a8a29e;
 
-  --accent: #3730a3;
+  --accent: #280ed1;
   --accent-hover: #2f2a8f;
-  --accent-soft: #eef2ff;
+  --accent-soft: #3a1df4;
 
   --background: var(--bg);
   --foreground: var(--text);

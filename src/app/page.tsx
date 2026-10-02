@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <section className="relative overflow-hidden bg-[#1c1917]">
+      <section className="relative overflow-hidden bg-[#040404]">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/40 via-transparent to-[#dc2626]/20" />
         <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 py-24 text-center">
           <span className="mb-4 text-5xl">🇭🇹</span>

@@ -3,14 +3,20 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { upload } from "@vercel/blob/client";
-import { ImagePlus, Images, Sparkles, Trash2, UploadCloud } from "lucide-react";
+import { ImagePlus, Images, Plus, Sparkles, Trash2, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { ImageBankPicker } from "@/components/ImageBankPicker";
 import { PostCard } from "@/components/PostCard";
 import { getBankImage, type BankImage } from "@/lib/imageBank";
-import { getDefaultImageQuiz, isValidImageQuiz, type ImageQuizConfig } from "@/lib/imageQuiz";
+import {
+  getDefaultImageQuiz,
+  isValidImageQuiz,
+  MAX_IMAGE_QUIZ_OPTIONS,
+  MIN_IMAGE_QUIZ_OPTIONS,
+  type ImageQuizConfig,
+} from "@/lib/imageQuiz";
 import { cn } from "@/lib/utils";
 
 interface PostFormValues {
@@ -93,6 +99,18 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
     }
   }
 
+  function addQuizOption() {
+    setQuizOptions((options) =>
+      options.length < MAX_IMAGE_QUIZ_OPTIONS ? [...options, ""] : options
+    );
+  }
+
+  function removeQuizOption(index: number) {
+    const removedWord = quizOptions[index];
+    setQuizOptions((options) => options.filter((_, optionIndex) => optionIndex !== index));
+    setQuizAnswers((answers) => answers.filter((answer) => answer !== removedWord));
+  }
+
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -132,7 +150,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
       ? { options: quizOptions, answers: quizAnswers }
       : null;
     if (imageUrl && quizEnabled && !isValidImageQuiz(imageQuiz)) {
-      setError("Preencha as dez palavras e marque pelo menos uma resposta correta.");
+      setError(`Informe de ${MIN_IMAGE_QUIZ_OPTIONS} a ${MAX_IMAGE_QUIZ_OPTIONS} palavras únicas e marque ao menos uma resposta correta.`);
       return;
     }
     setSaving(true);
@@ -329,7 +347,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
           />
           <span>
             <span className="block font-medium text-[var(--text)]">Ativar jogo de palavras para esta imagem</span>
-            <span className="mt-0.5 block text-xs text-[var(--text-muted)]">As imagens do banco já vêm com opções e gabarito; em uploads, informe as dez opções corretas manualmente.</span>
+            <span className="mt-0.5 block text-xs text-[var(--text-muted)]">Revise a gramática das sugestões, adicione ou remova palavras e marque as respostas corretas.</span>
           </span>
         </label>
       )}
@@ -340,20 +358,32 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
             <div>
               <h3 className="text-sm font-semibold text-[var(--text)]">Jogo de palavras em Kreyòl</h3>
               <p className="mt-1 text-xs text-[var(--text-muted)]">
-                Defina dez opções e marque todas as palavras que representam elementos visíveis na imagem.
+                Mantenha de {MIN_IMAGE_QUIZ_OPTIONS} a {MAX_IMAGE_QUIZ_OPTIONS} palavras únicas e marque todas as que aparecem na imagem.
               </p>
             </div>
-            {bankImage?.elements && (
+            <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
                 size="sm"
                 variant="outline"
-                onClick={handleAutoSelectQuizAnswers}
+                onClick={addQuizOption}
+                disabled={quizOptions.length >= MAX_IMAGE_QUIZ_OPTIONS}
                 className="text-xs"
               >
-                <Sparkles className="h-3.5 w-3.5 text-amber-500" /> Marcar elementos visíveis ({quizAnswers.length} marcadas)
+                <Plus className="h-3.5 w-3.5" /> Adicionar palavra
               </Button>
-            )}
+              {bankImage?.elements && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={handleAutoSelectQuizAnswers}
+                  className="text-xs"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-amber-500" /> Marcar elementos visíveis ({quizAnswers.length} marcadas)
+                </Button>
+              )}
+            </div>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             {quizOptions.map((word, index) => {
@@ -384,7 +414,9 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
                         setQuizOptions((options) =>
                           options.map((item, itemIndex) => (itemIndex === index ? value : item))
                         );
-                        setQuizAnswers((answers) => answers.filter((answer) => answer !== word));
+                        setQuizAnswers((answers) =>
+                          answers.map((answer) => (answer === word ? value : answer))
+                        );
                       }}
                       placeholder={`Opção ${index + 1} em Kreyòl`}
                       maxLength={40}
@@ -397,12 +429,24 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
                       </span>
                     )}
                   </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    disabled={quizOptions.length <= MIN_IMAGE_QUIZ_OPTIONS}
+                    onClick={() => removeQuizOption(index)}
+                    aria-label={`Remover palavra ${index + 1}`}
+                    title="Remover palavra"
+                    className="h-9 w-9 px-0 text-[var(--text-muted)] hover:text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               );
             })}
           </div>
           <p className="text-[11px] text-[var(--text-muted)]">
-            Caixa marcada = resposta correta. O aluno terá três tentativas para encontrar as palavras certas na ilustração Ghibli.
+            {quizOptions.length}/{MAX_IMAGE_QUIZ_OPTIONS} palavras. Caixa marcada = resposta correta; ao editar uma palavra marcada, o gabarito acompanha a correção. O aluno terá três tentativas.
           </p>
         </section>
       )}

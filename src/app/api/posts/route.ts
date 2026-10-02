@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Imagem inválida." }, { status: 400 });
   }
   if (imageQuiz != null && !isValidImageQuiz(imageQuiz)) {
-    return NextResponse.json({ error: "Configure dez opções e marque ao menos uma resposta correta para a imagem." }, { status: 400 });
+    return NextResponse.json({ error: "Informe de duas a vinte palavras únicas e marque ao menos uma resposta correta para a imagem." }, { status: 400 });
   }
   if (!String(content).trim() && !imageUrl) {
     return NextResponse.json(

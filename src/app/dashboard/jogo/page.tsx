@@ -4,7 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { getBankImage, IMAGE_BANK } from "@/lib/imageBank";
-import { getDefaultImageQuiz } from "@/lib/imageQuiz";
+import { getDefaultImageQuiz, isValidImageQuiz } from "@/lib/imageQuiz";
 import Post from "@/models/Post";
 import { ImageQuizGame, type ImageQuizChallenge } from "@/components/ImageQuizGame";
 
@@ -41,19 +41,13 @@ export default async function ImageQuizPage({
     if (!post.imageUrl) notFound();
 
     const image = getBankImage(post.imageUrl);
-    const hasCustomQuiz = Boolean(
-      post.imageQuiz &&
-        Array.isArray(post.imageQuiz.options) &&
-        post.imageQuiz.options.length === 10 &&
-        Array.isArray(post.imageQuiz.answers) &&
-        post.imageQuiz.answers.length > 0
-    );
+    const hasCustomQuiz = Boolean(post.imageQuiz && isValidImageQuiz(post.imageQuiz));
     const quiz = hasCustomQuiz
       ? post.imageQuiz
       : image
       ? getDefaultImageQuiz(image.theme, image.id)
       : undefined;
-    if (!quiz || !quiz.options || quiz.options.length !== 10 || !quiz.answers?.length) notFound();
+    if (!quiz || !isValidImageQuiz(quiz)) notFound();
     challenge = {
       id: String(post._id),
       postId: String(post._id),

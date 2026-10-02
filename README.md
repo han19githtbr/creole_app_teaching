@@ -46,6 +46,7 @@ O mesmo critério é usado nas listagens de lições, na página individual e no
 
 - Criar e editar lições, controlar publicação e anunciar conteúdo.
 - Criar e gerenciar postagens e vídeos, incluindo expiração/agendamento disponíveis.
+- Configurar o jogo de palavras por imagem: adicionar, corrigir ou remover opções (de 2 a 20 palavras únicas) e definir quais são respostas corretas.
 - Revisar respostas dos alunos.
 - Controlar sessões ao vivo.
 
@@ -64,6 +65,7 @@ O mesmo critério é usado nas listagens de lições, na página individual e no
 - Publicação e agendamento de vídeos, likes e comentários.
 - XP, moedas Goud, níveis, conquistas e títulos honoríficos.
 - Quiz de imagens com feedback visual e sonoro.
+- Nas postagens com imagem, as palavras e o gabarito podem ser ajustados no editor; corrigir a grafia de uma resposta marcada mantém essa palavra como correta.
 
 ## Estrutura principal
 

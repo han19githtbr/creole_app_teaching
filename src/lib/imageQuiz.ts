@@ -5,6 +5,9 @@ export interface ImageQuizConfig {
   answers: string[];
 }
 
+export const MIN_IMAGE_QUIZ_OPTIONS = 2;
+export const MAX_IMAGE_QUIZ_OPTIONS = 20;
+
 const THEME_QUIZZES: Record<string, ImageQuizConfig> = {
   Tecnologia: { options: ["òdinatè", "robo", "dròn", "moulen van", "tanbou", "legliz", "papiyon", "bato", "bouji", "pòm"], answers: ["òdinatè", "robo", "dròn", "moulen van"] },
   Natureza: { options: ["pyebwa", "flè", "papiyon", "zwazo", "robo", "dròn", "tanbou", "legliz", "bato", "òdinatè"], answers: ["pyebwa", "flè", "papiyon", "zwazo"] },
@@ -45,12 +48,16 @@ export function isValidImageQuiz(value: unknown): value is ImageQuizConfig {
   if (!value || typeof value !== "object") return false;
   const quiz = value as Partial<ImageQuizConfig>;
   if (!Array.isArray(quiz.options) || !Array.isArray(quiz.answers)) return false;
-  if (quiz.options.length !== 10 || quiz.answers.length < 1) return false;
+  if (
+    quiz.options.length < MIN_IMAGE_QUIZ_OPTIONS ||
+    quiz.options.length > MAX_IMAGE_QUIZ_OPTIONS ||
+    quiz.answers.length < 1
+  ) return false;
   if (quiz.options.some((word) => typeof word !== "string" || !word.trim())) return false;
   if (quiz.answers.some((word) => typeof word !== "string" || !word.trim())) return false;
   const options = quiz.options.map((word) => word.trim().toLocaleLowerCase());
   const answers = quiz.answers.map((word) => word.trim().toLocaleLowerCase());
-  return new Set(options).size === 10 && answers.every((word) => options.includes(word));
+  return new Set(options).size === options.length && answers.every((word) => options.includes(word));
 }
 
 export function normalizeImageQuiz(value: ImageQuizConfig): ImageQuizConfig {

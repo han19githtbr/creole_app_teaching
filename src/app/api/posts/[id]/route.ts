@@ -47,7 +47,7 @@ export async function PUT(
     if (imageQuiz === null) {
       post.imageQuiz = undefined;
     } else if (post.imageUrl && !isValidImageQuiz(imageQuiz)) {
-      return NextResponse.json({ error: "Configure dez opções e marque ao menos uma resposta correta para a imagem." }, { status: 400 });
+      return NextResponse.json({ error: "Informe de duas a vinte palavras únicas e marque ao menos uma resposta correta para a imagem." }, { status: 400 });
     } else if (post.imageUrl) {
       post.imageQuiz = normalizeImageQuiz(imageQuiz);
     }

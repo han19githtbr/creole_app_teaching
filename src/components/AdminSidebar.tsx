@@ -30,11 +30,11 @@ export function AdminSidebar({ pendingAnswers = 0 }: { pendingAnswers?: number }
               className={cn(
                 "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 active
-                  ? "bg-[var(--accent-soft)] text-[var(--accent)] font-semibold"
+                  ? "bg-[var(--accent-soft)] text-white font-bold [&_svg]:stroke-[2.5]"
                   : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-4 w-4" strokeWidth={active ? 2.5 : 2} />
               {label}
               {href === "/admin/answers" && pendingAnswers > 0 && (
                 <span className="ml-auto rounded-full bg-amber-400 px-1.5 text-[11px] font-bold leading-5 text-amber-950">

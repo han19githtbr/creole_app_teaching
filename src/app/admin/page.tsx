@@ -73,7 +73,7 @@ function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; va
   return (
     <Card>
       <CardContent className="flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] shadow-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-white shadow-sm [&_svg]:stroke-[2.5]">
           {icon}
         </div>
         <div>

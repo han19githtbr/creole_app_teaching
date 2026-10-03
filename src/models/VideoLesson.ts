@@ -21,6 +21,20 @@ export interface IVideoCustomization {
   bannerText?: string;
 }
 
+export interface IVideoStoryCaption {
+  start: number;
+  end: number;
+  kreyol: string;
+  portuguese: string;
+}
+
+export interface IVideoStory {
+  imageSrc: string;
+  theme: string;
+  audioUrl: string;
+  captions: IVideoStoryCaption[];
+}
+
 export interface IVideoLesson extends Document {
   title: string;
   description: string;
@@ -33,6 +47,7 @@ export interface IVideoLesson extends Document {
   publishAt?: Date | null;
   announcedAt?: Date | null;
   isLiveRecording: boolean;
+  story?: IVideoStory;
   customization: IVideoCustomization;
   likes: string[]; // array of user emails
   comments: IVideoComment[];
@@ -66,6 +81,26 @@ const VideoCustomizationSchema = new Schema<IVideoCustomization>(
   { _id: false }
 );
 
+const VideoStoryCaptionSchema = new Schema<IVideoStoryCaption>(
+  {
+    start: { type: Number, required: true, min: 0, max: 300 },
+    end: { type: Number, required: true, min: 0, max: 300 },
+    kreyol: { type: String, required: true, trim: true },
+    portuguese: { type: String, required: true, trim: true },
+  },
+  { _id: false }
+);
+
+const VideoStorySchema = new Schema<IVideoStory>(
+  {
+    imageSrc: { type: String, required: true },
+    theme: { type: String, required: true },
+    audioUrl: { type: String, required: true },
+    captions: { type: [VideoStoryCaptionSchema], default: [] },
+  },
+  { _id: false }
+);
+
 const VideoLessonSchema = new Schema<IVideoLesson>(
   {
     title: { type: String, required: true },
@@ -79,6 +114,7 @@ const VideoLessonSchema = new Schema<IVideoLesson>(
     publishAt: { type: Date, default: null },
     announcedAt: { type: Date, default: null },
     isLiveRecording: { type: Boolean, default: false },
+    story: { type: VideoStorySchema, default: undefined },
     customization: { type: VideoCustomizationSchema, default: () => ({}) },
     likes: { type: [String], default: [] },
     comments: { type: [VideoCommentSchema], default: [] },

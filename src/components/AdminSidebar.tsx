@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, BookOpen, MessageSquare, MessageCircleQuestion, Radio, Video } from "lucide-react";
+import { LayoutDashboard, BookOpen, MessageSquare, MessageCircleQuestion, Radio, Video, Sparkles } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Painel geral", icon: LayoutDashboard },
   { href: "/admin/videos", label: "Vídeos e Gravações", icon: Video },
+  { href: "/admin/stories", label: "Histórias", icon: Sparkles },
   { href: "/admin/lessons", label: "Lições", icon: BookOpen },
   { href: "/admin/posts", label: "Postagens", icon: MessageSquare },
   { href: "/admin/answers", label: "Respostas", icon: MessageCircleQuestion },

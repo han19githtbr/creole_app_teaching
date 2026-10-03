@@ -7,12 +7,13 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
-import { BookOpen, Gamepad2, LayoutDashboard, Menu, Radio, ShieldCheck, Video, X } from "lucide-react";
+import { BookOpen, Gamepad2, LayoutDashboard, Menu, Radio, ShieldCheck, Sparkles, Video, X } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
   { href: "/dashboard/lessons", label: "Lições", icon: BookOpen },
   { href: "/dashboard/videos", label: "Vídeos", icon: Video },
+  { href: "/dashboard/stories", label: "Histórias", icon: Sparkles },
   { href: "/dashboard/jogo", label: "Jogo", icon: Gamepad2 },
   { href: "/live", label: "Ao vivo", icon: Radio },
 ];

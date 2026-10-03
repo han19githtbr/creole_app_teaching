@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
@@ -21,8 +21,15 @@ const NAV_LINKS = [
 export function Navbar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
   const role = session?.user?.role;
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (pathname?.startsWith("/admin") && status === "unauthenticated") {
+      router.replace("/");
+    }
+  }, [pathname, router, status]);
 
   const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname?.startsWith(href + "/"));
 
@@ -84,7 +91,7 @@ export function Navbar() {
                 variant="outline"
                 size="sm"
                 className="hidden md:inline-flex"
-                onClick={() => signOut()}
+                onClick={() => signOut({ callbackUrl: "/" })}
               >
                 Sair
               </Button>
@@ -132,7 +139,7 @@ export function Navbar() {
             type="button"
             onClick={() => {
               setMobileOpen(false);
-              signOut();
+              signOut({ callbackUrl: "/" });
             }}
             className="mt-1 flex items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-2)] cursor-pointer"
           >

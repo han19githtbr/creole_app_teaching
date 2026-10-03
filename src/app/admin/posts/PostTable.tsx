@@ -53,13 +53,17 @@ export function PostTable({ posts }: { posts: PostRow[] }) {
             return (
               <tr key={post._id} className="border-b border-[var(--border-soft)] last:border-0">
                 <td className="px-4 py-3 font-medium text-[var(--text)]">
-                  <div className="flex items-center gap-3">
+                  <Link
+                    href={`/admin/posts/${post._id}`}
+                    aria-label={`Ver detalhes da postagem: ${post.title}`}
+                    className="group flex items-center gap-3 transition-colors hover:text-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+                  >
                     {post.imageUrl && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={post.imageUrl} alt="" className="h-10 w-14 shrink-0 rounded-md object-cover" />
                     )}
-                    <span className="min-w-0 break-words">{post.title}</span>
-                  </div>
+                    <span className="min-w-0 break-words group-hover:underline">{post.title}</span>
+                  </Link>
                 </td>
                 <td className="px-4 py-3">
                   {!post.isPublished ? (

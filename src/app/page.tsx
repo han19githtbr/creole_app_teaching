@@ -31,11 +31,11 @@ export default function Home() {
         <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 py-24 text-center">
           <span className="mb-4 text-5xl">🇭🇹</span>
           <h1 className="text-4xl font-bold text-white sm:text-5xl">
-            Aprenda Kreyòl Ayisyen
+            Aprenda Crioulo Haitiano
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-[var(--border-strong)]">
-            Curso completo de crioulo haitiano: comunicação, gramática, turismo,
-            cultura e linguagem cristã — com lições estruturadas, postagens do
+            Curso de crioulo ao redor de temas como : comunicação, gramática, turismo,
+            cultura, religião e vários outros — com lições estruturadas, postagens do
             professor e aulas ao vivo.
           </p>
           <Button
@@ -52,17 +52,17 @@ export default function Home() {
         <Feature
           icon={<BookOpen className="h-6 w-6" />}
           title="26 lições completas"
-          description="Gramática, vocabulário, diálogos, cultura e referência — todo o conteúdo da apostila, organizado por categoria."
+          description="Gramática, vocabulário, diálogos, cultura e referência ."
         />
         <Feature
           icon={<Radio className="h-6 w-6" />}
           title="Aulas ao vivo"
-          description="Participe de aulas em tempo real com o professor, com chat e controle de câmera/microfone."
+          description="Participe de aulas em tempo real com o professor e chat ao vivo."
         />
         <Feature
           icon={<GraduationCap className="h-6 w-6" />}
           title="Exercícios e gabarito"
-          description="Banco de exercícios em 8 estilos diferentes, com gabarito comentado para praticar no seu ritmo."
+          description="Banco de exercícios em estilos diferentes, com gabarito comentado para praticar no seu ritmo."
         />
       </section>
 

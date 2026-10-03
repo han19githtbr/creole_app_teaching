@@ -89,7 +89,7 @@ export function LessonTable({ lessons }: { lessons: LessonRow[] }) {
                       <Bell className="h-3 w-3" /> Anunciada
                     </Badge>
                   ) : (
-                    <Badge variant="outline">Não anunciada</Badge>
+                    <Badge variant="outline" className="whitespace-nowrap">Não anunciada</Badge>
                   )}
                 </td>
                 <td className="px-4 py-3">

@@ -23,7 +23,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - Painel do aluno com progresso, conteúdo recente e central de notificações.
 - Postagens com texto e/ou imagem (banco de ilustrações ou upload), respostas dos alunos revisadas pelo administrador e jogo de identificação de palavras na imagem.
 - Vídeos com likes, comentários, gravação no navegador e agendamento.
-- **Histórias**: uma cena ilustrada + narração em Kreyòl (gravada, enviada ou convertida de MP4) + legendas em Kreyòl e português, com exportação de vídeo vertical.
+- **Histórias**: uma cena ilustrada + narração em Kreyòl (gravada, enviada ou convertida de MP4) + legendas em Kreyòl e português, com exportação de vídeo vertical e rótulos visuais dos elementos posicionados de forma clara para cada cena.
 - Aulas ao vivo com LiveKit, quando configurado.
 - Fundo virtual (MediaPipe) na gravação de vídeos e nas aulas ao vivo.
 - PWA com service worker, página offline e Web Push opcional.
@@ -72,6 +72,7 @@ Toda a animação depende somente do **tempo atual do áudio** e da **duração 
 
 - **Legendas**: aparecem entre o início e o fim definidos, lidos do relógio do áudio.
 - **Elementos da cena**: cada elemento fica oculto até o seu momento, entra com fade e zoom em 0,6 s, fica em destaque (cor dourada) até o início do próximo e depois permanece visível, discreto. Sem marcação manual, os 4 elementos se dividem igualmente ao longo da narração (em 60 s: 0, 15, 30 e 45 s). Os momentos podem ser ajustados no formulário (campo **Elementos da cena**) para coincidir com o instante em que você fala cada palavra; o botão **Distribuir automaticamente** volta à divisão igual.
+- **Posicionamento visual dos rótulos**: cada cena tem um layout específico para que os nomes dos elementos fiquem acima dos objetos e não escondam a imagem nem a legenda principal. A experiência foi refinada para manter a leitura clara em todas as ilustrações do banco, sem sobreposição visual.
 - **Cena**: zoom suave (de 100% a 105%) e leve deriva distribuídos por **toda** a narração, qualquer que seja a duração. A barra de progresso e o contador `mm:ss / mm:ss` usam a duração real.
 - **Legendas no formulário**: ao enviar/gravar/converter a narração, se o roteiro ainda estiver vazio, os trechos são criados já dentro da duração (cerca de um por minuto, no máximo 12). O botão **Redistribuir tempos** divide os trechos existentes igualmente pela duração. Os tempos aceitam décimos de segundo.
 - **Na troca da narração**, os momentos dos elementos voltam à divisão automática (eles pertenciam ao áudio anterior). As legendas são mantidas; revise os tempos com **Redistribuir tempos**.
@@ -81,6 +82,7 @@ Toda a animação depende somente do **tempo atual do áudio** e da **duração 
 No player, **Baixar vídeo vertical** gera um vídeo 9:16 (1080×1920) com a cena, o título, os elementos, as legendas e a barra de progresso.
 
 - O vídeo é gravado **em tempo real** no navegador (canvas + `MediaRecorder`), portanto demora tanto quanto a narração. Mantenha a aba aberta e visível: se ela ficar em segundo plano, a exportação é cancelada para não gerar um vídeo fora de sincronia.
+- Os rótulos dos elementos seguem o layout específico da cena durante toda a narração, preservando clareza e fluidez na experiência visual do usuário final.
 - Os quadros são desenhados a partir do relógio do áudio, não do relógio de parede.
 - O formato é MP4 quando o navegador consegue gravar MP4 (Chrome e Edge recentes); caso contrário, WebM, com um aviso para converter antes de publicar no Instagram.
 - É necessário um navegador com `MediaRecorder` e `captureStream` (Chrome, Edge ou Firefox atuais).
@@ -129,7 +131,7 @@ O mesmo critério é usado nas listagens de lições, na página individual e no
 - Jogo de palavras por imagem: adicionar, corrigir ou remover opções (de 2 a 20 palavras únicas) e definir quais são respostas corretas.
 - Respostas: revisar as respostas dos alunos (em análise, correta ou incorreta, com texto do professor).
 - Vídeos: enviar (até 500 MB), gravar no estúdio, editar, publicar e agendar.
-- **Histórias**: criar, editar, pré-visualizar, publicar, agendar e excluir.
+- **Histórias**: criar, editar, pré-visualizar, publicar, agendar e excluir, com posicionamento visual refinado dos elementos da cena para leitura clara e sem sobreposição.
 - Aula ao vivo: iniciar e encerrar sessões, com fundo virtual.
 - Painel geral com estatísticas.
 

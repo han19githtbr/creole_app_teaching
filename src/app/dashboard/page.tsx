@@ -38,12 +38,15 @@ export default async function DashboardPage() {
     ? {}
     : { isPublished: true, announcedAt: { $ne: null } };
 
-  const videoMatch = isAdmin
-    ? {}
-    : {
-        isPublished: true,
-        $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
-      };
+  const videoMatch = {
+    story: { $exists: false },
+    ...(isAdmin
+      ? {}
+      : {
+          isPublished: true,
+          $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
+        }),
+  };
 
   const [posts, live, categoryCounts, currentUser, recentVideos, recentLessons] = await Promise.all([
     Post.find({

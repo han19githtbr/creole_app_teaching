@@ -17,12 +17,15 @@ export default async function DashboardVideosPage() {
   const isAdmin = session.user.role === "admin";
   const now = new Date();
 
-  const filter = isAdmin
-    ? {}
-    : {
-        isPublished: true,
-        $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
-      };
+  const filter = {
+    story: { $exists: false },
+    ...(isAdmin
+      ? {}
+      : {
+          isPublished: true,
+          $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
+        }),
+  };
 
   const videos = await VideoLesson.find(filter)
     .sort({ createdAt: -1 })

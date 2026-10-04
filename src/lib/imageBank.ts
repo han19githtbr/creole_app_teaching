@@ -7,6 +7,13 @@ export interface BankElement {
   pt: string;
 }
 
+export interface StoryLabelLayout {
+  top: number;
+  left: number;
+  width: number;
+  align: "center" | "left" | "right";
+}
+
 export interface BankImage {
   id: string;
   theme: string;
@@ -19,11 +26,30 @@ export interface BankImage {
   /** Tema animado do estúdio (VIDEO_BACKGROUNDS) mais parecido */
   ambientTheme: string;
   isPrimary: boolean;
+  /** Ajuste visual fino para posicionar os rótulos acima dos elementos visuais de cada cena. */
+  labelLayout?: StoryLabelLayout;
   /** Elementos reconhecíveis na cena para o jogo e lições */
   elements: BankElement[];
 }
 
-const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary">[] = [
+const STORY_LABEL_LAYOUTS: Record<string, StoryLabelLayout> = {
+  tecnologia: { top: 13, left: 49, width: 80, align: "center" },
+  natureza: { top: 12, left: 52, width: 84, align: "center" },
+  cultura: { top: 11, left: 50, width: 72, align: "center" },
+  turismo: { top: 13, left: 51, width: 82, align: "center" },
+  interior: { top: 10, left: 50, width: 86, align: "center" },
+  danca: { top: 10, left: 47, width: 76, align: "center" },
+  geografia: { top: 11, left: 53, width: 80, align: "center" },
+  historia: { top: 12, left: 52, width: 78, align: "center" },
+  cinema: { top: 11, left: 54, width: 76, align: "center" },
+  musica: { top: 12, left: 48, width: 74, align: "center" },
+  lazeres: { top: 11, left: 52, width: 82, align: "center" },
+  estoicismo: { top: 12, left: 50, width: 74, align: "center" },
+  religiao: { top: 12, left: 50, width: 78, align: "center" },
+  gastronomia: { top: 12, left: 50, width: 80, align: "center" },
+};
+
+const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary" | "labelLayout">[] = [
   {
     id: "tecnologia",
     theme: "Tecnologia",
@@ -405,6 +431,7 @@ export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
       src: `/ghibli/${id}.svg`,
       caption,
       isPrimary: variant === 1,
+      labelLayout: STORY_LABEL_LAYOUTS[image.id] ?? { top: 12, left: 50, width: 78, align: "center" },
       elements,
     };
   })
@@ -415,6 +442,11 @@ export const IMAGE_THEMES = IMAGE_THEMES_DATA.map((image) => image.theme);
 export function getBankImage(idOrSrc: string | null | undefined): BankImage | undefined {
   if (!idOrSrc) return undefined;
   return IMAGE_BANK.find((i) => i.id === idOrSrc || i.src === idOrSrc);
+}
+
+export function getStoryLabelLayout(idOrSrc: string | null | undefined): StoryLabelLayout {
+  const bankImage = getBankImage(idOrSrc);
+  return bankImage?.labelLayout ?? { top: 12, left: 50, width: 78, align: "center" };
 }
 
 /** URLs de imagem aceitas em postagens: banco Ghibli (/ghibli/* em svg, png, webp, jpg) ou upload Vercel Blob. */

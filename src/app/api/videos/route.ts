@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const isAdmin = session.user.role === "admin";
 
   const now = new Date();
-  const filter: Record<string, unknown> = {};
+  const filter: Record<string, unknown> = { story: { $exists: false } };
 
   if (!isAdmin || !showAll) {
     filter.isPublished = true;

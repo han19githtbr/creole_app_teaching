@@ -55,6 +55,7 @@ export async function GET() {
     ],
   };
   const videoFilter = {
+    story: { $exists: false },
     isPublished: true,
     $and: [
       {

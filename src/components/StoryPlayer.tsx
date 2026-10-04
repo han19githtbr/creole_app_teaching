@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import NextImage from "next/image";
 import { Download, Languages, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
-import { getBankImage } from "@/lib/imageBank";
+import { getBankImage, getStoryLabelLayout } from "@/lib/imageBank";
 import { describeStoryDuration, formatStoryTime } from "@/lib/storyAudio";
 import {
   buildElementTimeline,
@@ -67,6 +67,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const duration = mediaDuration || story.audioDuration || lastCaptionEnd || 0;
 
   const sceneElements = useMemo(() => getBankImage(story.imageSrc)?.elements ?? [], [story.imageSrc]);
+  const sceneLayout = useMemo(() => getStoryLabelLayout(story.imageSrc), [story.imageSrc]);
   const timeline = useMemo(() => buildElementTimeline(sceneElements, story.elementCues, duration), [sceneElements, story.elementCues, duration]);
 
   const activeCaption = captionAt(story.captions, currentTime);
@@ -134,7 +135,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     context.font = "700 28px system-ui, sans-serif";
     const gap = 14;
     const height = 56;
-    const maxWidth = EXPORT_WIDTH - 128;
+    const maxWidth = EXPORT_WIDTH * (sceneLayout.width / 100);
     const items = timeline.map((element) => {
       const kreyolWidth = context.measureText(element.kreyol).width;
       const separator = context.measureText("  ·  ").width;
@@ -155,7 +156,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     }
     return rows.flatMap((row, rowIndex) => {
       const total = row.reduce((sum, item) => sum + item.width, 0) + gap * (row.length - 1);
-      let x = (EXPORT_WIDTH - total) / 2;
+      const leftAnchor = EXPORT_WIDTH * (sceneLayout.left / 100) - total / 2;
+      let x = leftAnchor;
+      if (sceneLayout.align === "left") x = EXPORT_WIDTH * (sceneLayout.left / 100) - maxWidth * 0.38;
+      if (sceneLayout.align === "right") x = EXPORT_WIDTH * (sceneLayout.left / 100) + maxWidth * 0.38 - total;
       return row.map((item) => {
         const placed = { ...item, x, y: top + rowIndex * (height + gap), height };
         x += item.width + gap;
@@ -316,7 +320,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       } else titleLine = test;
     }
     context.fillText(titleLine.trim(), 70, titleY);
-    drawElementPills(context, baseTop + baseHeight + 38, seconds);
+    drawElementPills(context, (baseTop + baseHeight + 38) + (sceneLayout.top - 12) * 2.5, seconds);
     const caption = captionAt(story.captions, seconds);
     if (caption) drawCaptionBox(context, caption.kreyol, caption.portuguese);
     context.textAlign = "left";
@@ -438,24 +442,47 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/35" />
           <div className="absolute left-5 top-5 flex items-center gap-2"><span className="rounded-sm bg-[#14251e]/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#f5cf72]">{story.theme}</span><span className="rounded-sm border border-white/30 bg-black/30 px-2 py-1 text-[10px] text-white/85">KREYÒL · PT</span></div>
-          <div className="absolute right-4 top-14 flex max-w-[55%] flex-wrap justify-end gap-1.5 sm:right-5 sm:top-16">
-            {timeline.map((element, index) => {
-              const visual = elementVisual(element, currentTime);
-              const active = visual.phase === "active";
-              return (
-                <span
-                  key={`${element.kreyol}-${index}`}
-                  className={`rounded-sm border px-2 py-1 text-[9px] leading-none shadow-sm backdrop-blur-sm sm:text-[10px] ${active ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d]" : "border-white/30 bg-[#15261f]/70 text-white"}`}
-                  style={{ opacity: visual.opacity, transform: `scale(${visual.scale})`, transformOrigin: "right center" }}
-                >
-                  <span className={`font-semibold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>{element.kreyol}</span>
-                  <span className={`px-1 ${active ? "text-[#18241d]/60" : "text-white/50"}`}>·</span>
-                  {element.pt}
-                </span>
-              );
-            })}
+          <div
+            className="pointer-events-none absolute z-20"
+            style={{
+              left: `${sceneLayout.left}%`,
+              top: `${sceneLayout.top}%`,
+              width: `${sceneLayout.width}%`,
+              transform: `translateX(-50%)`,
+            }}
+          >
+            <div className="flex max-w-full flex-wrap items-center gap-1.5" style={{ justifyContent: sceneLayout.align === "left" ? "flex-start" : sceneLayout.align === "right" ? "flex-end" : "center" }}>
+              {timeline.map((element, index) => {
+                const visual = elementVisual(element, currentTime);
+                const active = visual.phase === "active";
+                return (
+                  <span
+                    key={`${element.kreyol}-${index}`}
+                    className={`rounded-full border px-2.5 py-1 text-[9px] leading-none shadow-sm backdrop-blur-sm sm:text-[10px] ${active ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d]" : "border-white/30 bg-[#15261f]/75 text-white"}`}
+                    style={{ opacity: visual.opacity, transform: `scale(${visual.scale})`, transformOrigin: "center center" }}
+                  >
+                    <span className={`font-semibold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>{element.kreyol}</span>
+                    <span className={`px-1 ${active ? "text-[#18241d]/60" : "text-white/50"}`}>·</span>
+                    {element.pt}
+                  </span>
+                );
+              })}
+            </div>
           </div>
-          <div className="absolute bottom-5 left-5 right-5"><p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f5cf72]">{story.title}</p>{captionsEnabled && activeCaption && <div className="max-w-2xl rounded-md border-l-2 border-[#f5cf72] bg-black/60 px-4 py-3 backdrop-blur-sm"><p className="text-sm font-semibold leading-snug sm:text-base">{language !== "pt" && activeCaption.kreyol}</p>{language === "both" && <div className="my-2 h-px w-10 bg-[#f5cf72]/65" />}{language !== "ht" && <p className="text-xs leading-relaxed text-white/80 sm:text-sm">{activeCaption.portuguese}</p>}</div>}</div>
+          <div className="pointer-events-none absolute bottom-5 left-5 z-20">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f5cf72]">{story.title}</p>
+          </div>
+          <div className="pointer-events-none absolute bottom-4 right-4 z-30 w-[min(40%,28rem)] max-w-[calc(100%-2rem)]">
+            <div className="rounded-xl border border-[#f5cf72]/50 bg-black/65 px-4 py-3 backdrop-blur-sm shadow-lg">
+              {captionsEnabled && activeCaption && (
+                <>
+                  <p className="text-sm font-semibold leading-snug text-[#f8e7b3] sm:text-base">{language !== "pt" && activeCaption.kreyol}</p>
+                  {language === "both" && <div className="my-2 h-px w-10 bg-[#f5cf72]/65" />}
+                  {language !== "ht" && <p className="text-xs leading-relaxed text-white/80 sm:text-sm">{activeCaption.portuguese}</p>}
+                </>
+              )}
+            </div>
+          </div>
           <span className="absolute right-5 top-5 rounded-sm bg-black/45 px-2 py-1 text-[10px] tabular-nums">{formatStoryTime(currentTime)} / {durationLabel}</span>
         </div>
         <div className="space-y-3 p-4 sm:p-5">

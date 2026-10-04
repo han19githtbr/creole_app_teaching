@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminVideosPage() {
   await connectDB();
 
-  const videos = await VideoLesson.find().sort({ createdAt: -1 }).lean();
+  const videos = await VideoLesson.find({ story: { $exists: false } }).sort({ createdAt: -1 }).lean();
   const now = new Date();
 
   const serialized = videos.map((v) => ({

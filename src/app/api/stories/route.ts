@@ -1,46 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireAdmin, requireUser } from "@/lib/apiAuth";
-import { IMAGE_BANK } from "@/lib/imageBank";
+import { validateStory } from "@/lib/storyValidation";
 import { sendContentPush } from "@/lib/pushNotifications";
 import User from "@/models/User";
 import VideoLesson from "@/models/VideoLesson";
-
-const isAudioUrl = (value: unknown): value is string => {
-  if (typeof value !== "string") return false;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" && url.hostname.endsWith(".public.blob.vercel-storage.com");
-  } catch {
-    return false;
-  }
-};
-
-function validateStory(story: unknown) {
-  if (!story || typeof story !== "object") return "Defina a cena, o áudio e as legendas da história.";
-  const value = story as Record<string, unknown>;
-  if (typeof value.imageSrc !== "string" || !IMAGE_BANK.some((image) => image.src === value.imageSrc)) {
-    return "Selecione uma imagem válida do banco Ghibli.";
-  }
-  if (!isAudioUrl(value.audioUrl)) return "Envie uma narração de áudio válida.";
-  if (!Array.isArray(value.captions) || value.captions.length === 0) {
-    return "Adicione pelo menos uma legenda em Kreyòl e português.";
-  }
-  let previousEnd = 0;
-  for (const item of value.captions) {
-    if (!item || typeof item !== "object") return "Revise os trechos de legenda.";
-    const caption = item as Record<string, unknown>;
-    const start = Number(caption.start);
-    const end = Number(caption.end);
-    if (
-      !Number.isFinite(start) || !Number.isFinite(end) || start < previousEnd ||
-      end <= start || end > 300 || typeof caption.kreyol !== "string" ||
-      !caption.kreyol.trim() || typeof caption.portuguese !== "string" || !caption.portuguese.trim()
-    ) return "As legendas precisam estar ordenadas, preenchidas e dentro dos 5 minutos.";
-    previousEnd = end;
-  }
-  return null;
-}
 
 export async function GET(request: NextRequest) {
   const session = await requireUser();
@@ -76,8 +40,9 @@ export async function POST(request: NextRequest) {
   if (typeof body.title !== "string" || !body.title.trim()) {
     return NextResponse.json({ error: "O título é obrigatório." }, { status: 400 });
   }
-  const validationError = validateStory(body.story);
-  if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
+  const validation = validateStory(body.story);
+  if (!validation.ok) return NextResponse.json({ error: validation.error }, { status: 400 });
+  const story = validation.story;
 
   await connectDB();
   const author = await User.findOne({ email: session.user.email.toLowerCase().trim() });
@@ -88,15 +53,15 @@ export async function POST(request: NextRequest) {
   const video = await VideoLesson.create({
     title: body.title.trim(),
     description: typeof body.description === "string" ? body.description.trim() : "",
-    videoUrl: body.story.audioUrl,
-    duration: 300,
+    videoUrl: story.audioUrl,
+    duration: Math.round(story.audioDuration ?? 0),
     author: author._id,
     authorName: author.name || "Professor(a)",
     isPublished,
     publishAt: publishAt && !isNaN(publishAt.getTime()) ? publishAt : null,
     announcedAt: isPublished ? publishAt && publishAt > new Date() ? publishAt : new Date() : null,
     isLiveRecording: false,
-    story: body.story,
+    story,
     customization: { backgroundStyle: "natureza", avatarType: "webcam", frameStyle: "rounded" },
     likes: [],
     comments: [],

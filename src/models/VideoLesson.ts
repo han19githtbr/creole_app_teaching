@@ -1,4 +1,5 @@
 import mongoose, { Schema, models, model, type Document } from "mongoose";
+import { STORY_AUDIO_MAX_SECONDS, STORY_TIME_TOLERANCE } from "../lib/storyAudio";
 
 export interface IVideoComment {
   _id?: mongoose.Types.ObjectId;
@@ -28,11 +29,20 @@ export interface IVideoStoryCaption {
   portuguese: string;
 }
 
+export interface IVideoStoryElementCue {
+  kreyol: string;
+  /** Segundo da narração em que o elemento da cena entra em destaque. */
+  start: number;
+}
+
 export interface IVideoStory {
   imageSrc: string;
   theme: string;
   audioUrl: string;
+  /** Duração real da narração, em segundos (histórias antigas não têm este campo). */
+  audioDuration?: number;
   captions: IVideoStoryCaption[];
+  elementCues?: IVideoStoryElementCue[];
 }
 
 export interface IVideoLesson extends Document {
@@ -83,10 +93,18 @@ const VideoCustomizationSchema = new Schema<IVideoCustomization>(
 
 const VideoStoryCaptionSchema = new Schema<IVideoStoryCaption>(
   {
-    start: { type: Number, required: true, min: 0, max: 300 },
-    end: { type: Number, required: true, min: 0, max: 300 },
+    start: { type: Number, required: true, min: 0, max: STORY_AUDIO_MAX_SECONDS + STORY_TIME_TOLERANCE },
+    end: { type: Number, required: true, min: 0, max: STORY_AUDIO_MAX_SECONDS + STORY_TIME_TOLERANCE },
     kreyol: { type: String, required: true, trim: true },
     portuguese: { type: String, required: true, trim: true },
+  },
+  { _id: false }
+);
+
+const VideoStoryElementCueSchema = new Schema<IVideoStoryElementCue>(
+  {
+    kreyol: { type: String, required: true, trim: true },
+    start: { type: Number, required: true, min: 0, max: STORY_AUDIO_MAX_SECONDS + STORY_TIME_TOLERANCE },
   },
   { _id: false }
 );
@@ -96,7 +114,9 @@ const VideoStorySchema = new Schema<IVideoStory>(
     imageSrc: { type: String, required: true },
     theme: { type: String, required: true },
     audioUrl: { type: String, required: true },
+    audioDuration: { type: Number, min: 0 },
     captions: { type: [VideoStoryCaptionSchema], default: [] },
+    elementCues: { type: [VideoStoryElementCueSchema], default: [] },
   },
   { _id: false }
 );

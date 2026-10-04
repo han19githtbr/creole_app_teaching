@@ -15,6 +15,7 @@ export default async function AdminStoriesPage() {
     title: story.title,
     description: story.description || "",
     story: { imageSrc: story.story!.imageSrc, theme: story.story!.theme },
+    duration: story.story!.audioDuration ?? story.duration ?? 0,
     isPublished: story.isPublished,
     publishAt: story.publishAt ? new Date(story.publishAt).toISOString() : null,
     createdAt: story.createdAt ? new Date(story.createdAt).toISOString() : new Date().toISOString(),

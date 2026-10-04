@@ -7,6 +7,7 @@ import { connectDB } from "@/lib/mongodb";
 import VideoLesson from "@/models/VideoLesson";
 import { StoryPlayer } from "@/components/StoryPlayer";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
+import { formatStoryTime } from "@/lib/storyAudio";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,10 @@ export default async function WatchStoryPage({ params }: { params: Promise<{ id:
     imageSrc: record.story.imageSrc,
     theme: record.story.theme,
     audioUrl: record.story.audioUrl,
-    captions: record.story.captions.map((caption: IVideoStoryCaption) => ({ ...caption })),
+    audioDuration: record.story.audioDuration,
+    captions: record.story.captions.map((caption: IVideoStoryCaption) => ({ start: caption.start, end: caption.end, kreyol: caption.kreyol, portuguese: caption.portuguese })),
+    elementCues: (record.story.elementCues ?? []).map((cue: { kreyol: string; start: number }) => ({ kreyol: cue.kreyol, start: cue.start })),
   };
-  return <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-7 sm:px-6"><Link href="/dashboard/stories" className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]"><ChevronLeft className="h-4 w-4"/> Todas as histórias</Link><header className="border-b border-[var(--border)] pb-4"><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">{story.theme} · 05:00</p><h1 className="mt-1 text-2xl font-bold text-[var(--text)]">{record.title}</h1>{record.description && <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">{record.description}</p>}</header><StoryPlayer story={story}/></main>;
+  const durationSeconds = story.audioDuration ?? record.duration ?? 0;
+  return <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-7 sm:px-6"><Link href="/dashboard/stories" className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]"><ChevronLeft className="h-4 w-4"/> Todas as histórias</Link><header className="border-b border-[var(--border)] pb-4"><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">{story.theme}{durationSeconds > 0 ? ` · ${formatStoryTime(durationSeconds)}` : ""}</p><h1 className="mt-1 text-2xl font-bold text-[var(--text)]">{record.title}</h1>{record.description && <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">{record.description}</p>}</header><StoryPlayer story={story}/></main>;
 }

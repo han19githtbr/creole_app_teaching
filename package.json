@@ -10,6 +10,7 @@
     "seed": "tsx src/seed/run.ts"
   },
   "dependencies": {
+    "@breezystack/lamejs": "^1.2.7",
     "@livekit/components-react": "^2.9.24",
     "@livekit/components-styles": "^1.2.0",
     "@mediapipe/selfie_segmentation": "^0.1.1675465747",

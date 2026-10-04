@@ -1,6 +1,7 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/apiAuth";
+import { STORY_AUDIO_CONTENT_TYPES, STORY_AUDIO_MAX_BYTES } from "@/lib/storyAudio";
 
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
@@ -12,9 +13,9 @@ export async function POST(request: Request): Promise<NextResponse> {
         const session = await requireAdmin();
         if (!session) throw new Error("Acesso restrito ao administrador.");
         return {
-          allowedContentTypes: ["audio/mpeg", "audio/mp4", "audio/aac", "audio/wav", "audio/ogg", "audio/webm"],
+          allowedContentTypes: [...STORY_AUDIO_CONTENT_TYPES],
           addRandomSuffix: true,
-          maximumSizeInBytes: 30 * 1024 * 1024,
+          maximumSizeInBytes: STORY_AUDIO_MAX_BYTES,
         };
       },
     });

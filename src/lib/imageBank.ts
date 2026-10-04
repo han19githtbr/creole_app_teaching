@@ -12,6 +12,7 @@ export interface StoryLabelLayout {
   left: number;
   width: number;
   align: "center" | "left" | "right";
+  anchors: { left: number; top: number }[];
 }
 
 export interface BankImage {
@@ -33,20 +34,20 @@ export interface BankImage {
 }
 
 const STORY_LABEL_LAYOUTS: Record<string, StoryLabelLayout> = {
-  tecnologia: { top: 13, left: 49, width: 80, align: "center" },
-  natureza: { top: 12, left: 52, width: 84, align: "center" },
-  cultura: { top: 11, left: 50, width: 72, align: "center" },
-  turismo: { top: 13, left: 51, width: 82, align: "center" },
-  interior: { top: 10, left: 50, width: 86, align: "center" },
-  danca: { top: 10, left: 47, width: 76, align: "center" },
-  geografia: { top: 11, left: 53, width: 80, align: "center" },
-  historia: { top: 12, left: 52, width: 78, align: "center" },
-  cinema: { top: 11, left: 54, width: 76, align: "center" },
-  musica: { top: 12, left: 48, width: 74, align: "center" },
-  lazeres: { top: 11, left: 52, width: 82, align: "center" },
-  estoicismo: { top: 12, left: 50, width: 74, align: "center" },
-  religiao: { top: 12, left: 50, width: 78, align: "center" },
-  gastronomia: { top: 12, left: 50, width: 80, align: "center" },
+  tecnologia: { top: 13, left: 49, width: 80, align: "center", anchors: [{ left: 28, top: 69 }, { left: 46, top: 69 }, { left: 57, top: 32 }, { left: 30, top: 50 }] },
+  natureza: { top: 12, left: 52, width: 84, align: "center", anchors: [{ left: 50, top: 37 }, { left: 25, top: 82 }, { left: 75, top: 40 }, { left: 77, top: 24 }] },
+  cultura: { top: 11, left: 50, width: 72, align: "center", anchors: [{ left: 25, top: 64 }, { left: 50, top: 28 }, { left: 78, top: 28 }, { left: 50, top: 68 }] },
+  turismo: { top: 13, left: 51, width: 82, align: "center", anchors: [{ left: 48, top: 65 }, { left: 25, top: 62 }, { left: 76, top: 25 }, { left: 85, top: 48 }] },
+  interior: { top: 10, left: 50, width: 86, align: "center", anchors: [{ left: 50, top: 58 }, { left: 22, top: 36 }, { left: 51, top: 78 }, { left: 80, top: 65 }] },
+  danca: { top: 10, left: 47, width: 76, align: "center", anchors: [{ left: 48, top: 56 }, { left: 24, top: 24 }, { left: 76, top: 25 }, { left: 78, top: 78 }] },
+  geografia: { top: 11, left: 53, width: 80, align: "center", anchors: [{ left: 26, top: 37 }, { left: 51, top: 68 }, { left: 76, top: 70 }, { left: 75, top: 25 }] },
+  historia: { top: 12, left: 52, width: 78, align: "center", anchors: [{ left: 50, top: 35 }, { left: 76, top: 23 }, { left: 25, top: 68 }, { left: 77, top: 68 }] },
+  cinema: { top: 11, left: 54, width: 76, align: "center", anchors: [{ left: 50, top: 38 }, { left: 27, top: 72 }, { left: 77, top: 20 }, { left: 20, top: 38 }] },
+  musica: { top: 12, left: 48, width: 74, align: "center", anchors: [{ left: 26, top: 61 }, { left: 49, top: 67 }, { left: 74, top: 35 }, { left: 80, top: 68 }] },
+  lazeres: { top: 11, left: 52, width: 82, align: "center", anchors: [{ left: 72, top: 22 }, { left: 50, top: 69 }, { left: 20, top: 36 }, { left: 50, top: 82 }] },
+  estoicismo: { top: 12, left: 50, width: 74, align: "center", anchors: [{ left: 25, top: 47 }, { left: 50, top: 70 }, { left: 78, top: 37 }, { left: 78, top: 67 }] },
+  religiao: { top: 12, left: 50, width: 78, align: "center", anchors: [{ left: 50, top: 40 }, { left: 28, top: 70 }, { left: 77, top: 27 }, { left: 51, top: 20 }] },
+  gastronomia: { top: 12, left: 50, width: 80, align: "center", anchors: [{ left: 48, top: 61 }, { left: 25, top: 67 }, { left: 75, top: 45 }, { left: 78, top: 69 }] },
 };
 
 const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary" | "labelLayout">[] = [
@@ -446,7 +447,13 @@ export function getBankImage(idOrSrc: string | null | undefined): BankImage | un
 
 export function getStoryLabelLayout(idOrSrc: string | null | undefined): StoryLabelLayout {
   const bankImage = getBankImage(idOrSrc);
-  return bankImage?.labelLayout ?? { top: 12, left: 50, width: 78, align: "center" };
+  return bankImage?.labelLayout ?? {
+    top: 12,
+    left: 50,
+    width: 78,
+    align: "center",
+    anchors: [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }],
+  };
 }
 
 /** URLs de imagem aceitas em postagens: banco Ghibli (/ghibli/* em svg, png, webp, jpg) ou upload Vercel Blob. */

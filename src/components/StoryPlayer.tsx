@@ -131,45 +131,25 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     }
   }
 
-  function layoutPills(context: CanvasRenderingContext2D, top: number) {
-    context.font = "700 28px system-ui, sans-serif";
-    const gap = 14;
-    const height = 56;
-    const maxWidth = EXPORT_WIDTH * (sceneLayout.width / 100);
-    const items = timeline.map((element) => {
+  function drawElementPills(context: CanvasRenderingContext2D, scene: { x: number; y: number; width: number; height: number }, seconds: number) {
+    for (const [index, element] of timeline.entries()) {
+      const anchor = sceneLayout.anchors[index % sceneLayout.anchors.length];
+      const fontSize = 22;
+      context.font = `700 ${fontSize}px system-ui, sans-serif`;
       const kreyolWidth = context.measureText(element.kreyol).width;
       const separator = context.measureText("  ·  ").width;
       const ptWidth = context.measureText(element.pt).width;
-      return { element, kreyolWidth, separator, width: kreyolWidth + separator + ptWidth + 44 };
-    });
-    const rows: (typeof items)[] = [[]];
-    let rowWidth = 0;
-    for (const item of items) {
-      const needed = rowWidth ? rowWidth + gap + item.width : item.width;
-      if (needed > maxWidth && rows[rows.length - 1].length) {
-        rows.push([item]);
-        rowWidth = item.width;
-      } else {
-        rows[rows.length - 1].push(item);
-        rowWidth = needed;
-      }
-    }
-    return rows.flatMap((row, rowIndex) => {
-      const total = row.reduce((sum, item) => sum + item.width, 0) + gap * (row.length - 1);
-      const leftAnchor = EXPORT_WIDTH * (sceneLayout.left / 100) - total / 2;
-      let x = leftAnchor;
-      if (sceneLayout.align === "left") x = EXPORT_WIDTH * (sceneLayout.left / 100) - maxWidth * 0.38;
-      if (sceneLayout.align === "right") x = EXPORT_WIDTH * (sceneLayout.left / 100) + maxWidth * 0.38 - total;
-      return row.map((item) => {
-        const placed = { ...item, x, y: top + rowIndex * (height + gap), height };
-        x += item.width + gap;
-        return placed;
-      });
-    });
-  }
-
-  function drawElementPills(context: CanvasRenderingContext2D, top: number, seconds: number) {
-    for (const pill of layoutPills(context, top)) {
+      const width = kreyolWidth + separator + ptWidth + 32;
+      const height = 44;
+      const pill = {
+        element,
+        kreyolWidth,
+        separator,
+        width,
+        height,
+        x: scene.x + scene.width * (anchor.left / 100) - width / 2,
+        y: scene.y + scene.height * (anchor.top / 100) - height / 2,
+      };
       const visual = elementVisual(pill.element, seconds);
       if (visual.phase === "hidden" || visual.opacity <= 0.01) continue;
       const centerX = pill.x + pill.width / 2;
@@ -180,14 +160,14 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       context.scale(visual.scale, visual.scale);
       context.translate(-centerX, -centerY);
       const active = visual.phase === "active";
-      context.fillStyle = active ? "#f4c85b" : "rgba(21, 38, 31, .82)";
+      context.fillStyle = active ? "#f4c85b" : "rgba(21, 38, 31, .9)";
       context.beginPath();
       context.roundRect(pill.x, pill.y, pill.width, pill.height, 10);
       context.fill();
       context.strokeStyle = active ? "#f4c85b" : "rgba(255,255,255,.34)";
       context.lineWidth = 2;
       context.stroke();
-      context.font = "700 28px system-ui, sans-serif";
+      context.font = `700 ${fontSize}px system-ui, sans-serif`;
       context.textAlign = "left";
       context.textBaseline = "middle";
       context.fillStyle = active ? "#18241d" : "#f4c85b";
@@ -275,7 +255,6 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     context.restore();
     const baseScale = Math.min((EXPORT_WIDTH - 88) / image.width, 760 / image.height);
     const baseHeight = image.height * baseScale;
-    const baseTop = (EXPORT_HEIGHT - baseHeight) / 2 - 45;
     const width = image.width * baseScale * scene.zoom;
     const height = baseHeight * scene.zoom;
     const sceneX = (EXPORT_WIDTH - width) / 2 + (scene.driftX / 100) * width;
@@ -320,7 +299,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       } else titleLine = test;
     }
     context.fillText(titleLine.trim(), 70, titleY);
-    drawElementPills(context, (baseTop + baseHeight + 38) + (sceneLayout.top - 12) * 2.5, seconds);
+    drawElementPills(context, { x: sceneX, y: sceneY, width, height }, seconds);
     const caption = captionAt(story.captions, seconds);
     if (caption) drawCaptionBox(context, caption.kreyol, caption.portuguese);
     context.textAlign = "left";
@@ -442,33 +421,26 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/35" />
           <div className="absolute left-5 top-5 flex items-center gap-2"><span className="rounded-sm bg-[#14251e]/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#f5cf72]">{story.theme}</span><span className="rounded-sm border border-white/30 bg-black/30 px-2 py-1 text-[10px] text-white/85">KREYÒL · PT</span></div>
-          <div
-            className="pointer-events-none absolute z-20"
-            style={{
-              left: `${sceneLayout.left}%`,
-              top: `${sceneLayout.top}%`,
-              width: `${sceneLayout.width}%`,
-              transform: `translateX(-50%)`,
-            }}
-          >
-            <div className="flex max-w-full flex-wrap items-center gap-1.5" style={{ justifyContent: sceneLayout.align === "left" ? "flex-start" : sceneLayout.align === "right" ? "flex-end" : "center" }}>
-              {timeline.map((element, index) => {
-                const visual = elementVisual(element, currentTime);
-                const active = visual.phase === "active";
-                return (
-                  <span
-                    key={`${element.kreyol}-${index}`}
-                    className={`rounded-full border px-2.5 py-1 text-[9px] leading-none shadow-sm backdrop-blur-sm sm:text-[10px] ${active ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d]" : "border-white/30 bg-[#15261f]/75 text-white"}`}
-                    style={{ opacity: visual.opacity, transform: `scale(${visual.scale})`, transformOrigin: "center center" }}
-                  >
-                    <span className={`font-semibold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>{element.kreyol}</span>
-                    <span className={`px-1 ${active ? "text-[#18241d]/60" : "text-white/50"}`}>·</span>
-                    {element.pt}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
+          {timeline.map((element, index) => {
+            const visual = elementVisual(element, currentTime);
+            const active = visual.phase === "active";
+            const anchor = sceneLayout.anchors[index % sceneLayout.anchors.length];
+            const imageScale = 1.03 * frame.zoom;
+            const imageCrop = 16 / 9 / (1200 / 800);
+            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX;
+            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
+            return (
+              <span
+                key={`${element.kreyol}-${index}`}
+                className={`pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border px-2 py-1 text-[8px] leading-none shadow-sm backdrop-blur-sm sm:text-[10px] ${active ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d]" : "border-white/35 bg-[#15261f]/90 text-white"}`}
+                style={{ left: `${left}%`, top: `${top}%`, opacity: visual.opacity, transform: `translate(-50%, -50%) scale(${visual.scale})`, transformOrigin: "center center" }}
+              >
+                <span className={`font-semibold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>{element.kreyol}</span>
+                <span className={`px-1 ${active ? "text-[#18241d]/60" : "text-white/60"}`}>·</span>
+                {element.pt}
+              </span>
+            );
+          })}
           <div className="pointer-events-none absolute bottom-5 left-5 z-20">
             <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f5cf72]">{story.title}</p>
           </div>

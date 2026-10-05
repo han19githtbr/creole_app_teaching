@@ -23,7 +23,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - Painel do aluno com progresso, conteúdo recente e central de notificações.
 - Postagens com texto e/ou imagem (banco de ilustrações ou upload), respostas dos alunos revisadas pelo administrador e jogo de identificação de palavras na imagem.
 - Vídeos com likes, comentários, gravação no navegador e agendamento.
-- **Histórias**: uma cena ilustrada + narração em Kreyòl (gravada, enviada ou convertida de MP4) + legendas em Kreyòl e português, com exportação de vídeo vertical e rótulos visuais dos elementos posicionados de forma clara para cada cena.
+- **Histórias**: uma cena ilustrada + narração em Kreyòl (gravada, enviada ou convertida de MP4) + legendas em Kreyòl e português, com exportação de vídeo vertical, rótulos visuais dos elementos posicionados de forma clara para cada cena e legenda do player que o aluno pode arrastar pela tela.
 - Aulas ao vivo com LiveKit, quando configurado.
 - Fundo virtual (MediaPipe) na gravação de vídeos e nas aulas ao vivo.
 - PWA com service worker, página offline e Web Push opcional.
@@ -73,9 +73,22 @@ Toda a animação depende somente do **tempo atual do áudio** e da **duração 
 - **Legendas**: aparecem entre o início e o fim definidos, lidos do relógio do áudio.
 - **Elementos da cena**: cada elemento fica oculto até o seu momento, entra com fade e zoom em 0,6 s, fica em destaque (cor dourada) até o início do próximo e depois permanece visível, discreto. Sem marcação manual, os 4 elementos se dividem igualmente ao longo da narração (em 60 s: 0, 15, 30 e 45 s). Os momentos podem ser ajustados no formulário (campo **Elementos da cena**) para coincidir com o instante em que você fala cada palavra; o botão **Distribuir automaticamente** volta à divisão igual.
 - **Posicionamento visual dos rótulos**: cada cena tem um layout específico para que os nomes dos elementos fiquem acima dos objetos e não escondam a imagem nem a legenda principal. A experiência foi refinada para manter a leitura clara em todas as ilustrações do banco, sem sobreposição visual.
+- **Legenda móvel no player**: a caixa de legenda pode ser arrastada para qualquer ponto do quadro da cena, para que ela não esconda elementos da ilustração (detalhes em [Legenda móvel no player](#legenda-móvel-no-player)).
 - **Cena**: zoom suave (de 100% a 105%) e leve deriva distribuídos por **toda** a narração, qualquer que seja a duração. A barra de progresso e o contador `mm:ss / mm:ss` usam a duração real.
 - **Legendas no formulário**: ao enviar/gravar/converter a narração, se o roteiro ainda estiver vazio, os trechos são criados já dentro da duração (cerca de um por minuto, no máximo 12). O botão **Redistribuir tempos** divide os trechos existentes igualmente pela duração. Os tempos aceitam décimos de segundo.
 - **Na troca da narração**, os momentos dos elementos voltam à divisão automática (eles pertenciam ao áudio anterior). As legendas são mantidas; revise os tempos com **Redistribuir tempos**.
+
+### Legenda móvel no player
+
+Na pré-visualização/player de **Histórias**, a caixa de legenda (Kreyòl e/ou português) pode ser movida pelo aluno, tanto no desktop quanto no celular. Esse recurso está em `src/components/StoryPlayer.tsx`.
+
+- **Como mover**: arraste a caixa com o mouse, o dedo ou a caneta (Pointer Events). Há um ícone de "alça" no topo da caixa e o cursor muda para mão aberta/fechada. A caixa usa `touch-action: none`, então arrastá-la no celular não rola a página.
+- **Teclado**: com foco na legenda (tecla `Tab`), as setas movem a caixa de 12 em 12 pixels.
+- **Limites**: a legenda se move somente dentro do quadro da cena (a área da ilustração) e nunca sai dele. A posição é guardada em porcentagem do quadro, então acompanha o redimensionamento da janela ou a rotação do aparelho; e, quando a legenda muda de tamanho (a cada fala ou ao trocar o idioma **Ambas/Português/Kreyòl**), a posição é reencaixada para a caixa continuar inteira dentro do quadro.
+- **Posição original**: antes de qualquer arrasto, a legenda fica no canto inferior direito. Depois de movida, aparece o botão **Reposicionar**, ao lado de **Legendas**, que devolve a caixa a essa posição.
+- **Quando aparece**: a caixa só é exibida enquanto as legendas estão ativadas (botão **Legendas**) e existe uma fala ativa naquele instante da narração. Ela fica acima dos rótulos dos elementos da cena.
+- **Persistência**: a posição fica apenas na memória da tela aberta. Não é salva no servidor nem no navegador e volta ao canto inferior direito ao recarregar a página ou abrir outra história.
+- **Exportação**: a posição escolhida no player **não** é aplicada ao vídeo exportado; no vídeo vertical a legenda continua fixa na parte inferior do quadro.
 
 ### Exportação do vídeo vertical
 
@@ -86,6 +99,7 @@ No player, **Baixar vídeo vertical** gera um vídeo 9:16 (1080×1920) com a cen
 - Os quadros são desenhados a partir do relógio do áudio, não do relógio de parede.
 - O formato é MP4 quando o navegador consegue gravar MP4 (Chrome e Edge recentes); caso contrário, WebM, com um aviso para converter antes de publicar no Instagram.
 - É necessário um navegador com `MediaRecorder` e `captureStream` (Chrome, Edge ou Firefox atuais).
+- A legenda do vídeo exportado fica sempre na parte inferior do quadro, independentemente de onde o aluno a tenha arrastado no player.
 - Textos longos de legenda quebram em linhas e diminuem de tamanho (com reticências em último caso) para caber no quadro.
 
 ### Histórias criadas antes desta versão
@@ -118,7 +132,7 @@ O mesmo critério é usado nas listagens de lições, na página individual e no
 - Catálogo de lições por categoria, busca e conteúdo em Markdown; registro de conclusão.
 - Feed de postagens com imagem, resposta à legenda/pergunta e jogo de palavras na imagem.
 - Vídeos com likes e comentários.
-- **Histórias** narradas, com legendas em português e/ou Kreyòl, exportação em vídeo vertical e destaque dos elementos da cena em sincronia com o áudio.
+- **Histórias** narradas, com legendas em português e/ou Kreyòl (a caixa de legenda pode ser arrastada para qualquer ponto da cena), exportação em vídeo vertical e destaque dos elementos da cena em sincronia com o áudio.
 - Jogo de imagens (`/dashboard/jogo`).
 - Sala ao vivo (`/live`), se as credenciais LiveKit estiverem configuradas.
 - Central de notificações com itens não lidos de lições, postagens e vídeos.
@@ -207,7 +221,7 @@ Arquivos principais das histórias:
 | `src/lib/storyAudio.ts` | Limites (5 s a 10 min, 30 MB, 250 MB), formatos aceitos e utilitários de tempo |
 | `src/lib/storyTimeline.ts` | Linha do tempo única (cena, elementos, legendas) usada pelo player e pelo exportador |
 | `src/lib/storyValidation.ts` | Validação das histórias no servidor |
-| `src/components/StoryPlayer.tsx` | Player e exportação do vídeo vertical |
+| `src/components/StoryPlayer.tsx` | Player (incluindo a legenda arrastável) e exportação do vídeo vertical |
 | `src/app/api/stories/**` | Listagem, criação, edição, exclusão e upload do áudio |
 
 ### Endpoints da API

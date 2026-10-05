@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import NextImage from "next/image";
-import { Download, Languages, Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { Download, GripHorizontal, Languages, Pause, Play, Undo2, Volume2, VolumeX } from "lucide-react";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
 import { getBankImage, getStoryLabelLayout } from "@/lib/imageBank";
 import { describeStoryDuration, formatStoryTime } from "@/lib/storyAudio";
@@ -63,7 +63,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
+  // Posição da legenda em % do quadro da cena (canto superior esquerdo). `null` = posição original (canto inferior direito).
   const [captionPosition, setCaptionPosition] = useState<{ left: number; top: number } | null>(null);
+  const [draggingCaption, setDraggingCaption] = useState(false);
 
   // A duração que manda é a do áudio carregado no navegador. Se ele não a informar
   // (WebM gravado sem cabeçalho), vale a salva com a história e, por último, a última legenda.
@@ -103,6 +105,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     };
     event.currentTarget.setPointerCapture(event.pointerId);
     event.preventDefault();
+    setDraggingCaption(true);
     setCaptionPositionFromPixels(captionRect.left - viewportRect.left, captionRect.top - viewportRect.top);
   }
 
@@ -112,6 +115,14 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     if (!drag || drag.pointerId !== event.pointerId || !viewport) return;
     const viewportRect = viewport.getBoundingClientRect();
     setCaptionPositionFromPixels(event.clientX - viewportRect.left - drag.offsetX, event.clientY - viewportRect.top - drag.offsetY);
+  }
+
+  function endCaptionDrag(event: React.PointerEvent<HTMLDivElement>) {
+    const drag = captionDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    captionDragRef.current = null;
+    setDraggingCaption(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }
 
   function moveCaptionWithKeyboard(event: React.KeyboardEvent<HTMLDivElement>) {
@@ -133,6 +144,27 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       captionRect.top - viewportRect.top + direction[1],
     );
   }
+
+  // A legenda muda de tamanho a cada fala (e com o idioma escolhido) e o quadro muda de tamanho
+  // ao girar/redimensionar a tela: reencaixa a posição escolhida para a legenda nunca sair do quadro.
+  useEffect(() => {
+    function keepCaptionInside() {
+      const viewport = playerViewportRef.current;
+      const caption = captionRef.current;
+      if (!viewport || !caption || !viewport.clientWidth || !viewport.clientHeight) return;
+      const maxLeft = Math.max(0, 100 - (caption.offsetWidth / viewport.clientWidth) * 100);
+      const maxTop = Math.max(0, 100 - (caption.offsetHeight / viewport.clientHeight) * 100);
+      setCaptionPosition((current) => {
+        if (!current) return current;
+        const left = Math.min(current.left, maxLeft);
+        const top = Math.min(current.top, maxTop);
+        return left === current.left && top === current.top ? current : { left, top };
+      });
+    }
+    keepCaptionInside();
+    window.addEventListener("resize", keepCaptionInside);
+    return () => window.removeEventListener("resize", keepCaptionInside);
+  }, [activeCaption, language, captionsEnabled]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -476,7 +508,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(260px,0.6fr)]">
       <section className="overflow-hidden rounded-xl border border-[#273a31] bg-[#101b17] text-white shadow-xl">
-        <div className="relative aspect-video overflow-hidden bg-[#172821]">
+        <div ref={playerViewportRef} className="relative aspect-video overflow-hidden bg-[#172821]">
           <div className="absolute inset-0 will-change-transform" style={{ transform: `translate(${frame.driftX}%, ${frame.driftY}%) scale(${1.03 * frame.zoom})` }}>
             <NextImage src={story.imageSrc} alt={story.title} fill unoptimized className="object-cover" />
           </div>
@@ -505,22 +537,49 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           <div className="pointer-events-none absolute bottom-5 left-5 z-20">
             <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f5cf72]">{story.title}</p>
           </div>
-          <div className="pointer-events-none absolute bottom-4 right-4 z-30 w-[min(40%,28rem)] max-w-[calc(100%-2rem)]">
-            <div className="rounded-xl border border-[#f5cf72]/50 bg-black/65 px-4 py-3 backdrop-blur-sm shadow-lg">
-              {captionsEnabled && activeCaption && (
-                <>
-                  <p className="text-sm font-semibold leading-snug text-[#f8e7b3] sm:text-base">{language !== "pt" && activeCaption.kreyol}</p>
-                  {language === "both" && <div className="my-2 h-px w-10 bg-[#f5cf72]/65" />}
-                  {language !== "ht" && <p className="text-xs leading-relaxed text-white/80 sm:text-sm">{activeCaption.portuguese}</p>}
-                </>
-              )}
+          {captionsEnabled && activeCaption && (
+            <div
+              ref={captionRef}
+              role="group"
+              tabIndex={0}
+              aria-label="Legenda da história. Arraste para mover ou use as setas do teclado."
+              title="Arraste para mover a legenda"
+              onPointerDown={startCaptionDrag}
+              onPointerMove={moveCaptionDrag}
+              onPointerUp={endCaptionDrag}
+              onPointerCancel={endCaptionDrag}
+              onKeyDown={moveCaptionWithKeyboard}
+              className={`absolute z-30 w-[min(40%,28rem)] max-w-[calc(100%-2rem)] touch-none select-none rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#f5cf72] ${captionPosition ? "" : "bottom-4 right-4"} ${draggingCaption ? "cursor-grabbing" : "cursor-grab"}`}
+              style={captionPosition ? { left: `${captionPosition.left}%`, top: `${captionPosition.top}%` } : undefined}
+            >
+              <div className={`rounded-xl border border-[#f5cf72]/50 bg-black/65 px-4 pb-3 pt-1.5 shadow-lg backdrop-blur-sm ${draggingCaption ? "ring-2 ring-[#f5cf72]/60" : ""}`}>
+                <GripHorizontal className="mx-auto mb-1 h-3.5 w-3.5 text-[#f5cf72]/70" aria-hidden="true" />
+                <p className="text-sm font-semibold leading-snug text-[#f8e7b3] sm:text-base">{language !== "pt" && activeCaption.kreyol}</p>
+                {language === "both" && <div className="my-2 h-px w-10 bg-[#f5cf72]/65" />}
+                {language !== "ht" && <p className="text-xs leading-relaxed text-white/80 sm:text-sm">{activeCaption.portuguese}</p>}
+              </div>
             </div>
-          </div>
+          )}
           <span className="absolute right-5 top-5 rounded-sm bg-black/45 px-2 py-1 text-[10px] tabular-nums">{formatStoryTime(currentTime)} / {durationLabel}</span>
         </div>
         <div className="space-y-3 p-4 sm:p-5">
-          <div className="h-1 overflow-hidden rounded-full bg-white/15"><div className="h-full bg-[#f5cf72]" style={{ width: `${frame.progress * 100}%` }} /></div>
-          <div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-2"><button type="button" onClick={() => void togglePlay()} disabled={exporting} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5cf72] text-[#18241d] transition-transform hover:scale-105 disabled:opacity-50" aria-label={playing ? "Pausar história" : "Reproduzir história"}>{playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}</button><span className="text-xs text-white/65">{playing ? "A aventura está acontecendo" : "Ouça a narração em Kreyòl"}</span></div><div className="flex items-center gap-1.5"><button type="button" title={captionsEnabled ? "Ocultar legendas" : "Mostrar legendas"} onClick={() => setCaptionsEnabled((enabled) => !enabled)} className={`flex h-9 items-center gap-1.5 rounded-md px-2.5 text-xs ${captionsEnabled ? "bg-white/15 text-white" : "text-white/60 hover:bg-white/10"}`}><Languages className="h-4 w-4" /> Legendas</button><button type="button" title={muted ? "Ativar som" : "Silenciar"} disabled={exporting} onClick={() => { const next = !muted; setMuted(next); if (audioRef.current) audioRef.current.muted = next; }} className="flex h-9 w-9 items-center justify-center rounded-md text-white/70 hover:bg-white/10 disabled:opacity-50" aria-label={muted ? "Ativar som" : "Silenciar"}>{muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}</button></div></div>
+          <div className="h-1 overflow-hidden rounded-full bg-white/15">
+          <div className="h-full bg-[#f5cf72]" style={{ width: `${frame.progress * 100}%` }} /></div>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => void togglePlay()} disabled={exporting} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5cf72] text-[#18241d] transition-transform hover:scale-105 disabled:opacity-50" aria-label={playing ? "Pausar história" : "Reproduzir história"}>{playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
+              </button>
+              <span className="text-xs text-white/65">{playing ? "A aventura está acontecendo" : "Ouça a narração em Kreyòl"}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button type="button" title={captionsEnabled ? "Ocultar legendas" : "Mostrar legendas"} onClick={() => setCaptionsEnabled((enabled) => !enabled)} className={`flex h-9 items-center gap-1.5 rounded-md px-2.5 text-xs ${captionsEnabled ? "bg-white/15 text-white" : "text-white/60 hover:bg-white/10"}`}><Languages className="h-4 w-4" /> Legendas
+              </button>{captionPosition && 
+              <button type="button" title="Voltar a legenda para a posição original" onClick={() => setCaptionPosition(null)} className="flex h-9 items-center gap-1.5 rounded-md px-2.5 text-xs text-white/70 hover:bg-white/10"><Undo2 className="h-4 w-4" /> Reposicionar
+              </button>}
+              <button type="button" title={muted ? "Ativar som" : "Silenciar"} disabled={exporting} onClick={() => { const next = !muted; setMuted(next); if (audioRef.current) audioRef.current.muted = next; }} className="flex h-9 w-9 items-center justify-center rounded-md text-white/70 hover:bg-white/10 disabled:opacity-50" aria-label={muted ? "Ativar som" : "Silenciar"}>{muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
         </div>
       </section>
       <aside className="flex flex-col gap-4">

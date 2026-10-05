@@ -51,7 +51,10 @@ function wrapLines(context: CanvasRenderingContext2D, text: string, maxWidth: nu
 export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const playerViewportRef = useRef<HTMLDivElement>(null);
+  const captionRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
+  const captionDragRef = useRef<{ pointerId: number; offsetX: number; offsetY: number } | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [mediaDuration, setMediaDuration] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -60,6 +63,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
+  const [captionPosition, setCaptionPosition] = useState<{ left: number; top: number } | null>(null);
 
   // A duração que manda é a do áudio carregado no navegador. Se ele não a informar
   // (WebM gravado sem cabeçalho), vale a salva com a história e, por último, a última legenda.
@@ -72,6 +76,63 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
   const activeCaption = captionAt(story.captions, currentTime);
   const frame = sceneFrame(currentTime, duration);
+
+  function setCaptionPositionFromPixels(left: number, top: number) {
+    const viewport = playerViewportRef.current;
+    const caption = captionRef.current;
+    if (!viewport || !caption) return;
+    const maxLeft = Math.max(0, viewport.clientWidth - caption.offsetWidth);
+    const maxTop = Math.max(0, viewport.clientHeight - caption.offsetHeight);
+    setCaptionPosition({
+      left: (Math.max(0, Math.min(left, maxLeft)) / viewport.clientWidth) * 100,
+      top: (Math.max(0, Math.min(top, maxTop)) / viewport.clientHeight) * 100,
+    });
+  }
+
+  function startCaptionDrag(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.button !== 0) return;
+    const caption = captionRef.current;
+    const viewport = playerViewportRef.current;
+    if (!caption || !viewport) return;
+    const captionRect = caption.getBoundingClientRect();
+    const viewportRect = viewport.getBoundingClientRect();
+    captionDragRef.current = {
+      pointerId: event.pointerId,
+      offsetX: event.clientX - captionRect.left,
+      offsetY: event.clientY - captionRect.top,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.preventDefault();
+    setCaptionPositionFromPixels(captionRect.left - viewportRect.left, captionRect.top - viewportRect.top);
+  }
+
+  function moveCaptionDrag(event: React.PointerEvent<HTMLDivElement>) {
+    const drag = captionDragRef.current;
+    const viewport = playerViewportRef.current;
+    if (!drag || drag.pointerId !== event.pointerId || !viewport) return;
+    const viewportRect = viewport.getBoundingClientRect();
+    setCaptionPositionFromPixels(event.clientX - viewportRect.left - drag.offsetX, event.clientY - viewportRect.top - drag.offsetY);
+  }
+
+  function moveCaptionWithKeyboard(event: React.KeyboardEvent<HTMLDivElement>) {
+    const directions: Record<string, [number, number]> = {
+      ArrowUp: [0, -12],
+      ArrowDown: [0, 12],
+      ArrowLeft: [-12, 0],
+      ArrowRight: [12, 0],
+    };
+    const direction = directions[event.key];
+    const viewport = playerViewportRef.current;
+    const caption = captionRef.current;
+    if (!direction || !viewport || !caption) return;
+    event.preventDefault();
+    const captionRect = caption.getBoundingClientRect();
+    const viewportRect = viewport.getBoundingClientRect();
+    setCaptionPositionFromPixels(
+      captionRect.left - viewportRect.left + direction[0],
+      captionRect.top - viewportRect.top + direction[1],
+    );
+  }
 
   useEffect(() => {
     const audio = audioRef.current;

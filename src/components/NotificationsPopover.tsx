@@ -154,7 +154,7 @@ export function NotificationsPopover() {
         <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-150">
           <div className="flex items-center justify-between border-b border-[var(--border-soft)] pb-3">
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent-soft)] text-white">
                 <Bell className="h-4 w-4" />
               </span>
               <div>
@@ -169,7 +169,7 @@ export function NotificationsPopover() {
                 <button
                   type="button"
                   onClick={handleMarkAllRead}
-                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] transition cursor-pointer"
+                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-white hover:font-bold transition cursor-pointer"
                   title="Marcar todas como lidas"
                 >
                   <CheckCheck className="h-3.5 w-3.5" /> Ler todas

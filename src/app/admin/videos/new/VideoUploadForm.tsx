@@ -7,6 +7,7 @@ import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import {
   VIDEO_BACKGROUNDS,
   VIDEO_AVATARS,
@@ -47,6 +48,7 @@ export function VideoUploadForm() {
   const [scheduledTime, setScheduledTime] = useState("18:00");
 
   const [saving, setSaving] = useState(false);
+  const [uploadPercent, setUploadPercent] = useState<number | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -57,6 +59,7 @@ export function VideoUploadForm() {
     }
 
     setSaving(true);
+    setUploadPercent(undefined);
     setError(null);
 
     try {
@@ -71,6 +74,7 @@ export function VideoUploadForm() {
           access: "public",
           handleUploadUrl: "/api/videos/upload",
           contentType: (videoFile.type || "video/mp4").split(";")[0],
+          onUploadProgress: ({ percentage }) => setUploadPercent(percentage),
         });
 
         finalVideoUrl = blob.url;
@@ -171,7 +175,7 @@ export function VideoUploadForm() {
                 onClick={() => setSourceType("upload")}
                 className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-sm font-semibold transition-all cursor-pointer ${
                   sourceType === "upload"
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
+                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-white"
                     : "border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-secondary)]"
                 }`}
               >
@@ -182,7 +186,7 @@ export function VideoUploadForm() {
                 onClick={() => setSourceType("url")}
                 className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-sm font-semibold transition-all cursor-pointer ${
                   sourceType === "url"
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
+                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-white"
                     : "border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-secondary)]"
                 }`}
               >
@@ -456,6 +460,15 @@ export function VideoUploadForm() {
             {saving ? "Salvando..." : "Salvar Vídeo"}
           </Button>
         </div>
+
+        {saving && (
+          <LoadingSpinner
+            layout="inline"
+            size="sm"
+            label={sourceType === "upload" && videoFile ? "Enviando o vídeo…" : "Salvando o vídeo…"}
+            progress={sourceType === "upload" && videoFile ? uploadPercent : undefined}
+          />
+        )}
       </form>
     </div>
   );

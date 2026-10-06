@@ -120,7 +120,7 @@ export default async function VideoWatchPage({
                       <Radio className="h-3 w-3" /> Aula ao vivo gravada
                     </span>
                   )}
-                  <span className="flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-semibold text-[var(--accent)]">
+                  <span className="flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-semibold text-white">
                     {avatarPreset.icon} {avatarDisplayName}
                   </span>
                 </div>
@@ -225,7 +225,7 @@ export default async function VideoWatchPage({
 
             <Link
               href="/dashboard/videos"
-              className="block rounded-xl bg-[var(--surface-2)] p-2.5 text-center text-xs font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] transition-colors"
+              className="block rounded-xl bg-[var(--surface-2)] p-2.5 text-center text-xs font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-white transition-colors"
             >
               Ver catálogo completo de vídeos →
             </Link>

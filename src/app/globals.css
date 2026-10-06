@@ -81,6 +81,25 @@ body {
   stroke-width: 2.5 !important;
 }
 
+/* Fundo azul sólido (bg-[var(--accent)] / bg-[var(--accent-soft)]): o texto e os
+   ícones diretos dele ficam sempre brancos e em negrito, mesmo que alguma classe
+   de cor "pálida" (ex.: text-[var(--accent)]) tenha sobrado no componente.
+   O seletor ~= só casa a classe exata, então variantes como hover:bg-... e
+   bg-.../50 (translúcidas) não são afetadas. */
+:is(
+  [class~="bg-[var(--accent)]"],
+  [class~="bg-[var(--accent-soft)]"]
+) {
+  color: #ffffff !important;
+}
+:is(
+  [class~="bg-[var(--accent)]"],
+  [class~="bg-[var(--accent-soft)]"]
+) > :is(p, span, strong, em, small, label, a, h1, h2, h3, h4, h5, h6, svg):not([class*="bg-"]) {
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
 /* Lightweight prose styling for Markdown lesson/post content */
 .prose-kreyol h1 {
   font-size: 1.5rem;
@@ -449,3 +468,55 @@ html {
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* Carregamento (LoadingSpinner): círculo verde girando + porcentagem  */
+/* ------------------------------------------------------------------ */
+:root {
+  --loader: #059669;
+  --loader-soft: #34d399;
+  --loader-deep: #047857;
+  --loader-track: rgba(5, 150, 105, 0.16);
+  --loader-ink: #047857;
+}
+.dark {
+  --loader: #34d399;
+  --loader-soft: #6ee7b7;
+  --loader-deep: #10b981;
+  --loader-track: rgba(52, 211, 153, 0.2);
+  --loader-ink: #6ee7b7;
+}
+@keyframes kreyol-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes kreyol-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+@keyframes kreyol-label {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+@keyframes kreyol-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes kreyol-bar-shine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+.kreyol-loader-spin {
+  transform-origin: 50% 50%;
+  animation: kreyol-spin 0.95s linear infinite;
+}
+.kreyol-loader-glow { animation: kreyol-breathe 2.2s ease-in-out infinite; }
+.kreyol-loader-label { animation: kreyol-label 1.6s ease-in-out infinite; }
+.kreyol-loader-enter { animation: kreyol-fade-in 0.3s ease-out both; }
+.kreyol-loader-shine { animation: kreyol-bar-shine 1.4s ease-in-out infinite; }
+.kreyol-loader-arc { transition: stroke-dashoffset 0.35s ease-out; }
+/* Quem prefere menos movimento ainda vê que está carregando: o círculo só gira mais devagar. */
+@media (prefers-reduced-motion: reduce) {
+  .kreyol-loader-spin { animation-duration: 2.8s; }
+  .kreyol-loader-glow,
+  .kreyol-loader-label,
+  .kreyol-loader-shine { animation: none; }
+}

@@ -334,7 +334,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border)] pb-5">
         <div>
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <span className="flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-black text-[var(--accent-ink)]">
+            <span className="flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-black text-white">
               <Sparkles className="h-3.5 w-3.5" /> Pratik Kreyòl
             </span>
             <span className="text-xs font-bold text-[var(--text-muted)]">
@@ -501,7 +501,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
                 {challenge.title}
               </h2>
             </div>
-            <span className="shrink-0 rounded-xl bg-[var(--accent-soft)] px-3.5 py-1.5 text-xs font-black text-[var(--accent-ink)]">
+            <span className="shrink-0 rounded-xl bg-[var(--accent-soft)] px-3.5 py-1.5 text-xs font-black text-white">
               {challenge.answerCount} palavras certas
             </span>
           </div>
@@ -553,13 +553,13 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
                   className={cn(
                     "min-h-12 rounded-2xl border px-3.5 py-2.5 text-left text-sm font-bold transition-all duration-150 transform active:scale-95 cursor-pointer",
                     active
-                      ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] shadow-sm ring-2 ring-[var(--accent)]/40 scale-[1.02]"
+                      ? "border-[var(--accent)] bg-[var(--accent-soft)] text-white shadow-sm ring-2 ring-[var(--accent)]/40 scale-[1.02]"
                       : "border-[var(--border)] bg-[var(--surface-2)] text-[var(--text)] hover:border-[var(--accent)]/60 hover:bg-[var(--surface)]"
                   )}
                 >
                   <span className="flex items-center justify-between gap-2">
                     <span className="break-words">{word}</span>
-                    {active && <Check className="h-4 w-4 shrink-0 text-[var(--accent)]" />}
+                    {active && <Check className="h-4 w-4 shrink-0 text-white" strokeWidth={3} />}
                   </span>
                 </button>
               );

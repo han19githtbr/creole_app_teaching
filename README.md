@@ -7,6 +7,8 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Visão geral](#visão-geral)
 - [Stack](#stack)
 - [Histórias narradas](#histórias-narradas)
+- [Indicador de carregamento](#indicador-de-carregamento)
+- [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
 - [Visibilidade das lições](#visibilidade-das-lições)
 - [Funcionalidades](#funcionalidades)
 - [Estrutura do projeto](#estrutura-do-projeto)
@@ -118,6 +120,42 @@ Histórias antigas não têm duração gravada. O player usa a duração do pró
 
 O upload do áudio passa por `/api/stories/upload` (somente administrador; MP3, MP4/M4A, AAC, WAV, OGG e WebM; até 30 MB). A duração em segundos também é salva no campo `duration` do registro.
 
+## Indicador de carregamento
+
+Todas as telas que esperam por dados ou processamento mostram o mesmo indicador, o componente `src/components/LoadingSpinner.tsx`: um **círculo verde girando** (anel externo com degradê), um **anel interno que se enche conforme a porcentagem** e o número `NN%` no centro, com texto explicativo e brilho suave ao fundo.
+
+### Porcentagem
+
+- **Progresso real**: quando a operação informa o andamento, ele é usado diretamente (`progress={0..100}`). É o caso do envio de vídeo (`onUploadProgress` do Vercel Blob), da conversão/extração de áudio em MP3 e da gravação do vídeo vertical das histórias (tempo da narração).
+- **Progresso estimado**: quando não há como medir (carregamento de páginas e dados), a porcentagem sobe rápido no início, desacelera e para em 94% até o carregamento terminar. Ela nunca marca 100% antes da hora.
+
+### Variações (`layout` e `size`)
+
+| Opção | Uso |
+| --- | --- |
+| `layout="screen"` | Ocupa a área da página (usado nos `loading.tsx`) |
+| `layout="block"` | Centralizado dentro de um cartão ou lista |
+| `layout="inline"` | Linha com barra de progresso: formulários e uploads |
+| `layout="compact"` | Só o círculo e um texto curto (barra de navegação) |
+| `size` | `xs`, `sm`, `md` e `lg` (a porcentagem fica dentro do círculo em `md` e `lg`) |
+
+### Onde é aplicado
+
+- Navegação entre páginas, via `loading.tsx` (com mensagem específica): raiz, `dashboard`, `dashboard/lessons`, `dashboard/videos`, `dashboard/stories`, `dashboard/jogo`, `admin` e `live`.
+- Sala ao vivo do aluno (`LiveClient`) e controle da aula no admin (`AdminLiveControl`).
+- Verificação do login na barra de navegação.
+- Admin: envio de vídeo (`VideoUploadForm`), envio da imagem da postagem (`PostForm`), conversão do áudio das histórias (`StoryForm` e `StoryAudioRecorder`).
+- Estúdio de gravação: carregamento do recorte da pessoa (fundo virtual).
+- Player de histórias: gravação do vídeo vertical, com progresso real.
+
+### Acessibilidade
+
+O indicador usa `role="status"` e `aria-live="polite"`; a barra tem `role="progressbar"` com `aria-valuenow`. Para quem prefere menos movimento, o círculo continua girando, só que mais devagar. As cores vêm das variáveis `--loader*` em `globals.css`, com versão para o tema escuro.
+
+## Contraste sobre fundo azul
+
+Elementos com fundo azul sólido (`bg-[var(--accent)]` e `bg-[var(--accent-soft)]`), como o item ativo do menu mobile, selos, cartões selecionados e ícones circulares, usam **texto e ícones brancos em negrito** (ícones com traço mais grosso). Além das classes de cada componente, uma regra em `globals.css` garante isso para o próprio elemento e seus filhos diretos, mesmo que sobre uma classe de cor pálida. Variações translúcidas (`bg-.../50`) e estados `hover:` não são afetadas; nos `hover:bg-[var(--accent-soft)]` o texto passa a branco com `hover:text-white`.
+
 ## Visibilidade das lições
 
 Lições novas são rascunhos (`isPublished: false`) por padrão. Para uma lição aparecer para alunos, ela precisa estar publicada **e** ter sido anunciada (`announcedAt` preenchido). Publicar sem anunciar não a torna visível no catálogo, na página da lição nem nas listas do aluno. O anúncio é uma ação explícita do administrador.
@@ -222,6 +260,7 @@ Arquivos principais das histórias:
 | `src/lib/storyTimeline.ts` | Linha do tempo única (cena, elementos, legendas) usada pelo player e pelo exportador |
 | `src/lib/storyValidation.ts` | Validação das histórias no servidor |
 | `src/components/StoryPlayer.tsx` | Player (incluindo a legenda arrastável) e exportação do vídeo vertical |
+| `src/components/LoadingSpinner.tsx` | Indicador de carregamento (círculo verde girando + porcentagem) usado em todo o app |
 | `src/app/api/stories/**` | Listagem, criação, edição, exclusão e upload do áudio |
 
 ### Endpoints da API

@@ -80,7 +80,7 @@ function ReviewCard({ item, onSaved }: { item: ReviewItem; onSaved: (a: AnswerDT
             // eslint-disable-next-line @next/next/no-img-element
             <img src={item.userImage} alt="" referrerPolicy="no-referrer" className="h-9 w-9 shrink-0 rounded-full object-cover" />
           ) : (
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-sm font-bold text-[var(--accent)]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-sm font-bold text-white">
               {item.userName.charAt(0).toUpperCase()}
             </span>
           )}

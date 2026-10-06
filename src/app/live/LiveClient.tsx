@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { LiveRoom } from "@/components/LiveRoom";
 import { LiveBadge } from "@/components/LiveBadge";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Radio } from "lucide-react";
 
 interface LiveStatus {
@@ -37,7 +38,7 @@ export function LiveClient({ isAdmin }: { isAdmin: boolean }) {
   }, []);
 
   if (loading) {
-    return <div className="py-16 text-center text-[var(--text-muted)]">Carregando...</div>;
+    return <LoadingSpinner label="Carregando aula ao vivo…" />;
   }
 
   if (!status?.isLive) {

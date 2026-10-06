@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { BookOpen, Gamepad2, LayoutDashboard, Menu, Radio, ShieldCheck, Sparkles, Video, X } from "lucide-react";
 
 const NAV_LINKS = [
@@ -43,7 +44,7 @@ export function Navbar() {
   const mobileLinkClass = (href: string) =>
     `flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
       isActive(href)
-        ? "bg-[var(--accent-soft)] text-[var(--accent)] font-semibold"
+        ? "bg-[var(--accent-soft)] text-white font-bold [&_svg]:stroke-[2.5]"
         : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)]"
     }`;
 
@@ -105,7 +106,7 @@ export function Navbar() {
               </button>
             </>
           ) : status === "loading" ? (
-            <div className="h-9 w-24 animate-pulse rounded-lg bg-[var(--surface-2)]" />
+            <LoadingSpinner layout="compact" size="xs" label="Carregando…" showPercent={false} />
           ) : (
             <Button size="sm" onClick={() => signIn("google", { callbackUrl: "/dashboard" })}>
               Entrar com Google

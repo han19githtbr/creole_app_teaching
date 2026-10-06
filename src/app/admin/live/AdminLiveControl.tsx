@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LiveBadge } from "@/components/LiveBadge";
 import { LiveRoom } from "@/components/LiveRoom";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Radio, Circle, Video, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
@@ -113,7 +114,7 @@ export function AdminLiveControl() {
   }
 
   if (!status) {
-    return <div className="py-8 text-center text-[var(--text-muted)]">Carregando...</div>;
+    return <LoadingSpinner label="Carregando controle da aula ao vivo…" />;
   }
 
   return (
@@ -122,7 +123,7 @@ export function AdminLiveControl() {
       <Card>
         <CardContent className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-white">
               <Radio className="h-5 w-5" />
             </span>
             <div>
@@ -171,7 +172,7 @@ export function AdminLiveControl() {
       {/* Disseminate / Publish Recorded Live Card */}
       <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm space-y-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-white">
             <Video className="h-5 w-5" />
           </div>
           <div>

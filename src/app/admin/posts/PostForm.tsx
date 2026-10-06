@@ -18,6 +18,7 @@ import {
   type ImageQuizConfig,
 } from "@/lib/imageQuiz";
 import { cn } from "@/lib/utils";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 interface PostFormValues {
   _id?: string;
@@ -318,6 +319,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
                 >
                   {uploading ? "Enviando..." : "Escolher arquivo"}
                 </Button>
+                {uploading && <LoadingSpinner layout="inline" size="sm" label="Enviando a imagem…" className="mt-3 text-left" />}
                 <p className="mt-2 text-[11px] text-[var(--text-muted)]">JPG, PNG, WebP ou GIF (animado) — até 8 MB.</p>
               </div>
             )}

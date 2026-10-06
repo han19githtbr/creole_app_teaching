@@ -58,7 +58,7 @@ export default async function DashboardVideosPage() {
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 space-y-8">
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)] shadow-sm">
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--accent-soft)] text-white shadow-sm">
             <Video className="h-5 w-5" />
           </span>
           <div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, Mic, Pause, Play, Square, Trash2 } from "lucide-react";
+import { Mic, Pause, Play, Square, Trash2 } from "lucide-react";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { convertToMp3 } from "@/lib/audioToMp3";
 import {
@@ -257,10 +258,7 @@ export function StoryAudioRecorder({ onRecorded, onBusyChange, disabled }: Props
       )}
 
       {state === "processing" && (
-        <div className="space-y-2 rounded-lg border border-[var(--border-strong)] bg-[var(--surface-2)] p-4" role="status" aria-live="polite">
-          <p className="flex items-center gap-2 text-sm font-semibold text-[var(--text)]"><Loader2 className="h-4 w-4 animate-spin" /> Convertendo gravação para MP3… {Math.round(progress * 100)}%</p>
-          <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border-soft)]"><div className="h-full bg-[var(--accent)] transition-[width] duration-200" style={{ width: `${Math.round(progress * 100)}%` }} /></div>
-        </div>
+        <LoadingSpinner layout="inline" size="sm" label="Convertendo gravação para MP3…" progress={progress * 100} />
       )}
 
       {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}

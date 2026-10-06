@@ -6,6 +6,7 @@ import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { VIDEO_AVATARS, VIDEO_FRAME_STYLES } from "@/lib/videoThemes";
 import { getBankImage } from "@/lib/imageBank";
 import {
@@ -1173,7 +1174,7 @@ export function StudioVideoRecorder() {
                         className={cn(
                           "flex items-center justify-between rounded-xl border p-2 text-left transition-all cursor-pointer",
                           clarityPreset === preset.id
-                            ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-bold shadow-sm"
+                            ? "border-[var(--accent)] bg-[var(--accent-soft)] text-white font-bold shadow-sm"
                             : "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)]/40"
                         )}
                       >
@@ -1226,7 +1227,7 @@ export function StudioVideoRecorder() {
                         className={cn(
                           "flex flex-col items-center rounded-xl border p-2 text-center transition-all cursor-pointer",
                           recordingQuality === q.id
-                            ? "border-[var(--accent)] bg-[var(--accent-soft)] shadow-sm font-bold text-[var(--accent)]"
+                            ? "border-[var(--accent)] bg-[var(--accent-soft)] shadow-sm font-bold text-white"
                             : "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)]/40"
                         )}
                       >
@@ -1250,9 +1251,12 @@ export function StudioVideoRecorder() {
                 </p>
               )}
               {avatarType === "webcam" && virtualParsed.kind !== "none" && segStatus === "loading" && (
-                <p className="mb-2 rounded-lg bg-amber-50 p-2 text-[11px] text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
-                  Carregando o recorte da pessoa… enquanto isso, a câmera aparece sem trocar o fundo.
-                </p>
+                <div className="mb-2 space-y-1.5">
+                  <LoadingSpinner layout="inline" size="sm" label="Carregando o recorte da pessoa…" />
+                  <p className="px-1 text-[11px] text-[var(--text-secondary)]">
+                    Enquanto isso, a câmera aparece sem trocar o fundo.
+                  </p>
+                </div>
               )}
               {avatarType === "webcam" && virtualParsed.kind !== "none" && segStatus === "error" && (
                 <p className="mb-2 rounded-lg bg-red-50 p-2 text-[11px] text-red-700 dark:bg-red-950/30 dark:text-red-300">

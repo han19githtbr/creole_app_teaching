@@ -26,7 +26,8 @@ import {
   suggestedCaptionCount,
 } from "@/lib/storyAudio";
 import { defaultElementStarts } from "@/lib/storyTimeline";
-import { BookOpen, Calendar, Download, Film, Image as ImageIcon, Loader2, Mic, Plus, RefreshCw, Trash2, Upload } from "lucide-react";
+import { BookOpen, Calendar, Download, Film, Image as ImageIcon, Mic, Plus, RefreshCw, Trash2, Upload } from "lucide-react";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 type Caption = { start: number; end: number; kreyol: string; portuguese: string };
 type ElementCueValue = { kreyol: string; start: number };
@@ -264,7 +265,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
       <section className="space-y-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <div><h2 className="font-semibold text-[var(--text)]">Narração em Kreyòl</h2><p className="mt-1 text-xs text-[var(--text-muted)]">Grave, envie ou converta uma narração de {describeStoryDuration(STORY_AUDIO_MIN_SECONDS)} a {describeStoryDuration(STORY_AUDIO_MAX_SECONDS)}. A duração do vídeo, as legendas e os elementos da cena seguem esse áudio.</p></div>
         <div className="grid gap-2 sm:grid-cols-3" role="tablist" aria-label="Como adicionar a narração">
-          {modes.map(([value, label, Icon]) => <button key={value} type="button" role="tab" aria-selected={mode === value} onClick={() => setMode(value)} className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium ${mode === value ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]" : "border-[var(--border)] text-[var(--text-secondary)]"}`}><Icon className="h-4 w-4" />{label}</button>)}
+          {modes.map(([value, label, Icon]) => <button key={value} type="button" role="tab" aria-selected={mode === value} onClick={() => setMode(value)} className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium ${mode === value ? "border-[var(--accent)] bg-[var(--accent-soft)] text-white" : "border-[var(--border)] text-[var(--text-secondary)]"}`}><Icon className="h-4 w-4" />{label}</button>)}
         </div>
 
         {mode === "upload" && (
@@ -293,10 +294,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
               }} />
             </label>
             {conversion && (
-              <div className="space-y-2 rounded-lg border border-[var(--border-strong)] bg-[var(--surface-2)] p-4" role="status" aria-live="polite">
-                <p className="flex items-center gap-2 text-sm font-semibold text-[var(--text)]"><Loader2 className="h-4 w-4 animate-spin" /> {conversion.stage === "decoding" ? "Extraindo o áudio" : "Codificando MP3"} de {conversion.fileName}…</p>
-                <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border-soft)]"><div className="h-full bg-[var(--accent)] transition-[width] duration-200" style={{ width: `${Math.round((conversion.stage === "decoding" ? conversion.fraction * 0.3 : 0.3 + conversion.fraction * 0.7) * 100)}%` }} /></div>
-              </div>
+              <LoadingSpinner layout="inline" size="sm" label={`${conversion.stage === "decoding" ? "Extraindo o áudio" : "Codificando MP3"} de ${conversion.fileName}…`} progress={(conversion.stage === "decoding" ? conversion.fraction * 0.3 : 0.3 + conversion.fraction * 0.7) * 100} />
             )}
           </div>
         )}
@@ -350,7 +348,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
         <h2 className="font-semibold text-[var(--text)]">Publicação</h2>
         <div className="grid gap-2 sm:grid-cols-3">{([
           ["immediate", "Publicar agora"], ["scheduled", "Agendar"], ["draft", "Salvar rascunho"],
-        ] as const).map(([value, label]) => <button key={value} type="button" onClick={() => setPublishMode(value)} className={`rounded-lg border px-3 py-3 text-sm font-medium ${publishMode === value ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]" : "border-[var(--border)] text-[var(--text-secondary)]"}`}>{value === "scheduled" && <Calendar className="mr-1 inline h-4 w-4" />}{label}</button>)}</div>
+        ] as const).map(([value, label]) => <button key={value} type="button" onClick={() => setPublishMode(value)} className={`rounded-lg border px-3 py-3 text-sm font-medium ${publishMode === value ? "border-[var(--accent)] bg-[var(--accent-soft)] text-white" : "border-[var(--border)] text-[var(--text-secondary)]"}`}>{value === "scheduled" && <Calendar className="mr-1 inline h-4 w-4" />}{label}</button>)}</div>
         {publishMode === "scheduled" && <div className="grid max-w-md grid-cols-2 gap-3"><Input type="date" value={scheduledDate} onChange={(event) => setScheduledDate(event.target.value)} required /><Input type="time" value={scheduledTime} onChange={(event) => setScheduledTime(event.target.value)} required /></div>}
       </section>
       {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}

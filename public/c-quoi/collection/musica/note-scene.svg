@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="gmusica5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b2f3f"/><stop offset="1" stop-color="#241b2b"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#gmusica5)"/>
+<path d="M0 0h90q-20 140 0 350H0z" fill="#7c1d2b"/><path d="M490 0h-90q20 140 0 350h90z" fill="#7c1d2b"/>
+<path d="M130 0L60 350M360 0l70 350" stroke="#fff" stroke-opacity=".08" stroke-width="40"/>
+<rect x="0" y="278" width="490" height="72" fill="#8a5a33"/><path d="M0 278h490" stroke="#c28a55" stroke-width="6"/>
+<ellipse cx="245" cy="300" rx="150" ry="10" fill="#000" opacity=".22"/><ellipse cx="190" cy="232" rx="36" ry="26" fill="#f4f4f4" transform="rotate(-20 190 232)"/><ellipse cx="306" cy="214" rx="36" ry="26" fill="#f4f4f4" transform="rotate(-20 306 214)"/><rect x="216" y="90" width="9" height="140" rx="3" fill="#f4f4f4" /><rect x="332" y="74" width="9" height="140" rx="3" fill="#f4f4f4" /><path d="M216 90L341 72V108L216 126Z" fill="#f4f4f4" /><path d="M120 120H380M120 142H380M120 164H380" fill="none" stroke="#8a7a9a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>

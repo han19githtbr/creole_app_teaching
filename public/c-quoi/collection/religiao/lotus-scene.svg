@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="greligiao9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe3f5"/><stop offset="1" stop-color="#f7fbff"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#greligiao9)"/>
+<circle cx="415" cy="60" r="30" fill="#fff4b0" opacity=".9"/>
+<ellipse cx="90" cy="70" rx="55" ry="16" fill="#fff" opacity=".85"/><ellipse cx="130" cy="58" rx="40" ry="14" fill="#fff" opacity=".85"/>
+<path d="M0 250 Q120 200 250 245 T490 235 V350 H0Z" fill="#6fbde8"/>
+<rect x="0" y="270" width="490" height="80" fill="#4ea8de"/>
+<ellipse cx="245" cy="312" rx="150" ry="12" fill="#000" opacity=".1"/><ellipse cx="245" cy="268" rx="118" ry="20" fill="#3f9a4a" stroke="#2f7a3a" stroke-width="3"/><path d="M245 250Q185.8 220 171 204Q215.4 230 245 250Z" fill="#f472b6" stroke="#c0508a" stroke-width="3"/><path d="M245 250Q214.6 190 207 162Q229.8 200 245 250Z" fill="#f472b6" stroke="#c0508a" stroke-width="3"/><path d="M245 250Q245 178 245 145.2Q245 188 245 250Z" fill="#f9a8d4" stroke="#c0508a" stroke-width="3"/><path d="M245 250Q275.4 190 283 162Q260.2 200 245 250Z" fill="#f472b6" stroke="#c0508a" stroke-width="3"/><path d="M245 250Q304.2 220 319 204Q274.6 230 245 250Z" fill="#f472b6" stroke="#c0508a" stroke-width="3"/><path d="M245 250Q220 190 245 140Q270 190 245 250Z" fill="#fbcfe8" stroke="#c0508a" stroke-width="3"/></svg>

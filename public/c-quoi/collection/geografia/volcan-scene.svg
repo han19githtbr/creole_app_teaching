@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="ggeografia0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ed8f5"/><stop offset="1" stop-color="#f3e3d0"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#ggeografia0)"/>
+<circle cx="415" cy="60" r="30" fill="#fff4b0" opacity=".9"/>
+<ellipse cx="90" cy="70" rx="55" ry="16" fill="#fff" opacity=".85"/><ellipse cx="130" cy="58" rx="40" ry="14" fill="#fff" opacity=".85"/>
+<path d="M0 250 Q120 200 250 245 T490 235 V350 H0Z" fill="#9bd58b"/>
+<rect x="0" y="270" width="490" height="80" fill="#7bc46a"/>
+<ellipse cx="245" cy="312" rx="150" ry="12" fill="#000" opacity=".1"/><circle cx="250" cy="80" r="26" fill="#9a9a9a" opacity=".55"/><circle cx="278" cy="52" r="20" fill="#b0b0b0" opacity=".5"/><path d="M124 288L214 122H276L366 288Z" fill="#7a5a4a" stroke="#4a3328" stroke-width="3"/><path d="M214 122Q245 108 276 122L260 142L245 128L230 144Z" fill="#ff6a00" /><path d="M236 138Q226 190 206 232M254 136Q262 186 280 230" fill="none" stroke="#ff6a00" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" /><path d="M146 262Q180 240 214 250L226 288H138Z" fill="#6b4a3a" opacity=".6"/></svg>

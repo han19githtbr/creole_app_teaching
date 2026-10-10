@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="gtecnologia5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfe9f5"/><stop offset="1" stop-color="#c4d4ea"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#gtecnologia5)"/>
+<rect x="30" y="30" width="120" height="110" rx="6" fill="#fff8ec" opacity=".75"/><path d="M90 30v110M30 85h120" stroke="#e2cfae" stroke-width="4"/>
+<rect x="0" y="262" width="490" height="88" fill="#7d8fa8"/><rect x="0" y="254" width="490" height="16" fill="#e8eef7"/>
+<ellipse cx="245" cy="300" rx="190" ry="14" fill="#000" opacity=".08"/><rect x="188" y="78" width="114" height="186" rx="16" fill="#27303f" /><circle cx="245" cy="124" r="24" fill="#0f141c" /><circle cx="245" cy="124" r="14" fill="#475066" /><circle cx="245" cy="124" r="5" fill="#8aa0c0" /><circle cx="245" cy="208" r="44" fill="#0f141c" /><circle cx="245" cy="208" r="34" fill="#475066" /><circle cx="245" cy="208" r="20" fill="#0f141c" /><circle cx="245" cy="208" r="8" fill="#6b7a99" /><circle cx="280" cy="96" r="3.5" fill="#4ade80" /></svg>

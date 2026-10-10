@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import "./CestQuoiGame.css";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, Clock, Flame, RotateCcw, Trophy, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowLeft, Check, Flame, Heart, Lock, RotateCcw, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { soundEffects } from "@/lib/soundEffects";
-import { recordQuizWin } from "@/lib/gamification";
 import { Confetti } from "@/components/Confetti";
 import { CestQuoiStickman, type StickmanMood } from "@/components/CestQuoiStickman";
 import { cn } from "@/lib/utils";
@@ -23,13 +23,86 @@ export interface CestQuoiItem {
   arrow: { x: number; y: number };
 }
 
-const SECONDS_PER_IMAGE = 5; // tempo para responder (a cada tentativa)
+// ---------------------------------------------------------------------------
+// Configuração do jogo
+// ---------------------------------------------------------------------------
+export type Level = "easy" | "intermediate" | "master";
+
+const LEVEL_ORDER: Level[] = ["easy", "intermediate", "master"];
+
+const LEVELS: Record<
+  Level,
+  { label: string; emoji: string; seconds: number; multiplier: number; desc: string; grad: string; ring: string; text: string }
+> = {
+  easy: { label: "Fácil", emoji: "🌱", seconds: 15, multiplier: 1, desc: "15 segundos por palavra", grad: "from-emerald-400 to-green-600", ring: "ring-emerald-400", text: "text-emerald-600" },
+  intermediate: { label: "Intermediário", emoji: "⚡", seconds: 10, multiplier: 1.5, desc: "10 segundos por palavra", grad: "from-amber-400 to-orange-500", ring: "ring-amber-400", text: "text-amber-600" },
+  master: { label: "Master", emoji: "🔥", seconds: 5, multiplier: 2, desc: "5 segundos por palavra", grad: "from-rose-500 to-red-700", ring: "ring-rose-500", text: "text-rose-600" },
+};
+
 const MAX_ATTEMPTS = 2; // 1ª tentativa + mais uma
 const ROUNDS_PER_GAME = 10;
+const PASS_RATIO = 0.7; // 7 de 10 acertos para passar de nível
 
-type Phase = "intro" | "playing" | "done";
+type Phase = "intro" | "countdown" | "playing" | "done";
 type RoundState = "asking" | "correct" | "retry" | "reveal";
+type RoundResult = "hit" | "miss" | null;
 
+// ---------------------------------------------------------------------------
+// Progresso dos níveis (salvo neste navegador) — cada nível bloqueia o próximo
+// ---------------------------------------------------------------------------
+interface Progress {
+  passed: Level[];
+  best: Partial<Record<Level, number>>;
+}
+const PROGRESS_KEY = "cquoi:progress:v1";
+const SEEN_KEY = "cquoi:seen:v1";
+const EMPTY_PROGRESS: Progress = { passed: [], best: {} };
+
+const progressListeners = new Set<() => void>();
+function subscribeProgress(cb: () => void) {
+  progressListeners.add(cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    progressListeners.delete(cb);
+    window.removeEventListener("storage", cb);
+  };
+}
+function readProgressRaw(): string {
+  try {
+    return window.localStorage.getItem(PROGRESS_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+function parseProgress(raw: string): Progress {
+  if (!raw) return EMPTY_PROGRESS;
+  try {
+    const p = JSON.parse(raw) as Partial<Progress>;
+    return {
+      passed: Array.isArray(p.passed) ? p.passed.filter((l): l is Level => LEVEL_ORDER.includes(l as Level)) : [],
+      best: p.best && typeof p.best === "object" ? p.best : {},
+    };
+  } catch {
+    return EMPTY_PROGRESS;
+  }
+}
+function writeProgress(p: Progress) {
+  try {
+    window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(p));
+  } catch {
+    // sem armazenamento: o progresso vale só até fechar a página
+  }
+  progressListeners.forEach((fn) => fn());
+}
+/** Fácil sempre liberado; Intermediário exige passar no Fácil; Master exige passar no Intermediário. */
+function isUnlocked(level: Level, progress: Progress): boolean {
+  const idx = LEVEL_ORDER.indexOf(level);
+  return idx === 0 || progress.passed.includes(LEVEL_ORDER[idx - 1]);
+}
+
+// ---------------------------------------------------------------------------
+// Utilidades
+// ---------------------------------------------------------------------------
 function shuffle<T>(list: T[]): T[] {
   const a = [...list];
   for (let i = a.length - 1; i > 0; i--) {
@@ -37,6 +110,34 @@ function shuffle<T>(list: T[]): T[] {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+/** Sorteia as imagens da partida dando preferência às que o jogador ainda não viu (mais variedade). */
+function pickRounds(pool: CestQuoiItem[], count: number): CestQuoiItem[] {
+  let seen = new Set<string>();
+  try {
+    const raw = window.localStorage.getItem(SEEN_KEY);
+    if (raw) seen = new Set(JSON.parse(raw) as string[]);
+  } catch {
+    // ignora
+  }
+  const fresh = shuffle(pool.filter((i) => !seen.has(i.id)));
+  let list = fresh.slice(0, count);
+  if (list.length < count) {
+    // acabaram as inéditas: completa com as já vistas e recomeça o ciclo
+    const chosen = new Set(list.map((i) => i.id));
+    const extra = shuffle(pool.filter((i) => !chosen.has(i.id))).slice(0, count - list.length);
+    list = [...list, ...extra];
+    seen = new Set(list.map((i) => i.id));
+  } else {
+    list.forEach((i) => seen.add(i.id));
+  }
+  try {
+    window.localStorage.setItem(SEEN_KEY, JSON.stringify([...seen]));
+  } catch {
+    // ignora
+  }
+  return shuffle(list);
 }
 
 /** 4 alternativas: 2 do mesmo tema (quando houver) + as demais de outros temas. */
@@ -81,32 +182,37 @@ function speakFrench(text: string) {
     // sem áudio de pronúncia neste navegador
   }
 }
+function cancelSpeech() {
+  if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+}
 
-// ---------- seta vermelha que balança para a esquerda e a direita ----------
+// ---------- seta vermelha: cai sobre o objeto e depois balança ----------
 const ARROW_PATH = "M-104 -12 L-44 -12 L-50 -29 L0 0 L-50 29 L-44 12 L-104 12 Z";
 function SceneArrow({ item }: { item: CestQuoiItem }) {
   return (
     <svg viewBox={`0 0 ${item.w} ${item.h}`} className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
       <g className="cq-sway">
-        <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25)`}>
-          <path d={ARROW_PATH} fill="#e60012" stroke="#fff" strokeWidth="7" strokeLinejoin="round" />
-          <path d={ARROW_PATH} fill="#e60012" stroke="#e60012" strokeWidth="1" strokeLinejoin="round" />
+        <g className="cq2-arrow-drop">
+          <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25)`}>
+            <path d={ARROW_PATH} fill="#e60012" stroke="#fff" strokeWidth="7" strokeLinejoin="round" />
+            <path d={ARROW_PATH} fill="#e60012" stroke="#e60012" strokeWidth="1" strokeLinejoin="round" />
+          </g>
         </g>
       </g>
     </svg>
   );
 }
 
-// ---------- relógio azul com contagem de 5 s ----------
-function CountdownClock({ left, running }: { left: number; running: boolean }) {
-  const frac = Math.min(1, Math.max(0, left / (SECONDS_PER_IMAGE * 1000)));
+// ---------- relógio com contagem regressiva (tempo depende do nível) ----------
+function CountdownClock({ left, total, running }: { left: number; total: number; running: boolean }) {
+  const frac = Math.min(1, Math.max(0, left / total));
   const elapsed = 1 - frac;
-  const urgent = running && left <= 2000;
-  const ring = left <= 2000 ? "#dc2626" : left <= 3500 ? "#f59e0b" : "#2c58c9";
+  const urgent = running && frac <= 0.33;
+  const ring = frac <= 0.33 ? "#dc2626" : frac <= 0.6 ? "#f59e0b" : "#2c58c9";
   const C = 2 * Math.PI * 56;
   return (
-    <div className={cn("relative h-[76px] w-[76px] sm:h-[88px] sm:w-[88px]", urgent && "cq-clock-urgent")}>
-      <svg viewBox="0 0 140 140" className="h-full w-full">
+    <div className={cn("relative h-[72px] w-[72px] sm:h-[84px] sm:w-[84px]", urgent && "cq-clock-urgent")}>
+      <svg viewBox="0 0 140 140" className="h-full w-full drop-shadow">
         <circle cx="70" cy="70" r="64" fill="#fff" stroke={ring} strokeWidth="10" style={{ transition: "stroke .3s" }} />
         <circle cx="70" cy="70" r="56" fill="none" stroke={ring} strokeOpacity=".18" strokeWidth="6" />
         <circle cx="70" cy="70" r="56" fill="none" stroke={ring} strokeWidth="6" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * elapsed} transform="rotate(-90 70 70)" />
@@ -116,11 +222,23 @@ function CountdownClock({ left, running }: { left: number; running: boolean }) {
         <line x1="70" y1="70" x2="70" y2="26" stroke="#222" strokeWidth="5" strokeLinecap="round" transform={`rotate(${elapsed * 360} 70 70)`} />
         <circle cx="70" cy="70" r="6" fill="#222" />
       </svg>
-      <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-extrabold text-white shadow" style={{ background: ring, transition: "background .3s" }}>{Math.ceil(left / 1000)}</span>
+      <span
+        className="absolute -bottom-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-xs font-extrabold text-white shadow"
+        style={{ background: ring, transition: "background .3s" }}
+      >
+        {Math.ceil(left / 1000)}
+      </span>
     </div>
   );
 }
 
+// fagulhas que saem da cena quando o jogador acerta
+const SPARKS = [
+  { e: "✨", dx: -120, dy: -70 }, { e: "⭐", dx: 110, dy: -80 }, { e: "✨", dx: -60, dy: -110 }, { e: "🎉", dx: 70, dy: -105 },
+  { e: "⭐", dx: -140, dy: 10 }, { e: "✨", dx: 140, dy: 20 }, { e: "🎊", dx: -90, dy: 70 }, { e: "✨", dx: 95, dy: 75 },
+];
+
+// ===========================================================================
 export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; initialTheme?: string }) {
   const themes = useMemo(() => {
     const map = new Map<string, string>();
@@ -128,7 +246,11 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     return [...map.entries()].map(([id, label]) => ({ id, label }));
   }, [items]);
 
+  const progressRaw = useSyncExternalStore(subscribeProgress, readProgressRaw, () => "");
+  const progress = useMemo(() => parseProgress(progressRaw), [progressRaw]);
+
   const [phase, setPhase] = useState<Phase>("intro");
+  const [level, setLevel] = useState<Level>("easy");
   const [themeId, setThemeId] = useState<string>(initialTheme && themes.some((t) => t.id === initialTheme) ? initialTheme : "all");
   const [rounds, setRounds] = useState<CestQuoiItem[]>([]);
   const [options, setOptions] = useState<string[]>([]);
@@ -136,26 +258,44 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   const [attempt, setAttempt] = useState(1);
   const [roundState, setRoundState] = useState<RoundState>("asking");
   const [wrongPicks, setWrongPicks] = useState<string[]>([]);
-  const [timeLeft, setTimeLeft] = useState(SECONDS_PER_IMAGE * 1000);
+  const [results, setResults] = useState<RoundResult[]>([]);
+  const [timeLeft, setTimeLeft] = useState(0);
   const [score, setScore] = useState(0);
   const [hits, setHits] = useState(0);
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
-  const [xp, setXp] = useState(0);
-  const [goud, setGoud] = useState(0);
-  const [levelUp, setLevelUp] = useState<number | null>(null);
+  const [passed, setPassed] = useState(false);
+  const [unlockedNow, setUnlockedNow] = useState<Level | null>(null);
+  const [countdown, setCountdown] = useState(3);
   const [confetti, setConfetti] = useState(false);
   const [shake, setShake] = useState(false);
+  const [flash, setFlash] = useState<"green" | "red" | null>(null);
+  const [floater, setFloater] = useState<{ key: number; text: string } | null>(null);
   const [message, setMessage] = useState("");
+  const [lockedShake, setLockedShake] = useState<Level | null>(null);
   const [muted, setMuted] = useState(() => soundEffects.isMuted());
 
+  // valores "vivos" usados dentro de timers (evitam closures desatualizadas)
+  const levelRef = useRef<Level>("easy");
+  const roundsRef = useRef<CestQuoiItem[]>([]);
+  const indexRef = useRef(0);
+  const attemptRef = useRef(1);
+  const streakRef = useRef(0);
+  const hitsRef = useRef(0);
+  const scoreRef = useRef(0);
+  const bestStreakRef = useRef(0);
+  const floaterKey = useRef(0);
   const deadlineRef = useRef(0);
   const lastSecRef = useRef(-1);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const answeredRef = useRef(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const pickRef = useRef<(option: string) => void>(() => {});
 
   const item = rounds[index];
+  const levelCfg = LEVELS[level];
+  const totalMs = levelCfg.seconds * 1000;
   const running = phase === "playing" && roundState === "asking";
+  const need = Math.max(1, Math.ceil(rounds.length * PASS_RATIO));
 
   const later = useCallback((fn: () => void, ms: number) => {
     timers.current.push(setTimeout(fn, ms));
@@ -164,147 +304,195 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     timers.current.forEach(clearTimeout);
     timers.current = [];
   }, []);
-  useEffect(() => () => {
-    clearTimers();
-    if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
-  }, [clearTimers]);
+  useEffect(
+    () => () => {
+      clearTimers();
+      cancelSpeech();
+    },
+    [clearTimers]
+  );
 
   // as vozes do navegador carregam de forma assíncrona
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    const refresh = () => { cachedVoice = null; pickFrenchVoice(); };
+    const refresh = () => {
+      cachedVoice = null;
+      pickFrenchVoice();
+    };
     refresh();
     window.speechSynthesis.addEventListener?.("voiceschanged", refresh);
     return () => window.speechSynthesis.removeEventListener?.("voiceschanged", refresh);
   }, []);
 
   const startAttempt = useCallback(() => {
-    deadlineRef.current = Date.now() + SECONDS_PER_IMAGE * 1000;
+    const ms = LEVELS[levelRef.current].seconds * 1000;
+    deadlineRef.current = Date.now() + ms;
     lastSecRef.current = -1;
     answeredRef.current = false;
-    setTimeLeft(SECONDS_PER_IMAGE * 1000);
+    setTimeLeft(ms);
     setRoundState("asking");
   }, []);
 
-  function prepareRound(list: CestQuoiItem[], i: number, pool: CestQuoiItem[]) {
-    setOptions(buildOptions(list[i], pool));
-    setWrongPicks([]);
-    setAttempt(1);
-    setMessage("");
-    setConfetti(false);
-    soundEffects.playRoundStart();
-    startAttempt();
-  }
+  const prepareRound = useCallback(
+    (list: CestQuoiItem[], i: number) => {
+      setOptions(buildOptions(list[i], items));
+      setWrongPicks([]);
+      attemptRef.current = 1;
+      setAttempt(1);
+      setMessage("");
+      setConfetti(false);
+      setFlash(null);
+      soundEffects.playRoundStart();
+      startAttempt();
+    },
+    [items, startAttempt]
+  );
 
-  function startGame() {
-    const pool = themeId === "all" ? items : items.filter((i) => i.themeId === themeId);
-    const list = shuffle(pool).slice(0, ROUNDS_PER_GAME);
-    // as alternativas erradas vêm de todo o catálogo, para sempre haver 4 opções
-    clearTimers();
-    setRounds(list);
-    setIndex(0);
-    setScore(0);
-    setHits(0);
-    setStreak(0);
-    setBestStreak(0);
-    setXp(0);
-    setGoud(0);
-    setLevelUp(null);
-    setPhase("playing");
-    prepareRound(list, 0, items);
-  }
+  // ---------- fim da partida: calcula se passou e libera o próximo nível ----------
+  const finishGame = useCallback(() => {
+    const total = roundsRef.current.length;
+    const lv = levelRef.current;
+    const ok = hitsRef.current >= Math.max(1, Math.ceil(total * PASS_RATIO));
+    const prev = parseProgress(readProgressRaw());
+    const next: Progress = {
+      passed: ok && !prev.passed.includes(lv) ? [...prev.passed, lv] : prev.passed,
+      best: { ...prev.best, [lv]: Math.max(prev.best[lv] ?? 0, scoreRef.current) },
+    };
+    const nextLevel = LEVEL_ORDER[LEVEL_ORDER.indexOf(lv) + 1];
+    setUnlockedNow(ok && nextLevel && !prev.passed.includes(lv) ? nextLevel : null);
+    writeProgress(next);
+    setPassed(ok);
+    setConfetti(ok);
+    setPhase("done");
+    if (ok) soundEffects.playPerfectRound();
+    else soundEffects.playError();
+  }, []);
 
   const goNext = useCallback(() => {
     clearTimers();
-    if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
-    if (index + 1 >= rounds.length) {
-      setPhase("done");
-      setConfetti(hits > 0);
-      soundEffects.playPerfectRound();
+    cancelSpeech();
+    const next = indexRef.current + 1;
+    if (next >= roundsRef.current.length) {
+      finishGame();
       return;
     }
-    const next = index + 1;
+    indexRef.current = next;
     setIndex(next);
-    prepareRound(rounds, next, items);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, rounds, items, hits, clearTimers]);
+    prepareRound(roundsRef.current, next);
+  }, [clearTimers, finishGame, prepareRound]);
 
   // ---------- erro (opção errada ou tempo esgotado) ----------
   const registerMiss = useCallback(
     (picked: string | null) => {
-      if (answeredRef.current || !item) return;
+      const current = roundsRef.current[indexRef.current];
+      if (answeredRef.current || !current) return;
       answeredRef.current = true;
+      streakRef.current = 0;
       setStreak(0);
       if (picked) setWrongPicks((w) => [...w, picked]);
       setShake(true);
+      setFlash("red");
       later(() => setShake(false), 500);
+      later(() => setFlash(null), 650);
 
       if (picked === null) soundEffects.playTimeUp();
       else soundEffects.playError();
 
-      if (attempt < MAX_ATTEMPTS) {
+      if (attemptRef.current < MAX_ATTEMPTS) {
         setRoundState("retry");
-        setMessage(picked === null ? "Tempo esgotado! Você tem mais uma tentativa." : "Ainda não! Você tem mais uma tentativa.");
+        setMessage(picked === null ? "Tempo esgotado! Mais uma chance." : "Ainda não! Mais uma chance.");
         later(() => {
-          setAttempt((a) => a + 1);
+          attemptRef.current += 1;
+          setAttempt(attemptRef.current);
           setMessage("");
           startAttempt();
         }, 1500);
       } else {
         setRoundState("reveal");
-        setMessage(`A resposta era: ${item.fr}.`);
-        later(() => speakFrench(item.speak), 500);
+        setResults((r) => r.map((v, i) => (i === indexRef.current ? "miss" : v)));
+        setMessage("Veja a resposta certa!");
+        later(() => speakFrench(current.speak), 500);
         later(goNext, 4200);
       }
     },
-    [item, attempt, later, startAttempt, goNext]
+    [later, startAttempt, goNext]
   );
 
   // ---------- acerto ----------
-  function pick(option: string) {
-    if (!item || roundState !== "asking" || answeredRef.current || wrongPicks.includes(option)) return;
-    if (option !== item.fr) {
-      registerMiss(option);
-      return;
-    }
-    answeredRef.current = true;
-    const nextStreak = streak + 1;
-    const timeBonus = Math.round((timeLeft / 1000) * 2);
-    const points = (attempt === 1 ? 10 : 6) + timeBonus;
-    setRoundState("correct");
-    setScore((s) => s + points);
-    setHits((h) => h + 1);
-    setStreak(nextStreak);
-    setBestStreak((b) => Math.max(b, nextStreak));
-    setMessage(attempt === 1 ? "Parfait ! 🎉" : "Très bien ! Na segunda tentativa 👏");
-    setConfetti(true);
-    if (nextStreak > 1) soundEffects.playStreak(nextStreak);
-    else soundEffects.playSuccess();
-    later(() => speakFrench(item.speak), 350);
+  const pick = useCallback(
+    (option: string) => {
+      const current = roundsRef.current[indexRef.current];
+      if (!current || answeredRef.current) return;
+      if (option !== current.fr) {
+        registerMiss(option);
+        return;
+      }
+      answeredRef.current = true;
+      const lv = levelRef.current;
+      const msLeft = Math.max(0, deadlineRef.current - Date.now());
+      const frac = msLeft / (LEVELS[lv].seconds * 1000);
+      const nextStreak = streakRef.current + 1;
+      const base = attemptRef.current === 1 ? 10 : 6;
+      const timeBonus = Math.round(frac * 10);
+      const comboBonus = nextStreak > 1 ? Math.min(nextStreak * 2, 10) : 0;
+      const points = Math.round((base + timeBonus + comboBonus) * LEVELS[lv].multiplier);
 
-    const reward = recordQuizWin({
-      sceneId: `cquoi-${item.id}`,
-      theme: item.theme,
-      wordsCount: 1,
-      attemptsLeft: attempt === 1 ? 3 : 2,
-      streak: nextStreak,
-    });
-    setXp((x) => x + reward.gainedXp);
-    setGoud((g) => g + reward.gainedGoud);
-    if (reward.leveledUp) setLevelUp(reward.newLevel.level);
-    later(goNext, 3200);
-  }
+      streakRef.current = nextStreak;
+      hitsRef.current += 1;
+      scoreRef.current += points;
+      bestStreakRef.current = Math.max(bestStreakRef.current, nextStreak);
 
-  // ---------- relógio de 5 s com tique-taque ----------
+      setRoundState("correct");
+      setScore(scoreRef.current);
+      setHits(hitsRef.current);
+      setStreak(nextStreak);
+      setBestStreak(bestStreakRef.current);
+      setResults((r) => r.map((v, i) => (i === indexRef.current ? "hit" : v)));
+      setMessage(attemptRef.current === 1 ? "Parfait ! 🎉" : "Très bien ! Na segunda tentativa 👏");
+      setConfetti(true);
+      setFlash("green");
+      later(() => setFlash(null), 750);
+      floaterKey.current += 1;
+      setFloater({ key: floaterKey.current, text: `+${points}` });
+      later(() => setFloater(null), 1350);
+      if (nextStreak > 1) soundEffects.playStreak(nextStreak);
+      else soundEffects.playSuccess();
+      later(() => speakFrench(current.speak), 350);
+      later(goNext, 3200);
+    },
+    [later, goNext, registerMiss]
+  );
+
+  // mantém a versão mais recente do "pick" para o atalho de teclado
+  useEffect(() => {
+    pickRef.current = pick;
+  }, [pick]);
+
+  // ---------- atalhos 1-4 ----------
+  useEffect(() => {
+    if (!running) return;
+    const onKey = (e: KeyboardEvent) => {
+      const n = Number(e.key);
+      if (Number.isInteger(n) && n >= 1 && n <= options.length) {
+        const opt = options[n - 1];
+        if (!wrongPicks.includes(opt)) pickRef.current(opt);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [running, options, wrongPicks]);
+
+  // ---------- relógio com tique-taque ----------
   useEffect(() => {
     if (!running) return;
     const id = setInterval(() => {
       const left = Math.max(0, deadlineRef.current - Date.now());
       setTimeLeft(left);
       const sec = Math.ceil(left / 1000);
+      // tique-taque nos últimos 5 segundos de cada tentativa
       if (left > 0 && sec !== lastSecRef.current) {
         lastSecRef.current = sec;
-        soundEffects.playClockTick(sec <= 2);
+        if (sec <= 5) soundEffects.playClockTick(sec <= 2);
       }
       if (left <= 0) {
         clearInterval(id);
@@ -314,177 +502,425 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     return () => clearInterval(id);
   }, [running, registerMiss, attempt, index]);
 
+  // ---------- início da partida ----------
+  const startGame = useCallback(
+    (lv: Level) => {
+      if (!isUnlocked(lv, parseProgress(readProgressRaw()))) return;
+      const pool = themeId === "all" ? items : items.filter((i) => i.themeId === themeId);
+      const list = pickRounds(pool, Math.min(ROUNDS_PER_GAME, pool.length));
+      clearTimers();
+      cancelSpeech();
+      levelRef.current = lv;
+      roundsRef.current = list;
+      indexRef.current = 0;
+      attemptRef.current = 1;
+      streakRef.current = 0;
+      hitsRef.current = 0;
+      scoreRef.current = 0;
+      bestStreakRef.current = 0;
+      setLevel(lv);
+      setRounds(list);
+      setResults(list.map(() => null));
+      setIndex(0);
+      setScore(0);
+      setHits(0);
+      setStreak(0);
+      setBestStreak(0);
+      setPassed(false);
+      setUnlockedNow(null);
+      setConfetti(false);
+      setFloater(null);
+      setMessage("");
+      setRoundState("asking");
+      setCountdown(3);
+      setPhase("countdown");
+      // 3 ... 2 ... 1 ... Partez !
+      later(() => setCountdown(2), 850);
+      later(() => setCountdown(1), 1700);
+      later(() => setCountdown(0), 2550);
+      later(() => {
+        setPhase("playing");
+        prepareRound(list, 0);
+      }, 3300);
+    },
+    [items, themeId, clearTimers, later, prepareRound]
+  );
+
   function toggleSound() {
     const next = soundEffects.toggleMute();
     setMuted(next);
-    if (next && typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+    if (next) cancelSpeech();
+  }
+
+  function chooseLevel(lv: Level) {
+    if (!isUnlocked(lv, progress)) {
+      soundEffects.playError();
+      setLockedShake(lv);
+      setTimeout(() => setLockedShake(null), 450);
+      return;
+    }
+    soundEffects.playTap();
+    setLevel(lv);
   }
 
   const mood: StickmanMood = roundState === "correct" ? "dance" : roundState === "retry" || roundState === "reveal" ? "sad" : "think";
-  const stars = hits >= 9 ? 3 : hits >= 6 ? 2 : hits >= 3 ? 1 : 0;
+  const stars = rounds.length ? (hits >= rounds.length - 1 ? 3 : hits >= need + 1 ? 2 : hits >= need ? 1 : 0) : 0;
+  const nextAfterCurrent = LEVEL_ORDER[LEVEL_ORDER.indexOf(level) + 1] as Level | undefined;
+  const levelsDone = LEVEL_ORDER.every((l) => progress.passed.includes(l));
 
-  // =================== INTRO ===================
+  // ===================== INTRO =====================
   if (phase === "intro") {
+    const selectedUnlocked = isUnlocked(level, progress);
     return (
-      <div className="mx-auto w-full max-w-lg space-y-5 px-4 py-8">
-        <div className="flex items-center justify-between">
-          <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
-            <ArrowLeft className="h-4 w-4" /> Painel
-          </Link>
-          <button type="button" onClick={toggleSound} className="cursor-pointer rounded-lg border border-[var(--border)] p-2 text-[var(--text-secondary)]" aria-label={muted ? "Ativar som" : "Silenciar"}>
+      <div className="cq2-bg min-h-[calc(100vh-4rem)]">
+        <div className="mx-auto w-full max-w-lg space-y-5 px-4 py-6">
+          <div className="flex items-center justify-between">
+            <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+              <ArrowLeft className="h-4 w-4" /> Painel
+            </Link>
+            <button type="button" onClick={toggleSound} className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-[var(--text-secondary)]" aria-label={muted ? "Ativar som" : "Silenciar"}>
+              {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            </button>
+          </div>
+
+          <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 text-center shadow-lg">
+            <div className="cq2-scene-in mx-auto h-36 w-36"><CestQuoiStickman mood="think" /></div>
+            <h1 className="mt-1 text-3xl font-black tracking-tight text-[var(--text)]">C&apos;est quoi ? 🇫🇷</h1>
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">
+              A seta vermelha aponta para um objeto. Escolha o nome certo em francês antes que o tempo acabe! Você tem{" "}
+              <strong>mais uma tentativa</strong> se errar.
+            </p>
+
+            <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Escolha o nível</p>
+            <div className="mt-2 space-y-2.5 text-left">
+              {LEVEL_ORDER.map((lv, i) => {
+                const cfg = LEVELS[lv];
+                const unlocked = isUnlocked(lv, progress);
+                const done = progress.passed.includes(lv);
+                const best = progress.best[lv];
+                const selected = level === lv && unlocked;
+                const isNextGoal = unlocked && !done;
+                return (
+                  <button
+                    key={lv}
+                    type="button"
+                    onClick={() => chooseLevel(lv)}
+                    aria-disabled={!unlocked}
+                    className={cn(
+                      "relative flex w-full cursor-pointer items-center gap-3 overflow-hidden rounded-2xl border-2 border-b-4 p-3 transition-all active:translate-y-[2px] active:border-b-2",
+                      unlocked ? "bg-[var(--surface)] hover:bg-[var(--surface-2)]" : "cursor-not-allowed bg-[var(--surface-2)] opacity-70",
+                      selected ? `border-transparent ring-2 ${cfg.ring} ring-offset-2 ring-offset-[var(--surface)]` : "border-[var(--border)]",
+                      isNextGoal && selected && "cq2-glow",
+                      lockedShake === lv && "cq2-lock-shake"
+                    )}
+                  >
+                    <span className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-2xl shadow-inner", unlocked ? cfg.grad : "from-slate-300 to-slate-400 grayscale")}>
+                      {unlocked ? cfg.emoji : <Lock className="h-5 w-5 text-white" />}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-2">
+                        <span className="text-base font-extrabold text-[var(--text)]">{cfg.label}</span>
+                        {done && <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">✔ Concluído</span>}
+                      </span>
+                      <span className="block text-xs text-[var(--text-secondary)]">
+                        {cfg.desc} · pontos x{cfg.multiplier}
+                      </span>
+                      {unlocked ? (
+                        best ? <span className="block text-[11px] font-semibold text-[var(--text-muted)]">Melhor pontuação: {best} pts</span> : null
+                      ) : (
+                        <span className="block text-[11px] font-semibold text-[var(--text-muted)]">
+                          🔒 Passe o nível {LEVELS[LEVEL_ORDER[i - 1]].label} para desbloquear
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-3 rounded-xl bg-[var(--surface-2)] px-3 py-2 text-xs text-[var(--text-secondary)]">
+              Para <strong>passar de nível</strong>, acerte pelo menos <strong>{Math.ceil(ROUNDS_PER_GAME * PASS_RATIO)} de {ROUNDS_PER_GAME}</strong> palavras.
+            </p>
+
+            <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Tema</p>
+            <div className="mt-2 flex flex-wrap justify-center gap-1.5">
+              {[{ id: "all", label: "Todos os temas" }, ...themes].map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => { soundEffects.playTap(); setThemeId(t.id); }}
+                  className={cn(
+                    "cursor-pointer rounded-full border px-3 py-1 text-xs font-semibold transition-all active:scale-95",
+                    themeId === t.id ? "border-[var(--accent)] bg-[var(--accent)] text-white shadow" : "border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)]"
+                  )}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              disabled={!selectedUnlocked}
+              onClick={() => { soundEffects.playTap(); startGame(level); }}
+              className={cn(
+                "cq2-shine relative mt-6 w-full cursor-pointer overflow-hidden rounded-2xl border-b-4 bg-gradient-to-r px-4 py-3.5 text-lg font-black text-white shadow-lg transition-transform active:translate-y-[2px] active:border-b-2 disabled:cursor-not-allowed disabled:opacity-50",
+                LEVELS[level].grad,
+                level === "easy" ? "border-green-800" : level === "intermediate" ? "border-orange-700" : "border-red-900"
+              )}
+            >
+              Jouer ! ▶ {LEVELS[level].emoji} {LEVELS[level].label}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===================== CONTAGEM 3-2-1 =====================
+  if (phase === "countdown") {
+    return (
+      <div className="cq2-bg flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
+        <div className="text-center">
+          <p className={cn("text-sm font-extrabold uppercase tracking-widest", levelCfg.text)}>
+            {levelCfg.emoji} Nível {levelCfg.label} · {levelCfg.seconds} s por palavra
+          </p>
+          <div key={countdown} className="cq2-count mt-4 text-[110px] font-black leading-none text-[var(--text)]" aria-live="assertive">
+            {countdown > 0 ? countdown : "Partez !"}
+          </div>
+          <div className="mx-auto mt-4 h-32 w-32"><CestQuoiStickman mood={countdown > 0 ? "think" : "dance"} /></div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===================== FIM =====================
+  if (phase === "done") {
+    return (
+      <div className="cq2-bg min-h-[calc(100vh-4rem)]">
+        <div className="mx-auto w-full max-w-lg px-4 py-6">
+          <Confetti active={confetti} onComplete={() => setConfetti(false)} />
+          <div className="cq2-scene-in rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center shadow-lg">
+            <div className="mx-auto h-40 w-40"><CestQuoiStickman mood={passed ? "dance" : "sad"} /></div>
+            <p className={cn("text-xs font-extrabold uppercase tracking-widest", levelCfg.text)}>{levelCfg.emoji} Nível {levelCfg.label}</p>
+            <h2 className="mt-1 flex items-center justify-center gap-2 text-3xl font-black text-[var(--text)]">
+              <Trophy className={cn("h-7 w-7", passed ? "text-amber-500" : "text-slate-400")} />
+              {passed ? (levelsDone && level === "master" ? "Vous êtes Master !" : "Bravo !") : "Presque !"}
+            </h2>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              {passed ? `Você passou o nível ${levelCfg.label}!` : `Você precisa de ${need} acertos para passar. Tente de novo!`}
+            </p>
+            <p className="mt-2 text-2xl">{[0, 1, 2].map((s) => <span key={s} className={cn("inline-block", s < stars ? "cq2-unlock" : "opacity-25")} style={{ animationDelay: `${0.3 + s * 0.25}s` }}>⭐</span>)}</p>
+
+            <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+              <Stat label="Acertos" value={`${hits}/${rounds.length}`} />
+              <Stat label="Pontos" value={String(score)} />
+              <Stat label="Melhor combo" value={`x${bestStreak}`} />
+            </div>
+
+            <div className="mt-4">
+              <div className="flex justify-between text-[11px] font-semibold text-[var(--text-muted)]">
+                <span>Meta para passar</span>
+                <span>{hits}/{need}</span>
+              </div>
+              <div className="mt-1 h-3 overflow-hidden rounded-full bg-[var(--surface-2)]">
+                <div className={cn("h-full rounded-full transition-all duration-1000", passed ? "bg-green-500" : "bg-amber-500")} style={{ width: `${Math.min(100, (hits / need) * 100)}%` }} />
+              </div>
+            </div>
+
+            {unlockedNow && (
+              <div className="cq2-unlock mt-4 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-50 to-green-100 px-3 py-3 text-sm font-bold text-green-800 dark:from-emerald-950/40 dark:to-green-950/40 dark:text-green-300">
+                🔓 Novo nível desbloqueado: {LEVELS[unlockedNow].emoji} {LEVELS[unlockedNow].label}!
+              </div>
+            )}
+            {passed && !nextAfterCurrent && (
+              <div className="cq2-unlock mt-4 rounded-2xl bg-amber-50 px-3 py-3 text-sm font-bold text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+                🏆 Você concluiu todos os níveis do C&apos;est quoi ?
+              </div>
+            )}
+
+            <div className="mt-5 flex flex-col gap-2">
+              {passed && nextAfterCurrent && isUnlocked(nextAfterCurrent, progress) && (
+                <button
+                  type="button"
+                  onClick={() => { soundEffects.playTap(); startGame(nextAfterCurrent); }}
+                  className={cn("cursor-pointer rounded-2xl border-b-4 bg-gradient-to-r px-4 py-3 text-base font-black text-white shadow-md active:translate-y-[2px] active:border-b-2", LEVELS[nextAfterCurrent].grad, nextAfterCurrent === "intermediate" ? "border-orange-700" : "border-red-900")}
+                >
+                  Próximo nível: {LEVELS[nextAfterCurrent].emoji} {LEVELS[nextAfterCurrent].label} ▶
+                </button>
+              )}
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <button type="button" onClick={() => { soundEffects.playTap(); startGame(level); }} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-b-4 border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 font-bold text-[var(--text)] hover:bg-[var(--surface-2)] active:translate-y-[2px] active:border-b-2">
+                  <RotateCcw className="h-4 w-4" /> Jogar de novo
+                </button>
+                <button type="button" onClick={() => { soundEffects.playTap(); setPhase("intro"); }} className="flex-1 cursor-pointer rounded-2xl border-2 border-b-4 border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 font-semibold text-[var(--text)] hover:bg-[var(--surface-2)] active:translate-y-[2px] active:border-b-2">
+                  Níveis e temas
+                </button>
+              </div>
+              <Link href="/dashboard" className="text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text)]">Voltar ao painel</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===================== JOGO =====================
+  if (!item) return null;
+  const answered = roundState === "correct" || roundState === "reveal";
+  const frac = Math.min(1, Math.max(0, timeLeft / totalMs));
+  const barColor = frac <= 0.33 ? "#ef4444" : frac <= 0.6 ? "#f59e0b" : "#22c55e";
+  const heartsLeft = MAX_ATTEMPTS - attempt + 1;
+
+  return (
+    <div className="cq2-bg min-h-[calc(100vh-4rem)]">
+      <div className="mx-auto w-full max-w-md space-y-2.5 px-3 py-3">
+        <Confetti active={confetti && roundState === "correct"} onComplete={() => setConfetti(false)} />
+
+        {/* ---------- HUD ---------- */}
+        <div className="flex items-center justify-between gap-2 text-sm">
+          <Link href="/dashboard" className="inline-flex items-center rounded-lg p-1 text-[var(--text-secondary)] hover:text-[var(--text)]" aria-label="Sair do jogo"><ArrowLeft className="h-5 w-5" /></Link>
+          <span className={cn("inline-flex items-center gap-1 rounded-full bg-gradient-to-r px-3 py-1 text-xs font-extrabold text-white shadow", levelCfg.grad)}>
+            {levelCfg.emoji} {levelCfg.label}
+          </span>
+          <span key={score} className="cq2-bump rounded-full bg-[var(--surface)] px-3 py-1 text-xs font-extrabold text-[var(--text)] shadow-sm ring-1 ring-[var(--border)]">{score} pts</span>
+          <span key={`s${streak}`} className={cn("cq2-bump inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-extrabold shadow-sm", streak > 1 ? "bg-orange-500 text-white" : "bg-[var(--surface)] text-[var(--text-muted)] ring-1 ring-[var(--border)]")}>
+            <span className={streak > 1 ? "cq2-flame" : ""}><Flame className="h-3.5 w-3.5" /></span> x{streak}
+          </span>
+          <span className="inline-flex gap-0.5" aria-label={`Tentativa ${attempt} de ${MAX_ATTEMPTS}`}>
+            {Array.from({ length: MAX_ATTEMPTS }, (_, i) => {
+              const alive = i < heartsLeft;
+              return (
+                <span key={`${i}-${alive}`} className={cn(alive ? "cq2-heartbeat" : "cq2-heart-lost")}>
+                  <Heart className={cn("h-5 w-5", alive ? "fill-red-500 text-red-500" : "fill-slate-300 text-slate-300")} />
+                </span>
+              );
+            })}
+          </span>
+          <button type="button" onClick={toggleSound} className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface)] p-1.5 text-[var(--text-secondary)]" aria-label={muted ? "Ativar som" : "Silenciar"}>
             {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </button>
         </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center shadow-sm">
-          <div className="mx-auto h-40 w-40"><CestQuoiStickman mood="think" /></div>
-          <h1 className="mt-2 text-2xl font-extrabold text-[var(--text)]">C&apos;est quoi ? 🇫🇷</h1>
-          <p className="mt-2 text-sm text-[var(--text-secondary)]">
-            A seta vermelha aponta para um objeto. Escolha o nome certo em francês <strong>em {SECONDS_PER_IMAGE} segundos</strong>!
-            Se errar, você tem <strong>mais uma tentativa</strong>. Ao acertar, ouça a pronúncia correta da palavra.
-          </p>
-          <ul className="mx-auto mt-3 max-w-xs space-y-1 text-left text-xs text-[var(--text-muted)]">
-            <li className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-[var(--accent)]" /> O relógio faz tique-taque: fique de olho!</li>
-            <li className="flex items-center gap-2"><Flame className="h-3.5 w-3.5 text-[var(--accent)]" /> Acertos seguidos valem combo, XP e Goud.</li>
-            <li className="flex items-center gap-2"><Volume2 className="h-3.5 w-3.5 text-[var(--accent)]" /> Ative o som para ouvir a pronúncia.</li>
-          </ul>
 
-          <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Tema</p>
-          <div className="mt-2 flex flex-wrap justify-center gap-1.5">
-            {[{ id: "all", label: "Todos os temas" }, ...themes].map((t) => (
+        {/* progresso das rodadas */}
+        <div className="flex items-center gap-1" aria-label={`Palavra ${index + 1} de ${rounds.length}`}>
+          {rounds.map((_, i) => (
+            <span
+              key={i}
+              className={cn(
+                "h-2 flex-1 rounded-full transition-colors duration-300",
+                results[i] === "hit" ? "bg-green-500" : results[i] === "miss" ? "bg-red-500" : i === index ? "animate-pulse bg-[var(--accent)]" : "bg-[var(--border)]"
+              )}
+            />
+          ))}
+        </div>
+
+        {/* barra de tempo */}
+        <div className="h-3 overflow-hidden rounded-full bg-[var(--surface)] shadow-inner ring-1 ring-[var(--border)]">
+          <div
+            className={cn("h-full rounded-full", running && frac <= 0.33 && "cq2-timer-urgent")}
+            style={{ width: `${frac * 100}%`, background: barColor, transition: "width 100ms linear, background .3s" }}
+          />
+        </div>
+
+        {/* ---------- cena + painel do boneco ---------- */}
+        <div className={cn("overflow-hidden rounded-3xl border border-[var(--border)] bg-[#f1ece1] shadow-xl", shake && "cq-card-shake")}>
+          <div key={item.id} className="cq2-scene-in">
+            <div className="relative w-full" style={{ aspectRatio: `${item.w} / ${item.h}` }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.scene} alt="Objeto indicado pela seta vermelha" className="h-full w-full object-cover" draggable={false} />
+              <SceneArrow item={item} />
+              <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white backdrop-blur">{item.theme}</span>
+              <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2.5 py-0.5 text-[10px] font-bold text-white backdrop-blur">{index + 1} / {rounds.length}</span>
+
+              {flash && <div key={flash + roundState + attempt} className={cn("pointer-events-none absolute inset-0", flash === "green" ? "cq2-flash-green" : "cq2-flash-red")} />}
+              {roundState === "correct" && (
+                <div key={item.id + "sp"} className="pointer-events-none absolute inset-0">
+                  {SPARKS.map((s, i) => (
+                    <span key={i} className="cq2-spark" style={{ ["--dx" as string]: `${s.dx}px`, ["--dy" as string]: `${s.dy}px`, animationDelay: `${i * 30}ms` }}>{s.e}</span>
+                  ))}
+                </div>
+              )}
+              {floater && (
+                <div key={floater.key} className="cq2-float pointer-events-none absolute inset-x-0 top-1/3 text-center text-5xl font-black text-white" style={{ textShadow: "0 3px 0 #16a34a, 0 0 18px rgba(34,197,94,.9)" }}>
+                  {floater.text}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* painel bege: relógio · boneco · balão de fala */}
+          <div className="relative grid grid-cols-[88px_1fr_1fr] items-center gap-1 bg-[#f1ece1] px-2 pb-2 pt-2" style={{ minHeight: 190 }}>
+            <div className="self-start"><CountdownClock left={timeLeft} total={totalMs} running={running} /></div>
+            <div className="h-[170px]"><CestQuoiStickman mood={mood} compact /></div>
+            <div className="flex min-h-[90px] items-center">
+              <div
+                key={roundState + (answered ? item.id : "")}
+                className="cq2-bubble relative w-full rounded-2xl bg-white px-3 py-2 text-center shadow-md ring-1 ring-black/5"
+              >
+                <span className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rotate-45 bg-white ring-1 ring-black/5" style={{ clipPath: "polygon(0 0, 0 100%, 100% 100%)" }} />
+                {answered ? (
+                  <span className="relative inline-flex flex-wrap items-center justify-center gap-1.5 text-base font-black leading-tight text-black">
+                    <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-white", roundState === "correct" ? "bg-green-600" : "bg-red-500")}>
+                      {roundState === "correct" ? <Check className="h-4 w-4" strokeWidth={4} /> : <X className="h-4 w-4" strokeWidth={4} />}
+                    </span>
+                    {item.fr}.
+                  </span>
+                ) : (
+                  <span className="relative text-lg font-black text-[#333]">C&apos;est quoi ?</span>
+                )}
+                {message && <p className="relative mt-1 text-[11px] font-bold leading-snug text-[#555]" role="status">{message}</p>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ---------- alternativas ---------- */}
+        <div className="grid grid-cols-2 gap-2.5">
+          {options.map((opt, i) => {
+            const isWrong = wrongPicks.includes(opt);
+            const isRight = answered && opt === item.fr;
+            return (
               <button
-                key={t.id}
+                key={`${item.id}-${attempt}-${opt}`}
                 type="button"
-                onClick={() => setThemeId(t.id)}
+                disabled={roundState !== "asking" || isWrong}
+                onClick={() => pick(opt)}
+                style={{ animationDelay: `${i * 70}ms` }}
                 className={cn(
-                  "cursor-pointer rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
-                  themeId === t.id ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-2)]"
+                  "cq2-opt-in relative min-h-[58px] cursor-pointer rounded-2xl border-2 border-b-4 px-3 py-2 text-sm font-extrabold transition-colors",
+                  isRight
+                    ? "cq2-opt-correct border-green-700 bg-green-500 text-white"
+                    : isWrong
+                    ? "cq2-opt-wrong border-red-400 bg-red-100 text-red-500 line-through dark:bg-red-950/40"
+                    : "border-[var(--border)] border-b-[var(--border-strong)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)] hover:bg-[var(--surface-2)] active:translate-y-[2px] active:border-b-2",
+                  roundState !== "asking" && !isRight && !isWrong && "opacity-45"
                 )}
               >
-                {t.label}
+                <span className="absolute left-2 top-1 text-[10px] font-bold opacity-40">{i + 1}</span>
+                {opt}
               </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => { soundEffects.playTap(); startGame(); }}
-            className="mt-6 w-full cursor-pointer rounded-xl bg-[var(--accent)] px-4 py-3 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[var(--accent-hover)]"
-          >
-            Jouer ! ▶
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // =================== FIM ===================
-  if (phase === "done") {
-    return (
-      <div className="mx-auto w-full max-w-lg px-4 py-8">
-        <Confetti active={confetti} onComplete={() => setConfetti(false)} />
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center shadow-sm">
-          <div className="mx-auto h-44 w-44"><CestQuoiStickman mood={hits >= 4 ? "dance" : "sad"} /></div>
-          <h2 className="mt-2 flex items-center justify-center gap-2 text-2xl font-extrabold text-[var(--text)]"><Trophy className="h-6 w-6 text-amber-500" /> {hits >= 4 ? "Bravo !" : "Continue !"}</h2>
-          <p className="mt-1 text-lg">{[0, 1, 2].map((s) => <span key={s} className={s < stars ? "" : "opacity-25"}>⭐</span>)}</p>
-          <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-            <Stat label="Acertos" value={`${hits}/${rounds.length}`} />
-            <Stat label="Pontos" value={String(score)} />
-            <Stat label="Melhor combo" value={`x${bestStreak}`} />
-          </div>
-          <p className="mt-3 text-sm text-[var(--text-secondary)]">+{xp} XP · +{goud} Goud{levelUp ? ` · Nível ${levelUp}! 🎊` : ""}</p>
-          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-            <button type="button" onClick={startGame} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2.5 font-bold text-white hover:bg-[var(--accent-hover)]"><RotateCcw className="h-4 w-4" /> Jogar de novo</button>
-            <button type="button" onClick={() => setPhase("intro")} className="flex-1 cursor-pointer rounded-xl border border-[var(--border)] px-4 py-2.5 font-semibold text-[var(--text)] hover:bg-[var(--surface-2)]">Trocar tema</button>
-            <Link href="/dashboard" className="flex-1 rounded-xl border border-[var(--border)] px-4 py-2.5 text-center font-semibold text-[var(--text)] hover:bg-[var(--surface-2)]">Painel</Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // =================== JOGO ===================
-  if (!item) return null;
-  const answered = roundState === "correct" || roundState === "reveal";
-  return (
-    <div className="mx-auto w-full max-w-md space-y-3 px-3 py-4">
-      <Confetti active={confetti && roundState === "correct"} onComplete={() => setConfetti(false)} />
-
-      <div className="flex items-center justify-between gap-2 text-sm">
-        <Link href="/dashboard" className="inline-flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text)]"><ArrowLeft className="h-4 w-4" /></Link>
-        <span className="rounded-full bg-[var(--surface-2)] px-3 py-1 text-xs font-bold text-[var(--text)]">{index + 1} / {rounds.length}</span>
-        <span className="rounded-full bg-[var(--surface-2)] px-3 py-1 text-xs font-bold text-[var(--text)]">{score} pts</span>
-        <span className={cn("inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold", streak > 1 ? "bg-orange-500 text-white" : "bg-[var(--surface-2)] text-[var(--text-muted)]")}><Flame className="h-3 w-3" /> x{streak}</span>
-        <span className="inline-flex gap-1" aria-label={`Tentativa ${attempt} de ${MAX_ATTEMPTS}`}>
-          {Array.from({ length: MAX_ATTEMPTS }, (_, i) => <span key={i} className={cn("h-2.5 w-2.5 rounded-full", i < MAX_ATTEMPTS - attempt + 1 ? "bg-red-500" : "bg-[var(--border)]")} />)}
-        </span>
-        <button type="button" onClick={toggleSound} className="cursor-pointer rounded-lg border border-[var(--border)] p-1.5 text-[var(--text-secondary)]" aria-label={muted ? "Ativar som" : "Silenciar"}>
-          {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-        </button>
-      </div>
-
-      <div className={cn("overflow-hidden rounded-2xl border border-[var(--border)] bg-[#f1ece1] shadow-md", shake && "cq-card-shake")}>
-        {/* cena com a seta vermelha que balança */}
-        <div className="relative w-full" style={{ aspectRatio: `${item.w} / ${item.h}` }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={item.scene} alt="Objeto indicado pela seta vermelha" className="h-full w-full object-cover" draggable={false} />
-          <SceneArrow item={item} />
-          <span className="absolute right-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">{item.theme}</span>
+            );
+          })}
         </div>
 
-        {/* painel do boneco (mesmo modelo das imagens c-quoi) */}
-        <div className="relative bg-[#f1ece1]" style={{ aspectRatio: "490 / 440" }}>
-          <div className="absolute left-2 top-2 z-10"><CountdownClock left={timeLeft} running={running} /></div>
-          {answered && (
-            <div key={roundState} className="cq-pop-in absolute inset-x-0 top-3 z-10 flex justify-center pl-24">
-              <span className="inline-flex items-center gap-2 rounded-md bg-white/70 px-3 py-1 text-lg font-extrabold text-black">
-                <span className={cn("flex h-5 w-5 items-center justify-center rounded-sm text-white", roundState === "correct" ? "bg-green-600" : "bg-red-500")}>
-                  {roundState === "correct" ? <Check className="h-4 w-4" strokeWidth={4} /> : <X className="h-4 w-4" strokeWidth={4} />}
-                </span>
-                {item.fr}.
-              </span>
-            </div>
-          )}
-          <div className="mx-auto h-full w-[78%]"><CestQuoiStickman mood={mood} /></div>
-          {message && <p className="absolute inset-x-0 bottom-2 px-3 text-center text-sm font-bold text-[#333]" role="status">{message}</p>}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        {options.map((opt) => {
-          const isWrong = wrongPicks.includes(opt);
-          const isRight = answered && opt === item.fr;
-          return (
-            <button
-              key={opt}
-              type="button"
-              disabled={roundState !== "asking" || isWrong}
-              onClick={() => pick(opt)}
-              className={cn(
-                "min-h-[52px] cursor-pointer rounded-xl border-2 px-3 py-2 text-sm font-bold transition-all",
-                isRight ? "border-green-600 bg-green-600 text-white"
-                  : isWrong ? "border-red-300 bg-red-50 text-red-400 line-through opacity-70 dark:bg-red-950/30"
-                  : "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)] hover:bg-[var(--surface-2)] active:scale-95",
-                roundState !== "asking" && !isRight && !isWrong && "opacity-50"
-              )}
-            >
-              {opt}
+        {answered && (
+          <div className="cq2-opt-in flex gap-2">
+            <button type="button" onClick={() => speakFrench(item.speak)} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-b-4 border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm font-bold text-[var(--text)] hover:bg-[var(--surface-2)] active:translate-y-[2px] active:border-b-2">
+              <Volume2 className="h-4 w-4" /> Ouvir de novo
             </button>
-          );
-        })}
+            <button type="button" onClick={goNext} className="flex-1 cursor-pointer rounded-2xl border-b-4 border-blue-900 bg-[var(--accent)] px-3 py-2 text-sm font-black text-white hover:brightness-110 active:translate-y-[2px] active:border-b-2">
+              {index + 1 >= rounds.length ? "Ver resultado" : "Próximo ▶"}
+            </button>
+          </div>
+        )}
       </div>
-
-      {answered && (
-        <div className="flex gap-2">
-          <button type="button" onClick={() => speakFrench(item.speak)} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold text-[var(--text)] hover:bg-[var(--surface-2)]"><Volume2 className="h-4 w-4" /> Ouvir de novo</button>
-          <button type="button" onClick={goNext} className="flex-1 cursor-pointer rounded-xl bg-[var(--accent)] px-3 py-2 text-sm font-bold text-white hover:bg-[var(--accent-hover)]">{index + 1 >= rounds.length ? "Ver resultado" : "Próximo ▶"}</button>
-        </div>
-      )}
     </div>
   );
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-[var(--surface-2)] px-2 py-3">
+    <div className="rounded-2xl bg-[var(--surface-2)] px-2 py-3">
       <p className="text-xl font-extrabold text-[var(--text)]">{value}</p>
       <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{label}</p>
     </div>

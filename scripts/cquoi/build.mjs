@@ -11,12 +11,19 @@ import { composite, sceneOnly, SCENE_H, W } from "./lib.mjs";
 import * as o1 from "./objects-1.mjs";
 import * as o2 from "./objects-2.mjs";
 import * as o3 from "./objects-3.mjs";
+import * as o4 from "./objects-4.mjs";
+import * as o5 from "./objects-5.mjs";
+import * as o6 from "./objects-6.mjs";
+import * as o7 from "./objects-7.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const out = join(root, "public", "c-quoi", "collection");
 
 // mesma ordem dos temas da parte em crioulo
-const THEMES = [o1.TECNOLOGIA, o1.NATUREZA, o1.CULTURA, o1.TURISMO, o2.INTERIOR, o2.DANCA, o2.GEOGRAFIA, o2.HISTORIA, o3.CINEMA, o3.MUSICA, o3.LAZERES, o3.ESTOICISMO, o3.RELIGIAO];
+const THEMES = [o1.TECNOLOGIA, o1.NATUREZA, o1.CULTURA, o1.TURISMO, o2.INTERIOR, o2.DANCA, o2.GEOGRAFIA, o2.HISTORIA, o3.CINEMA, o3.MUSICA, o3.LAZERES, o3.ESTOICISMO, o3.RELIGIAO,
+  // +10 imagens por tema (novas)
+  o4.TECNOLOGIA_2, o4.NATUREZA_2, o4.CULTURA_2, o4.TURISMO_2, o5.INTERIOR_2, o5.DANCA_2, o5.GEOGRAFIA_2, o5.HISTORIA_2,
+  o6.CINEMA_2, o6.MUSICA_2, o6.LAZERES_2, o7.ESTOICISMO_2, o7.RELIGIAO_2, o7.GASTRONOMIA_2];
 
 const split = (fr) => { const [art, ...rest] = fr.split(" "); return { article: art, name: rest.join(" ") }; };
 const items = [];

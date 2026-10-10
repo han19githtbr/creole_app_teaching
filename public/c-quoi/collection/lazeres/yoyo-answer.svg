@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 830" width="490" height="830"><g><defs><linearGradient id="glazeres9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ed8f5"/><stop offset="1" stop-color="#e6f6ff"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#glazeres9)"/>
+<circle cx="415" cy="60" r="30" fill="#fff4b0" opacity=".9"/>
+<ellipse cx="90" cy="70" rx="55" ry="16" fill="#fff" opacity=".85"/><ellipse cx="130" cy="58" rx="40" ry="14" fill="#fff" opacity=".85"/>
+<path d="M0 250 Q120 200 250 245 T490 235 V350 H0Z" fill="#9bd58b"/>
+<rect x="0" y="270" width="490" height="80" fill="#7bc46a"/>
+<ellipse cx="245" cy="312" rx="150" ry="12" fill="#000" opacity=".1"/><path d="M250 40Q256 90 245 140" fill="none" stroke="#e8e0cf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><circle cx="245" cy="190" r="62" fill="#7b4fb8" stroke="#4c2a85" stroke-width="5"/><circle cx="245" cy="190" r="44" fill="#a78bfa" stroke="#4c2a85" stroke-width="3"/><circle cx="245" cy="190" r="14" fill="#ffd23f" stroke="#a8841f" stroke-width="3"/><path d="M200 160Q215 140 240 134" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/><g transform="translate(180 176) rotate(25)"><path d="M-104 -12 L-44 -12 L-50 -29 L0 0 L-50 29 L-44 12 L-104 12 Z" fill="#e60012" stroke="#fff" stroke-width="7" stroke-linejoin="round"/><path d="M-104 -12 L-44 -12 L-50 -29 L0 0 L-50 29 L-44 12 L-104 12 Z" fill="#e60012" stroke="#e60012" stroke-width="1" stroke-linejoin="round"/></g></g><g transform="translate(0 350)"><rect width="490" height="480" fill="#f1ece1"/><rect width="490" height="480" fill="#fff" opacity=".18"/><g transform="translate(245 40)"><rect x="-140" y="-18" width="280" height="38" rx="6" fill="none"/><rect x="-128" y="-9" width="20" height="20" fill="#22b24c" stroke="#128a38" stroke-width="2" rx="2"/><path d="M-124 1l6 6 10-12" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><text x="-100" y="8" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#111">Un yoyo.</text></g><g>
+<line x1="245" y1="262" x2="245" y2="392" stroke="#111" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M245 392 L223 458 M245 392 L267 458" stroke="#111" stroke-width="4.5" stroke-linecap="round"/>
+<ellipse cx="215" cy="466" rx="26" ry="9" fill="#111"/><ellipse cx="275" cy="466" rx="26" ry="9" fill="#111"/>
+<path d="M245 292 Q205 310 167 332" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/><path d="M245 292 Q285 308 315 322" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+<circle cx="245" cy="210" r="52" fill="#fff" stroke="#111" stroke-width="4"/>
+<circle cx="229" cy="205" r="4.5" fill="#111"/><circle cx="261" cy="205" r="4.5" fill="#111"/><path d="M229 224 Q245 242 261 224" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M205 256 L245 272 L285 256 L275 280 L245 288 L215 280Z" fill="#d62828"/>
+<path d="M189 186 Q195 142 241 138 Q297 136 301 180 Q265 168 189 186Z" fill="#1e3a9a"/>
+<circle cx="219" cy="146" r="8" fill="#d62828"/><circle cx="213" cy="150" r="5" fill="#fff"/><circle cx="223" cy="142" r="4" fill="#1e3a9a"/>
+</g></g></svg>

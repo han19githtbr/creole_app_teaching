@@ -1,0 +1,86 @@
+[
+ {
+  "id": "presse-agrumes",
+  "fr": "Un presse-agrumes",
+  "name": "presse-agrumes",
+  "scene": "/c-quoi/scenes/presse-agrumes.jpg",
+  "w": 490,
+  "h": 366,
+  "arrow": {
+   "x": 105,
+   "y": 162
+  }
+ },
+ {
+  "id": "rape",
+  "fr": "Une râpe",
+  "name": "râpe",
+  "scene": "/c-quoi/scenes/rape.jpg",
+  "w": 491,
+  "h": 346,
+  "arrow": {
+   "x": 157,
+   "y": 203
+  }
+ },
+ {
+  "id": "decapsuleur",
+  "fr": "Un décapsuleur",
+  "name": "décapsuleur",
+  "scene": "/c-quoi/scenes/decapsuleur.jpg",
+  "w": 491,
+  "h": 348,
+  "arrow": {
+   "x": 151,
+   "y": 247
+  }
+ },
+ {
+  "id": "entonnoir",
+  "fr": "Un entonnoir",
+  "name": "entonnoir",
+  "scene": "/c-quoi/scenes/entonnoir.jpg",
+  "w": 492,
+  "h": 365,
+  "arrow": {
+   "x": 178,
+   "y": 267
+  }
+ },
+ {
+  "id": "spatule",
+  "fr": "Une spatule",
+  "name": "spatule",
+  "scene": "/c-quoi/scenes/spatule.jpg",
+  "w": 487,
+  "h": 366,
+  "arrow": {
+   "x": 82,
+   "y": 267
+  }
+ },
+ {
+  "id": "fouet",
+  "fr": "Un fouet",
+  "name": "fouet",
+  "scene": "/c-quoi/scenes/fouet.jpg",
+  "w": 487,
+  "h": 365,
+  "arrow": {
+   "x": 106,
+   "y": 252
+  }
+ },
+ {
+  "id": "presse-ail",
+  "fr": "Un presse-ail",
+  "name": "presse-ail",
+  "scene": "/c-quoi/scenes/presse-ail.jpg",
+  "w": 490,
+  "h": 344,
+  "arrow": {
+   "x": 126,
+   "y": 170
+  }
+ }
+]

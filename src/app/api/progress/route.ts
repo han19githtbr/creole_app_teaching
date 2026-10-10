@@ -4,20 +4,24 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import Lesson from "@/models/Lesson";
 import { requireUser } from "@/lib/apiAuth";
+import { getAppLanguage, languageFilter, type AppLanguage } from "@/lib/language";
 
-function visibleLessons(isAdmin: boolean) {
-  return isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } };
+function visibleLessons(isAdmin: boolean, language: AppLanguage) {
+  return {
+    ...languageFilter(language),
+    ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
+  };
 }
 
-async function summary(userEmail: string, isAdmin: boolean) {
+async function summary(userEmail: string, isAdmin: boolean, language: AppLanguage) {
   const user = await User.findOne({ email: userEmail.toLowerCase().trim() })
     .select("completedLessons")
     .lean<{ completedLessons?: mongoose.Types.ObjectId[] }>();
   const ids = (user?.completedLessons ?? []).map(String);
   const [total, completed] = await Promise.all([
-    Lesson.countDocuments(visibleLessons(isAdmin)),
+    Lesson.countDocuments(visibleLessons(isAdmin, language)),
     ids.length
-      ? Lesson.countDocuments({ ...visibleLessons(isAdmin), _id: { $in: ids } })
+      ? Lesson.countDocuments({ ...visibleLessons(isAdmin, language), _id: { $in: ids } })
       : Promise.resolve(0),
   ]);
   return { completedLessonIds: ids, completed, total };
@@ -29,7 +33,9 @@ export async function GET() {
     return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
   }
   await connectDB();
-  return NextResponse.json(await summary(session.user.email, session.user.role === "admin"));
+  return NextResponse.json(
+    await summary(session.user.email, session.user.role === "admin", await getAppLanguage())
+  );
 }
 
 // Marca/desmarca uma lição como concluída.
@@ -49,7 +55,8 @@ export async function POST(req: NextRequest) {
   }
 
   await connectDB();
-  const lesson = await Lesson.exists({ _id: lessonId, ...visibleLessons(isAdmin) });
+  const language = await getAppLanguage();
+  const lesson = await Lesson.exists({ _id: lessonId, ...visibleLessons(isAdmin, language) });
   if (!lesson) {
     return NextResponse.json({ error: "Lição não encontrada." }, { status: 404 });
   }
@@ -60,5 +67,5 @@ export async function POST(req: NextRequest) {
     completed ? { $addToSet: { completedLessons: lessonId } } : { $pull: { completedLessons: lessonId } }
   );
 
-  return NextResponse.json(await summary(email, isAdmin));
+  return NextResponse.json(await summary(email, isAdmin, language));
 }

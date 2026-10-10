@@ -7,15 +7,19 @@ import PostAnswer from "@/models/PostAnswer";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { BookOpen, MessageSquare, Users, Plus, Radio, Video, Camera } from "lucide-react";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminHomePage() {
   await connectDB();
+  const language = await getAppLanguage();
+  const langMatch = languageFilter(language);
   const [totalLessons, totalVideos, activePosts, totalUsers, pendingAnswers] = await Promise.all([
-    Lesson.countDocuments(),
-    VideoLesson.countDocuments(),
+    Lesson.countDocuments(langMatch),
+    VideoLesson.countDocuments(langMatch),
     Post.countDocuments({
+      ...langMatch,
       isPublished: true,
       $or: [{ isPermanent: true }, { expiresAt: { $gte: new Date() } }],
     }),
@@ -26,7 +30,9 @@ export default async function AdminHomePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--text)]">Painel do Administrador</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">
+          Painel do Administrador · {LANGUAGE_META[language].flag} {LANGUAGE_META[language].label}
+        </h1>
         <p className="text-sm text-[var(--text-secondary)]">
           Visão geral do conteúdo, aulas gravadas, lições e estatísticas da plataforma.
         </p>

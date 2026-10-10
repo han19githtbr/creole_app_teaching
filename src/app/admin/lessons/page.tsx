@@ -4,12 +4,14 @@ import Lesson from "@/models/Lesson";
 import { Button } from "@/components/ui/button";
 import { LessonTable } from "./LessonTable";
 import { Plus } from "lucide-react";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminLessonsPage() {
   await connectDB();
-  const lessons = await Lesson.find()
+  const language = await getAppLanguage();
+  const lessons = await Lesson.find(languageFilter(language))
     .sort({ order: 1, sectionNumber: 1 })
     .select("title sectionNumber category isPublished announcedAt")
     .lean();
@@ -26,7 +28,7 @@ export default async function AdminLessonsPage() {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[var(--text)]">Lições</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">Lições · {LANGUAGE_META[language].flag} {LANGUAGE_META[language].label}</h1>
         <Link href="/admin/lessons/new">
           <Button size="sm">
             <Plus className="h-4 w-4" /> Nova lição

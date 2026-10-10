@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import VideoLesson from "@/models/VideoLesson";
 import { VideosGrid } from "./VideosGrid";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 import { Video } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -13,11 +14,13 @@ export default async function DashboardVideosPage() {
   if (!session) redirect("/");
 
   await connectDB();
+  const language = await getAppLanguage();
 
   const isAdmin = session.user.role === "admin";
   const now = new Date();
 
   const filter = {
+    ...languageFilter(language),
     story: { $exists: false },
     ...(isAdmin
       ? {}

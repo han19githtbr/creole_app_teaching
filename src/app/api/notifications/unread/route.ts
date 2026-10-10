@@ -5,6 +5,7 @@ import User from "@/models/User";
 import Lesson from "@/models/Lesson";
 import Post from "@/models/Post";
 import VideoLesson from "@/models/VideoLesson";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ export async function GET() {
   }
 
   await connectDB();
+  const langMatch = languageFilter(await getAppLanguage());
 
   const user = await User.findOne({ email: session.user.email.toLowerCase().trim() })
     .select("lastSeenLessonsAt lastSeenPostsAt lastSeenVideosAt createdAt")
@@ -35,6 +37,7 @@ export async function GET() {
   const videosThreshold = user?.lastSeenVideosAt ?? defaultFallbackDate;
 
   const lessonFilter = {
+      ...langMatch,
       isPublished: true,
       announcedAt: { $ne: null },
       $or: [
@@ -43,6 +46,7 @@ export async function GET() {
       ],
     };
   const postFilter = {
+    ...langMatch,
     isPublished: true,
     $and: [
       {
@@ -55,6 +59,7 @@ export async function GET() {
     ],
   };
   const videoFilter = {
+    ...langMatch,
     story: { $exists: false },
     isPublished: true,
     $and: [

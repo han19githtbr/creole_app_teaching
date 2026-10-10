@@ -4,12 +4,14 @@ import Post from "@/models/Post";
 import { Button } from "@/components/ui/button";
 import { PostTable } from "./PostTable";
 import { Plus } from "lucide-react";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPostsPage() {
   await connectDB();
-  const posts = await Post.find().sort({ createdAt: -1 }).lean();
+  const language = await getAppLanguage();
+  const posts = await Post.find(languageFilter(language)).sort({ createdAt: -1 }).lean();
 
   const now = Date.now(); // eslint-disable-line react-hooks/purity -- server component, fresh per request (force-dynamic)
   const rows = posts.map((p) => ({
@@ -26,7 +28,7 @@ export default async function AdminPostsPage() {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[var(--text)]">Postagens</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">Postagens · {LANGUAGE_META[language].flag} {LANGUAGE_META[language].label}</h1>
         <Link href="/admin/posts/new">
           <Button size="sm">
             <Plus className="h-4 w-4" /> Nova postagem

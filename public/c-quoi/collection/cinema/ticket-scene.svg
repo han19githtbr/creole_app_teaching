@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="gcinema2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2438"/><stop offset="1" stop-color="#52467a"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#gcinema2)"/>
+<path d="M0 0h90q-20 140 0 350H0z" fill="#7c1d2b"/><path d="M490 0h-90q20 140 0 350h90z" fill="#7c1d2b"/>
+<path d="M130 0L60 350M360 0l70 350" stroke="#fff" stroke-opacity=".08" stroke-width="40"/>
+<rect x="0" y="278" width="490" height="72" fill="#8a5a33"/><path d="M0 278h490" stroke="#c28a55" stroke-width="6"/>
+<ellipse cx="245" cy="300" rx="150" ry="10" fill="#000" opacity=".22"/><path d="M150 150H340V190A14 14 0 0 0 340 218V255H150V218A14 14 0 0 0 150 190Z" fill="#f5c542" stroke="#a67c00" stroke-width="3"/><path d="M290 150V255" fill="none" stroke="#a67c00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 6"/><path d="M175 185H265M175 205H245M175 225H260" fill="none" stroke="#7a5a00" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" /><path d="M312 190l9 18 20-3-14 14 4 20-19-9-19 9 4-20-14-14 20 3z" fill="#d62828" transform="translate(-15 -8) scale(.9)"/></svg>

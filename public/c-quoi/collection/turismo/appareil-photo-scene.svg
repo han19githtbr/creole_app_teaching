@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="gturismo1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3f4"/><stop offset="1" stop-color="#dff3fb"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#gturismo1)"/>
+<circle cx="415" cy="60" r="30" fill="#fff4b0" opacity=".9"/>
+<ellipse cx="90" cy="70" rx="55" ry="16" fill="#fff" opacity=".85"/><ellipse cx="130" cy="58" rx="40" ry="14" fill="#fff" opacity=".85"/>
+<path d="M0 250 Q120 200 250 245 T490 235 V350 H0Z" fill="#c9e6f5"/>
+<rect x="0" y="270" width="490" height="80" fill="#e8d5a2"/>
+<ellipse cx="245" cy="312" rx="150" ry="12" fill="#000" opacity=".1"/><rect x="165" y="170" width="160" height="100" rx="14" fill="#2d2d34" /><path d="M205 170L215 150H265L275 170Z" fill="#3b3b44" /><rect x="176" y="180" width="34" height="14" rx="3" fill="#e5e7eb" /><circle cx="298" cy="188" r="7" fill="#f2c14e" /><circle cx="245" cy="222" r="42" fill="#55555e" /><circle cx="245" cy="222" r="33" fill="#1b1e2e" /><circle cx="245" cy="222" r="20" fill="#2c3a64" /><circle cx="236" cy="213" r="7" fill="#fff" opacity=".7"/><rect x="172" y="252" width="146" height="10" rx="2" fill="#c0392b" /></svg>

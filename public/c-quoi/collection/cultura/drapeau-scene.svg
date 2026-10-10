@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="gcultura1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ed8f5"/><stop offset="1" stop-color="#e6f6ff"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#gcultura1)"/>
+<circle cx="415" cy="60" r="30" fill="#fff4b0" opacity=".9"/>
+<ellipse cx="90" cy="70" rx="55" ry="16" fill="#fff" opacity=".85"/><ellipse cx="130" cy="58" rx="40" ry="14" fill="#fff" opacity=".85"/>
+<path d="M0 250 Q120 200 250 245 T490 235 V350 H0Z" fill="#9bd58b"/>
+<rect x="0" y="270" width="490" height="80" fill="#7bc46a"/>
+<ellipse cx="245" cy="312" rx="150" ry="12" fill="#000" opacity=".1"/><rect x="200" y="85" width="8" height="195" rx="3" fill="#6b4a2a" /><circle cx="204" cy="82" r="7" fill="#f2c14e" /><path d="M208 95Q270 80 320 98T370 100V150H208Z" fill="#1f4fb8" /><path d="M208 150H370V195Q320 210 270 192T208 200Z" fill="#d1122b" /><rect x="262" y="124" width="34" height="34" rx="3" fill="#fff" opacity=".95"/><circle cx="279" cy="141" r="9" fill="#3a8a3e" /></svg>

@@ -155,6 +155,7 @@ export async function PUT(
       title: "Nova aula em vídeo",
       body: updated.title,
       url: `/dashboard/videos/${updated.id}`,
+      language: updated.language,
     });
   }
 

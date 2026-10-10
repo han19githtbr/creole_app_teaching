@@ -5,11 +5,14 @@ import Lesson from "@/models/Lesson";
 import Post from "@/models/Post";
 import User from "@/models/User";
 import VideoLesson from "@/models/VideoLesson";
+import { languageFilter, isAppLanguage, DEFAULT_LANGUAGE, type AppLanguage } from "@/lib/languageShared";
 
 interface PushMessage {
   title: string;
   body: string;
   url: string;
+  /** Se informado, só alunos que estudam este idioma recebem o aviso. */
+  language?: AppLanguage;
 }
 
 function configureWebPush() {
@@ -27,11 +30,16 @@ async function getUnreadCount(user: {
   lastSeenLessonsAt?: Date | null;
   lastSeenPostsAt?: Date | null;
   lastSeenVideosAt?: Date | null;
+  preferredLanguage?: string;
 }) {
+  const langMatch = languageFilter(
+    isAppLanguage(user.preferredLanguage) ? user.preferredLanguage : DEFAULT_LANGUAGE
+  );
   const fallback = user.createdAt ?? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const now = new Date();
   const [lessons, posts, videos] = await Promise.all([
     Lesson.countDocuments({
+      ...langMatch,
       isPublished: true,
       announcedAt: { $ne: null },
       $or: [
@@ -40,6 +48,7 @@ async function getUnreadCount(user: {
       ],
     }),
     Post.countDocuments({
+      ...langMatch,
       isPublished: true,
       $and: [
         {
@@ -52,6 +61,7 @@ async function getUnreadCount(user: {
       ],
     }),
     VideoLesson.countDocuments({
+      ...langMatch,
       isPublished: true,
       $and: [
         {
@@ -77,7 +87,7 @@ export async function sendPendingContentPush(userId: string, endpoint: string): 
     const [subscription, user] = await Promise.all([
       AppPushSubscription.findOne({ userId, endpoint }).lean(),
       User.findById(userId)
-        .select("createdAt lastSeenLessonsAt lastSeenPostsAt lastSeenVideosAt")
+        .select("createdAt lastSeenLessonsAt lastSeenPostsAt lastSeenVideosAt preferredLanguage")
         .lean(),
     ]);
     if (!subscription || !user) return;
@@ -113,8 +123,12 @@ export async function sendContentPush(message: PushMessage): Promise<void> {
     if (subscriptions.length === 0) return;
 
     const userIds = [...new Set(subscriptions.map((subscription) => String(subscription.userId)))];
-    const users = await User.find({ _id: { $in: userIds } })
-      .select("createdAt lastSeenLessonsAt lastSeenPostsAt lastSeenVideosAt")
+    const { language, ...payload } = message;
+    const users = await User.find({
+      _id: { $in: userIds },
+      ...(language ? { preferredLanguage: language === "francais" ? "francais" : { $in: ["kreyol", null] } } : {}),
+    })
+      .select("createdAt lastSeenLessonsAt lastSeenPostsAt lastSeenVideosAt preferredLanguage")
       .lean();
 
     await Promise.all(
@@ -128,7 +142,7 @@ export async function sendContentPush(message: PushMessage): Promise<void> {
             try {
               await webpush.sendNotification(
                 { endpoint: subscription.endpoint, keys: subscription.keys },
-                JSON.stringify({ ...message, count })
+                JSON.stringify({ ...payload, count })
               );
             } catch (error) {
               const statusCode = (error as { statusCode?: number }).statusCode;

@@ -93,6 +93,7 @@ export async function PUT(
       title: "Nova lição disponível",
       body: lesson.title,
       url: `/dashboard/lessons/${lesson.slug}`,
+      language: lesson.language,
     });
   }
 

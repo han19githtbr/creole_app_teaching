@@ -7,6 +7,7 @@ export interface SeedLesson {
   category: LessonCategory;
   order: number;
   content: string;
+  language?: "kreyol" | "francais";
 }
 
 export const seedLessons: SeedLesson[] = [

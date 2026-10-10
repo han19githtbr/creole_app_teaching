@@ -30,7 +30,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const isAvailable = video.isPublished && (!video.publishAt || video.publishAt <= new Date());
   if (isAvailable && !wasAvailable) {
     video.announcedAt = new Date();
-    await sendContentPush({ title: "Nova história em Kreyòl", body: video.title, url: `/dashboard/stories/${video.id}` });
+    await sendContentPush({ title: "Nova história em Kreyòl", body: video.title, url: `/dashboard/stories/${video.id}`, language: video.language });
   }
   await video.save();
   return NextResponse.json({ success: true });

@@ -16,6 +16,7 @@ export interface IUser extends Document {
   lastSeenVideosAt?: Date | null;
   /** Lições concluídas pelo aluno (ids de Lesson) — base das conquistas. */
   completedLessons: mongoose.Types.ObjectId[];
+  preferredLanguage?: "kreyol" | "francais";
   gamificationState?: GamificationState;
   gamificationRevision?: number;
   createdAt: Date;
@@ -27,6 +28,7 @@ const UserSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     image: { type: String },
     role: { type: String, enum: ["admin", "user"], default: "user" },
+    preferredLanguage: { type: String, enum: ["kreyol", "francais"], default: "kreyol" },
     lastSeenLessonsAt: { type: Date, default: null },
     lastSeenPostsAt: { type: Date, default: null },
     lastSeenVideosAt: { type: Date, default: null },

@@ -5,6 +5,7 @@ import { validateStory } from "@/lib/storyValidation";
 import { sendContentPush } from "@/lib/pushNotifications";
 import User from "@/models/User";
 import VideoLesson from "@/models/VideoLesson";
+import { getAppLanguage, languageFilter } from "@/lib/language";
 
 export async function GET(request: NextRequest) {
   const session = await requireUser();
@@ -12,9 +13,11 @@ export async function GET(request: NextRequest) {
 
   await connectDB();
   const now = new Date();
+  const langMatch = languageFilter(await getAppLanguage());
   const filter = session.user.role === "admin" && request.nextUrl.searchParams.get("all") === "true"
-    ? { story: { $exists: true } }
+    ? { ...langMatch, story: { $exists: true } }
     : {
+        ...langMatch,
         story: { $exists: true },
         isPublished: true,
         $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
@@ -50,7 +53,9 @@ export async function POST(request: NextRequest) {
 
   const publishAt = body.publishAt ? new Date(body.publishAt) : null;
   const isPublished = Boolean(body.isPublished);
+  const language = await getAppLanguage();
   const video = await VideoLesson.create({
+    language,
     title: body.title.trim(),
     description: typeof body.description === "string" ? body.description.trim() : "",
     videoUrl: story.audioUrl,
@@ -69,7 +74,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (video.isPublished && (!video.publishAt || video.publishAt <= new Date())) {
-    await sendContentPush({ title: "Nova história em Kreyòl", body: video.title, url: `/dashboard/stories/${video.id}` });
+    await sendContentPush({ title: language === "francais" ? "Nouvelle histoire en français" : "Nova história em Kreyòl", body: video.title, url: `/dashboard/stories/${video.id}`, language });
   }
   return NextResponse.json({ _id: String(video._id) }, { status: 201 });
 }

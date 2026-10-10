@@ -49,14 +49,16 @@ export const authOptions: NextAuthOptions = {
       await connectDB();
       const email = (token.email ?? user?.email)?.toLowerCase().trim();
       if (email) {
-        const dbUser = await User.findOne({ email }).lean<{ role: "admin" | "user" }>();
+        const dbUser = await User.findOne({ email }).lean<{ role: "admin" | "user"; preferredLanguage?: "kreyol" | "francais" }>();
         token.role = dbUser?.role ?? "user";
+        token.preferredLanguage = dbUser?.preferredLanguage ?? "kreyol";
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.role = token.role ?? "user";
+        session.user.preferredLanguage = token.preferredLanguage ?? "kreyol";
       }
       return session;
     },

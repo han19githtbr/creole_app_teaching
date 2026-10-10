@@ -507,6 +507,70 @@ class SoundEffectsManager {
       osc.stop(now + 0.18);
     } catch {}
   }
+
+  private tickPhase = false;
+
+  /** Tique-taque do relógio (alterna tom agudo/grave; mais forte e rápido quando o tempo está acabando). */
+  public playClockTick(urgent = false): void {
+    if (this.muted) return;
+    const ctx = this.getContext();
+    const master = this.getMasterNode();
+    if (!ctx || !master) return;
+
+    try {
+      const now = ctx.currentTime;
+      this.tickPhase = !this.tickPhase;
+      const freq = this.tickPhase ? 1500 : 1050;
+      const osc = ctx.createOscillator();
+      const click = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "square";
+      osc.frequency.setValueAtTime(freq, now);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.55, now + 0.035);
+      click.type = "triangle";
+      click.frequency.setValueAtTime(freq * 0.5, now);
+
+      const peak = urgent ? 0.28 : 0.16;
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(peak, now + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+
+      osc.connect(gain);
+      click.connect(gain);
+      gain.connect(master);
+      osc.start(now);
+      click.start(now);
+      osc.stop(now + 0.07);
+      click.stop(now + 0.07);
+    } catch {}
+  }
+
+  /** Alarme curto quando os 5 segundos acabam. */
+  public playTimeUp(): void {
+    if (this.muted) return;
+    const ctx = this.getContext();
+    const master = this.getMasterNode();
+    if (!ctx || !master) return;
+
+    try {
+      const now = ctx.currentTime;
+      [0, 0.16, 0.32].forEach((offset, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const start = now + offset;
+        osc.type = "square";
+        osc.frequency.setValueAtTime(i === 2 ? 440 : 660, start);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(0.16, start + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.13);
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(start);
+        osc.stop(start + 0.15);
+      });
+    } catch {}
+  }
 }
 
 export const soundEffects = new SoundEffectsManager();

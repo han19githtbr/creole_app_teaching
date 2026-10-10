@@ -51,6 +51,8 @@ export default async function VideoWatchPage({
   // Fetch related/suggested videos
   const relatedVideos = await VideoLesson.find({
     _id: { $ne: video._id },
+    story: { $exists: false },
+    language: video.language ?? "kreyol",
     ...(isAdmin
       ? {}
       : {

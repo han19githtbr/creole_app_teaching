@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Lesson from "@/models/Lesson";
 import User from "@/models/User";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 import { LessonCompleteButton } from "@/components/LessonCompleteButton";
 import { Markdown } from "@/components/Markdown";
 import { ArrowLeft, ArrowRight, ChevronLeft } from "lucide-react";
@@ -22,17 +23,20 @@ export default async function LessonDetailPage({
   const { slug } = await params;
   await connectDB();
 
+  const language = await getAppLanguage();
   const isAdmin = session.user.role === "admin";
   const lesson = await Lesson.findOne({
     slug,
+    ...languageFilter(language),
     ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
   }).lean();
 
   if (!lesson) notFound();
 
-  const siblingMatch = isAdmin
-    ? {}
-    : { isPublished: true, announcedAt: { $ne: null } };
+  const siblingMatch = {
+    ...languageFilter(language),
+    ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
+  };
 
   const [prev, next] = await Promise.all([
     Lesson.findOne({ order: { $lt: lesson.order }, ...siblingMatch })

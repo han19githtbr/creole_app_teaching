@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="gmusica3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2d5e"/><stop offset="1" stop-color="#7b62b0"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#gmusica3)"/>
+<path d="M0 0h90q-20 140 0 350H0z" fill="#7c1d2b"/><path d="M490 0h-90q20 140 0 350h90z" fill="#7c1d2b"/>
+<path d="M130 0L60 350M360 0l70 350" stroke="#fff" stroke-opacity=".08" stroke-width="40"/>
+<rect x="0" y="278" width="490" height="72" fill="#8a5a33"/><path d="M0 278h490" stroke="#c28a55" stroke-width="6"/>
+<ellipse cx="245" cy="300" rx="150" ry="10" fill="#000" opacity=".22"/><circle cx="245" cy="150" r="48" fill="#9ca3af" stroke="#4b5563" stroke-width="4"/><path d="M205 128H285M200 150H290M205 172H285" fill="none" stroke="#4b5563" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M215 105Q245 85 275 105" fill="none" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/><path d="M228 195H262L270 280H220Z" fill="#2d2d34" /><rect x="232" y="205" width="26" height="10" rx="3" fill="#6b7280" /></svg>

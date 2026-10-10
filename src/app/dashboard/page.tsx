@@ -18,6 +18,7 @@ import { LessonCard } from "@/components/LessonCard";
 import { ProgressCard } from "@/components/ProgressCard";
 import { GamificationCard } from "@/components/GamificationCard";
 import { getBankImage } from "@/lib/imageBank";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Radio, BookOpen, Bell, Video, ArrowRight } from "lucide-react";
@@ -29,16 +30,21 @@ export default async function DashboardPage() {
   if (!session) redirect("/");
 
   await connectDB();
+  const language = await getAppLanguage();
+  const meta = LANGUAGE_META[language];
+  const langMatch = languageFilter(language);
 
   const isAdmin = session.user.role === "admin";
   const now = new Date();
 
   // Alunos veem somente lições publicadas e anunciadas; admins veem todas (incluindo rascunhos)
-  const lessonMatch = isAdmin
-    ? {}
-    : { isPublished: true, announcedAt: { $ne: null } };
+  const lessonMatch = {
+    ...langMatch,
+    ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
+  };
 
   const videoMatch = {
+    ...langMatch,
     story: { $exists: false },
     ...(isAdmin
       ? {}
@@ -50,6 +56,7 @@ export default async function DashboardPage() {
 
   const [posts, live, categoryCounts, currentUser, recentVideos, recentLessons] = await Promise.all([
     Post.find({
+      ...langMatch,
       isPublished: true,
       $or: [{ isPermanent: true }, { expiresAt: { $gte: now } }],
     })
@@ -104,6 +111,7 @@ export default async function DashboardPage() {
   let hasNewLesson = false;
   if (!isAdmin) {
     hasNewLesson = await Lesson.exists({
+      ...langMatch,
       isPublished: true,
       $or: [
         { announcedAt: lastSeen ? { $gt: lastSeen } : { $ne: null } },
@@ -141,9 +149,11 @@ export default async function DashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text)]">
-            Bon jou, {session.user?.name?.split(" ")[0] ?? "aluno"}! 👋
+            {meta.greeting}, {session.user?.name?.split(" ")[0] ?? "aluno"}! 👋
           </h1>
-          <p className="text-[var(--text-secondary)]">Continue seu progresso em Kreyòl Ayisyen.</p>
+          <p className="text-[var(--text-secondary)]">
+            {meta.flag} {meta.tagline}
+          </p>
         </div>
         {live?.isLive && (
           <Link

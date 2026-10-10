@@ -1,0 +1,309 @@
+
+--- Page 5 ---
+CHAPITRE 2
+Grammaire avancée : les points critiques
+2.1 Le subjonctif — l'ennemi des non-natifs
+Le subjonctif est le principal différenciateur entre un niveau intermédiaire et avancé. Les tests formels en
+abusent délibérément.
+Quand utiliser  le subjonctif ?
+Verbes d'émotion : être content que, regretter que, avoir peur que, préférer que, vouloir que
+Verbes de volonté et souhait : souhaiter que, désirer que, exiger que, ordonner que
+Verbes de doute et négation : douter que, ne pas croire que, ne pas penser que
+Certaines conjonctions : bien que, quoique, pour que, afin que, avant que, à moins que, pourvu que
+Expressions impersonnelles : il faut que, il est nécessaire que, il est important que, il est possible
+que
+Exemple Raison
+Il faut que tu finisses ce rapport. Expression impersonnelle — obligation
+Je veux qu'elle vienne demain. Verbe de volonté — deux sujets différents
+Bien qu'il soit malade, il travaille. Conjonction d'opposition
+Avant que vous partiez, signez ici. Conjonction temporelle
+C'est le meilleur livre que j'aie lu. Superlatif relatif
+⚠ PIÈGE
+Ne confondez pas avec l'indicatif ! « Je pense que tu as raison » (indicatif) vs « Je ne pense pas que tu
+aies raison » (subjonctif après négation).
+Formation du subjonctif présent
+Base = 3ᵉ personne du pluriel du présent de l'indicatif (ils/elles), moins le -ent, + terminaisons : -e, -es, -e,
+-ions, -iez, -ent.
+Verbe Base Subjonctif
+parler → ils parlent parl- que je parle, que tu parles, qu'il parle, que nous parlions, que vous parliez,
+qu'ils parlent
+finir → ils finissent finiss- que je finisse, que tu finisses, qu'il finisse, que nous finissions, que vous
+finissiez, qu'ils finissent
+--- Page 6 ---
+prendre → ils
+prennentprenn- que je prenne, que nous prenions
+Subjonctifs irréguliers à mémoriser
+Verbe Subjonctif
+être que je sois, que tu sois, qu'il soit, que nous soyons, que vous soyez, qu'ils soient
+avoir que j'aie, que tu aies, qu'il ait, que nous ayons, que vous ayez, qu'ils aient
+aller que j'aille, que tu ailles, qu'il aille, que nous allions, que vous alliez, qu'ils aillent
+faire que je fasse, que tu fasses, qu'il fasse, que nous fassions, que vous fassiez, qu'ils fassent
+pouvoir que je puisse, que tu puisses, qu'il puisse, que nous puissions
+savoir que je sache, que tu saches, qu'il sache, que nous sachions
+vouloir que je veuille, que tu veuilles, qu'il veuille, que nous voulions
+2.2 La concordance des temps
+La concordance des temps est examinée dans tous les tests de niveau C1/C2. Elle régit les relations
+temporelles entre la proposition principale et la subordonnée.
+Principale Subordonnée Exemple
+Présent Présent, passé composé, futur Je pense qu'il part / est parti / partira.
+Passé Imparfait, plus-que-parfait, conditionnel Je pensais qu'il partait / était parti / partirait.
+Futur Présent, futur, futur antérieur Je penserai qu'il part / partira / sera parti.
+2.3 Le conditionnel — nuances et emplois
+Conditionnel présent
+Hypothèse avec si + imparfait : « Si j'avais le temps, je voyagerais. »
+Politesse et atténuation : « Je voudrais un café, s'il vous plaît. » / « Pourriez-vous m'aider ? »
+Futur dans le passé : « Il a dit qu'il viendrait. » (Il a dit : « Je viendrai. »)
+Information non confirmée (journalisme) : « Le président aurait signé un accord. »
+Conditionnel passé
+Regret sur le passé : « J'aurais dû étudier davantage. »
+Hypothèse irréelle dans le passé : « Si j'avais su, je serais venu. »
+Reproche : « Tu aurais pu me prévenir ! »
+Proposition SI Temps Principale Temps Sens
+--- Page 7 ---
+Si j'avais le temps, imparfait je voyagerais. conditionnel
+présentHypothèse
+présente/future
+Si j'avais eu le
+temps,plus-que-
+parfaitj'aurais
+voyagé.conditionnel passé Hypothèse passée
+irréelle
+2.4 Les pronoms relatifs complexes
+Les pronoms relatifs simples (qui, que, où, dont) sont connus de tous. Les complexes sont ce que les
+tests évaluent.
+Pronom Usage Exemple
+lequel / laquelle / lesquels /
+lesquellesComplément d'une préposition
+(autre que « de »)La ville dans laquelle je vis. / L'outil avec
+lequel il travaille.
+auquel / à laquelle /
+auxquels / auxquellesAprès préposition « à » + verbe Le projet auquel je participe. / La personne
+à laquelle je pense.
+duquel / de laquelle /
+desquels / desquellesAprès préposition « de » (pour
+les personnes : dont)La cause pour laquelle il lutte. / Les raisons
+desquelles dépend la décision.
+RÈGLE
+« Dont » remplace « de + quelque chose/quelqu'un » : « Le livre dont je parle » = « Le livre de lequel je
+parle ». Pour les lieux, utilisez « où » : « La ville où je suis né. »
+2.5 Les temps du passé — nuances
+Temps Usage Exemple
+Passé
+composéAction passée, terminée, à moment
+précisJ'ai travaillé hier. Il a fini le rapport.
+Imparfait État, habitude, action en cours,
+descriptionIl travaillait quand je suis arrivé. Enfant, je jouais
+dehors.
+Plus-que-
+parfaitAction avant une autre action au passé Quand je suis arrivé, il avait déjà fini.
+Passé simple Littérature, récit formel écrit (rare à
+l'oral)Il entra dans la salle et prit la parole.
+Passé récent Venir de + infinitif : action tout juste
+terminéeJe viens de terminer le rapport.
+2.6 Le gérondif et le participe présent
+Ces deux formes en -ant sont fréquemment confondues, alors qu'elles jouent des rôles différents à l'écrit
+soigné.
+--- Page 8 ---
+Forme Usage Exemple
+Gérondif (en +
+participe présent)Simultanéité, manière, condition — se
+rapporte au sujet de la principaleIl travaille en écoutant de la musique. / En
+insistant, tu obtiendras gain de cause.
+Participe présent
+(sans « en »)Équivalent d'une relative, souvent à l'écrit
+soutenu ; peut avoir son propre sujetLes candidats souhaitant s'inscrire doivent
+remplir ce formulaire. (= qui souhaitent)
+Adjectif verbal Forme en -ant employée comme adjectif
+: s'accorde en genre et en nombreUne réunion fatigante. Des arguments
+convaincants.
+⚠ PIÈGE
+Le participe présent est invariable (« les personnes travaillant ici »), mais l'adjectif verbal s'accorde (« des
+personnes travaillantes » n'existe pas — comparez « fatiguant » participe / « fatigant » adjectif : « en
+fatiguant son adversaire » vs « un rythme fatigant »).
+2.7 La voix passive
+Le passif déplace l'attention du sujet agissant vers l'action subie ; il est très présent dans le style
+administratif, journalistique et scientifique.
+Voix Exemple
+Active Le comité a approuvé la proposition.
+Passive La proposition a été approuvée par le comité.
+Passive sans agent (fréquent à l'écrit formel) De nouvelles mesures ont été annoncées hier.
+Passif pronominal (« se + verbe ») Ce produit se vend très bien en ligne. (= est vendu)
+RÈGLE
+Seuls les verbes transitifs directs (avec COD) peuvent se mettre au passif. « Téléphoner à quelqu'un » n'a
+pas de passif possible en français standard, contrairement à l'anglais « to be phoned ».
+2.8 Le discours indirect et le discours indirect au passé
+Rapporter les paroles de quelqu'un exige des transformations de temps, de pronoms et de repères
+temporels — un point très testé à l'oral comme à l'écrit.
+Discours direct Discours indirect (principale au passé)
+« Je viendrai demain. » Il a dit qu'il viendrait le lendemain.
+« J'ai fini le rapport hier. » Elle a expliqué qu'elle avait fini le rapport la veille.
+« Faites attention ! » Il nous a demandé de faire attention.
+« Pourquoi es-tu en retard ? » Elle m'a demandé pourquoi j'étais en retard.
+--- Page 9 ---
+REPÈRES À TRANSFORMER
+aujourd'hui → ce jour-là ; hier → la veille ; demain → le lendemain ; la semaine prochaine → la semaine
+suivante ; ici → là.
+--- Page 10 ---
+CHAPITRE 3
+Orthographe et accords : les pièges classiques
+3.1 L'accord du participe passé
+C'est l'un des points les plus délicats du français et l'un des plus évalués dans les tests écrits.
+Avec l'auxiliair e êtr e
+Le participe s'accorde avec le sujet.
+Exemple Règle
+Elle est arrivée. Sujet féminin singulier → -e
+Ils sont partis. Sujet masculin pluriel → -s
+Elles sont venues. Sujet féminin pluriel → -es
+Nous sommes rentrés. (groupe mixte) Masculin pluriel → -s
+Avec l'auxiliair e avoir
+Le participe s'accorde avec le COD (complément d'objet direct) seulement si le COD est placé avant le
+verbe.
+Exemple Explication
+J'ai lu les livres. COD après → pas d'accord
+Les livres que j'ai lus. COD « que » avant → accord : lu → lus
+La lettre qu'il a écrite. COD « que » avant, féminin → écrit → écrite
+Il les a vus hier. COD « les » avant → vu → vus
+⚠ CAS PARTICULIER
+Verbes pronominaux : accord avec le COD si présent, sinon pas d'accord. « Ils se sont lavés. » (se =
+COD) vs « Ils se sont lavé les mains. » (les mains = COD, pas « se »).
+3.2 Confusions fréquentes
+Confusion Règle Exemple
+a / à « a » = avoir (il a) ; « à » = préposition Il a rendez-vous à Paris.
+ou / où « ou » = ou bien ; « où » = lieu/choix Où vas-tu ? Paris ou Lyon ?
+--- Page 11 ---
+et / est « et » = conjonction ; « est » = être Elle est intelligente et travailleuse.
+ces / ses / c'est /
+s'estDéterminants et formes verbales C'est ses affaires. Ces idées, s'est-il
+bien rappelé ?
+leur / leurs « leur » (invariable) pronom ; « leurs »
+déterminant plurielJe leur parle de leurs projets.
+quand / quant /
+qu'enHomophones à distinguer Quant à lui, qu'en pense-t-il ? Quand
+viendra-t-il ?
+si / s'y Conjonction / pronom + adverbe Il s'y rend si souvent qu'il s'y sent chez
+lui.
+3.3 Accents et trémas — à ne pas oublier
+É (accent aigu) : uniquement sur le E — écrire, étude, été, hésiter
+È / Ê (accent grave / circonflexe) : è dans « père », « élève » ; ê dans « être », « forêt », « même »
+Tréma (ë, ï, ü) : indique que la voyelle se prononce séparément — Noël, naïf, aiguë
+Cédille (ç) : devant a, o, u pour faire le son [s] — garçon, reçu, façon
+Circonflexe sur i et u : ne change pas la prononciation mais change le sens — du/dû, ou/où, sur/sûr
+3.4 Autres accords délicats
+Cas Règle Exemple
+Adjectifs de couleur
+simplesS'accordent normalement Des chemises vertes, des
+robes bleues.
+Adjectifs de couleur
+composés / noms
+employés comme
+couleursInvariables Des chemises bleu marine.
+Des yeux marron. Des vestes
+orange.
+Tout (adverbe) Invariable devant un adjectif masculin ou un
+féminin commençant par une voyelle ; s'accorde
+devant un féminin commençant par une
+consonneElle est tout étonnée. Elle est
+toute contente.
+Demi Invariable avant le nom (avec trait d'union) ;
+s'accorde en genre seulement après le nomUne demi-heure. Deux
+heures et demie.
+Noms composés (pluriel) Dépend de la nature des éléments : seuls noms
+et adjectifs prennent la marque du plurielDes grands-pères, des
+timbres-poste, des couvre-lits
+(invariable, verbe + nom).
+--- Page 12 ---
+CHAPITRE 4
+Faux amis fréquents
+Les faux amis sont des mots qui se ressemblent d'une langue à l'autre mais qui n'ont pas le même sens. Ils
+provoquent des erreurs même chez des locuteurs très avancés, en particulier entre le français et le portugais
+ou l'anglais.
+4.1 Faux amis français / portugais
+Mot
+françaisNe veut PAS dire Veut dire Mot portugais correspondant
+Poli « Poluído » Courtois, bien élevé Educado / cortês
+Pretendre « Pretender » (avoir
+l'intention de)Faire semblant, revendiquer
+sans preuveFingir / alegar
+Latte « Leite » (lait) Planche de bois fine Ripa de madeira
+Puce — Petit insecte / composant
+électroniquePulga / chip
+Vaisselle « Vasilha » (au sens
+large)Ensemble des assiettes, verres,
+couvertsLouça
+Cave « Cavar » (creuser) Sous-sol, cellier Adega / porão
+Bras « Braço » a un sens plus
+large en portugaisUniquement le bras (membre) Braço
+Sac « Saco » (au sens
+vulgaire en portugais du
+Brésil)Sac ordinaire, neutre Bolsa / sacola
+Douce /
+doux« Doce » = sucré
+uniquementDoux au toucher, à la voix, au
+caractère (et sucré)Doce (partiellement) / suave
+Costume « Costume » = habitude Complet-veston, tenue Terno (le mot portugais pour «
+habitude » est « costume »)
+Politique — Domaine du pouvoir public —
+mais aussi « polie/poli » n'a rien
+à voirPolítica
+4.2 Faux amis français / anglais
+--- Page 13 ---
+Mot françaisNe veut PAS dire
+(anglais)Veut vraiment dire
+Actuellement « Actually » (en fait) En ce moment, maintenant (= currently)
+Assister à « To assist » (aider) Être présent à, participer à (= to attend)
+Attendre « To attend » (assister à) Patienter (= to wait)
+Éventuellement« Eventually »
+(finalement)Peut-être, le cas échéant (= possibly)
+Rester « To rest » (se reposer) Demeurer à un endroit (= to stay)
+Sensible « Sensible »
+(raisonnable)Émotif, réceptif (= sensitive)
+Librairie « Library » (bibliothèque) Magasin de livres (= bookshop)
+Journée « Journey » (voyage) La durée du jour (= day)
+Introduire « To introduce »
+(présenter quelqu'un)Faire entrer (une clé, un sujet) — pour présenter une
+personne, on dit « présenter »
+Blesser « To bless » (bénir) Faire une blessure (= to injure/hurt)
+Formation — Le mot existe dans les deux langues mais désigne surtout, en
+français, la formation professionnelle / les études
+ASTUCE PÉDAGOGIQUE
+Pour ancrer ces faux amis, faites deviner le sens à partir du contexte avant de révéler la traduction :
+l'erreur mémorisée par contraste se corrige plus durablement qu'une simple liste apprise par cœur.
+--- Page 14 ---
+CHAPITRE 5
+Verbes à préposition fixe
+De nombreux verbes français exigent une préposition précise — souvent différente de celle utilisée en
+anglais ou en portugais. Ces constructions sont une source d'erreurs persistante, même à un niveau avancé.
+5.1 Verbes suivis de « à »
+Verbe Exemple
+penser à Je pense souvent à ce projet.
+s'intéresser à Elle s'intéresse à la linguistique.
+réussir à Il a réussi à convaincre le jury.
+s'habituer à Nous nous habituons à ce climat.
+renoncer à Il a renoncé à son poste.
+participer à Elle participe à la conférence.
+faire attention à Faites attention à la marche.
+5.2 Verbes suivis de « de »
+Verbe Exemple
+parler de Nous avons parlé de l'avenir du projet.
+se souvenir de Je me souviens de cette réunion.
+avoir besoin de Il a besoin de repos.
+s'occuper de Elle s'occupe du dossier client.
+se plaindre de Il se plaint constamment de la charge de travail.
+féliciter quelqu'un de/pour Je vous félicite de votre réussite.
+manquer de Ce rapport manque de précision.
+5.3 Verbes à double construction (sens différent selon la préposition)
+Verbe Avec « à » Avec « de »
+--- Page 15 ---
+Décider — décider de faire quelque chose (prendre
+une décision)
+Manquer manquer à quelqu'un (faire ressentir une absence : «
+Tu me manques »)manquer de quelque chose (en être
+dépourvu)
+Jouer jouer à un jeu / un sport jouer de un instrument de musique
+Servir servir à quelque chose (avoir une utilité) se servir de quelque chose (utiliser)
+Venir venir à (arriver au point de) venir de faire quelque chose (passé
+récent)
+⚠ PIÈGE FRÉQUENT
+« Téléphoner à quelqu'un », pas « téléphoner quelqu'un ». « Assister à une réunion », pas « assister une
+réunion ». « Se rendre compte de quelque chose », pas « réaliser quelque chose » (calque de l'anglais «
+to realize », à éviter en registre soutenu).

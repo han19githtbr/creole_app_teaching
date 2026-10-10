@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { useAppLanguage } from "@/hooks/useAppLanguage";
+import { LANGUAGE_META } from "@/lib/languageShared";
 import { BookOpen, Gamepad2, LayoutDashboard, Menu, Radio, ShieldCheck, Sparkles, Video, X } from "lucide-react";
 
 const NAV_LINKS = [
@@ -25,6 +27,12 @@ export function Navbar() {
   const router = useRouter();
   const role = session?.user?.role;
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { language, switchLanguage } = useAppLanguage();
+  const meta = LANGUAGE_META[language];
+  const otherLanguage = language === "kreyol" ? "francais" : "kreyol";
+  const otherMeta = LANGUAGE_META[otherLanguage];
+  const navLabel = (href: string, label: string) =>
+    href === "/dashboard/jogo" && language === "francais" ? "C'est quoi ?" : label;
 
   useEffect(() => {
     if (pathname?.startsWith("/admin") && status === "unauthenticated") {
@@ -52,9 +60,9 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-[var(--text)]">
-          <span className="text-xl">🇭🇹</span>
+          <span className="text-xl">{meta.flag}</span>
           <span className="bg-gradient-to-r from-[var(--text)] via-[var(--accent)] to-[var(--text)] bg-clip-text text-transparent">
-            Kreyòl Ayisyen
+            {meta.brand}
           </span>
         </Link>
 
@@ -62,7 +70,7 @@ export function Navbar() {
           <nav className="hidden items-center gap-5 md:flex">
             {NAV_LINKS.map(({ href, label, icon: Icon }) => (
               <Link key={href} href={href} className={linkClass(href)}>
-                <Icon className="h-4 w-4" /> {label}
+                <Icon className="h-4 w-4" /> {navLabel(href, label)}
               </Link>
             ))}
             {role === "admin" && (
@@ -75,6 +83,18 @@ export function Navbar() {
 
         <div className="flex items-center gap-2.5 md:gap-3">
           <ThemeToggle />
+
+          {status === "authenticated" && (
+            <button
+              type="button"
+              onClick={() => switchLanguage(otherLanguage)}
+              title={`Trocar para ${otherMeta.label}`}
+              className="flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 text-xs font-semibold text-[var(--text)] hover:bg-[var(--surface-2)] cursor-pointer"
+            >
+              <span className="text-base leading-none">{otherMeta.flag}</span>
+              <span className="hidden sm:inline">{otherMeta.label}</span>
+            </button>
+          )}
 
           {status === "authenticated" && <NotificationsPopover />}
 
@@ -124,7 +144,7 @@ export function Navbar() {
               className={mobileLinkClass(href)}
               onClick={() => setMobileOpen(false)}
             >
-              <Icon className="h-4 w-4" /> {label}
+              <Icon className="h-4 w-4" /> {navLabel(href, label)}
             </Link>
           ))}
           {role === "admin" && (

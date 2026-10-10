@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="glazeres0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3f4"/><stop offset="1" stop-color="#e6f6ff"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#glazeres0)"/>
+<circle cx="415" cy="60" r="30" fill="#fff4b0" opacity=".9"/>
+<ellipse cx="90" cy="70" rx="55" ry="16" fill="#fff" opacity=".85"/><ellipse cx="130" cy="58" rx="40" ry="14" fill="#fff" opacity=".85"/>
+<path d="M0 250 Q120 200 250 245 T490 235 V350 H0Z" fill="#8ccf7d"/>
+<rect x="0" y="270" width="490" height="80" fill="#5fb35a"/>
+<ellipse cx="245" cy="312" rx="150" ry="12" fill="#000" opacity=".1"/><circle cx="245" cy="205" r="72" fill="#fff" stroke="#222" stroke-width="4"/><path d="M245 168L276 190L264 226H226L214 190Z" fill="#222" /><path d="M245 168V135M276 190L305 178M264 226L282 255M226 226L208 255M214 190L185 178" fill="none" stroke="#222" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M245 135L270 140M305 178L310 205M282 255L258 270M208 255L190 232M185 178L195 152" fill="none" stroke="#222" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>

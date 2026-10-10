@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 350" width="490" height="350"><defs><linearGradient id="gturismo3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fb3ee"/><stop offset="1" stop-color="#d7efff"/></linearGradient></defs>
+<rect width="490" height="350" fill="url(#gturismo3)"/>
+<circle cx="415" cy="60" r="30" fill="#fff4b0" opacity=".9"/>
+<ellipse cx="90" cy="70" rx="55" ry="16" fill="#fff" opacity=".85"/><ellipse cx="130" cy="58" rx="40" ry="14" fill="#fff" opacity=".85"/>
+<path d="M0 250 Q120 200 250 245 T490 235 V350 H0Z" fill="#9bd58b"/>
+<rect x="0" y="270" width="490" height="80" fill="#7bc46a"/>
+<ellipse cx="245" cy="312" rx="150" ry="12" fill="#000" opacity=".1"/><path d="M130 190Q135 160 200 158H350Q400 165 375 190Q350 215 200 215Q140 215 130 190Z" fill="#f4f6f8" stroke="#9aa5b4" stroke-width="3"/><path d="M215 178L170 120H210L275 178Z" fill="#cfd8e3" stroke="#9aa5b4" stroke-width="3"/><path d="M215 198L170 252H210L275 198Z" fill="#cfd8e3" stroke="#9aa5b4" stroke-width="3"/><path d="M345 165L378 128H395L378 168Z" fill="#1f4fb8" /><circle cx="210" cy="176" r="6" fill="#6fb7ea" /><circle cx="235" cy="176" r="6" fill="#6fb7ea" /><circle cx="260" cy="176" r="6" fill="#6fb7ea" /><circle cx="285" cy="176" r="6" fill="#6fb7ea" /><circle cx="310" cy="176" r="6" fill="#6fb7ea" /><rect x="150" y="188" width="220" height="6" rx="0" fill="#1f4fb8" /><path d="M130 190Q132 175 160 168L165 190Z" fill="#6fb7ea" /></svg>

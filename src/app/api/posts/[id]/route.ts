@@ -83,7 +83,7 @@ export async function PUT(
   await post.save();
 
   if (newlyPublished) {
-    await sendContentPush({ title: "Novo aviso do professor", body: post.title, url: `/dashboard#post-${post.id}` });
+    await sendContentPush({ title: "Novo aviso do professor", body: post.title, url: `/dashboard#post-${post.id}`, language: post.language });
   }
 
   return NextResponse.json({ post });

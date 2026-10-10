@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import Lesson, { LESSON_CATEGORIES } from "@/models/Lesson";
 import { requireAdmin, requireUser } from "@/lib/apiAuth";
 import { slugify } from "@/lib/utils";
+import { getAppLanguage, languageFilter } from "@/lib/language";
 
 export async function GET(req: NextRequest) {
   const session = await requireUser();
@@ -14,7 +15,8 @@ export async function GET(req: NextRequest) {
   const category = req.nextUrl.searchParams.get("category");
   const isAdmin = session.user.role === "admin";
 
-  const query: Record<string, unknown> = {};
+  const language = await getAppLanguage();
+  const query: Record<string, unknown> = { ...languageFilter(language) };
   if (category && LESSON_CATEGORIES.includes(category as never)) {
     query.category = category;
   }
@@ -51,7 +53,8 @@ export async function POST(req: NextRequest) {
     slug = `${slug}-${Date.now().toString(36)}`;
   }
 
-  const maxOrder = await Lesson.findOne().sort({ order: -1 }).select("order").lean<{ order: number }>();
+  const language = await getAppLanguage();
+  const maxOrder = await Lesson.findOne(languageFilter(language)).sort({ order: -1 }).select("order").lean<{ order: number }>();
 
   const lesson = await Lesson.create({
     title,
@@ -59,6 +62,7 @@ export async function POST(req: NextRequest) {
     sectionNumber: sectionNumber ?? 0,
     category,
     content,
+    language,
     isPublished: Boolean(isPublished),
     announcedAt: isPublished && announce !== false ? new Date() : null,
     order: (maxOrder?.order ?? 0) + 1,
@@ -67,9 +71,10 @@ export async function POST(req: NextRequest) {
   if (lesson.isPublished && lesson.announcedAt) {
     const { sendContentPush } = await import("@/lib/pushNotifications");
     await sendContentPush({
-      title: "Nova lição disponível",
+      title: language === "francais" ? "Nouvelle leçon disponible" : "Nova lição disponível",
       body: lesson.title,
       url: `/dashboard/lessons/${lesson.slug}`,
+      language,
     });
   }
 

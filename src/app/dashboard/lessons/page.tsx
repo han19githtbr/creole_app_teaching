@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/mongodb";
 import Lesson from "@/models/Lesson";
 import User from "@/models/User";
 import { LessonsGrid } from "./LessonsGrid";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 import { BookOpen } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -20,11 +21,13 @@ export default async function LessonsPage({
   const { category } = await searchParams;
 
   await connectDB();
+  const language = await getAppLanguage();
 
   const isAdmin = session.user.role === "admin";
-  const filter: Record<string, unknown> = isAdmin
-    ? {}
-    : { isPublished: true, announcedAt: { $ne: null } };
+  const filter: Record<string, unknown> = {
+    ...languageFilter(language),
+    ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
+  };
 
   if (category) filter.category = category;
 
@@ -76,7 +79,7 @@ export default async function LessonsPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text)] flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-[var(--accent)]" /> Lições de Kreyòl Ayisyen
+            <BookOpen className="h-6 w-6 text-[var(--accent)]" /> {LANGUAGE_META[language].lessonsTitle}
           </h1>
           <p className="text-sm text-[var(--text-secondary)]">
             Explore as seções organizadas por categoria gramatical, vocabulário e conversação.

@@ -62,6 +62,7 @@ export interface IVideoLesson extends Document {
   likes: string[]; // array of user emails
   comments: IVideoComment[];
   viewsCount: number;
+  language: "kreyol" | "francais";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -130,6 +131,7 @@ const VideoLessonSchema = new Schema<IVideoLesson>(
     duration: { type: Number, default: 0 },
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     authorName: { type: String, default: "Professor(a)" },
+    language: { type: String, enum: ["kreyol", "francais"], default: "kreyol", required: true, index: true },
     isPublished: { type: Boolean, default: true },
     publishAt: { type: Date, default: null },
     announcedAt: { type: Date, default: null },

@@ -4,13 +4,15 @@ import { VideoTable } from "./VideoTable";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus, Video } from "lucide-react";
+import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminVideosPage() {
   await connectDB();
+  const language = await getAppLanguage();
 
-  const videos = await VideoLesson.find({ story: { $exists: false } }).sort({ createdAt: -1 }).lean();
+  const videos = await VideoLesson.find({ ...languageFilter(language), story: { $exists: false } }).sort({ createdAt: -1 }).lean();
   const now = new Date();
 
   const serialized = videos.map((v) => ({
@@ -40,7 +42,7 @@ export default async function AdminVideosPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text)]">
-            Vídeos e Aulas Gravadas
+            Vídeos e Aulas Gravadas · {LANGUAGE_META[language].flag} {LANGUAGE_META[language].label}
           </h1>
           <p className="text-sm text-[var(--text-secondary)]">
             Grave aulas de até 10 minutos com bonequinhos/avatares ou gerencie publicações e agendamentos.

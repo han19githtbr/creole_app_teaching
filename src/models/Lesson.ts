@@ -17,6 +17,7 @@ export interface ILesson extends Document {
    * A published lesson with announcedAt = null is only visible to admins.
    */
   announcedAt: Date | null;
+  language: "kreyol" | "francais";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +28,7 @@ const LessonSchema = new Schema<ILesson>(
     slug: { type: String, required: true, unique: true },
     sectionNumber: { type: Number, required: true },
     category: { type: String, enum: LESSON_CATEGORIES, required: true },
+    language: { type: String, enum: ["kreyol", "francais"], default: "kreyol", required: true, index: true },
     content: { type: String, required: true },
     order: { type: Number, required: true, default: 0 },
     isPublished: { type: Boolean, default: false },

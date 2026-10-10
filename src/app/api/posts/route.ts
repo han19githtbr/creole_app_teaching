@@ -6,6 +6,7 @@ import { requireAdmin, requireUser } from "@/lib/apiAuth";
 import { isAllowedPostImageUrl } from "@/lib/imageBank";
 import { isValidImageQuiz, normalizeImageQuiz } from "@/lib/imageQuiz";
 import { sendContentPush } from "@/lib/pushNotifications";
+import { getAppLanguage, languageFilter } from "@/lib/language";
 
 export async function GET() {
   const session = await requireUser();
@@ -16,9 +17,11 @@ export async function GET() {
   await connectDB();
   const isAdmin = session.user.role === "admin";
 
+  const language = await getAppLanguage();
   const query: Record<string, unknown> = isAdmin
-    ? {}
+    ? { ...languageFilter(language) }
     : {
+        ...languageFilter(language),
         isPublished: true,
         $or: [{ isPermanent: true }, { expiresAt: { $gte: new Date() } }],
       };
@@ -83,7 +86,9 @@ export async function POST(req: NextRequest) {
     return null;
   }
 
+  const language = await getAppLanguage();
   const post = await Post.create({
+    language,
     title,
     content,
     imageUrl: imageUrl || "",
@@ -98,7 +103,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (post.isPublished) {
-    await sendContentPush({ title: "Novo aviso do professor", body: post.title, url: `/dashboard#post-${post.id}` });
+    await sendContentPush({ title: "Novo aviso do professor", body: post.title, url: `/dashboard#post-${post.id}`, language });
   }
 
   return NextResponse.json({ post }, { status: 201 });

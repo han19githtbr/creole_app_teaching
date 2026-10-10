@@ -520,3 +520,83 @@ html {
   .kreyol-loader-label,
   .kreyol-loader-shine { animation: none; }
 }
+
+/* ===== Jogo "C'est quoi ?" (francês) ===== */
+@keyframes cq-sway {
+  0%, 100% { transform: translateX(-16px); }
+  50% { transform: translateX(14px); }
+}
+.cq-sway { animation: cq-sway 0.9s ease-in-out infinite; }
+
+@keyframes cq-bounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-26px); }
+  60% { transform: translateY(0); }
+  80% { transform: translateY(-10px); }
+}
+.cq-bounce { animation: cq-bounce 0.7s ease-in-out infinite; }
+
+@keyframes cq-arm-up {
+  0%, 100% { transform: rotate(-24deg); }
+  50% { transform: rotate(34deg); }
+}
+@keyframes cq-arm-up-r {
+  0%, 100% { transform: rotate(24deg); }
+  50% { transform: rotate(-34deg); }
+}
+.cq-arm-l-dance { animation: cq-arm-up 0.35s ease-in-out infinite; }
+.cq-arm-r-dance { animation: cq-arm-up-r 0.35s ease-in-out infinite; }
+
+@keyframes cq-head-shake {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-9deg); }
+  40% { transform: rotate(8deg); }
+  60% { transform: rotate(-6deg); }
+  80% { transform: rotate(4deg); }
+}
+.cq-head-shake { animation: cq-head-shake 0.8s ease-in-out 2; }
+
+@keyframes cq-think {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.5deg); }
+}
+.cq-think { animation: cq-think 1.6s ease-in-out infinite; }
+
+@keyframes cq-qmark {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 1; }
+  50% { transform: translateY(-8px) scale(1.12); opacity: 0.8; }
+}
+.cq-qmark { animation: cq-qmark 1.2s ease-in-out infinite; }
+
+@keyframes cq-sweat {
+  0% { transform: translateY(0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(26px); opacity: 0; }
+}
+.cq-sweat { animation: cq-sweat 1s ease-in infinite; }
+
+@keyframes cq-pop-in {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.cq-pop-in { animation: cq-pop-in 0.35s ease-out both; }
+
+@keyframes cq-clock-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.cq-clock-urgent { animation: cq-clock-pulse 0.5s ease-in-out infinite; }
+
+@keyframes cq-card-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+.cq-card-shake { animation: cq-card-shake 0.45s ease-in-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cq-sway, .cq-bounce, .cq-arm-l-dance, .cq-arm-r-dance, .cq-think, .cq-qmark, .cq-clock-urgent { animation: none; }
+}

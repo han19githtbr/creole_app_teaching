@@ -7,16 +7,25 @@ import { getBankImage, IMAGE_BANK } from "@/lib/imageBank";
 import { getDefaultImageQuiz, isValidImageQuiz } from "@/lib/imageQuiz";
 import Post from "@/models/Post";
 import { ImageQuizGame, type ImageQuizChallenge } from "@/components/ImageQuizGame";
+import { CestQuoiGame, type CestQuoiItem } from "@/components/CestQuoiGame";
+import { getAppLanguage } from "@/lib/language";
+import cquoiItems from "@/lib/cquoiItems.json";
 
 export const dynamic = "force-dynamic";
 
 export default async function ImageQuizPage({
   searchParams,
 }: {
-  searchParams: Promise<{ post?: string; image?: string }>;
+  searchParams: Promise<{ post?: string; image?: string; theme?: string }>;
 }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
+
+  // Painel em francês: jogo "C'est quoi ?" (objetos da pasta c-quoi + coleção por temas)
+  if ((await getAppLanguage()) === "francais") {
+    const { theme } = await searchParams;
+    return <CestQuoiGame items={cquoiItems as CestQuoiItem[]} initialTheme={theme} />;
+  }
 
   const { post: postId, image: imageId } = await searchParams;
   const requestedImage = imageId ? getBankImage(imageId) : undefined;

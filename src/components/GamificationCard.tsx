@@ -6,10 +6,13 @@ import { Sparkles, Flame, Trophy, Coins, ArrowRight, Award } from "lucide-react"
 import { useGamification } from "@/hooks/useGamification";
 import { Card, CardContent } from "@/components/ui/card";
 import { AchievementsModal } from "@/components/AchievementsModal";
+import { useAppLanguage } from "@/hooks/useAppLanguage";
+import { LANGUAGE_META } from "@/lib/languageShared";
 
 export function GamificationCard() {
   const { state, levelInfo, activeTitle, unlockedBadgeList, allBadges } = useGamification();
   const [modalOpen, setModalOpen] = useState(false);
+  const { language } = useAppLanguage();
 
   return (
     <>
@@ -120,7 +123,7 @@ export function GamificationCard() {
                 href="/dashboard/jogo"
                 className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent)] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-[var(--accent-hover)] transition-all cursor-pointer"
               >
-                <Sparkles className="h-3.5 w-3.5" /> Jogo das Imagens <ArrowRight className="h-3 w-3" />
+                <Sparkles className="h-3.5 w-3.5" /> {LANGUAGE_META[language].gameTitle} <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
           </div>

@@ -4,6 +4,7 @@ import VideoLesson from "@/models/VideoLesson";
 import User from "@/models/User";
 import { requireAdmin, requireUser } from "@/lib/apiAuth";
 import { sendContentPush } from "@/lib/pushNotifications";
+import { getAppLanguage, languageFilter } from "@/lib/language";
 
 export async function GET(req: NextRequest) {
   const session = await requireUser();
@@ -19,7 +20,10 @@ export async function GET(req: NextRequest) {
   const isAdmin = session.user.role === "admin";
 
   const now = new Date();
-  const filter: Record<string, unknown> = { story: { $exists: false } };
+  const filter: Record<string, unknown> = {
+    ...languageFilter(await getAppLanguage()),
+    story: { $exists: false },
+  };
 
   if (!isAdmin || !showAll) {
     filter.isPublished = true;
@@ -112,6 +116,7 @@ export async function POST(req: NextRequest) {
   const parsedPublishAt = publishAt ? new Date(publishAt) : null;
 
   const video = await VideoLesson.create({
+    language: await getAppLanguage(),
     title: title.trim(),
     description: description?.trim() || "",
     videoUrl: videoUrl.trim(),
@@ -143,6 +148,7 @@ export async function POST(req: NextRequest) {
       title: "Nova aula em vídeo",
       body: video.title,
       url: `/dashboard/videos/${video.id}`,
+      language: video.language,
     });
   }
 

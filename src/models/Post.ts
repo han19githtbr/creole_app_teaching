@@ -15,6 +15,7 @@ export interface IPost extends Document {
   announcedAt?: Date | null;
   /** Alunos podem responder à legenda/pergunta (padrão: sim). */
   acceptsAnswers?: boolean;
+  language: "kreyol" | "francais";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +32,7 @@ const PostSchema = new Schema<IPost>(
       answers: { type: [String], default: undefined },
     },
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    language: { type: String, enum: ["kreyol", "francais"], default: "kreyol", required: true, index: true },
     isPermanent: { type: Boolean, default: true },
     expiresAt: { type: Date, default: null },
     isPublished: { type: Boolean, default: true },

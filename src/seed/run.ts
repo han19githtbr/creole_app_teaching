@@ -2,7 +2,11 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import mongoose from "mongoose";
 import Lesson from "../models/Lesson";
+import Post from "../models/Post";
+import VideoLesson from "../models/VideoLesson";
+import User from "../models/User";
 import { seedLessons } from "./lessons";
+import { frenchSeedLessons } from "./frenchLessons";
 
 async function main() {
   const uri = process.env.MONGODB_URI;
@@ -16,58 +20,112 @@ async function main() {
   console.log("Conectando ao MongoDB...");
   await mongoose.connect(uri);
 
-  console.log(`Semeando ${seedLessons.length} lições...`);
-  let created = 0;
-  const updated = 0;
+  // 1. Assegurar que lições antigas sem language fiquem como "kreyol"
+  await Lesson.updateMany({ language: { $exists: false } }, { $set: { language: "kreyol" } });
+  await Post.updateMany({ language: { $exists: false } }, { $set: { language: "kreyol" } });
+  await VideoLesson.updateMany({ language: { $exists: false } }, { $set: { language: "kreyol" } });
 
+  // 2. Semeando lições de Crioulo Haitiano
+  console.log(`Semeando ${seedLessons.length} lições de Crioulo...`);
+  let kreyolCreated = 0;
   for (const lesson of seedLessons) {
     const result = await Lesson.findOneAndUpdate(
-      { sectionNumber: lesson.sectionNumber },
+      { sectionNumber: lesson.sectionNumber, language: "kreyol" },
       {
         $set: {
           title: lesson.title,
           category: lesson.category,
           content: lesson.content,
           order: lesson.order,
-          isPublished: false,
+          language: "kreyol",
+          isPublished: true,
+          announcedAt: new Date(),
         },
         $setOnInsert: { slug: lesson.slug },
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
-    if (result) {
-      created += 1;
-    }
+    if (result) kreyolCreated += 1;
   }
+  console.log(`Concluído: ${kreyolCreated} lições de Crioulo criadas/atualizadas.`);
 
-  console.log(`Concluído. ${created} lições criadas/atualizadas, ${updated} ignoradas.`);
+  // 3. Semeando lições de Francês do Manuel Complet
+  console.log(`Semeando ${frenchSeedLessons.length} lições de Francês...`);
+  let frenchCreated = 0;
+  for (const lesson of frenchSeedLessons) {
+    const result = await Lesson.findOneAndUpdate(
+      { sectionNumber: lesson.sectionNumber, language: "francais" },
+      {
+        $set: {
+          title: lesson.title,
+          category: lesson.category,
+          content: lesson.content,
+          order: lesson.order,
+          language: "francais",
+          isPublished: true,
+          announcedAt: new Date(),
+        },
+        $setOnInsert: { slug: lesson.slug },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    if (result) frenchCreated += 1;
+  }
+  console.log(`Concluído: ${frenchCreated} lições de Francês criadas/atualizadas.`);
 
-  // Seed sample video lessons if collection is empty
-  const VideoLesson = (await import("../models/VideoLesson")).default;
-  const User = (await import("../models/User")).default;
-
+  // 4. Admin user
   const adminEmail = (process.env.ADMIN_EMAIL || "admin@kreyol.app").toLowerCase().trim();
   let adminUser = await User.findOne({ email: adminEmail });
   if (!adminUser) {
     adminUser = await User.create({
-      name: "Professor Kreyòl",
+      name: "Prof. Handy Claude",
       email: adminEmail,
       role: "admin",
+      preferredLanguage: "kreyol",
     });
   }
 
+  // 5. Postagens de exemplo em Francês se não houver nenhuma
+  const frenchPostsCount = await Post.countDocuments({ language: "francais" });
+  if (frenchPostsCount === 0) {
+    console.log("Semeando postagens de exemplo em Francês...");
+    await Post.create([
+      {
+        title: "Bienvenue dans l'espace Français FLE ! 🇫🇷",
+        content: "Chers étudiants, bienvenue dans le cursus complet de français. Retrouvez vos leçons structurées tirées du Manuel Complet de Français, vos fiches de révision et le nouveau jeu d'identification d'objets 'C'est quoi ?'. N'hésitez pas à poser vos questions !",
+        author: adminUser._id,
+        language: "francais",
+        isPermanent: true,
+        isPublished: true,
+        announcedAt: new Date(),
+        acceptsAnswers: true,
+      },
+      {
+        title: "Point grammaire : Ne confondez plus le Subjonctif et l'Indicatif !",
+        content: "Rappel essentiel du chapitre 2 : 'Je pense qu'il vient' (certitude = indicatif), mais 'Je ne pense pas qu'il vienne' (doute = subjonctif). Retenez également que le verbe ESPÉRER ne prend JAMAIS le subjonctif : 'J'espère que tu viendras' !",
+        author: adminUser._id,
+        language: "francais",
+        isPermanent: true,
+        isPublished: true,
+        announcedAt: new Date(),
+        acceptsAnswers: true,
+      },
+    ]);
+  }
+
+  // 6. Vídeos de exemplo em Crioulo e Francês
   const existingVideosCount = await VideoLesson.countDocuments();
   if (existingVideosCount === 0) {
     console.log("Semeando vídeos de exemplo...");
     await VideoLesson.create([
       {
         title: "Pronúncia e Sons Únicos do Kreyòl Ayisyen 🇭🇹",
-        description:
-          "Nesta aula curta, exploramos a pronúncia das vogais nasais (an, en, on) e consoantes especiais do crioulo haitiano com exemplos práticos.",
+        description: "Nesta aula curta, exploramos a pronúncia das vogais nasais (an, en, on) e consoantes especiais do crioulo haitiano.",
         videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        duration: 240, // 4 mins
+        duration: 240,
         author: adminUser._id,
         authorName: "Prof. Alex",
+        language: "kreyol",
         isPublished: true,
         publishAt: null,
         isLiveRecording: false,
@@ -78,43 +136,35 @@ async function main() {
           bannerText: "Fonética e Pronúncia",
         },
         likes: [adminEmail],
-        comments: [
-          {
-            userId: adminUser._id,
-            userName: "Aluno Pedro",
-            userEmail: "pedro@exemplo.com",
-            content: "Excelente explicação sobre as vogais nasais! Mèsi anpil!",
-            createdAt: new Date(Date.now() - 3600000),
-          },
-        ],
+        comments: [],
         viewsCount: 15,
       },
       {
-        title: "60 Frases Mais Importantes no Mercado de Porto Príncipe 🛒",
-        description:
-          "Aprenda como perguntar preços, negociar e cumprimentar os vendedores com naturalidade no comércio haitiano.",
+        title: "Le Subjonctif Français expliqué en 5 minutes 🇫🇷",
+        description: "Guide condensé pour dompter le subjonctif présent, ses verbes irréguliers et ses règles d'or pour les examens DELF/DALF.",
         videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        duration: 380, // 6:20
+        duration: 300,
         author: adminUser._id,
-        authorName: "Profª. Marie",
+        authorName: "Professeur de Français",
+        language: "francais",
         isPublished: true,
         publishAt: null,
         isLiveRecording: false,
         customization: {
-          backgroundStyle: "caribbean_sunset",
+          backgroundStyle: "universidade",
           avatarType: "you_studio",
           frameStyle: "split",
-          bannerText: "Vocabulário de Compras",
+          bannerText: "Grammaire Avancée",
         },
-        likes: [],
+        likes: [adminEmail],
         comments: [],
-        viewsCount: 8,
+        viewsCount: 12,
       },
     ]);
-    console.log("Vídeos de exemplo semeados com sucesso.");
   }
 
   await mongoose.disconnect();
+  console.log("Seed finalizado com sucesso!");
   process.exit(0);
 }
 

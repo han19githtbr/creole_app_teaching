@@ -2,81 +2,103 @@
 
 import { useEffect, useState, useCallback } from "react";
 import {
-  GamificationState,
+  GAMIFICATION_CHANGE_EVENT,
+  gamificationStorageKey,
+  getDefaultGamificationState,
+  getGamificationConfig,
   getGamificationState,
   getLevelInfo,
-  BADGES,
-  LEVELS,
-  HONORARY_TITLES,
   buyTitle as buyTitleUtil,
   equipTitle as equipTitleUtil,
   type Badge,
+  type GamificationChangeDetail,
+  type GamificationState,
   type HonoraryTitle,
 } from "@/lib/gamification";
+import type { AppLanguage } from "@/lib/languageShared";
 
-export function useGamification() {
-  const [state, setState] = useState<GamificationState>(() => getGamificationState());
+/**
+ * Progresso (XP, moeda, conquistas, níveis e títulos) do idioma informado.
+ * Cada idioma tem o seu próprio progresso — o do Kreyòl nunca aparece no
+ * painel do Français e vice-versa.
+ */
+export function useGamification(language: AppLanguage = "kreyol") {
+  const [state, setState] = useState<GamificationState>(() => getGamificationState(language));
+  const [stateLanguage, setStateLanguage] = useState<AppLanguage>(language);
+
+  // Trocou de idioma: carrega o progresso do outro idioma.
+  if (stateLanguage !== language) {
+    setStateLanguage(language);
+    setState(getGamificationState(language));
+  }
 
   useEffect(() => {
     function handleUpdate(e: Event) {
-      const customEvent = e as CustomEvent<GamificationState>;
-      if (customEvent.detail) {
-        setState(customEvent.detail);
-      } else {
-        setState(getGamificationState());
-      }
+      const detail = (e as CustomEvent<GamificationChangeDetail>).detail;
+      if (detail && detail.language !== language) return;
+      setState(detail?.state ?? getGamificationState(language));
     }
 
     function handleStorage(e: StorageEvent) {
-      if (e.key === "kreyol:gamification-state") {
-        setState(getGamificationState());
+      if (e.key === gamificationStorageKey(language)) {
+        setState(getGamificationState(language));
       }
     }
 
-    window.addEventListener("kreyol:gamification-update", handleUpdate);
+    window.addEventListener(GAMIFICATION_CHANGE_EVENT, handleUpdate);
     window.addEventListener("storage", handleStorage);
 
     return () => {
-      window.removeEventListener("kreyol:gamification-update", handleUpdate);
+      window.removeEventListener(GAMIFICATION_CHANGE_EVENT, handleUpdate);
       window.removeEventListener("storage", handleStorage);
     };
-  }, []);
+  }, [language]);
 
-  const levelInfo = getLevelInfo(state.xp);
+  const config = getGamificationConfig(language);
+  const safeState = stateLanguage === language ? state : getDefaultGamificationState(language);
+  const levelInfo = getLevelInfo(safeState.xp, language);
 
-  const unlockedBadgeList: Badge[] = BADGES.filter((b) =>
-    state.unlockedBadges.includes(b.id)
+  const unlockedBadgeList: Badge[] = config.badges.filter((b) =>
+    safeState.unlockedBadges.includes(b.id)
   );
 
-  const lockedBadgeList: Badge[] = BADGES.filter(
-    (b) => !state.unlockedBadges.includes(b.id)
+  const lockedBadgeList: Badge[] = config.badges.filter(
+    (b) => !safeState.unlockedBadges.includes(b.id)
   );
 
   const activeTitle: HonoraryTitle =
-    HONORARY_TITLES.find((t) => t.id === state.activeTitleId) || HONORARY_TITLES[0];
+    config.titles.find((t) => t.id === safeState.activeTitleId) || config.titles[0];
 
-  const buyTitle = useCallback((titleId: string) => {
-    const res = buyTitleUtil(titleId);
-    if (res.success && res.state) {
-      setState(res.state);
-    }
-    return res;
-  }, []);
+  const buyTitle = useCallback(
+    (titleId: string) => {
+      const res = buyTitleUtil(titleId, language);
+      if (res.success && res.state) {
+        setState(res.state);
+      }
+      return res;
+    },
+    [language]
+  );
 
-  const equipTitle = useCallback((titleId: string) => {
-    const next = equipTitleUtil(titleId);
-    setState(next);
-  }, []);
+  const equipTitle = useCallback(
+    (titleId: string) => {
+      const next = equipTitleUtil(titleId, language);
+      setState(next);
+    },
+    [language]
+  );
 
   return {
-    state,
+    language,
+    config,
+    state: safeState,
     levelInfo,
     activeTitle,
     unlockedBadgeList,
     lockedBadgeList,
-    allBadges: BADGES,
-    allLevels: LEVELS,
-    allTitles: HONORARY_TITLES,
+    allBadges: config.badges,
+    allLevels: config.levels,
+    allTitles: config.titles,
     buyTitle,
     equipTitle,
   };

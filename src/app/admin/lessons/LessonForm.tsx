@@ -24,7 +24,6 @@ export function LessonForm({ initial }: { initial?: LessonFormValues }) {
   const [category, setCategory] = useState<LessonCategory>(initial?.category ?? "Gramática");
   const [content, setContent] = useState(initial?.content ?? "");
   const [isPublished, setIsPublished] = useState(initial?.isPublished ?? false);
-  const [announce, setAnnounce] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,7 +40,7 @@ export function LessonForm({ initial }: { initial?: LessonFormValues }) {
         {
           method: isEdit ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, sectionNumber, category, content, isPublished, announce }),
+          body: JSON.stringify({ title, sectionNumber, category, content, isPublished }),
         }
       );
 
@@ -92,29 +91,16 @@ export function LessonForm({ initial }: { initial?: LessonFormValues }) {
             <input
               type="checkbox"
               checked={isPublished}
-              onChange={(e) => {
-                setIsPublished(e.target.checked);
-                if (!e.target.checked) setAnnounce(false);
-              }}
+              onChange={(e) => setIsPublished(e.target.checked)}
               className="h-4 w-4 rounded border-[var(--border-strong)]"
             />
-            Publicada
-          </label>
-          <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-            <input
-              type="checkbox"
-              checked={announce}
-              disabled={!isPublished}
-              onChange={(e) => setAnnounce(e.target.checked)}
-              className="h-4 w-4 rounded border-[var(--border-strong)]"
-            />
-            Anunciar aos alunos (notificar no painel e ícone do app)
+            Publicar para os alunos
           </label>
         </div>
       </div>
 
       <p className="text-xs text-[var(--text-muted)]">
-        Lições publicadas ficam visíveis para os alunos no painel e na lista de lições. Ao marcar “Anunciar”, a notificação de “Nova lição disponível” e o badge numérico no ícone do aplicativo no celular serão atualizados.
+        Lições em rascunho só aparecem para o administrador. Ao marcar “Publicar para os alunos”, a lição passa a aparecer no painel e na lista de lições, e a notificação de “Nova lição disponível” é enviada.
       </p>
 
       <div>

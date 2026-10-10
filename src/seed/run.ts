@@ -40,9 +40,10 @@ async function main() {
           content: lesson.content,
           order: lesson.order,
           language: "kreyol",
-          isPublished: true,
-          announcedAt: new Date(),
         },
+        // Publicação é decisão do admin: lições novas nascem como rascunho e
+        // rodar o seed de novo NUNCA altera o estado de publicação existente.
+        $setOnInsert: { isPublished: false, announcedAt: null },
       },
       { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
@@ -65,9 +66,10 @@ async function main() {
           content: lesson.content,
           order: lesson.order,
           language: "francais",
-          isPublished: true,
-          announcedAt: new Date(),
         },
+        // Publicação é decisão do admin: lições novas nascem como rascunho e
+        // rodar o seed de novo NUNCA altera o estado de publicação existente.
+        $setOnInsert: { isPublished: false, announcedAt: null },
       },
       { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
@@ -98,8 +100,8 @@ async function main() {
         author: adminUser._id,
         language: "francais",
         isPermanent: true,
-        isPublished: true,
-        announcedAt: new Date(),
+        isPublished: false,
+        announcedAt: null,
         acceptsAnswers: true,
       },
       {
@@ -108,8 +110,8 @@ async function main() {
         author: adminUser._id,
         language: "francais",
         isPermanent: true,
-        isPublished: true,
-        announcedAt: new Date(),
+        isPublished: false,
+        announcedAt: null,
         acceptsAnswers: true,
       },
     ]);
@@ -128,7 +130,7 @@ async function main() {
         author: adminUser._id,
         authorName: "Prof. Alex",
         language: "kreyol",
-        isPublished: true,
+        isPublished: false,
         publishAt: null,
         isLiveRecording: false,
         customization: {
@@ -149,7 +151,7 @@ async function main() {
         author: adminUser._id,
         authorName: "Professeur de Français",
         language: "francais",
-        isPublished: true,
+        isPublished: false,
         publishAt: null,
         isLiveRecording: false,
         customization: {

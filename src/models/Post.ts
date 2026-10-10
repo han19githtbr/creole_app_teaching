@@ -35,7 +35,8 @@ const PostSchema = new Schema<IPost>(
     language: { type: String, enum: ["kreyol", "francais"], default: "kreyol", required: true, index: true },
     isPermanent: { type: Boolean, default: true },
     expiresAt: { type: Date, default: null },
-    isPublished: { type: Boolean, default: true },
+    // Nada é publicado automaticamente: o admin precisa publicar de forma explícita.
+    isPublished: { type: Boolean, default: false },
     announcedAt: { type: Date, default: null },
     acceptsAnswers: { type: Boolean, default: true },
   },

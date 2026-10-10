@@ -85,7 +85,7 @@ export function StudioVideoRecorder() {
   // Metadata Form state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [publishMode, setPublishMode] = useState<"immediate" | "scheduled" | "draft">("immediate");
+  const [publishMode, setPublishMode] = useState<"immediate" | "scheduled" | "draft">("draft");
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("18:00");
   const [saving, setSaving] = useState(false);

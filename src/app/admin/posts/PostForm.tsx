@@ -45,7 +45,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
   const [uploading, setUploading] = useState(false);
   const [isPermanent, setIsPermanent] = useState(initial?.isPermanent ?? true);
   const [expiresAt, setExpiresAt] = useState(initial?.expiresAt?.slice(0, 10) ?? "");
-  const [isPublished, setIsPublished] = useState(initial?.isPublished ?? true);
+  const [isPublished, setIsPublished] = useState(initial?.isPublished ?? false);
   const [acceptsAnswers, setAcceptsAnswers] = useState(initial?.acceptsAnswers ?? true);
   const initialBankImage = getBankImage(initial?.imageUrl);
   const initialQuiz = initial?.imageQuiz ?? getDefaultImageQuiz(initialBankImage?.theme ?? "", initialBankImage?.id);

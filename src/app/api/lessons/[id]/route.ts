@@ -73,11 +73,10 @@ export async function PUT(
   if (isPublished !== undefined) lesson.isPublished = Boolean(isPublished);
   if (order !== undefined) lesson.order = order;
 
-  if (announce === true) {
-    lesson.announcedAt = new Date();
-  } else if (announce === false) {
+  // Regra única: só aparece para o aluno o que o admin publicou explicitamente.
+  if (!lesson.isPublished) {
     lesson.announcedAt = null;
-  } else if (isPublished === true && !wasPublished) {
+  } else if (!lesson.announcedAt || announce === true || !wasPublished) {
     lesson.announcedAt = new Date();
   }
 

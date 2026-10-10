@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
     videoUrl,
     thumbnailUrl,
     duration,
-    isPublished = true,
+    isPublished = false,
     publishAt,
     isLiveRecording = false,
     customization,

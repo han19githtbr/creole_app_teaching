@@ -22,7 +22,8 @@ export default async function StoriesPage() {
   const stories = await VideoLesson.find({
     ...languageFilter(language),
     story: { $exists: true },
-    ...(session.user.role === "admin" ? {} : { isPublished: true, $or: [{ publishAt: null }, { publishAt: { $lte: now } }] }),
+    isPublished: true,
+    $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
   }).sort({ createdAt: -1 }).lean();
 
   return <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-6">

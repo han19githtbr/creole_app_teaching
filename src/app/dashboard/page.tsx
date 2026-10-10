@@ -37,21 +37,19 @@ export default async function DashboardPage() {
   const isAdmin = session.user.role === "admin";
   const now = new Date();
 
-  // Alunos veem somente lições publicadas e anunciadas; admins veem todas (incluindo rascunhos)
+  // O painel do usuário mostra SOMENTE o que o admin publicou — inclusive quando quem
+  // está logado é o próprio admin. Rascunhos ficam restritos à área /admin.
   const lessonMatch = {
     ...langMatch,
-    ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
+    isPublished: true,
+    announcedAt: { $ne: null },
   };
 
   const videoMatch = {
     ...langMatch,
     story: { $exists: false },
-    ...(isAdmin
-      ? {}
-      : {
-          isPublished: true,
-          $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
-        }),
+    isPublished: true,
+    $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
   };
 
   const [posts, live, categoryCounts, currentUser, recentVideos, recentLessons] = await Promise.all([
@@ -113,6 +111,7 @@ export default async function DashboardPage() {
     hasNewLesson = await Lesson.exists({
       ...langMatch,
       isPublished: true,
+      announcedAt: { $ne: null },
       $or: [
         { announcedAt: lastSeen ? { $gt: lastSeen } : { $ne: null } },
         { createdAt: lastSeen ? { $gt: lastSeen } : { $ne: null } },

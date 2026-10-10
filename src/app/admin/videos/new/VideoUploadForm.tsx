@@ -43,7 +43,7 @@ export function VideoUploadForm() {
   const [bannerText, setBannerText] = useState("");
 
   // Scheduling
-  const [publishMode, setPublishMode] = useState<"immediate" | "scheduled" | "draft">("immediate");
+  const [publishMode, setPublishMode] = useState<"immediate" | "scheduled" | "draft">("draft");
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("18:00");
 

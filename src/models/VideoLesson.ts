@@ -132,7 +132,8 @@ const VideoLessonSchema = new Schema<IVideoLesson>(
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     authorName: { type: String, default: "Professor(a)" },
     language: { type: String, enum: ["kreyol", "francais"], default: "kreyol", required: true, index: true },
-    isPublished: { type: Boolean, default: true },
+    // Nada é publicado automaticamente: o admin precisa publicar de forma explícita.
+    isPublished: { type: Boolean, default: false },
     publishAt: { type: Date, default: null },
     announcedAt: { type: Date, default: null },
     isLiveRecording: { type: Boolean, default: false },

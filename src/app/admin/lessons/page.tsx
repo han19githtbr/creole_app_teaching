@@ -13,12 +13,13 @@ export default async function AdminLessonsPage() {
   const language = await getAppLanguage();
   const lessons = await Lesson.find(languageFilter(language))
     .sort({ order: 1, sectionNumber: 1 })
-    .select("title sectionNumber category isPublished announcedAt")
+    .select("title slug sectionNumber category isPublished announcedAt")
     .lean();
 
   const rows = lessons.map((l) => ({
     _id: String(l._id),
     title: l.title,
+    slug: l.slug,
     sectionNumber: l.sectionNumber,
     category: l.category,
     isPublished: l.isPublished,

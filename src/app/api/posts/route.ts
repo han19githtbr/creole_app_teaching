@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     imageQuiz,
     isPermanent = true,
     expiresAt = null,
-    isPublished = true,
+    isPublished = false,
     acceptsAnswers = true,
   } = body;
 

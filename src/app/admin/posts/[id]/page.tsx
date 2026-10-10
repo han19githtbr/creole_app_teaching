@@ -17,9 +17,9 @@ export default async function AdminPostDetailsPage({
   const post = await Post.findById(id).lean();
   if (!post) notFound();
 
-  const now = Date.now();
+  const now = new Date();
   const expired = Boolean(
-    !post.isPermanent && post.expiresAt && post.expiresAt.getTime() < now
+    !post.isPermanent && post.expiresAt && post.expiresAt.getTime() < now.getTime()
   );
 
   return (

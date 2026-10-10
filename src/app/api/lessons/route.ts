@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   await connectDB();
   const body = await req.json();
-  const { title, sectionNumber, category, content, isPublished = false, announce = false } = body;
+  const { title, sectionNumber, category, content, isPublished = false } = body;
 
   if (!title || !category || !content) {
     return NextResponse.json({ error: "Título, categoria e conteúdo são obrigatórios." }, { status: 400 });
@@ -64,7 +64,8 @@ export async function POST(req: NextRequest) {
     content,
     language,
     isPublished: Boolean(isPublished),
-    announcedAt: isPublished && announce !== false ? new Date() : null,
+    // Publicar = ficar visível aos alunos (e notificar). Rascunho nunca é anunciado.
+    announcedAt: isPublished ? new Date() : null,
     order: (maxOrder?.order ?? 0) + 1,
   });
 

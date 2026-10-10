@@ -19,15 +19,12 @@ export default async function DashboardVideosPage() {
   const isAdmin = session.user.role === "admin";
   const now = new Date();
 
+  // Somente vídeos publicados pelo admin (e já liberados) aparecem aqui — vale também para o admin.
   const filter = {
     ...languageFilter(language),
     story: { $exists: false },
-    ...(isAdmin
-      ? {}
-      : {
-          isPublished: true,
-          $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
-        }),
+    isPublished: true,
+    $or: [{ publishAt: null }, { publishAt: { $lte: now } }],
   };
 
   const videos = await VideoLesson.find(filter)

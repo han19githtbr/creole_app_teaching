@@ -24,9 +24,11 @@ export default async function LessonsPage({
   const language = await getAppLanguage();
 
   const isAdmin = session.user.role === "admin";
+  // Somente lições publicadas pelo admin aparecem aqui (vale também para o admin).
   const filter: Record<string, unknown> = {
     ...languageFilter(language),
-    ...(isAdmin ? {} : { isPublished: true, announcedAt: { $ne: null } }),
+    isPublished: true,
+    announcedAt: { $ne: null },
   };
 
   if (category) filter.category = category;

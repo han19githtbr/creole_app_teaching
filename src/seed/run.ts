@@ -30,9 +30,11 @@ async function main() {
   let kreyolCreated = 0;
   for (const lesson of seedLessons) {
     const result = await Lesson.findOneAndUpdate(
-      { sectionNumber: lesson.sectionNumber, language: "kreyol" },
+      // O slug é único em toda a coleção: é a chave segura para atualizar sem duplicar
+      { slug: lesson.slug },
       {
         $set: {
+          sectionNumber: lesson.sectionNumber,
           title: lesson.title,
           category: lesson.category,
           content: lesson.content,
@@ -41,9 +43,8 @@ async function main() {
           isPublished: true,
           announcedAt: new Date(),
         },
-        $setOnInsert: { slug: lesson.slug },
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     if (result) kreyolCreated += 1;
   }
@@ -54,9 +55,11 @@ async function main() {
   let frenchCreated = 0;
   for (const lesson of frenchSeedLessons) {
     const result = await Lesson.findOneAndUpdate(
-      { sectionNumber: lesson.sectionNumber, language: "francais" },
+      // O slug é único em toda a coleção: é a chave segura para atualizar sem duplicar
+      { slug: lesson.slug },
       {
         $set: {
+          sectionNumber: lesson.sectionNumber,
           title: lesson.title,
           category: lesson.category,
           content: lesson.content,
@@ -65,9 +68,8 @@ async function main() {
           isPublished: true,
           announcedAt: new Date(),
         },
-        $setOnInsert: { slug: lesson.slug },
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     if (result) frenchCreated += 1;
   }

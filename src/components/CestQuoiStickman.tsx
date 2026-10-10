@@ -7,13 +7,13 @@ export type StickmanMood = "think" | "dance" | "sad";
 
 const OX = 245;
 
-export function CestQuoiStickman({ mood }: { mood: StickmanMood }) {
+export function CestQuoiStickman({ mood, compact = false }: { mood: StickmanMood; compact?: boolean }) {
   const happy = mood === "dance";
   const sad = mood === "sad";
   const arm = { fill: "none", stroke: "#111", strokeWidth: 4.5, strokeLinecap: "round" as const };
 
   return (
-    <svg viewBox="0 0 490 490" className="h-full w-full" role="img" aria-label={`Boneco ${happy ? "feliz" : sad ? "triste" : "pensando"}`}>
+    <svg viewBox={compact ? "95 118 300 372" : "0 0 490 490"} className="h-full w-full" role="img" aria-label={`Boneco ${happy ? "feliz" : sad ? "triste" : "pensando"}`}>
       <g className={happy ? "cq-bounce" : ""}>
         {/* corpo e pernas */}
         <line x1={OX} y1="262" x2={OX} y2="392" stroke="#111" strokeWidth="4.5" strokeLinecap="round" />

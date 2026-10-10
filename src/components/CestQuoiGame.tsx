@@ -140,6 +140,38 @@ function pickRounds(pool: CestQuoiItem[], count: number): CestQuoiItem[] {
   return shuffle(list);
 }
 
+// ---------- pré-carregamento das imagens (evita imagem em branco / demorada no meio da partida) ----------
+/** Baixa a imagem antes de usá-la. Tenta de novo uma vez; se o servidor só estiver lento, segue após 8 s. */
+function preloadImage(src: string, retry = 1): Promise<boolean> {
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => resolve(true), 8000);
+    const finish = (ok: boolean) => {
+      clearTimeout(timeout);
+      resolve(ok);
+    };
+    const img = new Image();
+    img.onload = () => finish(true);
+    img.onerror = () => {
+      if (retry > 0) setTimeout(() => preloadImage(src, retry - 1).then(finish), 400);
+      else finish(false);
+    };
+    img.src = src;
+  });
+}
+
+/** Carrega todas as imagens da partida; se alguma não existir/falhar, troca por outra do mesmo conjunto. */
+async function loadRounds(list: CestQuoiItem[], pool: CestQuoiItem[]): Promise<CestQuoiItem[]> {
+  const ok = await Promise.all(list.map((i) => preloadImage(i.scene)));
+  const good = list.filter((_, k) => ok[k]);
+  if (good.length === list.length) return list;
+  const used = new Set(list.map((i) => i.id));
+  for (const spare of shuffle(pool.filter((i) => !used.has(i.id)))) {
+    if (good.length >= list.length) break;
+    if (await preloadImage(spare.scene)) good.push(spare);
+  }
+  return shuffle(good);
+}
+
 /** 4 alternativas: 2 do mesmo tema (quando houver) + as demais de outros temas. */
 function buildOptions(item: CestQuoiItem, pool: CestQuoiItem[]): string[] {
   const others = pool.filter((o) => o.id !== item.id && o.fr !== item.fr);
@@ -273,6 +305,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   const [floater, setFloater] = useState<{ key: number; text: string } | null>(null);
   const [message, setMessage] = useState("");
   const [lockedShake, setLockedShake] = useState<Level | null>(null);
+  const [loadingImgs, setLoadingImgs] = useState(false);
   const [muted, setMuted] = useState(() => soundEffects.isMuted());
 
   // valores "vivos" usados dentro de timers (evitam closures desatualizadas)
@@ -290,6 +323,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   const answeredRef = useRef(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const pickRef = useRef<(option: string) => void>(() => {});
+  const startToken = useRef(0);
 
   const item = rounds[index];
   const levelCfg = LEVELS[level];
@@ -533,14 +567,26 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       setMessage("");
       setRoundState("asking");
       setCountdown(3);
+      setLoadingImgs(false);
       setPhase("countdown");
+      // baixa as imagens da partida durante a contagem (a contagem esconde o tempo de carregamento)
+      const token = ++startToken.current;
+      const loading = loadRounds(list, pool);
       // 3 ... 2 ... 1 ... Partez !
       later(() => setCountdown(2), 850);
       later(() => setCountdown(1), 1700);
       later(() => setCountdown(0), 2550);
       later(() => {
-        setPhase("playing");
-        prepareRound(list, 0);
+        setLoadingImgs(true); // só aparece se as imagens ainda não terminaram de carregar
+        loading.then((finalList) => {
+          if (token !== startToken.current) return;
+          roundsRef.current = finalList;
+          setRounds(finalList);
+          setResults(finalList.map(() => null));
+          setLoadingImgs(false);
+          setPhase("playing");
+          prepareRound(finalList, 0);
+        });
       }, 3300);
     },
     [items, themeId, clearTimers, later, prepareRound]
@@ -687,6 +733,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
           <div key={countdown} className="cq2-count mt-4 text-[110px] font-black leading-none text-[var(--text)]" aria-live="assertive">
             {countdown > 0 ? countdown : "Partez !"}
           </div>
+          {loadingImgs && <p className="mt-2 animate-pulse text-sm font-bold text-[var(--text-secondary)]">Carregando imagens…</p>}
           <div className="mx-auto mt-4 h-32 w-32"><CestQuoiStickman mood={countdown > 0 ? "think" : "dance"} /></div>
         </div>
       </div>
@@ -827,7 +874,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
           <div key={item.id} className="cq2-scene-in">
             <div className="relative w-full" style={{ aspectRatio: `${item.w} / ${item.h}` }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.scene} alt="Objeto indicado pela seta vermelha" className="h-full w-full object-cover" draggable={false} />
+              <img src={item.scene} alt="Objeto indicado pela seta vermelha" className="h-full w-full object-cover" draggable={false} decoding="async" />
               <SceneArrow item={item} />
               <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white backdrop-blur">{item.theme}</span>
               <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2.5 py-0.5 text-[10px] font-bold text-white backdrop-blur">{index + 1} / {rounds.length}</span>

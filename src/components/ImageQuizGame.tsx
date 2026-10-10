@@ -45,7 +45,7 @@ export interface ImageQuizChallenge {
 
 export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQuizChallenge }) {
   const router = useRouter();
-  const { state: gamificationState, levelInfo, activeTitle } = useGamification();
+  const { state: gamificationState, levelInfo, activeTitle } = useGamification("kreyol");
 
   const [challenge, setChallenge] = useState(initialChallenge);
   const [selected, setSelected] = useState<string[]>([]);
@@ -153,6 +153,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
 
         // Processa recompensas de gamificação completas
         const rewardResult = recordQuizWin({
+          language: "kreyol",
           sceneId: challenge.id,
           theme: challenge.theme,
           wordsCount: challenge.answerCount,
@@ -338,10 +339,10 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
               <Sparkles className="h-3.5 w-3.5" /> Pratik Kreyòl
             </span>
             <span className="text-xs font-bold text-[var(--text-muted)]">
-              {levelInfo.current.badgeEmoji} Nivo {levelInfo.current.level}: {levelInfo.current.kreyol}
+              {levelInfo.current.badgeEmoji} Nivo {levelInfo.current.level}: {levelInfo.current.native}
             </span>
             <span className="hidden sm:inline-flex items-center gap-1 rounded-full border border-purple-500/25 bg-purple-500/10 px-2 py-0.5 text-[11px] font-bold text-purple-600 dark:text-purple-400">
-              {activeTitle.icon} {activeTitle.kreyol}
+              {activeTitle.icon} {activeTitle.native}
             </span>
           </div>
           <h1 className="text-2xl font-black text-[var(--text)] sm:text-3xl">

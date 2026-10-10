@@ -19,6 +19,9 @@ export interface IUser extends Document {
   preferredLanguage?: "kreyol" | "francais";
   gamificationState?: GamificationState;
   gamificationRevision?: number;
+  /** Progresso de gamificação do painel em Français (o Kreyòl usa gamificationState). */
+  gamificationStateFrancais?: GamificationState;
+  gamificationRevisionFrancais?: number;
   createdAt: Date;
 }
 
@@ -35,6 +38,8 @@ const UserSchema = new Schema<IUser>(
     completedLessons: { type: [Schema.Types.ObjectId], ref: "Lesson", default: [] },
     gamificationState: { type: Schema.Types.Mixed, default: undefined },
     gamificationRevision: { type: Number, default: 0 },
+    gamificationStateFrancais: { type: Schema.Types.Mixed, default: undefined },
+    gamificationRevisionFrancais: { type: Number, default: 0 },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

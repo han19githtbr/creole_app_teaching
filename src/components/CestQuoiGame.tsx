@@ -3,11 +3,15 @@
 import "./CestQuoiGame.css";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, Flame, Heart, Lock, RotateCcw, Trophy, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowLeft, Award, Check, Coins, Flame, Heart, Lock, RotateCcw, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { soundEffects } from "@/lib/soundEffects";
 import { Confetti } from "@/components/Confetti";
 import { CestQuoiStickman, type StickmanMood } from "@/components/CestQuoiStickman";
 import { cn } from "@/lib/utils";
+import { recordQuizWin, type Badge, type LevelInfo } from "@/lib/gamification";
+import { useGamification } from "@/hooks/useGamification";
+import { AchievementsModal } from "@/components/AchievementsModal";
+import { RewardUnlockModal } from "@/components/RewardUnlockModal";
 
 export interface CestQuoiItem {
   id: string;
@@ -278,6 +282,13 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     return [...map.entries()].map(([id, label]) => ({ id, label }));
   }, [items]);
 
+  // Progresso de gamificação do FRANCÊS (XP, écus, conquistas e títulos em francês)
+  const { state: gameState, levelInfo, activeTitle, config: gamifConfig } = useGamification("francais");
+  const [achievementsOpen, setAchievementsOpen] = useState(false);
+  const [rewardSummary, setRewardSummary] = useState<{ xp: number; goud: number; badges: Badge[]; level: LevelInfo | null } | null>(null);
+  const [rewardModalOpen, setRewardModalOpen] = useState(false);
+  const rewardRef = useRef<{ xp: number; goud: number; badges: Badge[]; level: LevelInfo | null }>({ xp: 0, goud: 0, badges: [], level: null });
+
   const progressRaw = useSyncExternalStore(subscribeProgress, readProgressRaw, () => "");
   const progress = useMemo(() => parseProgress(progressRaw), [progressRaw]);
 
@@ -395,6 +406,11 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     const nextLevel = LEVEL_ORDER[LEVEL_ORDER.indexOf(lv) + 1];
     setUnlockedNow(ok && nextLevel && !prev.passed.includes(lv) ? nextLevel : null);
     writeProgress(next);
+    const earned = rewardRef.current;
+    if (earned.xp > 0 || earned.goud > 0) {
+      setRewardSummary({ ...earned, badges: [...earned.badges] });
+      setRewardModalOpen(Boolean(earned.level) || earned.badges.length > 0);
+    }
     setPassed(ok);
     setConfetti(ok);
     setPhase("done");
@@ -476,6 +492,22 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       scoreRef.current += points;
       bestStreakRef.current = Math.max(bestStreakRef.current, nextStreak);
 
+      // Recompensa de gamificação (somente no progresso do Français)
+      const reward = recordQuizWin({
+        language: "francais",
+        sceneId: current.id,
+        theme: current.themeId,
+        wordsCount: 1,
+        attemptsLeft: attemptRef.current === 1 ? 3 : 2,
+        streak: nextStreak,
+      });
+      rewardRef.current = {
+        xp: rewardRef.current.xp + reward.gainedXp + reward.newBadges.reduce((n, b) => n + b.xpReward, 0),
+        goud: rewardRef.current.goud + reward.gainedGoud + reward.newBadges.reduce((n, b) => n + b.goudReward, 0),
+        badges: [...rewardRef.current.badges, ...reward.newBadges],
+        level: reward.leveledUp ? reward.newLevel : rewardRef.current.level,
+      };
+
       setRoundState("correct");
       setScore(scoreRef.current);
       setHits(hitsRef.current);
@@ -552,6 +584,9 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       hitsRef.current = 0;
       scoreRef.current = 0;
       bestStreakRef.current = 0;
+      rewardRef.current = { xp: 0, goud: 0, badges: [], level: null };
+      setRewardSummary(null);
+      setRewardModalOpen(false);
       setLevel(lv);
       setRounds(list);
       setResults(list.map(() => null));
@@ -628,6 +663,38 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
               {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             </button>
           </div>
+
+          {/* Nível, XP e conquistas em francês */}
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-amber-500/30 bg-amber-500/10 text-2xl">{levelInfo.current.badgeEmoji}</span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-extrabold text-[var(--text)]">
+                    {gamifConfig.levelWord} {levelInfo.current.level} · {levelInfo.current.native}
+                  </p>
+                  <p className="truncate text-[11px] font-semibold text-[var(--text-muted)]">
+                    {activeTitle.icon} {activeTitle.native}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => { soundEffects.playTap(); setAchievementsOpen(true); }}
+                className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-500/20 dark:text-amber-400"
+              >
+                <Trophy className="h-4 w-4" /> Conquistas
+              </button>
+            </div>
+            <div className="mt-2.5 flex items-center justify-between text-[11px] font-semibold text-[var(--text-muted)]">
+              <span className="inline-flex items-center gap-1"><Award className="h-3.5 w-3.5 text-blue-500" /> {gameState.xp} / {levelInfo.current.nextXp} XP</span>
+              <span className="inline-flex items-center gap-1"><Coins className="h-3.5 w-3.5 text-amber-500" /> {gameState.goud} {gamifConfig.currency}</span>
+            </div>
+            <div className="mt-1 h-2 overflow-hidden rounded-full bg-[var(--surface-2)]">
+              <div className="h-full rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-[var(--accent)] transition-all duration-500" style={{ width: `${levelInfo.progressPct}%` }} />
+            </div>
+          </div>
+          <AchievementsModal language="francais" isOpen={achievementsOpen} onClose={() => setAchievementsOpen(false)} />
 
           <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 text-center shadow-lg">
             <div className="cq2-scene-in mx-auto h-36 w-36"><CestQuoiStickman mood="think" /></div>
@@ -757,6 +824,30 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
               {passed ? `Você passou o nível ${levelCfg.label}!` : `Você precisa de ${need} acertos para passar. Tente de novo!`}
             </p>
             <p className="mt-2 text-2xl">{[0, 1, 2].map((s) => <span key={s} className={cn("inline-block", s < stars ? "cq2-unlock" : "opacity-25")} style={{ animationDelay: `${0.3 + s * 0.25}s` }}>⭐</span>)}</p>
+
+            {rewardSummary && (
+              <div className="cq2-unlock mt-4 flex flex-wrap items-center justify-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-black text-blue-600 dark:text-blue-400">
+                  <Award className="h-4 w-4" /> +{rewardSummary.xp} XP
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-black text-amber-600 dark:text-amber-400">
+                  <Coins className="h-4 w-4" /> +{rewardSummary.goud} {gamifConfig.currency}
+                </span>
+                <span className="w-full text-center text-[11px] font-semibold text-[var(--text-muted)]">
+                  {gamifConfig.levelWord} {levelInfo.current.level} · {levelInfo.current.native}
+                  {rewardSummary.badges.length > 0 && ` · ${rewardSummary.badges.map((b) => `${b.emoji} ${b.native}`).join(" · ")}`}
+                </span>
+              </div>
+            )}
+            <RewardUnlockModal
+              language="francais"
+              isOpen={rewardModalOpen}
+              onClose={() => setRewardModalOpen(false)}
+              badge={rewardSummary?.level ? null : rewardSummary?.badges[0] ?? null}
+              level={rewardSummary?.level ?? null}
+              xpGained={rewardSummary?.xp}
+              goudGained={rewardSummary?.goud}
+            />
 
             <div className="mt-4 grid grid-cols-3 gap-2 text-center">
               <Stat label="Acertos" value={`${hits}/${rounds.length}`} />

@@ -175,7 +175,7 @@ export default async function DashboardPage() {
       )}
 
       {/* Gamificação: Nível, Conquistas e Jogo das Imagens */}
-      <GamificationCard />
+      <GamificationCard language={language} />
 
       {/* Featured Section: Novas Lições & Lições Recentes */}
       <div className="space-y-4">

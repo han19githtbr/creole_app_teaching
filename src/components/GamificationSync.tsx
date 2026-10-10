@@ -3,31 +3,38 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import {
+  GAMIFICATION_CHANGE_EVENT,
   applySyncedGamificationState,
   getDefaultGamificationState,
+  getGamificationConfig,
   getGamificationState,
+  type GamificationChangeDetail,
   type GamificationState,
 } from "@/lib/gamification";
+import type { AppLanguage } from "@/lib/languageShared";
 
 const ACCOUNT_KEY = "kreyol:gamification-account";
 const SYNC_INTERVAL_MS = 30_000;
+// Cada idioma sincroniza o SEU progresso de forma independente.
+const SYNCED_LANGUAGES: AppLanguage[] = ["kreyol", "francais"];
 
-function hasProgress(state: GamificationState): boolean {
+function hasProgress(state: GamificationState, language: AppLanguage): boolean {
   return Boolean(
     state.xp || state.goud || state.totalSolved || state.highestStreak || state.currentStreak ||
     state.perfectRoundsCount || state.totalWordsFound || state.unlockedBadges.length ||
     state.scenesSolved.length || state.unlockedTitles.length > 1 ||
-    state.activeTitleId !== "title_inisyate"
+    state.activeTitleId !== getGamificationConfig(language).defaultTitleId
   );
 }
 
-export function GamificationSync() {
-  const { data: session, status } = useSession();
-  const email = session?.user?.email?.toLowerCase().trim();
-
-  useEffect(() => {
-    if (status !== "authenticated" || !email) return;
+/** Inicia a sincronização do progresso de UM idioma; devolve a função de limpeza. */
+function startLanguageSync(language: AppLanguage, email: string): () => void {
+  {
     const authenticatedEmail = email;
+    // O Kreyòl mantém as chaves originais (não perde o progresso salvo); o Français usa chaves próprias.
+    const suffix = language === "kreyol" ? "" : `:${language}`;
+    const accountKey = `${ACCOUNT_KEY}${suffix}`;
+    const apiUrl = `/api/gamification?language=${language}`;
 
     let disposed = false;
     let setupChangedState = false;
@@ -39,25 +46,25 @@ export function GamificationSync() {
     let pendingMode: "replace" | "mergeLegacy" = "replace";
 
     const encodedEmail = encodeURIComponent(authenticatedEmail);
-    const migrationKey = `kreyol:gamification-migrated:${encodedEmail}`;
-    const pendingKey = `kreyol:gamification-pending:${encodedEmail}`;
-    const baseKey = `kreyol:gamification-base:${encodedEmail}`;
-    const revisionKey = `kreyol:gamification-revision:${encodedEmail}`;
-    const accountAtStart = localStorage.getItem(ACCOUNT_KEY);
+    const migrationKey = `kreyol:gamification-migrated:${encodedEmail}${suffix}`;
+    const pendingKey = `kreyol:gamification-pending:${encodedEmail}${suffix}`;
+    const baseKey = `kreyol:gamification-base:${encodedEmail}${suffix}`;
+    const revisionKey = `kreyol:gamification-revision:${encodedEmail}${suffix}`;
+    const accountAtStart = localStorage.getItem(accountKey);
     const canImportLegacy = !accountAtStart || accountAtStart === authenticatedEmail;
-    const localAtStart = getGamificationState();
-    let baseState = getDefaultGamificationState();
+    const localAtStart = getGamificationState(language);
+    let baseState = getDefaultGamificationState(language);
     let revision = Number(localStorage.getItem(revisionKey)) || 0;
     try {
       const storedBase = localStorage.getItem(baseKey);
       if (storedBase) baseState = JSON.parse(storedBase) as GamificationState;
     } catch {
-      baseState = getDefaultGamificationState();
+      baseState = getDefaultGamificationState(language);
     }
 
     function applyRemote(state: GamificationState) {
       applyingRemote = true;
-      applySyncedGamificationState(state);
+      applySyncedGamificationState(state, language);
       applyingRemote = false;
     }
 
@@ -78,17 +85,17 @@ export function GamificationSync() {
       let retryAfterRequest = false;
       try {
         if (dirty) {
-          const sentState = getGamificationState();
-          const response = await fetch("/api/gamification", {
+          const sentState = getGamificationState(language);
+          const response = await fetch(apiUrl, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ state: sentState, baseState, revision, mode: pendingMode }),
+            body: JSON.stringify({ state: sentState, baseState, revision, mode: pendingMode, language }),
           });
           if (!response.ok) return;
           const result = (await response.json()) as { state: GamificationState; revision: number };
           rememberServerVersion(result.state, result.revision);
-          const currentState = getGamificationState();
-          localStorage.setItem(ACCOUNT_KEY, authenticatedEmail);
+          const currentState = getGamificationState(language);
+          localStorage.setItem(accountKey, authenticatedEmail);
           localStorage.setItem(migrationKey, "1");
           if (JSON.stringify(currentState) === JSON.stringify(sentState)) {
             dirty = false;
@@ -99,7 +106,7 @@ export function GamificationSync() {
             retryAfterRequest = true;
           }
         } else {
-          const response = await fetch("/api/gamification", { cache: "no-store" });
+          const response = await fetch(apiUrl, { cache: "no-store" });
           if (!response.ok) return;
           const result = (await response.json()) as {
             state: GamificationState;
@@ -107,7 +114,7 @@ export function GamificationSync() {
             revision: number;
           };
           rememberServerVersion(result.state, result.revision);
-          if (!dirty && result.initialized && JSON.stringify(getGamificationState()) !== JSON.stringify(result.state)) {
+          if (!dirty && result.initialized && JSON.stringify(getGamificationState(language)) !== JSON.stringify(result.state)) {
             applyRemote(result.state);
           } else if (dirty) {
             retryAfterRequest = true;
@@ -126,7 +133,9 @@ export function GamificationSync() {
       syncTimer = setTimeout(() => void syncNow(), 350);
     }
 
-    function handleLocalUpdate() {
+    function handleLocalUpdate(event?: Event) {
+      const detail = (event as CustomEvent<GamificationChangeDetail> | undefined)?.detail;
+      if (detail && detail.language !== language) return; // alteração de outro idioma
       if (applyingRemote) return;
       if (!ready) {
         setupChangedState = true;
@@ -138,11 +147,11 @@ export function GamificationSync() {
       scheduleSync();
     }
 
-    window.addEventListener("kreyol:gamification-update", handleLocalUpdate);
+    window.addEventListener(GAMIFICATION_CHANGE_EVENT, handleLocalUpdate);
 
     void (async () => {
       try {
-        const response = await fetch("/api/gamification", { cache: "no-store" });
+        const response = await fetch(apiUrl, { cache: "no-store" });
         if (!response.ok) throw new Error("Gamification sync unavailable");
         const result = (await response.json()) as {
           state: GamificationState;
@@ -152,17 +161,17 @@ export function GamificationSync() {
         if (disposed) return;
         rememberServerVersion(result.state, result.revision);
 
-        const localState = setupChangedState ? getGamificationState() : localAtStart;
+        const localState = setupChangedState ? getGamificationState(language) : localAtStart;
         const wasMigrated = localStorage.getItem(migrationKey) === "1";
         const hasPendingState = localStorage.getItem(pendingKey) === "1";
-        const canMigrateState = canImportLegacy && hasProgress(localState);
+        const canMigrateState = canImportLegacy && hasProgress(localState, language);
 
         if (hasPendingState || setupChangedState || (!wasMigrated && canMigrateState)) {
           dirty = true;
           pendingMode = result.initialized ? "mergeLegacy" : "replace";
           localStorage.setItem(pendingKey, "1");
           ready = true;
-          localStorage.setItem(ACCOUNT_KEY, authenticatedEmail);
+          localStorage.setItem(accountKey, authenticatedEmail);
           localStorage.setItem(migrationKey, "1");
           await syncNow();
           return;
@@ -171,20 +180,20 @@ export function GamificationSync() {
         if (result.initialized) {
           applyRemote(result.state);
         } else if (accountAtStart && accountAtStart !== email) {
-          applyRemote(getDefaultGamificationState());
+          applyRemote(getDefaultGamificationState(language));
         }
 
-        localStorage.setItem(ACCOUNT_KEY, authenticatedEmail);
+        localStorage.setItem(accountKey, authenticatedEmail);
         localStorage.setItem(migrationKey, "1");
         ready = true;
       } catch {
         if (disposed) return;
         ready = true;
         if (accountAtStart && accountAtStart !== authenticatedEmail) {
-          applyRemote(getDefaultGamificationState());
+          applyRemote(getDefaultGamificationState(language));
         }
         const hasPendingState = localStorage.getItem(pendingKey) === "1";
-        if (hasPendingState || (canImportLegacy && hasProgress(getGamificationState()))) {
+        if (hasPendingState || (canImportLegacy && hasProgress(getGamificationState(language), language))) {
           dirty = true;
           pendingMode = localStorage.getItem(migrationKey) === "1" ? "replace" : "mergeLegacy";
           localStorage.setItem(pendingKey, "1");
@@ -209,8 +218,19 @@ export function GamificationSync() {
       window.removeEventListener("focus", onFocus);
       window.removeEventListener("online", onOnline);
       document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("kreyol:gamification-update", handleLocalUpdate);
+      window.removeEventListener(GAMIFICATION_CHANGE_EVENT, handleLocalUpdate);
     };
+  }
+}
+
+export function GamificationSync() {
+  const { data: session, status } = useSession();
+  const email = session?.user?.email?.toLowerCase().trim();
+
+  useEffect(() => {
+    if (status !== "authenticated" || !email) return;
+    const stops = SYNCED_LANGUAGES.map((language) => startLanguageSync(language, email));
+    return () => stops.forEach((stop) => stop());
   }, [email, status]);
 
   return null;

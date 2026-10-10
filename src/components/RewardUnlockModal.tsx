@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import { Sparkles, Trophy, Award, X, Coins } from "lucide-react";
-import { type Badge, type LevelInfo } from "@/lib/gamification";
+import { getGamificationConfig, type Badge, type LevelInfo } from "@/lib/gamification";
+import type { AppLanguage } from "@/lib/languageShared";
 import { soundEffects } from "@/lib/soundEffects";
 import { Confetti } from "@/components/Confetti";
 
@@ -13,6 +14,8 @@ interface RewardUnlockModalProps {
   level?: LevelInfo | null;
   xpGained?: number;
   goudGained?: number;
+  /** Idioma do painel (padrão: Kreyòl). */
+  language?: AppLanguage;
 }
 
 export function RewardUnlockModal({
@@ -22,7 +25,9 @@ export function RewardUnlockModal({
   level,
   xpGained,
   goudGained,
+  language = "kreyol",
 }: RewardUnlockModalProps) {
+  const config = getGamificationConfig(language);
   useEffect(() => {
     if (isOpen) {
       if (level) {
@@ -59,11 +64,11 @@ export function RewardUnlockModal({
 
           <p className="flex items-center justify-center gap-1.5 text-xs font-black uppercase tracking-wider text-[var(--accent)]">
             <Sparkles className="h-4 w-4" />
-            {level ? "Nouvo Nivo Atteint!" : "Nouvo Konkèt Debloke!"}
+            {level ? config.levelUpLabel : config.badgeUnlockedLabel}
           </p>
 
           <h3 className="mt-1 text-2xl font-black text-[var(--text)]">
-            {level ? `Nivo ${level.level}: ${level.kreyol}` : badge?.kreyol}
+            {level ? `${config.levelWord} ${level.level}: ${level.native}` : badge?.native}
           </h3>
 
           <p className="mt-1.5 text-xs font-semibold text-[var(--text-secondary)]">
@@ -79,7 +84,7 @@ export function RewardUnlockModal({
               )}
               {goudGained && (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-black text-amber-600 dark:text-amber-400 shadow-sm">
-                  <Coins className="h-4 w-4 text-amber-500" /> +{goudGained} Goud
+                  <Coins className="h-4 w-4 text-amber-500" /> +{goudGained} {config.currency}
                 </span>
               )}
             </div>
@@ -90,7 +95,7 @@ export function RewardUnlockModal({
             onClick={onClose}
             className="mt-6 w-full rounded-2xl bg-[var(--accent)] py-3.5 text-sm font-black text-white shadow-lg shadow-[var(--accent)]/30 hover:bg-[var(--accent-hover)] transition-all transform active:scale-95 cursor-pointer"
           >
-            Kontinye Jwe! 🚀
+            {config.continueLabel}
           </button>
         </div>
       </div>

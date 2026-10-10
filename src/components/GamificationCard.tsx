@@ -6,17 +6,16 @@ import { Sparkles, Flame, Trophy, Coins, ArrowRight, Award } from "lucide-react"
 import { useGamification } from "@/hooks/useGamification";
 import { Card, CardContent } from "@/components/ui/card";
 import { AchievementsModal } from "@/components/AchievementsModal";
-import { useAppLanguage } from "@/hooks/useAppLanguage";
-import { LANGUAGE_META } from "@/lib/languageShared";
+import { LANGUAGE_META, type AppLanguage } from "@/lib/languageShared";
 
-export function GamificationCard() {
-  const { state, levelInfo, activeTitle, unlockedBadgeList, allBadges } = useGamification();
+/** Nível, conquistas e jogo do idioma do painel (cada idioma tem o seu progresso). */
+export function GamificationCard({ language }: { language: AppLanguage }) {
+  const { state, levelInfo, activeTitle, unlockedBadgeList, allBadges, config } = useGamification(language);
   const [modalOpen, setModalOpen] = useState(false);
-  const { language } = useAppLanguage();
 
   return (
     <>
-      <AchievementsModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <AchievementsModal language={language} isOpen={modalOpen} onClose={() => setModalOpen(false)} />
       <Card className="overflow-hidden border border-[var(--border)] bg-gradient-to-br from-[var(--surface)] via-[var(--surface)] to-[var(--surface-2)] shadow-md">
         <CardContent className="p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -28,17 +27,17 @@ export function GamificationCard() {
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-md bg-[var(--accent-soft)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white">
-                    Nivo {levelInfo.current.level}
+                    {config.levelWord} {levelInfo.current.level}
                   </span>
                   <span className="text-xs font-semibold text-[var(--text-muted)]">
                     {levelInfo.current.title}
                   </span>
                   <span className="inline-flex items-center gap-1 rounded-md border border-purple-500/25 bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-600 dark:text-purple-400">
-                    {activeTitle.icon} {activeTitle.kreyol}
+                    {activeTitle.icon} {activeTitle.native}
                   </span>
                 </div>
                 <h3 className="text-lg font-bold text-[var(--text)] sm:text-xl">
-                  {levelInfo.current.kreyol}
+                  {levelInfo.current.native}
                 </h3>
               </div>
             </div>
@@ -47,11 +46,15 @@ export function GamificationCard() {
             <div className="flex items-center gap-2.5">
               <div
                 className="flex items-center gap-1.5 rounded-xl border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400 shadow-sm cursor-pointer hover:bg-amber-500/20 transition"
-                title="Goud: Moeda fictícia do jogo. Ganhe +10 Goud ao acertar palavras nas postagens para desbloquear novos níveis!"
+                title={
+                  language === "francais"
+                    ? "Écu: moeda fictícia do jogo. Ganhe écus ao acertar palavras no C'est quoi ? para desbloquear novos níveis!"
+                    : "Goud: Moeda fictícia do jogo. Ganhe +10 Goud ao acertar palavras nas postagens para desbloquear novos níveis!"
+                }
                 onClick={() => setModalOpen(true)}
               >
                 <Coins className="h-4 w-4 text-amber-500" />
-                <span>{state.goud} Goud</span>
+                <span>{state.goud} {config.currency}</span>
               </div>
               <div className="flex items-center gap-1.5 rounded-xl border border-orange-500/25 bg-orange-500/10 px-3 py-1.5 text-xs font-bold text-orange-600 dark:text-orange-400 shadow-sm">
                 <Flame className="h-4 w-4 text-orange-500" />
@@ -97,7 +100,7 @@ export function GamificationCard() {
                       key={badge.id}
                       type="button"
                       onClick={() => setModalOpen(true)}
-                      title={`${badge.kreyol} (${badge.title}): ${badge.description}`}
+                      title={`${badge.native} (${badge.title}): ${badge.description}`}
                       className={`inline-flex h-7 w-7 items-center justify-center rounded-full border text-xs shadow-sm transition-transform hover:scale-125 cursor-pointer ${
                         isUnlocked
                           ? "border-amber-400/50 bg-amber-100 dark:bg-amber-900/40"

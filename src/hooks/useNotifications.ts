@@ -1,117 +1,105 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { setAppBadge } from "@/lib/badgeManager";
+import { useEffect, useState, useCallback } from "react";
+import {
+  GAMIFICATION_CHANGE_EVENT,
+  gamificationStorageKey,
+  getDefaultGamificationState,
+  getGamificationConfig,
+  getGamificationState,
+  getLevelInfo,
+  buyTitle as buyTitleUtil,
+  equipTitle as equipTitleUtil,
+  type Badge,
+  type GamificationChangeDetail,
+  type GamificationState,
+  type HonoraryTitle,
+} from "@/lib/gamification";
+import type { AppLanguage } from "@/lib/languageShared";
 
-export interface UnreadLesson {
-  id: string;
-  title: string;
-  slug: string;
-  sectionNumber: number;
-  category: string;
-  createdAt: string | null;
-  announcedAt: string | null;
-}
+/**
+ * Progresso (XP, moeda, conquistas, níveis e títulos) do idioma informado.
+ * Cada idioma tem o seu próprio progresso — o do Kreyòl nunca aparece no
+ * painel do Français e vice-versa.
+ */
+export function useGamification(language: AppLanguage = "kreyol") {
+  const [state, setState] = useState<GamificationState>(() => getGamificationState(language));
+  const [stateLanguage, setStateLanguage] = useState<AppLanguage>(language);
 
-export interface UnreadPost {
-  id: string;
-  title: string;
-  imageUrl: string | null;
-  createdAt: string | null;
-}
-
-export interface UnreadVideo {
-  id: string;
-  title: string;
-  duration: number;
-  authorName: string;
-  createdAt: string | null;
-}
-
-export interface NotificationsData {
-  count: number;
-  lessons: UnreadLesson[];
-  posts: UnreadPost[];
-  videos: UnreadVideo[];
-}
-
-export function useNotifications() {
-  const { status } = useSession();
-  const [data, setData] = useState<NotificationsData>({
-    count: 0,
-    lessons: [],
-    posts: [],
-    videos: [],
-  });
-  const fetchUnread = useCallback(async () => {
-    if (status !== "authenticated") return;
-    try {
-      const res = await fetch("/api/notifications/unread", { cache: "no-store" });
-      if (!res.ok) return;
-      const json = (await res.json()) as NotificationsData;
-      setData(json);
-      // Atualiza o ícone do aplicativo no celular (Badging API), navegador e favicon
-      await setAppBadge(json.count);
-    } catch {
-      // Ignora falhas de rede temporárias
-    }
-  }, [status]);
-
-  const markAsSeen = useCallback(
-    async (type: "all" | "lessons" | "posts" | "videos" = "all") => {
-      if (status !== "authenticated") return;
-      try {
-        const response = await fetch("/api/notifications/unread", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type }),
-        });
-        if (!response.ok) return;
-        await fetchUnread();
-      } catch {
-        // Ignora erro
-      }
-    },
-    [fetchUnread, status]
-  );
+  // Trocou de idioma: carrega o progresso do outro idioma.
+  if (stateLanguage !== language) {
+    setStateLanguage(language);
+    setState(getGamificationState(language));
+  }
 
   useEffect(() => {
-    if (status !== "authenticated") {
-      setAppBadge(0).catch(() => {});
-      return;
+    function handleUpdate(e: Event) {
+      const detail = (e as CustomEvent<GamificationChangeDetail>).detail;
+      if (detail && detail.language !== language) return;
+      setState(detail?.state ?? getGamificationState(language));
     }
 
-    void Promise.resolve().then(fetchUnread);
-
-    // Atualiza a cada 45 segundos e quando o usuário voltar para o app
-    const interval = setInterval(fetchUnread, 45000);
-    const onVisibility = () => {
-      if (document.visibilityState === "visible") {
-        fetchUnread();
+    function handleStorage(e: StorageEvent) {
+      if (e.key === gamificationStorageKey(language)) {
+        setState(getGamificationState(language));
       }
-    };
-    const onFocus = () => fetchUnread();
-    const onCustomRefresh = () => fetchUnread();
+    }
 
-    document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("focus", onFocus);
-    window.addEventListener("kreyol:notifications-refresh", onCustomRefresh);
+    window.addEventListener(GAMIFICATION_CHANGE_EVENT, handleUpdate);
+    window.addEventListener("storage", handleStorage);
 
     return () => {
-      clearInterval(interval);
-      document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("focus", onFocus);
-      window.removeEventListener("kreyol:notifications-refresh", onCustomRefresh);
+      window.removeEventListener(GAMIFICATION_CHANGE_EVENT, handleUpdate);
+      window.removeEventListener("storage", handleStorage);
     };
-  }, [status, fetchUnread]);
+  }, [language]);
+
+  const config = getGamificationConfig(language);
+  const safeState = stateLanguage === language ? state : getDefaultGamificationState(language);
+  const levelInfo = getLevelInfo(safeState.xp, language);
+
+  const unlockedBadgeList: Badge[] = config.badges.filter((b) =>
+    safeState.unlockedBadges.includes(b.id)
+  );
+
+  const lockedBadgeList: Badge[] = config.badges.filter(
+    (b) => !safeState.unlockedBadges.includes(b.id)
+  );
+
+  const activeTitle: HonoraryTitle =
+    config.titles.find((t) => t.id === safeState.activeTitleId) || config.titles[0];
+
+  const buyTitle = useCallback(
+    (titleId: string) => {
+      const res = buyTitleUtil(titleId, language);
+      if (res.success && res.state) {
+        setState(res.state);
+      }
+      return res;
+    },
+    [language]
+  );
+
+  const equipTitle = useCallback(
+    (titleId: string) => {
+      const next = equipTitleUtil(titleId, language);
+      setState(next);
+    },
+    [language]
+  );
 
   return {
-    count: data.count,
-    lessons: data.lessons,
-    posts: data.posts,
-    videos: data.videos,
-    refresh: fetchUnread,
-    markAsSeen,
+    language,
+    config,
+    state: safeState,
+    levelInfo,
+    activeTitle,
+    unlockedBadgeList,
+    lockedBadgeList,
+    allBadges: config.badges,
+    allLevels: config.levels,
+    allTitles: config.titles,
+    buyTitle,
+    equipTitle,
   };
 }

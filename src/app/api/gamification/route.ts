@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/apiAuth";
 import {
-  BADGES,
   getDefaultGamificationState,
-  HONORARY_TITLES,
+  getGamificationConfig,
   type GamificationState,
 } from "@/lib/gamification";
+import { isAppLanguage, type AppLanguage } from "@/lib/languageShared";
 import User from "@/models/User";
 
 export const dynamic = "force-dynamic";
@@ -26,16 +26,29 @@ function stringList(value: unknown, allowed?: Set<string>, limit = MAX_TRACKED_S
   return [...new Set(values)].slice(0, limit);
 }
 
-function sanitizeState(value: unknown): GamificationState | null {
+/** Cada idioma guarda o seu progresso em campos próprios do usuário. */
+function languageFields(language: AppLanguage) {
+  return language === "francais"
+    ? { stateField: "gamificationStateFrancais", revisionField: "gamificationRevisionFrancais" }
+    : { stateField: "gamificationState", revisionField: "gamificationRevision" };
+}
+
+function readLanguage(value: unknown): AppLanguage {
+  return isAppLanguage(value) ? value : "kreyol";
+}
+
+function sanitizeState(value: unknown, language: AppLanguage): GamificationState | null {
   if (!value || typeof value !== "object") return null;
   const input = value as Partial<GamificationState>;
-  const defaults = getDefaultGamificationState();
-  const unlockedTitles = stringList(input.unlockedTitles, new Set(HONORARY_TITLES.map((title) => title.id)), 100);
-  if (!unlockedTitles.includes("title_inisyate")) unlockedTitles.unshift("title_inisyate");
+  const defaults = getDefaultGamificationState(language);
+  const config = getGamificationConfig(language);
+  const defaultTitleId = config.defaultTitleId;
+  const unlockedTitles = stringList(input.unlockedTitles, new Set(config.titles.map((title) => title.id)), 100);
+  if (!unlockedTitles.includes(defaultTitleId)) unlockedTitles.unshift(defaultTitleId);
   const requestedActiveTitle = typeof input.activeTitleId === "string" ? input.activeTitleId : "";
   const activeTitleId = unlockedTitles.includes(requestedActiveTitle)
     ? requestedActiveTitle
-    : "title_inisyate";
+    : defaultTitleId;
   const lastPlayedAt = typeof input.lastPlayedAt === "string" && !Number.isNaN(Date.parse(input.lastPlayedAt))
     ? new Date(input.lastPlayedAt).toISOString()
     : undefined;
@@ -48,7 +61,7 @@ function sanitizeState(value: unknown): GamificationState | null {
     currentStreak: boundedNumber(input.currentStreak, defaults.currentStreak),
     perfectRoundsCount: boundedNumber(input.perfectRoundsCount, defaults.perfectRoundsCount),
     totalWordsFound: boundedNumber(input.totalWordsFound, defaults.totalWordsFound),
-    unlockedBadges: stringList(input.unlockedBadges, new Set(BADGES.map((badge) => badge.id)), 100),
+    unlockedBadges: stringList(input.unlockedBadges, new Set(config.badges.map((badge) => badge.id)), 100),
     scenesSolved: stringList(input.scenesSolved),
     unlockedTitles,
     activeTitleId,
@@ -56,7 +69,7 @@ function sanitizeState(value: unknown): GamificationState | null {
   };
 }
 
-function mergeLegacyState(current: GamificationState, legacy: GamificationState): GamificationState {
+function mergeLegacyState(current: GamificationState, legacy: GamificationState, defaultTitleId: string): GamificationState {
   const unlockedTitles = [...new Set([...current.unlockedTitles, ...legacy.unlockedTitles])];
   const legacyIsNewer = Boolean(
     legacy.lastPlayedAt && (!current.lastPlayedAt || legacy.lastPlayedAt > current.lastPlayedAt)
@@ -74,7 +87,7 @@ function mergeLegacyState(current: GamificationState, legacy: GamificationState)
     scenesSolved: [...new Set([...current.scenesSolved, ...legacy.scenesSolved])].slice(0, MAX_TRACKED_SCENES),
     unlockedTitles,
     activeTitleId: unlockedTitles.includes(legacy.activeTitleId) &&
-      (legacyIsNewer || current.activeTitleId === "title_inisyate")
+      (legacyIsNewer || current.activeTitleId === defaultTitleId)
       ? legacy.activeTitleId
       : current.activeTitleId,
     ...(current.lastPlayedAt || legacy.lastPlayedAt
@@ -123,22 +136,24 @@ function mergeConcurrentState(
   };
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const language = readLanguage(req.nextUrl.searchParams.get("language"));
+  const { stateField, revisionField } = languageFields(language);
   const session = await requireUser();
   const email = session?.user?.email?.toLowerCase().trim();
   if (!email) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
   await connectDB();
   const user = await User.findOne({ email })
-    .select("gamificationState gamificationRevision")
-    .lean<{ gamificationState?: unknown; gamificationRevision?: number }>();
+    .select(`${stateField} ${revisionField}`)
+    .lean<Record<string, unknown>>();
   if (!user) return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
 
-  const state = sanitizeState(user.gamificationState);
+  const state = sanitizeState(user[stateField], language);
   return NextResponse.json({
-    state: state ?? getDefaultGamificationState(),
+    state: state ?? getDefaultGamificationState(language),
     initialized: Boolean(state),
-    revision: user.gamificationRevision ?? 0,
+    revision: typeof user[revisionField] === "number" ? (user[revisionField] as number) : 0,
   });
 }
 
@@ -152,45 +167,51 @@ export async function PUT(req: NextRequest) {
     baseState?: unknown;
     revision?: unknown;
     mode?: string;
+    language?: unknown;
   } | null;
-  const incomingState = sanitizeState(body?.state);
+  const language = readLanguage(body?.language);
+  const { stateField, revisionField } = languageFields(language);
+  const defaultTitleId = getGamificationConfig(language).defaultTitleId;
+  const incomingState = sanitizeState(body?.state, language);
   if (!incomingState) return NextResponse.json({ error: "Estado de gamificação inválido." }, { status: 400 });
   if (body?.mode && body.mode !== "mergeLegacy" && body.mode !== "replace") {
     return NextResponse.json({ error: "Modo de sincronização inválido." }, { status: 400 });
   }
-  const baseState = sanitizeState(body?.baseState) ?? getDefaultGamificationState();
+  const baseState = sanitizeState(body?.baseState, language) ?? getDefaultGamificationState(language);
   const expectedRevision = boundedNumber(body?.revision, 0);
 
   await connectDB();
-  let user = await User.findOne({ email }).select("gamificationState gamificationRevision");
+  const selectFields = `${stateField} ${revisionField}`;
+  let user = await User.findOne({ email }).select(selectFields);
   if (!user) return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
 
   for (let attempt = 0; attempt < 4; attempt += 1) {
-    const currentRevision = boundedNumber(user.gamificationRevision, 0);
-    const currentState = sanitizeState(user.gamificationState) ?? getDefaultGamificationState();
-    const state = body?.mode === "mergeLegacy" && user.gamificationState
-      ? mergeLegacyState(currentState, incomingState)
+    const currentRevision = boundedNumber(user.get(revisionField), 0);
+    const storedState = user.get(stateField);
+    const currentState = sanitizeState(storedState, language) ?? getDefaultGamificationState(language);
+    const state = body?.mode === "mergeLegacy" && storedState
+      ? mergeLegacyState(currentState, incomingState, defaultTitleId)
       : currentRevision === expectedRevision
         ? incomingState
         : mergeConcurrentState(currentState, incomingState, baseState);
     const revisionFilter = currentRevision === 0
-      ? { $or: [{ gamificationRevision: 0 }, { gamificationRevision: { $exists: false } }] }
-      : { gamificationRevision: currentRevision };
+      ? { $or: [{ [revisionField]: 0 }, { [revisionField]: { $exists: false } }] }
+      : { [revisionField]: currentRevision };
     const updated = await User.findOneAndUpdate(
       { _id: user._id, ...revisionFilter },
-      { $set: { gamificationState: state, gamificationRevision: currentRevision + 1 } },
+      { $set: { [stateField]: state, [revisionField]: currentRevision + 1 } },
       { new: true }
-    ).select("gamificationState gamificationRevision");
+    ).select(selectFields);
 
     if (updated) {
       return NextResponse.json({
-        state: sanitizeState(updated.gamificationState) ?? state,
+        state: sanitizeState(updated.get(stateField), language) ?? state,
         initialized: true,
-        revision: updated.gamificationRevision ?? currentRevision + 1,
+        revision: boundedNumber(updated.get(revisionField), currentRevision + 1),
       });
     }
 
-    user = await User.findOne({ email }).select("gamificationState gamificationRevision");
+    user = await User.findOne({ email }).select(selectFields);
     if (!user) return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
   }
 

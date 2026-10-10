@@ -17,14 +17,19 @@ import { useGamification } from "@/hooks/useGamification";
 import { soundEffects } from "@/lib/soundEffects";
 import { Confetti } from "@/components/Confetti";
 import { cn } from "@/lib/utils";
+import type { AppLanguage } from "@/lib/languageShared";
 
 interface AchievementsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Idioma do painel: define níveis, conquistas, títulos e moeda exibidos (padrão: Kreyòl). */
+  language?: AppLanguage;
 }
 
-export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
+export function AchievementsModal({ isOpen, onClose, language = "kreyol" }: AchievementsModalProps) {
+  const isFrench = language === "francais";
   const {
+    config,
     state,
     levelInfo,
     activeTitle,
@@ -32,7 +37,8 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
     allTitles,
     buyTitle,
     equipTitle,
-  } = useGamification();
+  } = useGamification(language);
+  const currency = config.currency;
 
   const [activeTab, setActiveTab] = useState<"badges" | "titles">("badges");
   const [purchaseMsg, setPurchaseMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -77,7 +83,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
             </div>
             <div>
               <h2 className="text-lg font-black text-[var(--text)]">
-                Koleksyon & Onè Kreyòl
+                {config.collectionTitle}
               </h2>
               <p className="text-xs text-[var(--text-secondary)]">
                 Conquistas, insígnias de honra e níveis desbloqueáveis do jogo
@@ -104,15 +110,15 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                 NÍVEL {levelInfo.current.level}
               </span>
               <p className="text-sm font-extrabold text-[var(--text)]">
-                {levelInfo.current.kreyol} ({levelInfo.current.title})
+                {levelInfo.current.native} ({levelInfo.current.title})
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400" title="Goud: Moeda fictícia do jogo ganha ao acertar palavras">
+            <div className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400" title={`${currency}: moeda fictícia do jogo ganha ao acertar palavras`}>
               <Coins className="h-4 w-4 text-amber-500" />
-              <span>{state.goud} Goud</span>
+              <span>{state.goud} {currency}</span>
               <span className="hidden sm:inline rounded bg-amber-500/20 px-1 py-0.2 text-[9px] font-extrabold text-amber-700 dark:text-amber-300">
                 Fictícia
               </span>
@@ -128,14 +134,22 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
         <div className="border-b border-amber-500/20 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent px-6 py-2.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-              🪙 <strong className="text-[var(--text)]">Moeda Fictícia do Jogo:</strong> As <em>Gourdes (Goud)</em> são moedas virtuais gratuitas. A cada postagem com palavras acertadas você ganha <strong>+10 Goud</strong>! Ao somar <strong>50, 100, 200 Goud</strong>, desbloqueie os próximos níveis para aumentar seu <strong>XP</strong>!
+              {isFrench ? (
+                <>
+                  💶 <strong className="text-[var(--text)]">Moeda Fictícia do Jogo:</strong> Os <em>Écus</em> são moedas virtuais gratuitas. A cada palavra acertada no <strong>C&apos;est quoi ?</strong> você ganha écus! Ao somar <strong>50, 100, 200 écus</strong>, desbloqueie os próximos níveis para aumentar seu <strong>XP</strong>!
+                </>
+              ) : (
+                <>
+                  🪙 <strong className="text-[var(--text)]">Moeda Fictícia do Jogo:</strong> As <em>Gourdes (Goud)</em> são moedas virtuais gratuitas. A cada postagem com palavras acertadas você ganha <strong>+10 Goud</strong>! Ao somar <strong>50, 100, 200 Goud</strong>, desbloqueie os próximos níveis para aumentar seu <strong>XP</strong>!
+                </>
+              )}
             </p>
             <Link
               href="/dashboard/jogo"
               onClick={onClose}
               className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-amber-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm hover:bg-amber-600 transition self-start sm:self-auto cursor-pointer"
             >
-              <Gamepad2 className="h-3.5 w-3.5" /> +10 Goud por cena
+              <Gamepad2 className="h-3.5 w-3.5" /> {isFrench ? "Jogar C'est quoi ?" : "+10 Goud por cena"}
             </Link>
           </div>
         </div>
@@ -214,7 +228,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-1">
                         <h4 className="truncate text-sm font-bold text-[var(--text)]">
-                          {badge.kreyol}
+                          {badge.native}
                         </h4>
                         {isUnlocked ? (
                           <span className="flex items-center gap-0.5 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
@@ -239,7 +253,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                           +{badge.xpReward} XP
                         </span>
                         <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                          +{badge.goudReward} Goud
+                          +{badge.goudReward} {currency}
                         </span>
                       </div>
                     </div>
@@ -256,7 +270,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                 <div className="mt-1 flex items-center gap-2">
                   <span className="text-xl">{activeTitle.icon}</span>
                   <span className="text-base font-black text-[var(--text)]">
-                    {activeTitle.kreyol}
+                    {activeTitle.native}
                   </span>
                   <span className="text-xs text-[var(--text-secondary)]">
                     ({activeTitle.portuguese})
@@ -286,7 +300,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                             <span className="text-2xl">{title.icon}</span>
                             <div>
                               <h4 className="text-sm font-black text-[var(--text)]">
-                                {title.kreyol}
+                                {title.native}
                               </h4>
                               <p className="text-[11px] text-[var(--text-muted)]">
                                 {title.portuguese}
@@ -310,7 +324,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                             <div className="flex flex-col">
                               <span className="flex items-center gap-1 text-xs font-black text-amber-600 dark:text-amber-400">
                                 <Coins className="h-3.5 w-3.5" />
-                                {title.price} Goud <span className="text-[10px] font-normal text-[var(--text-muted)]">(fictícios)</span>
+                                {title.price} {currency} <span className="text-[10px] font-normal text-[var(--text-muted)]">(fictícios)</span>
                               </span>
                               {title.xpReward > 0 && (
                                 <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">
@@ -347,7 +361,9 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                             title={
                               canAfford
                                 ? `Desbloquear este nível e ganhar +${title.xpReward} XP`
-                                : `Faltam ${title.price - state.goud} Goud. Acerte palavras nas postagens para acumular!`
+                                : isFrench
+                                  ? `Faltam ${title.price - state.goud} ${currency}. Acerte palavras no C'est quoi ? para acumular!`
+                                  : `Faltam ${title.price - state.goud} ${currency}. Acerte palavras nas postagens para acumular!`
                             }
                           >
                             {canAfford ? (
@@ -355,7 +371,7 @@ export function AchievementsModal({ isOpen, onClose }: AchievementsModalProps) {
                                 <Zap className="h-3.5 w-3.5" /> Desbloquear (+{title.xpReward} XP)
                               </>
                             ) : (
-                              `Faltam ${title.price - state.goud} Goud`
+                              `Faltam ${title.price - state.goud} ${currency}`
                             )}
                           </button>
                         )}

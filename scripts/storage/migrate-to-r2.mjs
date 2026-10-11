@@ -30,9 +30,28 @@ const s3 = dryRun ? null : new S3Client({
   region: "auto",
   endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: { accessKeyId: R2_ACCESS_KEY_ID, secretAccessKey: R2_SECRET_ACCESS_KEY },
+  forcePathStyle: true, // usa sempre o mesmo endereço (conta.r2.cloudflarestorage.com), sem DNS por bucket
+  maxAttempts: 6,
 });
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Tenta de novo quando a internet cai por alguns instantes (DNS, timeout, conexão resetada).
+async function withRetry(task, label) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await task();
+    } catch (error) {
+      if (attempt >= 5) throw error;
+      const wait = attempt * 3000;
+      console.warn(`  falha em ${label} (${error.code ?? error.name}); nova tentativa ${attempt}/4 em ${wait / 1000}s`);
+      await sleep(wait);
+    }
+  }
+}
+
 let sent = 0, skipped = 0, bytes = 0;
+const failures = [];
 const sent_keys = [];
 for (const folder of FOLDERS) {
   const root = path.join("public", folder);
@@ -44,15 +63,31 @@ for (const folder of FOLDERS) {
     const body = fs.readFileSync(file);
     if (dryRun) { console.log("enviaria", key, `${(body.length / 1024).toFixed(0)} KB`); sent++; bytes += body.length; continue; }
     try {
-      const head = await s3.send(new HeadObjectCommand({ Bucket: R2_BUCKET, Key: key }));
-      if (head.ContentLength === body.length) { skipped++; continue; }
-    } catch { /* não existe: envia */ }
-    await s3.send(new PutObjectCommand({ Bucket: R2_BUCKET, Key: key, Body: body, ContentType: type, CacheControl: "public, max-age=31536000, immutable" }));
-    sent++; bytes += body.length; sent_keys.push(key);
-    if (sent % 25 === 0) console.log(`... ${sent} arquivos`);
+      let exists = false;
+      try {
+        const head = await withRetry(() => s3.send(new HeadObjectCommand({ Bucket: R2_BUCKET, Key: key })), key);
+        exists = head.ContentLength === body.length;
+      } catch (error) {
+        if (error?.$metadata?.httpStatusCode !== 404 && error?.name !== "NotFound") throw error;
+      }
+      if (exists) { skipped++; continue; }
+      await withRetry(
+        () => s3.send(new PutObjectCommand({ Bucket: R2_BUCKET, Key: key, Body: body, ContentType: type, CacheControl: "public, max-age=31536000, immutable" })),
+        key
+      );
+      sent++; bytes += body.length; sent_keys.push(key);
+      if (sent % 25 === 0) console.log(`... ${sent} arquivos`);
+    } catch (error) {
+      failures.push(key);
+      console.error(`ERRO em ${key}: ${error.code ?? error.name}`);
+    }
   }
 }
-console.log(`\nConcluído: ${sent} enviados (${(bytes / 1024 / 1024).toFixed(1)} MB), ${skipped} já estavam no bucket.`);
+console.log(`\nConcluído: ${sent} enviados (${(bytes / 1024 / 1024).toFixed(1)} MB), ${skipped} já estavam no bucket, ${failures.length} com erro.`);
+if (failures.length) {
+  console.error("Arquivos com erro (rode o script de novo; ele só envia o que falta):\n" + failures.join("\n"));
+  process.exitCode = 1;
+}
 
 if (!dryRun && ASSETS_BASE_URL && sent_keys.length) {
   const sample = sent_keys[0];

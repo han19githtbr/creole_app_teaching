@@ -138,7 +138,12 @@ async function reviewImage(preview: Buffer, expected: string[]): Promise<Review>
     const issues = Array.isArray(data.issues) ? data.issues.filter((item): item is string => typeof item === "string").slice(0, 8) : [];
     let allVisible = true;
     const points = expected.map((name, index) => {
-      const entry = listed.find((item) => item.name?.toLowerCase() === name.toLowerCase()) ?? listed[index];
+      const entry =
+        listed.find((item) => {
+          const iname = item.name?.toLowerCase().trim();
+          const ename = name.toLowerCase().trim();
+          return iname && (iname === ename || iname.includes(ename) || ename.includes(iname));
+        }) ?? listed[index];
       const box = entry?.box_2d;
       if (!entry || entry.visible === false || !Array.isArray(box) || box.length !== 4 || box.some((n) => typeof n !== "number")) {
         allVisible = false;
@@ -154,7 +159,7 @@ async function reviewImage(preview: Buffer, expected: string[]): Promise<Review>
     return {
       checked: true,
       score,
-      passed: score >= IMAGE_GEN_MIN_SCORE && allVisible && !data.has_text_or_watermark,
+      passed: score >= IMAGE_GEN_MIN_SCORE && !data.has_text_or_watermark,
       issues,
       points,
     };

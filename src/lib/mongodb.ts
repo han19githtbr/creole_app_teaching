@@ -17,14 +17,15 @@ global._mongooseCache = cached;
 export async function connectDB(): Promise<typeof mongoose> {
   if (cached.conn) return cached.conn;
 
-  if (!MONGODB_URI) {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
     throw new Error(
       "MONGODB_URI não está definida. Configure-a no arquivo .env.local (veja README.md)."
     );
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
+    cached.promise = mongoose.connect(uri, {
       bufferCommands: false,
     });
   }

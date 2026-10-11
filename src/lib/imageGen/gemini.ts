@@ -4,10 +4,10 @@
 
 const API_BASE = (process.env.GEMINI_API_BASE || "https://generativelanguage.googleapis.com/v1beta").replace(/\/+$/, "");
 
-export const imageModel = () => process.env.GEMINI_IMAGE_MODEL || "gemini-nano-banana-2.1";
-export const textModel = () => process.env.GEMINI_TEXT_MODEL || "gemini-3.8-flash";
-/** Modelo leve para tarefas curtas (revisão da imagem e escolha do objeto do C'est quoi ?). Sem valor, usa o de texto. */
-export const reviewModel = () => process.env.GEMINI_REVIEW_MODEL || textModel();
+export const imageModel = () => process.env.GEMINI_IMAGE_MODEL || "gemini-3.1-flash-image";
+export const textModel = () => process.env.GEMINI_TEXT_MODEL || "gemini-3.5-flash-lite";
+/** Modelo leve para tarefas curtas (revisão da imagem e escolha do objeto do C'est quoi ?). */
+export const reviewModel = () => process.env.GEMINI_REVIEW_MODEL || "gemini-3.5-flash-lite";
 
 export type GeminiErrorKind = "quota" | "auth" | "model" | "safety" | "network" | "format" | "other";
 
@@ -34,6 +34,13 @@ function classify(status: number, json: unknown, raw: string): GeminiError {
       status
     );
   }
+  if (status === 503) {
+    return new GeminiError(
+      `Serviço da IA temporariamente sobrecarregado (503). Tente novamente em instantes. Detalhe: ${apiMessage}`,
+      "network",
+      status
+    );
+  }
   if (status === 401 || status === 403) {
     return new GeminiError(`Chave da IA recusada (${status}). Confira GEMINI_API_KEY. Detalhe: ${apiMessage}`, "auth", status);
   }
@@ -47,32 +54,52 @@ function classify(status: number, json: unknown, raw: string): GeminiError {
   return new GeminiError(`Erro da IA (${status}): ${apiMessage}`, "other", status);
 }
 
-async function postInteraction(body: Record<string, unknown>, timeoutMs: number): Promise<unknown> {
+async function postInteraction(body: Record<string, unknown>, timeoutMs: number, maxRetries = 2): Promise<unknown> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new GeminiError("GEMINI_API_KEY não está configurada.", "auth");
-  let response: Response;
-  try {
-    response = await fetch(`${API_BASE}/interactions`, {
-      method: "POST",
-      headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(timeoutMs),
-    });
-  } catch (error) {
-    throw new GeminiError(
-      `Falha de rede ao chamar a IA: ${error instanceof Error ? error.message : "erro desconhecido"}`,
-      "network"
-    );
+
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    if (attempt > 0) {
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1500));
+    }
+    let response: Response;
+    try {
+      response = await fetch(`${API_BASE}/interactions`, {
+        method: "POST",
+        headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (attempt < maxRetries) continue;
+      throw new GeminiError(
+        `Falha de rede ao chamar a IA: ${lastError.message}`,
+        "network"
+      );
+    }
+
+    const raw = await response.text();
+    let json: unknown = null;
+    try {
+      json = JSON.parse(raw);
+    } catch {
+      /* resposta não-JSON */
+    }
+
+    if (response.status === 503 && attempt < maxRetries) {
+      continue;
+    }
+
+    if (!response.ok) throw classify(response.status, json, raw);
+    return json;
   }
-  const raw = await response.text();
-  let json: unknown = null;
-  try {
-    json = JSON.parse(raw);
-  } catch {
-    /* resposta não-JSON */
-  }
-  if (!response.ok) throw classify(response.status, json, raw);
-  return json;
+
+  throw new GeminiError(
+    `Falha de rede ao chamar a IA: ${lastError?.message || "tentativas esgotadas"}`,
+    "network"
+  );
 }
 
 // A resposta pode trazer "passos" de raciocínio (thought) com imagens intermediárias: são ignorados.

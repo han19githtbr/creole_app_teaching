@@ -19,7 +19,6 @@ import {
   Maximize2,
   Trophy,
 } from "lucide-react";
-import { IMAGE_BANK } from "@/lib/imageBank";
 import { soundEffects } from "@/lib/soundEffects";
 import {
   recordQuizWin,
@@ -225,9 +224,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
 
   async function nextRound() {
     soundEffects.playWhoosh();
-    const choices = IMAGE_BANK.filter((image) => image.id !== challenge.id);
-    const next = choices[Math.floor(Math.random() * choices.length)];
-    const response = await fetch(`/api/image-quiz?image=${encodeURIComponent(next.id)}`);
+    const response = await fetch(`/api/image-quiz?image=random&exclude=${encodeURIComponent(challenge.id)}`);
     if (!response.ok) {
       setFeedback("Não foi possível carregar a próxima imagem. Tente novamente.");
       return;
@@ -242,7 +239,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
     setFeedback("");
     setEarnedReward(null);
     setShowConfetti(false);
-    router.replace(`/dashboard/jogo?image=${encodeURIComponent(next.id)}`);
+    router.replace(`/dashboard/jogo?image=${encodeURIComponent(data.challenge.id)}`);
   }
 
   function challengeUrl() {

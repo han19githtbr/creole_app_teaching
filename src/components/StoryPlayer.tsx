@@ -5,7 +5,8 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import NextImage from "next/image";
 import { Download, GripHorizontal, Languages, Pause, Play, Undo2, Volume2, VolumeX } from "lucide-react";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
-import { getBankImage, getStoryLabelLayout } from "@/lib/imageBank";
+import { getStoryLabelLayout } from "@/lib/imageBank";
+import { useBankImage } from "@/hooks/useBankImage";
 import { describeStoryDuration, formatStoryTime } from "@/lib/storyAudio";
 import {
   buildElementTimeline,
@@ -73,8 +74,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const lastCaptionEnd = story.captions.reduce((latest, caption) => Math.max(latest, caption.end), 0);
   const duration = mediaDuration || story.audioDuration || lastCaptionEnd || 0;
 
-  const sceneElements = useMemo(() => getBankImage(story.imageSrc)?.elements ?? [], [story.imageSrc]);
-  const sceneLayout = useMemo(() => getStoryLabelLayout(story.imageSrc), [story.imageSrc]);
+  const bankImage = useBankImage(story.imageSrc);
+  const sceneElements = useMemo(() => bankImage?.elements ?? [], [bankImage]);
+  const sceneLayout = useMemo(() => bankImage?.labelLayout ?? getStoryLabelLayout(story.imageSrc), [bankImage, story.imageSrc]);
   const timeline = useMemo(() => buildElementTimeline(sceneElements, story.elementCues, duration), [sceneElements, story.elementCues, duration]);
 
   const activeCaption = captionAt(story.captions, currentTime);

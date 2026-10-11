@@ -1,9 +1,10 @@
 
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Eye, Search, Sparkles, X } from "lucide-react";
 import { IMAGE_BANK, IMAGE_THEMES, type BankImage } from "@/lib/imageBank";
+import type { ImageSection } from "@/lib/imageGen/config";
 import { cn } from "@/lib/utils";
 
 /**
@@ -13,17 +14,35 @@ import { cn } from "@/lib/utils";
 export function ImageBankPicker({
   selectedSrc,
   onSelect,
+  section,
 }: {
   selectedSrc: string | null;
   onSelect: (image: BankImage | null) => void;
+  /** Quando informado, inclui no topo as imagens geradas por IA (e aprovadas) dessa parte do app. */
+  section?: ImageSection;
 }) {
   const [theme, setTheme] = useState<string>("Todos");
   const [search, setSearch] = useState<string>("");
   const [onlyPrimary, setOnlyPrimary] = useState<boolean>(true);
   const [previewImage, setPreviewImage] = useState<BankImage | null>(null);
+  const [generated, setGenerated] = useState<BankImage[]>([]);
+
+  useEffect(() => {
+    if (!section) return;
+    let cancelled = false;
+    fetch(`/api/generated-images?section=${section}`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { images?: BankImage[] } | null) => {
+        if (!cancelled && data?.images) setGenerated(data.images);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [section]);
 
   const filteredItems = useMemo(() => {
-    return IMAGE_BANK.filter((img) => {
+    return [...generated, ...IMAGE_BANK].filter((img) => {
       if (onlyPrimary && !img.isPrimary) return false;
       if (theme !== "Todos" && img.theme !== theme) return false;
       if (search.trim()) {
@@ -38,7 +57,7 @@ export function ImageBankPicker({
       }
       return true;
     });
-  }, [theme, search, onlyPrimary]);
+  }, [theme, search, onlyPrimary, generated]);
 
   return (
     <div className="space-y-3.5">
@@ -146,7 +165,7 @@ export function ImageBankPicker({
                 
                 {/* Ghibli style badge */}
                 <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-amber-300 backdrop-blur-sm pointer-events-none">
-                  Ghibli Art
+                  {img.generated ? "✨ Nova · IA" : "Ghibli Art"}
                 </span>
 
                 {/* Inspect Preview button */}
@@ -318,4 +337,3 @@ export function ImageBankPicker({
     </div>
   );
 }
-

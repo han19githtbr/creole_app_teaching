@@ -1,4 +1,5 @@
 import imageSceneVariants from "./imageSceneVariants.json";
+import type { BankImage } from "./imageBank";
 
 export interface ImageQuizConfig {
   options: string[];
@@ -42,6 +43,11 @@ export function getDefaultImageQuiz(theme: string, imageId?: string): ImageQuizC
     };
   }
   return THEME_QUIZZES[theme];
+}
+
+/** Desafio de uma imagem do banco: imagens geradas por IA já trazem o seu; as demais usam o padrão do tema. */
+export function getQuizForImage(image: Pick<BankImage, "theme" | "id" | "quiz">): ImageQuizConfig | undefined {
+  return image.quiz ?? getDefaultImageQuiz(image.theme, image.id);
 }
 
 export function isValidImageQuiz(value: unknown): value is ImageQuizConfig {

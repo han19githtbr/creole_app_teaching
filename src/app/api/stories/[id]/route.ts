@@ -11,7 +11,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params;
   const body = await request.json();
   if (typeof body.title !== "string" || !body.title.trim()) return NextResponse.json({ error: "O título é obrigatório." }, { status: 400 });
-  const validation = validateStory(body.story);
+  const validation = await validateStory(body.story);
   if (!validation.ok) return NextResponse.json({ error: validation.error }, { status: 400 });
   const story = validation.story;
 

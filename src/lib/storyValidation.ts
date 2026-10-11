@@ -1,5 +1,5 @@
 // Validação única do conteúdo de uma história, usada pelas rotas POST e PUT.
-import { getBankImage } from "@/lib/imageBank";
+import { findAnyBankImage } from "@/lib/generatedImages";
 import {
   STORY_AUDIO_MAX_SECONDS,
   STORY_AUDIO_MIN_SECONDS,
@@ -20,12 +20,12 @@ const isAudioUrl = (value: unknown): value is string => {
   }
 };
 
-export function validateStory(input: unknown): Result {
+export async function validateStory(input: unknown): Promise<Result> {
   if (!input || typeof input !== "object") return { ok: false, error: "Defina a cena, o áudio e as legendas da história." };
   const value = input as Record<string, unknown>;
 
-  const image = typeof value.imageSrc === "string" ? getBankImage(value.imageSrc) : undefined;
-  if (!image || image.src !== value.imageSrc) return { ok: false, error: "Selecione uma imagem válida do banco Ghibli." };
+  const image = typeof value.imageSrc === "string" ? await findAnyBankImage(value.imageSrc) : undefined;
+  if (!image || image.src !== value.imageSrc) return { ok: false, error: "Selecione uma imagem válida do banco de imagens." };
   if (!isAudioUrl(value.audioUrl)) return { ok: false, error: "Envie uma narração de áudio válida." };
 
   const audioDuration = Number(value.audioDuration);

@@ -31,6 +31,10 @@ export interface BankImage {
   labelLayout?: StoryLabelLayout;
   /** Elementos reconhecíveis na cena para o jogo e lições */
   elements: BankElement[];
+  /** Desafio do jogo de identificar elementos (imagens geradas por IA já trazem o seu). */
+  quiz?: { options: string[]; answers: string[] };
+  /** true = imagem gerada por IA (guardada no R2 e cadastrada no banco de dados). */
+  generated?: boolean;
 }
 
 const STORY_LABEL_LAYOUTS: Record<string, StoryLabelLayout> = {
@@ -265,7 +269,7 @@ const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary" | "labelLayout">[] = [
 
 import imageSceneVariants from "./imageSceneVariants.json";
 
-const KREYOL_TO_PT: Record<string, string> = {
+export const KREYOL_TO_PT: Record<string, string> = {
   // Tecnologia
   "òdinatè": "computador",
   "robo": "robô",
@@ -456,10 +460,10 @@ export function getStoryLabelLayout(idOrSrc: string | null | undefined): StoryLa
   };
 }
 
-/** URLs de imagem aceitas em postagens: banco Ghibli (/ghibli/* em svg, png, webp, jpg) ou upload Vercel Blob. */
+/** URLs de imagem aceitas em postagens: banco Ghibli (/ghibli/*), imagens geradas por IA (/gen/*) ou upload Vercel Blob. */
 export function isAllowedPostImageUrl(url: unknown): url is string {
   if (typeof url !== "string" || !url) return false;
-  if (/^\/(ghibli|images)\/[a-z0-9_-]+\.(svg|png|webp|jpg|jpeg)$/i.test(url)) return true;
+  if (/^\/(ghibli|images|gen)\/[a-z0-9_-]+\.(svg|png|webp|jpg|jpeg)$/i.test(url)) return true;
   try {
     const u = new URL(url);
     return (
@@ -471,4 +475,3 @@ export function isAllowedPostImageUrl(url: unknown): url is string {
     return false;
   }
 }
-

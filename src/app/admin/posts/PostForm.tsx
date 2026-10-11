@@ -12,6 +12,7 @@ import { PostCard } from "@/components/PostCard";
 import { getBankImage, type BankImage } from "@/lib/imageBank";
 import {
   getDefaultImageQuiz,
+  getQuizForImage,
   isValidImageQuiz,
   MAX_IMAGE_QUIZ_OPTIONS,
   MIN_IMAGE_QUIZ_OPTIONS,
@@ -40,6 +41,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
   const [content, setContent] = useState(initial?.content ?? "");
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? "");
   const [imageAlt, setImageAlt] = useState(initial?.imageAlt ?? "");
+  const [pickedImage, setPickedImage] = useState<BankImage | null>(null);
   const [imageTab, setImageTab] = useState<"bank" | "upload">("bank");
   const [showImagePanel, setShowImagePanel] = useState(Boolean(initial?.imageUrl));
   const [uploading, setUploading] = useState(false);
@@ -56,9 +58,10 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
   const [error, setError] = useState<string | null>(null);
 
   const isEdit = Boolean(initial?._id);
-  const bankImage = getBankImage(imageUrl);
+  const bankImage = getBankImage(imageUrl) ?? (pickedImage && pickedImage.src === imageUrl ? pickedImage : undefined);
 
   function handleBankSelect(img: BankImage | null) {
+    setPickedImage(img);
     if (!img) {
       setImageUrl("");
       setImageAlt("");
@@ -75,7 +78,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
     if (!content.trim()) {
       setContent(img.caption);
     }
-    const quiz = getDefaultImageQuiz(img.theme, img.id);
+    const quiz = getQuizForImage(img);
     setQuizOptions(quiz?.options ?? Array(10).fill(""));
     setQuizAnswers(quiz?.answers ?? []);
     setQuizEnabled(Boolean(quiz));
@@ -299,7 +302,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
             </div>
 
             {imageTab === "bank" ? (
-              <ImageBankPicker selectedSrc={bankImage ? bankImage.src : null} onSelect={handleBankSelect} />
+              <ImageBankPicker section="posts" selectedSrc={bankImage ? bankImage.src : null} onSelect={handleBankSelect} />
             ) : (
               <div className="rounded-xl border border-dashed border-[var(--border-strong)] p-6 text-center">
                 <input

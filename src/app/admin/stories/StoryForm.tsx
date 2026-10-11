@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { convertToMp3, readAudioDuration, readMediaMetadataDuration, type Mp3Stage } from "@/lib/audioToMp3";
-import { getBankImage } from "@/lib/imageBank";
+import { useBankImage } from "@/hooks/useBankImage";
 import {
   MP4_CONVERTER_MAX_BYTES,
   STORY_AUDIO_MAX_BYTES,
@@ -78,7 +78,8 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
     if (audioPreviewUrl) URL.revokeObjectURL(audioPreviewUrl);
   }, [audioPreviewUrl]);
 
-  const sceneElements = useMemo(() => getBankImage(imageSrc)?.elements ?? [], [imageSrc]);
+  const bankImage = useBankImage(imageSrc);
+  const sceneElements = useMemo(() => bankImage?.elements ?? [], [bankImage]);
   const autoStarts = useMemo(() => defaultElementStarts(sceneElements.length, audioDuration), [sceneElements.length, audioDuration]);
   const elementStarts = sceneElements.map((element, index) => cueOverrides[element.kreyol] ?? autoStarts[index] ?? 0);
   const hasNarration = Boolean(audioFile || audioUrl);
@@ -258,7 +259,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
         </div>
         <details className="sm:col-span-2">
           <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-[var(--accent)]"><ImageIcon className="h-4 w-4" /> {imageSrc ? "Trocar imagem temática" : "Escolher imagem temática"}</summary>
-          <div className="mt-4"><ImageBankPicker selectedSrc={imageSrc || null} onSelect={(image) => { setImageSrc(image?.src ?? ""); setTheme(image?.theme ?? ""); setCueOverrides({}); }} /></div>
+          <div className="mt-4"><ImageBankPicker section="stories" selectedSrc={imageSrc || null} onSelect={(image) => { setImageSrc(image?.src ?? ""); setTheme(image?.theme ?? ""); setCueOverrides({}); }} /></div>
         </details>
       </section>
 

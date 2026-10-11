@@ -3,8 +3,9 @@ import { getServerSession } from "next-auth";
 import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
-import { getBankImage, IMAGE_BANK } from "@/lib/imageBank";
-import { getDefaultImageQuiz, isValidImageQuiz } from "@/lib/imageQuiz";
+import { IMAGE_BANK } from "@/lib/imageBank";
+import { findAnyBankImage, listApprovedCquoiItems, listApprovedGenerated } from "@/lib/generatedImages";
+import { getQuizForImage, isValidImageQuiz } from "@/lib/imageQuiz";
 import Post from "@/models/Post";
 import { ImageQuizGame, type ImageQuizChallenge } from "@/components/ImageQuizGame";
 import { CestQuoiGame, type CestQuoiItem } from "@/components/CestQuoiGame";
@@ -24,14 +25,15 @@ export default async function ImageQuizPage({
   // Painel em francês: jogo "C'est quoi ?" (objetos da pasta c-quoi + coleção por temas)
   if ((await getAppLanguage()) === "francais") {
     const { theme } = await searchParams;
-    return <CestQuoiGame items={cquoiItems as CestQuoiItem[]} initialTheme={theme} />;
+    return <CestQuoiGame items={[...(cquoiItems as CestQuoiItem[]), ...(await listApprovedCquoiItems())]} initialTheme={theme} />;
   }
 
   const { post: postId, image: imageId } = await searchParams;
-  const requestedImage = imageId ? getBankImage(imageId) : undefined;
+  const requestedImage = imageId ? await findAnyBankImage(imageId) : undefined;
   if (imageId && !requestedImage) notFound();
-  const randomImage = requestedImage ?? IMAGE_BANK[randomInt(IMAGE_BANK.length)];
-  const randomQuiz = getDefaultImageQuiz(randomImage.theme, randomImage.id)!;
+  const pool = requestedImage ? [] : [...IMAGE_BANK, ...(await listApprovedGenerated("posts"))];
+  const randomImage = requestedImage ?? pool[randomInt(pool.length)];
+  const randomQuiz = getQuizForImage(randomImage)!;
   let challenge: ImageQuizChallenge = {
     id: randomImage.id,
     theme: randomImage.theme,
@@ -49,12 +51,12 @@ export default async function ImageQuizPage({
     if (session.user.role !== "admin" && (!post.isPublished || (!post.isPermanent && post.expiresAt && post.expiresAt < new Date()))) notFound();
     if (!post.imageUrl) notFound();
 
-    const image = getBankImage(post.imageUrl);
+    const image = await findAnyBankImage(post.imageUrl, { includeUnapproved: session.user.role === "admin" });
     const hasCustomQuiz = Boolean(post.imageQuiz && isValidImageQuiz(post.imageQuiz));
     const quiz = hasCustomQuiz
       ? post.imageQuiz
       : image
-      ? getDefaultImageQuiz(image.theme, image.id)
+      ? getQuizForImage(image)
       : undefined;
     if (!quiz || !isValidImageQuiz(quiz)) notFound();
     challenge = {

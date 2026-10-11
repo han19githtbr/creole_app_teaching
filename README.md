@@ -10,6 +10,10 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Indicador de carregamento](#indicador-de-carregamento)
 - [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
 - [Visibilidade das lições](#visibilidade-das-lições)
+- [Imagens no Cloudflare R2](#imagens-no-cloudflare-r2)
+- [Configuração das variáveis de imagens e IA](#configuração-das-variáveis-de-imagens-e-ia)
+- [Geração de imagens por IA](#geração-de-imagens-por-ia)
+- [Cores e legibilidade](#cores-e-legibilidade)
 - [Funcionalidades](#funcionalidades)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Configuração local](#configuração-local)
@@ -30,6 +34,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - Fundo virtual (MediaPipe) na gravação de vídeos e nas aulas ao vivo.
 - PWA com service worker, página offline e Web Push opcional.
 - Gamificação com XP, moedas Goud, níveis, conquistas e títulos.
+- Imagens no **Cloudflare R2** (fora do repositório) e **geração de novas imagens por IA** (limite de 5 por dia, revisão automática e aprovação no painel do administrador).
 
 ## Stack
 
@@ -38,6 +43,8 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - NextAuth.js (Google OAuth, sessão JWT)
 - Tailwind CSS 4
 - Vercel Blob (uploads de vídeo, imagem de postagem e narração das histórias)
+- Cloudflare R2 (ilustrações do app e imagens geradas por IA) via `@aws-sdk/client-s3`; `sharp` para converter e validar imagens
+- Gemini API (geração e revisão de imagens) por REST
 - LiveKit (aulas ao vivo)
 - Web Push (`web-push`), Service Worker e Badging API
 - MediaPipe Selfie Segmentation (fundo virtual)
@@ -162,6 +169,152 @@ Lições novas são rascunhos (`isPublished: false`) por padrão. Para uma liç�
 
 O mesmo critério é usado nas listagens de lições, na página individual e nos dados de progresso/novidades destinados aos alunos. Administradores podem consultar o conteúdo sem esse filtro.
 
+## Imagens no Cloudflare R2
+
+As ilustrações deixaram de ficar nas pastas do projeto. `public/ghibli` (280 SVGs) e `public/c-quoi` (jogo C'est quoi ?) foram para um bucket do **Cloudflare R2** (plano gratuito: 10 GB, sem custo de saída; as imagens atuais somam ~9 MB).
+
+- **Mesmos caminhos.** O código continua usando `/ghibli/...`, `/c-quoi/...` e `/gen/...` (imagens geradas). O `next.config.ts` reescreve essas rotas para `ASSETS_BASE_URL`, então o navegador, o `<canvas>` (exportação de vídeo das histórias, cartão de conquista) e o service worker não percebem a diferença e não precisam de CORS.
+- **Transição segura.** O Next procura primeiro em `public/` e só depois no bucket. Sem `ASSETS_BASE_URL` nada é reescrito e o app usa os arquivos locais.
+- **Migração.** `node scripts/storage/migrate-to-r2.mjs --dry-run` lista o que seria enviado; sem `--dry-run` envia (com `Cache-Control: immutable` e o `Content-Type` correto) e ignora arquivos já presentes. Depois de conferir o site, apague `public/ghibli` e `public/c-quoi`. **Não apague `scripts/ghibli/manifest.json`**, que o banco de imagens (`src/lib/imageBank.ts`) lê.
+- **Configuração do R2.** Crie o bucket, ative o acesso público (domínio próprio em produção; a URL `r2.dev` serve para testes) e um token "Object Read & Write". Preencha as variáveis `R2_*` e `ASSETS_BASE_URL`. O Cloudflare pode pedir um cartão para ativar o R2; dentro do plano gratuito não há cobrança.
+- Mídias enviadas por usuários (vídeos, narrações, imagens de postagem) continuam no Vercel Blob.
+
+## Configuração das variáveis de imagens e IA
+
+Preencha as variáveis abaixo em dois lugares: no `.env.local` (para rodar no seu computador) e em **Vercel → Projeto → Settings → Environment Variables** (para produção). Depois de alterar na Vercel, faça um novo deploy. Os nomes dos menus dos serviços mudam de vez em quando; se algo estiver em outro lugar, procure pelo nome do item.
+
+```env
+# Imagens fora do projeto: Cloudflare R2 (plano gratuito)
+R2_ACCOUNT_ID=seu-account-id
+R2_ACCESS_KEY_ID=sua-access-key
+R2_SECRET_ACCESS_KEY=sua-secret-key
+R2_BUCKET=crioulo-imagens
+ASSETS_BASE_URL=https://imagens.seudominio.com
+
+# Geração de imagens por IA (painel /admin/imagens)
+GEMINI_API_KEY=sua-chave-do-ai-studio
+GEMINI_IMAGE_MODEL=gemini-nano-banana-2.1
+GEMINI_TEXT_MODEL=gemini-3.8-flash
+GEMINI_REVIEW_MODEL=gemini-3.5-flash-lite
+IMAGE_GEN_DAILY_LIMIT=5
+CRON_SECRET=segredo-do-cron
+```
+
+### 1. Cloudflare R2: `R2_BUCKET`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
+
+1. Crie uma conta em <https://dash.cloudflare.com> (gratuita) e abra **R2 Object Storage**. Na primeira vez o Cloudflare pode pedir para ativar o R2 e informar um cartão; dentro do plano gratuito (10 GB) não há cobrança.
+2. **`R2_BUCKET`:** clique em **Create bucket**, dê um nome (ex.: `crioulo-imagens`) e crie. O nome que você escolheu é o valor da variável.
+3. **`R2_ACCOUNT_ID`:** na página inicial do R2 (**Overview**) o *Account ID* aparece no painel lateral direito. Ele também é a parte hexadecimal do endereço do painel (`dash.cloudflare.com/<account-id>/...`).
+4. **`R2_ACCESS_KEY_ID` e `R2_SECRET_ACCESS_KEY`:** na página inicial do R2, clique em **Manage API Tokens** (ou *API*) → **Create API token**.
+   - Permissão: **Object Read & Write**.
+   - Escopo: aplique somente ao bucket criado (mais seguro).
+   - Ao criar, o Cloudflare mostra o *Access Key ID* e o *Secret Access Key*. **O segredo aparece uma única vez**: copie agora. Se perder, crie outro token. Ignore o campo "Token value" e o "endpoint"; o app monta o endereço sozinho a partir do Account ID.
+5. Nunca coloque essas chaves no Git nem em variáveis `NEXT_PUBLIC_*`.
+
+### 2. Endereço público das imagens: `ASSETS_BASE_URL`
+
+É a URL pela qual o bucket é lido na internet, **sem barra no final**. O app usa esse endereço para repassar `/ghibli/...`, `/c-quoi/...` e `/gen/...` ao bucket. Escolha uma das opções:
+
+- **Domínio próprio (recomendado para produção).** No bucket, abra **Settings → Custom Domains → Add**, informe um subdomínio (ex.: `imagens.seudominio.com`) e confirme. O domínio precisa estar usando o DNS do Cloudflare. Valor: `ASSETS_BASE_URL=https://imagens.seudominio.com`.
+- **URL `r2.dev` (para testar).** No bucket, em **Settings → Public access / Public Development URL**, clique em **Enable** e confirme. O Cloudflare mostra um endereço parecido com `https://pub-xxxxxxxx.r2.dev`. Valor: `ASSETS_BASE_URL=https://pub-xxxxxxxx.r2.dev`. Esse endereço tem limite de uso e não é indicado para produção.
+
+Teste: envie as imagens (`node scripts/storage/migrate-to-r2.mjs`) e abra no navegador `<ASSETS_BASE_URL>/ghibli/natureza.svg`; se a imagem aparecer, está certo. O script também faz essa verificação no final.
+
+### 3. Gemini: `GEMINI_API_KEY`
+
+1. Entre em <https://aistudio.google.com/apikey> com uma conta Google.
+2. Clique em **Create API key** (escolha ou crie um projeto) e copie a chave.
+3. Confira nas informações de limites do AI Studio (*Rate limits*) se a sua chave tem cota para **geração de imagens**. Se não tiver, a geração com o motor "Pintura Ghibli" retorna erro de cota (429). Nesse caso use o motor **"Vetor SVG"** no painel, que usa o modelo de texto.
+4. Guarde a chave só no servidor (nunca em `NEXT_PUBLIC_*`).
+
+### 4. Modelos: `GEMINI_IMAGE_MODEL`, `GEMINI_TEXT_MODEL` e `GEMINI_REVIEW_MODEL`
+
+São opcionais: se você não definir, o app usa os valores do exemplo. Servem para trocar de modelo sem mexer no código.
+
+- `GEMINI_IMAGE_MODEL`: modelo que desenha as imagens (motor "Pintura").
+- `GEMINI_TEXT_MODEL`: modelo que escreve os SVGs (motor "Vetor SVG"). Quanto melhor o modelo, melhor o desenho.
+- `GEMINI_REVIEW_MODEL`: modelo **leve** usado nas tarefas curtas: revisar cada imagem (nota, elementos e posições) e escolher o objeto novo do C'est quoi ?. Separar os dois poupa a cota do modelo principal. Se você não definir, o app usa o `GEMINI_TEXT_MODEL` para tudo. Escolha um modelo de texto que aceite imagem e tenha cota diária alta (na lista de limites do AI Studio, um modelo "Flash Lite" costuma ter 500 pedidos por dia).
+
+**Contas de cota por dia (motor SVG):** cada imagem usa 1 pedido do `GEMINI_TEXT_MODEL` (desenhar) e 1 do `GEMINI_REVIEW_MODEL` (revisar); no C'est quoi ? há mais 1 do modelo leve para escolher o objeto. Com 5 imagens por dia, são só 5 pedidos por dia no modelo principal, o que cabe até em modelos com cota de 20 por dia.
+
+Os nomes dos modelos mudam com frequência. Confira a lista atual na documentação do Gemini API (<https://ai.google.dev/gemini-api/docs/models>) e use exatamente o identificador mostrado. Se o nome estiver errado ou indisponível para a sua chave, o painel **Admin → Imagens com IA** mostra a mensagem "Modelo indisponível para esta chave" no pedido.
+
+### 5. Limite diário: `IMAGE_GEN_DAILY_LIMIT`
+
+Número de imagens que o robô pode gerar por dia, somando a geração automática e o botão "Gerar agora". O padrão é `5`. Se não definir, vale 5. A contagem zera à meia-noite no horário de Brasília. Diminua o valor se quiser economizar a cota da IA.
+
+### 6. Segredo do cron: `CRON_SECRET`
+
+É uma senha que protege a rota `/api/cron/image-gen`, que a Vercel chama uma vez por dia (06h de Brasília) para gerar as imagens dos pedidos ativos. Sem ela, a geração automática diária não roda (o botão "Gerar agora" continua funcionando).
+
+1. Gere um valor aleatório e longo:
+   - Linux/macOS/WSL: `openssl rand -base64 32`
+   - Qualquer sistema com Node: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
+2. Cadastre o valor como `CRON_SECRET` na Vercel (ambiente **Production**) e faça um novo deploy. A Vercel envia esse valor no cabeçalho `Authorization: Bearer ...` ao chamar o cron.
+3. Confira em **Vercel → Projeto → Settings → Cron Jobs** se o job `/api/cron/image-gen` aparece. No plano Hobby cada cron pode rodar no máximo uma vez por dia, que é o que está configurado em `vercel.json`.
+4. Para testar manualmente: `curl -H "Authorization: Bearer SEU_SEGREDO" https://seu-site.vercel.app/api/cron/image-gen`.
+
+### Checklist final
+
+1. Bucket criado e token com *Object Read & Write*.
+2. Acesso público ativado (domínio próprio ou `r2.dev`) e `ASSETS_BASE_URL` preenchida.
+3. Variáveis cadastradas no `.env.local` e na Vercel; novo deploy feito.
+4. `node scripts/storage/migrate-to-r2.mjs --dry-run`, depois sem `--dry-run`.
+5. Site conferido; só então apagar `public/ghibli` e `public/c-quoi`.
+6. Em **Admin → Imagens com IA**, o aviso amarelo de configuração não deve aparecer; faça um pedido pequeno (5 imagens) para testar.
+
+## Geração de imagens por IA
+
+Painel em **Admin → Imagens com IA** (`/admin/imagens`), para ampliar o conteúdo sem ficar preso ao número fixo de ilustrações.
+
+**Fluxo**
+
+1. O administrador cria um **pedido**: parte do app (Postagens, Histórias ou C'est quoi ?), tema (ou todos), quantidade (1 a 200) e motor.
+2. O robô entrega no máximo **5 imagens por dia** (`IMAGE_GEN_DAILY_LIMIT`). A cota é um contador no MongoDB (dia de Brasília) compartilhado pelo cron diário e pelo botão "Gerar agora", então nunca passa do limite. Ex.: 10 imagens levam 2 dias.
+3. Cada imagem é planejada, desenhada, **revisada automaticamente** (modelo de visão), guardada no R2 e cadastrada no MongoDB.
+4. A revisão confere se os elementos obrigatórios estão visíveis, se não há texto/marca d'água e o estilo, dá uma nota de 0 a 10 e localiza cada elemento. Abaixo da nota mínima (7) a imagem fica **Rejeitada**; as demais ficam **Para aprovar**.
+5. O administrador aprova na galeria (individualmente ou "Aprovar todas com nota ≥ 8,5"). Opcionalmente o pedido aprova sozinho as de nota alta. **Só imagens aprovadas aparecem para os alunos.**
+6. O pedido pode ser pausado, retomado ou cancelado; erros da IA (cota, chave, modelo) aparecem no próprio pedido.
+
+**Partes do app**
+
+| Parte | O que é gerado | Onde aparece |
+| --- | --- | --- |
+| Postagens | Cena com 4 elementos em Kreyòl, legenda e desafio (10 palavras, 4 corretas) | Seletor de imagens das postagens e jogo de identificar elementos (sorteio e "próxima imagem") |
+| Histórias | Cena com 4 elementos separados; as posições detectadas viram os rótulos animados | Seletor de imagens das histórias e player |
+| C'est quoi ? | Um objeto novo em francês (artigo + nome, sem repetir os existentes) e a seta vermelha posicionada sobre ele | Direto no jogo `/dashboard/jogo`, junto com os itens atuais |
+
+O vocabulário em Kreyòl **não é inventado pela IA**: os elementos saem do mesmo vocabulário revisado já usado pelo app (`imageSceneVariants.json` + dicionário de tradução). A IA só desenha e confere o desenho. As imagens antigas permanecem intactas e aparecem junto das novas (marcadas "✨ Nova · IA" no seletor).
+
+**Motores**
+
+- **Pintura Ghibli (Gemini, imagem):** melhor qualidade; saída em WebP 1200×800 (C'est quoi ?: 980×700, proporção 7:5 do jogo). Exige cota de imagem na sua chave do Gemini (confira no Google AI Studio). **Referência visual:** a cada geração, 2 ilustrações já existentes do mesmo tema (do banco `/ghibli` ou do C'est quoi ?) são convertidas em PNG e enviadas junto do prompt, com a instrução de imitar paleta, saturação, sombreado e simplicidade sem copiar a composição. Elas vêm de `public/` (se ainda existir) ou do bucket.
+- **Vetor SVG (Gemini, texto):** o modelo de texto escreve o SVG no mesmo formato e viewBox das imagens atuais, usando uma ilustração existente do bucket como referência de estilo. O SVG passa por sanitização (sem scripts, `<image>`, `<text>`, links externos ou animações) e precisa renderizar. Qualidade mais simples; costuma ter cota gratuita.
+
+**Execução**
+
+- Cron diário (`vercel.json`, 09:00 UTC = 06:00 em Brasília) chama `GET /api/cron/image-gen` com `Authorization: Bearer $CRON_SECRET`.
+- O botão "Gerar agora" produz uma imagem por requisição e repete até acabar a cota ou os pedidos (cada requisição fica curta).
+- Erros de cota/chave/modelo/rede interrompem o lote e devolvem a chamada à cota; falhas de formato tentam de novo uma vez.
+
+**Arquivos principais**
+
+- `src/lib/imageGen/` — `config.ts` (seções, temas, limites), `prompts.ts` (planejamento e prompts), `gemini.ts` (cliente REST, Interactions API), `svg.ts` (sanitização), `pipeline.ts` (cota, geração, revisão, lote).
+- `src/models/ImageGen.ts` — `GeneratedImage`, `ImageGenJob` e `ImageGenUsage`.
+- `src/lib/generatedImages.ts` — leitura das imagens aprovadas no mesmo formato do banco estático; `src/hooks/useBankImage.ts` — resolve imagens geradas no cliente.
+- `src/lib/r2.ts` — envio e remoção no R2.
+- `src/app/admin/imagens/` e `src/app/api/admin/image-gen/**`, `src/app/api/cron/image-gen`, `src/app/api/generated-images`.
+
+**Integrações em código existente:** `ImageBankPicker` (prop `section`), `PostForm` e `StoryForm`, `StoryPlayer`, `storyValidation.ts` (agora assíncrono e aceita imagens geradas aprovadas), `imageQuiz.ts` (`getQuizForImage`), `/api/image-quiz` (`image=random&exclude=`), `/dashboard/jogo` e `imageBank.ts` (aceita o prefixo `/gen/` e exporta `KREYOL_TO_PT`).
+
+**Segurança:** as rotas do painel exigem administrador; a leitura pública exige login; SVGs gerados são sanitizados e servidos com cabeçalhos restritivos configurados em `next.config.ts` (a sanitização é a defesa principal).
+
+## Cores e legibilidade
+
+- Modo claro: `--text-muted` escurecido (`#a8a29e` → `#6b645e`) e `--border` reforçado, para que textos secundários e divisórias fiquem legíveis.
+- Modo escuro: o azul do acento (`#280ed1`) quase desaparecia como cor de **texto** sobre o fundo preto; esses casos usam o tom claro (`--accent-hover`). Botões com fundo azul não mudam.
+- O painel de imagens usa cores de alto contraste (notas em verde/âmbar/vermelho com texto branco ou preto, avisos com borda forte).
+
 ## Funcionalidades
 
 ### Aluno
@@ -227,7 +380,7 @@ O aluno envia uma resposta à legenda/pergunta de uma postagem. Ela fica **Em an
 ```text
 src/
 ├── app/
-│   ├── admin/        # Painel do administrador (lições, postagens, respostas, vídeos, histórias, ao vivo)
+│   ├── admin/        # Painel do administrador (lições, postagens, respostas, vídeos, histórias, ao vivo, imagens com IA)
 │   ├── dashboard/    # Área do aluno (lições, vídeos, histórias, jogo)
 │   ├── live/         # Sala de aula ao vivo
 │   ├── offline/      # Página exibida sem conexão
@@ -270,6 +423,13 @@ Arquivos principais das histórias:
 | `/api/stories` | GET, POST |
 | `/api/stories/[id]` | GET, PUT, DELETE |
 | `/api/stories/upload` | POST |
+| `/api/generated-images` | GET (`?section=` lista aprovadas; `?src=` uma imagem) |
+| `/api/admin/image-gen` | GET (estado, cota, pedidos, galeria), POST (novo pedido) |
+| `/api/admin/image-gen/jobs/[id]` | PATCH (pausar, retomar, cancelar) |
+| `/api/admin/image-gen/images/[id]` | PATCH (aprovar, rejeitar, restaurar), DELETE |
+| `/api/admin/image-gen/run` | POST (gera uma imagem usando a cota do dia) |
+| `/api/admin/image-gen/bulk` | POST (aprova pendentes com nota alta) |
+| `/api/cron/image-gen` | GET (cron diário, exige `CRON_SECRET`) |
 | `/api/videos` | GET, POST |
 | `/api/videos/[id]` | GET, PUT, DELETE |
 | `/api/videos/upload` | POST |
@@ -315,6 +475,21 @@ VAPID_SUBJECT=mailto:admin@exemplo.com
 NEXT_PUBLIC_LIVEKIT_URL=wss://seu-projeto.livekit.cloud
 LIVEKIT_API_KEY=sua-api-key
 LIVEKIT_API_SECRET=sua-api-secret
+
+# Imagens fora do projeto: Cloudflare R2 (plano gratuito)
+R2_ACCOUNT_ID=seu-account-id
+R2_ACCESS_KEY_ID=sua-access-key
+R2_SECRET_ACCESS_KEY=sua-secret-key
+R2_BUCKET=crioulo-imagens
+ASSETS_BASE_URL=https://imagens.seudominio.com
+
+# Geração de imagens por IA (painel /admin/imagens)
+GEMINI_API_KEY=sua-chave-do-ai-studio
+GEMINI_IMAGE_MODEL=gemini-nano-banana-2.1
+GEMINI_TEXT_MODEL=gemini-3.8-flash
+GEMINI_REVIEW_MODEL=gemini-3.5-flash-lite
+IMAGE_GEN_DAILY_LIMIT=5
+CRON_SECRET=segredo-do-cron
 ```
 
 | Variável | Para que serve |
@@ -326,6 +501,12 @@ LIVEKIT_API_SECRET=sua-api-secret
 | `BLOB_READ_WRITE_TOKEN` | Token do Vercel Blob; necessário para enviar vídeos, imagens de postagem e a narração das histórias (lido automaticamente pelo SDK `@vercel/blob`) |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Push em segundo plano |
 | `NEXT_PUBLIC_LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` | Aulas ao vivo |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Acesso ao bucket do Cloudflare R2 (envio das imagens geradas e migração) |
+| `ASSETS_BASE_URL` | URL pública do bucket, sem barra final; ativa o repasse de `/ghibli`, `/c-quoi` e `/gen` para o R2 (vazio = usa `public/`) |
+| `GEMINI_API_KEY` | Chave do Gemini para gerar e revisar imagens |
+| `GEMINI_IMAGE_MODEL`, `GEMINI_TEXT_MODEL`, `GEMINI_REVIEW_MODEL` | Modelos de imagem, de texto (escreve o SVG) e leve (revisa a imagem e escolhe o objeto do C'est quoi ?). Opcionais; sem o último, usa o de texto |
+| `IMAGE_GEN_DAILY_LIMIT` | Imagens por dia (padrão 5) |
+| `CRON_SECRET` | Segredo do cron diário de geração (a Vercel o envia como Bearer) |
 
 Mantenha `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `BLOB_READ_WRITE_TOKEN`, `VAPID_PRIVATE_KEY` e `LIVEKIT_API_SECRET` apenas no servidor e fora do controle de versão.
 
@@ -361,10 +542,11 @@ Sem VAPID ou sem permissão, as notificações da central continuam disponíveis
 - `npm run start`: inicia a build de produção.
 - `npm run lint`: executa o ESLint.
 - `npm run seed`: executa `src/seed/run.ts` para carregar os dados iniciais.
+- `node scripts/storage/migrate-to-r2.mjs [--dry-run]`: envia `public/ghibli` e `public/c-quoi` para o R2, mantendo os caminhos.
 
 ## Deploy
 
-O deploy exige as variáveis de ambiente adequadas para o ambiente de produção. Ao usar Google OAuth, configure no Google Cloud Console o callback `https://SEU-DOMINIO/api/auth/callback/google`. O Vercel Blob precisa estar configurado (`BLOB_READ_WRITE_TOKEN`) para os uploads. Para push em segundo plano, use HTTPS e configure as chaves VAPID. Para aulas ao vivo, configure as credenciais LiveKit.
+O deploy exige as variáveis de ambiente adequadas para o ambiente de produção. Ao usar Google OAuth, configure no Google Cloud Console o callback `https://SEU-DOMINIO/api/auth/callback/google`. O Vercel Blob precisa estar configurado (`BLOB_READ_WRITE_TOKEN`) para os uploads. Para push em segundo plano, use HTTPS e configure as chaves VAPID. Para aulas ao vivo, configure as credenciais LiveKit. Para as imagens, configure as variáveis `R2_*` e `ASSETS_BASE_URL` (e rode a migração uma vez); para a geração por IA, defina `GEMINI_API_KEY` e `CRON_SECRET`, que habilita o cron diário do `vercel.json`.
 
 ## Licença
 

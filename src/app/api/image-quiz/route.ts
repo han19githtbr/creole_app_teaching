@@ -1,18 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/apiAuth";
-import { getBankImage } from "@/lib/imageBank";
-import { getDefaultImageQuiz } from "@/lib/imageQuiz";
+import { randomInt } from "node:crypto";
+import { IMAGE_BANK } from "@/lib/imageBank";
+import { findAnyBankImage, listApprovedGenerated } from "@/lib/generatedImages";
+import { getQuizForImage } from "@/lib/imageQuiz";
 import Post from "@/models/Post";
 
-async function getQuiz(postId?: string, imageId?: string, isAdmin = false) {
+async function pickRandomImage(excludeId?: string) {
+  const pool = [...IMAGE_BANK, ...(await listApprovedGenerated("posts"))].filter((image) => image.id !== excludeId);
+  return pool.length ? pool[randomInt(pool.length)] : undefined;
+}
+
+async function getQuiz(postId?: string, imageId?: string, isAdmin = false, exclude?: string) {
   if (postId) {
     await connectDB();
     const post = await Post.findById(postId).lean();
     if (!post?.imageUrl) return null;
     if (!isAdmin && (!post.isPublished || (!post.isPermanent && post.expiresAt && post.expiresAt < new Date()))) return null;
-    const image = getBankImage(post.imageUrl);
-    const quiz = post.imageQuiz ?? (image ? getDefaultImageQuiz(image.theme, image.id) : undefined);
+    const image = await findAnyBankImage(post.imageUrl, { includeUnapproved: isAdmin });
+    const quiz = post.imageQuiz ?? (image ? getQuizForImage(image) : undefined);
     if (!quiz) return null;
     return {
       id: String(post._id),
@@ -26,9 +33,9 @@ async function getQuiz(postId?: string, imageId?: string, isAdmin = false) {
     };
   }
 
-  const image = getBankImage(imageId);
+  const image = imageId === "random" ? await pickRandomImage(exclude) : await findAnyBankImage(imageId);
   if (!image) return null;
-  const quiz = getDefaultImageQuiz(image.theme, image.id);
+  const quiz = getQuizForImage(image);
   if (!quiz) return null;
   return {
     id: image.id,
@@ -45,7 +52,7 @@ export async function GET(req: NextRequest) {
   const session = await requireUser();
   if (!session) return NextResponse.json({ error: "Faça login para jogar." }, { status: 401 });
   const params = req.nextUrl.searchParams;
-  const challenge = await getQuiz(params.get("post") ?? undefined, params.get("image") ?? undefined, session.user.role === "admin");
+  const challenge = await getQuiz(params.get("post") ?? undefined, params.get("image") ?? undefined, session.user.role === "admin", params.get("exclude") ?? undefined);
   if (!challenge) return NextResponse.json({ error: "Desafio não encontrado." }, { status: 404 });
   return NextResponse.json({ challenge });
 }
@@ -65,8 +72,8 @@ export async function POST(req: NextRequest) {
     if (session.user.role !== "admin" && (!post.isPublished || (!post.isPermanent && post.expiresAt && post.expiresAt < new Date()))) {
       return NextResponse.json({ error: "Desafio não encontrado." }, { status: 404 });
     }
-    const image = getBankImage(post.imageUrl);
-    const quiz = post.imageQuiz ?? (image ? getDefaultImageQuiz(image.theme, image.id) : undefined);
+    const image = await findAnyBankImage(post.imageUrl, { includeUnapproved: true });
+    const quiz = post.imageQuiz ?? (image ? getQuizForImage(image) : undefined);
     if (!quiz) return NextResponse.json({ error: "Este desafio ainda não foi configurado." }, { status: 404 });
     const expected = new Set<string>((quiz.answers as string[]).map((word) => word.toLocaleLowerCase()));
     const selectedWords = body.selected as string[];
@@ -74,8 +81,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ correct: expected.size === selected.size && [...expected].every((word) => selected.has(word)) });
   }
 
-  const image = getBankImage(body.imageId);
-  const quiz = image ? getDefaultImageQuiz(image.theme, image.id) : undefined;
+  const image = await findAnyBankImage(body.imageId);
+  const quiz = image ? getQuizForImage(image) : undefined;
   if (!quiz) return NextResponse.json({ error: "Desafio não encontrado." }, { status: 404 });
   const expected = new Set(quiz.answers.map((word) => word.toLocaleLowerCase()));
   const selected = new Set((body.selected as string[]).map((word) => word.toLocaleLowerCase()));

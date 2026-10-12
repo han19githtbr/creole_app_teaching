@@ -26,7 +26,7 @@ export interface IGeneratedImage extends Document {
   anchors: { left: number; top: number }[];
   quiz?: { options: string[]; answers: string[] };
   /** Dados do jogo C'est quoi ? */
-  cquoi?: { fr: string; article: string; name: string; speak: string; w: number; h: number; arrow: { x: number; y: number } };
+  cquoi?: { fr: string; article: string; name: string; speak: string; w: number; h: number; arrow: { x: number; y: number }; hint?: { d: string; u: string; f?: string } };
   status: GeneratedStatus;
   qa: { checked: boolean; score: number; passed: boolean; issues: string[] };
   aiModel: string;
@@ -65,6 +65,7 @@ const GeneratedImageSchema = new Schema<IGeneratedImage>(
       w: Number,
       h: Number,
       arrow: { x: Number, y: Number },
+      hint: { d: String, u: String, f: String },
     },
     status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending", index: true },
     qa: {

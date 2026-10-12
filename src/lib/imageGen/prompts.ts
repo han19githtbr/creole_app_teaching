@@ -134,6 +134,12 @@ export interface CquoiProposal {
   name: string;
   english: string;
   context: string;
+  /** Dica em português: como o objeto é, sem dizer o nome (jogo: botão Dica). */
+  dica?: string;
+  /** Para que o objeto serve, em português. */
+  uso?: string;
+  /** Frase curta em francês que descreve o objeto, sem citar o nome (nível Nativo · Frase). */
+  frase?: string;
 }
 
 export function cquoiProposalPrompt(themeLabel: string, taken: string[]): string {
@@ -143,7 +149,8 @@ export function cquoiProposalPrompt(themeLabel: string, taken: string[]): string
     "Proponha UM objeto concreto, fácil de reconhecer numa ilustração, que NÃO esteja nesta lista de nomes já usados:",
     taken.join(", ") || "(nenhum)",
     "Regras: nome em francês correto, sem o artigo no campo name; article deve ser exatamente um de: Un, Une, Des, Du; english = nome do objeto em inglês; context = descrição curta em inglês de um lugar simples e natural onde o objeto aparece.",
-    'Responda SOMENTE com JSON: {"article":"Un","name":"...","english":"...","context":"..."}',
+    "Também escreva: dica = 1 ou 2 frases em português do Brasil dizendo como o objeto é (forma, partes, onde aparece) SEM dizer o nome dele; uso = 1 frase em português dizendo para que ele serve; frase = UMA frase curta em francês (8 a 14 palavras) que descreve o objeto SEM citar o nome dele, começando por Il, Elle, On ou Ce/Cette.",
+    'Responda SOMENTE com JSON: {"article":"Un","name":"...","english":"...","context":"...","dica":"...","uso":"...","frase":"..."}',
   ].join("\n");
 }
 

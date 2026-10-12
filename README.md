@@ -7,6 +7,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Visão geral](#visão-geral)
 - [Stack](#stack)
 - [Histórias narradas](#histórias-narradas)
+- [Jogo C'est quoi ?](#jogo-cest-quoi-)
 - [Indicador de carregamento](#indicador-de-carregamento)
 - [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
 - [Visibilidade das lições](#visibilidade-das-lições)
@@ -30,6 +31,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - Postagens com texto e/ou imagem (banco de ilustrações ou upload), respostas dos alunos revisadas pelo administrador e jogo de identificação de palavras na imagem.
 - Vídeos com likes, comentários, gravação no navegador e agendamento.
 - **Histórias**: uma cena ilustrada + narração em Kreyòl (gravada, enviada ou convertida de MP4) + legendas em Kreyòl e português, com exportação de vídeo vertical, rótulos visuais dos elementos posicionados de forma clara para cada cena e legenda do player que o aluno pode arrastar pela tela.
+- **Jogo "C'est quoi ?"** (painel em francês): 5 níveis, incluindo o **Nativo** (20 imagens, com os sub-níveis *Palavra* e *Frase*), botão **Dica** que congela o tempo, **arena online** com jogadores online, ranking e duelos.
 - Aulas ao vivo com LiveKit, quando configurado.
 - Fundo virtual (MediaPipe) na gravação de vídeos e nas aulas ao vivo.
 - PWA com service worker, página offline e Web Push opcional.
@@ -126,6 +128,91 @@ Histórias antigas não têm duração gravada. O player usa a duração do pró
 - momentos dos elementos apenas para elementos da cena escolhida e dentro da duração.
 
 O upload do áudio passa por `/api/stories/upload` (somente administrador; MP3, MP4/M4A, AAC, WAV, OGG e WebM; até 30 MB). A duração em segundos também é salva no campo `duration` do registro.
+
+## Jogo C'est quoi ?
+
+Jogo de vocabulário em francês do painel em **Français** (`/dashboard/jogo`). A seta vermelha aponta um objeto e o jogador responde antes que o tempo acabe. São 2 tentativas por imagem, combo, pontos por rapidez, XP e écus (gamificação do Français) e pronúncia em francês ao final de cada imagem.
+
+### Níveis
+
+Cada nível exige passar no anterior (o progresso fica no navegador, em `cquoi:progress:v1`). Para passar é preciso acertar **70%** das imagens.
+
+| Nível | Imagens | Tempo | Pontos | Como se joga |
+| --- | --- | --- | --- | --- |
+| 🌱 Fácil | 10 | 15 s | x1 | Escolher o nome do objeto (4 alternativas) |
+| ⚡ Intermediário | 10 | 10 s | x1,5 | Escolher o nome do objeto |
+| 🔥 Master | 10 | 5 s | x2 | Escolher o nome do objeto |
+| 👑 **Nativo · Palavra** | **20** | 4 s | x2,5 | Escolher o nome do objeto; as 3 alternativas erradas são do **mesmo tema** (bem parecidas). Libera após passar no Master |
+| 💎 **Nativo · Frase** | **20** | 9 s | x3 | Escolher, entre 4 frases em francês, a que **descreve a imagem**. Libera após passar no Nativo · Palavra |
+
+- Se o tema escolhido tiver menos de 20 imagens, o Nativo completa com imagens de outros temas (aviso na tela inicial).
+- No **Nativo · Frase** só entram imagens que têm frase escrita (as 199 imagens atuais têm; imagens novas geradas por IA também, veja [Conteúdo das dicas e das frases](#conteúdo-das-dicas-e-das-frases)). Ao revelar a resposta, a frase aparece no balão e é lida em voz alta.
+- As alternativas erradas nunca são "também corretas": objetos parecidos (ex.: chave / cadeado / chave de sol, chapéu / chapéu de palha, bola de futebol / de basquete) e nomes com palavra em comum nunca aparecem juntos (`isConfusable` em `src/lib/cquoiContent.ts`).
+- A tela inicial mostra o bloco **Nativo** com borda animada e os dois sub-níveis lado a lado.
+
+### Dica (todos os níveis)
+
+Na tela de jogo, o botão **💡 Dica** (ou a tecla **H**) abre um painel por cima do jogo:
+
+- **O tempo congela** (a barra fica azul/gelada). Ao tocar em *Voltar ao jogo*, o tempo parado é devolvido ao relógio, então a dica nunca consome segundos.
+- **💬 Explicação**: texto em português dizendo *como o objeto é* (sem dizer o nome) e *para que serve*, com botão **Ouvir a dica** (voz em pt-BR).
+- **🎬 Vídeo**: mini-filme animado na mesma ilustração do jogo (a câmera se aproxima do objeto da seta, holofote amarelo, legendas em 3 etapas com narração em português, pausar/rever). Se o item tiver um MP4 cadastrado (campo `v`, veja abaixo), o MP4 real é tocado no lugar do mini-filme.
+- **🔤 Pista**: mostra o artigo e a primeira letra de cada palavra do nome em francês (ex.: `Un o•••••••••  p•••••••`).
+- **Custo em pontos**: usar a dica reduz os pontos *daquela imagem* em **40%**; pedir também a pista da letra reduz em **55%** (`HINT_PENALTY` e `HINT_LETTER_PENALTY`, em `src/lib/cquoiLevels.ts`). O bônus de "acertou de primeira sem erros" da gamificação não é dado quando a dica foi usada. A dica pode ser revista na mesma imagem sem novo desconto. O resultado final mostra quantas dicas foram usadas.
+
+### Arena online: jogadores online, ranking e duelos
+
+Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicial e na tela de resultado. Não há WebSocket (o app roda em serverless na Vercel): o jogo envia um **batimento** ao servidor (a cada 8 s no lobby e 15 s durante a partida) que marca o jogador como online e devolve o painel atualizado.
+
+- **Online**: quem deu sinal de vida nos últimos 45 s aparece como online, com status **No lobby** ou **Jogando** (nível, pontos ao vivo e imagem atual, ex.: `120 pts · 4/10`). Ao sair da página, o jogador some da lista na hora (`sendBeacon`).
+- **Invisível**: o botão *Aparecendo / Invisível* do cabeçalho esconde o jogador da lista de online e impede convites. A escolha fica no navegador (`cquoi:visible:v1`). O jogador invisível continua no ranking.
+- **Ranking**: top 20 com medalhas, foto, nome, bolinha de online e pontos, mais a posição do próprio jogador quando ele está fora do top 20. Três visões: **Semana** (pontos somados, reinicia toda segunda-feira, fuso de Brasília), **Geral** (total de pontos) e **Melhor partida por nível**. A pontuação é enviada ao fim de cada partida.
+- **Duelos**: na aba *Online*, **Desafiar** convida um jogador que esteja no lobby. Os dois jogam **exatamente as mesmas imagens**, na mesma ordem, no nível e tema escolhidos por quem desafiou; vence quem fizer mais pontos. Quem desafia já começa a jogar; o convidado recebe o convite no painel (válido por 10 minutos), pode **Aceitar** ou **Recusar** e, ao aceitar, joga mesmo que ainda não tenha desbloqueado aquele nível. Resultado (vitória, derrota ou empate) e vitórias em duelo aparecem na aba *Duelos* e no ranking. O adversário vê a pontuação a superar assim que o desafiante termina.
+- **Limites e segurança**: só aparecem nome e foto da conta Google já cadastrada no app. O servidor recusa pontuações impossíveis para o nível (`maxScoreFor`), limita o envio de pontuação a 1 a cada 8 s por jogador e valida os ids das imagens do duelo. Como o jogo roda no navegador, o ranking não é à prova de fraude determinada.
+
+### Layout, cores e animações
+
+- Fundo com degradê animado e bolhas de cor flutuando (versão própria para o tema escuro).
+- Cada nível tem sua paleta (verde, âmbar, vermelho, violeta e magenta); o **Nativo** usa um cartão com borda de galáxia animada e coroa balançando.
+- Alternativas com letrinhas coloridas **A-D** (teclas **1-4** continuam funcionando), elevação ao passar o mouse e frases em coluna única no Nativo · Frase.
+- **Combo de fogo**: com 3 acertos seguidos a moldura da cena pega fogo; o contador de combo vira degradê laranja.
+- **Tempo congelado**: ao abrir a dica, a barra de tempo e o relógio ficam azul-gelo com brilho pulsante; o botão de dica pulsa quando metade do tempo já passou.
+- Painel da dica com entrada deslizante, abas animadas e mini-filme com zoom de câmera; convites de duelo e linhas do ranking entram em cascata.
+- Todas as animações respeitam `prefers-reduced-motion`.
+
+### Conteúdo das dicas e das frases
+
+- `src/lib/cquoiHints.json`: um registro por imagem da coleção, indexado pelo `id` do item:
+
+```json
+"tecnologia-drone": {
+  "d": "Máquina com hélices que voa sem ninguém dentro, controlada a distância.",
+  "u": "Serve para filmar e fotografar de cima e até entregar pequenos objetos.",
+  "f": "Il vole grâce à ses hélices et on le pilote à distance.",
+  "v": "/c-quoi/dicas/tecnologia-drone.mp4"
+}
+```
+
+  `d` = como é (PT, sem dizer o nome) · `u` = para que serve (PT) · `f` = frase em francês do Nativo · Frase · `v` = **opcional**, MP4 da dica. Para usar vídeos reais, envie os MP4 para o bucket em `c-quoi/dicas/` (o caminho `/c-quoi/...` já é repassado ao R2) e preencha `v`; se o arquivo falhar, o mini-filme animado assume.
+- **Imagens geradas por IA**: o mesmo pedido que escolhe o objeto novo (`cquoiProposalPrompt`) já devolve `dica`, `uso` e `frase`, sem gastar cota extra. Eles são guardados em `cquoi.hint` (`GeneratedImage`) e entram no jogo via `listApprovedCquoiItems`. A frase só é aceita se tiver tamanho razoável e não citar o nome do objeto; sem ela a imagem funciona normalmente, só não aparece no Nativo · Frase. Sem dica escrita, o painel mostra uma dica genérica (tema, forma e cores) e continua com a pista da letra.
+
+### Arquivos do jogo
+
+| Arquivo | Função |
+| --- | --- |
+| `src/components/CestQuoiGame.tsx` | Jogo: níveis, tempo, dica, pontuação, duelos e telas (início, contagem, jogo, resultado) |
+| `src/components/CestQuoiGame.css` | Animações e cores (fundo, Nativo, fogo, gelo, dica, arena) |
+| `src/components/CestQuoiHint.tsx` | Painel da dica (explicação, mini-vídeo, pista da letra) |
+| `src/components/CestQuoiArena.tsx` | Painel Arena online (ranking, online, duelos, convites) |
+| `src/hooks/useCquoiArena.ts` | Batimento de presença, ranking, desafios e envio de pontuação |
+| `src/lib/cquoiLevels.ts` | Regras dos 5 níveis (tempo, pontos, imagens, modo) e das dicas; compartilhado com a API |
+| `src/lib/cquoiContent.ts` | Dicas, frases, máscara da pista e montagem das alternativas "justas" |
+| `src/lib/cquoiHints.json` | Dica, uso, frase e vídeo opcional de cada imagem |
+| `src/app/api/cquoi/arena/route.ts` | API do ranking, presença e duelos |
+| `src/models/CquoiPlayer.ts` | Presença e placar de cada jogador (uma linha por usuário) |
+| `src/models/CquoiChallenge.ts` | Duelos (somem sozinhos após 14 dias) |
+
+`POST /api/cquoi/arena` aceita as ações `heartbeat`, `leave`, `score`, `challenge` e `respond`; `GET /api/cquoi/arena?board=week|all|<nível>` devolve o painel. Todas exigem login. Não há variável de ambiente nova: o ranking usa o mesmo MongoDB do app.
 
 ## Indicador de carregamento
 
@@ -282,7 +369,7 @@ Painel em **Admin → Imagens com IA** (`/admin/imagens`), para ampliar o conte�
 | --- | --- | --- |
 | Postagens | Cena com 4 elementos em Kreyòl, legenda e desafio (10 palavras, 4 corretas) | Seletor de imagens das postagens e jogo de identificar elementos (sorteio e "próxima imagem") |
 | Histórias | Cena com 4 elementos separados; as posições detectadas viram os rótulos animados | Seletor de imagens das histórias e player |
-| C'est quoi ? | Um objeto novo em francês (artigo + nome, sem repetir os existentes) e a seta vermelha posicionada sobre ele | Direto no jogo `/dashboard/jogo`, junto com os itens atuais |
+| C'est quoi ? | Um objeto novo em francês (artigo + nome, sem repetir os existentes), a seta vermelha posicionada sobre ele e a dica em português, o uso e a frase em francês do jogo | Direto no jogo `/dashboard/jogo`, junto com os itens atuais (todos os níveis, inclusive Nativo · Frase) |
 
 O vocabulário em Kreyòl **não é inventado pela IA**: os elementos saem do mesmo vocabulário revisado já usado pelo app (`imageSceneVariants.json` + dicionário de tradução). A IA só desenha e confere o desenho. As imagens antigas permanecem intactas e aparecem junto das novas (marcadas "✨ Nova · IA" no seletor).
 
@@ -324,7 +411,7 @@ O vocabulário em Kreyòl **não é inventado pela IA**: os elementos saem do me
 - Feed de postagens com imagem, resposta à legenda/pergunta e jogo de palavras na imagem.
 - Vídeos com likes e comentários.
 - **Histórias** narradas, com legendas em português e/ou Kreyòl (a caixa de legenda pode ser arrastada para qualquer ponto da cena), exportação em vídeo vertical e destaque dos elementos da cena em sincronia com o áudio.
-- Jogo de imagens (`/dashboard/jogo`).
+- Jogo de imagens (`/dashboard/jogo`). No painel em francês é o **C'est quoi ?** (5 níveis, com o Nativo, dica que congela o tempo e arena online); veja [Jogo C'est quoi ?](#jogo-cest-quoi-).
 - Sala ao vivo (`/live`), se as credenciais LiveKit estiverem configuradas.
 - Central de notificações com itens não lidos de lições, postagens e vídeos.
 - Compartilhamento de conquistas (lição finalizada e vitória no jogo) no Facebook e no Instagram.
@@ -362,7 +449,7 @@ O aluno envia uma resposta à legenda/pergunta de uma postagem. Ela fica **Em an
 
 - XP, moedas Goud, 7 níveis, conquistas e títulos honoríficos (comprados com Goud).
 - O estado é salvo por conta e sincronizado entre dispositivos autenticados; mudanças feitas offline ficam no navegador e são reenviadas quando a conexão volta.
-- O jogo de imagens concede XP e Goud, com bônus por acertar de primeira e por sequência de vitórias.
+- O jogo de imagens concede XP e Goud, com bônus por acertar de primeira e por sequência de vitórias. No C'est quoi ?, usar a dica tira o bônus de "primeira sem erros" e reduz os pontos da partida (que valem para o ranking).
 
 ### Notificações, PWA e badge
 
@@ -442,6 +529,7 @@ Arquivos principais das histórias:
 | `/api/posts/[id]/answers` | GET, POST |
 | `/api/answers/[answerId]` | PATCH |
 | `/api/image-quiz` | GET, POST |
+| `/api/cquoi/arena` | GET (ranking, online, convites e duelos), POST (`heartbeat`, `leave`, `score`, `challenge`, `respond`) |
 | `/api/progress` | GET, POST |
 | `/api/gamification` | GET, PUT |
 | `/api/live` | GET, POST |

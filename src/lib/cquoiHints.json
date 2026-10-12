@@ -1,0 +1,997 @@
+{
+ "tecnologia-ordinateur": {
+  "d": "Aparelho dobrável, com uma tela na parte de cima e teclas embaixo. Dá para levar na mochila.",
+  "u": "Serve para trabalhar, estudar, navegar na internet e assistir a vídeos.",
+  "f": "Il se plie, il a un écran et un clavier, et on peut l'emporter partout."
+ },
+ "tecnologia-souris": {
+  "d": "Pequeno objeto que desliza sobre a mesa e tem dois botões. Quando você o move, algo se mexe na tela.",
+  "u": "Serve para mover a setinha na tela do computador e clicar.",
+  "f": "On la fait glisser sur la table pour déplacer la flèche à l'écran."
+ },
+ "tecnologia-cle-usb": {
+  "d": "Peça pequenina de plástico e metal que se encaixa no computador. Cabe no bolso ou no chaveiro.",
+  "u": "Serve para guardar e levar arquivos de um computador para outro.",
+  "f": "Elle est toute petite et sert à transporter des fichiers d'un ordinateur à l'autre."
+ },
+ "tecnologia-drone": {
+  "d": "Máquina com hélices que voa sem ninguém dentro, controlada a distância.",
+  "u": "Serve para filmar e fotografar de cima e até entregar pequenos objetos.",
+  "f": "Il vole grâce à ses hélices et on le pilote à distance."
+ },
+ "natureza-arbre": {
+  "d": "Planta enorme, de tronco grosso, com galhos e muitas folhas.",
+  "u": "Dá sombra, frutos e oxigênio, e abriga pássaros.",
+  "f": "Il a un tronc, des branches et des feuilles, et il donne de l'ombre."
+ },
+ "natureza-fleur": {
+  "d": "Parte colorida e perfumada de uma planta, com pétalas ao redor do miolo.",
+  "u": "Atrai abelhas e borboletas e enfeita jardins e casas.",
+  "f": "Elle est colorée, elle sent bon et elle a des pétales."
+ },
+ "natureza-papillon": {
+  "d": "Inseto de asas largas e coloridas que voa de planta em planta. Antes de voar, foi uma lagarta.",
+  "u": "Poliniza as flores enquanto procura néctar.",
+  "f": "Il a de grandes ailes colorées et il a d'abord été une chenille."
+ },
+ "natureza-champignon": {
+  "d": "Cresce no chão úmido da floresta, com um chapeuzinho em cima de um pé.",
+  "u": "Alguns são gostosos de comer, mas outros são venenosos.",
+  "f": "Il pousse dans la forêt humide, avec un chapeau posé sur un pied."
+ },
+ "cultura-tambour": {
+  "d": "Instrumento redondo, de pele esticada em cima, que se toca com baquetas ou com as mãos.",
+  "u": "Serve para marcar o ritmo da música e das festas.",
+  "f": "On le frappe avec des baguettes pour marquer le rythme."
+ },
+ "cultura-drapeau": {
+  "d": "Pano retangular colorido preso a um mastro, que balança com o vento.",
+  "u": "Representa um país, uma região ou um grupo.",
+  "f": "C'est un tissu coloré au bout d'un mât qui représente un pays."
+ },
+ "cultura-lanterne": {
+  "d": "Caixa de luz com uma chama ou lâmpada dentro, com alça para carregar ou pendurar.",
+  "u": "Serve para iluminar no escuro e enfeitar festas.",
+  "f": "On la porte ou on l'accroche pour éclairer dans le noir."
+ },
+ "cultura-masque": {
+  "d": "Peça que cobre o rosto, com buracos para os olhos. Usada em festas e no teatro.",
+  "u": "Serve para se fantasiar no carnaval, no teatro e em rituais.",
+  "f": "On le met sur le visage pour se déguiser ou jouer un rôle."
+ },
+ "turismo-valise": {
+  "d": "Caixa com alça e, muitas vezes, rodinhas, onde se guardam roupas.",
+  "u": "Serve para carregar roupas e objetos nas viagens.",
+  "f": "On y range ses vêtements avant de partir en voyage."
+ },
+ "turismo-appareil-photo": {
+  "d": "Aparelho com uma lente na frente e um botão para disparar.",
+  "u": "Serve para registrar paisagens e momentos em fotos.",
+  "f": "Il a un objectif et on appuie sur un bouton pour garder un souvenir."
+ },
+ "turismo-parasol": {
+  "d": "Grande guarda-sol aberto na praia, fincado na areia.",
+  "u": "Dá sombra e protege do sol forte.",
+  "f": "Planté dans le sable, il nous protège du soleil à la plage."
+ },
+ "turismo-avion": {
+  "d": "Veículo com asas e turbinas que cruza o céu levando passageiros.",
+  "u": "Serve para viajar rápido por longas distâncias.",
+  "f": "Il a des ailes et des moteurs et il traverse le ciel avec des passagers."
+ },
+ "interior-seau": {
+  "d": "Recipiente redondo, mais largo em cima, com uma alça de arame.",
+  "u": "Serve para carregar água, areia e outros materiais.",
+  "f": "On le remplit d'eau et on le porte par son anse."
+ },
+ "interior-arrosoir": {
+  "d": "Recipiente de metal ou plástico com um bico comprido cheio de furinhos.",
+  "u": "Serve para molhar plantas e hortas.",
+  "f": "Il a un long bec percé de petits trous pour mouiller les plantes."
+ },
+ "interior-brouette": {
+  "d": "Carrinho com uma única roda na frente e duas alças atrás.",
+  "u": "Serve para transportar terra, pedras e colheitas.",
+  "f": "Elle a une roue devant et deux poignées pour transporter de la terre."
+ },
+ "interior-fourche": {
+  "d": "Ferramenta de cabo comprido, com pontas de metal como grandes dentes.",
+  "u": "Serve para virar a terra e levantar feno.",
+  "f": "Elle a un long manche et des dents métalliques pour soulever le foin."
+ },
+ "danca-chaussons": {
+  "d": "Sapatilhas macias e leves, geralmente cor-de-rosa, com fitas.",
+  "u": "Usadas para dançar balé e ficar na ponta dos pés.",
+  "f": "On les porte pour faire de la danse classique sur la pointe des pieds."
+ },
+ "danca-eventail": {
+  "d": "Peça que abre e fecha em forma de meia-lua e que se balança perto do rosto.",
+  "u": "Serve para se refrescar e dar charme à dança.",
+  "f": "On l'ouvre en demi-cercle et on l'agite pour se rafraîchir."
+ },
+ "danca-ruban": {
+  "d": "Fita comprida e fininha presa a uma varinha, que desenha curvas no ar.",
+  "u": "Usada na ginástica rítmica para fazer movimentos no ar.",
+  "f": "Long et fin, il dessine des courbes dans l'air quand on le fait tourner."
+ },
+ "danca-chapeau": {
+  "d": "Peça que se usa na cabeça, com uma aba ao redor.",
+  "u": "Protege a cabeça e completa uma fantasia ou figurino.",
+  "f": "On le porte sur la tête et il a un bord tout autour."
+ },
+ "geografia-boussole": {
+  "d": "Instrumento redondo com uma agulha que sempre aponta para o mesmo lado.",
+  "u": "Serve para se orientar e saber onde fica o norte.",
+  "f": "Son aiguille montre toujours le nord pour nous orienter."
+ },
+ "geografia-globe": {
+  "d": "Esfera montada num suporte que representa nosso planeta, com países e oceanos.",
+  "u": "Serve para estudar a geografia do mundo.",
+  "f": "C'est une sphère qui représente la Terre avec ses pays et ses océans."
+ },
+ "geografia-carte": {
+  "d": "Desenho de um território visto de cima, com estradas, rios e cidades.",
+  "u": "Serve para encontrar caminhos e conhecer lugares.",
+  "f": "Elle dessine un territoire vu du ciel pour trouver son chemin."
+ },
+ "geografia-montagne": {
+  "d": "Elevação gigantesca de pedra, com o topo às vezes coberto de neve.",
+  "u": "É fonte de rios, abrigo de animais e destino de escaladas.",
+  "f": "Très haute et rocheuse, son sommet est parfois couvert de neige."
+ },
+ "historia-epee": {
+  "d": "Arma longa de lâmina afiada e cabo na ponta, usada por cavaleiros.",
+  "u": "Servia para lutar e duelar em batalhas antigas.",
+  "f": "Les chevaliers la tenaient par la poignée pour se battre avec sa lame."
+ },
+ "historia-couronne": {
+  "d": "Enfeite de ouro, às vezes com joias, usado na cabeça de reis e rainhas.",
+  "u": "Simboliza o poder de um rei ou de uma rainha.",
+  "f": "Les rois et les reines la portent sur la tête comme symbole de pouvoir."
+ },
+ "historia-parchemin": {
+  "d": "Folha antiga enrolada, de pele ou papel envelhecido, escrita à mão.",
+  "u": "Servia para registrar leis, cartas e mensagens importantes.",
+  "f": "On l'enroulait pour conserver des textes écrits à la main autrefois."
+ },
+ "historia-bouclier": {
+  "d": "Peça grande e achatada que se segura no braço para se proteger.",
+  "u": "Servia para bloquear golpes e flechas em combates.",
+  "f": "On le tenait au bras pour se protéger des coups."
+ },
+ "cinema-clap": {
+  "d": "Tabuleta de duas partes que bate com um estalo no início de uma cena filmada.",
+  "u": "Serve para marcar e sincronizar cada cena gravada.",
+  "f": "On le claque au début de chaque scène de tournage."
+ },
+ "cinema-pop-corn": {
+  "d": "Grãos de milho que estouraram e ficaram brancos e fofos, vendidos em baldes.",
+  "u": "É o petisco típico de quem vai ao cinema.",
+  "f": "On le grignote devant un film, ce sont des grains de maïs éclatés."
+ },
+ "cinema-ticket": {
+  "d": "Papelzinho que dá direito de entrar numa sessão, com data e hora.",
+  "u": "Serve para provar que você pagou e entrar na sala.",
+  "f": "On le présente à l'entrée pour avoir le droit de voir le film."
+ },
+ "cinema-camera": {
+  "d": "Aparelho com lente que grava imagens em movimento, apoiado num tripé ou no ombro.",
+  "u": "Serve para filmar cenas de filmes e vídeos.",
+  "f": "On l'utilise pour filmer des scènes en mouvement."
+ },
+ "musica-guitare": {
+  "d": "Instrumento de madeira com caixa curvada, braço longo e cordas.",
+  "u": "Serve para tocar músicas, dedilhando ou batendo nas cordas.",
+  "f": "On pince ses cordes sur un long manche pour jouer des accords."
+ },
+ "musica-trompette": {
+  "d": "Instrumento de metal dourado, com três botões e um bocal onde se sopra.",
+  "u": "Serve para tocar músicas fortes e brilhantes, como no jazz.",
+  "f": "On souffle dedans et on appuie sur trois pistons pour jouer."
+ },
+ "musica-casque": {
+  "d": "Dois fones grandes ligados por um arco que passa sobre a cabeça.",
+  "u": "Serve para ouvir música sem incomodar os outros.",
+  "f": "On le pose sur les oreilles pour écouter de la musique en silence."
+ },
+ "musica-microphone": {
+  "d": "Peça pequena na ponta de uma haste, onde se fala ou canta.",
+  "u": "Serve para aumentar o volume da voz de quem canta ou discursa.",
+  "f": "On parle ou on chante dedans pour que tout le monde entende."
+ },
+ "lazeres-ballon": {
+  "d": "Bola redonda com gomos pretos e brancos, que se chuta no gramado.",
+  "u": "Serve para jogar futebol.",
+  "f": "On le tape du pied pour marquer des buts."
+ },
+ "lazeres-velo": {
+  "d": "Veículo de duas rodas movido por pedais, com guidão.",
+  "u": "Serve para passear, fazer exercício e se locomover.",
+  "f": "On pédale pour avancer sur ses deux roues."
+ },
+ "lazeres-cerf-volant": {
+  "d": "Armação leve coberta de papel ou tecido, presa a uma linha, que sobe com o vento.",
+  "u": "Serve para brincar de empinar no céu em dias de vento.",
+  "f": "Retenu par une ficelle, il monte dans le ciel quand il y a du vent."
+ },
+ "lazeres-raquette": {
+  "d": "Aro com cordas esticadas e um cabo, usado para rebater uma bolinha.",
+  "u": "Serve para jogar tênis.",
+  "f": "On frappe une balle jaune avec son cadre à cordes sur un court."
+ },
+ "estoicismo-colonne": {
+  "d": "Pilar alto e redondo de pedra, típico de templos gregos.",
+  "u": "Serve para sustentar o teto de grandes construções.",
+  "f": "Ce pilier de pierre soutient le toit des temples antiques."
+ },
+ "estoicismo-sablier": {
+  "d": "Dois vidros ligados, com areia que cai de um para o outro.",
+  "u": "Serve para medir o tempo que passa.",
+  "f": "Le sable s'écoule d'une partie à l'autre pour mesurer le temps."
+ },
+ "estoicismo-balance": {
+  "d": "Dois pratos pendurados numa barra, que sobem e descem.",
+  "u": "Serve para comparar pesos e simboliza a justiça.",
+  "f": "Avec ses deux plateaux, elle sert à peser et symbolise la justice."
+ },
+ "estoicismo-livre": {
+  "d": "Várias folhas presas por uma capa, que se abrem para ler.",
+  "u": "Serve para ler histórias, aprender e guardar conhecimento.",
+  "f": "On tourne ses pages pour lire des histoires et apprendre."
+ },
+ "religiao-eglise": {
+  "d": "Construção com torre alta, onde as pessoas se reúnem para rezar.",
+  "u": "Serve para celebrações, missas e orações.",
+  "f": "Les fidèles s'y réunissent pour prier sous un clocher."
+ },
+ "religiao-bougie": {
+  "d": "Cilindro de cera com um pavio que, aceso, solta uma chama.",
+  "u": "Serve para iluminar suavemente e acompanhar orações.",
+  "f": "Sa flamme éclaire doucement quand on allume sa mèche."
+ },
+ "religiao-colombe": {
+  "d": "Ave branca e delicada, símbolo da paz.",
+  "u": "É o símbolo universal da paz e da esperança.",
+  "f": "Cet oiseau blanc est le symbole de la paix."
+ },
+ "religiao-croix": {
+  "d": "Duas hastes que se cruzam, uma vertical e outra horizontal.",
+  "u": "É o principal símbolo do cristianismo.",
+  "f": "Deux barres croisées forment ce symbole du christianisme."
+ },
+ "tecnologia-telephone": {
+  "d": "Aparelho de mão com tela sensível ao toque e câmera, que cabe no bolso.",
+  "u": "Serve para ligar, mandar mensagens e acessar a internet.",
+  "f": "On l'a dans la poche pour appeler, envoyer des messages et aller sur internet."
+ },
+ "tecnologia-clavier": {
+  "d": "Placa com muitas teclas com letras e números.",
+  "u": "Serve para digitar textos no computador.",
+  "f": "On appuie sur ses touches pour écrire des lettres et des chiffres."
+ },
+ "tecnologia-imprimante": {
+  "d": "Máquina com bandeja de papel que reproduz no papel o que está no computador.",
+  "u": "Serve para imprimir documentos e fotos.",
+  "f": "Elle met sur papier les documents de l'ordinateur."
+ },
+ "tecnologia-robot": {
+  "d": "Máquina com corpo, braços e cabeça de metal, que faz tarefas sozinha.",
+  "u": "Serve para realizar trabalhos repetitivos ou perigosos.",
+  "f": "Cette machine de métal peut faire des tâches à la place des humains."
+ },
+ "tecnologia-ampoule": {
+  "d": "Peça de vidro em forma de pera que se rosqueia no soquete e acende.",
+  "u": "Serve para iluminar os ambientes quando há energia.",
+  "f": "On la visse au plafond et elle s'allume quand on appuie sur l'interrupteur."
+ },
+ "tecnologia-enceinte": {
+  "d": "Caixa com um grande cone redondo que vibra.",
+  "u": "Serve para tocar música e sons em volume alto.",
+  "f": "Cette boîte diffuse la musique à haut volume."
+ },
+ "tecnologia-tablette": {
+  "d": "Tela fina e retangular, maior que um celular, sem teclado físico.",
+  "u": "Serve para ler, assistir a vídeos e jogar.",
+  "f": "Plus grande qu'un téléphone, elle se touche du doigt pour lire et jouer."
+ },
+ "tecnologia-manette": {
+  "d": "Controle com botões e dois manetes, que se segura com as duas mãos.",
+  "u": "Serve para controlar personagens em videogames.",
+  "f": "On la tient à deux mains pour contrôler un personnage de jeu vidéo."
+ },
+ "tecnologia-satellite": {
+  "d": "Máquina com painéis solares que gira ao redor da Terra.",
+  "u": "Serve para transmitir sinais, prever o tempo e mostrar mapas.",
+  "f": "Il tourne autour de la Terre et envoie des signaux, des images et la météo."
+ },
+ "tecnologia-prise": {
+  "d": "Peça na parede com dois furos onde se encaixa um plugue.",
+  "u": "Serve para ligar aparelhos à energia elétrica.",
+  "f": "On y branche les appareils pour qu'ils aient du courant."
+ },
+ "natureza-soleil": {
+  "d": "Astro enorme e brilhante no céu, que dá luz e calor ao dia.",
+  "u": "Dá luz, calor e energia para a vida na Terra.",
+  "f": "Cet astre brillant éclaire et réchauffe la Terre pendant la journée."
+ },
+ "natureza-lune": {
+  "d": "Astro que brilha de noite, às vezes redondo, às vezes em forma de foice.",
+  "u": "Ilumina a noite e influencia as marés.",
+  "f": "On la voit surtout la nuit et sa forme change au fil des jours."
+ },
+ "natureza-nuage": {
+  "d": "Massa branca ou cinza, fofa, que flutua no céu.",
+  "u": "Guarda a água que depois cai como chuva.",
+  "f": "Blanc ou gris, il flotte dans le ciel et peut donner de la pluie."
+ },
+ "natureza-arc-en-ciel": {
+  "d": "Faixa de sete cores em arco que surge no céu quando chove e faz sol ao mesmo tempo.",
+  "u": "Mostra como a luz do sol se divide em cores.",
+  "f": "Après la pluie, ses sept couleurs forment un arc dans le ciel."
+ },
+ "natureza-cactus": {
+  "d": "Planta verde coberta de espinhos, que vive em lugares secos.",
+  "u": "Guarda água dentro de si para sobreviver no deserto.",
+  "f": "Cette plante piquante vit dans le désert et garde l'eau en réserve."
+ },
+ "natureza-coccinelle": {
+  "d": "Inseto pequeno de casquinho vermelho com bolinhas pretas.",
+  "u": "Ajuda o jardim comendo pulgões.",
+  "f": "Ce petit insecte rouge à pois noirs mange les pucerons du jardin."
+ },
+ "natureza-escargot": {
+  "d": "Bichinho mole com uma casca em espiral nas costas, que deixa um rastro de baba.",
+  "u": "Come folhas e carrega a casa sempre consigo.",
+  "f": "Il avance très lentement en portant sa coquille sur le dos."
+ },
+ "natureza-tournesol": {
+  "d": "Flor amarela e grande que acompanha o sol, com o miolo cheio de sementes.",
+  "u": "Dá sementes e óleo de cozinha.",
+  "f": "Cette grande fleur jaune suit le soleil et donne des graines."
+ },
+ "natureza-feuille": {
+  "d": "Parte plana e verde da planta, presa a um galho; cai no outono.",
+  "u": "Faz a fotossíntese, que transforma luz em alimento.",
+  "f": "Elle est verte et plate, et elle tombe des arbres en automne."
+ },
+ "natureza-abeille": {
+  "d": "Inseto listrado de amarelo e preto, que zumbe e tem ferrão.",
+  "u": "Poliniza as flores e produz mel.",
+  "f": "Rayée de jaune et de noir, elle butine les fleurs et fabrique du miel."
+ },
+ "cultura-vase": {
+  "d": "Recipiente de cerâmica ou vidro, mais alto que largo, com a boca estreita.",
+  "u": "Serve para colocar flores e decorar.",
+  "f": "On y met des fleurs pour décorer la maison."
+ },
+ "cultura-marionnette": {
+  "d": "Boneco de fios ou de luva, que ganha vida nas mãos de um artista.",
+  "u": "Serve para contar histórias em teatrinhos.",
+  "f": "On la fait bouger avec des fils ou la main pour raconter des histoires."
+ },
+ "cultura-tableau": {
+  "d": "Pintura emoldurada pendurada na parede.",
+  "u": "Serve para expor obras de arte e decorar.",
+  "f": "On l'accroche au mur dans un cadre pour montrer de la peinture."
+ },
+ "cultura-chapeau-paille": {
+  "d": "Chapéu de aba larga, trançado com fibras secas, usado no campo e na praia.",
+  "u": "Protege do sol forte.",
+  "f": "Tressé avec des fibres sèches, il protège la tête du soleil d'été."
+ },
+ "cultura-buste": {
+  "d": "Escultura que mostra só a cabeça, o pescoço e parte do peito de uma pessoa.",
+  "u": "Serve para homenagear personalidades.",
+  "f": "Cette sculpture montre seulement la tête et le haut du corps."
+ },
+ "cultura-totem": {
+  "d": "Poste de madeira alto, esculpido e pintado com rostos de animais empilhados.",
+  "u": "Representa os antepassados e as histórias de um povo.",
+  "f": "Ce grand poteau sculpté empile des visages d'animaux."
+ },
+ "cultura-poupee": {
+  "d": "Brinquedo em forma de pessoa, com cabelo e roupinhas.",
+  "u": "Serve para brincar e inventar histórias.",
+  "f": "Les enfants jouent avec elle, elle a des cheveux et des vêtements."
+ },
+ "cultura-tipi": {
+  "d": "Tenda em forma de cone, feita de peles ou lona e sustentada por varas.",
+  "u": "Serviu de moradia a povos indígenas nômades das planícies.",
+  "f": "Cette tente en cône a longtemps servi de maison à des peuples nomades."
+ },
+ "cultura-palette": {
+  "d": "Peça achatada com um furo para o polegar, cheia de manchas de cores diferentes.",
+  "u": "Serve para misturar as tintas de uma pintura.",
+  "f": "Le peintre y mélange ses couleurs avant de peindre."
+ },
+ "cultura-moulin": {
+  "d": "Torre com grandes pás giratórias que o vento move.",
+  "u": "Usado para moer grãos e gerar energia.",
+  "f": "Le vent fait tourner ses grandes ailes pour moudre le grain."
+ },
+ "turismo-passeport": {
+  "d": "Caderneta com foto e dados pessoais, que recebe carimbos nas fronteiras.",
+  "u": "Serve para provar sua identidade ao viajar para outros países.",
+  "f": "On le montre à la frontière pour prouver son identité à l'étranger."
+ },
+ "turismo-tente": {
+  "d": "Abrigo de tecido em forma de triângulo, armado no campo.",
+  "u": "Serve para dormir ao ar livre, no camping.",
+  "f": "On la monte en pleine nature pour dormir au camping."
+ },
+ "turismo-sac-a-dos": {
+  "d": "Bolsa com duas alças que se vestem nos ombros.",
+  "u": "Serve para carregar coisas nas costas, com as mãos livres.",
+  "f": "On le porte sur les épaules pour avoir les mains libres."
+ },
+ "turismo-phare": {
+  "d": "Torre alta e listrada na beira do mar, com uma luz giratória no topo.",
+  "u": "Serve para guiar os navios e evitar naufrágios.",
+  "f": "Sa lumière tournante guide les bateaux la nuit au bord de la mer."
+ },
+ "turismo-voilier": {
+  "d": "Barco com velas brancas infladas pelo vento.",
+  "u": "Serve para navegar sem motor, por esporte ou passeio.",
+  "f": "Ce bateau avance grâce au vent dans ses voiles."
+ },
+ "turismo-panneau": {
+  "d": "Placa de madeira com setas apontando para diferentes lugares.",
+  "u": "Serve para indicar direções e distâncias em trilhas e estradas.",
+  "f": "Ses flèches montrent la direction des différents endroits."
+ },
+ "turismo-autobus": {
+  "d": "Veículo grande, com muitas janelas e portas, que leva passageiros pela cidade.",
+  "u": "Serve para transportar muita gente em trajetos fixos.",
+  "f": "Ce grand véhicule transporte beaucoup de passagers en ville."
+ },
+ "turismo-lunettes-soleil": {
+  "d": "Armação com duas lentes escuras que se apoia no nariz e nas orelhas.",
+  "u": "Protegem os olhos do sol.",
+  "f": "Leurs verres foncés protègent les yeux du soleil."
+ },
+ "turismo-coquillage": {
+  "d": "Casca dura, às vezes em espiral, que se encontra na areia da praia.",
+  "u": "Era a casa de um animal marinho e hoje enfeita coleções de praia.",
+  "f": "Cette coquille dure trouvée sur la plage était la maison d'un animal marin."
+ },
+ "turismo-chateau-sable": {
+  "d": "Construção feita com areia molhada, com torres, na beira da praia.",
+  "u": "Serve para brincar na praia.",
+  "f": "Les enfants le construisent avec du sable mouillé sur la plage."
+ },
+ "interior-foin": {
+  "d": "Grande monte de capim seco, amarrado ou enrolado, no campo.",
+  "u": "Serve de alimento e de cama para os animais da fazenda.",
+  "f": "Cette herbe sèche et pressée nourrit les animaux de la ferme."
+ },
+ "interior-grange": {
+  "d": "Construção grande de madeira na fazenda, com portão largo.",
+  "u": "Serve para guardar colheitas, ferramentas e máquinas.",
+  "f": "On y range la récolte, les outils et les machines de la ferme."
+ },
+ "interior-tracteur": {
+  "d": "Veículo agrícola com rodas traseiras enormes.",
+  "u": "Serve para arar a terra e puxar carretas.",
+  "f": "Ses énormes roues arrière aident à labourer les champs."
+ },
+ "interior-rateau": {
+  "d": "Ferramenta de cabo longo com uma barra de dentes finos na ponta.",
+  "u": "Serve para juntar folhas e nivelar a terra.",
+  "f": "On le passe sur le sol pour rassembler les feuilles."
+ },
+ "interior-poule": {
+  "d": "Ave da fazenda, com crista vermelha, que cacareja e bota ovos.",
+  "u": "Dá ovos e carne.",
+  "f": "Cet oiseau de ferme caquette et pond des œufs."
+ },
+ "interior-vache": {
+  "d": "Animal grande da fazenda, com manchas, que mastiga capim.",
+  "u": "Dá leite, carne e couro.",
+  "f": "Cet animal de ferme mange de l'herbe et donne du lait."
+ },
+ "interior-epouvantail": {
+  "d": "Boneco de palha com roupas velhas e chapéu, plantado na horta.",
+  "u": "Serve para espantar os pássaros da plantação.",
+  "f": "Planté dans les champs, il fait fuir les oiseaux."
+ },
+ "interior-puits": {
+  "d": "Buraco fundo revestido de pedra, com uma corda para descer um recipiente.",
+  "u": "Serve para tirar água do subsolo.",
+  "f": "On y descend un récipient au bout d'une corde pour puiser l'eau du sol."
+ },
+ "interior-panier": {
+  "d": "Cesto trançado com alça, usado para carregar frutas.",
+  "u": "Serve para colher e carregar frutas, ovos e compras.",
+  "f": "Tressé et muni d'une anse, il sert à porter des fruits ou des œufs."
+ },
+ "interior-pelle": {
+  "d": "Ferramenta com cabo e uma lâmina larga e arredondada na ponta.",
+  "u": "Serve para cavar buracos e remexer a terra.",
+  "f": "Sa large lame sert à creuser des trous dans la terre."
+ },
+ "danca-tutu": {
+  "d": "Saia curta, armada, feita de várias camadas leves de tule.",
+  "u": "Faz parte da roupa das bailarinas de balé.",
+  "f": "Cette jupe courte et légère fait partie du costume des ballerines."
+ },
+ "danca-castagnettes": {
+  "d": "Duas conchas de madeira presas por um cordão, que estalam entre os dedos.",
+  "u": "Usadas na dança flamenca para marcar o ritmo.",
+  "f": "On les fait claquer entre les doigts pour danser le flamenco."
+ },
+ "danca-tambourin": {
+  "d": "Aro de madeira com pele esticada e pequenos pratinhos de metal que tilintam.",
+  "u": "Serve para marcar o ritmo em músicas e danças.",
+  "f": "On le secoue ou on le frappe, et ses petites cymbales tintent."
+ },
+ "danca-boule-facettes": {
+  "d": "Esfera coberta de pequenos espelhos que gira e reflete a luz.",
+  "u": "Serve para criar luzes coloridas em festas e pistas de dança.",
+  "f": "Elle tourne au plafond et éclaire la piste de danse de milliers de points lumineux."
+ },
+ "danca-claquettes": {
+  "d": "Sapatos com plaquinhas de metal nas solas, que fazem barulho no chão.",
+  "u": "Usados em danças em que os pés marcam o ritmo no piso.",
+  "f": "Leurs semelles métalliques font du bruit sur le sol quand on danse."
+ },
+ "danca-noeud-papillon": {
+  "d": "Adorno de tecido em forma de laço, usado no pescoço com terno.",
+  "u": "Completa roupas elegantes, de festas e formaturas.",
+  "f": "On le porte au cou avec un costume pour être élégant."
+ },
+ "danca-collier-fleurs": {
+  "d": "Fio com muitas flores coloridas, usado ao redor do pescoço, típico do Havaí.",
+  "u": "Serve para receber visitantes e enfeitar festas tropicais.",
+  "f": "Fait de fleurs colorées, il se met autour du cou pour accueillir les invités."
+ },
+ "danca-talons": {
+  "d": "Sapatos elegantes de salto alto.",
+  "u": "Usados em danças de salão, festas e ocasiões elegantes.",
+  "f": "Ces souliers élégants nous rendent plus grands avec leur talon haut."
+ },
+ "danca-cerceau": {
+  "d": "Aro leve e redondo que gira em torno da cintura ou dos braços.",
+  "u": "Serve para exercícios, brincadeiras e ginástica rítmica.",
+  "f": "On le fait tourner autour de la taille pour s'amuser et faire du sport."
+ },
+ "danca-rose": {
+  "d": "Flor de pétalas vermelhas e caule com espinhos, símbolo de amor.",
+  "u": "Serve para presentear e simbolizar o amor.",
+  "f": "Cette fleur à épines est souvent offerte aux personnes qu'on aime."
+ },
+ "geografia-volcan": {
+  "d": "Montanha que solta fumaça, cinzas e lava vermelha pelo topo.",
+  "u": "Libera lava e gases quando entra em erupção.",
+  "f": "Cette montagne crache de la lave et de la fumée par son cratère."
+ },
+ "geografia-ile": {
+  "d": "Pedaço de terra cercado de água por todos os lados.",
+  "u": "Abriga pessoas, animais e praias isoladas do continente.",
+  "f": "Entourée d'eau de tous les côtés, elle est séparée du continent."
+ },
+ "geografia-cascade": {
+  "d": "Queda de água de um rio que despenca de uma altura entre pedras.",
+  "u": "Forma paisagens lindas e pode gerar energia.",
+  "f": "L'eau d'une rivière y tombe d'un rocher dans un grand bruit."
+ },
+ "geografia-dune": {
+  "d": "Morro de areia fina, formado pelo vento no deserto ou na praia.",
+  "u": "Muda de lugar com o vento e é um ponto turístico.",
+  "f": "Cette colline de sable est sculptée par le vent."
+ },
+ "geografia-iceberg": {
+  "d": "Bloco enorme de gelo flutuando no oceano gelado; a maior parte fica debaixo da água.",
+  "u": "É um grande pedaço de gelo solto de uma geleira, perigoso para navios.",
+  "f": "Ce bloc de glace flotte sur la mer et sa plus grande partie est sous l'eau."
+ },
+ "geografia-lac": {
+  "d": "Grande extensão de água cercada de terra por todos os lados.",
+  "u": "Serve para pesca, passeios e abastecimento de água.",
+  "f": "Cette étendue d'eau est entourée de terre et ce n'est pas la mer."
+ },
+ "geografia-rose-vents": {
+  "d": "Estrela desenhada nos mapas, com as letras N, S, L e O nas pontas.",
+  "u": "Serve para mostrar os pontos cardeais: norte, sul, leste e oeste.",
+  "f": "Cette étoile à quatre pointes indique le nord, le sud, l'est et l'ouest."
+ },
+ "geografia-falaise": {
+  "d": "Parede rochosa muito alta e íngreme na beira do mar.",
+  "u": "Forma paredões naturais onde nidificam aves marinhas.",
+  "f": "Ce mur de roche très haut et vertical borde souvent la mer."
+ },
+ "geografia-grotte": {
+  "d": "Buraco grande dentro de uma montanha ou rocha, escuro e úmido.",
+  "u": "Serve de abrigo para morcegos e atrai exploradores.",
+  "f": "On entre dans cette cavité sombre creusée dans la roche."
+ },
+ "geografia-pont": {
+  "d": "Estrutura sobre um rio ou vale que liga as duas margens.",
+  "u": "Serve para atravessar rios, vales e estradas.",
+  "f": "Il relie les deux rives d'un fleuve pour qu'on puisse traverser."
+ },
+ "historia-chateau": {
+  "d": "Fortaleza de pedra com torres, muralhas e ponte levadiça, de reis e cavaleiros.",
+  "u": "Servia de moradia e de defesa na Idade Média.",
+  "f": "Avec ses tours et ses remparts, il protégeait un seigneur au Moyen Âge."
+ },
+ "historia-casque": {
+  "d": "Peça de metal que cobre a cabeça e o rosto de um guerreiro antigo, com viseira.",
+  "u": "Servia para proteger a cabeça nas batalhas.",
+  "f": "Ce couvre-chef en métal protégeait la tête des soldats d'autrefois."
+ },
+ "historia-pyramide": {
+  "d": "Construção gigante de pedra em forma de triângulo, no deserto do Egito.",
+  "u": "Era o túmulo dos faraós.",
+  "f": "Ce monument de pierre aux faces triangulaires abritait un pharaon."
+ },
+ "historia-amphore": {
+  "d": "Jarra antiga de duas alças e pescoço estreito.",
+  "u": "Servia para guardar vinho, azeite e grãos.",
+  "f": "Ce grand vase antique à deux anses contenait du vin ou de l'huile."
+ },
+ "historia-torche": {
+  "d": "Bastão de madeira com a ponta em chamas.",
+  "u": "Servia para iluminar cavernas e caminhos à noite.",
+  "f": "Une flamme brûle à son extrémité pour éclairer dans l'obscurité."
+ },
+ "historia-arc": {
+  "d": "Arma curva de madeira com uma corda esticada, que lança flechas.",
+  "u": "Serve para caçar e para o tiro com arco.",
+  "f": "On tend sa corde pour lancer des flèches."
+ },
+ "historia-canon": {
+  "d": "Tubo grosso de metal sobre rodas, que lança bolas de ferro.",
+  "u": "Servia para atacar navios e fortalezas.",
+  "f": "Ce long tube de métal sur roues lançait des boulets."
+ },
+ "historia-piece": {
+  "d": "Disco pequeno e redondo de metal, com figuras gravadas.",
+  "u": "Serve para pagar compras e trocas.",
+  "f": "Ce petit disque de métal sert à payer."
+ },
+ "historia-sceptre": {
+  "d": "Bastão ornamentado, com pedra preciosa ou ouro na ponta, usado por reis.",
+  "u": "Simboliza a autoridade de quem governa.",
+  "f": "Le roi le tient à la main pour montrer son autorité."
+ },
+ "historia-trone": {
+  "d": "Cadeira luxuosa e alta, de ouro ou madeira talhada, feita para reis.",
+  "u": "É o assento de um rei ou de uma rainha em cerimônias.",
+  "f": "Ce siège luxueux est réservé au roi ou à la reine."
+ },
+ "cinema-projecteur": {
+  "d": "Máquina com um facho de luz que passa o filme por uma lente até a parede.",
+  "u": "Serve para projetar o filme na tela grande.",
+  "f": "Sa lumière envoie le film sur le grand écran."
+ },
+ "cinema-bobine": {
+  "d": "Disco achatado com um filme enrolado em volta de um eixo.",
+  "u": "Servia para guardar filmes antigos.",
+  "f": "La pellicule d'un film est enroulée autour d'elle."
+ },
+ "cinema-fauteuil": {
+  "d": "Poltrona estofada, com apoio de braço, instalada em fileiras.",
+  "u": "Serve para o público assistir ao filme sentado.",
+  "f": "On s'y assoit confortablement pour regarder un film."
+ },
+ "cinema-megaphone": {
+  "d": "Cone grande com cabo, usado para falar mais alto.",
+  "u": "Serve para o diretor dar ordens e a multidão ouvir.",
+  "f": "Cet objet en forme de cône amplifie la voix de celui qui crie dedans."
+ },
+ "cinema-lunettes-3d": {
+  "d": "Óculos de armação de papel ou plástico, com lentes coloridas ou escuras.",
+  "u": "Dão a sensação de profundidade em filmes especiais.",
+  "f": "On les met pour voir les images en relief au cinéma."
+ },
+ "cinema-statuette": {
+  "d": "Estatueta dourada de uma pessoa, entregue como troféu.",
+  "u": "É um prêmio dado aos melhores artistas.",
+  "f": "Cette petite figurine dorée récompense les meilleurs acteurs."
+ },
+ "cinema-spot": {
+  "d": "Lâmpada potente com refletor, que aponta a luz para um ponto.",
+  "u": "Serve para iluminar o palco e destacar o artista.",
+  "f": "Son faisceau puissant éclaire un artiste sur scène."
+ },
+ "cinema-ecran": {
+  "d": "Grande superfície branca, na parede da sala escura, onde se vê o filme.",
+  "u": "Serve para mostrar as imagens do filme.",
+  "f": "Cette grande surface blanche affiche le film devant le public."
+ },
+ "cinema-tapis-rouge": {
+  "d": "Tapete comprido e vermelho estendido no chão, com cordões nas laterais.",
+  "u": "Serve para recepcionar celebridades em estreias.",
+  "f": "Les célébrités le foulent en arrivant à une première."
+ },
+ "cinema-affiche": {
+  "d": "Cartaz grande colado na parede, com título e imagem do filme.",
+  "u": "Serve para divulgar um filme e atrair o público.",
+  "f": "Elle annonce un film avec une grande image et son titre."
+ },
+ "musica-piano": {
+  "d": "Instrumento grande com teclas pretas e brancas e pedais.",
+  "u": "Serve para tocar melodias e acompanhar cantores.",
+  "f": "On appuie sur ses touches noires et blanches pour faire de la musique."
+ },
+ "musica-violon": {
+  "d": "Instrumento pequeno de madeira, tocado com um arco sobre as cordas e apoiado no ombro.",
+  "u": "Serve para tocar música clássica e popular.",
+  "f": "On le coince sous le menton et on frotte ses cordes avec un archet."
+ },
+ "musica-batterie": {
+  "d": "Conjunto de tambores e pratos, tocado com baquetas.",
+  "u": "Serve para marcar o ritmo das bandas.",
+  "f": "Cet ensemble de tambours et de cymbales se joue avec des baguettes."
+ },
+ "musica-flute": {
+  "d": "Tubo fino com furos e teclas, em que se sopra por um bocal lateral.",
+  "u": "Serve para tocar melodias suaves.",
+  "f": "On souffle dans ce tube mince et on bouche des trous avec les doigts."
+ },
+ "musica-saxophone": {
+  "d": "Instrumento de metal dourado, curvado em cima, com muitas teclas e uma palheta.",
+  "u": "É muito usado no jazz.",
+  "f": "Cet instrument doré et courbé se joue avec une anche, souvent dans le jazz."
+ },
+ "musica-note": {
+  "d": "Símbolo desenhado numa pauta, com uma bolinha e uma haste.",
+  "u": "Serve para registrar sons na partitura.",
+  "f": "Ce signe sur une portée représente un son dans une partition."
+ },
+ "musica-harmonica": {
+  "d": "Pequena caixa retangular com vários furinhos, em que se sopra e se puxa o ar.",
+  "u": "Serve para tocar blues e música de roça.",
+  "f": "On souffle et on aspire dans ses petits trous pour jouer."
+ },
+ "musica-xylophone": {
+  "d": "Fileira de barras coloridas de tamanhos diferentes, tocadas com martelinhos.",
+  "u": "Serve para tocar melodias e ensinar música às crianças.",
+  "f": "On frappe ses lames avec de petites mailloches."
+ },
+ "musica-metronome": {
+  "d": "Aparelho em forma de pirâmide, com uma haste que balança de um lado a outro.",
+  "u": "Serve para marcar o tempo certo da música.",
+  "f": "Sa tige oscille pour battre la mesure à vitesse régulière."
+ },
+ "musica-cle-sol": {
+  "d": "Símbolo enrolado em espiral no começo de uma pauta.",
+  "u": "Indica quais notas estão escritas na pauta.",
+  "f": "Ce signe en spirale au début d'une portée indique la hauteur des notes."
+ },
+ "lazeres-skate": {
+  "d": "Prancha pequena com quatro rodinhas.",
+  "u": "Serve para andar, saltar e fazer manobras em pistas.",
+  "f": "On monte sur cette planche à roulettes pour faire des figures."
+ },
+ "lazeres-surf": {
+  "d": "Prancha comprida e leve que desliza sobre as ondas.",
+  "u": "Serve para surfar no mar.",
+  "f": "On se tient debout dessus pour glisser sur les vagues."
+ },
+ "lazeres-basket": {
+  "d": "Bola laranja com linhas pretas, lançada em uma cesta alta.",
+  "u": "Serve para jogar basquete.",
+  "f": "On le fait rebondir et on le lance dans un panier en hauteur."
+ },
+ "lazeres-frisbee": {
+  "d": "Disco leve, plano e redondo, que voa girando.",
+  "u": "Serve para brincar de lançar um ao outro no parque.",
+  "f": "On le lance en le faisant tourner pour qu'un ami l'attrape."
+ },
+ "lazeres-patins": {
+  "d": "Sapatos com rodinhas embaixo.",
+  "u": "Servem para deslizar sobre o chão liso.",
+  "f": "On les attache aux pieds pour rouler sur le sol."
+ },
+ "lazeres-canne-peche": {
+  "d": "Vara comprida e flexível, com linha e anzol na ponta.",
+  "u": "Serve para pescar peixes em rios, lagos e no mar.",
+  "f": "Avec sa ligne et son hameçon, on attrape des poissons."
+ },
+ "lazeres-echiquier": {
+  "d": "Tabuleiro quadrado dividido em casas alternadas pretas e brancas.",
+  "u": "Serve para jogar xadrez.",
+  "f": "Ses cases noires et blanches accueillent un jeu de stratégie."
+ },
+ "lazeres-des": {
+  "d": "Pequenos cubos com pontinhos de um a seis.",
+  "u": "Servem para jogos de tabuleiro: lança-se e vê-se o resultado.",
+  "f": "On les lance pour voir un nombre de points de un à six."
+ },
+ "lazeres-hamac": {
+  "d": "Rede de pano pendurada entre duas árvores ou ganchos.",
+  "u": "Serve para descansar e se balançar.",
+  "f": "Suspendu entre deux arbres, il sert à se reposer en se balançant."
+ },
+ "lazeres-yoyo": {
+  "d": "Brinquedo redondo que sobe e desce preso a um barbante no dedo.",
+  "u": "Serve para fazer truques e brincar.",
+  "f": "Attaché à une ficelle, il monte et descend le long du doigt."
+ },
+ "estoicismo-plume": {
+  "d": "Pena longa de ave, de ponta afiada, mergulhada na tinta.",
+  "u": "Servia para escrever à mão em tempos antigos.",
+  "f": "On la trempait dans l'encre pour écrire autrefois."
+ },
+ "estoicismo-encrier": {
+  "d": "Pequeno pote de vidro ou cerâmica que guarda um líquido escuro.",
+  "u": "Servia para guardar a tinta da escrita.",
+  "f": "Ce petit pot contient le liquide noir pour écrire."
+ },
+ "estoicismo-lampe-huile": {
+  "d": "Peça pequena com bico e alça, onde queima um pavio mergulhado em óleo.",
+  "u": "Servia para iluminar as casas antigas.",
+  "f": "Une mèche brûle dans son huile pour éclairer une pièce."
+ },
+ "estoicismo-ancre": {
+  "d": "Peça de ferro curva com duas pontas, presa a uma corrente.",
+  "u": "Serve para manter um navio parado no mar.",
+  "f": "Lancée à l'eau, elle empêche le bateau de partir à la dérive."
+ },
+ "estoicismo-horloge": {
+  "d": "Mostrador redondo com números e dois ponteiros.",
+  "u": "Serve para ver as horas.",
+  "f": "Ses aiguilles tournent sur un cadran pour indiquer l'heure."
+ },
+ "estoicismo-miroir": {
+  "d": "Superfície lisa e brilhante que mostra a imagem de quem se olha.",
+  "u": "Serve para se ver, arrumar-se e refletir.",
+  "f": "On y voit son reflet quand on se regarde dedans."
+ },
+ "estoicismo-laurier": {
+  "d": "Ramos de folhas verdes dispostos em círculo, usados na cabeça de campeões.",
+  "u": "Era o prêmio dos vencedores na Grécia e em Roma.",
+  "f": "Faite de feuilles, elle couronnait les vainqueurs de la Grèce antique."
+ },
+ "estoicismo-rocher": {
+  "d": "Pedra enorme e firme, no meio do mar ou da montanha, desgastada pelas ondas.",
+  "u": "Simboliza a firmeza diante das dificuldades.",
+  "f": "Cette énorme pierre reste ferme malgré les vagues et le vent."
+ },
+ "estoicismo-cle": {
+  "d": "Peça pequena de metal com dentes, que gira numa fechadura.",
+  "u": "Serve para abrir e trancar portas.",
+  "f": "On la tourne dans une serrure pour ouvrir ou fermer une porte."
+ },
+ "estoicismo-cadenas": {
+  "d": "Fecho de metal com um arco que se prende em portões e malas.",
+  "u": "Serve para trancar portões, malas e correntes.",
+  "f": "On l'accroche à un portail pour le verrouiller."
+ },
+ "religiao-bible": {
+  "d": "Livro sagrado, muito grosso, dos cristãos.",
+  "u": "Serve para ler as escrituras e orar.",
+  "f": "Ce livre sacré des chrétiens est lu pendant les prières."
+ },
+ "religiao-chapelet": {
+  "d": "Colar de contas ligadas por um fio, com uma cruz.",
+  "u": "Serve para contar as orações.",
+  "f": "On fait glisser ses grains entre les doigts pour compter ses prières."
+ },
+ "religiao-mosquee": {
+  "d": "Edifício com cúpula, minaretes e arcos, onde os muçulmanos rezam.",
+  "u": "Serve para rezar e se reunir na fé islâmica.",
+  "f": "Ses minarets et son dôme dominent ce lieu de prière musulman."
+ },
+ "religiao-vitrail": {
+  "d": "Janela feita com pedaços de vidro colorido, formando uma imagem.",
+  "u": "Decora igrejas e deixa passar luz colorida.",
+  "f": "Cette fenêtre en verre coloré forme une image quand la lumière la traverse."
+ },
+ "religiao-cloche": {
+  "d": "Peça de metal em forma de sino, com um badalo que toca.",
+  "u": "Serve para chamar as pessoas para a missa e marcar as horas.",
+  "f": "Son tintement appelle les gens à la messe depuis le clocher."
+ },
+ "religiao-calice": {
+  "d": "Taça de metal com pé alto, usada em cerimônias.",
+  "u": "Usado nas missas para o vinho sagrado.",
+  "f": "Cette coupe à pied haut contient le vin pendant la messe."
+ },
+ "religiao-menorah": {
+  "d": "Candelabro de sete braços, símbolo do judaísmo.",
+  "u": "Serve de símbolo e de luz nas celebrações judaicas.",
+  "f": "Ce chandelier à sept branches est un symbole de la religion juive."
+ },
+ "religiao-ange": {
+  "d": "Ser de asas brancas e auréola sobre a cabeça.",
+  "u": "Representa um mensageiro de Deus e protetor.",
+  "f": "Avec ses ailes et son auréole, c'est un messager du ciel."
+ },
+ "religiao-pagode": {
+  "d": "Torre oriental de vários andares, com telhados curvos sobrepostos.",
+  "u": "É um templo budista da Ásia.",
+  "f": "Cette tour asiatique à plusieurs étages est un temple bouddhiste."
+ },
+ "religiao-lotus": {
+  "d": "Flor aquática que flutua sobre a lagoa, com pétalas em camadas.",
+  "u": "Simboliza a pureza e é sagrada no budismo e no hinduísmo.",
+  "f": "Cette fleur d'eau, symbole de pureté, flotte à la surface d'un étang."
+ },
+ "gastronomia-casserole": {
+  "d": "Panela funda com cabo comprido e tampa.",
+  "u": "Serve para cozinhar sopas, molhos e arroz.",
+  "f": "On y fait cuire de la soupe ou des pâtes sur le feu."
+ },
+ "gastronomia-poele": {
+  "d": "Frigideira rasa e redonda, com cabo longo.",
+  "u": "Serve para fritar ovos, carnes e panquecas.",
+  "f": "Plate et ronde, on y fait frire des œufs ou des crêpes."
+ },
+ "gastronomia-rouleau": {
+  "d": "Cilindro de madeira com duas pontas para segurar.",
+  "u": "Serve para esticar a massa de tortas e bolos.",
+  "f": "On le fait rouler pour aplatir la pâte."
+ },
+ "gastronomia-louche": {
+  "d": "Concha funda com cabo longo.",
+  "u": "Serve para servir sopa e caldos.",
+  "f": "Avec sa grande cuillère profonde, on sert la soupe."
+ },
+ "gastronomia-couteau": {
+  "d": "Lâmina afiada com cabo, usada na cozinha.",
+  "u": "Serve para cortar carnes, legumes e pão.",
+  "f": "Sa lame tranchante coupe la viande et les légumes."
+ },
+ "gastronomia-passoire": {
+  "d": "Tigela cheia de furinhos, com cabo ou alças.",
+  "u": "Serve para escorrer a água do macarrão e lavar frutas.",
+  "f": "Percée de petits trous, elle laisse partir l'eau et garde les aliments."
+ },
+ "gastronomia-tire-bouchon": {
+  "d": "Parafuso em espiral com cabo, às vezes com alavanca.",
+  "u": "Serve para abrir garrafas de vinho.",
+  "f": "Sa spirale pénètre dans le bouchon pour ouvrir une bouteille de vin."
+ },
+ "gastronomia-planche": {
+  "d": "Tábua grossa e lisa de madeira, retangular.",
+  "u": "Serve para cortar alimentos sem estragar a mesa.",
+  "f": "On y coupe les légumes pour ne pas abîmer la table."
+ },
+ "gastronomia-moulin-poivre": {
+  "d": "Peça cilíndrica que se gira para triturar grãos pretos.",
+  "u": "Serve para temperar com pimenta moída na hora.",
+  "f": "On tourne sa manivelle pour écraser des grains noirs sur le plat."
+ },
+ "gastronomia-theiere": {
+  "d": "Recipiente com bico curvo, alça e tampa, para água quente.",
+  "u": "Serve para preparar e servir chá.",
+  "f": "Avec son bec verseur et son couvercle, elle sert à préparer le thé."
+ },
+ "gastronomia-presse-agrumes": {
+  "d": "Peça com um cone cheio de relevos no centro, onde se espreme metade de uma fruta.",
+  "u": "Serve para extrair o suco de laranjas e limões.",
+  "f": "On y presse un demi-citron ou une orange pour en extraire le jus."
+ },
+ "gastronomia-rape": {
+  "d": "Placa de metal com furinhos pontudos, que desfia alimentos.",
+  "u": "Serve para ralar queijo, cenoura e chocolate.",
+  "f": "Ses trous tranchants transforment le fromage en petits morceaux."
+ },
+ "gastronomia-decapsuleur": {
+  "d": "Pequena peça de metal com um entalhe redondo, que abre tampinhas.",
+  "u": "Serve para abrir garrafas de refrigerante e cerveja.",
+  "f": "Cette petite pièce de métal enlève la capsule d'une bouteille."
+ },
+ "gastronomia-entonnoir": {
+  "d": "Cone de plástico ou metal com um tubo fino na ponta.",
+  "u": "Serve para passar líquidos para um frasco de boca estreita.",
+  "f": "Son cône permet de verser un liquide dans une bouteille sans en perdre."
+ },
+ "gastronomia-spatule": {
+  "d": "Utensílio com cabo e uma parte larga, achatada e flexível.",
+  "u": "Serve para virar alimentos e raspar tigelas.",
+  "f": "Plate et flexible au bout, on s'en sert pour retourner les aliments."
+ },
+ "gastronomia-fouet": {
+  "d": "Utensílio de cozinha com fios de arame curvados presos a um cabo.",
+  "u": "Serve para bater ovos, cremes e claras.",
+  "f": "Ses fils de métal battent les œufs et la crème."
+ },
+ "gastronomia-presse-ail": {
+  "d": "Alicate com furinhos, onde se esmaga um dente de alho.",
+  "u": "Serve para amassar alho sem usar faca.",
+  "f": "On serre ses deux manches pour écraser une gousse."
+ }
+}

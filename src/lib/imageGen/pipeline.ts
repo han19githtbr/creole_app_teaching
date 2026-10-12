@@ -197,7 +197,7 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
     let expected: string[];
     let elements: { kreyol: string; pt: string }[] = [];
     let quiz: { options: string[]; answers: string[] } | undefined;
-    let cquoi: { fr: string; article: string; name: string; speak: string; w: number; h: number; arrow: { x: number; y: number } } | undefined;
+    let cquoi: { fr: string; article: string; name: string; speak: string; w: number; h: number; arrow: { x: number; y: number }; hint?: { d: string; u: string; f?: string } } | undefined;
     let fallbackPoints: { left: number; top: number }[] = [];
 
     if (isCquoi) {
@@ -230,7 +230,14 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
       expected = [proposal.english];
       const fr = `${article} ${name}`;
       title = fr;
-      cquoi = { fr, article, name, speak: fr.toLowerCase(), w: 490, h: 350, arrow: { x: 245, y: 175 } };
+      // dica (PT), uso (PT) e frase (FR) do jogo; se a IA não entregar, o jogo usa uma dica genérica
+      const clean = (value: unknown, max: number) => (typeof value === "string" ? value.trim().replace(/\s+/g, " ").slice(0, max) : "");
+      const dica = clean(proposal.dica, 300);
+      const uso = clean(proposal.uso, 200);
+      const frase = clean(proposal.frase, 160);
+      const phraseOk = frase.length >= 15 && !frase.toLowerCase().includes(name.toLowerCase());
+      const hint = dica && uso ? { d: dica, u: uso, ...(phraseOk ? { f: frase } : {}) } : undefined;
+      cquoi = { fr, article, name, speak: fr.toLowerCase(), w: 490, h: 350, arrow: { x: 245, y: 175 }, ...(hint ? { hint } : {}) };
       fallbackPoints = [{ left: 50, top: 50 }];
     } else {
       const plan = planScene(theme.id);

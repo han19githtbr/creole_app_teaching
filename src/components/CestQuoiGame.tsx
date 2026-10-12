@@ -3,49 +3,41 @@
 import "./CestQuoiGame.css";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowLeft, Award, Check, Coins, Flame, Heart, Lock, RotateCcw, Trophy, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowLeft, Award, Check, Coins, Flame, Heart, Lightbulb, Lock, RotateCcw, Swords, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { soundEffects } from "@/lib/soundEffects";
 import { Confetti } from "@/components/Confetti";
 import { CestQuoiStickman, type StickmanMood } from "@/components/CestQuoiStickman";
+import { CestQuoiHint } from "@/components/CestQuoiHint";
+import { CestQuoiArena } from "@/components/CestQuoiArena";
 import { cn } from "@/lib/utils";
 import { recordQuizWin, type Badge, type LevelInfo } from "@/lib/gamification";
 import { useGamification } from "@/hooks/useGamification";
+import { useCquoiArena, type ArenaDuel, type ArenaInvite, type ArenaOnlinePlayer, type DuelConfig, type DuelOutcome } from "@/hooks/useCquoiArena";
 import { AchievementsModal } from "@/components/AchievementsModal";
 import { RewardUnlockModal } from "@/components/RewardUnlockModal";
+import {
+  HINT_LETTER_PENALTY,
+  HINT_PENALTY,
+  LEVELS,
+  LEVEL_ORDER,
+  MAX_ATTEMPTS,
+  PASS_RATIO,
+  passTarget,
+  type AnswerMode,
+  type Level,
+} from "@/lib/cquoiLevels";
+import { buildPhraseOptions, buildWordOptions, hasPhrase, phraseOf, type CestQuoiItem } from "@/lib/cquoiContent";
 
-export interface CestQuoiItem {
-  id: string;
-  themeId: string;
-  theme: string;
-  fr: string; // "Un fouet"
-  article: string;
-  name: string;
-  speak: string;
-  scene: string;
-  w: number;
-  h: number;
-  arrow: { x: number; y: number };
+export type { CestQuoiItem, Level };
+
+/** Cores das letrinhas A-D das alternativas. */
+const OPTION_COLORS = ["#3b82f6", "#ec4899", "#f59e0b", "#10b981"];
+const OPTION_LETTERS = ["A", "B", "C", "D"];
+
+/** Resposta certa de uma imagem, conforme o modo do nível (palavra ou frase). */
+function answerOf(item: CestQuoiItem, mode: AnswerMode): string {
+  return mode === "phrase" ? phraseOf(item) : item.fr;
 }
-
-// ---------------------------------------------------------------------------
-// Configuração do jogo
-// ---------------------------------------------------------------------------
-export type Level = "easy" | "intermediate" | "master";
-
-const LEVEL_ORDER: Level[] = ["easy", "intermediate", "master"];
-
-const LEVELS: Record<
-  Level,
-  { label: string; emoji: string; seconds: number; multiplier: number; desc: string; grad: string; ring: string; text: string }
-> = {
-  easy: { label: "Fácil", emoji: "🌱", seconds: 15, multiplier: 1, desc: "15 segundos por palavra", grad: "from-emerald-400 to-green-600", ring: "ring-emerald-400", text: "text-emerald-600" },
-  intermediate: { label: "Intermediário", emoji: "⚡", seconds: 10, multiplier: 1.5, desc: "10 segundos por palavra", grad: "from-amber-400 to-orange-500", ring: "ring-amber-400", text: "text-amber-600" },
-  master: { label: "Master", emoji: "🔥", seconds: 5, multiplier: 2, desc: "5 segundos por palavra", grad: "from-rose-500 to-red-700", ring: "ring-rose-500", text: "text-rose-600" },
-};
-
-const MAX_ATTEMPTS = 2; // 1ª tentativa + mais uma
-const ROUNDS_PER_GAME = 10;
-const PASS_RATIO = 0.7; // 7 de 10 acertos para passar de nível
 
 type Phase = "intro" | "countdown" | "playing" | "done";
 type RoundState = "asking" | "correct" | "retry" | "reveal";
@@ -173,20 +165,21 @@ async function loadRounds(list: CestQuoiItem[], pool: CestQuoiItem[]): Promise<C
     if (good.length >= list.length) break;
     if (await preloadImage(spare.scene)) good.push(spare);
   }
-  return shuffle(good);
+  return good;
 }
 
-/** 4 alternativas: 2 do mesmo tema (quando houver) + as demais de outros temas. */
-function buildOptions(item: CestQuoiItem, pool: CestQuoiItem[]): string[] {
-  const others = pool.filter((o) => o.id !== item.id && o.fr !== item.fr);
-  const same = shuffle(others.filter((o) => o.themeId === item.themeId));
-  const rest = shuffle(others.filter((o) => o.themeId !== item.themeId));
-  const picked: string[] = [];
-  for (const o of [...same.slice(0, 2), ...rest, ...same.slice(2)]) {
-    if (picked.length >= 3) break;
-    if (!picked.includes(o.fr)) picked.push(o.fr);
+/** Monta as imagens da partida. Se o tema escolhido tiver menos imagens que o nível pede (Nativo = 20), completa com outros temas. */
+function buildRounds(lv: Level, themeId: string, items: CestQuoiItem[]): CestQuoiItem[] {
+  const cfg = LEVELS[lv];
+  const base = cfg.mode === "phrase" ? items.filter(hasPhrase) : items;
+  const themed = themeId === "all" ? base : base.filter((i) => i.themeId === themeId);
+  let list = pickRounds(themed, Math.min(cfg.rounds, themed.length));
+  if (list.length < cfg.rounds) {
+    const chosen = new Set(list.map((i) => i.id));
+    const extra = shuffle(base.filter((i) => !chosen.has(i.id))).slice(0, cfg.rounds - list.length);
+    list = shuffle([...list, ...extra]);
   }
-  return shuffle([item.fr, ...picked]);
+  return list;
 }
 
 // ---------- pronúncia (Web Speech API em francês) ----------
@@ -217,6 +210,9 @@ function speakFrench(text: string) {
   } catch {
     // sem áudio de pronúncia neste navegador
   }
+}
+function speakAnswer(item: CestQuoiItem, mode: AnswerMode) {
+  speakFrench(mode === "phrase" ? `${item.speak}. ${phraseOf(item)}` : item.speak);
 }
 function cancelSpeech() {
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
@@ -318,6 +314,26 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   const [lockedShake, setLockedShake] = useState<Level | null>(null);
   const [loadingImgs, setLoadingImgs] = useState(false);
   const [muted, setMuted] = useState(() => soundEffects.isMuted());
+  const [hintOpen, setHintOpen] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [letterUsed, setLetterUsed] = useState(false);
+  const [hintsTotal, setHintsTotal] = useState(0);
+  const [pausedLeft, setPausedLeft] = useState(0);
+  const [duelOpponent, setDuelOpponent] = useState<string | null>(null);
+  const [duelOutcome, setDuelOutcome] = useState<DuelOutcome | null>(null);
+  const [submitMsg, setSubmitMsg] = useState<{ kind: "sending" | "ok" | "error"; text: string } | null>(null);
+  const [arenaNotice, setArenaNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  // Presença online, ranking e duelos
+  const arena = useCquoiArena({
+    status: phase === "playing" || phase === "countdown" ? "playing" : "lobby",
+    level: phase === "intro" ? null : level,
+    score,
+    round: phase === "playing" ? index + 1 : 0,
+    total: rounds.length,
+  });
+  const { submitScore, respond: respondDuel, challenge: sendChallenge } = arena;
 
   // valores "vivos" usados dentro de timers (evitam closures desatualizadas)
   const levelRef = useRef<Level>("easy");
@@ -335,9 +351,15 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const pickRef = useRef<(option: string) => void>(() => {});
   const startToken = useRef(0);
+  const hintRef = useRef(false); // usou a dica nesta imagem
+  const letterRef = useRef(false); // pediu também a pista da letra
+  const hintsTotalRef = useRef(0);
+  const pausedAtRef = useRef(0);
+  const challengeIdRef = useRef<string | null>(null);
 
   const item = rounds[index];
   const levelCfg = LEVELS[level];
+  const mode = levelCfg.mode;
   const totalMs = levelCfg.seconds * 1000;
   const running = phase === "playing" && roundState === "asking";
   const need = Math.max(1, Math.ceil(rounds.length * PASS_RATIO));
@@ -380,7 +402,14 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
 
   const prepareRound = useCallback(
     (list: CestQuoiItem[], i: number) => {
-      setOptions(buildOptions(list[i], items));
+      const lv = levelRef.current;
+      setOptions(LEVELS[lv].mode === "phrase" ? buildPhraseOptions(list[i], items) : buildWordOptions(list[i], items, lv === "native_word"));
+      hintRef.current = false;
+      letterRef.current = false;
+      pausedAtRef.current = 0;
+      setLetterUsed(false);
+      setHintUsed(false);
+      setHintOpen(false);
       setWrongPicks([]);
       attemptRef.current = 1;
       setAttempt(1);
@@ -406,6 +435,19 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     const nextLevel = LEVEL_ORDER[LEVEL_ORDER.indexOf(lv) + 1];
     setUnlockedNow(ok && nextLevel && !prev.passed.includes(lv) ? nextLevel : null);
     writeProgress(next);
+
+    // pontuação no ranking online (e no duelo, se houver)
+    setDuelOutcome(null);
+    setSubmitMsg({ kind: "sending", text: "Enviando sua pontuação ao ranking…" });
+    const finalScore = scoreRef.current;
+    void submitScore({ level: lv, score: finalScore, hits: hitsRef.current, total, challengeId: challengeIdRef.current }).then((res) => {
+      if (res.error) setSubmitMsg({ kind: "error", text: res.error });
+      else {
+        setSubmitMsg({ kind: "ok", text: `+${finalScore} pts somados ao ranking!` });
+        setDuelOutcome(res.duel);
+      }
+    });
+
     const earned = rewardRef.current;
     if (earned.xp > 0 || earned.goud > 0) {
       setRewardSummary({ ...earned, badges: [...earned.badges] });
@@ -416,7 +458,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     setPhase("done");
     if (ok) soundEffects.playPerfectRound();
     else soundEffects.playError();
-  }, []);
+  }, [submitScore]);
 
   const goNext = useCallback(() => {
     clearTimers();
@@ -461,7 +503,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
         setRoundState("reveal");
         setResults((r) => r.map((v, i) => (i === indexRef.current ? "miss" : v)));
         setMessage("Veja a resposta certa!");
-        later(() => speakFrench(current.speak), 500);
+        later(() => speakAnswer(current, LEVELS[levelRef.current].mode), 500);
         later(goNext, 4200);
       }
     },
@@ -473,7 +515,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     (option: string) => {
       const current = roundsRef.current[indexRef.current];
       if (!current || answeredRef.current) return;
-      if (option !== current.fr) {
+      if (option !== answerOf(current, LEVELS[levelRef.current].mode)) {
         registerMiss(option);
         return;
       }
@@ -485,7 +527,8 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       const base = attemptRef.current === 1 ? 10 : 6;
       const timeBonus = Math.round(frac * 10);
       const comboBonus = nextStreak > 1 ? Math.min(nextStreak * 2, 10) : 0;
-      const points = Math.round((base + timeBonus + comboBonus) * LEVELS[lv].multiplier);
+      const hintFactor = letterRef.current ? 1 - HINT_LETTER_PENALTY : hintRef.current ? 1 - HINT_PENALTY : 1;
+      const points = Math.max(1, Math.round((base + timeBonus + comboBonus) * LEVELS[lv].multiplier * hintFactor));
 
       streakRef.current = nextStreak;
       hitsRef.current += 1;
@@ -498,7 +541,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
         sceneId: current.id,
         theme: current.themeId,
         wordsCount: 1,
-        attemptsLeft: attemptRef.current === 1 ? 3 : 2,
+        attemptsLeft: attemptRef.current === 1 && !hintRef.current ? 3 : 2,
         streak: nextStreak,
       });
       rewardRef.current = {
@@ -514,7 +557,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       setStreak(nextStreak);
       setBestStreak(bestStreakRef.current);
       setResults((r) => r.map((v, i) => (i === indexRef.current ? "hit" : v)));
-      setMessage(attemptRef.current === 1 ? "Parfait ! 🎉" : "Très bien ! Na segunda tentativa 👏");
+      setMessage(hintRef.current ? "Bien joué ! Com a ajuda da dica 💡" : attemptRef.current === 1 ? "Parfait ! 🎉" : "Très bien ! Na segunda tentativa 👏");
       setConfetti(true);
       setFlash("green");
       later(() => setFlash(null), 750);
@@ -523,11 +566,36 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       later(() => setFloater(null), 1350);
       if (nextStreak > 1) soundEffects.playStreak(nextStreak);
       else soundEffects.playSuccess();
-      later(() => speakFrench(current.speak), 350);
+      later(() => speakAnswer(current, LEVELS[levelRef.current].mode), 350);
       later(goNext, 3200);
     },
     [later, goNext, registerMiss]
   );
+
+  // ---------- dica: congela o tempo enquanto o painel está aberto ----------
+  const openHint = useCallback(() => {
+    if (!running || hintOpen) return;
+    soundEffects.playTap();
+    cancelSpeech();
+    pausedAtRef.current = Date.now();
+    setPausedLeft(Math.max(0, deadlineRef.current - Date.now()));
+    if (!hintRef.current) {
+      hintRef.current = true;
+      hintsTotalRef.current += 1;
+      setHintsTotal(hintsTotalRef.current);
+      setHintUsed(true);
+    }
+    setHintOpen(true);
+  }, [running, hintOpen]);
+
+  const closeHint = useCallback(() => {
+    if (pausedAtRef.current) {
+      // devolve ao relógio o tempo que ficou parado
+      deadlineRef.current += Date.now() - pausedAtRef.current;
+      pausedAtRef.current = 0;
+    }
+    setHintOpen(false);
+  }, []);
 
   // mantém a versão mais recente do "pick" para o atalho de teclado
   useEffect(() => {
@@ -536,8 +604,12 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
 
   // ---------- atalhos 1-4 ----------
   useEffect(() => {
-    if (!running) return;
+    if (!running || hintOpen) return;
     const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "h") {
+        openHint();
+        return;
+      }
       const n = Number(e.key);
       if (Number.isInteger(n) && n >= 1 && n <= options.length) {
         const opt = options[n - 1];
@@ -546,11 +618,11 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [running, options, wrongPicks]);
+  }, [running, hintOpen, openHint, options, wrongPicks]);
 
   // ---------- relógio com tique-taque ----------
   useEffect(() => {
-    if (!running) return;
+    if (!running || hintOpen) return;
     const id = setInterval(() => {
       const left = Math.max(0, deadlineRef.current - Date.now());
       setTimeLeft(left);
@@ -566,14 +638,16 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       }
     }, 80);
     return () => clearInterval(id);
-  }, [running, registerMiss, attempt, index]);
+  }, [running, hintOpen, registerMiss, attempt, index]);
 
   // ---------- início da partida ----------
   const startGame = useCallback(
-    (lv: Level) => {
-      if (!isUnlocked(lv, parseProgress(readProgressRaw()))) return;
-      const pool = themeId === "all" ? items : items.filter((i) => i.themeId === themeId);
-      const list = pickRounds(pool, Math.min(ROUNDS_PER_GAME, pool.length));
+    (lv: Level, opts?: { rounds?: CestQuoiItem[]; challengeId?: string | null; opponent?: string | null }) => {
+      // duelos usam as imagens do desafiante e não exigem o nível desbloqueado
+      if (!opts?.rounds && !isUnlocked(lv, parseProgress(readProgressRaw()))) return;
+      const basePool = LEVELS[lv].mode === "phrase" ? items.filter(hasPhrase) : items;
+      const pool = themeId === "all" ? basePool : basePool.filter((i) => i.themeId === themeId);
+      const list = opts?.rounds ?? buildRounds(lv, themeId, items);
       clearTimers();
       cancelSpeech();
       levelRef.current = lv;
@@ -585,6 +659,19 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       scoreRef.current = 0;
       bestStreakRef.current = 0;
       rewardRef.current = { xp: 0, goud: 0, badges: [], level: null };
+      challengeIdRef.current = opts?.challengeId ?? null;
+      hintRef.current = false;
+      letterRef.current = false;
+      hintsTotalRef.current = 0;
+      pausedAtRef.current = 0;
+      setLetterUsed(false);
+      setHintsTotal(0);
+      setHintUsed(false);
+      setHintOpen(false);
+      setDuelOpponent(opts?.opponent ?? null);
+      setDuelOutcome(null);
+      setSubmitMsg(null);
+      setArenaNotice(null);
       setRewardSummary(null);
       setRewardModalOpen(false);
       setLevel(lv);
@@ -606,7 +693,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       setPhase("countdown");
       // baixa as imagens da partida durante a contagem (a contagem esconde o tempo de carregamento)
       const token = ++startToken.current;
-      const loading = loadRounds(list, pool);
+      const loading = loadRounds(list, opts?.rounds ? [] : pool);
       // 3 ... 2 ... 1 ... Partez !
       later(() => setCountdown(2), 850);
       later(() => setCountdown(1), 1700);
@@ -644,19 +731,97 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     setLevel(lv);
   }
 
+  // ---------- duelos ----------
+  function startDuel(config: DuelConfig, opponent: string) {
+    const byId = new Map(items.map((i) => [i.id, i]));
+    const list = config.itemIds.map((id) => byId.get(id)).filter((i): i is CestQuoiItem => Boolean(i));
+    if (!list.length) {
+      setArenaNotice({ kind: "error", text: "Não encontrei as imagens deste duelo. Peça um novo desafio." });
+      return;
+    }
+    setLevel(config.level);
+    if (config.themeId === "all" || themes.some((t) => t.id === config.themeId)) setThemeId(config.themeId);
+    startGame(config.level, { rounds: list, challengeId: config.id, opponent });
+  }
+
+  async function challengePlayer(player: ArenaOnlinePlayer) {
+    if (!isUnlocked(level, progress)) {
+      setArenaNotice({ kind: "error", text: "Escolha um nível já desbloqueado para desafiar." });
+      return;
+    }
+    setArenaNotice(null);
+    setBusyId(player.id);
+    const list = buildRounds(level, themeId, items);
+    const res = await sendChallenge(player.id, level, themeId, list.map((i) => i.id));
+    setBusyId(null);
+    if (res.error || !res.id) {
+      setArenaNotice({ kind: "error", text: res.error ?? "Não foi possível enviar o desafio." });
+      return;
+    }
+    soundEffects.playReward();
+    // quem desafia já joga: o adversário joga as mesmas imagens quando aceitar
+    startGame(level, { rounds: list, challengeId: res.id, opponent: player.name });
+  }
+
+  async function acceptInvite(invite: ArenaInvite) {
+    setArenaNotice(null);
+    const res = await respondDuel(invite.id, true);
+    if (res.error || !res.config) {
+      setArenaNotice({ kind: "error", text: res.error ?? "Esse desafio não está mais disponível." });
+      return;
+    }
+    soundEffects.playReward();
+    startDuel(res.config, invite.from.name);
+  }
+
+  async function declineInvite(invite: ArenaInvite) {
+    soundEffects.playTap();
+    await respondDuel(invite.id, false);
+  }
+
+  async function playDuel(duel: ArenaDuel) {
+    setArenaNotice(null);
+    const res = await respondDuel(duel.id, true);
+    if (res.error || !res.config) {
+      setArenaNotice({ kind: "error", text: res.error ?? "Esse desafio não está mais disponível." });
+      return;
+    }
+    startDuel(res.config, duel.opponent.name);
+  }
+
+  const arenaPanel = (
+    <CestQuoiArena
+      arena={arena}
+      challengeLevel={level}
+      busyId={busyId}
+      notice={arenaNotice}
+      onChallenge={challengePlayer}
+      onAccept={acceptInvite}
+      onDecline={declineInvite}
+      onPlayDuel={playDuel}
+    />
+  );
+
   const mood: StickmanMood = roundState === "correct" ? "dance" : roundState === "retry" || roundState === "reveal" ? "sad" : "think";
   const stars = rounds.length ? (hits >= rounds.length - 1 ? 3 : hits >= need + 1 ? 2 : hits >= need ? 1 : 0) : 0;
   const nextAfterCurrent = LEVEL_ORDER[LEVEL_ORDER.indexOf(level) + 1] as Level | undefined;
   const levelsDone = LEVEL_ORDER.every((l) => progress.passed.includes(l));
+  const nativeOpen = isUnlocked("native_word", progress);
 
   // ===================== INTRO =====================
   if (phase === "intro") {
     const selectedUnlocked = isUnlocked(level, progress);
+    const selCfg = LEVELS[level];
+    const classic: Level[] = ["easy", "intermediate", "master"];
+    const nativeLevels: Level[] = ["native_word", "native_phrase"];
+
+    const lockText = (lv: Level) => `🔒 Passe o nível ${LEVELS[LEVEL_ORDER[LEVEL_ORDER.indexOf(lv) - 1]].label} para desbloquear`;
+
     return (
       <div className="cq2-bg min-h-[calc(100vh-4rem)]">
         <div className="mx-auto w-full max-w-lg space-y-5 px-4 py-6">
           <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+            <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text)]">
               <ArrowLeft className="h-4 w-4" /> Painel
             </Link>
             <button type="button" onClick={toggleSound} className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-[var(--text-secondary)]" aria-label={muted ? "Ativar som" : "Silenciar"}>
@@ -700,19 +865,18 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
             <div className="cq2-scene-in mx-auto h-36 w-36"><CestQuoiStickman mood="think" /></div>
             <h1 className="mt-1 text-3xl font-black tracking-tight text-[var(--text)]">C&apos;est quoi ? 🇫🇷</h1>
             <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              A seta vermelha aponta para um objeto. Escolha o nome certo em francês antes que o tempo acabe! Você tem{" "}
+              A seta vermelha aponta para um objeto. Escolha a resposta certa em francês antes que o tempo acabe! Você tem{" "}
               <strong>mais uma tentativa</strong> se errar.
             </p>
 
             <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Escolha o nível</p>
             <div className="mt-2 space-y-2.5 text-left">
-              {LEVEL_ORDER.map((lv, i) => {
+              {classic.map((lv) => {
                 const cfg = LEVELS[lv];
                 const unlocked = isUnlocked(lv, progress);
                 const done = progress.passed.includes(lv);
                 const best = progress.best[lv];
                 const selected = level === lv && unlocked;
-                const isNextGoal = unlocked && !done;
                 return (
                   <button
                     key={lv}
@@ -721,9 +885,9 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
                     aria-disabled={!unlocked}
                     className={cn(
                       "relative flex w-full cursor-pointer items-center gap-3 overflow-hidden rounded-2xl border-2 border-b-4 p-3 transition-all active:translate-y-[2px] active:border-b-2",
-                      unlocked ? "bg-[var(--surface)] hover:bg-[var(--surface-2)]" : "cursor-not-allowed bg-[var(--surface-2)] opacity-70",
+                      unlocked ? "cq2-opt-hover bg-[var(--surface)] hover:bg-[var(--surface-2)]" : "cursor-not-allowed bg-[var(--surface-2)] opacity-70",
                       selected ? `border-transparent ring-2 ${cfg.ring} ring-offset-2 ring-offset-[var(--surface)]` : "border-[var(--border)]",
-                      isNextGoal && selected && "cq2-glow",
+                      unlocked && !done && selected && "cq2-glow",
                       lockedShake === lv && "cq2-lock-shake"
                     )}
                   >
@@ -735,23 +899,75 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
                         <span className="text-base font-extrabold text-[var(--text)]">{cfg.label}</span>
                         {done && <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">✔ Concluído</span>}
                       </span>
-                      <span className="block text-xs text-[var(--text-secondary)]">
-                        {cfg.desc} · pontos x{cfg.multiplier}
-                      </span>
+                      <span className="block text-xs text-[var(--text-secondary)]">{cfg.desc} · pontos x{cfg.multiplier}</span>
                       {unlocked ? (
                         best ? <span className="block text-[11px] font-semibold text-[var(--text-muted)]">Melhor pontuação: {best} pts</span> : null
                       ) : (
-                        <span className="block text-[11px] font-semibold text-[var(--text-muted)]">
-                          🔒 Passe o nível {LEVELS[LEVEL_ORDER[i - 1]].label} para desbloquear
-                        </span>
+                        <span className="block text-[11px] font-semibold text-[var(--text-muted)]">{lockText(lv)}</span>
                       )}
                     </span>
                   </button>
                 );
               })}
+
+              {/* ---------- NATIVO: dois sub-níveis ---------- */}
+              <div className="cq2-native-card">
+                <div className="cq2-native-inner p-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="cq2-crown text-3xl" aria-hidden>👑</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-base font-black text-[var(--text)]">Nativo</p>
+                      <p className="text-[11px] font-semibold text-[var(--text-secondary)]">20 imagens por partida · pontos até x3 · duas formas de jogar</p>
+                    </div>
+                    {!nativeOpen && <Lock className="h-5 w-5 text-[var(--text-muted)]" />}
+                  </div>
+                  <div className="mt-2.5 grid grid-cols-2 gap-2">
+                    {nativeLevels.map((lv) => {
+                      const cfg = LEVELS[lv];
+                      const unlocked = isUnlocked(lv, progress);
+                      const done = progress.passed.includes(lv);
+                      const best = progress.best[lv];
+                      const selected = level === lv && unlocked;
+                      return (
+                        <button
+                          key={lv}
+                          type="button"
+                          onClick={() => chooseLevel(lv)}
+                          aria-disabled={!unlocked}
+                          className={cn(
+                            "relative flex flex-col items-start gap-1 overflow-hidden rounded-2xl border-2 border-b-4 p-2.5 text-left transition-all active:translate-y-[2px] active:border-b-2",
+                            unlocked ? "cq2-opt-hover bg-[var(--surface)] hover:bg-[var(--surface-2)]" : "cursor-not-allowed bg-[var(--surface-2)] opacity-70",
+                            selected ? `border-transparent ring-2 ${cfg.ring} ring-offset-2 ring-offset-[var(--surface)]` : "border-[var(--border)]",
+                            lockedShake === lv && "cq2-lock-shake"
+                          )}
+                        >
+                          <span className={cn("flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br text-xl shadow-inner", unlocked ? cfg.grad : "from-slate-300 to-slate-400 grayscale")}>
+                            {unlocked ? cfg.emoji : <Lock className="h-4 w-4 text-white" />}
+                          </span>
+                          <span className="text-sm font-extrabold leading-tight text-[var(--text)]">{lv === "native_word" ? "Palavra" : "Frase"}</span>
+                          <span className="text-[11px] leading-snug text-[var(--text-secondary)]">
+                            {lv === "native_word" ? `Escolha o nome do objeto · ${cfg.seconds}s` : `Escolha a frase que descreve a imagem · ${cfg.seconds}s`}
+                          </span>
+                          <span className="text-[10px] font-bold text-[var(--text-muted)]">x{cfg.multiplier} pontos</span>
+                          {done && <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">✔ Concluído</span>}
+                          {unlocked && best ? <span className="text-[10px] font-semibold text-[var(--text-muted)]">Melhor: {best} pts</span> : null}
+                          {!unlocked && <span className="text-[10px] font-semibold leading-snug text-[var(--text-muted)]">{lockText(lv)}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
+
             <p className="mt-3 rounded-xl bg-[var(--surface-2)] px-3 py-2 text-xs text-[var(--text-secondary)]">
-              Para <strong>passar de nível</strong>, acerte pelo menos <strong>{Math.ceil(ROUNDS_PER_GAME * PASS_RATIO)} de {ROUNDS_PER_GAME}</strong> palavras.
+              Para <strong>passar de nível</strong>, acerte pelo menos <strong>{passTarget(level)} de {selCfg.rounds}</strong> ({Math.round(PASS_RATIO * 100)}%).
+            </p>
+            <p className="mt-2 flex items-start gap-2 rounded-xl border border-sky-300/50 bg-sky-500/10 px-3 py-2 text-left text-xs text-[var(--text-secondary)]">
+              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-sky-500" />
+              <span>
+                <strong className="text-[var(--text)]">Travou?</strong> Toque em <strong>Dica</strong> (ou tecle <kbd className="rounded bg-[var(--surface-2)] px-1 font-bold">H</kbd>): o tempo congela e você vê uma explicação em português e um mini-vídeo. Cada dica reduz os pontos da imagem.
+              </span>
             </p>
 
             <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Tema</p>
@@ -770,6 +986,9 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
                 </button>
               ))}
             </div>
+            {selCfg.rounds > 10 && themeId !== "all" && (
+              <p className="mt-2 text-[11px] font-semibold text-[var(--text-muted)]">Se o tema tiver menos de {selCfg.rounds} imagens, completamos com imagens de outros temas.</p>
+            )}
 
             <button
               type="button"
@@ -777,13 +996,15 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
               onClick={() => { soundEffects.playTap(); startGame(level); }}
               className={cn(
                 "cq2-shine relative mt-6 w-full cursor-pointer overflow-hidden rounded-2xl border-b-4 bg-gradient-to-r px-4 py-3.5 text-lg font-black text-white shadow-lg transition-transform active:translate-y-[2px] active:border-b-2 disabled:cursor-not-allowed disabled:opacity-50",
-                LEVELS[level].grad,
-                level === "easy" ? "border-green-800" : level === "intermediate" ? "border-orange-700" : "border-red-900"
+                selCfg.grad,
+                selCfg.edge
               )}
             >
-              Jouer ! ▶ {LEVELS[level].emoji} {LEVELS[level].label}
+              Jouer ! ▶ {selCfg.emoji} {selCfg.label}
             </button>
           </div>
+
+          {arenaPanel}
         </div>
       </div>
     );
@@ -795,8 +1016,9 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       <div className="cq2-bg flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
         <div className="text-center">
           <p className={cn("text-sm font-extrabold uppercase tracking-widest", levelCfg.text)}>
-            {levelCfg.emoji} Nível {levelCfg.label} · {levelCfg.seconds} s por palavra
+            {levelCfg.emoji} Nível {levelCfg.label} · {levelCfg.seconds} s por {mode === "phrase" ? "frase" : "palavra"}
           </p>
+          {duelOpponent && <p className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-fuchsia-500/15 px-3 py-1 text-xs font-extrabold text-fuchsia-600 dark:text-fuchsia-300"><Swords className="h-3.5 w-3.5" /> Duelo contra {duelOpponent}</p>}
           <div key={countdown} className="cq2-count mt-4 text-[110px] font-black leading-none text-[var(--text)]" aria-live="assertive">
             {countdown > 0 ? countdown : "Partez !"}
           </div>
@@ -811,14 +1033,14 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   if (phase === "done") {
     return (
       <div className="cq2-bg min-h-[calc(100vh-4rem)]">
-        <div className="mx-auto w-full max-w-lg px-4 py-6">
+        <div className="mx-auto w-full max-w-lg space-y-5 px-4 py-6">
           <Confetti active={confetti} onComplete={() => setConfetti(false)} />
           <div className="cq2-scene-in rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center shadow-lg">
             <div className="mx-auto h-40 w-40"><CestQuoiStickman mood={passed ? "dance" : "sad"} /></div>
             <p className={cn("text-xs font-extrabold uppercase tracking-widest", levelCfg.text)}>{levelCfg.emoji} Nível {levelCfg.label}</p>
             <h2 className="mt-1 flex items-center justify-center gap-2 text-3xl font-black text-[var(--text)]">
               <Trophy className={cn("h-7 w-7", passed ? "text-amber-500" : "text-slate-400")} />
-              {passed ? (levelsDone && level === "master" ? "Vous êtes Master !" : "Bravo !") : "Presque !"}
+              {passed ? (levelsDone && level === "native_phrase" ? "Vous êtes Natif !" : "Bravo !") : "Presque !"}
             </h2>
             <p className="mt-1 text-sm text-[var(--text-secondary)]">
               {passed ? `Você passou o nível ${levelCfg.label}!` : `Você precisa de ${need} acertos para passar. Tente de novo!`}
@@ -849,10 +1071,11 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
               goudGained={rewardSummary?.goud}
             />
 
-            <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+            <div className="mt-4 grid grid-cols-4 gap-2 text-center">
               <Stat label="Acertos" value={`${hits}/${rounds.length}`} />
               <Stat label="Pontos" value={String(score)} />
-              <Stat label="Melhor combo" value={`x${bestStreak}`} />
+              <Stat label="Combo" value={`x${bestStreak}`} />
+              <Stat label="Dicas" value={String(hintsTotal)} />
             </div>
 
             <div className="mt-4">
@@ -864,6 +1087,36 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
                 <div className={cn("h-full rounded-full transition-all duration-1000", passed ? "bg-green-500" : "bg-amber-500")} style={{ width: `${Math.min(100, (hits / need) * 100)}%` }} />
               </div>
             </div>
+
+            {submitMsg && (
+              <p
+                className={cn(
+                  "mt-4 rounded-xl px-3 py-2 text-xs font-bold",
+                  submitMsg.kind === "ok" ? "bg-green-500/15 text-green-700 dark:text-green-300" : submitMsg.kind === "error" ? "bg-red-500/15 text-red-700 dark:text-red-300" : "animate-pulse bg-[var(--surface-2)] text-[var(--text-secondary)]"
+                )}
+                role="status"
+              >
+                {submitMsg.kind === "ok" ? "🏆 " : ""}{submitMsg.text}
+              </p>
+            )}
+
+            {duelOpponent && (
+              <div
+                className={cn(
+                  "cq2-unlock mt-3 rounded-2xl border-2 px-3 py-3 text-sm font-bold",
+                  duelOutcome?.result === "win" ? "border-green-400 bg-green-500/10 text-green-700 dark:text-green-300" : duelOutcome?.result === "loss" ? "border-red-300 bg-red-500/10 text-red-700 dark:text-red-300" : "border-fuchsia-300 bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300"
+                )}
+              >
+                <p className="inline-flex items-center gap-1.5"><Swords className="h-4 w-4" /> Duelo contra {duelOpponent}</p>
+                {duelOutcome?.result ? (
+                  <p className="mt-1 text-base font-black">
+                    {duelOutcome.result === "win" ? "🏆 Você venceu!" : duelOutcome.result === "loss" ? "😢 Você perdeu desta vez." : "🤝 Empate!"} {duelOutcome.myScore} × {duelOutcome.theirScore}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs font-semibold">⏳ Sua pontuação foi guardada ({score} pts). Quando {duelOpponent} terminar, o resultado aparece na aba Duelos.</p>
+                )}
+              </div>
+            )}
 
             {unlockedNow && (
               <div className="cq2-unlock mt-4 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-50 to-green-100 px-3 py-3 text-sm font-bold text-green-800 dark:from-emerald-950/40 dark:to-green-950/40 dark:text-green-300">
@@ -881,7 +1134,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
                 <button
                   type="button"
                   onClick={() => { soundEffects.playTap(); startGame(nextAfterCurrent); }}
-                  className={cn("cursor-pointer rounded-2xl border-b-4 bg-gradient-to-r px-4 py-3 text-base font-black text-white shadow-md active:translate-y-[2px] active:border-b-2", LEVELS[nextAfterCurrent].grad, nextAfterCurrent === "intermediate" ? "border-orange-700" : "border-red-900")}
+                  className={cn("cursor-pointer rounded-2xl border-b-4 bg-gradient-to-r px-4 py-3 text-base font-black text-white shadow-md active:translate-y-[2px] active:border-b-2", LEVELS[nextAfterCurrent].grad, LEVELS[nextAfterCurrent].edge)}
                 >
                   Próximo nível: {LEVELS[nextAfterCurrent].emoji} {LEVELS[nextAfterCurrent].label} ▶
                 </button>
@@ -897,6 +1150,8 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
               <Link href="/dashboard" className="text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text)]">Voltar ao painel</Link>
             </div>
           </div>
+
+          {arenaPanel}
         </div>
       </div>
     );
@@ -906,22 +1161,36 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   if (!item) return null;
   const answered = roundState === "correct" || roundState === "reveal";
   const frac = Math.min(1, Math.max(0, timeLeft / totalMs));
-  const barColor = frac <= 0.33 ? "#ef4444" : frac <= 0.6 ? "#f59e0b" : "#22c55e";
+  const barColor = hintOpen ? "#38bdf8" : frac <= 0.33 ? "#ef4444" : frac <= 0.6 ? "#f59e0b" : "#22c55e";
   const heartsLeft = MAX_ATTEMPTS - attempt + 1;
+  const phraseMode = mode === "phrase";
+  const correctAnswer = answerOf(item, mode);
+  const penaltyPct = Math.round(HINT_PENALTY * 100);
 
   return (
     <div className="cq2-bg min-h-[calc(100vh-4rem)]">
       <div className="mx-auto w-full max-w-md space-y-2.5 px-3 py-3">
         <Confetti active={confetti && roundState === "correct"} onComplete={() => setConfetti(false)} />
 
+        {hintOpen && (
+          <CestQuoiHint
+            item={item}
+            mode={mode}
+            secondsLeft={pausedLeft / 1000}
+            onClose={closeHint}
+            onLetterClue={() => { letterRef.current = true; setLetterUsed(true); }}
+            letterAlready={letterUsed}
+          />
+        )}
+
         {/* ---------- HUD ---------- */}
         <div className="flex items-center justify-between gap-2 text-sm">
           <Link href="/dashboard" className="inline-flex items-center rounded-lg p-1 text-[var(--text-secondary)] hover:text-[var(--text)]" aria-label="Sair do jogo"><ArrowLeft className="h-5 w-5" /></Link>
           <span className={cn("inline-flex items-center gap-1 rounded-full bg-gradient-to-r px-3 py-1 text-xs font-extrabold text-white shadow", levelCfg.grad)}>
-            {levelCfg.emoji} {levelCfg.label}
+            {levelCfg.emoji} {levelCfg.short}
           </span>
           <span key={score} className="cq2-bump rounded-full bg-[var(--surface)] px-3 py-1 text-xs font-extrabold text-[var(--text)] shadow-sm ring-1 ring-[var(--border)]">{score} pts</span>
-          <span key={`s${streak}`} className={cn("cq2-bump inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-extrabold shadow-sm", streak > 1 ? "bg-orange-500 text-white" : "bg-[var(--surface)] text-[var(--text-muted)] ring-1 ring-[var(--border)]")}>
+          <span key={`s${streak}`} className={cn("cq2-bump inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-extrabold shadow-sm", streak > 1 ? "bg-gradient-to-r from-orange-500 to-red-500 text-white" : "bg-[var(--surface)] text-[var(--text-muted)] ring-1 ring-[var(--border)]")}>
             <span className={streak > 1 ? "cq2-flame" : ""}><Flame className="h-3.5 w-3.5" /></span> x{streak}
           </span>
           <span className="inline-flex gap-0.5" aria-label={`Tentativa ${attempt} de ${MAX_ATTEMPTS}`}>
@@ -939,8 +1208,14 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
           </button>
         </div>
 
+        {duelOpponent && (
+          <p className="flex items-center justify-center gap-1.5 rounded-full bg-fuchsia-500/15 px-3 py-1 text-[11px] font-extrabold text-fuchsia-700 dark:text-fuchsia-300">
+            <Swords className="h-3.5 w-3.5" /> Duelo contra {duelOpponent}
+          </p>
+        )}
+
         {/* progresso das rodadas */}
-        <div className="flex items-center gap-1" aria-label={`Palavra ${index + 1} de ${rounds.length}`}>
+        <div className="flex items-center gap-1" aria-label={`Imagem ${index + 1} de ${rounds.length}`}>
           {rounds.map((_, i) => (
             <span
               key={i}
@@ -953,15 +1228,15 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
         </div>
 
         {/* barra de tempo */}
-        <div className="h-3 overflow-hidden rounded-full bg-[var(--surface)] shadow-inner ring-1 ring-[var(--border)]">
+        <div className={cn("h-3 overflow-hidden rounded-full bg-[var(--surface)] shadow-inner ring-1 ring-[var(--border)]", hintOpen && "cq2-frozen")}>
           <div
-            className={cn("h-full rounded-full", running && frac <= 0.33 && "cq2-timer-urgent")}
+            className={cn("h-full rounded-full", running && !hintOpen && frac <= 0.33 && "cq2-timer-urgent")}
             style={{ width: `${frac * 100}%`, background: barColor, transition: "width 100ms linear, background .3s" }}
           />
         </div>
 
         {/* ---------- cena + painel do boneco ---------- */}
-        <div className={cn("overflow-hidden rounded-3xl border border-[var(--border)] bg-[#f1ece1] shadow-xl", shake && "cq-card-shake")}>
+        <div className={cn("overflow-hidden rounded-3xl border border-[var(--border)] bg-[#f1ece1] shadow-xl", shake && "cq-card-shake", streak >= 3 && roundState === "asking" && "cq2-fire")}>
           <div key={item.id} className="cq2-scene-in">
             <div className="relative w-full" style={{ aspectRatio: `${item.w} / ${item.h}` }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -969,6 +1244,11 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
               <SceneArrow item={item} />
               <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white backdrop-blur">{item.theme}</span>
               <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2.5 py-0.5 text-[10px] font-bold text-white backdrop-blur">{index + 1} / {rounds.length}</span>
+              {hintUsed && !answered && (
+                <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-sky-600/90 px-2.5 py-0.5 text-[10px] font-bold text-white backdrop-blur">
+                  <Lightbulb className="h-3 w-3" /> dica usada
+                </span>
+              )}
 
               {flash && <div key={flash + roundState + attempt} className={cn("pointer-events-none absolute inset-0", flash === "green" ? "cq2-flash-green" : "cq2-flash-red")} />}
               {roundState === "correct" && (
@@ -988,7 +1268,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
 
           {/* painel bege: relógio · boneco · balão de fala */}
           <div className="relative grid grid-cols-[88px_1fr_1fr] items-center gap-1 bg-[#f1ece1] px-2 pb-2 pt-2" style={{ minHeight: 190 }}>
-            <div className="self-start"><CountdownClock left={timeLeft} total={totalMs} running={running} /></div>
+            <div className="self-start"><CountdownClock left={timeLeft} total={totalMs} running={running && !hintOpen} /></div>
             <div className="h-[170px]"><CestQuoiStickman mood={mood} compact /></div>
             <div className="flex min-h-[90px] items-center">
               <div
@@ -1004,28 +1284,49 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
                     {item.fr}.
                   </span>
                 ) : (
-                  <span className="relative text-lg font-black text-[#333]">C&apos;est quoi ?</span>
+                  <span className="relative text-lg font-black text-[#333]">{phraseMode ? "Quelle phrase ?" : "C'est quoi ?"}</span>
                 )}
+                {answered && phraseMode && <p className="relative mt-1 text-[11px] font-semibold italic leading-snug text-[#444]">{correctAnswer}</p>}
                 {message && <p className="relative mt-1 text-[11px] font-bold leading-snug text-[#555]" role="status">{message}</p>}
               </div>
             </div>
           </div>
         </div>
 
+        {/* ---------- botão de dica ---------- */}
+        {roundState === "asking" && (
+          <button
+            type="button"
+            onClick={openHint}
+            className={cn(
+              "flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-b-4 border-sky-400 bg-gradient-to-r from-sky-50 to-cyan-50 px-3 py-2 text-sm font-black text-sky-700 shadow-sm transition-all active:translate-y-[2px] active:border-b-2 dark:from-sky-950/50 dark:to-cyan-950/40 dark:text-sky-300",
+              !hintUsed && frac < 0.5 && "cq2-hint-nudge"
+            )}
+            aria-label="Pedir uma dica (congela o tempo)"
+          >
+            <Lightbulb className="h-4 w-4" strokeWidth={2.8} />
+            {hintUsed ? "Rever a dica" : "Dica"}
+            <span className="rounded-full bg-sky-500/15 px-2 py-0.5 text-[10px] font-extrabold">
+              {hintUsed ? "pontos já reduzidos" : `congela o tempo · −${penaltyPct}% pts`}
+            </span>
+          </button>
+        )}
+
         {/* ---------- alternativas ---------- */}
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className={cn("grid gap-2.5", phraseMode ? "grid-cols-1" : "grid-cols-2")}>
           {options.map((opt, i) => {
             const isWrong = wrongPicks.includes(opt);
-            const isRight = answered && opt === item.fr;
+            const isRight = answered && opt === correctAnswer;
             return (
               <button
                 key={`${item.id}-${attempt}-${opt}`}
                 type="button"
-                disabled={roundState !== "asking" || isWrong}
+                disabled={roundState !== "asking" || isWrong || hintOpen}
                 onClick={() => pick(opt)}
                 style={{ animationDelay: `${i * 70}ms` }}
                 className={cn(
-                  "cq2-opt-in relative min-h-[58px] cursor-pointer rounded-2xl border-2 border-b-4 px-3 py-2 text-sm font-extrabold transition-colors",
+                  "cq2-opt-in cq2-opt-hover relative flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-b-4 px-3 py-2 font-extrabold transition-colors",
+                  phraseMode ? "min-h-[56px] text-left text-[13px] leading-snug" : "min-h-[58px] text-sm",
                   isRight
                     ? "cq2-opt-correct border-green-700 bg-green-500 text-white"
                     : isWrong
@@ -1034,8 +1335,8 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
                   roundState !== "asking" && !isRight && !isWrong && "opacity-45"
                 )}
               >
-                <span className="absolute left-2 top-1 text-[10px] font-bold opacity-40">{i + 1}</span>
-                {opt}
+                <span className="cq2-chip" style={{ background: isRight ? "#15803d" : isWrong ? "#f87171" : OPTION_COLORS[i % OPTION_COLORS.length] }}>{OPTION_LETTERS[i] ?? i + 1}</span>
+                <span className={cn("min-w-0 flex-1", !phraseMode && "text-center")}>{opt}</span>
               </button>
             );
           })}
@@ -1043,7 +1344,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
 
         {answered && (
           <div className="cq2-opt-in flex gap-2">
-            <button type="button" onClick={() => speakFrench(item.speak)} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-b-4 border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm font-bold text-[var(--text)] hover:bg-[var(--surface-2)] active:translate-y-[2px] active:border-b-2">
+            <button type="button" onClick={() => speakAnswer(item, mode)} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-b-4 border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm font-bold text-[var(--text)] hover:bg-[var(--surface-2)] active:translate-y-[2px] active:border-b-2">
               <Volume2 className="h-4 w-4" /> Ouvir de novo
             </button>
             <button type="button" onClick={goNext} className="flex-1 cursor-pointer rounded-2xl border-b-4 border-blue-900 bg-[var(--accent)] px-3 py-2 text-sm font-black text-white hover:brightness-110 active:translate-y-[2px] active:border-b-2">

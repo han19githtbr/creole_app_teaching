@@ -82,5 +82,6 @@ export async function listApprovedCquoiItems(): Promise<CestQuoiItem[]> {
       w: doc.cquoi!.w,
       h: doc.cquoi!.h,
       arrow: { x: doc.cquoi!.arrow.x, y: doc.cquoi!.arrow.y },
+      ...(doc.cquoi!.hint?.d && doc.cquoi!.hint?.u ? { hint: { d: doc.cquoi!.hint.d, u: doc.cquoi!.hint.u, f: doc.cquoi!.hint.f || undefined } } : {}),
     }));
 }

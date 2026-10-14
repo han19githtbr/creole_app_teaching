@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { LANGUAGE_META, type AppLanguage } from "@/lib/languageShared";
-import { LayoutDashboard, BookOpen, MessageSquare, MessageCircleQuestion, Radio, Video, Sparkles, ImagePlus } from "lucide-react";
+import { LayoutDashboard, BookOpen, MessageSquare, MessageCircleQuestion, Radio, Video, Sparkles, ImagePlus, Megaphone } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Painel geral", icon: LayoutDashboard },
@@ -15,6 +15,7 @@ const items = [
   { href: "/admin/posts", label: "Postagens", icon: MessageSquare },
   { href: "/admin/answers", label: "Respostas", icon: MessageCircleQuestion },
   { href: "/admin/imagens", label: "Imagens com IA", icon: ImagePlus },
+  { href: "/admin/propaganda", label: "Propagandas", icon: Megaphone },
   { href: "/admin/live", label: "Ao vivo", icon: Radio },
 ];
 

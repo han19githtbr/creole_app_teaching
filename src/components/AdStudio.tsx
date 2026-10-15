@@ -37,7 +37,7 @@ type Drag =
   | { mode: "move"; id: string; sx: number; sy: number; ox: number; oy: number }
   | { mode: "resize"; id: string; handle: Handle; orig: Layer }
   | { mode: "rotate"; id: string };
-type PickerTarget = { type: "layer" } | { type: "pick"; field: "heroImage" | "teacherImage" } | { type: "bg" };
+type PickerTarget = { type: "layer" } | { type: "pick"; field: "heroImage" | "teachers" } | { type: "bg" };
 
 interface SavedItem {
   _id: string;
@@ -49,7 +49,7 @@ interface SavedItem {
 }
 
 const BRAND_KEY = "adstudio:brand";
-const DEFAULT_BRAND: Brand = { name: "Prof. Handy", handle: "", url: "", contact: "" };
+const DEFAULT_BRAND: Brand = { name: "frances_com_tres_nativos", handle: "", url: "", contact: "" };
 
 function paletteOf(d: AdDesign): Palette {
   return d.customPalette ?? PALETTES.find((p) => p.id === d.paletteId) ?? PALETTES[0];
@@ -58,9 +58,12 @@ function paletteOf(d: AdDesign): Palette {
 function designFromTemplate(templateId: string, language: AppLanguage, format: FormatId, brand: Brand, data: AdData, picks: Picks, keep?: { customPalette?: Palette; paletteId?: string; name?: string }): AdDesign {
   const t = getTemplate(templateId) ?? getTemplate("hero")!;
   const res = t.build({ language, format: FORMATS[format], brand, data, picks });
+  const used = new Set([picks.heroImage, picks.gameImage, ...(picks.teacherImages ?? [])]);
+  const assets = data.images.filter((i) => i.id.startsWith("up-") && used.has(i.id));
   return {
     version: 1,
     source: { templateId: t.id, picks },
+    assets: assets.length ? assets : undefined,
     name: keep?.name ?? `${t.name} · ${COPY[language].name}`,
     language,
     format,
@@ -97,12 +100,11 @@ function rescaleSlides(slides: Slide[], from: FormatId, to: FormatId): Slide[] {
   }));
 }
 
-function fileToDataUrl(file: File): Promise<string> {
+function fileToDataUrl(file: File, max = 1400): Promise<string> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
-      const max = 1400;
       const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
       const c = document.createElement("canvas");
       c.width = Math.round(img.naturalWidth * k);
@@ -141,7 +143,13 @@ export function AdStudio({ initialData }: { initialData: AdData }) {
   const [data, setData] = useState<AdData>(initialData);
   const [loadingLang, setLoadingLang] = useState(false);
   const [brand, setBrandState] = useState<Brand>({ ...DEFAULT_BRAND, url: initialData.appUrl });
-  const [picks, setPicks] = useState<Picks>({});
+  const [picks, setPicksState] = useState<Picks>({});
+  const picksRef = useRef<Picks>({});
+  const setPicks = useCallback((next: Picks | ((p: Picks) => Picks)) => {
+    const value = typeof next === "function" ? next(picksRef.current) : next;
+    picksRef.current = value;
+    setPicksState(value);
+  }, []);
   const [design, setDesignState] = useState<AdDesign>(() => designFromTemplate("hero", initialData.language, "feed45", { ...DEFAULT_BRAND, url: initialData.appUrl }, initialData, {}));
   const designRef = useRef(design);
   const hist = useRef<{ past: AdDesign[]; future: AdDesign[]; key?: string; at: number }>({ past: [], future: [], at: 0 });
@@ -304,6 +312,7 @@ export function AdStudio({ initialData }: { initialData: AdData }) {
       const raw = localStorage.getItem(BRAND_KEY);
       const saved = raw ? (JSON.parse(raw) as Partial<Brand>) : {};
       const merged: Brand = { ...DEFAULT_BRAND, ...saved };
+      if (!merged.name || merged.name === "Prof. Handy") merged.name = DEFAULT_BRAND.name;
       if (!merged.url) merged.url = initialData.appUrl || window.location.origin;
       // Hidrata a marca salva neste navegador (só existe no cliente) e refaz o modelo inicial com ela.
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -392,7 +401,7 @@ export function AdStudio({ initialData }: { initialData: AdData }) {
   };
 
   // ---------------------------------------------------------------- camadas
-  const addLayer = (kind: LayerKind, extra?: { screen?: ScreenKind; src?: string }) => {
+  const addLayer = (kind: LayerKind, extra?: { screen?: ScreenKind; src?: string; icon?: "instagram" | "facebook" }) => {
     const layer = makeLayer(kind, fmt.w, fmt.h, extra);
     if (layer.kind === "phone") {
       layer.accentColor = "@bg2";
@@ -480,7 +489,15 @@ export function AdStudio({ initialData }: { initialData: AdData }) {
   // ---------------------------------------------------------------- imagens da biblioteca
   const onLibraryClick = (img: LibImage) => {
     if (picker?.type === "pick") {
-      setPicks((p) => ({ ...p, [picker.field]: img.id }));
+      if (picker.field === "teachers") {
+        const cur = picksRef.current.teacherImages ?? [];
+        if (cur.includes(img.id)) return flash("Essa foto já foi adicionada.");
+        if (cur.length >= 5) return flash("Máximo de 5 fotos de professores.");
+        setPicks({ ...picksRef.current, teacherImages: [...cur, img.id] });
+        flash(`Foto adicionada (${cur.length + 1}). Clique em outras ou em “concluir”.`);
+        return;
+      }
+      setPicks((p) => ({ ...p, heroImage: img.id }));
       setPicker(null);
       setTab("modelos");
       flash("Imagem escolhida. Clique em “Usar este” ou “Refazer o layout”.");
@@ -517,13 +534,29 @@ export function AdStudio({ initialData }: { initialData: AdData }) {
   const onUpload = async (file: File) => {
     try {
       const url = await fileToDataUrl(file);
-      const img: LibImage = { id: uid("up"), src: url, title: file.name, group: "Enviadas", kind: "generated" };
-      if (picker?.type === "pick") {
-        flash("Para modelos, use imagens da biblioteca. Depois do modelo pronto, troque a imagem na própria camada.");
-        return;
-      }
+      const img: LibImage = { id: uid("up-"), src: url, title: file.name, group: "Enviadas", kind: "generated" };
+      if (picker?.type === "pick") return void (await onUploadPick(file, picker.field));
       onLibraryClick(img);
       flash("Imagem enviada. Ela fica salva dentro da peça.");
+    } catch {
+      flash("Não foi possível ler essa imagem.");
+    }
+  };
+
+  /** Envio direto para os modelos (foto de professor ou imagem principal). */
+  const onUploadPick = async (file: File, field: "heroImage" | "teachers") => {
+    try {
+      const url = await fileToDataUrl(file, field === "teachers" ? 900 : 1400);
+      const img: LibImage = { id: uid("up-"), src: url, title: file.name, group: "Enviadas", kind: field === "teachers" ? "teacher" : "generated", portrait: field === "teachers" };
+      setData((d) => ({ ...d, images: [img, ...d.images] }));
+      if (field === "teachers") {
+        const cur = picksRef.current.teacherImages ?? [];
+        if (cur.length >= 5) return flash("Máximo de 5 fotos de professores.");
+        setPicks({ ...picksRef.current, teacherImages: [...cur, img.id] });
+        flash(`Foto adicionada (${cur.length + 1}). Clique em “Usar este” ou “Refazer o layout”.`);
+      } else {
+        setPicks({ ...picksRef.current, heroImage: img.id });
+      }
     } catch {
       flash("Não foi possível ler essa imagem.");
     }
@@ -852,7 +885,11 @@ export function AdStudio({ initialData }: { initialData: AdData }) {
       }
       pushHistory();
       setDesign(json.design);
-      setBrandState((b) => ({ ...b }));
+      setPicks(json.design.source?.picks ?? {});
+      if (json.design.assets?.length) {
+        const extra = json.design.assets;
+        setData((d) => ({ ...d, images: [...extra.filter((a) => !d.images.some((i) => i.id === a.id)), ...d.images] }));
+      }
       setSavedId(item._id);
       setSlideIdx(0);
       setSelId(null);
@@ -875,7 +912,7 @@ export function AdStudio({ initialData }: { initialData: AdData }) {
   const setToken = (t: PaletteToken, hex: string) => commit((d) => ({ ...d, customPalette: { ...paletteOf(d), id: "custom", name: "Personalizada", colors: { ...paletteOf(d).colors, [t]: hex } } }), { key: `tok:${t}` });
   const setBg = (patch: Partial<Background>, key?: string) => patchSlide(slideIdx, (s) => ({ ...s, bg: { ...s.bg, ...patch } }), { key });
 
-  const pickerLabel = picker?.type === "pick" ? (picker.field === "heroImage" ? "imagem principal do modelo" : "foto do professor") : picker?.type === "bg" ? "fundo do slide" : picker?.type === "layer" ? "imagem da camada selecionada" : null;
+  const pickerLabel = picker?.type === "pick" ? (picker.field === "heroImage" ? "imagem principal do modelo" : "foto dos professores (clique em várias)") : picker?.type === "bg" ? "fundo do slide" : picker?.type === "layer" ? "imagem da camada selecionada" : null;
   const canUndo = histInfo.undo > 0;
   const canRedo = histInfo.redo > 0;
 
@@ -949,6 +986,7 @@ export function AdStudio({ initialData }: { initialData: AdData }) {
                   setPicker({ type: "pick", field });
                   setTab("imagens");
                 }}
+                onUploadPick={onUploadPick}
               />
             )}
             {tab === "elementos" && <ElementsPanel onAdd={addLayer} onAddEmoji={addEmoji} />}

@@ -175,6 +175,15 @@ export function Inspector({ layer, palette, onChange, onPickImage, onDelete, onD
         </Section>
       )}
 
+      {L.kind === "icon" && (
+        <Section title="Ícone de rede social">
+          <Segmented value={L.icon} options={[{ value: "instagram", label: "Instagram" }, { value: "facebook", label: "Facebook" }]} onChange={(v) => set({ icon: v, name: v === "instagram" ? "Ícone Instagram" : "Ícone Facebook" })} />
+          <Segmented value={L.style} options={[{ value: "brand", label: "Colorido" }, { value: "solid", label: "Só o desenho" }]} onChange={(v) => set({ style: v })} />
+          {L.style === "solid" && <ColorField label="Cor" value={L.color} palette={palette} onChange={(v) => set({ color: v })} />}
+          <Toggle label="Sombra" value={!!L.shadow} onChange={(v) => set({ shadow: v })} />
+        </Section>
+      )}
+
       {L.kind === "button" && (
         <Section title="Botão (chamada para ação)">
           <div className="grid grid-cols-[64px_1fr] gap-2">

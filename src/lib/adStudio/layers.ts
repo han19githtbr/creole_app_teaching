@@ -3,6 +3,7 @@ import type {
   Background,
   ButtonLayer,
   CardLayer,
+  IconLayer,
   ImageLayer,
   Layer,
   LayerKind,
@@ -164,6 +165,17 @@ export function buttonLayer(text: string, x: number, y: number, w: number, h: nu
   };
 }
 
+export function iconLayer(icon: IconLayer["icon"], x: number, y: number, size: number, o: Partial<IconLayer> = {}): IconLayer {
+  return {
+    ...base(o.name ?? (icon === "instagram" ? "Ícone Instagram" : "Ícone Facebook"), x, y, size, size),
+    kind: "icon",
+    icon,
+    style: "brand",
+    color: "@light",
+    ...o,
+  };
+}
+
 export function defaultBackground(o: Partial<Background> = {}): Background {
   return {
     type: "gradient",
@@ -194,10 +206,11 @@ export const LAYER_KIND_LABEL: Record<LayerKind, string> = {
   stat: "Número",
   list: "Lista",
   button: "Botão",
+  icon: "Ícone",
 };
 
 /** Camada nova com conteúdo de exemplo, centralizada no formato. */
-export function makeLayer(kind: LayerKind, W: number, H: number, extra: { src?: string; screen?: ScreenKind } = {}): Layer {
+export function makeLayer(kind: LayerKind, W: number, H: number, extra: { src?: string; screen?: ScreenKind; icon?: IconLayer["icon"] } = {}): Layer {
   const cx = (w: number) => (W - w) / 2;
   const cy = (h: number) => (H - h) / 2;
   switch (kind) {
@@ -219,6 +232,8 @@ export function makeLayer(kind: LayerKind, W: number, H: number, extra: { src?: 
       return statLayer(cx(300), cy(220), 300, 220);
     case "list":
       return listLayer(["Primeiro benefício", "Segundo benefício", "Terceiro benefício"], cx(W * 0.8), cy(300), W * 0.8, 300);
+    case "icon":
+      return iconLayer(extra.icon ?? "instagram", cx(140), cy(140), 140);
     case "button":
       return buttonLayer("Comece agora", cx(W * 0.7), cy(110), W * 0.7, 110);
   }

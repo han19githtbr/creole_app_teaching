@@ -25,11 +25,13 @@ export function TemplatesPanel(props: {
   onLanguage: (l: AppLanguage) => void;
   onApply: (id: string, mode: "replace" | "append") => void;
   onReapply: () => void;
-  onPickImage: (field: "heroImage" | "teacherImage") => void;
+  onPickImage: (field: "heroImage" | "teachers") => void;
+  onUploadPick: (file: File, field: "heroImage" | "teachers") => void;
 }) {
   const { language, data, picks, setPicks } = props;
   const list = templatesFor(language);
   const words = COPY[language].words;
+  const teacherIds = picks.teacherImages ?? [];
   return (
     <div className="space-y-4 p-3">
       <Section title="Idioma da propaganda">
@@ -50,15 +52,47 @@ export function TemplatesPanel(props: {
         <Select label="Lição em destaque" value={picks.lessonId ?? data.lessons[0]?.id ?? ""} options={data.lessons.length ? data.lessons.map((l) => ({ value: l.id, label: l.title })) : [{ value: "", label: "(sem lições publicadas)" }]} onChange={(v) => setPicks({ ...picks, lessonId: v })} />
         <Select label="Desafio (engajamento e jogo)" value={picks.challengeId ?? data.challenges[0]?.id ?? ""} options={data.challenges.map((c) => ({ value: c.id, label: c.label.slice(0, 60) }))} onChange={(v) => setPicks({ ...picks, challengeId: v })} />
         <Select label="Palavra do dia" value={String(picks.wordIndex ?? 0)} options={words.map((w, i) => ({ value: String(i), label: `${w.term} — ${w.pt}` }))} onChange={(v) => setPicks({ ...picks, wordIndex: Number(v) })} />
-        <div className="grid grid-cols-2 gap-2">
-          <button type="button" className={btn} onClick={() => props.onPickImage("heroImage")}>🖼️ Imagem principal{picks.heroImage ? " ✓" : ""}</button>
-          <button type="button" className={btn} onClick={() => props.onPickImage("teacherImage")}>👤 Foto do professor{picks.teacherImage ? " ✓" : ""}</button>
-        </div>
-        {(picks.heroImage || picks.teacherImage) && (
-          <button type="button" className="text-xs font-semibold text-[var(--accent-soft)] underline" onClick={() => setPicks({ ...picks, heroImage: undefined, teacherImage: undefined })}>
-            Voltar às imagens automáticas
+        <button type="button" className={cn(btn, "w-full")} onClick={() => props.onPickImage("heroImage")}>🖼️ Imagem principal{picks.heroImage ? " ✓" : " (automática)"}</button>
+        {picks.heroImage && (
+          <button type="button" className="text-xs font-semibold text-[var(--accent-soft)] underline" onClick={() => setPicks({ ...picks, heroImage: undefined })}>
+            Voltar à imagem automática
           </button>
         )}
+        <div className="rounded-md border border-[var(--border)] p-2">
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">Fotos dos professores (até 5)</p>
+          <div className="mb-2 flex flex-wrap gap-2">
+            {teacherIds.map((id) => {
+              const img = data.images.find((i) => i.id === id || i.src === id);
+              return (
+                <div key={id} className="relative h-14 w-14">
+                  <div className="h-full w-full overflow-hidden rounded-full border-2 border-[var(--border-strong)] bg-[var(--surface-2)]">
+                    {img && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={img.src} alt={img.title} className="h-full w-full object-cover" style={{ objectPosition: "50% 20%" }} />
+                    )}
+                  </div>
+                  <button type="button" title="Remover foto" aria-label="Remover foto" onClick={() => setPicks({ ...picks, teacherImages: teacherIds.filter((x) => x !== id) })} className="absolute -right-1 -top-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+            {teacherIds.length === 0 && <p className="text-xs text-[var(--text-muted)]">Nenhuma escolhida — usando a foto padrão do professor.</p>}
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
+            <button type="button" className={btn} disabled={teacherIds.length >= 5} onClick={() => props.onPickImage("teachers")}>➕ Da biblioteca</button>
+            <label className={cn(btn, "flex cursor-pointer items-center justify-center gap-1", teacherIds.length >= 5 && "pointer-events-none opacity-50")}>
+              <Upload className="h-4 w-4" /> Do computador
+              <input type="file" accept="image/png,image/jpeg,image/webp" multiple className="hidden" onChange={(e) => { Array.from(e.target.files ?? []).slice(0, 5 - teacherIds.length).forEach((f) => props.onUploadPick(f, "teachers")); e.target.value = ""; }} />
+            </label>
+          </div>
+          {teacherIds.length > 0 && (
+            <button type="button" className="mt-1.5 text-xs font-semibold text-[var(--accent-soft)] underline" onClick={() => setPicks({ ...picks, teacherImages: undefined })}>
+              Voltar à foto padrão
+            </button>
+          )}
+          <p className="mt-1.5 text-[11px] text-[var(--text-muted)]">Toque no × para remover uma foto. Depois clique em “Usar este” ou “Refazer o layout”.</p>
+        </div>
       </Section>
 
       {props.hasSource && (
@@ -107,7 +141,7 @@ const SCREEN_BUTTONS: { screen: ScreenKind; label: string }[] = [
 
 const EMOJIS = ["🇭🇹", "🇫🇷", "🇧🇷", "🔥", "⭐", "🎉", "🏆", "🚀", "📚", "🎥", "📡", "🎮", "💡", "❤️", "👉", "✅", "🆕", "🎁", "🗣️", "🌴"];
 
-export function ElementsPanel({ onAdd, onAddEmoji }: { onAdd: (kind: LayerKind, extra?: { screen?: ScreenKind }) => void; onAddEmoji: (e: string) => void }) {
+export function ElementsPanel({ onAdd, onAddEmoji }: { onAdd: (kind: LayerKind, extra?: { screen?: ScreenKind; icon?: "instagram" | "facebook" }) => void; onAddEmoji: (e: string) => void }) {
   return (
     <div className="space-y-4 p-3">
       <Section title="Básicos">
@@ -119,6 +153,8 @@ export function ElementsPanel({ onAdd, onAddEmoji }: { onAdd: (kind: LayerKind, 
           <button className={btn} onClick={() => onAdd("list")}>✅ Lista</button>
           <button className={btn} onClick={() => onAdd("stat")}>🔢 Número</button>
           <button className={btn} onClick={() => onAdd("card")}>🧩 Cartão</button>
+          <button className={btn} onClick={() => onAdd("icon", { icon: "instagram" })}>📷 Ícone Instagram</button>
+          <button className={btn} onClick={() => onAdd("icon", { icon: "facebook" })}>👍 Ícone Facebook</button>
         </div>
       </Section>
       <Section title="Celular com tela do app">
@@ -170,7 +206,7 @@ export function ImagesPanel(props: {
       {props.pickerFor && (
         <div className="rounded-lg border border-amber-300 bg-amber-50 p-2 text-xs font-semibold text-amber-900">
           Clique numa imagem para usar como: {props.pickerFor}.{" "}
-          <button className="underline" onClick={props.onCancelPicker}>cancelar</button>
+          <button className="underline" onClick={props.onCancelPicker}>concluir</button>
         </div>
       )}
       <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-[var(--border-strong)] bg-[var(--surface)] px-3 py-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-2)]">
@@ -320,7 +356,7 @@ export function BrandPanel(props: {
   return (
     <div className="space-y-4 p-3">
       <Section title="Sua marca (aparece nas peças)">
-        <Field label="Nome do professor"><TextInput value={brand.name} onChange={(v) => props.setBrand({ ...brand, name: v })} /></Field>
+        <Field label="Nome do perfil (aparece ao lado do ícone do Instagram)"><TextInput value={brand.name} onChange={(v) => props.setBrand({ ...brand, name: v })} /></Field>
         <Field label="Link da plataforma"><TextInput value={brand.url} onChange={(v) => props.setBrand({ ...brand, url: v })} placeholder="https://…" /></Field>
         <Field label="@ do Instagram/Facebook"><TextInput value={brand.handle} onChange={(v) => props.setBrand({ ...brand, handle: v })} placeholder="@seuperfil" /></Field>
         <Field label="Contato (WhatsApp, e-mail…)"><TextInput value={brand.contact} onChange={(v) => props.setBrand({ ...brand, contact: v })} placeholder="opcional" /></Field>

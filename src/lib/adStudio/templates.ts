@@ -5,6 +5,7 @@ import { buildCaption, cleanUrl, COPY } from "./content";
 import {
   buttonLayer,
   cardLayer,
+  iconLayer,
   imageLayer,
   listLayer,
   newSlide,
@@ -65,6 +66,7 @@ interface Resolved extends TemplateCtx {
   hero?: LibImage;
   gameImg?: LibImage;
   teacher?: LibImage;
+  teachers: LibImage[];
   challenge?: AdChallenge;
   copy: (typeof COPY)[AppLanguage];
 }
@@ -93,11 +95,15 @@ function resolve(ctx: TemplateCtx): Resolved {
   const prefer = language === "kreyol" ? "cultura" : "turismo";
   const hero = byId(picks.heroImage) ?? ghibli.find((i) => i.id === prefer) ?? ghibli[0];
   const challenge = data.challenges.find((c) => c.id === picks.challengeId) ?? data.challenges[0];
-  const teachers = data.images.filter((i) => i.kind === "teacher");
-  const teacher = byId(picks.teacherImage) ?? teachers.find((t) => t.id.includes("studio")) ?? teachers[0];
+  const library = data.images.filter((i) => i.kind === "teacher");
+  const ids = picks.teacherImages ?? (picks.teacherImage ? [picks.teacherImage] : []);
+  let teachers = ids.map((id) => byId(id)).filter((t): t is LibImage => !!t);
+  if (!teachers.length) teachers = [library.find((t) => t.id.includes("studio")) ?? library[0]].filter((t): t is LibImage => !!t);
+  teachers = teachers.slice(0, 5);
+  const teacher = teachers[0];
   const gameImg = byId(picks.gameImage);
   const lesson = data.lessons.find((l) => l.id === picks.lessonId) ?? data.lessons[0];
-  return { ...ctx, hero, challenge, teacher, gameImg, lesson, copy: COPY[language] };
+  return { ...ctx, hero, challenge, teacher, teachers, gameImg, lesson, copy: COPY[language] };
 }
 
 function estLines(text: string, size: number, width: number): number {
@@ -138,17 +144,23 @@ function compose(spec: Spec, c: Resolved): Slide {
   const footH = url || c.brand.contact ? (wide ? 28 : 38) : 0;
   const barH = wide ? 40 : mode === "split" ? 46 : 54;
 
-  // Barra de marca
+  // Barra de marca: ícone do Instagram + nome do perfil (esquerda) e idioma
+  const chipRow = mode === "split" && !wide;
+  const iconS = wide ? 36 : mode === "split" ? 42 : 52;
+  const nameSize = wide ? 20 : mode === "split" ? 28 : 34;
+  const chipW = chipRow ? Math.min(leftW, 300) : wide ? 230 : Math.round(leftW * 0.4);
+  const nameW = chipRow ? leftW - iconS - 12 : leftW - chipW - iconS - 24;
+  if (c.brand.name) {
+    layers.push(
+      iconLayer("instagram", lx, top + (barH - iconS) / 2, iconS, { name: "Ícone Instagram" }),
+      textLayer(c.brand.name, lx + iconS + 12, top, nameW, barH, { name: "Perfil", size: nameSize, valign: "middle", color: "@light", shadow: true })
+    );
+  }
+  const chipY = chipRow ? top + barH + 10 : top;
   layers.push(
-    textLayer(`${c.brand.name ? "🎓 " + c.brand.name : ""}`, lx, top, leftW * (mode === "stack" ? 0.55 : 0.5), barH, {
-      name: "Marca",
-      size: wide ? 24 : 32,
-      valign: "middle",
-      color: "@light",
-    }),
-    textLayer(`${c.copy.flag} ${c.copy.name}`, lx + leftW * (mode === "stack" ? 0.5 : 0.46), top, leftW * (mode === "stack" ? 0.5 : 0.54), barH, {
+    textLayer(`${c.copy.flag} ${c.copy.name}`, chipRow ? lx : lx + leftW - chipW, chipY, chipW, chipRow ? 44 : barH, {
       name: "Idioma",
-      size: wide ? 22 : 30,
+      size: wide ? 20 : chipRow ? 26 : 30,
       align: "center",
       valign: "middle",
       color: "@dark",
@@ -158,14 +170,9 @@ function compose(spec: Spec, c: Resolved): Slide {
       autoFit: true,
     })
   );
-  // O texto do idioma fica ancorado à direita: ajusta a caixa para encostar na borda.
-  const chip = layers[layers.length - 1] as Layer & { x: number; w: number };
-  chip.w = leftW * (mode === "stack" ? 0.5 : 0.54);
-  chip.x = lx + leftW - chip.w;
-  (chip as unknown as { align: string }).align = "right";
 
   // Título
-  let y = top + barH + (wide ? 18 : 34);
+  let y = top + barH + (chipRow ? 54 : 0) + (wide ? 18 : 34);
   let hs = hs0;
   const linesA = () => estLines(spec.a, hs, leftW);
   const linesB = () => (spec.b ? estLines(spec.b, hs, leftW) : 0);
@@ -321,36 +328,30 @@ function heroVisual(): VisualFn {
     if (c.hero) {
       out.push(imageLayer(c.hero.src, box.x, iy, box.w, ih, { name: "Imagem principal", borderWidth: 10, radius: 48, shadow: true, focusX: 50, focusY: 55 }));
     }
-    if (c.teacher) {
-      const d = Math.round(Math.min(box.w, ih) * (mode === "split" ? 0.42 : 0.36));
-      const tx = box.x + (mode === "split" ? 14 : 28);
-      const ty = iy + ih - d - (mode === "split" ? 14 : 28);
-      out.push(
-        imageLayer(c.teacher.src, tx, ty, d, d, {
-          name: "Foto do professor",
-          radius: d / 2,
-          borderWidth: 10,
-          focusX: 50,
-          focusY: 16,
-          zoom: 1.25,
-          shadow: true,
-        })
-      );
-      if (c.brand.name) {
+    const n = c.teachers.length;
+    if (n > 0) {
+      // Fotos dos professores lado a lado (sobrepostas), centralizadas na base da imagem.
+      const margin = mode === "split" ? 14 : 28;
+      const overlap = n > 1 ? 0.78 : 1;
+      let d = Math.round(Math.min(box.w, ih) * (n === 1 ? (mode === "split" ? 0.42 : 0.36) : n === 2 ? 0.34 : 0.3));
+      const total = (k: number) => k + (n - 1) * k * overlap;
+      while (total(d) > box.w - margin * 2 && d > 60) d -= 4;
+      const step = d * overlap;
+      const startX = n === 1 ? box.x + margin : box.x + (box.w - total(d)) / 2;
+      const ty = iy + ih - d - margin;
+      c.teachers.forEach((t, i) => {
         out.push(
-          textLayer(c.brand.name, tx + d - 8, ty + d * 0.58, Math.min(box.w - d - 40, 420), 66, {
-            name: "Nome",
-            size: 30,
-            color: "@dark",
-            bgColor: "@primary",
-            bgPadding: 14,
-            bgRadius: 36,
-            valign: "middle",
-            align: "center",
+          imageLayer(t.src, startX + i * step, ty, d, d, {
+            name: `Professor ${i + 1}`,
+            radius: d / 2,
+            borderWidth: 10,
+            focusX: 50,
+            focusY: 16,
+            zoom: 1.25,
             shadow: true,
           })
         );
-      }
+      });
     }
     return out;
   };
@@ -491,7 +492,7 @@ const hero: TemplateInfo = {
       {
         name: "Apresentação",
         a: k ? "Aprenda o idioma" : "Fale francês",
-        b: k ? "do Haiti comigo" : "com confiança",
+        b: k ? "do Haiti com a gente" : "com confiança",
         sub: k
           ? "Lições, aulas em vídeo, aulas ao vivo, jogos e histórias animadas — tudo em um só lugar."
           : "Lições, aulas ao vivo, vídeos e o jogo C'est quoi ? para você evoluir de verdade.",
@@ -504,7 +505,7 @@ const hero: TemplateInfo = {
       },
       c
     );
-    return { slides: [slide], caption: buildCaption(c.language, c.brand, k ? "Aprenda crioulo haitiano comigo!" : "Aprenda francês comigo!") };
+    return { slides: [slide], caption: buildCaption(c.language, c.brand, k ? "Aprenda crioulo haitiano com a gente!" : "Aprenda francês com a gente!") };
   },
 };
 
@@ -523,7 +524,7 @@ const features: TemplateInfo = {
         name: "Funcionalidades",
         a: "Tudo para você",
         b: "aprender de verdade",
-        sub: k ? "Uma plataforma completa de Kreyòl, criada por um professor nativo." : "Uma plataforma completa de francês, criada por um professor nativo.",
+        sub: k ? "Uma plataforma completa de Kreyòl, criada por professores nativos." : "Uma plataforma completa de francês, criada por professores nativos.",
         cta: "Quero começar",
         ctaIcon: "✨",
         visual: gridVisual(),
@@ -610,8 +611,8 @@ const live: TemplateInfo = {
       {
         name: "Ao vivo",
         a: "Aulas ao vivo",
-        b: "com o professor",
-        sub: "Tire dúvidas em tempo real, pratique a conversação e reveja tudo depois nas aulas gravadas.",
+        b: "com os professores",
+        sub: "Tire dúvidas em tempo real com os professores, pratique a conversação e reveja tudo depois nas aulas gravadas.",
         bullets: ["Interação ao vivo pelo celular", "Aulas gravadas para rever quando quiser"],
         cta: "Quero participar",
         ctaIcon: "📡",
@@ -623,7 +624,7 @@ const live: TemplateInfo = {
       },
       c
     );
-    return { slides: [slide], caption: buildCaption(c.language, c.brand, "Aulas ao vivo e gravadas com o professor!") };
+    return { slides: [slide], caption: buildCaption(c.language, c.brand, "Aulas ao vivo e gravadas com os professores!") };
   },
 };
 
@@ -839,7 +840,7 @@ const carousel: TemplateInfo = {
       {
         name: "5 · Chamada final",
         a: "Vem aprender",
-        b: "comigo!",
+        b: "com a gente!",
         sub: "Aulas ao vivo, vídeos, lições e jogos esperando por você.",
         bullets: ["Comece hoje mesmo", "No seu ritmo, pelo celular"],
         cta: "Acesse a plataforma",

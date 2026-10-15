@@ -29,6 +29,9 @@ export function sanitizeDesign(input: unknown): { ok: true; design: AdDesign } |
       if (layer.kind === "phone") layer.imageSrc = safeSrc(layer.imageSrc);
     }
   }
+  d.assets = Array.isArray(d.assets)
+    ? d.assets.slice(0, 12).map((a) => ({ ...a, src: safeSrc(a.src) })).filter((a) => a.src)
+    : undefined;
   d.caption = typeof d.caption === "string" ? d.caption.slice(0, 5000) : "";
   d.name = typeof d.name === "string" ? d.name.slice(0, 120) : "Propaganda";
   return { ok: true, design: d };

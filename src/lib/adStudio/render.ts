@@ -6,6 +6,7 @@ import type {
   Background,
   ButtonLayer,
   CardLayer,
+  IconLayer,
   ImageLayer,
   Layer,
   ListLayer,
@@ -581,6 +582,49 @@ function drawButton(ctx: CanvasRenderingContext2D, L: ButtonLayer, o: RenderOpti
   ctx.fillText(label, L.w / 2, L.h / 2 + fit.size * 0.03);
 }
 
+function drawIcon(ctx: CanvasRenderingContext2D, L: IconLayer, o: RenderOptions) {
+  const s = Math.min(L.w, L.h);
+  ctx.save();
+  ctx.translate((L.w - s) / 2, (L.h - s) / 2);
+  const solid = L.style === "solid";
+  const fg = solid ? resolveColor(L.color, o.palette) : "#ffffff";
+  if (!solid) {
+    ctx.save();
+    setShadow(ctx, !!L.shadow, o.scale ?? 1, 0.6);
+    roundRectPath(ctx, 0, 0, s, s, s * (L.icon === "instagram" ? 0.28 : 0.22));
+    if (L.icon === "instagram") {
+      const g = ctx.createLinearGradient(0, s, s, 0);
+      g.addColorStop(0, "#feda75");
+      g.addColorStop(0.28, "#fa7e1e");
+      g.addColorStop(0.55, "#d62976");
+      g.addColorStop(0.8, "#962fbf");
+      g.addColorStop(1, "#4f5bd5");
+      ctx.fillStyle = g;
+    } else ctx.fillStyle = "#1877f2";
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.strokeStyle = fg;
+  ctx.fillStyle = fg;
+  if (L.icon === "instagram") {
+    ctx.lineWidth = s * 0.075;
+    roundRectPath(ctx, s * 0.2, s * 0.2, s * 0.6, s * 0.6, s * 0.17);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(s / 2, s / 2, s * 0.15, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(s * 0.68, s * 0.32, s * 0.04, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    ctx.font = fontString("sans", 900, s * 0.78);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("f", s * 0.56, s * 0.9);
+  }
+  ctx.restore();
+}
+
 // ---------------------------------------------------------------------------
 // Celular (mockup do app)
 // ---------------------------------------------------------------------------
@@ -1151,6 +1195,9 @@ function drawLayer(ctx: CanvasRenderingContext2D, layer: Layer, o: RenderOptions
       break;
     case "button":
       drawButton(ctx, layer, o);
+      break;
+    case "icon":
+      drawIcon(ctx, layer, o);
       break;
   }
   ctx.restore();

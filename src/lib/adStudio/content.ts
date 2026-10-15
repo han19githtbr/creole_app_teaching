@@ -90,13 +90,14 @@ export function buildCaption(language: AppLanguage, brand: Brand, topic: string)
   lines.push("");
   lines.push(
     language === "kreyol"
-      ? `Venha aprender ${c.ptName} comigo${brand.name ? ` (${brand.name})` : ""}: lições, aulas em vídeo, aulas ao vivo, jogos e histórias animadas em um só lugar.`
-      : `Venha aprender ${c.ptName} comigo${brand.name ? ` (${brand.name})` : ""}: lições, aulas em vídeo, aulas ao vivo, o jogo C'est quoi ? e ranking com outros alunos.`
+      ? `Venha aprender ${c.ptName} com a gente${brand.name ? ` (@${brand.name.replace(/^@/, "")})` : ""}: lições, aulas em vídeo, aulas ao vivo, jogos e histórias animadas em um só lugar.`
+      : `Venha aprender ${c.ptName} com a gente${brand.name ? ` (@${brand.name.replace(/^@/, "")})` : ""}: lições, aulas em vídeo, aulas ao vivo, o jogo C'est quoi ? e ranking com outros alunos.`
   );
   lines.push("");
   if (brand.url) lines.push(`👉 Acesse: ${brand.url}`);
   if (brand.contact) lines.push(`💬 Fale comigo: ${brand.contact}`);
-  if (brand.handle) lines.push(`📲 Siga ${brand.handle.startsWith("@") ? brand.handle : `@${brand.handle}`}`);
+  const handle = brand.handle || brand.name;
+  if (handle) lines.push(`📲 Siga @${handle.replace(/^@/, "")}`);
   lines.push("");
   lines.push(c.hashtags.join(" "));
   return lines.join("\n");

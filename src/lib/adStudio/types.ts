@@ -183,7 +183,15 @@ export interface ButtonLayer extends LayerBase {
   arrow: boolean;
 }
 
-export type Layer = TextLayer | ImageLayer | ShapeLayer | PhoneLayer | CardLayer | StatLayer | ListLayer | ButtonLayer;
+export interface IconLayer extends LayerBase {
+  kind: "icon";
+  icon: "instagram" | "facebook";
+  /** "brand" = ícone colorido da rede; "solid" = só o desenho, na cor escolhida. */
+  style: "brand" | "solid";
+  color: string;
+}
+
+export type Layer = IconLayer | TextLayer | ImageLayer | ShapeLayer | PhoneLayer | CardLayer | StatLayer | ListLayer | ButtonLayer;
 export type LayerKind = Layer["kind"];
 
 export interface Slide {
@@ -209,9 +217,12 @@ export interface Picks {
   lessonId?: string;
   heroImage?: string;
   gameImage?: string;
+  /** @deprecated use teacherImages. */
   teacherImage?: string;
   challengeId?: string;
   wordIndex?: number;
+  /** Fotos dos professores (3 ou mais): ids da biblioteca ou enviadas do computador. */
+  teacherImages?: string[];
 }
 
 export interface AdDesign {
@@ -227,6 +238,8 @@ export interface AdDesign {
   brand: Brand;
   slides: Slide[];
   caption: string;
+  /** Imagens enviadas do computador usadas nos modelos (para refazer o layout depois). */
+  assets?: LibImage[];
 }
 
 // ---------------------------------------------------------------------------

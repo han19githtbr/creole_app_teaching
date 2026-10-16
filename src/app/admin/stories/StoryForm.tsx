@@ -26,8 +26,10 @@ import {
   suggestedCaptionCount,
 } from "@/lib/storyAudio";
 import { defaultElementStarts } from "@/lib/storyTimeline";
-import { BookOpen, Calendar, Download, Film, Image as ImageIcon, Mic, Plus, RefreshCw, Trash2, Upload } from "lucide-react";
+import { BookOpen, Calendar, Download, Film, Image as ImageIcon, Mic, Plus, RefreshCw, Sparkles, Trash2, Upload } from "lucide-react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { identifyEntityType, detectActionFromCaption, ACTION_METAS } from "@/lib/storyLifeEngine";
+
 
 type Caption = { start: number; end: number; kreyol: string; portuguese: string };
 type ElementCueValue = { kreyol: string; start: number };
@@ -318,11 +320,35 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
       {sceneElements.length > 0 && (
         <section className="space-y-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <div><h2 className="font-semibold text-[var(--text)]">Elementos da cena</h2><p className="mt-1 text-xs text-[var(--text-muted)]">Cada elemento aparece e fica em destaque na imagem a partir do segundo marcado — no player e no vídeo exportado. Por padrão eles se dividem igualmente ao longo da narração; ajuste para coincidir com o momento em que você fala cada palavra.</p></div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="font-semibold text-[var(--text)]">Elementos com Vida da cena</h2>
+                <span className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+                  <Sparkles className="h-3 w-3" /> Reativo à Narração
+                </span>
+              </div>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
+                Cada elemento ganha vida e se comporta realisticamente de acordo com as ações descritas no áudio e na legenda (ex.: pássaros voam, cachorros correm/latem, árvores balançam ao vento, tambores vibram).
+              </p>
+            </div>
             <Button type="button" variant="outline" size="sm" onClick={() => setCueOverrides({})} disabled={Object.keys(cueOverrides).length === 0}><RefreshCw className="h-4 w-4" /> Distribuir automaticamente</Button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {sceneElements.map((element, index) => <label key={element.kreyol} className="rounded-lg border border-[var(--border-soft)] p-3 text-[10px] font-medium text-[var(--text-muted)]"><span className="block text-sm font-semibold text-[var(--text)]">{element.kreyol} <span className="font-normal text-[var(--text-muted)]">· {element.pt}</span></span>Aparece em (s)<Input type="number" min="0" max={audioDuration || undefined} step="0.1" value={elementStarts[index]} onChange={(event) => setCueOverrides((current) => ({ ...current, [element.kreyol]: Math.max(0, Number(event.target.value) || 0) }))} className="mt-1 h-8" /></label>)}
+            {sceneElements.map((element, index) => {
+              const entity = identifyEntityType(`${element.pt} ${element.kreyol}`);
+              return (
+                <label key={element.kreyol} className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-2)]/30 p-3 text-[10px] font-medium text-[var(--text-muted)]">
+                  <span className="block text-sm font-semibold text-[var(--text)]">
+                    {element.kreyol} <span className="font-normal text-[var(--text-muted)]">· {element.pt}</span>
+                  </span>
+                  <span className="mt-1 block text-[11px] text-[var(--accent)] font-medium">
+                    Tipo: {entity} (anima com narração)
+                  </span>
+                  <span className="mt-2 block">Aparece em (segundos)</span>
+                  <Input type="number" min="0" max={audioDuration || undefined} step="0.1" value={elementStarts[index]} onChange={(event) => setCueOverrides((current) => ({ ...current, [element.kreyol]: Math.max(0, Number(event.target.value) || 0) }))} className="mt-1 h-8" />
+                </label>
+              );
+            })}
           </div>
         </section>
       )}
@@ -336,14 +362,51 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
           </div>
         </div>
         <div className="space-y-3">
-          {captions.map((caption, index) => <div key={index} className="grid gap-3 rounded-lg border border-[var(--border-soft)] p-3 sm:grid-cols-[110px_1fr_1fr_36px]">
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-1"><label className="text-[10px] font-medium text-[var(--text-muted)]">Início (s)<Input type="number" min="0" max={audioDuration || undefined} step="0.1" value={caption.start} onChange={(event) => changeCaption(index, "start", event.target.value)} className="mt-1 h-8" /></label><label className="text-[10px] font-medium text-[var(--text-muted)]">Fim (s)<Input type="number" min="0" max={audioDuration || undefined} step="0.1" value={caption.end} onChange={(event) => changeCaption(index, "end", event.target.value)} className="mt-1 h-8" /></label></div>
-            <label className="text-[10px] font-semibold text-[var(--text-muted)]">KREYÒL<Textarea value={caption.kreyol} onChange={(event) => changeCaption(index, "kreyol", event.target.value)} rows={2} required className="mt-1 text-sm font-normal" placeholder="Sa k ap pase nan istwa a..." /></label>
-            <label className="text-[10px] font-semibold text-[var(--text-muted)]">PORTUGUÊS<Textarea value={caption.portuguese} onChange={(event) => changeCaption(index, "portuguese", event.target.value)} rows={2} required className="mt-1 text-sm font-normal" placeholder="Tradução da fala..." /></label>
-            <Button type="button" variant="ghost" size="sm" title="Remover trecho" aria-label="Remover trecho" disabled={captions.length === 1} onClick={() => { setCaptionsEdited(true); setCaptions((items) => items.filter((_, itemIndex) => itemIndex !== index)); }} className="self-center px-2 text-red-600"><Trash2 className="h-4 w-4" /></Button>
-          </div>)}
+          {captions.map((caption, index) => {
+            const detectedActions = sceneElements.map((el) => {
+              const entity = identifyEntityType(`${el.pt} ${el.kreyol}`);
+              const action = detectActionFromCaption(entity, `${caption.portuguese} ${caption.kreyol}`);
+              return { element: el, entity, action, meta: ACTION_METAS[action] };
+            }).filter((a) => a.action !== "idle");
+
+            return (
+              <div key={index} className="space-y-2 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-2)]/20 p-3.5">
+                <div className="grid gap-3 sm:grid-cols-[110px_1fr_1fr_36px]">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-1">
+                    <label className="text-[10px] font-medium text-[var(--text-muted)]">Início (s)
+                      <Input type="number" min="0" max={audioDuration || undefined} step="0.1" value={caption.start} onChange={(event) => changeCaption(index, "start", event.target.value)} className="mt-1 h-8" />
+                    </label>
+                    <label className="text-[10px] font-medium text-[var(--text-muted)]">Fim (s)
+                      <Input type="number" min="0" max={audioDuration || undefined} step="0.1" value={caption.end} onChange={(event) => changeCaption(index, "end", event.target.value)} className="mt-1 h-8" />
+                    </label>
+                  </div>
+                  <label className="text-[10px] font-semibold text-[var(--text-muted)]">KREYÒL
+                    <Textarea value={caption.kreyol} onChange={(event) => changeCaption(index, "kreyol", event.target.value)} rows={2} required className="mt-1 text-sm font-normal" placeholder="Ex.: Zwazo a ap vole nan syèl la, chen an ap kouri..." />
+                  </label>
+                  <label className="text-[10px] font-semibold text-[var(--text-muted)]">PORTUGUÊS
+                    <Textarea value={caption.portuguese} onChange={(event) => changeCaption(index, "portuguese", event.target.value)} rows={2} required className="mt-1 text-sm font-normal" placeholder="Ex.: O pássaro voa pelo céu, o cachorro corre alegremente..." />
+                  </label>
+                  <Button type="button" variant="ghost" size="sm" title="Remover trecho" aria-label="Remover trecho" disabled={captions.length === 1} onClick={() => { setCaptionsEdited(true); setCaptions((items) => items.filter((_, itemIndex) => itemIndex !== index)); }} className="self-center px-2 text-red-600">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {detectedActions.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 pl-1 text-[11px]">
+                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">⚡ Ações ativadas neste trecho:</span>
+                    {detectedActions.map((d, dIdx) => (
+                      <span key={dIdx} className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300">
+                        {d.meta.emoji} {d.element.pt}: {d.meta.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
+
 
       <section className="space-y-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <h2 className="font-semibold text-[var(--text)]">Publicação</h2>

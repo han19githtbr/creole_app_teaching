@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import NextImage from "next/image";
-import { Download, GripHorizontal, Languages, Pause, Play, Undo2, Volume2, VolumeX } from "lucide-react";
+import { Download, GripHorizontal, Languages, Pause, Play, RotateCcw, Sparkles, Undo2, Volume2, VolumeX } from "lucide-react";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
 import { getStoryLabelLayout } from "@/lib/imageBank";
 import { useBankImage } from "@/hooks/useBankImage";
@@ -15,6 +15,11 @@ import {
   sceneFrame,
   type ElementCue,
 } from "@/lib/storyTimeline";
+import {
+  calculateLivingElementState,
+  drawLivingElementOnCanvas,
+} from "@/lib/storyLifeEngine";
+
 
 export interface StoryPlayerData {
   title: string;
@@ -65,9 +70,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
-  // Posição da legenda em % do quadro da cena (canto superior esquerdo). `null` = posição original (canto inferior direito).
+  // Posição da legenda em % do quadro da cena (canto superior esquerdo). `null` = posição original (centralizada na parte inferior).
   const [captionPosition, setCaptionPosition] = useState<{ left: number; top: number } | null>(null);
   const [draggingCaption, setDraggingCaption] = useState(false);
+  const [isEnded, setIsEnded] = useState(false);
 
   // A duração que manda é a do áudio carregado no navegador. Se ele não a informar
   // (WebM gravado sem cabeçalho), vale a salva com a história e, por último, a última legenda.
@@ -81,6 +87,59 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
   const activeCaption = captionAt(story.captions, currentTime);
   const frame = sceneFrame(currentTime, duration);
+
+  const isAudioEnded = Boolean(audioRef.current?.ended);
+  const isTimeNearEnd = duration > 0 && currentTime >= Math.max(0, duration - 0.25);
+  const isPastLastCaption = lastCaptionEnd > 0 && currentTime >= lastCaptionEnd;
+  const isVideoFinished = isEnded || isAudioEnded || isTimeNearEnd || (isPastLastCaption && !playing);
+  const shouldShowCaption = captionsEnabled && Boolean(activeCaption) && !isVideoFinished;
+
+  // Cálculo do efeito de digitação em tempo real da legenda em português em sincronia com o áudio
+  const typingData = useMemo(() => {
+    if (!activeCaption) return null;
+    const captionDuration = Math.max(0.1, activeCaption.end - activeCaption.start);
+    const captionElapsed = Math.max(0, currentTime - activeCaption.start);
+
+    // A fala do áudio ocupa ~88% da duração da legenda, garantindo leitura completa
+    const speechDuration = Math.max(0.1, captionDuration * 0.88);
+    const progress = Math.min(1, Math.max(0, captionElapsed / speechDuration));
+
+    const ptText = activeCaption.portuguese || "";
+    const ptLength = ptText.length;
+    const visibleCount = Math.min(ptLength, Math.max(0, Math.ceil(ptLength * progress)));
+    const visiblePt = ptText.slice(0, visibleCount);
+    const invisiblePt = ptText.slice(visibleCount);
+    const isTyping = progress > 0 && progress < 1;
+
+    return {
+      progress,
+      visiblePt,
+      invisiblePt,
+      isTyping,
+      kreyol: activeCaption.kreyol,
+      portuguese: ptText,
+    };
+  }, [activeCaption, currentTime]);
+
+  // Mantém a última legenda durante a transição suave de desaparecimento
+  const lastTypingDataRef = useRef(typingData);
+  if (typingData) {
+    lastTypingDataRef.current = typingData;
+  }
+  const displayedTypingData = typingData || lastTypingDataRef.current;
+
+  function seekTo(targetSeconds: number) {
+    const audio = audioRef.current;
+    const clamped = Math.max(0, Math.min(targetSeconds, duration));
+    if (audio) audio.currentTime = clamped;
+    setCurrentTime(clamped);
+    if (clamped < (duration || lastCaptionEnd) - 0.3) {
+      setIsEnded(false);
+    } else {
+      setIsEnded(true);
+      setPlaying(false);
+    }
+  }
 
   function setCaptionPositionFromPixels(left: number, top: number) {
     const viewport = playerViewportRef.current;
@@ -175,8 +234,21 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     const syncDuration = () => {
       if (Number.isFinite(audio.duration) && audio.duration > 0) setMediaDuration(audio.duration);
     };
-    const syncTime = () => setCurrentTime(audio.currentTime);
-    const ended = () => { setPlaying(false); setCurrentTime(0); };
+    const syncTime = () => {
+      if (audio) {
+        setCurrentTime(audio.currentTime);
+        if (audio.ended || (duration > 0 && audio.currentTime >= duration - 0.25)) {
+          setIsEnded(true);
+          setPlaying(false);
+        } else if (audio.currentTime < duration - 0.4) {
+          setIsEnded(false);
+        }
+      }
+    };
+    const ended = () => {
+      setPlaying(false);
+      setIsEnded(true);
+    };
     audio.addEventListener("loadedmetadata", syncDuration);
     audio.addEventListener("durationchange", syncDuration);
     audio.addEventListener("timeupdate", syncTime);
@@ -190,7 +262,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       audio.removeEventListener("seeked", syncTime);
       audio.removeEventListener("ended", ended);
     };
-  }, []);
+  }, [duration]);
 
   // O evento "timeupdate" dispara só ~4 vezes por segundo; enquanto toca, lemos o
   // relógio do áudio a cada quadro para a cena e os elementos acompanharem a voz de perto.
@@ -199,12 +271,18 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     let handle = 0;
     const tick = () => {
       const audio = audioRef.current;
-      if (audio) setCurrentTime(audio.currentTime);
+      if (audio) {
+        setCurrentTime(audio.currentTime);
+        if (audio.ended || (duration > 0 && audio.currentTime >= duration - 0.25)) {
+          setIsEnded(true);
+          setPlaying(false);
+        }
+      }
       handle = requestAnimationFrame(tick);
     };
     handle = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(handle);
-  }, [playing]);
+  }, [playing, duration]);
 
   useEffect(() => () => {
     if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
@@ -219,65 +297,55 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       return;
     }
     try {
-      if (audio.ended || (duration > 0 && audio.currentTime >= duration)) audio.currentTime = 0;
+      if (audio.ended || isEnded || (duration > 0 && audio.currentTime >= duration - 0.25)) {
+        audio.currentTime = 0;
+        setCurrentTime(0);
+        setIsEnded(false);
+      }
       await audio.play();
       setPlaying(true);
+      setIsEnded(false);
     } catch {
       setExportError("Não foi possível reproduzir a narração. Verifique o áudio e tente novamente.");
     }
   }
 
   function drawElementPills(context: CanvasRenderingContext2D, scene: { x: number; y: number; width: number; height: number }, seconds: number) {
+    const activeCap = captionAt(story.captions, seconds);
+    const captionText = activeCap ? `${activeCap.portuguese} ${activeCap.kreyol}` : "";
+
     for (const [index, element] of timeline.entries()) {
       const anchor = sceneLayout.anchors[index % sceneLayout.anchors.length];
-      const fontSize = 22;
-      context.font = `700 ${fontSize}px system-ui, sans-serif`;
-      const kreyolWidth = context.measureText(element.kreyol).width;
-      const separator = context.measureText("  ·  ").width;
-      const ptWidth = context.measureText(element.pt).width;
-      const width = kreyolWidth + separator + ptWidth + 32;
-      const height = 44;
-      const pill = {
-        element,
-        kreyolWidth,
-        separator,
-        width,
-        height,
-        x: scene.x + scene.width * (anchor.left / 100) - width / 2,
-        y: scene.y + scene.height * (anchor.top / 100) - height / 2,
-      };
-      const visual = elementVisual(pill.element, seconds);
+      const visual = elementVisual(element, seconds);
       if (visual.phase === "hidden" || visual.opacity <= 0.01) continue;
-      const centerX = pill.x + pill.width / 2;
-      const centerY = pill.y + pill.height / 2;
-      context.save();
-      context.globalAlpha = visual.opacity;
-      context.translate(centerX, centerY);
-      context.scale(visual.scale, visual.scale);
-      context.translate(-centerX, -centerY);
-      const active = visual.phase === "active";
-      context.fillStyle = active ? "#f4c85b" : "rgba(21, 38, 31, .9)";
-      context.beginPath();
-      context.roundRect(pill.x, pill.y, pill.width, pill.height, 10);
-      context.fill();
-      context.strokeStyle = active ? "#f4c85b" : "rgba(255,255,255,.34)";
-      context.lineWidth = 2;
-      context.stroke();
-      context.font = `700 ${fontSize}px system-ui, sans-serif`;
-      context.textAlign = "left";
-      context.textBaseline = "middle";
-      context.fillStyle = active ? "#18241d" : "#f4c85b";
-      context.fillText(pill.element.kreyol, pill.x + 22, centerY + 1);
-      context.fillStyle = active ? "#18241d" : "rgba(255,255,255,.55)";
-      context.fillText("  ·  ", pill.x + 22 + pill.kreyolWidth, centerY + 1);
-      context.fillStyle = active ? "#18241d" : "#ffffff";
-      context.fillText(pill.element.pt, pill.x + 22 + pill.kreyolWidth + pill.separator, centerY + 1);
-      context.restore();
+
+      const centerX = scene.x + scene.width * (anchor.left / 100);
+      const centerY = scene.y + scene.height * (anchor.top / 100);
+      const isActive = visual.phase === "active";
+
+      const livingState = calculateLivingElementState(
+        element.pt,
+        element.kreyol,
+        seconds,
+        captionText,
+        isActive
+      );
+
+      drawLivingElementOnCanvas(context, {
+        centerX,
+        centerY,
+        kreyol: element.kreyol,
+        portuguese: element.pt,
+        state: livingState,
+        visualOpacity: visual.opacity,
+        visualScale: visual.scale,
+        isActive,
+      });
     }
-    context.textBaseline = "alphabetic";
   }
 
-  function drawCaptionBox(context: CanvasRenderingContext2D, kreyol: string, portuguese: string) {
+
+  function drawCaptionBox(context: CanvasRenderingContext2D, kreyol: string, portuguese: string, isTyping = false) {
     const maxTextWidth = EXPORT_WIDTH - 160;
     const maxBoxHeight = 365;
     let size = 22;
@@ -305,10 +373,14 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       boxHeight = 32 + 38 + kreyolLines.length * size * 1.28 + 18 + 38 + portugueseLines.length * (size - 2) * 1.28 + 26;
     }
     const boxTop = EXPORT_HEIGHT - 130 - boxHeight;
-    context.fillStyle = "rgba(9, 19, 16, .76)";
+    context.fillStyle = "rgba(9, 19, 16, .84)";
     context.beginPath();
     context.roundRect(54, boxTop, EXPORT_WIDTH - 108, boxHeight, 26);
     context.fill();
+    context.strokeStyle = "rgba(245, 207, 114, .38)";
+    context.lineWidth = 2;
+    context.stroke();
+
     context.textAlign = "center";
     let y = boxTop + 32 + 24;
     context.fillStyle = "#f4c85b";
@@ -322,15 +394,18 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       context.fillText(line, EXPORT_WIDTH / 2, y - size * 0.28);
     }
     y += 18 + 24;
-    context.fillStyle = "#c8e7d4";
+    context.fillStyle = "#4ade80";
     context.font = "700 25px system-ui, sans-serif";
-    context.fillText("PORTUGUÊS", EXPORT_WIDTH / 2, y);
+    context.fillText("PORTUGUÊS (AO VIVO)", EXPORT_WIDTH / 2, y);
     context.fillStyle = "#ffffff";
     context.font = `500 ${size - 2}px system-ui, sans-serif`;
     y += 14;
-    for (const line of portugueseLines) {
+    for (let i = 0; i < portugueseLines.length; i++) {
+      const line = portugueseLines[i];
+      const isLast = i === portugueseLines.length - 1;
+      const lineText = isTyping && isLast ? `${line} ▍` : line;
       y += (size - 2) * 1.28;
-      context.fillText(line, EXPORT_WIDTH / 2, y - (size - 2) * 0.28);
+      context.fillText(lineText, EXPORT_WIDTH / 2, y - (size - 2) * 0.28);
     }
   }
 
@@ -397,7 +472,15 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     context.fillText(titleLine.trim(), 70, titleY);
     drawElementPills(context, { x: sceneX, y: sceneY, width, height }, seconds);
     const caption = captionAt(story.captions, seconds);
-    if (caption) drawCaptionBox(context, caption.kreyol, caption.portuguese);
+    if (caption && (!duration || seconds < duration - 0.1)) {
+      const captionDuration = Math.max(0.1, caption.end - caption.start);
+      const captionElapsed = Math.max(0, seconds - caption.start);
+      const typingProgress = Math.min(1, Math.max(0, captionElapsed / (captionDuration * 0.88)));
+      const charCount = Math.min(caption.portuguese.length, Math.max(0, Math.ceil(caption.portuguese.length * typingProgress)));
+      const typedPortuguese = caption.portuguese.slice(0, charCount);
+      const isTyping = typingProgress > 0 && typingProgress < 1;
+      drawCaptionBox(context, caption.kreyol, typedPortuguese, isTyping);
+    }
     context.textAlign = "left";
     context.fillStyle = "rgba(255,255,255,.78)";
     context.font = "500 24px system-ui, sans-serif";
@@ -516,63 +599,232 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             <NextImage src={story.imageSrc} alt={story.title} fill unoptimized className="object-cover" />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/35" />
-          <div className="absolute left-5 top-5 flex items-center gap-2"><span className="rounded-sm bg-[#14251e]/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#f5cf72]">{story.theme}</span><span className="rounded-sm border border-white/30 bg-black/30 px-2 py-1 text-[10px] text-white/85">KREYÒL · PT</span></div>
+          <div className="absolute left-4 top-4 sm:left-5 sm:top-5 flex flex-wrap items-center gap-2 z-20">
+            <span className="rounded-md bg-[#14251e]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#f5cf72] border border-[#f5cf72]/30 shadow-sm">{story.theme}</span>
+            <span className="rounded-md border border-white/20 bg-black/40 px-2 py-1 text-[10px] text-white/90 font-medium">KREYÒL · PT</span>
+            <span className="hidden sm:flex items-center gap-1 rounded-md border border-[#f5cf72]/40 bg-[#f5cf72]/20 px-2 py-1 text-[10px] font-semibold text-[#f5cf72]">
+              <Sparkles className="h-2.5 w-2.5 animate-pulse text-[#f5cf72]" /> Elementos Vivos
+            </span>
+            <span className="hidden md:inline-block text-[11px] font-semibold tracking-wide text-white/80 max-w-[220px] truncate drop-shadow">
+              {story.title}
+            </span>
+          </div>
           {timeline.map((element, index) => {
             const visual = elementVisual(element, currentTime);
             const active = visual.phase === "active";
             const anchor = sceneLayout.anchors[index % sceneLayout.anchors.length];
             const imageScale = 1.03 * frame.zoom;
             const imageCrop = 16 / 9 / (1200 / 800);
-            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX;
-            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
+
+            const captionText = activeCaption ? `${activeCaption.portuguese} ${activeCaption.kreyol}` : "";
+            const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active);
+
+            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX + living.dx;
+            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY + living.dy;
+
             return (
-              <span
+              <div
                 key={`${element.kreyol}-${index}`}
-                className={`pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border px-2 py-1 text-[8px] leading-none shadow-sm backdrop-blur-sm sm:text-[10px] ${active ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d]" : "border-white/35 bg-[#15261f]/90 text-white"}`}
-                style={{ left: `${left}%`, top: `${top}%`, opacity: visual.opacity, transform: `translate(-50%, -50%) scale(${visual.scale})`, transformOrigin: "center center" }}
+                className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 select-none will-change-transform"
+                style={{
+                  left: `${left}%`,
+                  top: `${top}%`,
+                  opacity: visual.opacity,
+                  transform: `translate(-50%, -50%) scale(${visual.scale * living.scaleX}, ${visual.scale * living.scaleY}) rotate(${living.rotation}deg)`,
+                  transformOrigin: "center center",
+                }}
               >
-                <span className={`font-semibold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>{element.kreyol}</span>
-                <span className={`px-1 ${active ? "text-[#18241d]/60" : "text-white/60"}`}>·</span>
-                {element.pt}
-              </span>
+                {/* Aura viva de destaque */}
+                {active && (
+                  <div
+                    className="absolute inset-0 -m-3 rounded-full bg-[#f5cf72]/25 blur-md"
+                    style={{ opacity: 0.4 + living.pulse * 0.6 }}
+                  />
+                )}
+
+                {/* Partículas vivas no espaço ao redor */}
+                {living.particles.map((p, pIndex) => (
+                  <span
+                    key={pIndex}
+                    className="absolute text-xs sm:text-sm select-none pointer-events-none transition-transform"
+                    style={{
+                      left: `calc(50% + ${p.x}px)`,
+                      top: `calc(50% + ${p.y}px)`,
+                      opacity: p.opacity,
+                      transform: `scale(${p.scale}) rotate(${p.rotation}deg)`,
+                    }}
+                  >
+                    {p.char}
+                  </span>
+                ))}
+
+                {/* Pílula viva */}
+                <div
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-[8px] sm:text-[10px] leading-none shadow-lg backdrop-blur-md transition-colors ${
+                    active
+                      ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d] ring-2 ring-[#f5cf72]/50 shadow-[0_0_15px_rgba(245,207,114,0.4)]"
+                      : "border-white/35 bg-[#15261f]/92 text-white"
+                  }`}
+                >
+                  <span className="text-xs sm:text-sm">{living.badgeEmoji}</span>
+                  <span className={`font-bold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>{element.kreyol}</span>
+                  <span className={`px-0.5 ${active ? "text-[#18241d]/60" : "text-white/60"}`}>·</span>
+                  <span className={active ? "text-[#18241d]" : "text-white"}>{element.pt}</span>
+                  {living.action !== "idle" && (
+                    <span
+                      className={`ml-1 rounded-full px-1.5 py-0.5 text-[7px] sm:text-[9px] font-extrabold uppercase tracking-wider ${
+                        active ? "bg-[#18241d] text-[#f5cf72]" : "bg-[#f5cf72]/20 text-[#f5cf72]"
+                      }`}
+                    >
+                      {living.badgeText}
+                    </span>
+                  )}
+                </div>
+              </div>
             );
           })}
-          <div className="pointer-events-none absolute bottom-5 left-5 z-20">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f5cf72]">{story.title}</p>
-          </div>
-          {captionsEnabled && activeCaption && (
+
+          {displayedTypingData && (
             <div
               ref={captionRef}
               role="group"
               tabIndex={0}
-              aria-label="Legenda da história. Arraste para mover ou use as setas do teclado."
-              title="Arraste para mover a legenda"
+              aria-label="Legenda sincronizada da história"
+              title="Legenda sincronizada (arraste para mover se desejar)"
               onPointerDown={startCaptionDrag}
               onPointerMove={moveCaptionDrag}
               onPointerUp={endCaptionDrag}
               onPointerCancel={endCaptionDrag}
               onKeyDown={moveCaptionWithKeyboard}
-              className={`absolute z-30 w-[min(40%,28rem)] max-w-[calc(100%-2rem)] touch-none select-none rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#f5cf72] ${captionPosition ? "" : "bottom-4 right-4"} ${draggingCaption ? "cursor-grabbing" : "cursor-grab"}`}
+              className={`absolute z-30 w-[min(94%,36rem)] max-w-[calc(100%-1.25rem)] touch-none select-none outline-none transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-[#f5cf72] ${
+                captionPosition ? "" : "bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2"
+              } ${draggingCaption ? "cursor-grabbing" : "cursor-grab"} ${
+                shouldShowCaption
+                  ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+                  : "opacity-0 translate-y-2 scale-95 pointer-events-none"
+              }`}
               style={captionPosition ? { left: `${captionPosition.left}%`, top: `${captionPosition.top}%` } : undefined}
             >
-              <div className={`rounded-xl border border-[#f5cf72]/50 bg-black/65 px-4 pb-3 pt-1.5 shadow-lg backdrop-blur-sm ${draggingCaption ? "ring-2 ring-[#f5cf72]/60" : ""}`}>
-                <GripHorizontal className="mx-auto mb-1 h-3.5 w-3.5 text-[#f5cf72]/70" aria-hidden="true" />
-                <p className="text-sm font-semibold leading-snug text-[#f8e7b3] sm:text-base">{language !== "pt" && activeCaption.kreyol}</p>
-                {language === "both" && <div className="my-2 h-px w-10 bg-[#f5cf72]/65" />}
-                {language !== "ht" && <p className="text-xs leading-relaxed text-white/80 sm:text-sm">{activeCaption.portuguese}</p>}
+              <div
+                className={`group relative overflow-hidden rounded-xl sm:rounded-2xl border border-[#f5cf72]/35 bg-[#0a1510]/92 sm:bg-black/85 px-3.5 py-2 sm:px-4.5 sm:py-2.5 shadow-[0_10px_35px_rgba(0,0,0,0.85),0_2px_8px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all ${
+                  draggingCaption ? "ring-2 ring-[#f5cf72]/70 shadow-[0_0_25px_rgba(245,207,114,0.35)]" : ""
+                }`}
+              >
+                {/* Linha de brilho superior sutil para acabamento premium */}
+                <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#f5cf72]/45 to-transparent" />
+
+                {/* Alça sutil de reposicionamento (discreta no canto superior direito para não poluir nem ocupar espaço vertical) */}
+                <div
+                  className="absolute right-2 top-2 flex items-center gap-1 text-white/35 opacity-40 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+                  title="Arraste para mover a legenda"
+                  aria-hidden="true"
+                >
+                  <GripHorizontal className="h-3 w-3" />
+                </div>
+
+                {/* Conteúdo em Kreyòl (áudio original falado) */}
+                {language !== "pt" && (
+                  <div className="flex items-center gap-1.5 pr-5 mb-1">
+                    <span className="shrink-0 rounded bg-[#f5cf72]/20 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#f5cf72] border border-[#f5cf72]/30">
+                      Kreyòl
+                    </span>
+                    <p className="text-xs sm:text-[13px] font-medium leading-tight text-[#fde68a]/90 drop-shadow-sm truncate">
+                      {displayedTypingData.kreyol}
+                    </p>
+                  </div>
+                )}
+
+                {/* Conteúdo em Português com efeito de digitação sincronizado para o usuário não-falante */}
+                {language !== "ht" && (
+                  <div className="flex items-start gap-1.5 pr-4">
+                    {language === "both" && (
+                      <span className="shrink-0 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-emerald-300 border border-emerald-400/30 mt-0.5">
+                        PT
+                      </span>
+                    )}
+                    <div className={`flex-1 text-xs sm:text-sm md:text-[15px] font-semibold leading-snug text-white ${language === "pt" ? "text-center" : ""}`}>
+                      <span className="relative inline">
+                        <span className="text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                          {displayedTypingData.visiblePt}
+                        </span>
+                        {displayedTypingData.isTyping && playing && (
+                          <span
+                            className="inline-block w-[2.5px] h-[1.15em] ml-0.5 align-middle rounded-full bg-[#f5cf72] shadow-[0_0_8px_#f5cf72] animate-pulse"
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span className="opacity-0 select-none pointer-events-none" aria-hidden="true">
+                          {displayedTypingData.invisiblePt}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
           <span className="absolute right-5 top-5 rounded-sm bg-black/45 px-2 py-1 text-[10px] tabular-nums">{formatStoryTime(currentTime)} / {durationLabel}</span>
         </div>
         <div className="space-y-3 p-4 sm:p-5">
-          <div className="h-1 overflow-hidden rounded-full bg-white/15">
-          <div className="h-full bg-[#f5cf72]" style={{ width: `${frame.progress * 100}%` }} /></div>
+          <div
+            role="slider"
+            tabIndex={0}
+            aria-label="Controle de reprodução da história"
+            aria-valuemin={0}
+            aria-valuemax={duration}
+            aria-valuenow={currentTime}
+            onClick={(e) => {
+              if (!duration || exporting) return;
+              const rect = e.currentTarget.getBoundingClientRect();
+              const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+              seekTo(ratio * duration);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                seekTo(Math.max(0, currentTime - 5));
+              } else if (e.key === "ArrowRight") {
+                e.preventDefault();
+                seekTo(Math.min(duration, currentTime + 5));
+              }
+            }}
+            className="group relative flex h-3 w-full cursor-pointer items-center select-none"
+          >
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15 transition-all group-hover:h-2">
+              <div
+                className="h-full bg-gradient-to-r from-[#f5cf72] to-[#fde68a] transition-all"
+                style={{ width: `${frame.progress * 100}%` }}
+              />
+            </div>
+            <div
+              className="absolute h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[#f5cf72] opacity-0 shadow-md transition-opacity group-hover:opacity-100 ring-2 ring-black/50"
+              style={{ left: `${frame.progress * 100}%` }}
+            />
+          </div>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => void togglePlay()} disabled={exporting} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5cf72] text-[#18241d] transition-transform hover:scale-105 disabled:opacity-50" aria-label={playing ? "Pausar história" : "Reproduzir história"}>{playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
+              <button
+                type="button"
+                onClick={() => void togglePlay()}
+                disabled={exporting}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5cf72] text-[#18241d] transition-transform hover:scale-105 disabled:opacity-50 shadow-md"
+                aria-label={playing ? "Pausar história" : isVideoFinished ? "Assistir novamente" : "Reproduzir história"}
+              >
+                {playing ? (
+                  <Pause className="h-4 w-4" />
+                ) : isVideoFinished ? (
+                  <RotateCcw className="h-4 w-4" />
+                ) : (
+                  <Play className="ml-0.5 h-4 w-4" />
+                )}
               </button>
-              <span className="text-xs text-white/65">{playing ? "A aventura está acontecendo" : "Ouça a narração em Kreyòl"}</span>
+              <span className="text-xs text-white/70">
+                {playing
+                  ? "A aventura está acontecendo…"
+                  : isVideoFinished
+                  ? "História concluída! Clique para assistir novamente"
+                  : "Ouça a narração em Kreyòl com tradução sincronizada"}
+              </span>
             </div>
             <div className="flex items-center gap-1.5">
               <button type="button" title={captionsEnabled ? "Ocultar legendas" : "Mostrar legendas"} onClick={() => setCaptionsEnabled((enabled) => !enabled)} className={`flex h-9 items-center gap-1.5 rounded-md px-2.5 text-xs ${captionsEnabled ? "bg-white/15 text-white" : "text-white/60 hover:bg-white/10"}`}><Languages className="h-4 w-4" /> Legendas

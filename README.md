@@ -6,15 +6,15 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 
 - [Visão geral](#visão-geral)
 - [Stack](#stack)
-- [Histórias narradas](#histórias-narradas)
+- [Histórias narradas com Elementos com Vida](#histórias-narradas)
 - [Jogo C'est quoi ?](#jogo-cest-quoi-)
 - [Indicador de carregamento](#indicador-de-carregamento)
 - [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
 - [Visibilidade das lições](#visibilidade-das-lições)
 - [Imagens no Cloudflare R2](#imagens-no-cloudflare-r2)
 - [Configuração das variáveis de imagens e IA](#configuração-das-variáveis-de-imagens-e-ia)
-- [Geração de imagens por IA](#geração-de-imagens-por-ia)
-- [Cores e legibilidade](#cores-e-legibilidade)
+- [Geração de imagens por IA (Controle Exato de Quantidade)](#geração-de-imagens-por-ia)
+- [Cores, Animações e Legibilidade](#cores-e-legibilidade)
 - [Funcionalidades](#funcionalidades)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Configuração local](#configuração-local)
@@ -30,13 +30,14 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - Painel do aluno com progresso, conteúdo recente e central de notificações.
 - Postagens com texto e/ou imagem (banco de ilustrações ou upload), respostas dos alunos revisadas pelo administrador e jogo de identificação de palavras na imagem.
 - Vídeos com likes, comentários, gravação no navegador e agendamento.
-- **Histórias**: uma cena ilustrada + narração em Kreyòl (gravada, enviada ou convertida de MP4) + legendas em Kreyòl e português, com exportação de vídeo vertical, rótulos visuais dos elementos posicionados de forma clara para cada cena e legenda do player que o aluno pode arrastar pela tela.
+- **Histórias narradas com Elementos com Vida**: uma cena ilustrada + narração em Kreyòl + legendas bilíngues, onde cada elemento da cena ganha vida e se comporta realisticamente (pássaros voam, cachorros correm/latem, árvores balançam ao vento, etc.) de acordo com as ações descritas na fala ou na legenda. Acompanha exportação de vídeo vertical 9:16 com as mesmas animações gravadas, rótulos inteligentes e legenda móvel arrastável.
 - **Jogo "C'est quoi ?"** (painel em francês): 5 níveis, incluindo o **Nativo** (20 imagens, com os sub-níveis *Palavra* e *Frase*), botão **Dica** que congela o tempo, **arena online** com jogadores online, ranking e duelos.
 - Aulas ao vivo com LiveKit, quando configurado.
 - Fundo virtual (MediaPipe) na gravação de vídeos e nas aulas ao vivo.
 - PWA com service worker, página offline e Web Push opcional.
 - Gamificação com XP, moedas Goud, níveis, conquistas e títulos.
-- Imagens no **Cloudflare R2** (fora do repositório) e **geração de novas imagens por IA** (limite de 5 por dia, revisão automática e aprovação no painel do administrador).
+- Imagens no **Cloudflare R2** (fora do repositório) e **geração de novas imagens por IA** com controle rigoroso de quantidade (gera exatamente 1, 2 ou a quantidade solicitada, respeitando a cota diária, com revisão automática e aprovação no painel do administrador).
+
 
 ## Stack
 
@@ -89,17 +90,44 @@ Toda a animação depende somente do **tempo atual do áudio** e da **duração 
 - **Legendas no formulário**: ao enviar/gravar/converter a narração, se o roteiro ainda estiver vazio, os trechos são criados já dentro da duração (cerca de um por minuto, no máximo 12). O botão **Redistribuir tempos** divide os trechos existentes igualmente pela duração. Os tempos aceitam décimos de segundo.
 - **Na troca da narração**, os momentos dos elementos voltam à divisão automática (eles pertenciam ao áudio anterior). As legendas são mantidas; revise os tempos com **Redistribuir tempos**.
 
-### Legenda móvel no player
+### Elementos com Vida (Living Elements Engine)
 
-Na pré-visualização/player de **Histórias**, a caixa de legenda (Kreyòl e/ou português) pode ser movida pelo aluno, tanto no desktop quanto no celular. Esse recurso está em `src/components/StoryPlayer.tsx`.
+Desenvolvido em `src/lib/storyLifeEngine.ts` para dar vida autêntica aos elementos das ilustrações. Em vez de simples rótulos estáticos, cada elemento da cena se comporta e se movimenta dinamicamente de acordo com o que a **narração gravada** ou a **legenda ativa** descreve naquele instante:
 
-- **Como mover**: arraste a caixa com o mouse, o dedo ou a caneta (Pointer Events). Há um ícone de "alça" no topo da caixa e o cursor muda para mão aberta/fechada. A caixa usa `touch-action: none`, então arrastá-la no celular não rola a página.
-- **Teclado**: com foco na legenda (tecla `Tab`), as setas movem a caixa de 12 em 12 pixels.
-- **Limites**: a legenda se move somente dentro do quadro da cena (a área da ilustração) e nunca sai dele. A posição é guardada em porcentagem do quadro, então acompanha o redimensionamento da janela ou a rotação do aparelho; e, quando a legenda muda de tamanho (a cada fala ou ao trocar o idioma **Ambas/Português/Kreyòl**), a posição é reencaixada para a caixa continuar inteira dentro do quadro.
-- **Posição original**: antes de qualquer arrasto, a legenda fica no canto inferior direito. Depois de movida, aparece o botão **Reposicionar**, ao lado de **Legendas**, que devolve a caixa a essa posição.
-- **Quando aparece**: a caixa só é exibida enquanto as legendas estão ativadas (botão **Legendas**) e existe uma fala ativa naquele instante da narração. Ela fica acima dos rótulos dos elementos da cena.
-- **Persistência**: a posição fica apenas na memória da tela aberta. Não é salva no servidor nem no navegador e volta ao canto inferior direito ao recarregar a página ou abrir outra história.
-- **Exportação**: a posição escolhida no player **não** é aplicada ao vídeo exportado; no vídeo vertical a legenda continua fixa na parte inferior do quadro.
+- **Identificação semântica de entidades:** O motor reconhece automaticamente a natureza do elemento a partir do seu nome em português e Kreyòl:
+  - Animais: `cachorro/chen` (dog), `pássaro/zwazo` (bird), `cavalo/chwal` (horse), `gato/chat` (cat), `borboleta/papiyon` (butterfly).
+  - Natureza: `árvore/pyebwa` (tree), `flores/flè` (flower), `sol/solèy` (sun), `nuvem/nyaj` (cloud), `rio/mar/rivyè` (water).
+  - Cultura e som: `tambor/tanbou` (drum), `música/violão/mizik` (music), `lanterna/lanp` (lantern), `casa/kay` (house).
+  - Veículos e tecnologia: `carro/machin` (car), `barco/bato` (boat), `drone/dròn` (drone), `robô/robo` (robot), `moinho/moulen` (windmill).
+- **Detecção de ações por processamento de linguagem natural (Kreyòl + Português):**
+  - **Voar / Bater asas (`voa`, `sobrevoa`, `plana`, `vole`, `ap vole`):** pássaros, borboletas e drones traçam arcos suaves de voo pelo céu com oscilação física de asas e flutuação.
+  - **Correr / Galopar (`corre`, `dispara`, `veloz`, `kouri`, `ap kouri`):** cachorros e cavalos realizam ciclos enérgicos de passadas, saltos e deslocamento horizontal acompanhados de partículas de movimento.
+  - **Pular / Saltar (`pula`, `salta`, `sote`, `ap sote`):** impulsão em arco com compressão (*squash*) no solo e estiramento (*stretch*) no ar.
+  - **Latir / Emitir som (`late`, `uiva`, `jape`, `ap jape`):** pulsação enérgica com ondas sonoras expansivas.
+  - **Cantar / Tocar música (`canta`, `gorjeia`, `toca`, `ritmo`, `chante`, `tanbouye`, `jwe mizik`):** vibração harmônica rítmica e notas musicais (`♪ ♫`) flutuando no ar.
+  - **Brilhar / Iluminar (`brilha`, `reluz`, `radiante`, `ekla`, `klere`):** pulso de respiração luminosa, raios solares em rotação e partículas de brilho (`✨ ⭐`).
+  - **Vento / Balançar (`vento`, `sopra`, `balança`, `van`, `soufle`, `balanse`):** balanço oscilatório suave em árvores e plantas, com folhas desprendendo e flutuando na direção do vento.
+  - **Navegar / Ondas (`navega`, `flutua`, `onda`, `naje`, `flote`):** ondulação aquática com flutuação de barcos e respingos.
+  - **Dormir / Descansar (`dorme`, `descansa`, `sono`, `dòmi`, `repoze`):** respiração lenta e pacífica com partículas `💤`.
+  - **Comportamento ocioso vivo (Idle):** mesmo quando nenhuma ação verbal específica está ativa, os elementos possuem micro-movimentos orgânicos (respiração, atenção ao ambiente, farfalhar suave).
+- **Paridade total entre Player Web e Exportação de Vídeo:**
+  - No player web (`StoryPlayer.tsx`), os elementos exibem a aura viva de destaque, partículas animadas em órbita e selos com a ação em tempo real (`🦅 Voando`, `🐾 Correndo`, `🎶 Cantando`, `✨ Brilhando`).
+  - No exportador Canvas 2D (`drawLivingElementOnCanvas`), todas as animações, físicas, partículas e auras são gravadas quadro a quadro em alta definição (1080×1920) sincronizadas ao relógio do áudio (`currentTime`), gerando um vídeo vertical MP4/WebM idêntico ao assistido na tela.
+- **Prévia e auxílio na criação da história (`StoryForm.tsx`):**
+  - No bloco **Elementos da cena**, cada elemento exibe sua categoria identificada e indicação de animação.
+  - No bloco **Roteiro e legendas**, ao digitar as falas em Kreyòl e português, etiquetas dinâmicas indicam imediatamente quais ações foram ativadas naquele trecho (ex.: `⚡ Ações ativadas: 🦅 Pássaro: Voando · 🐾 Cachorro: Correndo`).
+
+### Legendas Sincronizadas com Efeito de Digitação e Posição Otimizada
+
+No player de **Histórias** (`src/components/StoryPlayer.tsx`), a exibição das legendas foi aprimorada para dar a melhor experiência a quem não fala Kreyòl:
+
+- **Efeito de digitação em tempo real (Typewriter):** A tradução em português é digitada letra por letra em sincronia matemática com a voz falada do áudio. O cálculo acompanha a progressão do tempo real (`requestAnimationFrame`), revelando o texto conforme a fala acontece e permitindo que o usuário compreenda instantaneamente o que está sendo dito.
+- **Sem saltos visuais (Layout Shift Zero):** O trecho ainda não digitado é renderizado de forma invisível no mesmo contêiner tipográfico, mantendo a altura e as quebras de linha estáveis desde o primeiro caractere, eliminando oscilações e pulos de tela.
+- **Posicionamento na parte inferior:** A legenda fica centralizada na base do vídeo (`bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2`) com largura confortável, garantindo leitura perfeita sem cobrir os elementos vivos nem a ilustração da cena.
+- **Sumiço automático ao final do vídeo:** Assim que a história termina (`ended` ou ao atingir o fim da duração), a legenda desaparece imediatamente da tela, revelando a arte completa e todos os 4 elementos da cena em sua totalidade.
+- **Arrasto livre e reposicionamento:** Caso o aluno deseje, a legenda continua podendo ser arrastada livremente com o mouse ou toque (Pointer Events) ou movida via teclado (`Tab` + setas). O botão **Reposicionar** devolve a legenda ao centro inferior original.
+- **Barra de progresso interativa:** A barra de reprodução agora permite clicar em qualquer ponto para avançar ou retroceder a história imediatamente, além de suporte às teclas de seta esquerda/direita.
+- **Paridade na exportação de vídeo 9:16:** Na geração do vídeo vertical em Canvas 2D (`drawCaptionBox`), a legenda em português também é desenhada com o efeito de digitação e o cursor sincronizado ao áudio, e é omitida nos quadros finais para entregar um vídeo limpo.
 
 ### Exportação do vídeo vertical
 
@@ -352,55 +380,81 @@ Número de imagens que o robô pode gerar por dia, somando a geração automáti
 
 ## Geração de imagens por IA
 
-Painel em **Admin → Imagens com IA** (`/admin/imagens`), para ampliar o conteúdo sem ficar preso ao número fixo de ilustrações.
+Painel em **Admin → Imagens com IA** (`/admin/imagens`), para ampliar o conteúdo do aplicativo gerando ilustrações novas sob demanda com controle rigoroso de quantidade e revisão de qualidade.
 
-**Fluxo**
+### Controle rigoroso de quantidade de imagens
+
+Anteriormente, ao clicar em gerar, o sistema executava um loop que consumia toda a cota diária (5 imagens), mesmo quando se desejava apenas 1 ou 2 imagens para teste. O sistema foi totalmente reformulado para respeitar estritamente a quantidade solicitada:
+
+- **Pipeline com parada imediata (`src/lib/imageGen/pipeline.ts`):** `runImageGenBatch` aceita os parâmetros `maxItems?: number` e `jobId?: string`. O processamento para imediatamente no momento exato em que o número de imagens requisitado for concluído com sucesso.
+- **Endpoint dedicado (`/api/admin/image-gen/run`):** O método `POST` recebe `{ count?: number, jobId?: string }` via JSON e repassa ao pipeline de geração.
+- **Seletor de quantidade na cota diária:** No bloco "Cota de hoje" do painel, há botões rápidos (`1`, `2`, `3` ou `Restante`) ao lado de "Gerar agora". Ao clicar em `1`, exatamente uma única imagem é gerada.
+- **Criação e execução imediata no "Novo pedido":** O formulário de pedidos conta com atalhos de quantidade (`1`, `2`, `3`, `5`) e o botão de ação primária **"Criar e gerar agora (X imagem/ns)"**, que cria o pedido e executa na hora apenas a quantidade definida sem gastar a cota restante.
+- **Ações diretas por pedido:** Em "Pedidos em andamento", cada cartão de pedido possui botões individuais **"Gerar 1 agora"** e **"Gerar X restantes"** (respeitando o saldo da cota do dia), direcionando a geração exclusivamente para o ID daquele pedido (`jobId`).
+- **Modal interativo de inspeção (Zoom) na Galeria:** Ao clicar sobre qualquer miniatura de imagem na galeria, abre-se um modal de alta resolução com:
+  - Visualização completa da imagem (pintura WebP em alta definição ou vetor SVG renderizado).
+  - Ficha técnica completa de avaliação de QA: nota geral (0 a 10), notas por critério (estilo, fidelidade ao tema, ausência de marcas/textos) e parecer detalhado da IA revisora.
+  - Lista de elementos identificados na cena com porcentagens e coordenadas de posição.
+  - Ações diretas de **Aprovar** e **Rejeitar** dentro do próprio modal.
+
+### Fluxo de geração e revisão
 
 1. O administrador cria um **pedido**: parte do app (Postagens, Histórias ou C'est quoi ?), tema (ou todos), quantidade (1 a 200) e motor.
-2. O robô entrega no máximo **5 imagens por dia** (`IMAGE_GEN_DAILY_LIMIT`). A cota é um contador no MongoDB (dia de Brasília) compartilhado pelo cron diário e pelo botão "Gerar agora", então nunca passa do limite. Ex.: 10 imagens levam 2 dias.
+2. O robô entrega no máximo **5 imagens por dia** (`IMAGE_GEN_DAILY_LIMIT`). A cota é um contador no MongoDB (dia de Brasília) compartilhado pelo cron diário e pelos botões de execução manual.
 3. Cada imagem é planejada, desenhada, **revisada automaticamente** (modelo de visão), guardada no R2 e cadastrada no MongoDB.
 4. A revisão confere se os elementos obrigatórios estão visíveis, se não há texto/marca d'água e o estilo, dá uma nota de 0 a 10 e localiza cada elemento. Abaixo da nota mínima (7) a imagem fica **Rejeitada**; as demais ficam **Para aprovar**.
-5. O administrador aprova na galeria (individualmente ou "Aprovar todas com nota ≥ 8,5"). Opcionalmente o pedido aprova sozinho as de nota alta. **Só imagens aprovadas aparecem para os alunos.**
-6. O pedido pode ser pausado, retomado ou cancelado; erros da IA (cota, chave, modelo) aparecem no próprio pedido.
+5. O administrador aprova na galeria (individualmente, no modal de zoom ou com "Aprovar todas com nota ≥ 8,5"). Opcionalmente o pedido aprova sozinho as de nota alta. **Só imagens aprovadas aparecem para os alunos.**
+6. O pedido pode ser pausado, retomado ou cancelado; erros da IA (cota, chave, modelo) aparecem com tratamento amigável no próprio pedido.
 
-**Partes do app**
+### Partes do app
 
 | Parte | O que é gerado | Onde aparece |
 | --- | --- | --- |
 | Postagens | Cena com 4 elementos em Kreyòl, legenda e desafio (10 palavras, 4 corretas) | Seletor de imagens das postagens e jogo de identificar elementos (sorteio e "próxima imagem") |
-| Histórias | Cena com 4 elementos separados; as posições detectadas viram os rótulos animados | Seletor de imagens das histórias e player |
+| Histórias | Cena com 4 elementos separados; as posições detectadas viram os rótulos animados com suporte ao motor de vida | Seletor de imagens das histórias, editor e player |
 | C'est quoi ? | Um objeto novo em francês (artigo + nome, sem repetir os existentes), a seta vermelha posicionada sobre ele e a dica em português, o uso e a frase em francês do jogo | Direto no jogo `/dashboard/jogo`, junto com os itens atuais (todos os níveis, inclusive Nativo · Frase) |
 
 O vocabulário em Kreyòl **não é inventado pela IA**: os elementos saem do mesmo vocabulário revisado já usado pelo app (`imageSceneVariants.json` + dicionário de tradução). A IA só desenha e confere o desenho. As imagens antigas permanecem intactas e aparecem junto das novas (marcadas "✨ Nova · IA" no seletor).
 
-**Motores**
+### Motores
 
 - **Pintura Ghibli (Gemini, imagem):** melhor qualidade; saída em WebP 1200×800 (C'est quoi ?: 980×700, proporção 7:5 do jogo). Exige cota de imagem na sua chave do Gemini (confira no Google AI Studio). **Referência visual:** a cada geração, 2 ilustrações já existentes do mesmo tema (do banco `/ghibli` ou do C'est quoi ?) são convertidas em PNG e enviadas junto do prompt, com a instrução de imitar paleta, saturação, sombreado e simplicidade sem copiar a composição. Elas vêm de `public/` (se ainda existir) ou do bucket.
 - **Vetor SVG (Gemini, texto):** o modelo de texto escreve o SVG no mesmo formato e viewBox das imagens atuais, usando uma ilustração existente do bucket como referência de estilo. O SVG passa por sanitização (sem scripts, `<image>`, `<text>`, links externos ou animações) e precisa renderizar. Qualidade mais simples; costuma ter cota gratuita.
 
-**Execução**
+### Execução
 
 - Cron diário (`vercel.json`, 09:00 UTC = 06:00 em Brasília) chama `GET /api/cron/image-gen` com `Authorization: Bearer $CRON_SECRET`.
-- O botão "Gerar agora" produz uma imagem por requisição e repete até acabar a cota ou os pedidos (cada requisição fica curta).
+- Execução manual: `POST /api/admin/image-gen/run` aceita `{ count, jobId }` gerando a quantidade exata sob demanda.
 - Erros de cota/chave/modelo/rede interrompem o lote e devolvem a chamada à cota; falhas de formato tentam de novo uma vez.
 
-**Arquivos principais**
+### Arquivos principais
 
-- `src/lib/imageGen/` — `config.ts` (seções, temas, limites), `prompts.ts` (planejamento e prompts), `gemini.ts` (cliente REST, Interactions API), `svg.ts` (sanitização), `pipeline.ts` (cota, geração, revisão, lote).
+- `src/lib/imageGen/` — `config.ts` (seções, temas, limites), `prompts.ts` (planejamento e prompts), `gemini.ts` (cliente REST, Interactions API), `svg.ts` (sanitização), `pipeline.ts` (cota, geração com `maxItems` e `jobId`, revisão, lote).
 - `src/models/ImageGen.ts` — `GeneratedImage`, `ImageGenJob` e `ImageGenUsage`.
 - `src/lib/generatedImages.ts` — leitura das imagens aprovadas no mesmo formato do banco estático; `src/hooks/useBankImage.ts` — resolve imagens geradas no cliente.
 - `src/lib/r2.ts` — envio e remoção no R2.
 - `src/app/admin/imagens/` e `src/app/api/admin/image-gen/**`, `src/app/api/cron/image-gen`, `src/app/api/generated-images`.
 
-**Integrações em código existente:** `ImageBankPicker` (prop `section`), `PostForm` e `StoryForm`, `StoryPlayer`, `storyValidation.ts` (agora assíncrono e aceita imagens geradas aprovadas), `imageQuiz.ts` (`getQuizForImage`), `/api/image-quiz` (`image=random&exclude=`), `/dashboard/jogo` e `imageBank.ts` (aceita o prefixo `/gen/` e exporta `KREYOL_TO_PT`).
-
 **Segurança:** as rotas do painel exigem administrador; a leitura pública exige login; SVGs gerados são sanitizados e servidos com cabeçalhos restritivos configurados em `next.config.ts` (a sanitização é a defesa principal).
 
-## Cores e legibilidade
+## Cores, Animações e Legibilidade
 
-- Modo claro: `--text-muted` escurecido (`#a8a29e` → `#6b645e`) e `--border` reforçado, para que textos secundários e divisórias fiquem legíveis.
-- Modo escuro: o azul do acento (`#280ed1`) quase desaparecia como cor de **texto** sobre o fundo preto; esses casos usam o tom claro (`--accent-hover`). Botões com fundo azul não mudam.
-- O painel de imagens usa cores de alto contraste (notas em verde/âmbar/vermelho com texto branco ou preto, avisos com borda forte).
+O sistema visual e de estilos (`src/app/globals.css`) foi atualizado para proporcionar máxima legibilidade, contraste WCAG AAA e dinamismo visual:
+
+- **Sistema de Cores Refinado:**
+  - **Tom de Acento (Royal Indigo):** modo claro com `--accent: #2e1ff0` (indigo vibrante com contraste nítido sobre fundos claros), `--accent-hover: #4338ca` e `--accent-subtle: #eef2ff`. No modo escuro, utiliza `--accent: #6366f1`, `--accent-hover: #818cf8` e `--accent-subtle: #1e1b4b`, eliminando problemas de leitura de textos azuis sobre fundo escuro.
+  - **Hierarquia de Superfícies:** camadas de elevação (`--card`, `--surface`, `--surface-hover`) e bordas suaves (`--border-subtle`, `--border-strong`) que aumentam a nitidez entre cartões, modais e fundos.
+  - **Textos Secundários:** `--text-muted` calibrado para legibilidade perfeita tanto em temas claros quanto escuros, sem parecer desbotado.
+  - **Painel de Imagens:** badges com contraste acessível para notas (verde para aprovadas, âmbar para revisão, vermelho para rejeitadas com texto nítido).
+- **Animações e Físicas Vivas:**
+  - `@keyframes living-pulse`: respiração e auras orgânicas de elementos em destaque.
+  - `@keyframes living-fly`: trajetórias de voo, ondulações e bater de asas para pássaros, borboletas e drones.
+  - `@keyframes living-run`: galopes e corridas rítmicas para animais terrestres e veículos.
+  - `@keyframes living-bounce`: saltos elásticos com física de compressão (*squash*) e estiramento (*stretch*).
+  - `@keyframes living-sway`: balanço oscilatório natural para árvores, folhagens e flores ao vento.
+  - `@keyframes living-float`: flutuação aquática e aérea suave para nuvens, barcos e lanternas.
+  - `@keyframes particle-rise` e `particle-twinkle`: partículas reativas (brilhos, notas musicais, folhas, zzz) emanando dos elementos vivos.
+  - Classes utilitárias Tailwind complementares (`.animate-living-pulse`, `.animate-living-fly`, etc.) para uso imediato em componentes React.
 
 ## Funcionalidades
 

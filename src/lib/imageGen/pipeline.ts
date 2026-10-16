@@ -325,8 +325,8 @@ export function generationConfigProblem(): string | null {
   return null;
 }
 
-export async function runImageGenBatch(options: { maxItems?: number; deadlineMs?: number } = {}): Promise<BatchResult> {
-  const { maxItems = IMAGE_GEN_DAILY_LIMIT, deadlineMs = 240_000 } = options;
+export async function runImageGenBatch(options: { maxItems?: number; deadlineMs?: number; jobId?: string } = {}): Promise<BatchResult> {
+  const { maxItems = IMAGE_GEN_DAILY_LIMIT, deadlineMs = 240_000, jobId } = options;
   await connectDB();
   const result: BatchResult = { saved: 0, rejected: 0, failed: 0, usage: await getUsage(), stopped: "max" };
   const problem = generationConfigProblem();
@@ -342,7 +342,9 @@ export async function runImageGenBatch(options: { maxItems?: number; deadlineMs?
       result.stopped = "time";
       break;
     }
-    const job = await ImageGenJob.findOne({ status: "active", remaining: { $gt: 0 } }).sort({ createdAt: 1 });
+    const query: Record<string, unknown> = { status: "active", remaining: { $gt: 0 } };
+    if (jobId) query._id = jobId;
+    const job = await ImageGenJob.findOne(query).sort({ createdAt: 1 });
     if (!job) {
       result.stopped = "no-jobs";
       break;

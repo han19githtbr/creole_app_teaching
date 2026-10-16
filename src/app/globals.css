@@ -16,9 +16,9 @@
   --text-secondary: #57534e;
   --text-muted: #6b645e;
 
-  --accent: #280ed1;
-  --accent-hover: #2f2a8f;
-  --accent-soft: #3a1df4;
+  --accent: #2e1ff0;
+  --accent-hover: #2214be;
+  --accent-soft: #3b2cf7;
   --accent-ink: #000000;
 
   --background: var(--bg);
@@ -29,7 +29,7 @@
   color-scheme: dark;
 
   --bg: #0a0b13;
-  --surface: #08080a;
+  --surface: #10111a;
   --surface-2: #1b1c28;
   --border: #262838;
   --border-soft: #1f2130;
@@ -39,11 +39,12 @@
   --text-secondary: #b3b4c4;
   --text-muted: #82839a;
 
-  --accent: #280ed1;
-  --accent-hover: #a5b0fa;
-  --accent-soft: #3a1df4;
-  --accent-ink: #000000;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-soft: #4f46e5;
+  --accent-ink: #ffffff;
 }
+
 
 @theme inline {
   --color-background: var(--background);
@@ -601,8 +602,40 @@ html {
   .cq-sway, .cq-bounce, .cq-arm-l-dance, .cq-arm-r-dance, .cq-think, .cq-qmark, .cq-clock-urgent { animation: none; }
 }
 
-/* Modo escuro: o azul do acento (#280ed1) quase some sobre o fundo preto quando usado como COR DE TEXTO
-   (links, títulos de seção, ícones). Nesses casos usa-se o tom claro; botões com fundo azul não mudam. */
+/* Modo escuro: o tom claro de acento para links, títulos de seção e ícones */
 .dark [class~="text-[var(--accent)]"]:not([class~="bg-[var(--accent)]"]):not([class~="bg-[var(--accent-soft)]"]) {
   color: var(--accent-hover);
 }
+
+/* ===== Animações dos Elementos com Vida das Histórias ===== */
+@keyframes living-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes living-pulse-glow {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50% { transform: scale(1.15); opacity: 0.65; }
+}
+
+@keyframes living-particle-float {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  50% { opacity: 0.95; }
+  100% { transform: translateY(-24px) scale(1.1); opacity: 0; }
+}
+
+.animate-living-float {
+  animation: living-float 2.4s ease-in-out infinite;
+}
+
+.animate-living-glow {
+  animation: living-pulse-glow 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-living-float,
+  .animate-living-glow {
+    animation: none;
+  }
+}
+

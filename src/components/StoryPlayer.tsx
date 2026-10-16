@@ -49,16 +49,16 @@ const RECORDER_CANDIDATES = [
   "video/webm",
 ];
 
-async function pickRecorderMime(canvasStream: MediaStream): Promise<string | undefined> {
-  const videoOnly = new MediaStream(canvasStream.getVideoTracks());
+// Testa cada codec com o stream real (vídeo + áudio) antes de gravar de verdade.
+async function pickRecorderMime(stream: MediaStream): Promise<string | undefined> {
   for (const type of RECORDER_CANDIDATES) {
     if (!MediaRecorder.isTypeSupported(type)) continue;
     try {
-      const probe = new MediaRecorder(videoOnly, { mimeType: type, videoBitsPerSecond: 4_000_000 });
+      const probe = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 4_000_000, audioBitsPerSecond: 128_000 });
       let failed = false;
       probe.onerror = () => { failed = true; };
       probe.start(100);
-      for (const track of canvasStream.getVideoTracks()) {
+      for (const track of stream.getVideoTracks()) {
         (track as CanvasCaptureMediaStreamTrack).requestFrame?.();
       }
       await new Promise((resolve) => setTimeout(resolve, 700));
@@ -70,6 +70,25 @@ async function pickRecorderMime(canvasStream: MediaStream): Promise<string | und
     }
   }
   return undefined;
+}
+
+// Captura estável do áudio via Web Audio (audio.captureStream() troca/remove trilhas
+// durante a gravação e isso faz o MediaRecorder disparar erro).
+const audioGraphs = new WeakMap<HTMLAudioElement, { ctx: AudioContext; dest: MediaStreamAudioDestinationNode }>();
+
+function getAudioCapture(audio: HTMLAudioElement) {
+  let graph = audioGraphs.get(audio);
+  if (!graph) {
+    const AudioCtor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new AudioCtor();
+    const source = ctx.createMediaElementSource(audio);
+    const dest = ctx.createMediaStreamDestination();
+    source.connect(ctx.destination);
+    source.connect(dest);
+    graph = { ctx, dest };
+    audioGraphs.set(audio, graph);
+  }
+  return graph;
 }
 
 function wrapLines(context: CanvasRenderingContext2D, text: string, maxWidth: number, maxLines = Number.POSITIVE_INFINITY) {
@@ -636,31 +655,25 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       audio.muted = false;
       drawExportFrame(context, image, 0, exportW, exportH);
       const canvasStream = canvas.captureStream(30);
-      const captureAudio = audio as HTMLAudioElement & { captureStream?: () => MediaStream };
-      let audioStream = captureAudio.captureStream?.();
-      let playbackStarted = false;
-      if (!audioStream?.getAudioTracks().length) {
-        await audio.play();
-        playbackStarted = true;
-        audioStream = captureAudio.captureStream?.();
-      }
-      if (!audioStream?.getAudioTracks().length) throw new Error("Seu navegador não liberou a captura da narração. Use Chrome ou Edge para exportar.");
-      const stream = new MediaStream([...canvasStream.getVideoTracks(), ...audioStream.getAudioTracks()]);
-      const mimeType = await pickRecorderMime(canvasStream);
+      const { ctx: audioCtx, dest } = getAudioCapture(audio);
+      if (audioCtx.state === "suspended") await audioCtx.resume();
+      const stream = new MediaStream([...canvasStream.getVideoTracks(), ...dest.stream.getAudioTracks()]);
+      const mimeType = await pickRecorderMime(stream);
       if (!mimeType) throw new Error("Este navegador não oferece codificação de vídeo compatível para exportação.");
       const mp4Type = mimeType.startsWith("video/mp4") ? mimeType : undefined;
       const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000, audioBitsPerSecond: 128_000 });
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
       recorder.onerror = (event) => {
-        console.error("MediaRecorder error:", event);
-        failure = new Error("O navegador interrompeu a gravação do vídeo.");
+        const detail = (event as unknown as { error?: DOMException }).error;
+        console.error("MediaRecorder error:", detail?.name, detail?.message, "mimeType:", mimeType);
+        failure = new Error(`O navegador interrompeu a gravação do vídeo${detail?.name ? ` (${detail.name})` : ""}.`);
       };
       const finished = new Promise<Blob>((resolve) => {
         recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType }));
       });
       recorder.start(1000);
-      if (!playbackStarted) await audio.play();
+      await audio.play();
 
       await new Promise<void>((resolve) => {
         const draw = () => {
@@ -675,9 +688,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         drawExportFrame(context, image, duration, exportW, exportH);
         await new Promise((resolve) => setTimeout(resolve, 400));
       }
-      recorder.stop();
+      if (recorder.state !== "inactive") recorder.stop();
       const blob = await finished;
-      stream.getTracks().forEach((track) => track.stop());
+      canvasStream.getTracks().forEach((track) => track.stop()); // não parar a trilha de áudio: ela é reutilizada nas próximas exportações
       if (failure) throw failure;
       if (!completed) throw new Error("A narração foi interrompida antes do fim; o vídeo não foi gerado. Tente exportar novamente.");
 

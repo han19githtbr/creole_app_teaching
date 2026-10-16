@@ -91,6 +91,25 @@ function getAudioCapture(audio: HTMLAudioElement) {
   return graph;
 }
 
+// Renderiza o SVG animado (animações CSS) congelado no instante `seconds`.
+// Um delay negativo + pausa faz cada animação CSS começar exatamente nesse ponto do ciclo.
+async function renderAnimatedSvgFrame(svgText: string, seconds: number): Promise<HTMLImageElement> {
+  const t = Math.max(0, seconds).toFixed(3);
+  const override = `<style>*{animation-delay:-${t}s !important;animation-play-state:paused !important;}</style>`;
+  const markup = svgText.replace(/<svg\b[^>]*>/, (match) => match + override);
+  const url = URL.createObjectURL(new Blob([markup], { type: "image/svg+xml;charset=utf-8" }));
+  const img = new Image();
+  img.src = url;
+  try {
+    await img.decode();
+  } catch (error) {
+    URL.revokeObjectURL(url);
+    throw error;
+  }
+  img.dataset.blobUrl = url;
+  return img;
+}
+
 function wrapLines(context: CanvasRenderingContext2D, text: string, maxWidth: number, maxLines = Number.POSITIVE_INFINITY) {
   const words = text.split(/\s+/).filter(Boolean);
   const lines: string[] = [];
@@ -119,6 +138,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const targetLangUpper = isFr ? "FRANÇAIS" : "KREYÒL";
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const animatedFrameRef = useRef<HTMLImageElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playerViewportRef = useRef<HTMLDivElement>(null);
   const captionRef = useRef<HTMLDivElement>(null);
@@ -515,6 +535,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     exportH = EXPORT_HEIGHT
   ) {
     const isSquare = exportH === exportW;
+    const source: CanvasImageSource = animatedFrameRef.current ?? image;
     const scene = sceneFrame(seconds, duration);
     context.clearRect(0, 0, exportW, exportH);
     context.fillStyle = "#172821";
@@ -525,7 +546,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     const backgroundHeight = image.height * backgroundScale;
     context.save();
     context.filter = "blur(28px) brightness(.42)";
-    context.drawImage(image, (exportW - backgroundWidth) / 2, (exportH - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
+    context.drawImage(source, (exportW - backgroundWidth) / 2, (exportH - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
     context.restore();
 
     const maxSceneHeight = isSquare ? 520 : 760;
@@ -542,7 +563,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     context.beginPath();
     context.roundRect(sceneX, sceneY, width, height, isSquare ? 18 : 22);
     context.clip();
-    context.drawImage(image, sceneX, sceneY, width, height);
+    context.drawImage(source, sceneX, sceneY, width, height);
     context.restore();
 
     context.strokeStyle = "rgba(255,255,255,.24)";
@@ -638,6 +659,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     setExporting(true);
     const wasMuted = audio.muted;
     let failure: Error | null = null;
+    let producing = false;
 
     const onVisibility = () => {
       if (document.hidden) {
@@ -650,6 +672,21 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const image = new Image();
       image.src = story.imageSrc;
       await image.decode();
+
+      // Quadros animados do SVG (drone, moinho, robô, pássaros...) acompanhando o tempo do áudio.
+      const setAnimatedFrame = (frame: HTMLImageElement) => {
+        const previous = animatedFrameRef.current;
+        animatedFrameRef.current = frame;
+        if (previous?.dataset.blobUrl) URL.revokeObjectURL(previous.dataset.blobUrl);
+      };
+      if (svgContent) {
+        try {
+          setAnimatedFrame(await renderAnimatedSvgFrame(svgContent, 0));
+          producing = true;
+        } catch {
+          producing = false;
+        }
+      }
       audio.pause();
       audio.currentTime = 0;
       audio.muted = false;
@@ -675,6 +712,27 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       recorder.start(1000);
       await audio.play();
 
+      if (producing) {
+        void (async () => {
+          let lastBucket = -1;
+          while (producing) {
+            const bucket = Math.floor(audio.currentTime * 20);
+            if (bucket === lastBucket) {
+              await new Promise((resolve) => setTimeout(resolve, 10));
+              continue;
+            }
+            lastBucket = bucket;
+            try {
+              const frame = await renderAnimatedSvgFrame(svgContent as string, bucket / 20);
+              if (producing) setAnimatedFrame(frame);
+              else if (frame.dataset.blobUrl) URL.revokeObjectURL(frame.dataset.blobUrl);
+            } catch {
+              /* mantém o último quadro válido */
+            }
+          }
+        })();
+      }
+
       await new Promise<void>((resolve) => {
         const draw = () => {
           drawExportFrame(context, image, audio.currentTime, exportW, exportH);
@@ -684,6 +742,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         animationRef.current = requestAnimationFrame(draw);
       });
       const completed = audio.ended;
+      producing = false;
       if (completed) {
         drawExportFrame(context, image, duration, exportW, exportH);
         await new Promise((resolve) => setTimeout(resolve, 400));
@@ -776,6 +835,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       setExportError(error instanceof Error ? error.message : "Não foi possível exportar o vídeo.");
     } finally {
       document.removeEventListener("visibilitychange", onVisibility);
+      producing = false;
+      const lastFrame = animatedFrameRef.current;
+      animatedFrameRef.current = null;
+      if (lastFrame?.dataset.blobUrl) URL.revokeObjectURL(lastFrame.dataset.blobUrl);
       if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
       audio.pause();
       audio.currentTime = 0;

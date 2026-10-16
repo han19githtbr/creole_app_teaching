@@ -39,7 +39,7 @@ export interface BankImage {
 
 const STORY_LABEL_LAYOUTS: Record<string, StoryLabelLayout> = {
   tecnologia: { top: 13, left: 49, width: 80, align: "center", anchors: [{ left: 28, top: 69 }, { left: 46, top: 69 }, { left: 57, top: 32 }, { left: 30, top: 50 }] },
-  natureza: { top: 12, left: 52, width: 84, align: "center", anchors: [{ left: 50, top: 37 }, { left: 25, top: 82 }, { left: 75, top: 40 }, { left: 77, top: 24 }] },
+  natureza: { top: 12, left: 52, width: 84, align: "center", anchors: [{ left: 24, top: 35 }, { left: 34, top: 85 }, { left: 58, top: 52 }, { left: 31, top: 41 }] },
   cultura: { top: 11, left: 50, width: 72, align: "center", anchors: [{ left: 25, top: 64 }, { left: 50, top: 28 }, { left: 78, top: 28 }, { left: 50, top: 68 }] },
   turismo: { top: 13, left: 51, width: 82, align: "center", anchors: [{ left: 48, top: 65 }, { left: 25, top: 62 }, { left: 76, top: 25 }, { left: 85, top: 48 }] },
   interior: { top: 10, left: 50, width: 86, align: "center", anchors: [{ left: 50, top: 58 }, { left: 22, top: 36 }, { left: 51, top: 78 }, { left: 80, top: 65 }] },

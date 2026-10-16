@@ -542,18 +542,17 @@ export function drawLivingElementOnCanvas(
   context.save();
   context.globalAlpha = visualOpacity;
 
-  // Posição final com o deslocamento vivo
-  const posX = centerX + state.dx * 8;
-  const posY = centerY + state.dy * 8;
+  // Posição estável de ancoragem para identificação do elemento
+  const posX = centerX;
+  const posY = centerY;
 
   context.translate(posX, posY);
-  context.rotate((state.rotation * Math.PI) / 180);
-  context.scale(visualScale * state.scaleX, visualScale * state.scaleY);
+  context.scale(visualScale * (isActive ? 1.05 : 1), visualScale * (isActive ? 1.05 : 1));
 
-  // 1. Aura luminosa viva em volta do elemento se ativo
+  // 1. Aura luminosa viva em volta do identificador se o elemento estiver ativo
   if (isActive) {
-    const auraRadius = 42 + state.pulse * 14;
-    const gradient = context.createRadialGradient(0, 0, 18, 0, 0, auraRadius);
+    const auraRadius = 38 + state.pulse * 10;
+    const gradient = context.createRadialGradient(0, 0, 15, 0, 0, auraRadius);
     gradient.addColorStop(0, "rgba(244, 200, 91, 0.45)");
     gradient.addColorStop(0.6, "rgba(244, 200, 91, 0.15)");
     gradient.addColorStop(1, "rgba(244, 200, 91, 0)");
@@ -563,30 +562,15 @@ export function drawLivingElementOnCanvas(
     context.fill();
   }
 
-  // 2. Partículas vivas (notas musicais, faíscas, folhas, pegadas)
-  for (const p of state.particles) {
-    context.save();
-    context.globalAlpha = visualOpacity * p.opacity;
-    context.translate(p.x, p.y);
-    context.rotate((p.rotation * Math.PI) / 180);
-    context.font = `${Math.round(20 * p.scale)}px "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif`;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText(p.char, 0, 0);
-    context.restore();
-  }
-
-  // 3. Pílula principal com ícone da ação viva
+  // 2. Pílula identificadora estável
   const fontSize = 21;
   context.font = `700 ${fontSize}px system-ui, -apple-system, sans-serif`;
   const emojiWidth = 32;
   const kreyolWidth = context.measureText(kreyol).width;
   const separatorWidth = context.measureText("  ·  ").width;
   const ptWidth = context.measureText(portuguese).width;
-  const actionBadgeText = state.action !== "idle" ? ` (${state.badgeText})` : "";
-  const actionWidth = actionBadgeText ? context.measureText(actionBadgeText).width : 0;
 
-  const totalWidth = emojiWidth + kreyolWidth + separatorWidth + ptWidth + actionWidth + 34;
+  const totalWidth = emojiWidth + kreyolWidth + separatorWidth + ptWidth + 34;
   const totalHeight = 46;
   const pillX = -totalWidth / 2;
   const pillY = -totalHeight / 2;
@@ -601,13 +585,13 @@ export function drawLivingElementOnCanvas(
   context.lineWidth = isActive ? 2.5 : 1.5;
   context.stroke();
 
-  // Emoji da ação/entidade
+  // Emoji da entidade
   context.font = `20px "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "middle";
   context.fillText(state.badgeEmoji, pillX + 22, 1);
 
-  // Texto Kreyòl · Português + Ação
+  // Texto Kreyòl · Português (identificador limpo)
   context.font = `700 ${fontSize}px system-ui, -apple-system, sans-serif`;
   context.textAlign = "left";
   context.textBaseline = "middle";
@@ -623,13 +607,6 @@ export function drawLivingElementOnCanvas(
 
   context.fillStyle = isActive ? "#18241d" : "#ffffff";
   context.fillText(portuguese, curX, 1);
-  curX += ptWidth;
-
-  if (actionBadgeText) {
-    context.font = `600 ${fontSize - 4}px system-ui, -apple-system, sans-serif`;
-    context.fillStyle = isActive ? "rgba(24, 36, 29, 0.85)" : "#f5cf72";
-    context.fillText(actionBadgeText, curX, 1);
-  }
 
   context.restore();
 }

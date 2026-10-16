@@ -74,6 +74,28 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const [captionPosition, setCaptionPosition] = useState<{ left: number; top: number } | null>(null);
   const [draggingCaption, setDraggingCaption] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
+  const [svgContent, setSvgContent] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (story.imageSrc && (story.imageSrc.endsWith(".svg") || story.imageSrc.includes(".svg?"))) {
+      fetch(story.imageSrc)
+        .then((res) => (res.ok ? res.text() : null))
+        .then((text) => {
+          if (isMounted && text) {
+            setSvgContent(text);
+          }
+        })
+        .catch(() => {
+          if (isMounted) setSvgContent(null);
+        });
+    } else {
+      setSvgContent(null);
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [story.imageSrc]);
 
   // A duração que manda é a do áudio carregado no navegador. Se ele não a informar
   // (WebM gravado sem cabeçalho), vale a salva com a história e, por último, a última legenda.
@@ -596,9 +618,18 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       <section className="overflow-hidden rounded-xl border border-[#273a31] bg-[#101b17] text-white shadow-xl">
         <div ref={playerViewportRef} className="relative aspect-video overflow-hidden bg-[#172821]">
           <div className="absolute inset-0 will-change-transform" style={{ transform: `translate(${frame.driftX}%, ${frame.driftY}%) scale(${1.03 * frame.zoom})` }}>
-            <NextImage src={story.imageSrc} alt={story.title} fill unoptimized className="object-cover" />
+            {svgContent ? (
+              <div
+                className={`h-full w-full [&>svg]:h-full [&>svg]:w-full [&>svg]:object-cover ${
+                  playing ? "" : "[&_*]:[animation-play-state:paused!important]"
+                }`}
+                dangerouslySetInnerHTML={{ __html: svgContent }}
+              />
+            ) : (
+              <NextImage src={story.imageSrc} alt={story.title} fill unoptimized className="object-cover" />
+            )}
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/35" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/35 pointer-events-none" />
           <div className="absolute left-4 top-4 sm:left-5 sm:top-5 flex flex-wrap items-center gap-2 z-20">
             <span className="rounded-md bg-[#14251e]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#f5cf72] border border-[#f5cf72]/30 shadow-sm">{story.theme}</span>
             <span className="rounded-md border border-white/20 bg-black/40 px-2 py-1 text-[10px] text-white/90 font-medium">KREYÒL · PT</span>
@@ -619,66 +650,42 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const captionText = activeCaption ? `${activeCaption.portuguese} ${activeCaption.kreyol}` : "";
             const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active);
 
-            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX + living.dx;
-            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY + living.dy;
+            // Posição de ancoragem estável: o título identifica o elemento da imagem sem se debater
+            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX;
+            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
 
             return (
               <div
                 key={`${element.kreyol}-${index}`}
-                className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 select-none will-change-transform"
+                className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 select-none transition-all duration-300 will-change-transform"
                 style={{
                   left: `${left}%`,
                   top: `${top}%`,
                   opacity: visual.opacity,
-                  transform: `translate(-50%, -50%) scale(${visual.scale * living.scaleX}, ${visual.scale * living.scaleY}) rotate(${living.rotation}deg)`,
+                  transform: `translate(-50%, -50%) scale(${visual.scale * (active ? 1.06 : 1)})`,
                   transformOrigin: "center center",
                 }}
               >
-                {/* Aura viva de destaque */}
+                {/* Destaque sutil com aura luminosa quando o elemento está ativo na narração */}
                 {active && (
                   <div
-                    className="absolute inset-0 -m-3 rounded-full bg-[#f5cf72]/25 blur-md"
-                    style={{ opacity: 0.4 + living.pulse * 0.6 }}
+                    className="absolute inset-0 -m-2 rounded-full bg-[#f5cf72]/30 blur-md pointer-events-none transition-opacity"
+                    style={{ opacity: 0.5 + living.pulse * 0.5 }}
                   />
                 )}
 
-                {/* Partículas vivas no espaço ao redor */}
-                {living.particles.map((p, pIndex) => (
-                  <span
-                    key={pIndex}
-                    className="absolute text-xs sm:text-sm select-none pointer-events-none transition-transform"
-                    style={{
-                      left: `calc(50% + ${p.x}px)`,
-                      top: `calc(50% + ${p.y}px)`,
-                      opacity: p.opacity,
-                      transform: `scale(${p.scale}) rotate(${p.rotation}deg)`,
-                    }}
-                  >
-                    {p.char}
-                  </span>
-                ))}
-
-                {/* Pílula viva */}
+                {/* Pílula identificadora estável do elemento */}
                 <div
-                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-[8px] sm:text-[10px] leading-none shadow-lg backdrop-blur-md transition-colors ${
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-[8px] sm:text-[10px] leading-none shadow-lg backdrop-blur-md transition-all duration-300 ${
                     active
-                      ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d] ring-2 ring-[#f5cf72]/50 shadow-[0_0_15px_rgba(245,207,114,0.4)]"
-                      : "border-white/35 bg-[#15261f]/92 text-white"
+                      ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d] font-bold ring-2 ring-[#f5cf72]/60 shadow-[0_0_18px_rgba(245,207,114,0.5)]"
+                      : "border-white/35 bg-[#12221b]/92 text-white/95"
                   }`}
                 >
                   <span className="text-xs sm:text-sm">{living.badgeEmoji}</span>
                   <span className={`font-bold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>{element.kreyol}</span>
                   <span className={`px-0.5 ${active ? "text-[#18241d]/60" : "text-white/60"}`}>·</span>
                   <span className={active ? "text-[#18241d]" : "text-white"}>{element.pt}</span>
-                  {living.action !== "idle" && (
-                    <span
-                      className={`ml-1 rounded-full px-1.5 py-0.5 text-[7px] sm:text-[9px] font-extrabold uppercase tracking-wider ${
-                        active ? "bg-[#18241d] text-[#f5cf72]" : "bg-[#f5cf72]/20 text-[#f5cf72]"
-                      }`}
-                    >
-                      {living.badgeText}
-                    </span>
-                  )}
                 </div>
               </div>
             );

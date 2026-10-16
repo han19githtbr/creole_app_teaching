@@ -34,12 +34,6 @@ export function Navbar() {
   const navLabel = (href: string, label: string) =>
     href === "/dashboard/jogo" && language === "francais" ? "C'est quoi ?" : label;
 
-  useEffect(() => {
-    if (pathname?.startsWith("/admin") && status === "unauthenticated") {
-      router.replace("/");
-    }
-  }, [pathname, router, status]);
-
   const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname?.startsWith(href + "/"));
 
   const linkClass = (href: string) =>

@@ -15,7 +15,15 @@ const cached: MongooseCache = global._mongooseCache ?? { conn: null, promise: nu
 global._mongooseCache = cached;
 
 export async function connectDB(): Promise<typeof mongoose> {
-  if (cached.conn) return cached.conn;
+  // Se já estiver conectado (readyState === 1), reaproveita a conexão ativa
+  if (mongoose.connection.readyState === 1) {
+    return mongoose;
+  }
+
+  // Se já estiver em processo de conexão (readyState === 2), aguarda a promessa existente
+  if (mongoose.connection.readyState === 2 && cached.promise) {
+    return cached.promise;
+  }
 
   const uri = process.env.MONGODB_URI;
   if (!uri) {
@@ -24,18 +32,38 @@ export async function connectDB(): Promise<typeof mongoose> {
     );
   }
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(uri, {
-      bufferCommands: false,
+  // Configura listeners para limpar o cache caso a conexão caia ou ocorra erro
+  if (!mongoose.connection.listeners("disconnected").length) {
+    mongoose.connection.on("disconnected", () => {
+      cached.conn = null;
+      cached.promise = null;
+    });
+  }
+  if (!mongoose.connection.listeners("error").length) {
+    mongoose.connection.on("error", () => {
+      cached.conn = null;
+      cached.promise = null;
     });
   }
 
-  try {
-    cached.conn = await cached.promise;
-  } catch (err) {
-    cached.promise = null;
-    throw err;
-  }
+  cached.conn = null;
+  cached.promise = mongoose
+    .connect(uri, {
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 8000,
+      socketTimeoutMS: 45000,
+      bufferCommands: true,
+    })
+    .then((m) => {
+      cached.conn = m;
+      return m;
+    })
+    .catch((err) => {
+      cached.promise = null;
+      cached.conn = null;
+      throw err;
+    });
 
-  return cached.conn;
+  return cached.promise;
 }
+

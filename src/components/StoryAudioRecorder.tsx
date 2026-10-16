@@ -19,6 +19,10 @@ interface Props {
   onRecorded: (file: File, durationSeconds: number) => void;
   /** Avisa quando há gravação ou conversão em andamento (para o formulário bloquear o salvamento). */
   onBusyChange?: (busy: boolean) => void;
+  /** Idioma da narração ("kreyol" ou "francais") */
+  language?: "kreyol" | "francais";
+  /** Transcrição de fala ao vivo enquanto o microfone grava */
+  onLiveTranscript?: (text: string, isFinal: boolean) => void;
   disabled?: boolean;
 }
 
@@ -35,10 +39,11 @@ function timestampName() {
   return `narracao-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.mp3`;
 }
 
-export function StoryAudioRecorder({ onRecorded, onBusyChange, disabled }: Props) {
+export function StoryAudioRecorder({ onRecorded, onBusyChange, language = "kreyol", onLiveTranscript, disabled }: Props) {
   const [state, setState] = useState<RecorderState>("idle");
   const [elapsed, setElapsed] = useState(0);
   const [level, setLevel] = useState(0);
+  const [liveText, setLiveText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
 
@@ -67,9 +72,21 @@ export function StoryAudioRecorder({ onRecorded, onBusyChange, disabled }: Props
     return elapsedBeforeRef.current + running;
   }, []);
 
+  const recognitionRef = useRef<any>(null);
+  const onLiveTranscriptRef = useRef(onLiveTranscript);
+  useEffect(() => {
+    onLiveTranscriptRef.current = onLiveTranscript;
+  }, [onLiveTranscript]);
+
   const releaseResources = useCallback(() => {
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
     if (meterFrameRef.current !== null) cancelAnimationFrame(meterFrameRef.current);
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {}
+      recognitionRef.current = null;
+    }
     timerRef.current = null;
     meterFrameRef.current = null;
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -169,12 +186,48 @@ export function StoryAudioRecorder({ onRecorded, onBusyChange, disabled }: Props
       recorder.start(1000);
       segmentStartRef.current = performance.now();
       startMeter(stream);
+
+      // Inicia reconhecimento de fala em tempo real caso disponível no navegador
+      if (typeof window !== "undefined") {
+        const SpeechRecognitionClass =
+          (window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any }).SpeechRecognition ||
+          (window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any }).webkitSpeechRecognition;
+
+        if (SpeechRecognitionClass) {
+          try {
+            const recognition = new SpeechRecognitionClass();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = language === "francais" ? "fr-FR" : "ht-HT";
+            recognition.onresult = (event: any) => {
+              let text = "";
+              let isFinal = false;
+              for (let i = event.resultIndex; i < event.results.length; i++) {
+                text += event.results[i][0]?.transcript || "";
+                if (event.results[i].isFinal) isFinal = true;
+              }
+              const trimmed = text.trim();
+              if (trimmed) {
+                setLiveText(trimmed);
+                onLiveTranscriptRef.current?.(trimmed, isFinal);
+              }
+            };
+            recognition.onerror = () => {};
+            recognition.start();
+            recognitionRef.current = recognition;
+          } catch {
+            // Reconhecimento de fala é uma melhoria opcional; segue com o áudio
+          }
+        }
+      }
+
       timerRef.current = window.setInterval(() => {
         const seconds = currentElapsed();
         setElapsed(seconds);
         if (seconds >= STORY_AUDIO_MAX_SECONDS) stop();
       }, 200);
       setElapsed(0);
+      setLiveText("");
       setState("recording");
     } catch (permissionError) {
       releaseResources();
@@ -193,10 +246,16 @@ export function StoryAudioRecorder({ onRecorded, onBusyChange, disabled }: Props
       elapsedBeforeRef.current = currentElapsed();
       segmentStartRef.current = null;
       recorder.pause();
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch {}
+      }
       setState("paused");
     } else if (recorder.state === "paused") {
       segmentStartRef.current = performance.now();
       recorder.resume();
+      if (recognitionRef.current) {
+        try { recognitionRef.current.start(); } catch {}
+      }
       setState("recording");
     }
   }
@@ -216,6 +275,7 @@ export function StoryAudioRecorder({ onRecorded, onBusyChange, disabled }: Props
     if (recorder && recorder.state !== "inactive") recorder.stop();
     releaseResources();
     setElapsed(0);
+    setLiveText("");
     setState("idle");
   }
 
@@ -229,7 +289,7 @@ export function StoryAudioRecorder({ onRecorded, onBusyChange, disabled }: Props
             <Mic className="h-4 w-4" /> Gravar narração
           </Button>
           <p className="text-xs text-[var(--text-muted)]">
-            Grave direto pelo microfone, de {describeStoryDuration(STORY_AUDIO_MIN_SECONDS)} a {describeStoryDuration(STORY_AUDIO_MAX_SECONDS)}. Ao parar, a gravação é convertida em MP3 e fica pronta para ouvir antes de salvar.
+            Grave direto pelo microfone, de {describeStoryDuration(STORY_AUDIO_MIN_SECONDS)} a {describeStoryDuration(STORY_AUDIO_MAX_SECONDS)}. Ao falar, o roteiro e as legendas são preenchidos automaticamente.
           </p>
         </div>
       )}
@@ -253,6 +313,12 @@ export function StoryAudioRecorder({ onRecorded, onBusyChange, disabled }: Props
           <div className="h-2 overflow-hidden rounded-full bg-[var(--border-soft)]" aria-hidden="true">
             <div className="h-full rounded-full bg-[var(--accent)] transition-[width] duration-100" style={{ width: `${state === "recording" ? Math.round(level * 100) : 0}%` }} />
           </div>
+          {liveText && (
+            <div className="rounded-md border border-[var(--accent)]/30 bg-[var(--surface)] p-2 text-xs text-[var(--text)] shadow-sm">
+              <span className="font-semibold text-[var(--accent)]">Transcrição ao vivo: </span>
+              <span>{liveText}</span>
+            </div>
+          )}
           {elapsed < STORY_AUDIO_MIN_SECONDS && <p className="text-xs text-[var(--text-muted)]">Mínimo de {describeStoryDuration(STORY_AUDIO_MIN_SECONDS)} para usar a gravação.</p>}
         </div>
       )}

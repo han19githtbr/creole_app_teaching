@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import NextImage from "next/image";
-import { Download, GripHorizontal, Languages, Pause, Play, RotateCcw, Sparkles, Undo2, Volume2, VolumeX } from "lucide-react";
+import { Check, Copy, Download, ExternalLink, Film, GripHorizontal, Languages, MessageCircle, Pause, Play, RotateCcw, Share2, Sparkles, Undo2, Volume2, VolumeX } from "lucide-react";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
-import { getStoryLabelLayout } from "@/lib/imageBank";
+import { getStoryLabelLayout, getElementLabel } from "@/lib/imageBank";
 import { useBankImage } from "@/hooks/useBankImage";
+import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { describeStoryDuration, formatStoryTime } from "@/lib/storyAudio";
 import {
   buildElementTimeline,
@@ -27,11 +28,14 @@ export interface StoryPlayerData {
   imageSrc: string;
   theme: string;
   audioUrl: string;
+  language?: "kreyol" | "francais";
   /** Duração gravada junto com a história (histórias antigas não têm). */
   audioDuration?: number;
   captions: IVideoStoryCaption[];
   elementCues?: ElementCue[];
 }
+
+export type ExportFormat = "stories" | "feed";
 
 const EXPORT_WIDTH = 1080;
 const EXPORT_HEIGHT = 1920;
@@ -57,6 +61,12 @@ function wrapLines(context: CanvasRenderingContext2D, text: string, maxWidth: nu
 }
 
 export function StoryPlayer({ story }: { story: StoryPlayerData }) {
+  const { language: currentAppLanguage } = useAppLanguage();
+  const storyLang = story.language || currentAppLanguage;
+  const isFr = storyLang === "francais";
+  const targetLangLabel = isFr ? "Français" : "Kreyòl";
+  const targetLangUpper = isFr ? "FRANÇAIS" : "KREYÒL";
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playerViewportRef = useRef<HTMLDivElement>(null);
@@ -68,14 +78,33 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const [playing, setPlaying] = useState(false);
   const [captionsEnabled, setCaptionsEnabled] = useState(true);
   const [language, setLanguage] = useState<"both" | "pt" | "ht">("both");
+  const [exportFormat, setExportFormat] = useState<ExportFormat>("stories");
   const [exporting, setExporting] = useState(false);
+  const [exportNotice, setExportNotice] = useState<string | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [copiedCaption, setCopiedCaption] = useState(false);
   const [muted, setMuted] = useState(false);
   // Posição da legenda em % do quadro da cena (canto superior esquerdo). `null` = posição original (centralizada na parte inferior).
   const [captionPosition, setCaptionPosition] = useState<{ left: number; top: number } | null>(null);
   const [draggingCaption, setDraggingCaption] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
   const [svgContent, setSvgContent] = useState<string | null>(null);
+
+  const socialCaption = useMemo(() => {
+    const flag = isFr ? "🇫🇷" : "🇭🇹";
+    const firstCap = story.captions[0];
+    const quote = firstCap ? `"${firstCap.kreyol}" (${firstCap.portuguese})` : "";
+    const tags = isFr ? "#frances #aprenderfrances #français #cultura" : "#kreyol #haiti #idiomas #cultura";
+    return `✨ ${story.title} ${flag} 🇧🇷\nTema: ${story.theme}\n\n${quote}\n\n📖 Aprenda ${targetLangLabel} com histórias animadas e tradução sincronizada em português!\n${tags} #educacao #estudo`;
+  }, [story.title, story.theme, isFr, targetLangLabel, story.captions]);
+
+  function copySocialCaption() {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(socialCaption);
+      setCopiedCaption(true);
+      setTimeout(() => setCopiedCaption(false), 3000);
+    }
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -337,10 +366,12 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         isActive
       );
 
+      const elementLabel = getElementLabel(element, storyLang);
+
       drawLivingElementOnCanvas(context, {
         centerX,
         centerY,
-        kreyol: element.kreyol,
+        kreyol: elementLabel,
         portuguese: element.pt,
         state: livingState,
         visualOpacity: visual.opacity,
@@ -350,150 +381,198 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     }
   }
 
-
-  function drawCaptionBox(context: CanvasRenderingContext2D, kreyol: string, portuguese: string, isTyping = false) {
-    const maxTextWidth = EXPORT_WIDTH - 160;
-    const maxBoxHeight = 365;
-    let size = 22;
-    let kreyolLines: string[] = [];
+  function drawCaptionBox(
+    context: CanvasRenderingContext2D,
+    targetText: string,
+    portuguese: string,
+    isTyping = false,
+    exportW = EXPORT_WIDTH,
+    exportH = EXPORT_HEIGHT
+  ) {
+    const isSquare = exportH === exportW;
+    const maxTextWidth = exportW - 160;
+    const maxBoxHeight = isSquare ? 230 : 365;
+    let size = isSquare ? 20 : 22;
+    let targetLines: string[] = [];
     let portugueseLines: string[] = [];
     let boxHeight = 0;
-    for (const candidate of [36, 32, 28, 25, 22]) {
+    const candidateSizes = isSquare ? [26, 23, 20, 18, 16] : [36, 32, 28, 25, 22];
+    for (const candidate of candidateSizes) {
       context.font = `500 ${candidate}px system-ui, sans-serif`;
-      const k = wrapLines(context, kreyol, maxTextWidth);
+      const k = wrapLines(context, targetText, maxTextWidth);
       context.font = `500 ${candidate - 2}px system-ui, sans-serif`;
       const p = wrapLines(context, portuguese, maxTextWidth);
-      const height = 32 + 38 + k.length * candidate * 1.28 + 18 + 38 + p.length * (candidate - 2) * 1.28 + 26;
+      const height = (isSquare ? 20 : 32) + (isSquare ? 26 : 38) + k.length * candidate * 1.25 + (isSquare ? 12 : 18) + (isSquare ? 26 : 38) + p.length * (candidate - 2) * 1.25 + (isSquare ? 18 : 26);
       size = candidate;
-      kreyolLines = k;
+      targetLines = k;
       portugueseLines = p;
       boxHeight = height;
       if (height <= maxBoxHeight) break;
     }
     if (boxHeight > maxBoxHeight) {
-      // Texto muito longo mesmo na menor fonte: limita as linhas com reticências.
       context.font = `500 ${size}px system-ui, sans-serif`;
-      kreyolLines = wrapLines(context, kreyol, maxTextWidth, 3);
+      targetLines = wrapLines(context, targetText, maxTextWidth, 2);
       context.font = `500 ${size - 2}px system-ui, sans-serif`;
-      portugueseLines = wrapLines(context, portuguese, maxTextWidth, 3);
-      boxHeight = 32 + 38 + kreyolLines.length * size * 1.28 + 18 + 38 + portugueseLines.length * (size - 2) * 1.28 + 26;
+      portugueseLines = wrapLines(context, portuguese, maxTextWidth, 2);
+      boxHeight = (isSquare ? 20 : 32) + (isSquare ? 26 : 38) + targetLines.length * size * 1.25 + (isSquare ? 12 : 18) + (isSquare ? 26 : 38) + portugueseLines.length * (size - 2) * 1.25 + (isSquare ? 18 : 26);
     }
-    const boxTop = EXPORT_HEIGHT - 130 - boxHeight;
-    context.fillStyle = "rgba(9, 19, 16, .84)";
+    const boxBottomPadding = isSquare ? 45 : 130;
+    const boxTop = exportH - boxBottomPadding - boxHeight;
+    context.fillStyle = "rgba(9, 19, 16, .88)";
     context.beginPath();
-    context.roundRect(54, boxTop, EXPORT_WIDTH - 108, boxHeight, 26);
+    context.roundRect(54, boxTop, exportW - 108, boxHeight, isSquare ? 18 : 26);
     context.fill();
-    context.strokeStyle = "rgba(245, 207, 114, .38)";
+    context.strokeStyle = "rgba(245, 207, 114, .45)";
     context.lineWidth = 2;
     context.stroke();
 
     context.textAlign = "center";
-    let y = boxTop + 32 + 24;
+    let y = boxTop + (isSquare ? 20 : 32) + (isSquare ? 18 : 24);
     context.fillStyle = "#f4c85b";
-    context.font = "700 27px system-ui, sans-serif";
-    context.fillText("KREYÒL", EXPORT_WIDTH / 2, y);
+    context.font = `700 ${isSquare ? 20 : 27}px system-ui, sans-serif`;
+    context.fillText(targetLangUpper, exportW / 2, y);
     context.fillStyle = "#ffffff";
     context.font = `500 ${size}px system-ui, sans-serif`;
-    y += 14;
-    for (const line of kreyolLines) {
-      y += size * 1.28;
-      context.fillText(line, EXPORT_WIDTH / 2, y - size * 0.28);
+    y += isSquare ? 10 : 14;
+    for (const line of targetLines) {
+      y += size * 1.25;
+      context.fillText(line, exportW / 2, y - size * 0.25);
     }
-    y += 18 + 24;
+    y += (isSquare ? 12 : 18) + (isSquare ? 18 : 24);
     context.fillStyle = "#4ade80";
-    context.font = "700 25px system-ui, sans-serif";
-    context.fillText("PORTUGUÊS (AO VIVO)", EXPORT_WIDTH / 2, y);
+    context.font = `700 ${isSquare ? 18 : 25}px system-ui, sans-serif`;
+    context.fillText("PORTUGUÊS (AO VIVO)", exportW / 2, y);
     context.fillStyle = "#ffffff";
     context.font = `500 ${size - 2}px system-ui, sans-serif`;
-    y += 14;
+    y += isSquare ? 10 : 14;
     for (let i = 0; i < portugueseLines.length; i++) {
       const line = portugueseLines[i];
       const isLast = i === portugueseLines.length - 1;
       const lineText = isTyping && isLast ? `${line} ▍` : line;
-      y += (size - 2) * 1.28;
-      context.fillText(lineText, EXPORT_WIDTH / 2, y - (size - 2) * 0.28);
+      y += (size - 2) * 1.25;
+      context.fillText(lineText, exportW / 2, y - (size - 2) * 0.25);
     }
   }
 
   // Desenha o quadro do vídeo exportado para o instante `seconds` do ÁUDIO.
-  // Usa as mesmas funções de linha do tempo da pré-visualização (zoom/deriva da cena,
-  // elementos, legenda e progresso) — por isso o vídeo sai igual ao que o player mostra.
-  function drawExportFrame(context: CanvasRenderingContext2D, image: HTMLImageElement, seconds: number) {
+  function drawExportFrame(
+    context: CanvasRenderingContext2D,
+    image: HTMLImageElement,
+    seconds: number,
+    exportW = EXPORT_WIDTH,
+    exportH = EXPORT_HEIGHT
+  ) {
+    const isSquare = exportH === exportW;
     const scene = sceneFrame(seconds, duration);
-    context.clearRect(0, 0, EXPORT_WIDTH, EXPORT_HEIGHT);
+    context.clearRect(0, 0, exportW, exportH);
     context.fillStyle = "#172821";
-    context.fillRect(0, 0, EXPORT_WIDTH, EXPORT_HEIGHT);
-    const backgroundScale = Math.max(EXPORT_WIDTH / image.width, EXPORT_HEIGHT / image.height);
+    context.fillRect(0, 0, exportW, exportH);
+
+    const backgroundScale = Math.max(exportW / image.width, exportH / image.height);
     const backgroundWidth = image.width * backgroundScale;
     const backgroundHeight = image.height * backgroundScale;
     context.save();
     context.filter = "blur(28px) brightness(.42)";
-    context.drawImage(image, (EXPORT_WIDTH - backgroundWidth) / 2, (EXPORT_HEIGHT - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
+    context.drawImage(image, (exportW - backgroundWidth) / 2, (exportH - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
     context.restore();
-    const baseScale = Math.min((EXPORT_WIDTH - 88) / image.width, 760 / image.height);
+
+    const maxSceneHeight = isSquare ? 520 : 760;
+    const baseScale = Math.min((exportW - (isSquare ? 64 : 88)) / image.width, maxSceneHeight / image.height);
     const baseHeight = image.height * baseScale;
     const width = image.width * baseScale * scene.zoom;
     const height = baseHeight * scene.zoom;
-    const sceneX = (EXPORT_WIDTH - width) / 2 + (scene.driftX / 100) * width;
-    const sceneY = (EXPORT_HEIGHT - height) / 2 + (scene.driftY / 100) * height - 45;
+    const sceneX = (exportW - width) / 2 + (scene.driftX / 100) * width;
+    const sceneY = isSquare
+      ? 152 + (scene.driftY / 100) * height
+      : (exportH - height) / 2 + (scene.driftY / 100) * height - 45;
+
     context.save();
     context.beginPath();
-    context.roundRect(sceneX, sceneY, width, height, 22);
+    context.roundRect(sceneX, sceneY, width, height, isSquare ? 18 : 22);
     context.clip();
     context.drawImage(image, sceneX, sceneY, width, height);
     context.restore();
+
     context.strokeStyle = "rgba(255,255,255,.24)";
     context.lineWidth = 2;
     context.beginPath();
-    context.roundRect(sceneX, sceneY, width, height, 22);
+    context.roundRect(sceneX, sceneY, width, height, isSquare ? 18 : 22);
     context.stroke();
-    const shade = context.createLinearGradient(0, 0, 0, EXPORT_HEIGHT);
-    shade.addColorStop(0, "rgba(12, 24, 20, .28)");
+
+    const shade = context.createLinearGradient(0, 0, 0, exportH);
+    shade.addColorStop(0, "rgba(12, 24, 20, .32)");
     shade.addColorStop(0.48, "rgba(12, 24, 20, .04)");
-    shade.addColorStop(0.68, "rgba(12, 24, 20, .18)");
-    shade.addColorStop(1, "rgba(12, 24, 20, .88)");
+    shade.addColorStop(0.72, "rgba(12, 24, 20, .22)");
+    shade.addColorStop(1, "rgba(12, 24, 20, .92)");
     context.fillStyle = shade;
-    context.fillRect(0, 0, EXPORT_WIDTH, EXPORT_HEIGHT);
+    context.fillRect(0, 0, exportW, exportH);
+
+    const barY = isSquare ? 42 : 74;
     context.fillStyle = "rgba(12, 24, 20, .72)";
-    context.fillRect(64, 74, EXPORT_WIDTH - 128, 4);
+    context.fillRect(54, barY, exportW - 108, 4);
     context.fillStyle = "#f4c85b";
-    context.fillRect(64, 74, (EXPORT_WIDTH - 128) * scene.progress, 4);
+    context.fillRect(54, barY, (exportW - 108) * scene.progress, 4);
+
     context.textAlign = "left";
     context.fillStyle = "#f4c85b";
-    context.font = "700 25px system-ui, sans-serif";
-    context.fillText(`${story.theme.toLocaleUpperCase()}  ·  KREYÒL STUDIO`, 70, 142);
+    context.font = `700 ${isSquare ? 20 : 25}px system-ui, sans-serif`;
+    const studioBadge = isFr ? "FRANÇAIS STUDIO" : "KREYÒL STUDIO";
+    context.fillText(`${story.theme.toLocaleUpperCase()}  ·  ${studioBadge}`, 56, isSquare ? 80 : 142);
+
     context.fillStyle = "#ffffff";
-    context.font = "700 56px Georgia, serif";
+    context.font = isSquare ? "700 36px Georgia, serif" : "700 56px Georgia, serif";
     const words = story.title.split(" ");
     let titleLine = "";
-    let titleY = 220;
+    let titleY = isSquare ? 122 : 220;
+    const titleLineHeight = isSquare ? 42 : 68;
+    const maxTitleLines = isSquare ? 1 : 2;
+    let linesDrawn = 0;
     for (const word of words) {
       const test = `${titleLine}${word} `;
-      if (context.measureText(test).width > EXPORT_WIDTH - 140) {
-        context.fillText(titleLine.trim(), 70, titleY);
-        titleLine = `${word} `;
-        titleY += 68;
+      if (context.measureText(test).width > exportW - 140) {
+        if (linesDrawn < maxTitleLines) {
+          context.fillText(titleLine.trim(), 56, titleY);
+          titleLine = `${word} `;
+          titleY += titleLineHeight;
+          linesDrawn++;
+        }
       } else titleLine = test;
     }
-    context.fillText(titleLine.trim(), 70, titleY);
+    if (linesDrawn < maxTitleLines && titleLine.trim()) {
+      context.fillText(titleLine.trim(), 56, titleY);
+    }
+
     drawElementPills(context, { x: sceneX, y: sceneY, width, height }, seconds);
+
     const captionIndex = story.captions.findIndex((c) => seconds >= c.start && seconds < c.end);
     const caption = captionIndex >= 0 ? story.captions[captionIndex] : undefined;
     if (caption && (!duration || seconds < duration - 0.1)) {
       const snapshot = computeCaptionTyping(caption, seconds, captionIndex, voiceData);
-      drawCaptionBox(context, caption.kreyol, snapshot.visiblePt, snapshot.isTyping);
+      drawCaptionBox(context, caption.kreyol, snapshot.visiblePt, snapshot.isTyping, exportW, exportH);
     }
+
     context.textAlign = "left";
     context.fillStyle = "rgba(255,255,255,.78)";
-    context.font = "500 24px system-ui, sans-serif";
-    context.fillText("Kreyòl Ayisyen", 70, EXPORT_HEIGHT - 68);
+    context.font = `500 ${isSquare ? 18 : 24}px system-ui, sans-serif`;
+    context.fillText(isFr ? "Français Interactif" : "Kreyòl Ayisyen", 56, exportH - (isSquare ? 20 : 68));
   }
 
-  async function exportVideo() {
+  async function exportVideo(
+    targetFormat: ExportFormat = exportFormat,
+    destination: "download" | "whatsapp" | "instagram" | "facebook" = "download"
+  ) {
     const audio = audioRef.current;
     const canvas = canvasRef.current;
     if (!audio || !canvas) return;
     setExportError(null);
+    setExportNotice(null);
+
+    const isStories = targetFormat === "stories";
+    const exportW = 1080;
+    const exportH = isStories ? 1920 : 1080;
+    canvas.width = exportW;
+    canvas.height = exportH;
+
     if (!(duration > 0)) {
       setExportError("Aguarde o carregamento da narração e tente novamente.");
       return;
@@ -507,27 +586,27 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     setExporting(true);
     const wasMuted = audio.muted;
     let failure: Error | null = null;
-    // Com a aba em segundo plano o navegador congela o desenho dos quadros, mas o áudio
-    // continua: o vídeo sairia fora de sincronia. Nesse caso a exportação é cancelada.
+
     const onVisibility = () => {
-      if (document.hidden) failure = new Error("A exportação foi cancelada porque a aba ficou em segundo plano. Mantenha esta aba aberta e visível até o fim.");
+      if (document.hidden) {
+        failure = new Error("A exportação foi cancelada porque a aba ficou em segundo plano. Mantenha esta aba aberta e visível até o fim.");
+      }
     };
     document.addEventListener("visibilitychange", onVisibility);
+
     try {
       const image = new Image();
       image.src = story.imageSrc;
       await image.decode();
       audio.pause();
       audio.currentTime = 0;
-      // A captura do elemento <audio> grava o que ele reproduz; mudo, o vídeo sairia sem narração.
       audio.muted = false;
-      drawExportFrame(context, image, 0);
+      drawExportFrame(context, image, 0, exportW, exportH);
       const canvasStream = canvas.captureStream(30);
       const captureAudio = audio as HTMLAudioElement & { captureStream?: () => MediaStream };
       let audioStream = captureAudio.captureStream?.();
       let playbackStarted = false;
       if (!audioStream?.getAudioTracks().length) {
-        // Alguns navegadores só expõem a trilha de áudio depois que a reprodução começa.
         await audio.play();
         playbackStarted = true;
         audioStream = captureAudio.captureStream?.();
@@ -538,7 +617,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const webmType = ["video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"].find((type) => MediaRecorder.isTypeSupported(type));
       const mimeType = mp4Type || webmType;
       if (!mimeType) throw new Error("Este navegador não oferece codificação de vídeo compatível para exportação.");
-      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 2_000_000 });
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 2_500_000 });
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
       recorder.onerror = () => { failure = new Error("O navegador interrompeu a gravação do vídeo."); };
@@ -547,11 +626,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       });
       recorder.start(1000);
       if (!playbackStarted) await audio.play();
-      // Os quadros só começam a ser desenhados com o áudio já tocando, e seguem o relógio do
-      // áudio (audio.currentTime) — nunca o relógio de parede.
+
       await new Promise<void>((resolve) => {
         const draw = () => {
-          drawExportFrame(context, image, audio.currentTime);
+          drawExportFrame(context, image, audio.currentTime, exportW, exportH);
           if (!failure && !audio.ended && !audio.paused) animationRef.current = requestAnimationFrame(draw);
           else resolve();
         };
@@ -559,8 +637,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       });
       const completed = audio.ended;
       if (completed) {
-        drawExportFrame(context, image, duration);
-        // Pequena folga para os últimos quadros e o fim do áudio chegarem ao gravador.
+        drawExportFrame(context, image, duration, exportW, exportH);
         await new Promise((resolve) => setTimeout(resolve, 400));
       }
       recorder.stop();
@@ -568,14 +645,84 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       stream.getTracks().forEach((track) => track.stop());
       if (failure) throw failure;
       if (!completed) throw new Error("A narração foi interrompida antes do fim; o vídeo não foi gerado. Tente exportar novamente.");
+
       const extension = mp4Type ? "mp4" : "webm";
+      const cleanTitle = story.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "historia";
+      const filename = `${cleanTitle}-${isStories ? "stories-9x16" : "feed-1x1"}.${extension}`;
+
+      const file = new File([blob], filename, { type: blob.type });
       const url = URL.createObjectURL(blob);
+
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${story.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "historia"}-vertical.${extension}`;
+      link.download = filename;
       link.click();
-      URL.revokeObjectURL(url);
-      if (!mp4Type) setExportError("Vídeo exportado em WebM; para o Instagram, converta o arquivo para MP4 antes de publicar.");
+
+      if (destination === "whatsapp") {
+        if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: story.title,
+              text: socialCaption,
+            });
+            setExportNotice("Compartilhado com sucesso no WhatsApp!");
+          } catch (err: any) {
+            if (err?.name !== "AbortError") {
+              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(socialCaption)}`, "_blank");
+              setExportNotice("Vídeo baixado! Abrindo WhatsApp com a legenda pronta.");
+            }
+          }
+        } else {
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(socialCaption)}`, "_blank");
+          setExportNotice("Vídeo baixado! WhatsApp aberto com a legenda pronta para colar e anexar.");
+        }
+      } else if (destination === "instagram") {
+        copySocialCaption();
+        if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: story.title,
+              text: socialCaption,
+            });
+            setExportNotice("Compartilhado com sucesso para o Instagram!");
+          } catch (err: any) {
+            if (err?.name !== "AbortError") {
+              window.open("https://www.instagram.com/", "_blank");
+              setExportNotice("Vídeo baixado e legenda copiada! Abra o Instagram e cole a legenda.");
+            }
+          }
+        } else {
+          window.open("https://www.instagram.com/", "_blank");
+          setExportNotice("Vídeo baixado e legenda copiada! Cole no Instagram ao publicar.");
+        }
+      } else if (destination === "facebook") {
+        copySocialCaption();
+        if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: story.title,
+              text: socialCaption,
+            });
+            setExportNotice("Compartilhado com sucesso para o Facebook!");
+          } catch (err: any) {
+            if (err?.name !== "AbortError") {
+              window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(socialCaption)}`, "_blank");
+              setExportNotice("Vídeo baixado e legenda copiada! Publicando no Facebook.");
+            }
+          }
+        } else {
+          window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(socialCaption)}`, "_blank");
+          setExportNotice("Vídeo baixado e legenda copiada! Abra o Facebook para publicar.");
+        }
+      } else {
+        setExportNotice(`Vídeo ${isStories ? "Stories (9:16)" : "Feed (1:1)"} baixado com sucesso!`);
+      }
+
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      if (!mp4Type) setExportError("Vídeo exportado em WebM. Recomendamos converter para MP4 se publicar diretamente no Instagram.");
     } catch (error) {
       if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
       setExportError(error instanceof Error ? error.message : "Não foi possível exportar o vídeo.");
@@ -612,7 +759,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/35 pointer-events-none" />
           <div className="absolute left-4 top-4 sm:left-5 sm:top-5 flex flex-wrap items-center gap-2 z-20">
             <span className="rounded-md bg-[#14251e]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#f5cf72] border border-[#f5cf72]/30 shadow-sm">{story.theme}</span>
-            <span className="rounded-md border border-white/20 bg-black/40 px-2 py-1 text-[10px] text-white/90 font-medium">KREYÒL · PT</span>
+            <span className="rounded-md border border-white/20 bg-black/40 px-2 py-1 text-[10px] text-white/90 font-medium">
+              {targetLangUpper} · PT
+            </span>
             <span className="hidden sm:flex items-center gap-1 rounded-md border border-[#f5cf72]/40 bg-[#f5cf72]/20 px-2 py-1 text-[10px] font-semibold text-[#f5cf72]">
               <Sparkles className="h-2.5 w-2.5 animate-pulse text-[#f5cf72]" /> Elementos Vivos
             </span>
@@ -630,7 +779,6 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const captionText = activeCaption ? `${activeCaption.portuguese} ${activeCaption.kreyol}` : "";
             const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active);
 
-            // Posição de ancoragem estável: o título identifica o elemento da imagem sem se debater
             const left = 50 + (anchor.left - 50) * imageScale + frame.driftX;
             const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
 
@@ -646,7 +794,6 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   transformOrigin: "center center",
                 }}
               >
-                {/* Destaque sutil com aura luminosa quando o elemento está ativo na narração */}
                 {active && (
                   <div
                     className="absolute inset-0 -m-2 rounded-full bg-[#f5cf72]/30 blur-md pointer-events-none transition-opacity"
@@ -654,7 +801,6 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   />
                 )}
 
-                {/* Pílula identificadora estável do elemento */}
                 <div
                   className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-[8px] sm:text-[10px] leading-none shadow-lg backdrop-blur-md transition-all duration-300 ${
                     active
@@ -663,7 +809,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   }`}
                 >
                   <span className="text-xs sm:text-sm">{living.badgeEmoji}</span>
-                  <span className={`font-bold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>{element.kreyol}</span>
+                  <span className={`font-bold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>
+                    {getElementLabel(element, storyLang)}
+                  </span>
                   <span className={`px-0.5 ${active ? "text-[#18241d]/60" : "text-white/60"}`}>·</span>
                   <span className={active ? "text-[#18241d]" : "text-white"}>{element.pt}</span>
                 </div>
@@ -697,10 +845,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   draggingCaption ? "ring-2 ring-[#f5cf72]/70 shadow-[0_0_25px_rgba(245,207,114,0.35)]" : ""
                 }`}
               >
-                {/* Linha de brilho superior sutil para acabamento premium */}
                 <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#f5cf72]/45 to-transparent" />
 
-                {/* Alça sutil de reposicionamento (discreta no canto superior direito para não poluir nem ocupar espaço vertical) */}
                 <div
                   className="absolute right-2 top-2 flex items-center gap-1 text-white/35 opacity-40 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
                   title="Arraste para mover a legenda"
@@ -709,11 +855,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   <GripHorizontal className="h-3 w-3" />
                 </div>
 
-                {/* Conteúdo em Kreyòl (áudio original falado) */}
                 {language !== "pt" && (
                   <div className="flex items-center gap-1.5 pr-5 mb-1">
                     <span className="shrink-0 rounded bg-[#f5cf72]/20 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#f5cf72] border border-[#f5cf72]/30">
-                      Kreyòl
+                      {targetLangLabel}
                     </span>
                     <p className="text-xs sm:text-[13px] font-medium leading-tight text-[#fde68a]/90 drop-shadow-sm truncate">
                       {displayedTypingData.kreyol}
@@ -721,7 +866,6 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   </div>
                 )}
 
-                {/* Conteúdo em Português com efeito de digitação sincronizado para o usuário não-falante */}
                 {language !== "ht" && (
                   <div className="flex items-start gap-1.5 pr-4">
                     {language === "both" && (
@@ -814,7 +958,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   ? "A aventura está acontecendo…"
                   : isVideoFinished
                   ? "História concluída! Clique para assistir novamente"
-                  : "Ouça a narração em Kreyòl com tradução sincronizada"}
+                  : `Ouça a narração em ${targetLangLabel} com tradução sincronizada`}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -829,8 +973,173 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         </div>
       </section>
       <aside className="flex flex-col gap-4">
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5"><p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--accent)]">Ouvir e compreender</p><h2 className="mt-1 text-lg font-bold text-[var(--text)]">A história, na sua língua</h2><p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">A narração é em Kreyòl. A tradução acompanha cada fala em português, sincronizada ao áudio.</p><div className="mt-4 grid grid-cols-3 gap-1 rounded-md bg-[var(--surface-2)] p-1">{([ ["both", "Ambas"], ["pt", "Português"], ["ht", "Kreyòl"] ] as const).map(([value, label]) => <button key={value} type="button" onClick={() => setLanguage(value)} className={`rounded px-2 py-1.5 text-[11px] font-semibold ${language === value ? "bg-[var(--surface)] text-[var(--text)] shadow-sm" : "text-[var(--text-muted)]"}`}>{label}</button>)}</div></div>
-        <div className="rounded-xl border border-[#d6b45b]/40 bg-[#f5cf72]/10 p-5"><p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9d7622]">Leve a aventura</p><h2 className="mt-1 text-lg font-bold text-[var(--text)]">Pronto para compartilhar</h2><p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">Exporta um vídeo vertical{duration > 0 ? ` de ${describeStoryDuration(duration)}` : ""}, com a duração exata da narração, com elementos da cena e legendas incorporados, no formato disponível neste navegador.</p><button type="button" onClick={() => void exportVideo()} disabled={exporting || !(duration > 0)} className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#1d3028] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#29463a] disabled:cursor-wait disabled:opacity-60"><Download className="h-4 w-4" />{exporting ? "Preparando vídeo 9:16..." : "Baixar vídeo vertical"}</button>{exporting && <LoadingSpinner layout="inline" size="sm" label="Gravando o vídeo vertical…" progress={duration > 0 ? (currentTime / duration) * 100 : undefined} className="mt-3" />}{exporting && <p className="mt-2 text-center text-[11px] text-[var(--text-muted)]">A exportação acontece em tempo real e leva cerca de {describeStoryDuration(duration)}. Mantenha esta aba aberta e visível; a narração toca durante o processo.</p>}{exportError && <p role="alert" className="mt-3 text-xs leading-relaxed text-[#a23c31]">{exportError}</p>}</div>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--accent)]">
+            Ouvir e compreender
+          </p>
+          <h2 className="mt-1 text-lg font-bold text-[var(--text)]">
+            A história, na sua língua
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+            A narração é em {targetLangLabel}. A tradução acompanha cada fala em português, sincronizada ao áudio.
+          </p>
+          <div className="mt-4 grid grid-cols-3 gap-1 rounded-md bg-[var(--surface-2)] p-1">
+            {([
+              ["both", "Ambas"],
+              ["pt", "Português"],
+              ["ht", targetLangLabel],
+            ] as const).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setLanguage(value)}
+                className={`rounded px-2 py-1.5 text-[11px] font-semibold transition-colors ${
+                  language === value
+                    ? "bg-[var(--surface)] text-[var(--text)] shadow-sm"
+                    : "text-[var(--text-muted)] hover:text-[var(--text)]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Publicar e Baixar nas Redes Sociais */}
+        <div className="rounded-xl border border-[#d6b45b]/40 bg-[#f5cf72]/10 p-5">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9d7622]">
+              Leve a aventura
+            </p>
+            <span className="flex items-center gap-1 rounded-full bg-[#f5cf72]/20 px-2 py-0.5 text-[10px] font-semibold text-[#8a6316]">
+              <Share2 className="h-3 w-3" /> Redes Sociais
+            </span>
+          </div>
+
+          <h2 className="mt-1 text-lg font-bold text-[var(--text)]">
+            Publicar e Baixar
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+            Exporte o vídeo com legendas e animações sincronizadas no formato ideal para Feed ou Stories e publique no Instagram, WhatsApp ou Facebook.
+          </p>
+
+          {/* Seletor de Formato: Stories (9:16) ou Feed (1:1) */}
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setExportFormat("stories")}
+              disabled={exporting}
+              className={`flex items-center justify-center gap-1.5 rounded-lg border p-2 text-xs font-semibold transition-all ${
+                exportFormat === "stories"
+                  ? "border-[#f5cf72] bg-[#1d3028] text-[#f5cf72] shadow-sm"
+                  : "border-black/10 bg-white/40 text-[var(--text-muted)] hover:bg-white/70 dark:bg-black/20"
+              }`}
+            >
+              <Film className="h-3.5 w-3.5" />
+              <span>📱 Stories (9:16)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setExportFormat("feed")}
+              disabled={exporting}
+              className={`flex items-center justify-center gap-1.5 rounded-lg border p-2 text-xs font-semibold transition-all ${
+                exportFormat === "feed"
+                  ? "border-[#f5cf72] bg-[#1d3028] text-[#f5cf72] shadow-sm"
+                  : "border-black/10 bg-white/40 text-[var(--text-muted)] hover:bg-white/70 dark:bg-black/20"
+              }`}
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>🖼️ Feed (1:1)</span>
+            </button>
+          </div>
+
+          {/* Botão Baixar Vídeo */}
+          <button
+            type="button"
+            onClick={() => void exportVideo(exportFormat, "download")}
+            disabled={exporting || !(duration > 0)}
+            className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#1d3028] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#29463a] disabled:cursor-wait disabled:opacity-60 shadow-sm"
+          >
+            <Download className="h-4 w-4" />
+            {exporting
+              ? `Gravando ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`
+              : `Baixar Vídeo (${exportFormat === "stories" ? "Stories 9:16" : "Feed 1:1"})`}
+          </button>
+
+          {/* Botões de Redes Sociais */}
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              title="Publicar no WhatsApp (Status e Grupos)"
+              onClick={() => void exportVideo(exportFormat, "whatsapp")}
+              disabled={exporting || !(duration > 0)}
+              className="flex flex-col items-center justify-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-600/10 hover:bg-emerald-600/20 py-2 px-1 text-emerald-800 dark:text-emerald-300 transition-colors disabled:opacity-50"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-[10px] font-bold">WhatsApp</span>
+            </button>
+
+            <button
+              type="button"
+              title="Publicar no Instagram (Stories e Feed)"
+              onClick={() => void exportVideo(exportFormat, "instagram")}
+              disabled={exporting || !(duration > 0)}
+              className="flex flex-col items-center justify-center gap-1 rounded-lg border border-pink-500/30 bg-gradient-to-br from-pink-500/10 to-purple-500/10 hover:from-pink-500/20 hover:to-purple-500/20 py-2 px-1 text-pink-900 dark:text-pink-300 transition-colors disabled:opacity-50"
+            >
+              <Share2 className="h-4 w-4 text-pink-600 dark:text-pink-400" />
+              <span className="text-[10px] font-bold">Instagram</span>
+            </button>
+
+            <button
+              type="button"
+              title="Publicar no Facebook (Feed e Stories)"
+              onClick={() => void exportVideo(exportFormat, "facebook")}
+              disabled={exporting || !(duration > 0)}
+              className="flex flex-col items-center justify-center gap-1 rounded-lg border border-blue-500/30 bg-blue-600/10 hover:bg-blue-600/20 py-2 px-1 text-blue-800 dark:text-blue-300 transition-colors disabled:opacity-50"
+            >
+              <ExternalLink className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-[10px] font-bold">Facebook</span>
+            </button>
+          </div>
+
+          {/* Copiar Legenda Formatada */}
+          <button
+            type="button"
+            onClick={copySocialCaption}
+            className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md border border-[#d6b45b]/50 bg-white/60 dark:bg-black/20 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-white transition-colors"
+          >
+            {copiedCaption ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+            <span>{copiedCaption ? "Legenda copiada!" : "Copiar texto da postagem (hashtags e tradução)"}</span>
+          </button>
+
+          {exporting && (
+            <LoadingSpinner
+              layout="inline"
+              size="sm"
+              label={`Gravando o vídeo ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`}
+              progress={duration > 0 ? (currentTime / duration) * 100 : undefined}
+              className="mt-3"
+            />
+          )}
+
+          {exporting && (
+            <p className="mt-2 text-center text-[11px] text-[var(--text-muted)]">
+              A gravação acontece em tempo real acompanhando o áudio ({describeStoryDuration(duration)}). Mantenha a aba aberta.
+            </p>
+          )}
+
+          {exportNotice && (
+            <p role="status" className="mt-2 rounded-md bg-emerald-500/15 border border-emerald-500/30 p-2 text-center text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+              {exportNotice}
+            </p>
+          )}
+
+          {exportError && (
+            <p role="alert" className="mt-3 text-xs leading-relaxed text-[#a23c31]">
+              {exportError}
+            </p>
+          )}
+        </div>
       </aside>
       <audio ref={audioRef} src={story.audioUrl} crossOrigin="anonymous" preload="metadata" className="hidden" />
       <canvas ref={canvasRef} width={EXPORT_WIDTH} height={EXPORT_HEIGHT} className="hidden" aria-hidden="true" />

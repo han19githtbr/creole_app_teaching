@@ -26,6 +26,7 @@ export default async function WatchStoryPage({ params }: { params: Promise<{ id:
     theme: record.story.theme,
     audioUrl: record.story.audioUrl,
     audioDuration: record.story.audioDuration,
+    language: record.language,
     captions: record.story.captions.map((caption: IVideoStoryCaption) => ({ start: caption.start, end: caption.end, kreyol: caption.kreyol, portuguese: caption.portuguese })),
     elementCues: (record.story.elementCues ?? []).map((cue: { kreyol: string; start: number }) => ({ kreyol: cue.kreyol, start: cue.start })),
   };

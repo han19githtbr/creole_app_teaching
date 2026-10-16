@@ -6,7 +6,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 
 - [Visão geral](#visão-geral)
 - [Stack](#stack)
-- [Histórias narradas com Elementos com Vida](#histórias-narradas)
+- [Histórias narradas com Elementos com Vida, Transcrição Automática e Publicação Social](#histórias-narradas)
 - [Jogo C'est quoi ?](#jogo-cest-quoi-)
 - [Indicador de carregamento](#indicador-de-carregamento)
 - [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
@@ -133,17 +133,42 @@ No player de **Histórias** (`src/components/StoryPlayer.tsx`) e no módulo de a
 - **Arrasto livre e reposicionamento:** O aluno pode arrastar a legenda para qualquer ponto da tela com mouse/toque ou via teclado (`Tab` + setas), com botão para redefinir a posição padrão.
 - **Paridade na exportação de vídeo 9:16:** Na gravação vertical em Canvas 2D (`drawCaptionBox`), a legenda utiliza o mesmo motor de atividade de voz, pausando durante silêncios e sumindo nos quadros finais do vídeo exportado.
 
-### Exportação do vídeo vertical
+### Paridade entre o Ensino de Crioulo e Francês
 
-No player, **Baixar vídeo vertical** gera um vídeo 9:16 (1080×1920) com a cena, o título, os elementos, as legendas e a barra de progresso.
+A funcionalidade de **Histórias** está integrada com **total paridade de recursos** tanto na plataforma de **Kreyòl Ayisyen** quanto na de **Français** (`/admin/stories` e `/dashboard/stories`):
 
-- O vídeo é gravado **em tempo real** no navegador (canvas + `MediaRecorder`), portanto demora tanto quanto a narração. Mantenha a aba aberta e visível: se ela ficar em segundo plano, a exportação é cancelada para não gerar um vídeo fora de sincronia.
-- Os rótulos dos elementos seguem o layout específico da cena durante toda a narração, preservando clareza e fluidez na experiência visual do usuário final.
-- Os quadros são desenhados a partir do relógio do áudio, não do relógio de parede.
-- O formato é MP4 quando o navegador consegue gravar MP4 (Chrome e Edge recentes); caso contrário, WebM, com um aviso para converter antes de publicar no Instagram.
-- É necessário um navegador com `MediaRecorder` e `captureStream` (Chrome, Edge ou Firefox atuais).
-- A legenda do vídeo exportado fica sempre na parte inferior do quadro, independentemente de onde o aluno a tenha arrastado no player.
-- Textos longos de legenda quebram em linhas e diminuem de tamanho (com reticências em último caso) para caber no quadro.
+- **Interface adaptada ao idioma:** Todos os textos, títulos, banners informativos, instruções, colunas de legendas e placeholders alternam dinamicamente com base no idioma ativo (`useAppLanguage()`):
+  - Em Crioulo: `Narração em Kreyòl`, coluna `KREYÒL`, exemplos em Kreyòl (`Ex.: Zwazo a ap vole...`).
+  - Em Francês: `Narração em Francês`, coluna `FRANÇAIS`, exemplos em Francês (`Ex.: L'oiseau vole dans le ciel...`).
+- **Elementos da cena no idioma selecionado:** As 280 ilustrações do banco Ghibli trazem nomes e categorias nativas para cada idioma através de `getElementLabel(element, language)` e do dicionário `PT_TO_FR` (`src/lib/imageBank.ts`). No painel em francês, os elementos são exibidos exclusivamente em francês e português (ex.: `chien · cachorro`, `oiseau · pássaro`, `arbre · árvore`, `fleur · flor`), eliminando qualquer termo em crioulo da interface de francês.
+- **Motor de Vida multilíngue:** O motor `Living Elements Engine` (`src/lib/storyLifeEngine.ts`) reconhece entidades e verbos de ação em **Francês**, **Crioulo** e **Português** (`voler/vole/voa`, `courir/kouri/corre`, `sauter/sote/pula`, `chanter/chante/canta`, `aboyer/jape/late`, `briller/klere/brilha`, `vent/van/vento`, etc.).
+
+### Preenchimento Automático do Roteiro e Legendas
+
+O preenchimento do roteiro e das legendas bilíngues (idioma-alvo + português) agora conta com automação inteligente em duas frentes:
+
+1. **Gravação ao vivo com transcrição em tempo real (Speech-to-Text):**
+   - Ao gravar pelo microfone na aba **Gravar agora**, o navegador ativa o reconhecimento de voz contínuo (`webkitSpeechRecognition` / `SpeechRecognition`), preenchendo o roteiro de legendas automaticamente conforme as palavras são pronunciadas.
+   - Um indicador visual (`Gravando e transcrevendo...`) confirma o reconhecimento de fala em tempo real.
+2. **Upload de áudio e conversão com IA (Gemini Multimodal):**
+   - Ao enviar um arquivo de áudio ou converter um vídeo MP4, a rota `/api/stories/transcribe` aciona inteligência artificial multimodal (Google Gemini) para transcrever a narração diretamente no idioma-alvo (Crioulo ou Francês) e gerar a respectiva tradução sincronizada em português.
+   - O áudio é dividido em trechos com tempos de início e fim calculados para coincidir com a duração da narração.
+3. **Edição e correção manual a qualquer momento:**
+   - Mesmo com o preenchimento automático, o administrador pode editar livremente qualquer trecho, ajustar uma palavra incorreta, pontuar e alterar os segundos de início e término (`start` e `end`), tanto no campo em português quanto no campo no idioma-alvo (Crioulo/Francês).
+
+### Exportação e Publicação em Redes Sociais (Instagram, WhatsApp e Facebook)
+
+No player da história (`StoryPlayer.tsx`), o bloco **Publicar e Baixar** permite gerar e publicar os vídeos das histórias animadas nas principais redes sociais:
+
+- **Dois formatos de exportação sob medida:**
+  - 📱 **Stories & Status (9:16 - 1080×1920):** Formato vertical ideal para Instagram Stories, Facebook Stories e Status do WhatsApp, com composição vertical de cena, tipografia expandida e legendas posicionadas na base.
+  - 🖼️ **Feed & Posts (1:1 - 1080×1080):** Formato quadrado perfeito para o Feed do Instagram, Feed do Facebook e conversas/grupos do WhatsApp, com enquadramento adaptativo de imagem e texto conciso.
+- **Botão de Download direto:** Grava o vídeo com animações quadro a quadro e áudio sincronizado e faz o download instantâneo no formato compatível do navegador (MP4 ou WebM).
+- **Publicação direta nas redes sociais:**
+  - **WhatsApp (Status e Grupos):** Compartilha o arquivo de vídeo e a legenda diretamente via Web Share API em dispositivos compatíveis, ou baixa o arquivo e abre o WhatsApp com o texto pré-formatado.
+  - **Instagram (Stories e Feed):** Aciona o compartilhamento mobile com o vídeo e a legenda ou copia o texto formatado (com hashtags temáticas e citação da história) e abre o Instagram para publicação.
+  - **Facebook (Feed e Stories):** Permite compartilhamento direto ou cópia rápida da legenda com redirecionamento para o Facebook.
+- **Botão "Copiar texto da postagem":** Copia para a área de transferência um texto atrativo com o título, tema, citação da primeira fala com tradução e hashtags relevantes (`#frances`, `#kreyol`, `#idiomas`, etc.).
 
 ### Histórias criadas antes desta versão
 

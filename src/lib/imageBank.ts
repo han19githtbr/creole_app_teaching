@@ -5,6 +5,7 @@ import generatedImages from "../../scripts/ghibli/manifest.json";
 export interface BankElement {
   kreyol: string;
   pt: string;
+  fr?: string;
 }
 
 export interface StoryLabelLayout {
@@ -474,4 +475,86 @@ export function isAllowedPostImageUrl(url: unknown): url is string {
   } catch {
     return false;
   }
+}
+
+export const PT_TO_FR: Record<string, string> = {
+  "computador": "ordinateur",
+  "robô": "robot",
+  "drone": "drone",
+  "moinho de vento": "moulin à vent",
+  "satélite": "satellite",
+  "painel solar": "panneau solaire",
+  "celular/telefone": "téléphone portable",
+  "laboratório": "laboratoire",
+  "tela/monitor": "écran",
+  "antena": "antenne",
+  "árvore": "arbre",
+  "árvores": "arbres",
+  "flores": "fleurs",
+  "borboleta": "papillon",
+  "pássaro": "oiseau",
+  "montanha": "montagne",
+  "montanhas": "montagnes",
+  "rio": "rivière",
+  "cachoeira": "cascade",
+  "mar": "mer",
+  "palmeira": "palmier",
+  "tartaruga": "tortue",
+  "tambor": "tambour",
+  "bandeira": "drapeau",
+  "lanterna": "lanterne",
+  "lanterna/lâmpada": "lanterne",
+  "lanternas": "lanternes",
+  "casa": "maison",
+  "máscara": "masque",
+  "comerciante/feira": "marchand/marché",
+  "dançarinos": "danseurs",
+  "comida típica": "plat typique",
+  "vestimentas": "vêtements",
+  "guarda-sol/sombrinha": "parasol",
+  "barco": "bateau",
+  "balão": "montgolfière",
+  "farol": "phare",
+  "avião": "avion",
+  "jardim/plantação": "jardin/plantation",
+  "cerca": "clôture",
+  "fitas": "rubans",
+  "bússola": "boussole",
+  "fortaleza": "forteresse",
+  "canhão": "canon",
+  "tocha": "torche",
+  "cinema": "cinéma",
+  "pipoca": "pop-corn",
+  "estrelas": "étoiles",
+  "violão": "guitare",
+  "notas musicais": "notes de musique",
+  "alto-falante": "haut-parleur",
+  "pipa": "cerf-volant",
+  "bicicleta": "vélo",
+  "toalha de piquenique": "nappe de pique-nique",
+  "colunas": "colonnes",
+  "livro": "livre",
+  "oliveira": "olivier",
+  "filósofo sábio": "sage philosophe",
+  "igreja/capela": "église/chapelle",
+  "velas": "bougies",
+  "pombas": "colombes",
+  "cruz": "croix",
+  "panela/caldeirão": "casserole/chaudron",
+  "pão": "pain",
+  "frutas": "fruits",
+  "pimentas": "piments",
+};
+
+export function getElementLabel(element: BankElement, language: "kreyol" | "francais" = "kreyol"): string {
+  if (language === "francais") {
+    if (element.fr) return element.fr;
+    const lowerPt = element.pt.toLowerCase().trim();
+    if (PT_TO_FR[lowerPt]) return PT_TO_FR[lowerPt];
+    for (const [ptKey, frVal] of Object.entries(PT_TO_FR)) {
+      if (lowerPt.includes(ptKey) || ptKey.includes(lowerPt)) return frVal;
+    }
+    return element.pt;
+  }
+  return element.kreyol;
 }

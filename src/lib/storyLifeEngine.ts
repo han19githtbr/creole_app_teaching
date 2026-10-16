@@ -81,27 +81,27 @@ export function identifyEntityType(name: string): EntityType {
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
-  if (/(cachorr|cao|cadela|puppy|filhote|chen|chyen)/.test(norm)) return "dog";
+  if (/(cachorr|cao|cadela|puppy|filhote|chen|chyen|chien|chiot)/.test(norm)) return "dog";
   if (/(gato|gata|gatinho|chat|chaton)/.test(norm)) return "cat";
-  if (/(passar|ave|gaivota|gaviao|sabia|pombo|zwazo|pijon)/.test(norm)) return "bird";
-  if (/(borbolet|mariposa|papiyon)/.test(norm)) return "butterfly";
-  if (/(caval|egua|potro|chwal|jiman)/.test(norm)) return "horse";
-  if (/(arvore|bosque|floresta|galho|pyebwa|pye bwa)/.test(norm)) return "tree";
-  if (/(flor|flores|rosa|margarida|jardim|fle\b)/.test(norm)) return "flower";
-  if (/(sol\b|solzao|amanhecer|entardecer|soley)/.test(norm)) return "sun";
-  if (/(nuvem|ceu\b|nevoa|nyaj)/.test(norm)) return "cloud";
-  if (/(rio|mar|lago|agua|onda|cachoeira|dlo|lanme|rivye)/.test(norm)) return "water";
-  if (/(barco|canoa|navio|veleiro|bote|bato|chaloup)/.test(norm)) return "boat";
-  if (/(carro|caminhao|automovel|veiculo|machin|oto)/.test(norm)) return "car";
+  if (/(passar|ave|gaivota|gaviao|sabia|pombo|zwazo|pijon|oiseau|colombe|pigeon)/.test(norm)) return "bird";
+  if (/(borbolet|mariposa|papiyon|papillon)/.test(norm)) return "butterfly";
+  if (/(caval|egua|potro|chwal|jiman|cheval|jument)/.test(norm)) return "horse";
+  if (/(arvore|bosque|floresta|galho|pyebwa|pye bwa|arbre|foret)/.test(norm)) return "tree";
+  if (/(flor|flores|rosa|margarida|jardim|fle\b|fleur)/.test(norm)) return "flower";
+  if (/(sol\b|solzao|amanhecer|entardecer|soley|soleil)/.test(norm)) return "sun";
+  if (/(nuvem|ceu\b|nevoa|nyaj|nuage|ciel)/.test(norm)) return "cloud";
+  if (/(rio|mar|lago|agua|onda|cachoeira|dlo|lanme|rivye|mer|riviere|lac|eau|cascade)/.test(norm)) return "water";
+  if (/(barco|canoa|navio|veleiro|bote|bato|chaloup|bateau|navire)/.test(norm)) return "boat";
+  if (/(carro|caminhao|automovel|veiculo|machin|oto|voiture)/.test(norm)) return "car";
   if (/(drone|dron)/.test(norm)) return "drone";
-  if (/(robo|androide)/.test(norm)) return "robot";
-  if (/(tambor|atabaque|bateria|percussao|tanbou)/.test(norm)) return "drum";
-  if (/(musica|violao|guitarra|melodia|som|mizik|gita)/.test(norm)) return "music";
-  if (/(lanterna|lampada|vela|farol|lanp|bouji)/.test(norm)) return "lantern";
-  if (/(fogo|fogueira|chama|labareda|dife)/.test(norm)) return "fire";
-  if (/(casa|cabana|castelo|edificio|choupana|kay|chato)/.test(norm)) return "house";
-  if (/(homem|mulher|crianca|menino|menina|pessoa|moun|timoun|gason|fi\b)/.test(norm)) return "person";
-  if (/(moinho|catavento|moulen)/.test(norm)) return "windmill";
+  if (/(robo|androide|robot)/.test(norm)) return "robot";
+  if (/(tambor|atabaque|bateria|percussao|tanbou|tambour)/.test(norm)) return "drum";
+  if (/(musica|violao|guitarra|melodia|som|mizik|gita|guitare)/.test(norm)) return "music";
+  if (/(lanterna|lampada|vela|farol|lanp|bouji|lanterne|lampe|bougie|phare)/.test(norm)) return "lantern";
+  if (/(fogo|fogueira|chama|labareda|dife|feu|flamme)/.test(norm)) return "fire";
+  if (/(casa|cabana|castelo|edificio|choupana|kay|chato|maison|chateau)/.test(norm)) return "house";
+  if (/(homem|mulher|crianca|menino|menina|pessoa|moun|timoun|gason|fi\b|homme|femme|enfant)/.test(norm)) return "person";
+  if (/(moinho|catavento|moulen|moulin)/.test(norm)) return "windmill";
 
   return "generic";
 }
@@ -117,23 +117,23 @@ export function detectActionFromCaption(
     .replace(/[\u0300-\u036f]/g, "");
 
   // Verbos de voo
-  if (/(voa|voar|voando|sobrevoa|bate asas|plana|levantou voo|vole|ap vole|anle)/.test(norm)) {
+  if (/(voa|voar|voando|sobrevoa|bate asas|plana|levantou voo|vole|ap vole|anle|voler|volant|plane)/.test(norm)) {
     if (entity === "bird" || entity === "butterfly" || entity === "drone") return "flying";
   }
 
   // Verbos de corrida e rapidez
-  if (/(corre|correr|correndo|dispara|apressado|veloz|kouri|ap kouri|galope)/.test(norm)) {
+  if (/(corre|correr|correndo|dispara|apressado|veloz|kouri|ap kouri|galope|court|courir|courant)/.test(norm)) {
     if (entity === "dog" || entity === "horse" || entity === "cat" || entity === "person") return "running";
     if (entity === "car") return "running";
   }
 
   // Verbos de pulo / salto
-  if (/(pula|pular|pulando|salta|saltando|empina|sote|ap sote|rebondi)/.test(norm)) {
+  if (/(pula|pular|pulando|salta|saltando|empina|sote|ap sote|rebondi|saute|sauter|bondit)/.test(norm)) {
     return "jumping";
   }
 
   // Latidos e sons animais
-  if (/(late|latir|latindo|uiva|rosna|jape|ap jape|rele|oyo)/.test(norm)) {
+  if (/(late|latir|latindo|uiva|rosna|jape|ap jape|rele|oyo|aboie|aboyer)/.test(norm)) {
     if (entity === "dog") return "barking";
   }
 

@@ -26,9 +26,11 @@ import {
   suggestedCaptionCount,
 } from "@/lib/storyAudio";
 import { defaultElementStarts } from "@/lib/storyTimeline";
-import { BookOpen, Calendar, Download, Film, Image as ImageIcon, Mic, Plus, RefreshCw, Sparkles, Trash2, Upload } from "lucide-react";
+import { BookOpen, Calendar, CheckCircle2, Download, Film, Image as ImageIcon, Loader2, Mic, Plus, RefreshCw, Sparkles, Trash2, Upload } from "lucide-react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { identifyEntityType, detectActionFromCaption, ACTION_METAS } from "@/lib/storyLifeEngine";
+import { useAppLanguage } from "@/hooks/useAppLanguage";
+import { getElementLabel } from "@/lib/imageBank";
 
 
 type Caption = { start: number; end: number; kreyol: string; portuguese: string };
@@ -48,6 +50,11 @@ const megabytes = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(1).repla
 
 export function StoryForm({ initial }: { initial?: InitialStory }) {
   const router = useRouter();
+  const { language } = useAppLanguage();
+  const isFr = language === "francais";
+  const targetLangLabel = isFr ? "Francês" : "Kreyòl";
+  const targetLangUpper = isFr ? "FRANCÊS" : "KREYÒL";
+
   const [title, setTitle] = useState(initial?.title ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [imageSrc, setImageSrc] = useState(initial?.story.imageSrc ?? "");
@@ -60,6 +67,8 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
   const [audioError, setAudioError] = useState<string | null>(null);
   const [conversion, setConversion] = useState<{ fileName: string; stage: Mp3Stage; fraction: number } | null>(null);
   const [recorderBusy, setRecorderBusy] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [transcribeNotice, setTranscribeNotice] = useState<string | null>(null);
   const [captions, setCaptions] = useState<Caption[]>(initial?.story.captions ?? [emptyCaption()]);
   // Enquanto o roteiro estiver intocado, os tempos são ajustados sozinhos à duração da narração.
   const [captionsEdited, setCaptionsEdited] = useState(Boolean(initial));
@@ -85,7 +94,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
   const autoStarts = useMemo(() => defaultElementStarts(sceneElements.length, audioDuration), [sceneElements.length, audioDuration]);
   const elementStarts = sceneElements.map((element, index) => cueOverrides[element.kreyol] ?? autoStarts[index] ?? 0);
   const hasNarration = Boolean(audioFile || audioUrl);
-  const busy = Boolean(conversion) || recorderBusy;
+  const busy = Boolean(conversion) || recorderBusy || transcribing;
 
   function changeCaption(index: number, key: keyof Caption, value: string) {
     setCaptionsEdited(true);
@@ -99,6 +108,52 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
       const slots = evenCaptionSlots(items.length, duration);
       return items.map((item, index) => ({ ...item, ...slots[index] }));
     });
+  }
+
+  function handleLiveTranscript(text: string, isFinal: boolean) {
+    setCaptions((current) => {
+      const updated = [...current];
+      if (updated.length === 0) {
+        return [{ start: 0, end: 5, kreyol: text, portuguese: "" }];
+      }
+      const lastIdx = updated.length - 1;
+      updated[lastIdx] = {
+        ...updated[lastIdx],
+        kreyol: text,
+      };
+      return updated;
+    });
+  }
+
+  async function autoTranscribeAudio(file: File, duration: number) {
+    setTranscribing(true);
+    setTranscribeNotice(null);
+    try {
+      const formData = new FormData();
+      formData.append("audio", file);
+      formData.append("language", language);
+      formData.append("duration", String(duration));
+      const res = await fetch("/api/stories/transcribe", {
+        method: "POST",
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.captions) && data.captions.length > 0) {
+          setCaptions(data.captions);
+          setCaptionsEdited(true);
+          if (data.message) {
+            setTranscribeNotice(data.message);
+          } else {
+            setTranscribeNotice(`Narração transcrita e traduzida automaticamente (${targetLangLabel} e Português)! Você pode editar os campos abaixo livremente.`);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Transcrição automática falhou:", err);
+    } finally {
+      setTranscribing(false);
+    }
   }
 
   /** Valida e adota um arquivo como narração (envio, gravação ou conversão). */
@@ -131,6 +186,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
     if (!captionsEdited && captions.every((caption) => !caption.kreyol.trim() && !caption.portuguese.trim())) {
       setCaptions(evenCaptionSlots(suggestedCaptionCount(duration), duration).map((slot) => ({ ...slot, kreyol: "", portuguese: "" })));
     }
+    void autoTranscribeAudio(file, duration);
   }
 
   async function convertVideoToMp3(file: File) {
@@ -170,13 +226,13 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
     setError(null);
     if (busy) return setError("Aguarde o fim da gravação ou da conversão da narração.");
     if (!imageSrc) return setError("Escolha uma imagem para a história.");
-    if (!hasNarration) return setError("Grave, envie ou converta a narração em Kreyòl.");
+    if (!hasNarration) return setError(`Grave, envie ou converta a narração em ${targetLangLabel}.`);
     if (!(audioDuration > 0)) return setError("Não foi possível medir a duração da narração. Envie o áudio novamente.");
     if (audioDuration < STORY_AUDIO_MIN_SECONDS - STORY_TIME_TOLERANCE || audioDuration > STORY_AUDIO_MAX_SECONDS + STORY_TIME_TOLERANCE) {
       return setError(`A narração precisa ter entre ${describeStoryDuration(STORY_AUDIO_MIN_SECONDS)} e ${describeStoryDuration(STORY_AUDIO_MAX_SECONDS)}.`);
     }
     if (captions.some((caption) => !caption.kreyol.trim() || !caption.portuguese.trim())) {
-      return setError("Preencha os textos em Kreyòl e português de todos os trechos.");
+      return setError(`Preencha os textos em ${targetLangLabel} e português de todos os trechos.`);
     }
     let previousEnd = 0;
     for (const [index, caption] of captions.entries()) {
@@ -252,7 +308,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
             <Textarea className="mt-1.5" value={description} onChange={(event) => setDescription(event.target.value)} rows={3} placeholder="Uma breve introdução à aventura..." />
           </label>
           <div className="flex items-center gap-2 rounded-lg bg-[var(--surface-2)] px-3 py-2 text-xs text-[var(--text-secondary)]">
-            <BookOpen className="h-4 w-4 shrink-0 text-[var(--accent)]" /> História com cenas animadas e narração em Kreyòl; a duração do vídeo é a da narração.
+            <BookOpen className="h-4 w-4 shrink-0 text-[var(--accent)]" /> História com cenas animadas e narração em {targetLangLabel}; a duração do vídeo é a da narração.
           </div>
         </div>
         <div className="overflow-hidden rounded-lg bg-[#1d3028] text-white">
@@ -266,7 +322,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
       </section>
 
       <section className="space-y-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-        <div><h2 className="font-semibold text-[var(--text)]">Narração em Kreyòl</h2><p className="mt-1 text-xs text-[var(--text-muted)]">Grave, envie ou converta uma narração de {describeStoryDuration(STORY_AUDIO_MIN_SECONDS)} a {describeStoryDuration(STORY_AUDIO_MAX_SECONDS)}. A duração do vídeo, as legendas e os elementos da cena seguem esse áudio.</p></div>
+        <div><h2 className="font-semibold text-[var(--text)]">Narração em {targetLangLabel}</h2><p className="mt-1 text-xs text-[var(--text-muted)]">Grave, envie ou converta uma narração de {describeStoryDuration(STORY_AUDIO_MIN_SECONDS)} a {describeStoryDuration(STORY_AUDIO_MAX_SECONDS)}. O roteiro e as legendas são preenchidos automaticamente conforme o áudio.</p></div>
         <div className="grid gap-2 sm:grid-cols-3" role="tablist" aria-label="Como adicionar a narração">
           {modes.map(([value, label, Icon]) => <button key={value} type="button" role="tab" aria-selected={mode === value} onClick={() => setMode(value)} className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium ${mode === value ? "border-[var(--accent)] bg-[var(--accent-soft)] text-white" : "border-[var(--border)] text-[var(--text-secondary)]"}`}><Icon className="h-4 w-4" />{label}</button>)}
         </div>
@@ -274,7 +330,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
         {mode === "upload" && (
           <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)] p-4 hover:border-[var(--accent)]">
             <Upload className="h-5 w-5 text-[var(--accent)]" />
-            <span className="min-w-0 flex-1 text-sm text-[var(--text)]">{audioFile ? audioFile.name : audioUrl ? "Narração já enviada" : "Selecionar arquivo de áudio"}<span className="block text-xs text-[var(--text-muted)]">{audioDuration ? `${describeStoryDuration(audioDuration)}${audioFile ? ` · ${megabytes(audioFile.size)}` : ""}` : `Máximo ${megabytes(STORY_AUDIO_MAX_BYTES).replace(",0", "")}`}</span></span>
+            <span className="min-w-0 flex-1 text-sm text-[var(--text)]">{audioFile ? audioFile.name : audioUrl ? "Narração já enviada" : `Selecionar arquivo de áudio (${targetLangLabel})`}<span className="block text-xs text-[var(--text-muted)]">{audioDuration ? `${describeStoryDuration(audioDuration)}${audioFile ? ` · ${megabytes(audioFile.size)}` : ""}` : `Máximo ${megabytes(STORY_AUDIO_MAX_BYTES).replace(",0", "")}`}</span></span>
             <input type="file" accept="audio/mpeg,audio/mp4,audio/aac,audio/wav,audio/ogg,audio/webm,.mp3,.m4a,.wav,.ogg,.webm" className="sr-only" disabled={busy} onChange={(event) => {
               const file = event.target.files?.[0];
               event.target.value = "";
@@ -283,7 +339,15 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
           </label>
         )}
 
-        {mode === "record" && <StoryAudioRecorder disabled={saving || Boolean(conversion)} onBusyChange={setRecorderBusy} onRecorded={(file, seconds) => void adoptNarration(file, "record", seconds)} />}
+        {mode === "record" && (
+          <StoryAudioRecorder
+            disabled={saving || Boolean(conversion) || transcribing}
+            language={language}
+            onLiveTranscript={handleLiveTranscript}
+            onBusyChange={setRecorderBusy}
+            onRecorded={(file, seconds) => void adoptNarration(file, "record", seconds)}
+          />
+        )}
 
         {mode === "convert" && (
           <div className="space-y-3">
@@ -335,11 +399,12 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {sceneElements.map((element, index) => {
-              const entity = identifyEntityType(`${element.pt} ${element.kreyol}`);
+              const elementName = getElementLabel(element, language);
+              const entity = identifyEntityType(`${element.pt} ${element.kreyol} ${elementName}`);
               return (
                 <label key={element.kreyol} className="rounded-xl border border-[var(--border-soft)] bg-[var(--surface-2)]/30 p-3 text-[10px] font-medium text-[var(--text-muted)]">
                   <span className="block text-sm font-semibold text-[var(--text)]">
-                    {element.kreyol} <span className="font-normal text-[var(--text-muted)]">· {element.pt}</span>
+                    {elementName} <span className="font-normal text-[var(--text-muted)]">· {element.pt}</span>
                   </span>
                   <span className="mt-1 block text-[11px] text-[var(--accent)] font-medium">
                     Tipo: {entity} (anima com narração)
@@ -361,12 +426,28 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
             <Button type="button" variant="outline" size="sm" onClick={() => { setCaptionsEdited(true); setCaptions((items) => [...items, { start: lastEnd, end: Math.min(roundTenth(lastEnd + 30), Math.floor(audioDuration * 10) / 10), kreyol: "", portuguese: "" }]); }} disabled={!(audioDuration > 0) || lastEnd >= audioDuration - 0.1}><Plus className="h-4 w-4" /> Adicionar trecho</Button>
           </div>
         </div>
+
+        {transcribing && (
+          <div className="flex items-center gap-2 rounded-lg bg-[var(--accent-soft)]/20 p-3 text-xs text-[var(--accent)] font-medium border border-[var(--accent)]/30">
+            <Loader2 className="h-4 w-4 animate-spin shrink-0" />
+            Transcrevendo narração e preenchendo legendas em {targetLangLabel} e Português...
+          </div>
+        )}
+
+        {transcribeNotice && !transcribing && (
+          <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 p-3 text-xs text-emerald-700 dark:text-emerald-300 font-medium border border-emerald-500/30">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+            {transcribeNotice}
+          </div>
+        )}
+
         <div className="space-y-3">
           {captions.map((caption, index) => {
             const detectedActions = sceneElements.map((el) => {
-              const entity = identifyEntityType(`${el.pt} ${el.kreyol}`);
+              const elementName = getElementLabel(el, language);
+              const entity = identifyEntityType(`${el.pt} ${el.kreyol} ${elementName}`);
               const action = detectActionFromCaption(entity, `${caption.portuguese} ${caption.kreyol}`);
-              return { element: el, entity, action, meta: ACTION_METAS[action] };
+              return { element: el, elementName, entity, action, meta: ACTION_METAS[action] };
             }).filter((a) => a.action !== "idle");
 
             return (
@@ -380,8 +461,8 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
                       <Input type="number" min="0" max={audioDuration || undefined} step="0.1" value={caption.end} onChange={(event) => changeCaption(index, "end", event.target.value)} className="mt-1 h-8" />
                     </label>
                   </div>
-                  <label className="text-[10px] font-semibold text-[var(--text-muted)]">KREYÒL
-                    <Textarea value={caption.kreyol} onChange={(event) => changeCaption(index, "kreyol", event.target.value)} rows={2} required className="mt-1 text-sm font-normal" placeholder="Ex.: Zwazo a ap vole nan syèl la, chen an ap kouri..." />
+                  <label className="text-[10px] font-semibold text-[var(--text-muted)]">{targetLangUpper}
+                    <Textarea value={caption.kreyol} onChange={(event) => changeCaption(index, "kreyol", event.target.value)} rows={2} required className="mt-1 text-sm font-normal" placeholder={isFr ? "Ex.: L'oiseau vole dans le ciel, le chien court joyeusement..." : "Ex.: Zwazo a ap vole nan syèl la, chen an ap kouri..."} />
                   </label>
                   <label className="text-[10px] font-semibold text-[var(--text-muted)]">PORTUGUÊS
                     <Textarea value={caption.portuguese} onChange={(event) => changeCaption(index, "portuguese", event.target.value)} rows={2} required className="mt-1 text-sm font-normal" placeholder="Ex.: O pássaro voa pelo céu, o cachorro corre alegremente..." />
@@ -396,7 +477,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
                     <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">⚡ Ações ativadas neste trecho:</span>
                     {detectedActions.map((d, dIdx) => (
                       <span key={dIdx} className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300">
-                        {d.meta.emoji} {d.element.pt}: {d.meta.label}
+                        {d.meta.emoji} {d.elementName}: {d.meta.label}
                       </span>
                     ))}
                   </div>

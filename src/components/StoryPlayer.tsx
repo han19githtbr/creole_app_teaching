@@ -19,6 +19,7 @@ import {
   calculateLivingElementState,
   drawLivingElementOnCanvas,
 } from "@/lib/storyLifeEngine";
+import { useAudioVoiceActivity, computeCaptionTyping } from "@/lib/audioVoiceActivity";
 
 
 export interface StoryPlayerData {
@@ -107,7 +108,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const sceneLayout = useMemo(() => bankImage?.labelLayout ?? getStoryLabelLayout(story.imageSrc), [bankImage, story.imageSrc]);
   const timeline = useMemo(() => buildElementTimeline(sceneElements, story.elementCues, duration), [sceneElements, story.elementCues, duration]);
 
-  const activeCaption = captionAt(story.captions, currentTime);
+  const voiceData = useAudioVoiceActivity(story.audioUrl, story.captions);
+
+  const activeCaptionIndex = story.captions.findIndex((c) => currentTime >= c.start && currentTime < c.end);
+  const activeCaption = activeCaptionIndex >= 0 ? story.captions[activeCaptionIndex] : undefined;
   const frame = sceneFrame(currentTime, duration);
 
   const isAudioEnded = Boolean(audioRef.current?.ended);
@@ -116,32 +120,12 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const isVideoFinished = isEnded || isAudioEnded || isTimeNearEnd || (isPastLastCaption && !playing);
   const shouldShowCaption = captionsEnabled && Boolean(activeCaption) && !isVideoFinished;
 
-  // Cálculo do efeito de digitação em tempo real da legenda em português em sincronia com o áudio
+  // Cálculo da digitação em tempo real em estrita sincronia com a voz do áudio.
+  // Durante pausas no áudio (silêncio, respiração, vírgula), nada é digitado.
   const typingData = useMemo(() => {
-    if (!activeCaption) return null;
-    const captionDuration = Math.max(0.1, activeCaption.end - activeCaption.start);
-    const captionElapsed = Math.max(0, currentTime - activeCaption.start);
-
-    // A fala do áudio ocupa ~88% da duração da legenda, garantindo leitura completa
-    const speechDuration = Math.max(0.1, captionDuration * 0.88);
-    const progress = Math.min(1, Math.max(0, captionElapsed / speechDuration));
-
-    const ptText = activeCaption.portuguese || "";
-    const ptLength = ptText.length;
-    const visibleCount = Math.min(ptLength, Math.max(0, Math.ceil(ptLength * progress)));
-    const visiblePt = ptText.slice(0, visibleCount);
-    const invisiblePt = ptText.slice(visibleCount);
-    const isTyping = progress > 0 && progress < 1;
-
-    return {
-      progress,
-      visiblePt,
-      invisiblePt,
-      isTyping,
-      kreyol: activeCaption.kreyol,
-      portuguese: ptText,
-    };
-  }, [activeCaption, currentTime]);
+    if (!activeCaption || activeCaptionIndex < 0) return null;
+    return computeCaptionTyping(activeCaption, currentTime, activeCaptionIndex, voiceData);
+  }, [activeCaption, activeCaptionIndex, currentTime, voiceData]);
 
   // Mantém a última legenda durante a transição suave de desaparecimento
   const lastTypingDataRef = useRef(typingData);
@@ -493,15 +477,11 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     }
     context.fillText(titleLine.trim(), 70, titleY);
     drawElementPills(context, { x: sceneX, y: sceneY, width, height }, seconds);
-    const caption = captionAt(story.captions, seconds);
+    const captionIndex = story.captions.findIndex((c) => seconds >= c.start && seconds < c.end);
+    const caption = captionIndex >= 0 ? story.captions[captionIndex] : undefined;
     if (caption && (!duration || seconds < duration - 0.1)) {
-      const captionDuration = Math.max(0.1, caption.end - caption.start);
-      const captionElapsed = Math.max(0, seconds - caption.start);
-      const typingProgress = Math.min(1, Math.max(0, captionElapsed / (captionDuration * 0.88)));
-      const charCount = Math.min(caption.portuguese.length, Math.max(0, Math.ceil(caption.portuguese.length * typingProgress)));
-      const typedPortuguese = caption.portuguese.slice(0, charCount);
-      const isTyping = typingProgress > 0 && typingProgress < 1;
-      drawCaptionBox(context, caption.kreyol, typedPortuguese, isTyping);
+      const snapshot = computeCaptionTyping(caption, seconds, captionIndex, voiceData);
+      drawCaptionBox(context, caption.kreyol, snapshot.visiblePt, snapshot.isTyping);
     }
     context.textAlign = "left";
     context.fillStyle = "rgba(255,255,255,.78)";
@@ -754,9 +734,13 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                         <span className="text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                           {displayedTypingData.visiblePt}
                         </span>
-                        {displayedTypingData.isTyping && playing && (
+                        {displayedTypingData.progress > 0 && displayedTypingData.progress < 1 && playing && (
                           <span
-                            className="inline-block w-[2.5px] h-[1.15em] ml-0.5 align-middle rounded-full bg-[#f5cf72] shadow-[0_0_8px_#f5cf72] animate-pulse"
+                            className={`inline-block w-[2.5px] h-[1.15em] ml-0.5 align-middle rounded-full transition-all duration-150 ${
+                              displayedTypingData.isTyping
+                                ? "bg-[#f5cf72] shadow-[0_0_8px_#f5cf72] animate-pulse opacity-100"
+                                : "bg-[#f5cf72]/70 opacity-40 scale-90"
+                            }`}
                             aria-hidden="true"
                           />
                         )}

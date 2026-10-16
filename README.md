@@ -92,8 +92,10 @@ Toda a animação depende somente do **tempo atual do áudio** e da **duração 
 
 ### Elementos com Vida (Living Elements Engine)
 
-Desenvolvido em `src/lib/storyLifeEngine.ts` para dar vida autêntica aos elementos das ilustrações. Em vez de simples rótulos estáticos, cada elemento da cena se comporta e se movimenta dinamicamente de acordo com o que a **narração gravada** ou a **legenda ativa** descreve naquele instante:
+Desenvolvido em `src/lib/storyLifeEngine.ts` para dar vida autêntica aos elementos das ilustrações. Em vez de mover os títulos ou rótulos, quem se movimenta realisticamente são **os próprios elementos gráficos da imagem** (a borboleta bate asas e traça voos orgânicos, o pássaro respira e mexe a cauda, árvores e flores balançam ao vento), enquanto os títulos funcionam como rótulos identificadores estáveis e ancorados sobre cada elemento:
 
+- **Movimentação real dos elementos da cena:** As animações acontecem diretamente sobre as formas visuais da ilustração (ex.: batimento de asas de 0,18 s com trajetórias 3D suaves para borboletas, pulsação torácica e oscilação de cauda para pássaros, curvatura e balanço do dossel para árvores).
+- **Rótulos identificadores estáveis:** As pílulas com os nomes em Kreyòl e Português (`òdinatè · computador`) mantêm posição de ancoragem estável sobre os elementos correspondentes, com aura luminosa dourada quando em destaque na fala, sem trepidações mecânicas.
 - **Identificação semântica de entidades:** O motor reconhece automaticamente a natureza do elemento a partir do seu nome em português e Kreyòl:
   - Animais: `cachorro/chen` (dog), `pássaro/zwazo` (bird), `cavalo/chwal` (horse), `gato/chat` (cat), `borboleta/papiyon` (butterfly).
   - Natureza: `árvore/pyebwa` (tree), `flores/flè` (flower), `sol/solèy` (sun), `nuvem/nyaj` (cloud), `rio/mar/rivyè` (water).
@@ -117,17 +119,19 @@ Desenvolvido em `src/lib/storyLifeEngine.ts` para dar vida autêntica aos elemen
   - No bloco **Elementos da cena**, cada elemento exibe sua categoria identificada e indicação de animação.
   - No bloco **Roteiro e legendas**, ao digitar as falas em Kreyòl e português, etiquetas dinâmicas indicam imediatamente quais ações foram ativadas naquele trecho (ex.: `⚡ Ações ativadas: 🦅 Pássaro: Voando · 🐾 Cachorro: Correndo`).
 
-### Legendas Sincronizadas com Efeito de Digitação e Posição Otimizada
+### Legendas Sincronizadas com Detecção de Voz (VAD) e Efeito de Digitação
 
-No player de **Histórias** (`src/components/StoryPlayer.tsx`), a exibição das legendas foi aprimorada para dar a melhor experiência a quem não fala Kreyòl:
+No player de **Histórias** (`src/components/StoryPlayer.tsx`) e no módulo de análise de voz (`src/lib/audioVoiceActivity.ts`), a exibição das legendas oferece sincronia realista com a fala da narração:
 
-- **Efeito de digitação em tempo real (Typewriter):** A tradução em português é digitada letra por letra em sincronia matemática com a voz falada do áudio. O cálculo acompanha a progressão do tempo real (`requestAnimationFrame`), revelando o texto conforme a fala acontece e permitindo que o usuário compreenda instantaneamente o que está sendo dito.
-- **Sem saltos visuais (Layout Shift Zero):** O trecho ainda não digitado é renderizado de forma invisível no mesmo contêiner tipográfico, mantendo a altura e as quebras de linha estáveis desde o primeiro caractere, eliminando oscilações e pulos de tela.
-- **Posicionamento na parte inferior:** A legenda fica centralizada na base do vídeo (`bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2`) com largura confortável, garantindo leitura perfeita sem cobrir os elementos vivos nem a ilustração da cena.
-- **Sumiço automático ao final do vídeo:** Assim que a história termina (`ended` ou ao atingir o fim da duração), a legenda desaparece imediatamente da tela, revelando a arte completa e todos os 4 elementos da cena em sua totalidade.
-- **Arrasto livre e reposicionamento:** Caso o aluno deseje, a legenda continua podendo ser arrastada livremente com o mouse ou toque (Pointer Events) ou movida via teclado (`Tab` + setas). O botão **Reposicionar** devolve a legenda ao centro inferior original.
-- **Barra de progresso interativa:** A barra de reprodução agora permite clicar em qualquer ponto para avançar ou retroceder a história imediatamente, além de suporte às teclas de seta esquerda/direita.
-- **Paridade na exportação de vídeo 9:16:** Na geração do vídeo vertical em Canvas 2D (`drawCaptionBox`), a legenda em português também é desenhada com o efeito de digitação e o cursor sincronizado ao áudio, e é omitida nos quadros finais para entregar um vídeo limpo.
+- **Digitação estritamente sincronizada com o áudio (VAD - Voice Activity Detection):** A legenda em português é digitada **somente enquanto houver fala ativa no áudio**. A análise acústica decodifica a faixa com a Web Audio API (`AudioContext`), calculando a energia RMS em janelas de 20 ms com passo de 10 ms (100 quadros por segundo) com limiares adaptativos de ruído e histerese.
+- **Parada absoluta durante pausas de áudio:** Se a narração dá uma pausa (respiração, vírgula, quebra de frase ou silêncio entre palavras), **nada é digitado**: o progresso congela imediatamente e nenhuma nova letra aparece até a voz recomeçar, garantindo uma cadência autêntica e realista.
+- **Alinhamento palavra por palavra:** O texto em português é mapeado para os blocos ativos de fala da narração; as palavras aparecem na exata proporção e momento em que são pronunciadas no áudio.
+- **Cursor inteligente de digitação:** Durante a fala ativa, um cursor dourado pulsa dinamicamente (`#f5cf72` com brilho); durante as pausas da fala, ele repousa suave e estático, indicando o silêncio momentâneo da narração; ao término da frase, o cursor desaparece para manter a leitura limpa.
+- **Design compacto e posição inferior:** A legenda possui formato fino em vidro fosco (*frosted glass* escuro com borda dourada delicada) e fica posicionada na base do vídeo (`bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2`), garantindo leitura confortável sem cobrir a arte nem os elementos da cena.
+- **Sumiço automático ao final do vídeo:** Assim que a narração ou o vídeo termina (`ended`, término de buffer ou fim da duração), a legenda desaparece suavemente por completo (`opacity-0`), liberando totalmente a imagem e os elementos da cena.
+- **Sem saltos visuais (Layout Shift Zero):** O trecho ainda não digitado é renderizado com opacidade zero no mesmo fluxo tipográfico, mantendo largura, quebras de linha e altura estáveis desde a primeira letra.
+- **Arrasto livre e reposicionamento:** O aluno pode arrastar a legenda para qualquer ponto da tela com mouse/toque ou via teclado (`Tab` + setas), com botão para redefinir a posição padrão.
+- **Paridade na exportação de vídeo 9:16:** Na gravação vertical em Canvas 2D (`drawCaptionBox`), a legenda utiliza o mesmo motor de atividade de voz, pausando durante silêncios e sumindo nos quadros finais do vídeo exportado.
 
 ### Exportação do vídeo vertical
 
@@ -553,6 +557,8 @@ Arquivos principais das histórias:
 | `src/lib/storyAudio.ts` | Limites (5 s a 10 min, 30 MB, 250 MB), formatos aceitos e utilitários de tempo |
 | `src/lib/storyTimeline.ts` | Linha do tempo única (cena, elementos, legendas) usada pelo player e pelo exportador |
 | `src/lib/storyValidation.ts` | Validação das histórias no servidor |
+| `src/lib/audioVoiceActivity.ts` | Detecção de voz (VAD via Web Audio API) e sincronização estrita da digitação da legenda com as falas e pausas do áudio |
+| `src/lib/storyLifeEngine.ts` | Motor de vida dos elementos da imagem (animações de borboleta voando, asas, farfalhar, etc.) |
 | `src/components/StoryPlayer.tsx` | Player (incluindo a legenda arrastável) e exportação do vídeo vertical |
 | `src/components/LoadingSpinner.tsx` | Indicador de carregamento (círculo verde girando + porcentagem) usado em todo o app |
 | `src/app/api/stories/**` | Listagem, criação, edição, exclusão e upload do áudio |

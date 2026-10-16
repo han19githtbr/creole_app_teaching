@@ -40,6 +40,38 @@ export type ExportFormat = "stories" | "feed";
 const EXPORT_WIDTH = 1080;
 const EXPORT_HEIGHT = 1920;
 
+const RECORDER_CANDIDATES = [
+  "video/mp4;codecs=avc1.640028,mp4a.40.2",
+  "video/mp4;codecs=avc1.4D4028,mp4a.40.2",
+  "video/mp4;codecs=avc1.42E028,mp4a.40.2",
+  "video/webm;codecs=vp9,opus",
+  "video/webm;codecs=vp8,opus",
+  "video/webm",
+];
+
+async function pickRecorderMime(canvasStream: MediaStream): Promise<string | undefined> {
+  const videoOnly = new MediaStream(canvasStream.getVideoTracks());
+  for (const type of RECORDER_CANDIDATES) {
+    if (!MediaRecorder.isTypeSupported(type)) continue;
+    try {
+      const probe = new MediaRecorder(videoOnly, { mimeType: type, videoBitsPerSecond: 4_000_000 });
+      let failed = false;
+      probe.onerror = () => { failed = true; };
+      probe.start(100);
+      for (const track of canvasStream.getVideoTracks()) {
+        (track as CanvasCaptureMediaStreamTrack).requestFrame?.();
+      }
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      const ok = !failed && probe.state === "recording";
+      if (probe.state !== "inactive") probe.stop();
+      if (ok) return type;
+    } catch {
+      /* tenta o próximo codec */
+    }
+  }
+  return undefined;
+}
+
 function wrapLines(context: CanvasRenderingContext2D, text: string, maxWidth: number, maxLines = Number.POSITIVE_INFINITY) {
   const words = text.split(/\s+/).filter(Boolean);
   const lines: string[] = [];
@@ -614,14 +646,16 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       }
       if (!audioStream?.getAudioTracks().length) throw new Error("Seu navegador não liberou a captura da narração. Use Chrome ou Edge para exportar.");
       const stream = new MediaStream([...canvasStream.getVideoTracks(), ...audioStream.getAudioTracks()]);
-      const mp4Type = ["video/mp4;codecs=avc1.42E01E,mp4a.40.2", "video/mp4"].find((type) => MediaRecorder.isTypeSupported(type));
-      const webmType = ["video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"].find((type) => MediaRecorder.isTypeSupported(type));
-      const mimeType = mp4Type || webmType;
+      const mimeType = await pickRecorderMime(canvasStream);
       if (!mimeType) throw new Error("Este navegador não oferece codificação de vídeo compatível para exportação.");
-      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 2_500_000 });
+      const mp4Type = mimeType.startsWith("video/mp4") ? mimeType : undefined;
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000, audioBitsPerSecond: 128_000 });
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
-      recorder.onerror = () => { failure = new Error("O navegador interrompeu a gravação do vídeo."); };
+      recorder.onerror = (event) => {
+        console.error("MediaRecorder error:", event);
+        failure = new Error("O navegador interrompeu a gravação do vídeo.");
+      };
       const finished = new Promise<Blob>((resolve) => {
         recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType }));
       });

@@ -358,15 +358,16 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const centerY = scene.y + scene.height * (anchor.top / 100);
       const isActive = visual.phase === "active";
 
+      const elementLabel = getElementLabel(element, storyLang);
+
       const livingState = calculateLivingElementState(
         element.pt,
         element.kreyol,
         seconds,
         captionText,
-        isActive
+        isActive,
+        elementLabel
       );
-
-      const elementLabel = getElementLabel(element, storyLang);
 
       drawLivingElementOnCanvas(context, {
         centerX,
@@ -777,10 +778,11 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const imageCrop = 16 / 9 / (1200 / 800);
 
             const captionText = activeCaption ? `${activeCaption.portuguese} ${activeCaption.kreyol}` : "";
-            const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active);
+            const elementTargetLabel = getElementLabel(element, storyLang);
+            const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active, elementTargetLabel);
 
-            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX;
-            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
+            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX + (active ? living.dx : 0);
+            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY + (active ? living.dy : 0);
 
             return (
               <div
@@ -790,7 +792,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   left: `${left}%`,
                   top: `${top}%`,
                   opacity: visual.opacity,
-                  transform: `translate(-50%, -50%) scale(${visual.scale * (active ? 1.06 : 1)})`,
+                  transform: `translate(-50%, -50%) scale(${visual.scale * (active ? 1.06 * living.scaleX : 1)}) rotate(${active ? living.rotation : 0}deg)`,
                   transformOrigin: "center center",
                 }}
               >
@@ -799,6 +801,25 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                     className="absolute inset-0 -m-2 rounded-full bg-[#f5cf72]/30 blur-md pointer-events-none transition-opacity"
                     style={{ opacity: 0.5 + living.pulse * 0.5 }}
                   />
+                )}
+
+                {active && living.particles.length > 0 && (
+                  <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+                    {living.particles.map((p, pIdx) => (
+                      <span
+                        key={pIdx}
+                        className="absolute text-xs sm:text-sm select-none transition-all duration-150"
+                        style={{
+                          left: `${p.x}px`,
+                          top: `${p.y}px`,
+                          opacity: p.opacity,
+                          transform: `scale(${p.scale}) rotate(${p.rotation}deg)`,
+                        }}
+                      >
+                        {p.char}
+                      </span>
+                    ))}
+                  </div>
                 )}
 
                 <div
@@ -810,7 +831,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                 >
                   <span className="text-xs sm:text-sm">{living.badgeEmoji}</span>
                   <span className={`font-bold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>
-                    {getElementLabel(element, storyLang)}
+                    {elementTargetLabel}
                   </span>
                   <span className={`px-0.5 ${active ? "text-[#18241d]/60" : "text-white/60"}`}>·</span>
                   <span className={active ? "text-[#18241d]" : "text-white"}>{element.pt}</span>

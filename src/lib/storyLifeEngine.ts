@@ -73,7 +73,7 @@ export const ACTION_METAS: Record<EntityAction, ActionMeta> = {
   idle: { id: "idle", label: "Atento", emoji: "🌿", description: "Comportamento natural e vivo no ambiente" },
 };
 
-/** Identifica o tipo semântico da entidade a partir do nome em português ou Kreyòl. */
+/** Identifica o tipo semântico da entidade a partir do nome em português, Kreyòl ou francês. */
 export function identifyEntityType(name: string): EntityType {
   const norm = name
     .toLowerCase()
@@ -83,30 +83,30 @@ export function identifyEntityType(name: string): EntityType {
 
   if (/(cachorr|cao|cadela|puppy|filhote|chen|chyen|chien|chiot)/.test(norm)) return "dog";
   if (/(gato|gata|gatinho|chat|chaton)/.test(norm)) return "cat";
-  if (/(passar|ave|gaivota|gaviao|sabia|pombo|zwazo|pijon|oiseau|colombe|pigeon)/.test(norm)) return "bird";
+  if (/(passar|ave|gaivota|gaviao|sabia|pombo|zwazo|pijon|oiseau|colombe|pigeon|pipa|kap\b|cerf-volant|sevolan)/.test(norm)) return "bird";
   if (/(borbolet|mariposa|papiyon|papillon)/.test(norm)) return "butterfly";
   if (/(caval|egua|potro|chwal|jiman|cheval|jument)/.test(norm)) return "horse";
-  if (/(arvore|bosque|floresta|galho|pyebwa|pye bwa|arbre|foret)/.test(norm)) return "tree";
-  if (/(flor|flores|rosa|margarida|jardim|fle\b|fleur)/.test(norm)) return "flower";
-  if (/(sol\b|solzao|amanhecer|entardecer|soley|soleil)/.test(norm)) return "sun";
+  if (/(arvore|bosque|floresta|galho|oliveira|pyebwa|pye bwa|pye oliv|arbre|foret|olivier)/.test(norm)) return "tree";
+  if (/(flor|flores|rosa|margarida|jardim|plantacao|fle\b|jaden|fleur|plantation)/.test(norm)) return "flower";
+  if (/(sol\b|solzao|amanhecer|entardecer|estrela|estrelas|soley|zetwal|soleil|etoile)/.test(norm)) return "sun";
   if (/(nuvem|ceu\b|nevoa|nyaj|nuage|ciel)/.test(norm)) return "cloud";
-  if (/(rio|mar|lago|agua|onda|cachoeira|dlo|lanme|rivye|mer|riviere|lac|eau|cascade)/.test(norm)) return "water";
-  if (/(barco|canoa|navio|veleiro|bote|bato|chaloup|bateau|navire)/.test(norm)) return "boat";
-  if (/(carro|caminhao|automovel|veiculo|machin|oto|voiture)/.test(norm)) return "car";
-  if (/(drone|dron)/.test(norm)) return "drone";
-  if (/(robo|androide|robot)/.test(norm)) return "robot";
-  if (/(tambor|atabaque|bateria|percussao|tanbou|tambour)/.test(norm)) return "drum";
-  if (/(musica|violao|guitarra|melodia|som|mizik|gita|guitare)/.test(norm)) return "music";
-  if (/(lanterna|lampada|vela|farol|lanp|bouji|lanterne|lampe|bougie|phare)/.test(norm)) return "lantern";
-  if (/(fogo|fogueira|chama|labareda|dife|feu|flamme)/.test(norm)) return "fire";
-  if (/(casa|cabana|castelo|edificio|choupana|kay|chato|maison|chateau)/.test(norm)) return "house";
-  if (/(homem|mulher|crianca|menino|menina|pessoa|moun|timoun|gason|fi\b|homme|femme|enfant)/.test(norm)) return "person";
-  if (/(moinho|catavento|moulen|moulin)/.test(norm)) return "windmill";
+  if (/(rio|mar|lago|agua|onda|cachoeira|dlo|lanme|rivye|kaskad|mer|riviere|lac|eau|cascade)/.test(norm)) return "water";
+  if (/(barco|canoa|navio|veleiro|bote|balao|bato|balon|chaloup|bateau|navire|montgolfiere)/.test(norm)) return "boat";
+  if (/(carro|caminhao|automovel|veiculo|bicicleta|machin|oto|bisiklet|voiture|velo|bicyclette)/.test(norm)) return "car";
+  if (/(drone|dron|bussola|bousol|boussole)/.test(norm)) return "drone";
+  if (/(robo|androide|robot|computador|odinate|ordinateur)/.test(norm)) return "robot";
+  if (/(tambor|atabaque|bateria|percussao|canhao|tanbou|kanon|tambour|canon)/.test(norm)) return "drum";
+  if (/(musica|violao|guitarra|melodia|som|alto-falante|mizik|gita|opale|guitare|haut-parleur|notes)/.test(norm)) return "music";
+  if (/(lanterna|lampada|vela|farol|lanp|bouji|fa\b|lanterne|lampe|bougie|phare)/.test(norm)) return "lantern";
+  if (/(fogo|fogueira|chama|labareda|tocha|caldeirao|panela|dife|flanbo|chodye|feu|flamme|torche|chaudron|casserole)/.test(norm)) return "fire";
+  if (/(casa|cabana|castelo|edificio|choupana|fortaleza|igreja|capela|colunas|cerca|kay|chato|fo\b|legliz|kolon|kloti|maison|chateau|forteresse|eglise|chapelle|colonne|cloture)/.test(norm)) return "house";
+  if (/(homem|mulher|crianca|menino|menina|pessoa|filosofo|sabio|dancarino|moun|timoun|gason|fi\b|moun saj|danse|homme|femme|enfant|sage|philosophe|danseur|danseuse)/.test(norm)) return "person";
+  if (/(moinho|catavento|bandeira|moulen|drapo|moulin|drapeau)/.test(norm)) return "windmill";
 
   return "generic";
 }
 
-/** Detecta a ação do elemento com base no texto da legenda/áudio e tipo da entidade. */
+/** Detecta a ação do elemento com base no texto da legenda/áudio e tipo da entidade (PT, Kreyòl e FR). */
 export function detectActionFromCaption(
   entity: EntityType,
   captionText: string
@@ -117,78 +117,78 @@ export function detectActionFromCaption(
     .replace(/[\u0300-\u036f]/g, "");
 
   // Verbos de voo
-  if (/(voa|voar|voando|sobrevoa|bate asas|plana|levantou voo|vole|ap vole|anle|voler|volant|plane)/.test(norm)) {
-    if (entity === "bird" || entity === "butterfly" || entity === "drone") return "flying";
+  if (/(voa|voar|voando|sobrevoa|bate asas|plana|levantou voo|vole|ap vole|anle|voler|volant|plane|planer|s'envole|senvole)/.test(norm)) {
+    if (entity === "bird" || entity === "butterfly" || entity === "drone" || entity === "boat") return "flying";
   }
 
   // Verbos de corrida e rapidez
-  if (/(corre|correr|correndo|dispara|apressado|veloz|kouri|ap kouri|galope|court|courir|courant)/.test(norm)) {
+  if (/(corre|correr|correndo|dispara|apressado|veloz|kouri|ap kouri|galope|court|courir|courant|galoper|fonce|foncer)/.test(norm)) {
     if (entity === "dog" || entity === "horse" || entity === "cat" || entity === "person") return "running";
     if (entity === "car") return "running";
   }
 
   // Verbos de pulo / salto
-  if (/(pula|pular|pulando|salta|saltando|empina|sote|ap sote|rebondi|saute|sauter|bondit)/.test(norm)) {
+  if (/(pula|pular|pulando|salta|saltando|empina|sote|ap sote|rebondi|saute|sauter|bondit|bondir)/.test(norm)) {
     return "jumping";
   }
 
   // Latidos e sons animais
-  if (/(late|latir|latindo|uiva|rosna|jape|ap jape|rele|oyo|aboie|aboyer)/.test(norm)) {
+  if (/(late|latir|latindo|uiva|rosna|jape|ap jape|rele|oyo|aboie|aboyer|aboiement|jappe|japper|rugit)/.test(norm)) {
     if (entity === "dog") return "barking";
   }
 
   // Canto e gorjeio
-  if (/(canta|cantando|gorjeia|assobia|chante|ap chante|melodi)/.test(norm)) {
+  if (/(canta|cantando|gorjeia|assobia|chante|ap chante|melodi|chanter|chantant|gazouille|gazouiller|siffle|siffler)/.test(norm)) {
     return "singing";
   }
 
   // Dança e festa
-  if (/(dança|danca|dancar|dancando|festa|alegria|ginga|danse|ap danse|fet\b)/.test(norm)) {
+  if (/(dança|danca|dancar|dancando|festa|alegria|ginga|danse|ap danse|fet\b|danser|dansant|tournoie|tournoyer|fete)/.test(norm)) {
     return "dancing";
   }
 
   // Tocar música e percussão
-  if (/(toca|tocando|batucada|ritmo|tamborilando|jwe mizik|tanbouye|barye)/.test(norm)) {
+  if (/(toca|tocando|batucada|ritmo|tamborilando|jwe mizik|tanbouye|barye|joue|jouer|rythme|percussion|gratte|gratter)/.test(norm)) {
     return "playing_music";
   }
 
   // Brilho e luz
-  if (/(brilha|brilhar|brilhando|reluz|ilumina|radiante|claro|ekla|klere|ap klere|limye)/.test(norm)) {
+  if (/(brilha|brilhar|brilhando|reluz|ilumina|radiante|claro|ekla|klere|ap klere|limye|brille|briller|brillant|illumine|illuminer|rayon|rayonne|etincelle|lumiere)/.test(norm)) {
     return "shining";
   }
 
   // Vento e balanço
-  if (/(vento|ventando|sopra|soprando|balanca|balancando|farfalha|van\b|soufle|ap soufle|balanse)/.test(norm)) {
+  if (/(vento|ventando|sopra|soprando|balanca|balancando|farfalha|van\b|soufle|ap soufle|balanse|vent|souffle|souffler|balance|balancer|oscille|osciller|ondove|frissonne)/.test(norm)) {
     return "blowing";
   }
 
   // Nado e navegação
-  if (/(nada|nadar|nadando|navega|flutua|mergulha|onda|naje|ap naje|flote)/.test(norm)) {
+  if (/(nada|nadar|nadando|navega|flutua|mergulha|onda|naje|ap naje|flote|nage|nager|navigue|naviguer|flotte|flotter|vogue|voguer|mer\b|vague)/.test(norm)) {
     return "swimming";
   }
 
   // Sono e descanso
-  if (/(dorme|dormir|dormindo|descansa|repousa|sono|deita|domi|ap domi|repoze)/.test(norm)) {
+  if (/(dorme|dormir|dormindo|descansa|repousa|sono|deita|domi|ap domi|repoze|dort|dormant|repose|reposer|calme|paisible|endormi)/.test(norm)) {
     return "sleeping";
   }
 
   // Alimentação
-  if (/(come|comer|comendo|bica|mastiga|alimenta|manje|ap manje)/.test(norm)) {
+  if (/(come|comer|comendo|bica|mastiga|alimenta|manje|ap manje|mange|manger|mangent|deguste|croque|savoure|croquer|bouillonne|mijote)/.test(norm)) {
     return "eating";
   }
 
   // Fala e contação
-  if (/(fala|falando|conversa|conta|diz|exclama|pale|ap pale|rakonte)/.test(norm)) {
+  if (/(fala|falando|conversa|conta|diz|exclama|pale|ap pale|rakonte|parle|parler|raconte|raconter|dit|explique)/.test(norm)) {
     return "speaking";
   }
 
   // Caminhada
-  if (/(anda|andando|caminha|caminhando|passeia|mache|ap mache)/.test(norm)) {
+  if (/(anda|andando|caminha|caminhando|passeia|mache|ap mache|marche|marcher|promene|promener|balade|avance)/.test(norm)) {
     return "walking";
   }
 
   // Celebração
-  if (/(comemora|celebra|viva|festeja|selebre)/.test(norm)) {
+  if (/(comemora|celebra|viva|festeja|selebre|celebre|celebrer|fete|feter|hourra|bravo|felicite)/.test(norm)) {
     return "celebrating";
   }
 
@@ -237,9 +237,10 @@ export function calculateLivingElementState(
   elementKreyol: string,
   time: number,
   captionText: string,
-  isActiveInTimeline: boolean
+  isActiveInTimeline: boolean,
+  elementExtra?: string
 ): LivingElementState {
-  const entity = identifyEntityType(`${elementPt} ${elementKreyol}`);
+  const entity = identifyEntityType(`${elementPt} ${elementKreyol} ${elementExtra || ""}`);
   const action = detectActionFromCaption(entity, captionText);
   const actionMeta = ACTION_METAS[action];
 

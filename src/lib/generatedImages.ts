@@ -40,7 +40,7 @@ export async function listApprovedGenerated(section?: ImageSection): Promise<Ban
   return docs.map(toBankImage);
 }
 
-/** Procura uma imagem gerada por id ("gen-<id>") ou por caminho ("/gen/...svg|webp"). */
+/** Procura uma imagem gerada por id ("gen-<id>"), por caminho ("/gen/...") ou por URL completa do Vercel Blob. */
 export async function findGeneratedBankImage(
   idOrSrc: string | null | undefined,
   options: { includeUnapproved?: boolean } = {}
@@ -49,7 +49,23 @@ export async function findGeneratedBankImage(
   const filter: Record<string, unknown> = {};
   if (idOrSrc.startsWith("gen-") && isValidObjectId(idOrSrc.slice(4))) filter._id = idOrSrc.slice(4);
   else if (idOrSrc.startsWith("/gen/")) filter.src = idOrSrc;
-  else return undefined;
+  else {
+    // Aceita URLs completas do Vercel Blob usadas como imageSrc nas histórias
+    try {
+      const u = new URL(idOrSrc);
+      if (
+        u.protocol === "https:" &&
+        (u.hostname.endsWith(".public.blob.vercel-storage.com") ||
+          u.hostname.endsWith(".vercel-storage.com"))
+      ) {
+        filter.src = idOrSrc;
+      } else {
+        return undefined;
+      }
+    } catch {
+      return undefined;
+    }
+  }
   if (!options.includeUnapproved) filter.status = "approved";
   await connectDB();
   const doc = (await GeneratedImage.findOne(filter).lean()) as unknown as IGeneratedImage | null;

@@ -21,6 +21,7 @@ import {
   drawLivingElementOnCanvas,
   measureLivingPill,
 } from "@/lib/storyLifeEngine";
+import { Muxer, ArrayBufferTarget } from "mp4-muxer";
 import { resolveLabelCollisions } from "@/lib/storyLabelLayout";
 import { buildSvgLayerKit, loadSvgImage, rasterizeLayer, releaseSvgImage } from "@/lib/storySvgLayers";
 import { useAudioVoiceActivity, computeCaptionTyping } from "@/lib/audioVoiceActivity";
@@ -137,6 +138,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const [language, setLanguage] = useState<"both" | "pt" | "ht">("both");
   const [exportFormat, setExportFormat] = useState<ExportFormat>("stories");
   const [exporting, setExporting] = useState(false);
+  // Progresso (0-100) e modo da exportação: "offline" = quadro a quadro (não depende do tempo real); "realtime" = gravação ao vivo.
+  const [exportProgress, setExportProgress] = useState<number | null>(null);
+  const [exportMode, setExportMode] = useState<"offline" | "realtime" | null>(null);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
   const [copiedCaption, setCopiedCaption] = useState(false);
@@ -685,6 +689,247 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     context.fillText(isFr ? "Français Interactif" : "Kreyòl Ayisyen", 56, exportH - (isSquare ? 20 : 68));
   }
 
+  async function deliverExport(
+    blob: Blob,
+    isMp4: boolean,
+    isStories: boolean,
+    destination: "download" | "whatsapp" | "instagram" | "facebook"
+  ) {
+    const extension = isMp4 ? "mp4" : "webm";
+    const cleanTitle = story.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "historia";
+    const filename = `${cleanTitle}-${isStories ? "stories-9x16" : "feed-1x1"}.${extension}`;
+
+    const file = new File([blob], filename, { type: blob.type });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+
+    if (destination === "whatsapp") {
+      if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: story.title,
+            text: socialCaption,
+          });
+          setExportNotice("Compartilhado com sucesso no WhatsApp!");
+        } catch (err: any) {
+          if (err?.name !== "AbortError") {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(socialCaption)}`, "_blank");
+            setExportNotice("Vídeo baixado! Abrindo WhatsApp com a legenda pronta.");
+          }
+        }
+      } else {
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(socialCaption)}`, "_blank");
+        setExportNotice("Vídeo baixado! WhatsApp aberto com a legenda pronta para colar e anexar.");
+      }
+    } else if (destination === "instagram") {
+      copySocialCaption();
+      if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: story.title,
+            text: socialCaption,
+          });
+          setExportNotice("Compartilhado com sucesso para o Instagram!");
+        } catch (err: any) {
+          if (err?.name !== "AbortError") {
+            window.open("https://www.instagram.com/", "_blank");
+            setExportNotice("Vídeo baixado e legenda copiada! Abra o Instagram e cole a legenda.");
+          }
+        }
+      } else {
+        window.open("https://www.instagram.com/", "_blank");
+        setExportNotice("Vídeo baixado e legenda copiada! Cole no Instagram ao publicar.");
+      }
+    } else if (destination === "facebook") {
+      copySocialCaption();
+      if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: story.title,
+            text: socialCaption,
+          });
+          setExportNotice("Compartilhado com sucesso para o Facebook!");
+        } catch (err: any) {
+          if (err?.name !== "AbortError") {
+            window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(socialCaption)}`, "_blank");
+            setExportNotice("Vídeo baixado e legenda copiada! Publicando no Facebook.");
+          }
+        }
+      } else {
+        window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(socialCaption)}`, "_blank");
+        setExportNotice("Vídeo baixado e legenda copiada! Abra o Facebook para publicar.");
+      }
+    } else {
+      setExportNotice(`Vídeo ${isStories ? "Stories (9:16)" : "Feed (1:1)"} baixado com sucesso!`);
+    }
+
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+
+  /**
+   * Exportação quadro a quadro (WebCodecs): cada quadro é desenhado no instante exato (i/30 s), codificado e
+   * gravado no MP4, sem depender do tempo real. Se o computador demorar mais para desenhar um quadro, o vídeo
+   * continua perfeito (só leva mais tempo para ficar pronto) — nada de quadros perdidos nem vídeo congelado.
+   * Devolve null se o navegador não oferecer H.264 + AAC via WebCodecs (aí usa-se a gravação em tempo real).
+   */
+  async function renderOfflineMp4(params: {
+    context: CanvasRenderingContext2D;
+    image: HTMLImageElement;
+    exportW: number;
+    exportH: number;
+    isStories: boolean;
+  }): Promise<Blob | null> {
+    const { context, image, exportW, exportH, isStories } = params;
+    if (
+      typeof VideoEncoder === "undefined" ||
+      typeof AudioEncoder === "undefined" ||
+      typeof VideoFrame === "undefined" ||
+      typeof AudioData === "undefined" ||
+      typeof OfflineAudioContext === "undefined" ||
+      !story.audioUrl
+    ) {
+      return null;
+    }
+
+    const fps = 30;
+    const sampleRate = 48000;
+
+    let videoConfig: VideoEncoderConfig | null = null;
+    for (const codec of ["avc1.64002A", "avc1.4D002A", "avc1.42002A"]) {
+      const candidate: VideoEncoderConfig = {
+        codec,
+        width: exportW,
+        height: exportH,
+        bitrate: isStories ? 8_000_000 : 6_000_000,
+        framerate: fps,
+        avc: { format: "avc" },
+      };
+      try {
+        if ((await VideoEncoder.isConfigSupported(candidate)).supported) {
+          videoConfig = candidate;
+          break;
+        }
+      } catch {
+        /* tenta o próximo perfil */
+      }
+    }
+    if (!videoConfig) return null;
+
+    const audioSupported = async (channels: number) => {
+      try {
+        return Boolean((await AudioEncoder.isConfigSupported({ codec: "mp4a.40.2", sampleRate, numberOfChannels: channels, bitrate: 160_000 })).supported);
+      } catch {
+        return false;
+      }
+    };
+    if (!(await audioSupported(2)) || !(await audioSupported(1))) return null;
+
+    // Áudio: decodifica a narração inteira e reamostra para 48 kHz.
+    const response = await fetch(story.audioUrl, { mode: "cors" });
+    if (!response.ok) throw new Error("Não foi possível carregar a narração para exportar.");
+    const audioBuffer = await new OfflineAudioContext(2, sampleRate, sampleRate).decodeAudioData(await response.arrayBuffer());
+    const channels = Math.min(2, audioBuffer.numberOfChannels);
+    const channelData = Array.from({ length: channels }, (_, channel) => audioBuffer.getChannelData(channel));
+
+    const target = new ArrayBufferTarget();
+    const muxer = new Muxer({
+      target,
+      video: { codec: "avc", width: exportW, height: exportH, frameRate: fps },
+      audio: { codec: "aac", numberOfChannels: channels, sampleRate },
+      fastStart: "in-memory",
+    });
+
+    let encoderError: Error | null = null;
+    const videoEncoder = new VideoEncoder({
+      output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+      error: (error) => { encoderError = error; },
+    });
+    const audioEncoder = new AudioEncoder({
+      output: (chunk, meta) => muxer.addAudioChunk(chunk, meta),
+      error: (error) => { encoderError = error; },
+    });
+
+    try {
+      videoEncoder.configure(videoConfig);
+      audioEncoder.configure({ codec: "mp4a.40.2", sampleRate, numberOfChannels: channels, bitrate: 160_000 });
+
+      // Entrega o áudio aos poucos, acompanhando o vídeo, para o MP4 ficar bem intercalado.
+      let audioOffset = 0;
+      const feedAudioUntil = (seconds: number) => {
+        const limit = Math.min(audioBuffer.length, Math.floor(seconds * sampleRate));
+        while (audioOffset < limit) {
+          const frames = Math.min(4800, audioBuffer.length - audioOffset);
+          const planar = new Float32Array(frames * channels);
+          channelData.forEach((data, channel) => planar.set(data.subarray(audioOffset, audioOffset + frames), channel * frames));
+          const chunk = new AudioData({
+            format: "f32-planar",
+            sampleRate,
+            numberOfFrames: frames,
+            numberOfChannels: channels,
+            timestamp: Math.round((audioOffset / sampleRate) * 1e6),
+            data: planar,
+          });
+          audioEncoder.encode(chunk);
+          chunk.close();
+          audioOffset += frames;
+        }
+      };
+
+      const totalFrames = Math.max(1, Math.ceil((audioBuffer.duration + 0.4) * fps));
+      const layers = exportLayersRef.current;
+      const secondsAt = (index: number) => Math.min(index / fps, duration || audioBuffer.duration);
+      let nextMid = layers && layerKit ? loadSvgImage(layerKit.frozen(0), 8000) : null;
+
+      for (let index = 0; index < totalFrames; index++) {
+        if (encoderError) throw encoderError;
+        const seconds = secondsAt(index);
+
+        if (layers && layerKit && nextMid) {
+          const midImage = await nextMid;
+          nextMid = index + 1 < totalFrames ? loadSvgImage(layerKit.frozen(secondsAt(index + 1)), 8000) : null;
+          if (midImage) {
+            const previous = layers.mid;
+            layers.mid = midImage;
+            releaseSvgImage(previous);
+          }
+        }
+
+        drawExportFrame(context, image, seconds, exportW, exportH);
+
+        const frame = new VideoFrame(context.canvas as HTMLCanvasElement, {
+          timestamp: Math.round((index * 1e6) / fps),
+          duration: Math.round(1e6 / fps),
+        });
+        videoEncoder.encode(frame, { keyFrame: index % (fps * 2) === 0 });
+        frame.close();
+        feedAudioUntil(seconds + 0.5);
+
+        while (videoEncoder.encodeQueueSize > 6) {
+          await new Promise<void>((resolve) => videoEncoder.addEventListener("dequeue", () => resolve(), { once: true }));
+          if (encoderError) throw encoderError;
+        }
+        if (index % 5 === 0) setExportProgress(Math.min(99, Math.round((index / totalFrames) * 100)));
+      }
+
+      feedAudioUntil(Number.POSITIVE_INFINITY);
+      await videoEncoder.flush();
+      await audioEncoder.flush();
+      if (encoderError) throw encoderError;
+      muxer.finalize();
+      return new Blob([target.buffer], { type: "video/mp4" });
+    } finally {
+      if (videoEncoder.state !== "closed") videoEncoder.close();
+      if (audioEncoder.state !== "closed") audioEncoder.close();
+    }
+  }
+
   async function exportVideo(
     targetFormat: ExportFormat = exportFormat,
     destination: "download" | "whatsapp" | "instagram" | "facebook" = "download"
@@ -774,6 +1019,25 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           producing = false;
         }
       }
+      // Caminho principal: renderização quadro a quadro (não trava, não perde quadros).
+      try {
+        setExportMode("offline");
+        setExportProgress(0);
+        const offlineBlob = await renderOfflineMp4({ context, image, exportW, exportH, isStories });
+        if (offlineBlob) {
+          setExportProgress(100);
+          await deliverExport(offlineBlob, true, isStories, destination);
+          return;
+        }
+      } catch (offlineError) {
+        console.error("Exportação quadro a quadro falhou:", offlineError);
+        throw new Error(
+          `Não foi possível gerar o vídeo${offlineError instanceof Error && offlineError.message ? ` (${offlineError.message})` : ""}.`
+        );
+      }
+      setExportMode("realtime");
+      setExportProgress(null);
+
       audio.pause();
       audio.currentTime = 0;
       audio.muted = false;
@@ -845,82 +1109,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       if (failure) throw failure;
       if (!completed) throw new Error("A narração foi interrompida antes do fim; o vídeo não foi gerado. Tente exportar novamente.");
 
-      const extension = mp4Type ? "mp4" : "webm";
-      const cleanTitle = story.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "historia";
-      const filename = `${cleanTitle}-${isStories ? "stories-9x16" : "feed-1x1"}.${extension}`;
-
-      const file = new File([blob], filename, { type: blob.type });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
-      link.click();
-
-      if (destination === "whatsapp") {
-        if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({
-              files: [file],
-              title: story.title,
-              text: socialCaption,
-            });
-            setExportNotice("Compartilhado com sucesso no WhatsApp!");
-          } catch (err: any) {
-            if (err?.name !== "AbortError") {
-              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(socialCaption)}`, "_blank");
-              setExportNotice("Vídeo baixado! Abrindo WhatsApp com a legenda pronta.");
-            }
-          }
-        } else {
-          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(socialCaption)}`, "_blank");
-          setExportNotice("Vídeo baixado! WhatsApp aberto com a legenda pronta para colar e anexar.");
-        }
-      } else if (destination === "instagram") {
-        copySocialCaption();
-        if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({
-              files: [file],
-              title: story.title,
-              text: socialCaption,
-            });
-            setExportNotice("Compartilhado com sucesso para o Instagram!");
-          } catch (err: any) {
-            if (err?.name !== "AbortError") {
-              window.open("https://www.instagram.com/", "_blank");
-              setExportNotice("Vídeo baixado e legenda copiada! Abra o Instagram e cole a legenda.");
-            }
-          }
-        } else {
-          window.open("https://www.instagram.com/", "_blank");
-          setExportNotice("Vídeo baixado e legenda copiada! Cole no Instagram ao publicar.");
-        }
-      } else if (destination === "facebook") {
-        copySocialCaption();
-        if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({
-              files: [file],
-              title: story.title,
-              text: socialCaption,
-            });
-            setExportNotice("Compartilhado com sucesso para o Facebook!");
-          } catch (err: any) {
-            if (err?.name !== "AbortError") {
-              window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(socialCaption)}`, "_blank");
-              setExportNotice("Vídeo baixado e legenda copiada! Publicando no Facebook.");
-            }
-          }
-        } else {
-          window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(socialCaption)}`, "_blank");
-          setExportNotice("Vídeo baixado e legenda copiada! Abra o Facebook para publicar.");
-        }
-      } else {
-        setExportNotice(`Vídeo ${isStories ? "Stories (9:16)" : "Feed (1:1)"} baixado com sucesso!`);
-      }
-
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      await deliverExport(blob, Boolean(mp4Type), isStories, destination);
       if (!mp4Type) setExportError("Vídeo exportado em WebM. Recomendamos converter para MP4 se publicar diretamente no Instagram.");
     } catch (error) {
       if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
@@ -938,6 +1127,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       setCurrentTime(0);
       setPlaying(false);
       setExporting(false);
+      setExportMode(null);
+      setExportProgress(null);
     }
   }
 
@@ -1339,7 +1530,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           >
             <Download className="h-4 w-4" />
             {exporting
-              ? `Gravando ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`
+              ? exportMode === "offline" && exportProgress !== null
+                ? `Renderizando ${exportProgress}%…`
+                : `Gravando ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`
               : `Baixar Vídeo (${exportFormat === "stories" ? "Stories 9:16" : "Feed 1:1"})`}
           </button>
 
@@ -1393,15 +1586,17 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             <LoadingSpinner
               layout="inline"
               size="sm"
-              label={`Gravando o vídeo ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`}
-              progress={duration > 0 ? (currentTime / duration) * 100 : undefined}
+              label={`${exportMode === "offline" ? "Renderizando" : "Gravando"} o vídeo ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`}
+              progress={exportMode === "offline" && exportProgress !== null ? exportProgress : duration > 0 ? (currentTime / duration) * 100 : undefined}
               className="mt-3"
             />
           )}
 
           {exporting && (
             <p className="mt-2 text-center text-[11px] text-[var(--text-muted)]">
-              A gravação acontece em tempo real acompanhando o áudio ({describeStoryDuration(duration)}). Mantenha a aba aberta.
+              {exportMode === "offline"
+                ? "O vídeo é renderizado quadro a quadro, com qualidade total. Pode levar um ou dois minutos: mantenha esta aba aberta."
+                : `A gravação acontece em tempo real acompanhando o áudio (${describeStoryDuration(duration)}). Mantenha a aba aberta.`}
             </p>
           )}
 

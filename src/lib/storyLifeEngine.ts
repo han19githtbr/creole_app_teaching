@@ -524,6 +524,24 @@ export function calculateLivingElementState(
 }
 
 /** Renderiza os elementos vivos sobre o canvas 2D de exportação (1080x1920) */
+export function measureLivingPill(
+  context: CanvasRenderingContext2D,
+  kreyol: string,
+  portuguese: string,
+  fontSize = 21
+): { width: number; height: number } {
+  context.save();
+  context.font = `700 ${fontSize}px system-ui, -apple-system, sans-serif`;
+  const width =
+    fontSize * 1.52 +
+    context.measureText(kreyol).width +
+    context.measureText("  ·  ").width +
+    context.measureText(portuguese).width +
+    fontSize * 1.62;
+  context.restore();
+  return { width, height: Math.round(fontSize * 2.2) };
+}
+
 export function drawLivingElementOnCanvas(
   context: CanvasRenderingContext2D,
   params: {
@@ -535,9 +553,10 @@ export function drawLivingElementOnCanvas(
     visualOpacity: number;
     visualScale: number;
     isActive: boolean;
+    fontSize?: number;
   }
 ) {
-  const { centerX, centerY, kreyol, portuguese, state, visualOpacity, visualScale, isActive } = params;
+  const { centerX, centerY, kreyol, portuguese, state, visualOpacity, visualScale, isActive, fontSize = 21 } = params;
   if (visualOpacity <= 0.01) return;
 
   context.save();
@@ -564,40 +583,44 @@ export function drawLivingElementOnCanvas(
   }
 
   // 2. Pílula identificadora estável
-  const fontSize = 21;
   context.font = `700 ${fontSize}px system-ui, -apple-system, sans-serif`;
-  const emojiWidth = 32;
+  const emojiWidth = fontSize * 1.52;
   const kreyolWidth = context.measureText(kreyol).width;
   const separatorWidth = context.measureText("  ·  ").width;
   const ptWidth = context.measureText(portuguese).width;
 
-  const totalWidth = emojiWidth + kreyolWidth + separatorWidth + ptWidth + 34;
-  const totalHeight = 46;
+  const totalWidth = emojiWidth + kreyolWidth + separatorWidth + ptWidth + fontSize * 1.62;
+  const totalHeight = Math.round(fontSize * 2.2);
   const pillX = -totalWidth / 2;
   const pillY = -totalHeight / 2;
 
   // Fundo da pílula
+  context.save();
+  context.shadowColor = "rgba(0, 0, 0, 0.45)";
+  context.shadowBlur = fontSize * 0.7;
+  context.shadowOffsetY = fontSize * 0.2;
   context.fillStyle = isActive ? "#f5cf72" : "rgba(18, 32, 26, 0.92)";
   context.beginPath();
-  context.roundRect(pillX, pillY, totalWidth, totalHeight, 14);
+  context.roundRect(pillX, pillY, totalWidth, totalHeight, totalHeight / 2.8);
   context.fill();
+  context.restore();
 
   context.strokeStyle = isActive ? "#f8deb3" : "rgba(255, 255, 255, 0.38)";
   context.lineWidth = isActive ? 2.5 : 1.5;
   context.stroke();
 
   // Emoji da entidade
-  context.font = `20px "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif`;
+  context.font = `${Math.round(fontSize * 0.95)}px "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillText(state.badgeEmoji, pillX + 22, 1);
+  context.fillText(state.badgeEmoji, pillX + fontSize * 1.05, 1);
 
   // Texto Kreyòl · Português (identificador limpo)
   context.font = `700 ${fontSize}px system-ui, -apple-system, sans-serif`;
   context.textAlign = "left";
   context.textBaseline = "middle";
 
-  let curX = pillX + emojiWidth + 14;
+  let curX = pillX + emojiWidth + fontSize * 0.66;
   context.fillStyle = isActive ? "#18241d" : "#f5cf72";
   context.fillText(kreyol, curX, 1);
   curX += kreyolWidth;

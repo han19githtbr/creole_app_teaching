@@ -19,7 +19,10 @@ import {
 import {
   calculateLivingElementState,
   drawLivingElementOnCanvas,
+  measureLivingPill,
 } from "@/lib/storyLifeEngine";
+import { resolveLabelCollisions } from "@/lib/storyLabelLayout";
+import { buildSvgLayerKit, loadSvgImage, rasterizeLayer, releaseSvgImage } from "@/lib/storySvgLayers";
 import { useAudioVoiceActivity, computeCaptionTyping } from "@/lib/audioVoiceActivity";
 
 
@@ -91,25 +94,6 @@ function getAudioCapture(audio: HTMLAudioElement) {
   return graph;
 }
 
-// Renderiza o SVG animado (animações CSS) congelado no instante `seconds`.
-// Um delay negativo + pausa faz cada animação CSS começar exatamente nesse ponto do ciclo.
-async function renderAnimatedSvgFrame(svgText: string, seconds: number): Promise<HTMLImageElement> {
-  const t = Math.max(0, seconds).toFixed(3);
-  const override = `<style>*{animation-delay:-${t}s !important;animation-play-state:paused !important;}</style>`;
-  const markup = svgText.replace(/<svg\b[^>]*>/, (match) => match + override);
-  const url = URL.createObjectURL(new Blob([markup], { type: "image/svg+xml;charset=utf-8" }));
-  const img = new Image();
-  img.src = url;
-  try {
-    await img.decode();
-  } catch (error) {
-    URL.revokeObjectURL(url);
-    throw error;
-  }
-  img.dataset.blobUrl = url;
-  return img;
-}
-
 function wrapLines(context: CanvasRenderingContext2D, text: string, maxWidth: number, maxLines = Number.POSITIVE_INFINITY) {
   const words = text.split(/\s+/).filter(Boolean);
   const lines: string[] = [];
@@ -138,7 +122,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const targetLangUpper = isFr ? "FRANÇAIS" : "KREYÒL";
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const animatedFrameRef = useRef<HTMLImageElement | null>(null);
+  // Camadas do SVG animado usadas só durante a exportação (below/above estáticas, mid animada) e fundo desfocado em cache.
+  const exportLayersRef = useRef<{ below: CanvasImageSource | null; mid: HTMLImageElement | null; above: CanvasImageSource | null } | null>(null);
+  const exportBgRef = useRef<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playerViewportRef = useRef<HTMLDivElement>(null);
   const captionRef = useRef<HTMLDivElement>(null);
@@ -197,6 +183,23 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       isMounted = false;
     };
   }, [story.imageSrc]);
+
+  // Divide o SVG em camadas: o fundo vira imagem estática (rasterizada uma vez) e só os elementos animados são redesenhados.
+  const layerKit = useMemo(() => (svgContent ? buildSvgLayerKit(svgContent) : null), [svgContent]);
+  const [layerUrls, setLayerUrls] = useState<{ kit: typeof layerKit; below: string | null; above: string | null }>({ kit: null, below: null, above: null });
+  useEffect(() => {
+    if (!layerKit) {
+      setLayerUrls({ kit: null, below: null, above: null });
+      return;
+    }
+    const toUrl = (markup: string | null) => (markup ? URL.createObjectURL(new Blob([markup], { type: "image/svg+xml;charset=utf-8" })) : null);
+    const urls = { kit: layerKit, below: toUrl(layerKit.below), above: toUrl(layerKit.above) };
+    setLayerUrls(urls);
+    return () => {
+      if (urls.below) URL.revokeObjectURL(urls.below);
+      if (urls.above) URL.revokeObjectURL(urls.above);
+    };
+  }, [layerKit]);
 
   // A duração que manda é a do áudio carregado no navegador. Se ele não a informar
   // (WebM gravado sem cabeçalho), vale a salva com a história e, por último, a última legenda.
@@ -419,36 +422,76 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   function drawElementPills(context: CanvasRenderingContext2D, scene: { x: number; y: number; width: number; height: number }, seconds: number) {
     const activeCap = captionAt(story.captions, seconds);
     const captionText = activeCap ? `${activeCap.portuguese} ${activeCap.kreyol}` : "";
+    const pillFont = context.canvas.width === context.canvas.height ? 22 : 27;
 
-    for (const [index, element] of timeline.entries()) {
+    const items = timeline.map((element, index) => {
       const anchor = sceneLayout.anchors[index % sceneLayout.anchors.length];
-      const visual = elementVisual(element, seconds);
+      const label = getElementLabel(element, storyLang);
+      const size = measureLivingPill(context, label, element.pt, pillFont);
+      return {
+        element,
+        label,
+        cx: scene.x + scene.width * (anchor.left / 100),
+        cy: scene.y + scene.height * (anchor.top / 100),
+        w: size.width * 1.06,
+        h: size.height * 1.06,
+      };
+    });
+    // Afasta rótulos que se sobreporiam (posições estáveis: não "pulam" durante o vídeo).
+    const offsets = resolveLabelCollisions(
+      items.map(({ cx, cy, w, h }) => ({ cx, cy, w, h })),
+      { x: scene.x + 12, y: scene.y + 12, w: scene.width - 24, h: scene.height - 24 },
+      12
+    );
+
+    for (const [index, item] of items.entries()) {
+      const visual = elementVisual(item.element, seconds);
       if (visual.phase === "hidden" || visual.opacity <= 0.01) continue;
-
-      const centerX = scene.x + scene.width * (anchor.left / 100);
-      const centerY = scene.y + scene.height * (anchor.top / 100);
       const isActive = visual.phase === "active";
-
-      const elementLabel = getElementLabel(element, storyLang);
+      const { dx, dy } = offsets[index];
+      const centerX = item.cx + dx;
+      const centerY = item.cy + dy;
 
       const livingState = calculateLivingElementState(
-        element.pt,
-        element.kreyol,
+        item.element.pt,
+        item.element.kreyol,
         seconds,
         captionText,
         isActive,
-        elementLabel
+        item.label
       );
+
+      // Se o rótulo precisou sair de cima do objeto, um fio fino liga o rótulo ao ponto original.
+      if (Math.hypot(dx, dy) > 10) {
+        context.save();
+        context.globalAlpha = visual.opacity * 0.9;
+        context.strokeStyle = "rgba(245, 207, 114, .85)";
+        context.lineWidth = 2.5;
+        context.lineCap = "round";
+        context.beginPath();
+        context.moveTo(item.cx, item.cy);
+        context.lineTo(centerX, centerY);
+        context.stroke();
+        context.fillStyle = "#f5cf72";
+        context.strokeStyle = "rgba(18, 32, 26, .9)";
+        context.lineWidth = 2;
+        context.beginPath();
+        context.arc(item.cx, item.cy, 6, 0, Math.PI * 2);
+        context.fill();
+        context.stroke();
+        context.restore();
+      }
 
       drawLivingElementOnCanvas(context, {
         centerX,
         centerY,
-        kreyol: elementLabel,
-        portuguese: element.pt,
+        kreyol: item.label,
+        portuguese: item.element.pt,
         state: livingState,
         visualOpacity: visual.opacity,
         visualScale: visual.scale,
         isActive,
+        fontSize: pillFont,
       });
     }
   }
@@ -535,19 +578,24 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     exportH = EXPORT_HEIGHT
   ) {
     const isSquare = exportH === exportW;
-    const source: CanvasImageSource = animatedFrameRef.current ?? image;
     const scene = sceneFrame(seconds, duration);
-    context.clearRect(0, 0, exportW, exportH);
-    context.fillStyle = "#172821";
-    context.fillRect(0, 0, exportW, exportH);
-
-    const backgroundScale = Math.max(exportW / image.width, exportH / image.height);
-    const backgroundWidth = image.width * backgroundScale;
-    const backgroundHeight = image.height * backgroundScale;
-    context.save();
-    context.filter = "blur(28px) brightness(.42)";
-    context.drawImage(source, (exportW - backgroundWidth) / 2, (exportH - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
-    context.restore();
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = "high";
+    const cachedBackground = exportBgRef.current;
+    if (cachedBackground && cachedBackground.width === exportW && cachedBackground.height === exportH) {
+      context.drawImage(cachedBackground, 0, 0);
+    } else {
+      context.clearRect(0, 0, exportW, exportH);
+      context.fillStyle = "#172821";
+      context.fillRect(0, 0, exportW, exportH);
+      const backgroundScale = Math.max(exportW / image.width, exportH / image.height);
+      const backgroundWidth = image.width * backgroundScale;
+      const backgroundHeight = image.height * backgroundScale;
+      context.save();
+      context.filter = "blur(28px) brightness(.42)";
+      context.drawImage(image, (exportW - backgroundWidth) / 2, (exportH - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
+      context.restore();
+    }
 
     const maxSceneHeight = isSquare ? 520 : 760;
     const baseScale = Math.min((exportW - (isSquare ? 64 : 88)) / image.width, maxSceneHeight / image.height);
@@ -563,7 +611,14 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     context.beginPath();
     context.roundRect(sceneX, sceneY, width, height, isSquare ? 18 : 22);
     context.clip();
-    context.drawImage(source, sceneX, sceneY, width, height);
+    const layers = exportLayersRef.current;
+    if (layers) {
+      if (layers.below) context.drawImage(layers.below, sceneX, sceneY, width, height);
+      if (layers.mid) context.drawImage(layers.mid, sceneX, sceneY, width, height);
+      if (layers.above) context.drawImage(layers.above, sceneX, sceneY, width, height);
+    } else {
+      context.drawImage(image, sceneX, sceneY, width, height);
+    }
     context.restore();
 
     context.strokeStyle = "rgba(255,255,255,.24)";
@@ -673,17 +728,49 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       image.src = story.imageSrc;
       await image.decode();
 
-      // Quadros animados do SVG (drone, moinho, robô, pássaros...) acompanhando o tempo do áudio.
-      const setAnimatedFrame = (frame: HTMLImageElement) => {
-        const previous = animatedFrameRef.current;
-        animatedFrameRef.current = frame;
-        if (previous?.dataset.blobUrl) URL.revokeObjectURL(previous.dataset.blobUrl);
-      };
-      if (svgContent) {
+      // Fundo desfocado: calculado uma única vez (aplicar o blur a cada quadro era a parte mais pesada da exportação).
+      const background = document.createElement("canvas");
+      background.width = exportW;
+      background.height = exportH;
+      const backgroundContext = background.getContext("2d");
+      if (backgroundContext) {
+        backgroundContext.fillStyle = "#172821";
+        backgroundContext.fillRect(0, 0, exportW, exportH);
+        const backgroundScale = Math.max(exportW / image.width, exportH / image.height);
+        const backgroundWidth = image.width * backgroundScale;
+        const backgroundHeight = image.height * backgroundScale;
+        backgroundContext.filter = "blur(28px) brightness(.42)";
+        backgroundContext.drawImage(image, (exportW - backgroundWidth) / 2, (exportH - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
+        exportBgRef.current = background;
+      }
+
+      // Cena em camadas: fundo e primeiro plano rasterizados uma vez; só os elementos animados (drone, moinho,
+      // robô, pássaros...) são redesenhados, congelados no instante exato do áudio.
+      exportLayersRef.current = null;
+      if (layerKit) {
         try {
-          setAnimatedFrame(await renderAnimatedSvgFrame(svgContent, 0));
-          producing = true;
+          const rasterWidth = Math.round(exportW * 1.5);
+          const rasterHeight = Math.round((rasterWidth * image.naturalHeight) / Math.max(1, image.naturalWidth));
+          const [belowImage, aboveImage, firstFrame] = await Promise.all([
+            layerKit.below ? loadSvgImage(layerKit.below, 8000) : Promise.resolve(null),
+            layerKit.above ? loadSvgImage(layerKit.above, 8000) : Promise.resolve(null),
+            loadSvgImage(layerKit.frozen(0), 8000),
+          ]);
+          const complete = firstFrame && (!layerKit.below || belowImage) && (!layerKit.above || aboveImage);
+          if (complete) {
+            exportLayersRef.current = {
+              below: belowImage ? rasterizeLayer(belowImage, rasterWidth, rasterHeight) : null,
+              mid: firstFrame,
+              above: aboveImage ? rasterizeLayer(aboveImage, rasterWidth, rasterHeight) : null,
+            };
+            producing = true;
+          } else {
+            releaseSvgImage(firstFrame);
+          }
+          releaseSvgImage(belowImage);
+          releaseSvgImage(aboveImage);
         } catch {
+          exportLayersRef.current = null;
           producing = false;
         }
       }
@@ -698,7 +785,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const mimeType = await pickRecorderMime(stream);
       if (!mimeType) throw new Error("Este navegador não oferece codificação de vídeo compatível para exportação.");
       const mp4Type = mimeType.startsWith("video/mp4") ? mimeType : undefined;
-      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000, audioBitsPerSecond: 128_000 });
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: isStories ? 8_000_000 : 6_000_000, audioBitsPerSecond: 160_000 });
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
       recorder.onerror = (event) => {
@@ -712,30 +799,35 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       recorder.start(1000);
       await audio.play();
 
-      if (producing) {
+      if (producing && layerKit) {
+        const kit = layerKit;
         void (async () => {
-          let lastBucket = -1;
+          const interval = 1000 / 30;
           while (producing) {
-            const bucket = Math.floor(audio.currentTime * 20);
-            if (bucket === lastBucket) {
-              await new Promise((resolve) => setTimeout(resolve, 10));
-              continue;
+            const started = performance.now();
+            // loadSvgImage nunca fica pendurada (tem tempo limite): se um quadro falhar, o loop segue para o próximo.
+            const frame = await loadSvgImage(kit.frozen(audio.currentTime + 0.03), 1200);
+            const layers = exportLayersRef.current;
+            if (frame && producing && layers) {
+              const previous = layers.mid;
+              layers.mid = frame;
+              releaseSvgImage(previous);
+            } else {
+              releaseSvgImage(frame);
             }
-            lastBucket = bucket;
-            try {
-              const frame = await renderAnimatedSvgFrame(svgContent as string, bucket / 20);
-              if (producing) setAnimatedFrame(frame);
-              else if (frame.dataset.blobUrl) URL.revokeObjectURL(frame.dataset.blobUrl);
-            } catch {
-              /* mantém o último quadro válido */
-            }
+            await new Promise((resolve) => setTimeout(resolve, Math.max(0, interval - (performance.now() - started))));
           }
         })();
       }
 
       await new Promise<void>((resolve) => {
-        const draw = () => {
-          drawExportFrame(context, image, audio.currentTime, exportW, exportH);
+        let lastDraw = 0;
+        const draw = (now: number) => {
+          // ~30 quadros/s estáveis: desenhar a 60 quadros/s só sobrecarrega o navegador sem ganho no vídeo.
+          if (now - lastDraw >= 30) {
+            lastDraw = now;
+            drawExportFrame(context, image, audio.currentTime, exportW, exportH);
+          }
           if (!failure && !audio.ended && !audio.paused) animationRef.current = requestAnimationFrame(draw);
           else resolve();
         };
@@ -836,9 +928,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     } finally {
       document.removeEventListener("visibilitychange", onVisibility);
       producing = false;
-      const lastFrame = animatedFrameRef.current;
-      animatedFrameRef.current = null;
-      if (lastFrame?.dataset.blobUrl) URL.revokeObjectURL(lastFrame.dataset.blobUrl);
+      releaseSvgImage(exportLayersRef.current?.mid);
+      exportLayersRef.current = null;
+      exportBgRef.current = null;
       if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
       audio.pause();
       audio.currentTime = 0;
@@ -849,6 +941,41 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     }
   }
 
+  // Tamanho real do palco: usado para o tamanho do texto dos rótulos e para afastar rótulos que se sobreporiam.
+  const [stageSize, setStageSize] = useState({ w: 720, h: 405 });
+  useEffect(() => {
+    const element = playerViewportRef.current;
+    if (!element) return;
+    const update = () => setStageSize({ w: element.clientWidth || 720, h: element.clientHeight || 405 });
+    update();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  const pillFontPx = Math.max(9, Math.min(14, stageSize.w * 0.0155));
+  const labelOffsets = useMemo(() => {
+    const anchors = sceneLayout.anchors;
+    if (!anchors?.length) return timeline.map(() => ({ x: 0, y: 0 }));
+    const imageScale = 1.03;
+    const imageCrop = 16 / 9 / (1200 / 800);
+    const boxes = timeline.map((element, index) => {
+      const anchor = anchors[index % anchors.length];
+      const chars = getElementLabel(element, storyLang).length + element.pt.length + 3;
+      return {
+        cx: (stageSize.w * (50 + (anchor.left - 50) * imageScale)) / 100,
+        cy: (stageSize.h * (50 + (anchor.top - 50) * imageCrop * imageScale)) / 100,
+        w: pillFontPx * (0.62 * chars + 3.8) * 1.06,
+        h: pillFontPx * 2.3,
+      };
+    });
+    return resolveLabelCollisions(boxes, { x: 6, y: 6, w: stageSize.w - 12, h: stageSize.h - 12 }, 6).map((offset) => ({
+      x: (offset.dx / stageSize.w) * 100,
+      y: (offset.dy / stageSize.h) * 100,
+    }));
+  }, [timeline, sceneLayout, storyLang, stageSize, pillFontPx]);
+
   const durationLabel = formatStoryTime(duration);
 
   return (
@@ -856,7 +983,24 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       <section className="overflow-hidden rounded-xl border border-[#273a31] bg-[#101b17] text-white shadow-xl">
         <div ref={playerViewportRef} className="relative aspect-video overflow-hidden bg-[#172821]">
           <div className="absolute inset-0 will-change-transform" style={{ transform: `translate(${frame.driftX}%, ${frame.driftY}%) scale(${1.03 * frame.zoom})` }}>
-            {svgContent ? (
+            {svgContent && layerKit && layerUrls.kit === layerKit ? (
+              <div className="relative h-full w-full">
+                {layerUrls.below && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={layerUrls.below} alt="" draggable={false} className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover" />
+                )}
+                <div
+                  className={`absolute inset-0 [&>svg]:h-full [&>svg]:w-full ${
+                    playing ? "" : "[&_*]:[animation-play-state:paused!important]"
+                  }`}
+                  dangerouslySetInnerHTML={{ __html: layerKit.live }}
+                />
+                {layerUrls.above && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={layerUrls.above} alt="" draggable={false} className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover" />
+                )}
+              </div>
+            ) : svgContent ? (
               <div
                 className={`h-full w-full [&>svg]:h-full [&>svg]:w-full [&>svg]:object-cover ${
                   playing ? "" : "[&_*]:[animation-play-state:paused!important]"
@@ -891,13 +1035,14 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const elementTargetLabel = getElementLabel(element, storyLang);
             const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active, elementTargetLabel);
 
-            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX + (active ? living.dx : 0);
-            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY + (active ? living.dy : 0);
+            const offset = labelOffsets[index] ?? { x: 0, y: 0 };
+            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX + offset.x + (active ? living.dx : 0);
+            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY + offset.y + (active ? living.dy : 0);
 
             return (
               <div
                 key={`${element.kreyol}-${index}`}
-                className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 select-none transition-all duration-300 will-change-transform"
+                className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 select-none transition-opacity duration-300 will-change-transform"
                 style={{
                   left: `${left}%`,
                   top: `${top}%`,
@@ -933,13 +1078,14 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                 )}
 
                 <div
-                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-[8px] sm:text-[10px] leading-none shadow-lg backdrop-blur-md transition-all duration-300 ${
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-[0.9em] py-[0.55em] leading-none shadow-lg backdrop-blur-md transition-colors duration-300 ${
                     active
                       ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d] font-bold ring-2 ring-[#f5cf72]/60 shadow-[0_0_18px_rgba(245,207,114,0.5)]"
                       : "border-white/35 bg-[#12221b]/92 text-white/95"
                   }`}
+                  style={{ fontSize: `${pillFontPx}px` }}
                 >
-                  <span className="text-xs sm:text-sm">{living.badgeEmoji}</span>
+                  <span style={{ fontSize: "1.15em" }}>{living.badgeEmoji}</span>
                   <span className={`font-bold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>
                     {elementTargetLabel}
                   </span>

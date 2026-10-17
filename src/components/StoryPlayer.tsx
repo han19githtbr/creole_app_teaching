@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import NextImage from "next/image";
 import { Check, Copy, Download, ExternalLink, Film, GripHorizontal, Languages, MessageCircle, Pause, Play, RotateCcw, Share2, Sparkles, Undo2, Volume2, VolumeX } from "lucide-react";
@@ -426,35 +426,34 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   function drawElementPills(context: CanvasRenderingContext2D, scene: { x: number; y: number; width: number; height: number }, seconds: number) {
     const activeCap = captionAt(story.captions, seconds);
     const captionText = activeCap ? `${activeCap.portuguese} ${activeCap.kreyol}` : "";
-    const pillFont = context.canvas.width === context.canvas.height ? 22 : 27;
+    // Rótulos discretos: pequenos, e o do elemento em destaque só um pouco maior.
+    const isSquare = context.canvas.width === context.canvas.height;
+    const activeFont = isSquare ? 16 : 19;
+    const idleFont = Math.round(activeFont * 0.82);
+    // O rótulo fica ACIMA do objeto (nunca em cima dele), ligado por um fio fino até o ponto do objeto.
+    const lift = scene.height * 0.075;
 
     const items = timeline.map((element, index) => {
       const anchor = sceneLayout.anchors[index % sceneLayout.anchors.length];
       const label = getElementLabel(element, storyLang);
-      const size = measureLivingPill(context, label, element.pt, pillFont);
-      return {
-        element,
-        label,
-        cx: scene.x + scene.width * (anchor.left / 100),
-        cy: scene.y + scene.height * (anchor.top / 100),
-        w: size.width * 1.06,
-        h: size.height * 1.06,
-      };
+      const size = measureLivingPill(context, label, element.pt, activeFont);
+      const ax = scene.x + scene.width * (anchor.left / 100);
+      const ay = scene.y + scene.height * (anchor.top / 100);
+      return { element, label, ax, ay, cx: ax, cy: ay - lift - size.height / 2, w: size.width * 1.06, h: size.height * 1.06 };
     });
     // Afasta rótulos que se sobreporiam (posições estáveis: não "pulam" durante o vídeo).
     const offsets = resolveLabelCollisions(
       items.map(({ cx, cy, w, h }) => ({ cx, cy, w, h })),
-      { x: scene.x + 12, y: scene.y + 12, w: scene.width - 24, h: scene.height - 24 },
-      12
+      { x: scene.x + 10, y: scene.y + 10, w: scene.width - 20, h: scene.height - 20 },
+      10
     );
 
     for (const [index, item] of items.entries()) {
       const visual = elementVisual(item.element, seconds);
       if (visual.phase === "hidden" || visual.opacity <= 0.01) continue;
       const isActive = visual.phase === "active";
-      const { dx, dy } = offsets[index];
-      const centerX = item.cx + dx;
-      const centerY = item.cy + dy;
+      const centerX = item.cx + offsets[index].dx;
+      const centerY = item.cy + offsets[index].dy;
 
       const livingState = calculateLivingElementState(
         item.element.pt,
@@ -465,26 +464,24 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         item.label
       );
 
-      // Se o rótulo precisou sair de cima do objeto, um fio fino liga o rótulo ao ponto original.
-      if (Math.hypot(dx, dy) > 10) {
-        context.save();
-        context.globalAlpha = visual.opacity * 0.9;
-        context.strokeStyle = "rgba(245, 207, 114, .85)";
-        context.lineWidth = 2.5;
-        context.lineCap = "round";
-        context.beginPath();
-        context.moveTo(item.cx, item.cy);
-        context.lineTo(centerX, centerY);
-        context.stroke();
-        context.fillStyle = "#f5cf72";
-        context.strokeStyle = "rgba(18, 32, 26, .9)";
-        context.lineWidth = 2;
-        context.beginPath();
-        context.arc(item.cx, item.cy, 6, 0, Math.PI * 2);
-        context.fill();
-        context.stroke();
-        context.restore();
-      }
+      // Fio fino do rótulo até o objeto (o ponto fica no objeto, o texto fica acima).
+      context.save();
+      context.globalAlpha = visual.opacity * (isActive ? 0.95 : 0.7);
+      context.strokeStyle = "rgba(245, 207, 114, .9)";
+      context.lineWidth = isActive ? 2.5 : 2;
+      context.lineCap = "round";
+      context.beginPath();
+      context.moveTo(item.ax, item.ay);
+      context.lineTo(centerX, centerY);
+      context.stroke();
+      context.fillStyle = "#f5cf72";
+      context.strokeStyle = "rgba(18, 32, 26, .9)";
+      context.lineWidth = 1.5;
+      context.beginPath();
+      context.arc(item.ax, item.ay, isActive ? 5.5 : 4.5, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+      context.restore();
 
       drawLivingElementOnCanvas(context, {
         centerX,
@@ -492,10 +489,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         kreyol: item.label,
         portuguese: item.element.pt,
         state: livingState,
-        visualOpacity: visual.opacity,
+        visualOpacity: visual.opacity * (isActive ? 1 : 0.88),
         visualScale: visual.scale,
         isActive,
-        fontSize: pillFont,
+        fontSize: isActive ? activeFont : idleFont,
       });
     }
   }
@@ -1145,7 +1142,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     return () => observer.disconnect();
   }, []);
 
-  const pillFontPx = Math.max(9, Math.min(14, stageSize.w * 0.0155));
+  const pillFontPx = Math.max(8, Math.min(12, stageSize.w * 0.0125));
   const labelOffsets = useMemo(() => {
     const anchors = sceneLayout.anchors;
     if (!anchors?.length) return timeline.map(() => ({ x: 0, y: 0 }));
@@ -1154,16 +1151,22 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     const boxes = timeline.map((element, index) => {
       const anchor = anchors[index % anchors.length];
       const chars = getElementLabel(element, storyLang).length + element.pt.length + 3;
+      const boxHeight = pillFontPx * 2.3;
+      const anchorY = (stageSize.h * (50 + (anchor.top - 50) * imageCrop * imageScale)) / 100;
       return {
         cx: (stageSize.w * (50 + (anchor.left - 50) * imageScale)) / 100,
-        cy: (stageSize.h * (50 + (anchor.top - 50) * imageCrop * imageScale)) / 100,
+        // O rótulo fica acima do objeto, não em cima dele.
+        cy: anchorY - stageSize.h * 0.075 - boxHeight / 2,
+        anchorY,
         w: pillFontPx * (0.62 * chars + 3.8) * 1.06,
-        h: pillFontPx * 2.3,
+        h: boxHeight,
       };
     });
-    return resolveLabelCollisions(boxes, { x: 6, y: 6, w: stageSize.w - 12, h: stageSize.h - 12 }, 6).map((offset) => ({
+    const resolved = resolveLabelCollisions(boxes, { x: 6, y: 6, w: stageSize.w - 12, h: stageSize.h - 12 }, 6);
+    // Deslocamento do rótulo em relação ao ponto do objeto, em % do palco.
+    return resolved.map((offset, index) => ({
       x: (offset.dx / stageSize.w) * 100,
-      y: (offset.dy / stageSize.h) * 100,
+      y: ((boxes[index].cy + offset.dy - boxes[index].anchorY) / stageSize.h) * 100,
     }));
   }, [timeline, sceneLayout, storyLang, stageSize, pillFontPx]);
 
@@ -1230,15 +1233,38 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const left = 50 + (anchor.left - 50) * imageScale + frame.driftX + offset.x + (active ? living.dx : 0);
             const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY + offset.y + (active ? living.dy : 0);
 
+            const anchorLeftPct = 50 + (anchor.left - 50) * imageScale + frame.driftX;
+            const anchorTopPct = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
+
             return (
+              <Fragment key={`${element.kreyol}-${index}`}>
+              {visual.opacity > 0.01 && (
+                <svg
+                  className="pointer-events-none absolute inset-0 z-10 h-full w-full"
+                  viewBox={`0 0 ${stageSize.w} ${stageSize.h}`}
+                  aria-hidden="true"
+                  style={{ opacity: visual.opacity * (active ? 0.95 : 0.7) }}
+                >
+                  <line
+                    x1={(anchorLeftPct / 100) * stageSize.w}
+                    y1={(anchorTopPct / 100) * stageSize.h}
+                    x2={(left / 100) * stageSize.w}
+                    y2={(top / 100) * stageSize.h}
+                    stroke="#f5cf72"
+                    strokeOpacity={0.9}
+                    strokeWidth={active ? 1.6 : 1.2}
+                    strokeLinecap="round"
+                  />
+                  <circle cx={(anchorLeftPct / 100) * stageSize.w} cy={(anchorTopPct / 100) * stageSize.h} r={active ? 3.4 : 2.8} fill="#f5cf72" stroke="rgba(18,32,26,.9)" strokeWidth={1} />
+                </svg>
+              )}
               <div
-                key={`${element.kreyol}-${index}`}
                 className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 select-none transition-opacity duration-300 will-change-transform"
                 style={{
                   left: `${left}%`,
                   top: `${top}%`,
                   opacity: visual.opacity,
-                  transform: `translate(-50%, -50%) scale(${visual.scale * (active ? 1.06 * living.scaleX : 1)}) rotate(${active ? living.rotation : 0}deg)`,
+                  transform: `translate(-50%, -50%) scale(${visual.scale * (active ? 1.03 * living.scaleX : 1)}) rotate(${active ? living.rotation : 0}deg)`,
                   transformOrigin: "center center",
                 }}
               >
@@ -1284,6 +1310,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   <span className={active ? "text-[#18241d]" : "text-white"}>{element.pt}</span>
                 </div>
               </div>
+              </Fragment>
             );
           })}
 

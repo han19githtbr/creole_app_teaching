@@ -571,8 +571,8 @@ export function drawLivingElementOnCanvas(
 
   // 1. Aura luminosa viva em volta do identificador se o elemento estiver ativo
   if (isActive) {
-    const auraRadius = 38 + state.pulse * 10;
-    const gradient = context.createRadialGradient(0, 0, 15, 0, 0, auraRadius);
+    const auraRadius = fontSize * 1.8 + state.pulse * fontSize * 0.48;
+    const gradient = context.createRadialGradient(0, 0, fontSize * 0.7, 0, 0, auraRadius);
     gradient.addColorStop(0, "rgba(244, 200, 91, 0.45)");
     gradient.addColorStop(0.6, "rgba(244, 200, 91, 0.15)");
     gradient.addColorStop(1, "rgba(244, 200, 91, 0)");

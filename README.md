@@ -133,6 +133,46 @@ No player de **Histórias** (`src/components/StoryPlayer.tsx`) e no módulo de a
 - **Arrasto livre e reposicionamento:** O aluno pode arrastar a legenda para qualquer ponto da tela com mouse/toque ou via teclado (`Tab` + setas), com botão para redefinir a posição padrão.
 - **Paridade na exportação de vídeo 9:16:** Na gravação vertical em Canvas 2D (`drawCaptionBox`), a legenda utiliza o mesmo motor de atividade de voz, pausando durante silêncios e sumindo nos quadros finais do vídeo exportado.
 
+### Cenas Vivas: todas as imagens ganham vida (`src/lib/storySceneLife.ts`)
+
+Antes, só as cenas principais traziam animação dentro do próprio SVG; as outras ~270 variações e as imagens geradas por IA eram estáticas. Agora **toda cena** (as 280 do banco, as de IA vetoriais e as de IA rasterizadas) recebe uma **camada de vida** desenhada por cima da imagem, imitando o mundo real:
+
+- **Mar, rio e lago:** ondas e brilhos na água, veleiros com esteira, barco a remo com remadores, peixes saltando, **tubarão caçando um cardume** (os peixes se espalham) e gaivotas.
+- **Natureza:** coelho fugindo de uma raposa, cervos pastando, borboletas e pássaros.
+- **Tecnologia:** humanos digitando/apontando e **interagindo com robôs**, drone patrulhando.
+- **Turismo:** turistas apontando e fotografando, pessoas caminhando, avião cruzando o céu, balão subindo.
+- **Gastronomia:** **família jantando** à mesa (comendo, conversando, vapor da comida).
+- **Cinema:** **plateia** assistindo (a tela tremeluz nos rostos), feixe do projetor com poeira, pipoca.
+- **Cultura, Dança, Música:** dançarinos girando, tamborista, banda, notas musicais, confete.
+- **Vida no interior, Lazeres, História, Geografia, Estoicismo, Religião:** galinhas, vacas, cão, pipas, bola, ciclista, cavaleiro, exploradores, filósofos conversando, fiéis, pombas, velas.
+
+**Como funciona**
+
+1. `analyzeSceneZones` lê a própria imagem (transparência e cor) e descobre **onde há água e onde fica o chão**, para pôr barcos no mar e pessoas no chão. Funciona com qualquer imagem; se não conseguir ler (ex.: CORS), usa posições padrão.
+2. `createSceneLife` escolhe o elenco pelo **tema** e pelas palavras dos **elementos/título** da cena (barco, robô, avião, mesa, etc.).
+3. `render(t)` é uma **função pura do tempo**: devolve o SVG do instante `t`. O player usa o tempo do áudio e a exportação usa o tempo de cada quadro. Por isso **o vídeo baixado é idêntico ao assistido** (Stories 9:16 e Feed 1:1).
+4. As cenas `tecnologia`, `natureza`, `turismo` e `gastronomia` principais já têm seus personagens no SVG e **não recebem camada extra** (evita duplicar).
+5. **Imagens geradas por IA** seguem o mesmo caminho: não exigem nada além do tema da imagem; a camada é aplicada na hora de tocar/exportar a história.
+
+Desempenho medido: ~8 ms por quadro e ~17 KB de SVG por quadro; o resultado é determinístico (mesma entrada, mesmo quadro). Para adicionar um ator novo, crie a função de desenho em `storySceneLife.ts` e inclua-a no `case` do tema.
+
+### Correções de estabilidade (tela "This page couldn't load")
+
+- **Erros de sintaxe** que impediam compilar: `default:` faltando no `switch` de `calculateLivingElementState` (`storyLifeEngine.ts`) e `}` faltando no bloco de exportação offline (`StoryPlayer.tsx`).
+- **Telas de erro amigáveis:** `src/app/error.tsx` e `src/app/global-error.tsx` com "Tentar de novo" e "Voltar", no lugar da página genérica.
+- **Página da história** (`dashboard/stories/[id]`): se o banco falhar, tenta uma segunda vez antes de exibir o erro.
+
+### MongoDB Atlas: alerta de conexões acima do limite (cluster M0)
+
+O M0 permite **500 conexões** somando todas as instâncias. O `connectDB` antigo zerava o cache no evento `disconnected`; como o driver já se reconecta sozinho, a requisição seguinte abria **outro pool sem fechar o anterior**, e cada instância serverless ainda mantinha pool grande. Correções em `src/lib/mongodb.ts`:
+
+- cache único em `global` e a promessa só é descartada se a conexão **falhar**;
+- `maxPoolSize: 2`, `minPoolSize: 0`, `maxIdleTimeMS: 5000`, `maxConnecting: 1`;
+- `serverMonitoringMode: "poll"` e `heartbeatFrequencyMS: 30000` (menos conexões de monitoramento);
+- tempos limite definidos (`serverSelectionTimeoutMS`, `connectTimeoutMS`, `socketTimeoutMS`, `waitQueueTimeoutMS`).
+
+Além disso, o batimento da arena no lobby (`useCquoiArena.ts`) passou de 8 s para 20 s. **Depois de publicar:** abra o alerta no Atlas, confira em *Metrics > Connections* que a curva caiu e, se quiser mais folga, considere um plano acima do M0.
+
 ### Paridade entre o Ensino de Crioulo e Francês
 
 A funcionalidade de **Histórias** está integrada com **total paridade de recursos** tanto na plataforma de **Kreyòl Ayisyen** quanto na de **Français** (`/admin/stories` e `/dashboard/stories`):

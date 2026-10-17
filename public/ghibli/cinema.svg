@@ -20,6 +20,97 @@
       <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
     </filter>
 
+    <style>
+      /* Animações realistas para Cinema (Sinema) */
+      /* Estrelas cintilantes no céu crepuscular */
+      .star-twinkle-1 {
+        animation: starTwinkle 3.2s ease-in-out infinite alternate;
+      }
+      .star-twinkle-2 {
+        animation: starTwinkle 2.4s ease-in-out infinite alternate;
+        animation-delay: 1.1s;
+      }
+      @keyframes starTwinkle {
+        0% { opacity: 0.35; transform: scale(0.85); }
+        100% { opacity: 1; transform: scale(1.3); }
+      }
+
+      /* Letreiro neon Art Déco SINEMA pulsando e lâmpadas em perseguição */
+      .marquee-neon-glow {
+        animation: neonPulse 2.8s ease-in-out infinite alternate;
+      }
+      @keyframes neonPulse {
+        0%, 100% { fill: #fde047; opacity: 0.92; filter: drop-shadow(0 0 4px #facc15); }
+        50% { fill: #fffbeb; opacity: 1; filter: drop-shadow(0 0 12px #f59e0b); }
+      }
+
+      .marquee-bulb-a {
+        animation: bulbChaseA 1.2s steps(2, start) infinite;
+      }
+      .marquee-bulb-b {
+        animation: bulbChaseB 1.2s steps(2, start) infinite;
+      }
+      @keyframes bulbChaseA {
+        0%, 49% { fill: #fef08a; opacity: 1; filter: drop-shadow(0 0 3px #fde047); }
+        50%, 100% { fill: #ca8a04; opacity: 0.45; filter: none; }
+      }
+      @keyframes bulbChaseB {
+        0%, 49% { fill: #ca8a04; opacity: 0.45; filter: none; }
+        50%, 100% { fill: #fef08a; opacity: 1; filter: drop-shadow(0 0 3px #fde047); }
+      }
+
+      /* Feixe de luz do projetor de cinema */
+      .projector-beam {
+        animation: projectorBeamFlicker 0.18s ease-in-out infinite alternate;
+        transform-origin: -185px -100px;
+      }
+      @keyframes projectorBeamFlicker {
+        0% { opacity: 0.22; }
+        100% { opacity: 0.38; }
+      }
+
+      /* Espectadores assistindo ao filme no cinema e comendo pipoca */
+      .spectator-popcorn {
+        animation: spectatorBreathe 4.2s ease-in-out infinite;
+        transform-origin: 0px 50px;
+      }
+      .spectator-arm-popcorn {
+        animation: popcornHandToMouth 3.6s ease-in-out infinite;
+        transform-origin: -18px 25px;
+      }
+      @keyframes spectatorBreathe {
+        0%, 100% { transform: rotate(0deg); }
+        45% { transform: rotate(-2deg); }
+        70% { transform: rotate(1deg); }
+      }
+      @keyframes popcornHandToMouth {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(38deg) translateY(-8px); }
+        45% { transform: rotate(44deg) translateY(-12px); }
+        70% { transform: rotate(12deg) translateY(-3px); }
+      }
+
+      .spectator-watching {
+        animation: spectatorEngrossed 3.8s ease-in-out infinite;
+        transform-origin: 0px 50px;
+      }
+      @keyframes spectatorEngrossed {
+        0%, 100% { transform: rotate(0deg) scale(1); }
+        35% { transform: rotate(2.5deg) scale(1.02); }
+        65% { transform: rotate(-1.5deg) scale(0.99); }
+      }
+
+      /* Árvores da calçada balançando com o vento noturno */
+      .sidewalk-tree-sway {
+        animation: treeSwayNight 6.2s ease-in-out infinite alternate;
+        transform-origin: 0px 0px;
+      }
+      @keyframes treeSwayNight {
+        0% { transform: rotate(-1.5deg); }
+        100% { transform: rotate(2deg); }
+      }
+    </style>
+
     <!-- Sky Gradients -->
     <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#236ca7"/>

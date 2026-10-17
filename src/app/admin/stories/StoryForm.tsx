@@ -270,6 +270,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
         method: initial ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          language,
           title: title.trim(),
           description: description.trim(),
           isPublished: publishMode !== "draft",

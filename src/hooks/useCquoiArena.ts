@@ -79,7 +79,7 @@ export interface DuelOutcome {
 }
 
 const VISIBLE_KEY = "cquoi:visible:v1";
-const LOBBY_EVERY_MS = 8_000;
+const LOBBY_EVERY_MS = 20_000;
 const PLAYING_EVERY_MS = 15_000;
 const URL = "/api/cquoi/arena";
 

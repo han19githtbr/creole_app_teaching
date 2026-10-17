@@ -24,6 +24,7 @@ import {
 import { Muxer, ArrayBufferTarget } from "mp4-muxer";
 import { resolveLabelCollisions } from "@/lib/storyLabelLayout";
 import { buildSvgLayerKit, loadSvgImage, rasterizeLayer, releaseSvgImage } from "@/lib/storySvgLayers";
+import { analyzeSceneZones, createSceneLife, lifeSvgDocument, type SceneZones } from "@/lib/storySceneLife";
 import { useAudioVoiceActivity, computeCaptionTyping } from "@/lib/audioVoiceActivity";
 
 
@@ -124,6 +125,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   // Camadas do SVG animado usadas só durante a exportação (below/above estáticas, mid animada) e fundo desfocado em cache.
+  // Quadro atual da camada de vida (pessoas, animais, barcos...) durante a exportação do vídeo.
+  const lifeImageRef = useRef<HTMLImageElement | null>(null);
   const exportLayersRef = useRef<{ below: CanvasImageSource | null; mid: HTMLImageElement | null; above: CanvasImageSource | null } | null>(null);
   const exportBgRef = useRef<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -150,6 +153,27 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const [draggingCaption, setDraggingCaption] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
   const [svgContent, setSvgContent] = useState<string | null>(null);
+  const [audioCors, setAudioCors] = useState<"anonymous" | undefined>("anonymous");
+  const [audioLoadError, setAudioLoadError] = useState<string | null>(null);
+
+  const handleAudioError = () => {
+    if (audioCors === "anonymous") {
+      setAudioCors(undefined);
+    } else {
+      console.warn("Falha no carregamento do áudio da história.");
+      setAudioLoadError("Falha na reprodução do áudio. Clique para tentar novamente.");
+    }
+  };
+
+  const retryAudio = () => {
+    setAudioLoadError(null);
+    setAudioCors(undefined);
+    if (audioRef.current) {
+      audioRef.current.load();
+      void audioRef.current.play().catch(() => undefined);
+      setPlaying(true);
+    }
+  };
 
   const socialCaption = useMemo(() => {
     const flag = isFr ? "🇫🇷" : "🇭🇹";
@@ -212,6 +236,44 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
   const bankImage = useBankImage(story.imageSrc);
   const sceneElements = useMemo(() => bankImage?.elements ?? [], [bankImage]);
+
+  // Camada de VIDA: descobre onde há água/chão na imagem (qualquer imagem: banco, SVG ou gerada por IA)
+  // e cria o "elenco" animado da cena. O mesmo render(t) alimenta o player e o vídeo exportado.
+  const [sceneZones, setSceneZones] = useState<SceneZones | null>(null);
+  useEffect(() => {
+    let alive = true;
+    let blobUrl: string | null = null;
+    setSceneZones(null);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      if (alive) setSceneZones(analyzeSceneZones(img, img.naturalWidth || 1200, img.naturalHeight || 800));
+    };
+    img.onerror = () => undefined;
+    if (svgContent) {
+      blobUrl = URL.createObjectURL(new Blob([svgContent], { type: "image/svg+xml;charset=utf-8" }));
+      img.src = blobUrl;
+    } else {
+      img.src = story.imageSrc;
+    }
+    return () => {
+      alive = false;
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+    };
+  }, [story.imageSrc, svgContent]);
+  const lifeScene = useMemo(
+    () => createSceneLife({ sceneId: story.imageSrc, theme: story.theme, title: story.title, elements: sceneElements, zones: sceneZones }),
+    [story.imageSrc, story.theme, story.title, sceneElements, sceneZones],
+  );
+  const lifeTick = Math.floor(currentTime * 30) / 30;
+  const lifeMarkup = useMemo(() => {
+    if (!lifeScene.actors.length) return "";
+    try {
+      return lifeScene.render(lifeTick);
+    } catch {
+      return "";
+    }
+  }, [lifeScene, lifeTick]);
   const sceneLayout = useMemo(() => bankImage?.labelLayout ?? getStoryLabelLayout(story.imageSrc), [bankImage, story.imageSrc]);
   const timeline = useMemo(() => buildElementTimeline(sceneElements, story.elementCues, duration), [sceneElements, story.elementCues, duration]);
 
@@ -221,10 +283,12 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const activeCaption = activeCaptionIndex >= 0 ? story.captions[activeCaptionIndex] : undefined;
   const frame = sceneFrame(currentTime, duration);
 
+  const effectiveDuration = (audioRef.current && Number.isFinite(audioRef.current.duration) && audioRef.current.duration > 0)
+    ? audioRef.current.duration
+    : duration;
   const isAudioEnded = Boolean(audioRef.current?.ended);
-  const isTimeNearEnd = duration > 0 && currentTime >= Math.max(0, duration - 0.25);
-  const isPastLastCaption = lastCaptionEnd > 0 && currentTime >= lastCaptionEnd;
-  const isVideoFinished = isEnded || isAudioEnded || isTimeNearEnd || (isPastLastCaption && !playing);
+  const isTimeNearEnd = effectiveDuration > 0 && currentTime >= Math.max(0, effectiveDuration - 0.08);
+  const isVideoFinished = isEnded || isAudioEnded || (isTimeNearEnd && !playing);
   const shouldShowCaption = captionsEnabled && Boolean(activeCaption) && !isVideoFinished;
 
   // Cálculo da digitação em tempo real em estrita sincronia com a voz do áudio.
@@ -350,10 +414,13 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     const syncTime = () => {
       if (audio) {
         setCurrentTime(audio.currentTime);
-        if (audio.ended || (duration > 0 && audio.currentTime >= duration - 0.25)) {
+        const effectiveDur = (Number.isFinite(audio.duration) && audio.duration > 0)
+          ? audio.duration
+          : duration;
+        if (audio.ended || (effectiveDur > 0 && audio.currentTime >= effectiveDur - 0.08)) {
           setIsEnded(true);
           setPlaying(false);
-        } else if (audio.currentTime < duration - 0.4) {
+        } else if (effectiveDur > 0 && audio.currentTime < effectiveDur - 0.3) {
           setIsEnded(false);
         }
       }
@@ -386,7 +453,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const audio = audioRef.current;
       if (audio) {
         setCurrentTime(audio.currentTime);
-        if (audio.ended || (duration > 0 && audio.currentTime >= duration - 0.25)) {
+        const effectiveDur = (Number.isFinite(audio.duration) && audio.duration > 0)
+          ? audio.duration
+          : duration;
+        if (audio.ended || (effectiveDur > 0 && audio.currentTime >= effectiveDur - 0.08)) {
           setIsEnded(true);
           setPlaying(false);
         }
@@ -410,7 +480,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       return;
     }
     try {
-      if (audio.ended || isEnded || (duration > 0 && audio.currentTime >= duration - 0.25)) {
+      const effectiveDur = (Number.isFinite(audio.duration) && audio.duration > 0)
+        ? audio.duration
+        : duration;
+      if (audio.ended || isEnded || (effectiveDur > 0 && audio.currentTime >= effectiveDur - 0.08)) {
         audio.currentTime = 0;
         setCurrentTime(0);
         setIsEnded(false);
@@ -433,8 +506,13 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     // O rótulo fica ACIMA do objeto (nunca em cima dele), ligado por um fio fino até o ponto do objeto.
     const lift = scene.height * 0.075;
 
+    const rawAnchors = sceneLayout?.anchors;
+    const anchors = rawAnchors && rawAnchors.length > 0
+      ? rawAnchors
+      : [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }];
+
     const items = timeline.map((element, index) => {
-      const anchor = sceneLayout.anchors[index % sceneLayout.anchors.length];
+      const anchor = anchors[index % anchors.length];
       const label = getElementLabel(element, storyLang);
       const size = measureLivingPill(context, label, element.pt, activeFont);
       const ax = scene.x + scene.width * (anchor.left / 100);
@@ -620,6 +698,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     } else {
       context.drawImage(image, sceneX, sceneY, width, height);
     }
+    // Camada de vida do instante atual (mesmo desenho que o player mostra).
+    if (lifeImageRef.current) context.drawImage(lifeImageRef.current, sceneX, sceneY, width, height);
     context.restore();
 
     context.strokeStyle = "rgba(255,255,255,.24)";
@@ -826,7 +906,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         return false;
       }
     };
-    if (!(await audioSupported(2)) || !(await audioSupported(1))) return null;
+    if (!(await audioSupported(2))) return null;
 
     // Áudio: decodifica a narração inteira e reamostra para 48 kHz.
     const response = await fetch(story.audioUrl, { mode: "cors" });
@@ -883,6 +963,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const layers = exportLayersRef.current;
       const secondsAt = (index: number) => Math.min(index / fps, duration || audioBuffer.duration);
       let nextMid = layers && layerKit ? loadSvgImage(layerKit.frozen(0), 8000) : null;
+      const life = lifeScene.actors.length ? lifeScene : null;
+      let nextLife = life ? loadSvgImage(lifeSvgDocument(life.render(secondsAt(0))), 8000) : null;
 
       for (let index = 0; index < totalFrames; index++) {
         if (encoderError) throw encoderError;
@@ -895,6 +977,16 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const previous = layers.mid;
             layers.mid = midImage;
             releaseSvgImage(previous);
+          }
+        }
+
+        if (life && nextLife) {
+          const lifeImage = await nextLife;
+          nextLife = index + 1 < totalFrames ? loadSvgImage(lifeSvgDocument(life.render(secondsAt(index + 1))), 8000) : null;
+          if (lifeImage) {
+            const previousLife = lifeImageRef.current;
+            lifeImageRef.current = lifeImage;
+            releaseSvgImage(previousLife);
           }
         }
 
@@ -967,6 +1059,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
     try {
       const image = new Image();
+      image.crossOrigin = "anonymous";
       image.src = story.imageSrc;
       await image.decode();
 
@@ -1027,10 +1120,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           return;
         }
       } catch (offlineError) {
-        console.error("Exportação quadro a quadro falhou:", offlineError);
-        throw new Error(
-          `Não foi possível gerar o vídeo${offlineError instanceof Error && offlineError.message ? ` (${offlineError.message})` : ""}.`
-        );
+        console.warn("Exportação quadro a quadro falhou ou não é suportada neste navegador, recorrendo à gravação em tempo real:", offlineError);
       }
       setExportMode("realtime");
       setExportProgress(null);
@@ -1081,6 +1171,25 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         })();
       }
 
+      if (producing && lifeScene.actors.length) {
+        const lifeSource = lifeScene;
+        void (async () => {
+          const interval = 1000 / 30;
+          while (producing) {
+            const started = performance.now();
+            const lifeImage = await loadSvgImage(lifeSvgDocument(lifeSource.render(audio.currentTime + 0.03)), 1200);
+            if (lifeImage && producing) {
+              const previousLife = lifeImageRef.current;
+              lifeImageRef.current = lifeImage;
+              releaseSvgImage(previousLife);
+            } else {
+              releaseSvgImage(lifeImage);
+            }
+            await new Promise((resolve) => setTimeout(resolve, Math.max(0, interval - (performance.now() - started))));
+          }
+        })();
+      }
+
       await new Promise<void>((resolve) => {
         let lastDraw = 0;
         const draw = (now: number) => {
@@ -1116,6 +1225,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       producing = false;
       releaseSvgImage(exportLayersRef.current?.mid);
       exportLayersRef.current = null;
+      releaseSvgImage(lifeImageRef.current);
+      lifeImageRef.current = null;
       exportBgRef.current = null;
       if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
       audio.pause();
@@ -1144,8 +1255,11 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
   const pillFontPx = Math.max(8, Math.min(12, stageSize.w * 0.0125));
   const labelOffsets = useMemo(() => {
-    const anchors = sceneLayout.anchors;
-    if (!anchors?.length) return timeline.map(() => ({ x: 0, y: 0 }));
+    const rawAnchors = sceneLayout?.anchors;
+    const anchors = rawAnchors && rawAnchors.length > 0
+      ? rawAnchors
+      : [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }];
+    if (!anchors.length) return timeline.map(() => ({ x: 0, y: 0 }));
     const imageScale = 1.03;
     const imageCrop = 16 / 9 / (1200 / 800);
     const boxes = timeline.map((element, index) => {
@@ -1205,6 +1319,16 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
               <NextImage src={story.imageSrc} alt={story.title} fill unoptimized className="object-cover" />
             )}
           </div>
+          {lifeMarkup && (
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 1200 800"
+              preserveAspectRatio="xMidYMid slice"
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{ transform: `translate(${frame.driftX}%, ${frame.driftY}%) scale(${1.03 * frame.zoom})` }}
+              dangerouslySetInnerHTML={{ __html: lifeMarkup }}
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/35 pointer-events-none" />
           <div className="absolute left-4 top-4 sm:left-5 sm:top-5 flex flex-wrap items-center gap-2 z-20">
             <span className="rounded-md bg-[#14251e]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#f5cf72] border border-[#f5cf72]/30 shadow-sm">{story.theme}</span>
@@ -1221,7 +1345,11 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           {timeline.map((element, index) => {
             const visual = elementVisual(element, currentTime);
             const active = visual.phase === "active";
-            const anchor = sceneLayout.anchors[index % sceneLayout.anchors.length];
+            const rawAnchors = sceneLayout?.anchors;
+            const anchors = rawAnchors && rawAnchors.length > 0
+              ? rawAnchors
+              : [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }];
+            const anchor = anchors[index % anchors.length];
             const imageScale = 1.03 * frame.zoom;
             const imageCrop = 16 / 9 / (1200 / 800);
 
@@ -1465,6 +1593,18 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
               </button>
             </div>
           </div>
+          {audioLoadError && (
+            <div className="flex items-center justify-between gap-2 rounded-lg bg-red-950/70 border border-red-500/40 p-2.5 text-xs text-red-200">
+              <span>{audioLoadError}</span>
+              <button
+                type="button"
+                onClick={retryAudio}
+                className="shrink-0 rounded bg-red-800/80 hover:bg-red-700 px-2.5 py-1 text-[11px] font-semibold text-white transition-colors"
+              >
+                Tentar novamente
+              </button>
+            </div>
+          )}
         </div>
       </section>
       <aside className="flex flex-col gap-4">
@@ -1640,7 +1780,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           )}
         </div>
       </aside>
-      <audio ref={audioRef} src={story.audioUrl} crossOrigin="anonymous" preload="metadata" className="hidden" />
+      <audio ref={audioRef} src={story.audioUrl} crossOrigin={audioCors} onError={handleAudioError} preload="auto" className="hidden" />
       <canvas ref={canvasRef} width={EXPORT_WIDTH} height={EXPORT_HEIGHT} className="hidden" aria-hidden="true" />
     </div>
   );

@@ -184,26 +184,29 @@ export function alignTokensToBursts(tokens: WordToken[], bursts: SpeechInterval[
 
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
+    burstIdx = Math.max(0, Math.min(bursts.length - 1, burstIdx));
     const remainingTokens = tokens.length - i;
     const remainingBursts = bursts.length - burstIdx;
 
     // Se o número de palavras restantes for igual aos blocos restantes, reserva ao menos uma por bloco
     if (remainingTokens <= remainingBursts && remainingBursts > 1) {
-      if (partition[burstIdx].length > 0) {
+      if (partition[burstIdx]?.length > 0 && burstIdx < bursts.length - 1) {
         burstIdx++;
         accumulatedWInBurst = 0;
       }
-      partition[burstIdx].push(token);
-      burstIdx++;
-      accumulatedWInBurst = 0;
+      (partition[burstIdx] || partition[partition.length - 1]).push(token);
+      if (burstIdx < bursts.length - 1) {
+        burstIdx++;
+        accumulatedWInBurst = 0;
+      }
       continue;
     }
 
-    const currentBurst = bursts[burstIdx];
+    const currentBurst = bursts[burstIdx] || bursts[bursts.length - 1];
     const burstDuration = Math.max(0.04, currentBurst.end - currentBurst.start);
-    const targetWForBurst = totalW * (burstDuration / totalSpeech);
+    const targetWForBurst = totalW * (burstDuration / Math.max(0.01, totalSpeech));
 
-    partition[burstIdx].push(token);
+    (partition[burstIdx] || partition[partition.length - 1]).push(token);
     accumulatedWInBurst += token.weight;
 
     const hasPunctuation = /[,;:.!?—-]/.test(token.text);
@@ -221,7 +224,7 @@ export function alignTokensToBursts(tokens: WordToken[], bursts: SpeechInterval[
     const bTokens = partition[b] || [];
     if (bTokens.length === 0) continue;
 
-    const bTotalW = bTokens.reduce((acc, t) => acc + t.weight, 0);
+    const bTotalW = Math.max(0.001, bTokens.reduce((acc, t) => acc + t.weight, 0));
     const bDuration = Math.max(0.08, burst.end - burst.start);
     let curTime = burst.start;
 
@@ -497,80 +500,97 @@ export function computeCaptionTyping(
     };
   }
 
-  // Obtém o plano da legenda (do áudio decodificado ou fallback)
-  let plan = voiceData?.plans.get(captionIndex);
-  if (!plan) {
-    plan = createFallbackSpeechPlan(caption, captionIndex);
-  }
-
-  const { bursts, alignedWords } = plan;
-
-  // Verifica se o áudio está ativamente falando neste instante
-  let isSpeaking = false;
-  for (const b of bursts) {
-    if (time >= b.start && time < b.end) {
-      isSpeaking = true;
-      break;
+  try {
+    // Obtém o plano da legenda (do áudio decodificado ou fallback)
+    let plan = voiceData?.plans.get(captionIndex);
+    if (!plan) {
+      plan = createFallbackSpeechPlan(caption, captionIndex);
     }
-  }
 
-  // Verifica a posição do tempo em relação às palavras
-  let visibleCount = 0;
-  let isTyping = false;
-  let currentWord: string | undefined;
+    const { bursts, alignedWords } = plan;
 
-  for (let i = 0; i < alignedWords.length; i++) {
-    const w = alignedWords[i];
-
-    if (time >= w.end) {
-      // Palavra já foi dita por completo
-      visibleCount = Math.max(visibleCount, w.charEnd);
-    } else if (time >= w.start && time < w.end) {
-      // Palavra está sendo ativamente pronunciada neste instante
-      const wordProg = Math.max(0, Math.min(1, (time - w.start) / Math.max(0.01, w.end - w.start)));
-      const charsInWord = Math.round(w.word.length * wordProg);
-      visibleCount = Math.max(visibleCount, w.charStart + charsInWord);
-      isTyping = true;
-      currentWord = w.word.trim();
-      break;
-    } else {
-      // Palavras futuras ainda não começaram
-      break;
+    // Verifica se o áudio está ativamente falando neste instante
+    let isSpeaking = false;
+    for (const b of bursts) {
+      if (time >= b.start && time < b.end) {
+        isSpeaking = true;
+        break;
+      }
     }
+
+    // Verifica a posição do tempo em relação às palavras
+    let visibleCount = 0;
+    let isTyping = false;
+    let currentWord: string | undefined;
+
+    for (let i = 0; i < alignedWords.length; i++) {
+      const w = alignedWords[i];
+
+      if (time >= w.end) {
+        // Palavra já foi dita por completo
+        visibleCount = Math.max(visibleCount, w.charEnd);
+      } else if (time >= w.start && time < w.end) {
+        // Palavra está sendo ativamente pronunciada neste instante
+        const wordProg = Math.max(0, Math.min(1, (time - w.start) / Math.max(0.01, w.end - w.start)));
+        const charsInWord = Math.round(w.word.length * wordProg);
+        visibleCount = Math.max(visibleCount, w.charStart + charsInWord);
+        isTyping = true;
+        currentWord = w.word.trim();
+        break;
+      } else {
+        // Palavras futuras ainda não começaram
+        break;
+      }
+    }
+
+    // Se o tempo já passou do último bloco de fala desta legenda, mostra o texto completo
+    const lastBurst = bursts[bursts.length - 1];
+    if (lastBurst && time >= lastBurst.end) {
+      visibleCount = ptLength;
+      isSpeaking = false;
+      isTyping = false;
+    }
+
+    // Se o tempo estiver antes do primeiro bloco de fala, nenhuma letra é digitada ainda
+    const firstBurst = bursts[0];
+    if (firstBurst && time < firstBurst.start) {
+      visibleCount = 0;
+      isSpeaking = false;
+      isTyping = false;
+    }
+
+    visibleCount = Math.max(0, Math.min(ptLength, visibleCount));
+    const progress = ptLength > 0 ? visibleCount / ptLength : 1;
+    const visiblePt = ptText.slice(0, visibleCount);
+    const invisiblePt = ptText.slice(visibleCount);
+
+    return {
+      progress,
+      visibleCount,
+      visiblePt,
+      invisiblePt,
+      isSpeaking,
+      isTyping: isTyping && isSpeaking,
+      currentWord,
+      kreyol: caption.kreyol,
+      portuguese: ptText,
+    };
+  } catch {
+    // Fallback gracioso: calcula digitação linear segura sem quebrar o componente
+    const capDuration = Math.max(0.4, caption.end - caption.start);
+    const progress = Math.max(0, Math.min(1, (time - caption.start) / capDuration));
+    const visibleCount = Math.round(ptLength * progress);
+    return {
+      progress,
+      visibleCount,
+      visiblePt: ptText.slice(0, visibleCount),
+      invisiblePt: ptText.slice(visibleCount),
+      isSpeaking: progress < 1,
+      isTyping: progress > 0 && progress < 1,
+      kreyol: caption.kreyol,
+      portuguese: ptText,
+    };
   }
-
-  // Se o tempo já passou do último bloco de fala desta legenda, mostra o texto completo
-  const lastBurst = bursts[bursts.length - 1];
-  if (lastBurst && time >= lastBurst.end) {
-    visibleCount = ptLength;
-    isSpeaking = false;
-    isTyping = false;
-  }
-
-  // Se o tempo estiver antes do primeiro bloco de fala, nenhuma letra é digitada ainda
-  const firstBurst = bursts[0];
-  if (firstBurst && time < firstBurst.start) {
-    visibleCount = 0;
-    isSpeaking = false;
-    isTyping = false;
-  }
-
-  visibleCount = Math.max(0, Math.min(ptLength, visibleCount));
-  const progress = ptLength > 0 ? visibleCount / ptLength : 1;
-  const visiblePt = ptText.slice(0, visibleCount);
-  const invisiblePt = ptText.slice(visibleCount);
-
-  return {
-    progress,
-    visibleCount,
-    visiblePt,
-    invisiblePt,
-    isSpeaking,
-    isTyping: isTyping && isSpeaking,
-    currentWord,
-    kreyol: caption.kreyol,
-    portuguese: ptText,
-  };
 }
 
 /**

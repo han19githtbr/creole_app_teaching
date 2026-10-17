@@ -27,6 +27,8 @@ export type EntityType =
   | "house"
   | "person"
   | "windmill"
+  | "fish"
+  | "airplane"
   | "generic";
 
 export type EntityAction =
@@ -45,6 +47,12 @@ export type EntityAction =
   | "speaking"
   | "walking"
   | "celebrating"
+  | "rowing"
+  | "hunting"
+  | "dining"
+  | "watching_movie"
+  | "traveling"
+  | "interacting"
   | "idle";
 
 export interface ActionMeta {
@@ -70,6 +78,12 @@ export const ACTION_METAS: Record<EntityAction, ActionMeta> = {
   speaking: { id: "speaking", label: "Falando", emoji: "💬", description: "Gesto expressivo e pulso de voz" },
   walking: { id: "walking", label: "Caminhando", emoji: "🚶", description: "Passo cadenciado e suave inclinação" },
   celebrating: { id: "celebrating", label: "Celebrando", emoji: "🎉", description: "Saltos de alegria e confetes de luz" },
+  rowing: { id: "rowing", label: "Remando", emoji: "🚣", description: "Remando compassado sobre as águas em harmonia" },
+  hunting: { id: "hunting", label: "Caçando", emoji: "🦈", description: "Perseguição ágil e dinamicamente focada" },
+  dining: { id: "dining", label: "Jantando", emoji: "🍲", description: "Confraternização à mesa compartilhando a refeição" },
+  watching_movie: { id: "watching_movie", label: "No Cinema", emoji: "🍿", description: "Fascinados diante da tela grande do cinema" },
+  traveling: { id: "traveling", label: "Viajando", emoji: "✈️", description: "Cruzando o horizonte explorando pontos turísticos" },
+  interacting: { id: "interacting", label: "Interagindo", emoji: "🤝", description: "Humano e robô colaborando e conversando em sintonia" },
   idle: { id: "idle", label: "Atento", emoji: "🌿", description: "Comportamento natural e vivo no ambiente" },
 };
 
@@ -81,6 +95,8 @@ export function identifyEntityType(name: string): EntityType {
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
+  if (/(tubarao|peixe|peixes|baleia|golfinho|pwason|rekren|requin|poisson|dauphin)/.test(norm)) return "fish";
+  if (/(aviao|aeroplano|aeroporto|avion|aeroport)/.test(norm)) return "airplane";
   if (/(cachorr|cao|cadela|puppy|filhote|chen|chyen|chien|chiot)/.test(norm)) return "dog";
   if (/(gato|gata|gatinho|chat|chaton)/.test(norm)) return "cat";
   if (/(passar|ave|gaivota|gaviao|sabia|pombo|zwazo|pijon|oiseau|colombe|pigeon|pipa|kap\b|cerf-volant|sevolan)/.test(norm)) return "bird";
@@ -192,12 +208,45 @@ export function detectActionFromCaption(
     return "celebrating";
   }
 
+  // Remando no mar / lago
+  if (/(rema|remando|remo\b|remar|rame|ramer|rameurs|chaloupe|pagayer|canotier)/.test(norm)) {
+    return "rowing";
+  }
+
+  // Caçando / perseguição aquática ou animal
+  if (/(caca|cacando|persegu|tubarao|predador|chasse|chasser|chassant|requin|proie|traque)/.test(norm)) {
+    return "hunting";
+  }
+
+  // Jantar / refeição em família
+  if (/(jantar|jantando|almoco|refeicao|familia|ceia|diner|mangeant ensemble|repas|souper|famille)/.test(norm)) {
+    return "dining";
+  }
+
+  // Cinema / assistindo filme
+  if (/(cinema|filme|pipoca|tela grande|assistindo|sinema|regarde le film|spectateurs|pop-corn)/.test(norm)) {
+    return "watching_movie";
+  }
+
+  // Viagem / turismo / voo
+  if (/(viaja|viajando|turismo|passeio|aeroporto|aviao|embarque|voyage|voyager|tourisme|aeroport|valise)/.test(norm)) {
+    return "traveling";
+  }
+
+  // Interação colaborativa entre humano e robô
+  if (/(interag|humano e robo|colabora|aprende junto|parceria|interagit|interaction|collaborer|partenaire)/.test(norm)) {
+    return "interacting";
+  }
+
   // Comportamentos padrão por tipo de entidade na ausência de verbo específico
   if (entity === "bird" || entity === "butterfly") return "flying";
+  if (entity === "airplane") return "traveling";
   if (entity === "sun" || entity === "lantern" || entity === "fire") return "shining";
   if (entity === "drum" || entity === "music") return "playing_music";
   if (entity === "tree" || entity === "flower" || entity === "windmill") return "blowing";
-  if (entity === "water" || entity === "boat") return "swimming";
+  if (entity === "boat") return "rowing";
+  if (entity === "fish") return "hunting";
+  if (entity === "water") return "swimming";
   if (entity === "dog") return "running";
 
   return "idle";
@@ -491,6 +540,135 @@ export function calculateLivingElementState(
         opacity: 0.85,
         scale: 0.8,
         rotation: t * 50,
+      });
+      break;
+    }
+
+    case "rowing": {
+      // Remada compassada e oscilação sobre a água
+      const stroke = Math.sin(t * 3.2);
+      dx = stroke * 2.8 * intensity;
+      dy = Math.sin(t * 6.4) * 1.6 * intensity;
+      rotation = stroke * 5;
+      scaleX = 1 + Math.abs(stroke) * 0.05;
+      pulse = (stroke + 1) / 2;
+
+      if (isActiveInTimeline) {
+        particles.push({
+          x: stroke > 0 ? 16 : -16,
+          y: 12,
+          char: "🌊",
+          opacity: 0.85 * Math.abs(stroke),
+          scale: 0.8,
+          rotation: stroke * 10,
+        });
+      }
+      break;
+    }
+
+    case "hunting": {
+      // Perseguição ágil e focada com impulsos rápidos
+      const lunge = Math.sin(t * 5.5);
+      dx = (Math.cos(t * 2.8) * 3.5 + lunge * 1.5) * intensity;
+      dy = Math.sin(t * 4) * 2 * intensity;
+      rotation = lunge * 8;
+      scaleX = 1.08;
+      scaleY = 0.94;
+      pulse = Math.abs(lunge);
+
+      if (isActiveInTimeline) {
+        particles.push({
+          x: -18,
+          y: Math.sin(t * 6) * 8,
+          char: "⚡",
+          opacity: 0.9,
+          scale: 0.85,
+          rotation: t * 45,
+        });
+      }
+      break;
+    }
+
+    case "dining": {
+      // Família à mesa com gestos de refeição e conversa calorosa
+      const dine = Math.sin(t * 2.4);
+      dx = Math.cos(t * 1.8) * 1.2 * intensity;
+      dy = Math.abs(dine) * -1.5 * intensity;
+      scaleY = 1 + dine * 0.04;
+      scaleX = 1 - dine * 0.02;
+      rotation = Math.sin(t * 2) * 3;
+      pulse = (dine + 1) / 2;
+
+      particles.push({
+        x: Math.sin(t * 2.5) * 12,
+        y: -14 - ((t * 14) % 24),
+        char: "🍲",
+        opacity: Math.max(0, 0.9 - ((t * 14) % 24) / 24),
+        scale: 0.8,
+        rotation: 0,
+      });
+      break;
+    }
+
+    case "watching_movie": {
+      // Fascinados diante da tela grande do cinema
+      const wonder = Math.sin(t * 1.9);
+      dx = Math.sin(t * 1.5) * 1.4 * intensity;
+      dy = wonder * 1.2 * intensity;
+      scaleX = 1 + wonder * 0.03;
+      scaleY = 1 - wonder * 0.02;
+      rotation = Math.sin(t * 1.2) * 2;
+      pulse = (wonder + 1) / 2;
+
+      particles.push({
+        x: 14 + Math.sin(t * 3) * 6,
+        y: -12 + Math.cos(t * 3) * 6,
+        char: "🍿",
+        opacity: 0.85,
+        scale: 0.8,
+        rotation: t * 20,
+      });
+      break;
+    }
+
+    case "traveling": {
+      // Voo suave cruzando o horizonte
+      const cruise = Math.sin(t * 2.2);
+      dx = Math.cos(t * 1.6) * 4 * intensity;
+      dy = cruise * 2 * intensity;
+      rotation = cruise * 4;
+      scaleX = 1.05;
+      scaleY = 0.96;
+      pulse = (cruise + 1) / 2;
+
+      particles.push({
+        x: -20,
+        y: cruise * 4,
+        char: "✈️",
+        opacity: 0.85,
+        scale: 0.85,
+        rotation: cruise * 6,
+      });
+      break;
+    }
+
+    case "interacting": {
+      // Humano e robô colaborando e conversando em harmonia
+      const sync = Math.sin(t * 3.6);
+      dx = Math.sin(t * 2) * 2.2 * intensity;
+      dy = Math.abs(sync) * -2 * intensity;
+      scaleX = 1 + Math.abs(sync) * 0.06;
+      scaleY = 1 + Math.abs(sync) * 0.06;
+      rotation = sync * 6;
+      pulse = (sync + 1) / 2;
+
+      particles.push({
+        x: Math.sin(t * 4) * 16,
+        y: -16 + Math.cos(t * 4) * 6,
+        char: "🤝",
+        opacity: 0.9,
+        scale: 0.85,
+        rotation: 0,
       });
       break;
     }

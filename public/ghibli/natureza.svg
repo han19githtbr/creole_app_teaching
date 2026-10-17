@@ -144,6 +144,98 @@
         50% { transform: rotate(0.6deg) scaleY(1.015); }
         100% { transform: rotate(-0.4deg) scaleY(0.995); }
       }
+
+      /* Animais brincando/caçando no prado: Coelho veloz e Raposa em perseguição */
+      .wildlife-chase {
+        animation: chaseCycle 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+      @keyframes chaseCycle {
+        0% { transform: translateX(-160px); opacity: 0; }
+        5% { opacity: 1; }
+        45% { transform: translateX(520px); opacity: 1; }
+        50% { transform: translateX(600px); opacity: 0; }
+        51% { transform: translateX(-160px); opacity: 0; }
+        55% { opacity: 1; }
+        95% { transform: translateX(520px); opacity: 1; }
+        100% { transform: translateX(600px); opacity: 0; }
+      }
+
+      .rabbit-living {
+        animation: rabbitHop 0.65s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+        transform-origin: 30px 20px;
+      }
+      @keyframes rabbitHop {
+        0%, 100% { transform: translateY(0) scaleY(0.92) scaleX(1.05); }
+        40% { transform: translateY(-26px) scaleY(1.08) scaleX(0.95) rotate(-6deg); }
+        70% { transform: translateY(-8px) scaleY(1) rotate(4deg); }
+      }
+
+      .rabbit-ears {
+        transform-origin: 10px 0px;
+        animation: rabbitEarsBob 0.65s ease-in-out infinite alternate;
+      }
+      @keyframes rabbitEarsBob {
+        0% { transform: rotate(-8deg); }
+        100% { transform: rotate(12deg); }
+      }
+
+      .fox-living {
+        animation: foxBound 0.65s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+        animation-delay: 0.12s;
+        transform-origin: 40px 25px;
+      }
+      @keyframes foxBound {
+        0%, 100% { transform: translateY(0) scaleY(0.9) scaleX(1.06); }
+        42% { transform: translateY(-24px) scaleY(1.06) scaleX(0.96) rotate(-8deg); }
+        72% { transform: translateY(-6px) scaleY(1) rotate(5deg); }
+      }
+
+      .fox-tail {
+        transform-origin: -10px 5px;
+        animation: foxTailWave 0.65s ease-in-out infinite alternate;
+      }
+      @keyframes foxTailWave {
+        0% { transform: rotate(-20deg); }
+        100% { transform: rotate(16deg); }
+      }
+
+      /* Peixe saltando no rio cristalino */
+      .river-fish-leap {
+        animation: fishLeap 6.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        transform-origin: 0px 0px;
+      }
+      @keyframes fishLeap {
+        0%, 75% { transform: translate(755px, 630px) scale(0) rotate(-40deg); opacity: 0; }
+        78% { transform: translate(755px, 620px) scale(0.8) rotate(-35deg); opacity: 1; }
+        84% { transform: translate(770px, 575px) scale(1) rotate(0deg); opacity: 1; }
+        90% { transform: translate(788px, 625px) scale(0.85) rotate(45deg); opacity: 1; }
+        93%, 100% { transform: translate(792px, 640px) scale(0) rotate(50deg); opacity: 0; }
+      }
+
+      /* Esporos / Pólen cintilante e vaga-lumes */
+      .pollen-particle-1 {
+        animation: pollenFloat1 5.4s ease-in-out infinite alternate;
+      }
+      .pollen-particle-2 {
+        animation: pollenFloat2 6.8s ease-in-out infinite alternate;
+      }
+      .pollen-particle-3 {
+        animation: pollenFloat3 4.8s ease-in-out infinite alternate;
+      }
+      @keyframes pollenFloat1 {
+        0% { transform: translate(0, 0); opacity: 0.35; }
+        50% { transform: translate(25px, -35px); opacity: 0.85; }
+        100% { transform: translate(-15px, -65px); opacity: 0.2; }
+      }
+      @keyframes pollenFloat2 {
+        0% { transform: translate(0, 0); opacity: 0.2; }
+        50% { transform: translate(-30px, -45px); opacity: 0.8; }
+        100% { transform: translate(20px, -75px); opacity: 0.3; }
+      }
+      @keyframes pollenFloat3 {
+        0% { transform: translate(0, 0); opacity: 0.4; }
+        100% { transform: translate(35px, -50px); opacity: 0.9; }
+      }
     </style>
 
     <!-- Sky Gradients -->
@@ -326,6 +418,26 @@
   <path d="M720,530 Q680,600 780,680 T880,800 L1020,800 Q920,680 840,600 T860,530 Z" fill="url(#waterTone)" opacity="0.85"/>
   <path d="M740,550 Q710,610 800,690" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6"/>
 
+  <!-- PWASO (Peixe Truta Saltando da Água Cristalina) -->
+  <g class="river-fish-leap" filter="url(#dropShadow)">
+    <g transform="scale(0.85)">
+      <!-- Fish Body -->
+      <path d="M-22,0 C-14,-10 14,-10 24,0 C14,10 -14,10 -22,0 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
+      <ellipse cx="-4" cy="-2" rx="10" ry="5" fill="#bae6fd" opacity="0.6"/>
+      <!-- Tail fin -->
+      <polygon points="-22,0 -34,-10 -30,0 -34,10" fill="#0284c7"/>
+      <!-- Dorsal fin -->
+      <polygon points="-4,-7 4,-14 6,-7" fill="#0284c7"/>
+      <!-- Eye -->
+      <circle cx="16" cy="-2" r="2.5" fill="#ffffff"/>
+      <circle cx="17" cy="-2" r="1.2" fill="#0f172a"/>
+      <!-- Water splash droplets -->
+      <circle cx="-16" cy="14" r="2" fill="#e0f2fe" opacity="0.8"/>
+      <circle cx="2" cy="18" r="2.5" fill="#e0f2fe" opacity="0.8"/>
+      <circle cx="18" cy="12" r="1.8" fill="#e0f2fe" opacity="0.8"/>
+    </g>
+  </g>
+
   <!-- PYEBWA (Árvore Ancestral Ghibli Colossal) on the left -->
   <g transform="translate(190, 800)" filter="url(#dropShadow)">
     <!-- Massive Gnarled Roots and Trunk -->
@@ -391,6 +503,84 @@
 
   <!-- Rolling Fore Meadow -->
   <path d="M-50,680 Q320,620 680,670 T1250,650 L1250,800 L-50,800 Z" fill="url(#hillNear)"/>
+
+  <!-- BÈT NAN PRAIRIE (Animais Brincando no Prado: Coelho Correndo e Raposa Brincalhona) -->
+  <g transform="translate(540, 640)">
+    <g class="wildlife-chase">
+      <!-- 1. Playful Rabbit (Lapin / Coelho) bounding ahead -->
+      <g transform="translate(180, 0)">
+        <g class="rabbit-living" filter="url(#dropShadow)">
+          <!-- Rabbit Shadow -->
+          <ellipse cx="0" cy="12" rx="20" ry="6" fill="#0f172a" opacity="0.25"/>
+          <!-- Fluffy tail -->
+          <circle cx="-24" cy="-8" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+          <!-- Body -->
+          <ellipse cx="-4" cy="-4" rx="22" ry="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8"/>
+          <!-- Hind leg -->
+          <ellipse cx="-12" cy="4" rx="12" ry="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" transform="rotate(-15 -12 4)"/>
+          <!-- Fore leg -->
+          <ellipse cx="8" cy="6" rx="5" ry="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" transform="rotate(20 8 6)"/>
+          <!-- Head -->
+          <circle cx="14" cy="-12" r="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8"/>
+          <!-- Pink nose & eye -->
+          <circle cx="22" cy="-10" r="2" fill="#f43f5e"/>
+          <circle cx="16" cy="-14" r="2.2" fill="#0f172a"/>
+          <!-- Perky Ears -->
+          <g class="rabbit-ears">
+            <ellipse cx="10" cy="-28" rx="4" ry="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" transform="rotate(-18 10 -28)"/>
+            <ellipse cx="10" cy="-28" rx="2" ry="10" fill="#fda4af" transform="rotate(-18 10 -28)"/>
+            <ellipse cx="16" cy="-28" rx="4" ry="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" transform="rotate(-2 16 -28)"/>
+            <ellipse cx="16" cy="-28" rx="2" ry="10" fill="#fda4af" transform="rotate(-2 16 -28)"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- 2. Playful Young Fox (Wena / Raposa) chasing behind -->
+      <g transform="translate(0, 0)">
+        <g class="fox-living" filter="url(#dropShadow)">
+          <!-- Shadow -->
+          <ellipse cx="10" cy="14" rx="28" ry="7" fill="#0f172a" opacity="0.25"/>
+          <!-- Bushy Tail with white tip -->
+          <g class="fox-tail">
+            <path d="M-22,-4 C-38,-15 -52,-10 -60,2 C-52,14 -35,16 -20,2 Z" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
+            <path d="M-50,-2 C-55,-1 -58,2 -60,2 C-55,8 -48,8 -44,3 Z" fill="#ffffff"/>
+          </g>
+          <!-- Body -->
+          <ellipse cx="6" cy="-2" rx="26" ry="15" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
+          <ellipse cx="10" cy="2" rx="18" ry="8" fill="#ffffff" opacity="0.9"/>
+          <!-- Hind legs bounding -->
+          <path d="M-8,5 Q-16,22 -6,20" stroke="#9a3412" stroke-width="4" stroke-linecap="round"/>
+          <!-- Front legs reaching forward -->
+          <path d="M22,6 Q32,20 38,16" stroke="#9a3412" stroke-width="4" stroke-linecap="round"/>
+          <!-- Head -->
+          <polygon points="26,-12 44,-2 26,8" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
+          <polygon points="28,0 42,-2 28,6" fill="#ffffff"/>
+          <!-- Black nose and cunning playful eye -->
+          <circle cx="43" cy="-2" r="2.2" fill="#0f172a"/>
+          <circle cx="32" cy="-6" r="2" fill="#0f172a"/>
+          <!-- Pointed Ears -->
+          <polygon points="24,-12 28,-26 34,-10" fill="#ea580c" stroke="#9a3412" stroke-width="1.8"/>
+          <polygon points="26,-13 28,-22 32,-11" fill="#0f172a"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- PÓLEN E ESPOROS DOURADOS FLUTUANDO (Ghibli Magic Pollen Particles) -->
+  <g filter="url(#softGlow)">
+    <g class="pollen-particle-1">
+      <circle cx="460" cy="540" r="3" fill="#fef08a" opacity="0.75"/>
+      <circle cx="820" cy="460" r="2.5" fill="#fef08a" opacity="0.6"/>
+    </g>
+    <g class="pollen-particle-2">
+      <circle cx="590" cy="480" r="3.2" fill="#fde047" opacity="0.8"/>
+      <circle cx="910" cy="520" r="2.8" fill="#fef08a" opacity="0.7"/>
+    </g>
+    <g class="pollen-particle-3">
+      <circle cx="340" cy="500" r="2.5" fill="#fde047" opacity="0.7"/>
+      <circle cx="720" cy="420" r="3" fill="#fef08a" opacity="0.8"/>
+    </g>
+  </g>
 
   <!-- PAPIYON (Borboletas) fluttering over meadow -->
   <!-- Butterfly 1: Monarch (Orange & Black) -->

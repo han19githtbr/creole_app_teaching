@@ -20,6 +20,116 @@
       <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
     </filter>
 
+    <style>
+      /* Animações realistas dos elementos vivos da cultura haitiana (Kilti) */
+      .cloud-drift-left {
+        animation: cloudDriftLeft 48s ease-in-out infinite alternate;
+      }
+      .cloud-drift-right {
+        animation: cloudDriftRight 52s ease-in-out infinite alternate;
+      }
+      @keyframes cloudDriftLeft {
+        0% { transform: translate(200px, 160px) scale(0.9); }
+        100% { transform: translate(245px, 160px) scale(0.9); }
+      }
+      @keyframes cloudDriftRight {
+        0% { transform: translate(960px, 180px) scale(0.85); }
+        100% { transform: translate(910px, 180px) scale(0.85); }
+      }
+
+      .bunting-wave-1 {
+        transform-origin: 600px 280px;
+        animation: buntingFlutter 4.6s ease-in-out infinite alternate;
+      }
+      .bunting-wave-2 {
+        transform-origin: 600px 360px;
+        animation: buntingFlutter 5.2s ease-in-out infinite alternate;
+      }
+      @keyframes buntingFlutter {
+        0% { transform: scaleY(1) rotate(0deg); }
+        50% { transform: scaleY(1.03) rotate(0.4deg); }
+        100% { transform: scaleY(0.97) rotate(-0.4deg); }
+      }
+
+      .drapo-flutter {
+        transform-origin: 0px 50px;
+        animation: drapoWave 3.4s ease-in-out infinite;
+      }
+      @keyframes drapoWave {
+        0%, 100% { transform: scaleX(1) skewY(0deg); }
+        25% { transform: scaleX(0.97) skewY(2.2deg); }
+        50% { transform: scaleX(1.02) skewY(-1.8deg); }
+        75% { transform: scaleX(0.98) skewY(1.5deg); }
+      }
+
+      .lantern-sway-1 {
+        transform-origin: 480px 340px;
+        animation: lanternSway1 4.4s ease-in-out infinite alternate;
+      }
+      .lantern-sway-2 {
+        transform-origin: 740px 330px;
+        animation: lanternSway2 3.9s ease-in-out infinite alternate;
+      }
+      @keyframes lanternSway1 {
+        0% { transform: rotate(-3.5deg); }
+        100% { transform: rotate(3.5deg); }
+      }
+      @keyframes lanternSway2 {
+        0% { transform: rotate(3deg); }
+        100% { transform: rotate(-3deg); }
+      }
+
+      .flame-flicker {
+        animation: flameDance 1.6s ease-in-out infinite alternate;
+        transform-origin: center bottom;
+      }
+      @keyframes flameDance {
+        0% { transform: scale(1, 1); opacity: 0.9; }
+        50% { transform: scale(1.15, 0.92); opacity: 1; }
+        100% { transform: scale(0.92, 1.12); opacity: 0.85; }
+      }
+
+      .lantern-glow-pulse {
+        animation: lanternGlow 2.8s ease-in-out infinite alternate;
+      }
+      @keyframes lanternGlow {
+        0% { opacity: 0.22; transform: scale(0.95); }
+        100% { opacity: 0.42; transform: scale(1.1); }
+      }
+
+      .tanbou-playing {
+        transform-origin: 620px 680px;
+        animation: tanbouRhythm 1.6s ease-in-out infinite;
+      }
+      @keyframes tanbouRhythm {
+        0%, 100% { transform: scale(1); }
+        15% { transform: scale(1.025, 0.98); }
+        30% { transform: scale(0.99, 1.01); }
+        45% { transform: scale(1.03, 0.975); }
+        60% { transform: scale(1); }
+      }
+
+      .drummer-hands {
+        transform-origin: 0px -40px;
+        animation: drummerMotion 0.8s ease-in-out infinite alternate;
+      }
+      @keyframes drummerMotion {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-10px) rotate(-4deg); }
+        100% { transform: translateY(3px) rotate(5deg); }
+      }
+
+      .sparks-floating {
+        animation: sparksDrift 5.5s ease-in-out infinite;
+      }
+      @keyframes sparksDrift {
+        0% { transform: translateY(0px); opacity: 0; }
+        25% { opacity: 0.85; }
+        75% { opacity: 0.7; }
+        100% { transform: translateY(-70px); opacity: 0; }
+      }
+    </style>
+
     <!-- Sky Gradients -->
     <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#236ca7"/>

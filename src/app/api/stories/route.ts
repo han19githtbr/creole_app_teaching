@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
   const publishAt = body.publishAt ? new Date(body.publishAt) : null;
   const isPublished = Boolean(body.isPublished);
-  const language = await getAppLanguage();
+  const language = (body.language === "francais" || body.language === "kreyol") ? body.language : await getAppLanguage();
   const video = await VideoLesson.create({
     language,
     title: body.title.trim(),

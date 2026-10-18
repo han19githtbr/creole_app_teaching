@@ -20,6 +20,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   if (!video) return NextResponse.json({ error: "História não encontrada." }, { status: 404 });
   const wasAvailable = video.isPublished && (!video.publishAt || video.publishAt <= new Date());
   const publishAt = body.publishAt ? new Date(body.publishAt) : null;
+  if (body.language === "francais" || body.language === "kreyol") {
+    video.language = body.language;
+  }
   video.title = body.title.trim();
   video.description = typeof body.description === "string" ? body.description.trim() : "";
   video.videoUrl = story.audioUrl;

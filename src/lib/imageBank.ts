@@ -544,6 +544,16 @@ export const PT_TO_FR: Record<string, string> = {
   "pão": "pain",
   "frutas": "fruits",
   "pimentas": "piments",
+  "peixe": "poisson",
+  "peixes": "poissons",
+  "tubarão": "requin",
+  "remador": "rameur",
+  "pescador": "pêcheur",
+  "coelho": "lapin",
+  "raposa": "renard",
+  "família": "famille",
+  "espectadores": "spectateurs",
+  "sino": "cloche",
 };
 
 export function getElementLabel(element: BankElement, language: "kreyol" | "francais" = "kreyol"): string {

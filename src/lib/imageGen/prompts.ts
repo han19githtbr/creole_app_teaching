@@ -103,20 +103,24 @@ export function scenePrompt(plan: ScenePlan, forStory: boolean): string {
     `Show EXACTLY these 4 key objects, each one clearly recognisable, completely visible (never cropped), large (about 15-25% of the image width), with open space around it, and not overlapping any other key object:`,
     list,
     forStory
-      ? "Leave a calm area above each object so an animated label can sit there. Keep the background simple so the four objects stand out."
+      ? "Leave a calm area above each object so an animated label can sit there. Compose elements with vivid movie-like life and realistic interactions (e.g. sea waves and boats with rowers, interacting people, playing animals, dining family, or moviegoers), matching a frame of an animated film."
       : "Keep the rest of the scene simple and uncluttered so the four objects stand out.",
     "Do not draw any text, letters, numbers, logos, written signs, borders, frames or watermarks. Avoid close-up faces.",
   ].join("\n");
 }
 
-export function svgScenePrompt(plan: ScenePlan, reference: string | null): string {
+export function svgScenePrompt(plan: ScenePlan, reference: string | null, forStory = false): string {
   const prefix = `g${Math.random().toString(36).slice(2, 6)}`;
+  const animationRule = forStory
+    ? "Para Histórias animadas, inclua dentro de <defs><style> regras de animação CSS @keyframes dando vida aos elementos da cena com movimentos realistas do mundo real (ex.: ondulação suave da água/mar, barco balançando e remadores, animais brincando, humanos interagindo com tecnologia, folhas/árvores balançando, vapor ou chamas tremulando, nuvens deslizando suavemente) e aplique as classes correspondentes com nomes descritivos nos grupos <g class='...'> dos elementos."
+    : "- Apenas elementos estáticos: g, defs, linearGradient, radialGradient, filter (feGaussianBlur/feTurbulence/feDropShadow), path, rect, circle, ellipse, polygon. Sem script, image, text ou links externos.";
+
   return [
     "Você é ilustrador vetorial. Crie UMA cena em SVG no MESMO formato e estilo da referência (estilo Studio Ghibli: céu em gradiente, colinas em camadas, sombras suaves, textura de papel).",
     "REGRAS OBRIGATÓRIAS:",
     '- viewBox="0 0 1200 800" width="1200" height="800".',
-    "- Apenas elementos estáticos: g, defs, linearGradient, radialGradient, filter (feGaussianBlur/feTurbulence/feDropShadow), path, rect, circle, ellipse, polygon. Sem script, image, text, animações ou links externos.",
-    `- IDs únicos com prefixo "${prefix}-". No máximo ~9 KB de código.`,
+    animationRule,
+    `- IDs únicos com prefixo "${prefix}-". No máximo ~12 KB de código.`,
     `- Tema: ${plan.themeLabel}. Clima: ${plan.setting}.`,
     `- Desenhe EXATAMENTE estes 4 objetos, grandes, com vários detalhes, bem separados e sem sobreposição: ${plan.objects
       .map((object, index) => `${index + 1}) ${object.en} (${SLOTS[index].where})`)

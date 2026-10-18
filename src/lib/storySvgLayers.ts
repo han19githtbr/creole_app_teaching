@@ -145,6 +145,7 @@ export function loadSvgImage(markup: string, timeoutMs = 1500): Promise<HTMLImag
   return new Promise((resolve) => {
     const url = URL.createObjectURL(new Blob([markup], { type: "image/svg+xml;charset=utf-8" }));
     const img = new Image();
+    img.crossOrigin = "anonymous";
     let settled = false;
     const finish = (ok: boolean) => {
       if (settled) return;

@@ -243,7 +243,7 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
       const plan = planScene(theme.id);
       const forStory = job.section === "stories";
       if (job.engine === "svg") {
-        prompt = svgScenePrompt(plan, await fetchReferenceSvg(`/ghibli/${plan.themeId}.svg`));
+        prompt = svgScenePrompt(plan, await fetchReferenceSvg(`/ghibli/${plan.themeId}.svg`), forStory);
         drawn = await drawSvg(prompt, 1200, 800);
       } else {
         prompt = scenePrompt(plan, forStory);

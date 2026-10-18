@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/apiAuth";
-import { evenCaptionSlots, roundTenth, suggestedCaptionCount } from "@/lib/storyAudio";
+import { evenCaptionSlots, resolveAudioContentType, roundTenth, suggestedCaptionCount } from "@/lib/storyAudio";
 
 // A transcrição por IA pode levar de 20 s a alguns minutos (áudio de até 10 min). Sem isto a hospedagem
 // usa o limite padrão (10 s a 60 s), derruba a conexão e o navegador mostra "Failed to fetch".
 export const maxDuration = 300;
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 /** Orçamento total para a IA: sobra tempo para devolver a resposta antes do limite da função. */
 const AI_BUDGET_MS = 240_000;
@@ -45,7 +47,8 @@ export async function POST(request: NextRequest) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         const base64Audio = buffer.toString("base64");
-        const mimeType = file.type || "audio/mpeg";
+        // Sem parâmetros de codec ("audio/webm;codecs=opus" é recusado pela API) e com o tipo deduzido da extensão.
+        const mimeType = resolveAudioContentType({ name: file.name, type: file.type }) ?? "audio/mpeg";
 
         const prompt = `Você é um especialista em transcrição e tradução bilíngue para uma plataforma de ensino de línguas.
 O arquivo de áudio anexo tem duração de aproximadamente ${duration.toFixed(1)} segundos e está falado em ${targetLangName}.

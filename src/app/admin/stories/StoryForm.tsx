@@ -128,10 +128,12 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
   async function autoTranscribeAudio(file: File, duration: number) {
     setTranscribing(true);
     setTranscribeNotice(null);
-    const MAX_ATTEMPTS = 2;
+    const MAX_ATTEMPTS = 3;
     let failure = "";
     try {
       for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        // Conexão instável (reset/DNS): espera um pouco antes de tentar de novo.
+        if (attempt > 1) await new Promise((resolve) => setTimeout(resolve, 1500 * (attempt - 1)));
         try {
           const formData = new FormData();
           formData.append("audio", file);

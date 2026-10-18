@@ -35,6 +35,7 @@ export interface LifeScene {
 }
 
 /** Cenas principais que JÁ trazem seus personagens animados dentro do próprio SVG (não duplicar). */
+const AMBIENT_BIRDS = new Set(["passaros", "gaivotas", "pombas", "aguia"]);
 const NATIVE_LIFE_IDS = new Set(["tecnologia", "natureza", "turismo", "gastronomia"]);
 
 /* ------------------------------------------------------------------ utilidades */
@@ -679,12 +680,25 @@ export function createSceneLife(input: LifeInput): LifeScene {
   }
   if (!wz && has(/passaro|oiseau|zwazo|ave\b/)) { const ph = r(); add("passaros", 0, (t) => bird(t, { x: travel(t, 30, ph, 80, 1), y: 130, ph: 1 })); }
 
-  actors.sort((a, b) => a.z - b.z);
+  // Cena limpa: só ficam animações ambientes discretas (ondas na água, poucas aves e uma borboleta).
+  // Pessoas, animais, barcos, tubarões, confete e brilhos sobrepostos cobriam os objetos rotulados
+  // e deixavam difícil identificar cada elemento no vídeo.
+  const keep: number[] = [];
+  let birds = 0;
+  let butterflies = 0;
+  names.forEach((name, i) => {
+    if (name === "ondas") keep.push(i);
+    else if (AMBIENT_BIRDS.has(name) && birds++ < 2) keep.push(i);
+    else if (name === "borboletas" && butterflies++ < 1) keep.push(i);
+  });
+  const visibleActors = keep.map((i) => actors[i]);
+  const visibleNames = keep.map((i) => names[i]);
+  visibleActors.sort((a, b) => a.z - b.z);
   return {
-    actors: Array.from(new Set(names)),
+    actors: Array.from(new Set(visibleNames)),
     render: (t: number) => {
       let out = "";
-      for (const a of actors) {
+      for (const a of visibleActors) {
         try { out += a.draw(t); } catch { /* um ator com falha não derruba a cena */ }
       }
       return out;

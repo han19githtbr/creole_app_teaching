@@ -1,0 +1,7562 @@
+[
+ {
+  "id": "tecnologia",
+  "theme": "Tecnologia",
+  "title": "Oficina tecnológica no campo",
+  "elements": [
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   },
+   {
+    "kreyol": "robo",
+    "pt": "robô",
+    "fr": "robot"
+   },
+   {
+    "kreyol": "dròn",
+    "pt": "drone",
+    "fr": "drone"
+   },
+   {
+    "kreyol": "moulen van",
+    "pt": "moinho de vento",
+    "fr": "moulin à vent"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-02",
+  "theme": "Tecnologia",
+  "title": "Laboratório de robótica",
+  "elements": [
+   {
+    "kreyol": "robo",
+    "pt": "robô",
+    "fr": "robot"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "laboratwa",
+    "pt": "laboratório",
+    "fr": "laboratoire"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-03",
+  "theme": "Tecnologia",
+  "title": "Parque de energia solar",
+  "elements": [
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   },
+   {
+    "kreyol": "moulen van",
+    "pt": "moinho de vento",
+    "fr": "moulin à vent"
+   },
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   },
+   {
+    "kreyol": "dròn",
+    "pt": "drone",
+    "fr": "drone"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-04",
+  "theme": "Tecnologia",
+  "title": "Estação de satélites",
+  "elements": [
+   {
+    "kreyol": "satelit",
+    "pt": "satélite",
+    "fr": "satellite"
+   },
+   {
+    "kreyol": "antèn",
+    "pt": "antena",
+    "fr": "antenne"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-05",
+  "theme": "Tecnologia",
+  "title": "Oficina de pequenos robôs",
+  "elements": [
+   {
+    "kreyol": "robo",
+    "pt": "robô",
+    "fr": "robot"
+   },
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   },
+   {
+    "kreyol": "moulen van",
+    "pt": "moinho de vento",
+    "fr": "moulin à vent"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-06",
+  "theme": "Tecnologia",
+  "title": "Satélite em órbita",
+  "elements": [
+   {
+    "kreyol": "satelit",
+    "pt": "satélite",
+    "fr": "satellite"
+   },
+   {
+    "kreyol": "antèn",
+    "pt": "antena",
+    "fr": "antenne"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-07",
+  "theme": "Tecnologia",
+  "title": "Centro de controle digital",
+  "elements": [
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   },
+   {
+    "kreyol": "robo",
+    "pt": "robô",
+    "fr": "robot"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-08",
+  "theme": "Tecnologia",
+  "title": "Drones sobre a cidade",
+  "elements": [
+   {
+    "kreyol": "dròn",
+    "pt": "drone",
+    "fr": "drone"
+   },
+   {
+    "kreyol": "antèn",
+    "pt": "antena",
+    "fr": "antenne"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   },
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-09",
+  "theme": "Tecnologia",
+  "title": "Invenções na escola",
+  "elements": [
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   },
+   {
+    "kreyol": "robo",
+    "pt": "robô",
+    "fr": "robot"
+   },
+   {
+    "kreyol": "laboratwa",
+    "pt": "laboratório",
+    "fr": "laboratoire"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-10",
+  "theme": "Tecnologia",
+  "title": "Moinho e sensores no campo",
+  "elements": [
+   {
+    "kreyol": "moulen van",
+    "pt": "moinho de vento",
+    "fr": "moulin à vent"
+   },
+   {
+    "kreyol": "dròn",
+    "pt": "drone",
+    "fr": "drone"
+   },
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-11",
+  "theme": "Tecnologia",
+  "title": "Estufa inteligente",
+  "elements": [
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   },
+   {
+    "kreyol": "laboratwa",
+    "pt": "laboratório",
+    "fr": "laboratoire"
+   },
+   {
+    "kreyol": "dròn",
+    "pt": "drone",
+    "fr": "drone"
+   },
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-12",
+  "theme": "Tecnologia",
+  "title": "Torre de comunicação na colina",
+  "elements": [
+   {
+    "kreyol": "antèn",
+    "pt": "antena",
+    "fr": "antenne"
+   },
+   {
+    "kreyol": "satelit",
+    "pt": "satélite",
+    "fr": "satellite"
+   },
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-13",
+  "theme": "Tecnologia",
+  "title": "Fábrica de drones artesanais",
+  "elements": [
+   {
+    "kreyol": "dròn",
+    "pt": "drone",
+    "fr": "drone"
+   },
+   {
+    "kreyol": "robo",
+    "pt": "robô",
+    "fr": "robot"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-14",
+  "theme": "Tecnologia",
+  "title": "Barco de pesquisa oceanográfica",
+  "elements": [
+   {
+    "kreyol": "satelit",
+    "pt": "satélite",
+    "fr": "satellite"
+   },
+   {
+    "kreyol": "antèn",
+    "pt": "antena",
+    "fr": "antenne"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-15",
+  "theme": "Tecnologia",
+  "title": "Laboratório de energias limpas",
+  "elements": [
+   {
+    "kreyol": "moulen van",
+    "pt": "moinho de vento",
+    "fr": "moulin à vent"
+   },
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   },
+   {
+    "kreyol": "laboratwa",
+    "pt": "laboratório",
+    "fr": "laboratoire"
+   },
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-16",
+  "theme": "Tecnologia",
+  "title": "Observatório espacial no platô",
+  "elements": [
+   {
+    "kreyol": "satelit",
+    "pt": "satélite",
+    "fr": "satellite"
+   },
+   {
+    "kreyol": "antèn",
+    "pt": "antena",
+    "fr": "antenne"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-17",
+  "theme": "Tecnologia",
+  "title": "Oficina móvel no trem",
+  "elements": [
+   {
+    "kreyol": "robo",
+    "pt": "robô",
+    "fr": "robot"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "laboratwa",
+    "pt": "laboratório",
+    "fr": "laboratoire"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-18",
+  "theme": "Tecnologia",
+  "title": "Central hidrelétrica ecológica",
+  "elements": [
+   {
+    "kreyol": "moulen van",
+    "pt": "moinho de vento",
+    "fr": "moulin à vent"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "panno solè",
+    "pt": "painel solar",
+    "fr": "panneau solaire"
+   },
+   {
+    "kreyol": "dròn",
+    "pt": "drone",
+    "fr": "drone"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-19",
+  "theme": "Tecnologia",
+  "title": "Biblioteca digital comunitária",
+  "elements": [
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   },
+   {
+    "kreyol": "antèn",
+    "pt": "antena",
+    "fr": "antenne"
+   }
+  ]
+ },
+ {
+  "id": "tecnologia-20",
+  "theme": "Tecnologia",
+  "title": "Feira de robótica juvenil",
+  "elements": [
+   {
+    "kreyol": "robo",
+    "pt": "robô",
+    "fr": "robot"
+   },
+   {
+    "kreyol": "dròn",
+    "pt": "drone",
+    "fr": "drone"
+   },
+   {
+    "kreyol": "òdinatè",
+    "pt": "computador",
+    "fr": "ordinateur"
+   },
+   {
+    "kreyol": "telefòn",
+    "pt": "celular/telefone",
+    "fr": "téléphone portable"
+   }
+  ]
+ },
+ {
+  "id": "natureza",
+  "theme": "Natureza",
+  "title": "Árvore ancestral e prado florido",
+  "elements": [
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "papiyon",
+    "pt": "borboleta",
+    "fr": "papillon"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   }
+  ]
+ },
+ {
+  "id": "natureza-02",
+  "theme": "Natureza",
+  "title": "Cachoeira na floresta",
+  "elements": [
+   {
+    "kreyol": "kaskad",
+    "pt": "cachoeira",
+    "fr": "cascade"
+   },
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "natureza-03",
+  "theme": "Natureza",
+  "title": "Praia das tartarugas",
+  "elements": [
+   {
+    "kreyol": "tòti",
+    "pt": "tartaruga",
+    "fr": "tortue"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "natureza-04",
+  "theme": "Natureza",
+  "title": "Trilha entre montanhas",
+  "elements": [
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "natureza-05",
+  "theme": "Natureza",
+  "title": "Jardim de borboletas",
+  "elements": [
+   {
+    "kreyol": "papiyon",
+    "pt": "borboleta",
+    "fr": "papillon"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   }
+  ]
+ },
+ {
+  "id": "natureza-06",
+  "theme": "Natureza",
+  "title": "Rio entre palmeiras",
+  "elements": [
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "tòti",
+    "pt": "tartaruga",
+    "fr": "tortue"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "natureza-07",
+  "theme": "Natureza",
+  "title": "Clareira florida",
+  "elements": [
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "papiyon",
+    "pt": "borboleta",
+    "fr": "papillon"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "natureza-08",
+  "theme": "Natureza",
+  "title": "Costa dos pássaros",
+  "elements": [
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   },
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "tòti",
+    "pt": "tartaruga",
+    "fr": "tortue"
+   }
+  ]
+ },
+ {
+  "id": "natureza-09",
+  "theme": "Natureza",
+  "title": "Vale verde depois da chuva",
+  "elements": [
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "kaskad",
+    "pt": "cachoeira",
+    "fr": "cascade"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   }
+  ]
+ },
+ {
+  "id": "natureza-10",
+  "theme": "Natureza",
+  "title": "Ilha tropical",
+  "elements": [
+   {
+    "kreyol": "tòti",
+    "pt": "tartaruga",
+    "fr": "tortue"
+   },
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   }
+  ]
+ },
+ {
+  "id": "natureza-11",
+  "theme": "Natureza",
+  "title": "Lagoa dos lírios ao amanhecer",
+  "elements": [
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   }
+  ]
+ },
+ {
+  "id": "natureza-12",
+  "theme": "Natureza",
+  "title": "Cânion verde e rio caudaloso",
+  "elements": [
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "kaskad",
+    "pt": "cachoeira",
+    "fr": "cascade"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   }
+  ]
+ },
+ {
+  "id": "natureza-13",
+  "theme": "Natureza",
+  "title": "Recife de corais e tartarugas",
+  "elements": [
+   {
+    "kreyol": "tòti",
+    "pt": "tartaruga",
+    "fr": "tortue"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   }
+  ]
+ },
+ {
+  "id": "natureza-14",
+  "theme": "Natureza",
+  "title": "Pico da montanha ao pôr do sol",
+  "elements": [
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   },
+   {
+    "kreyol": "papiyon",
+    "pt": "borboleta",
+    "fr": "papillon"
+   }
+  ]
+ },
+ {
+  "id": "natureza-15",
+  "theme": "Natureza",
+  "title": "Floresta tropical de bambus e palmeiras",
+  "elements": [
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "kaskad",
+    "pt": "cachoeira",
+    "fr": "cascade"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "natureza-16",
+  "theme": "Natureza",
+  "title": "Ninho dos pássaros no manguezal",
+  "elements": [
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "papiyon",
+    "pt": "borboleta",
+    "fr": "papillon"
+   }
+  ]
+ },
+ {
+  "id": "natureza-17",
+  "theme": "Natureza",
+  "title": "Enseada secreta com falésias",
+  "elements": [
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "tòti",
+    "pt": "tartaruga",
+    "fr": "tortue"
+   }
+  ]
+ },
+ {
+  "id": "natureza-18",
+  "theme": "Natureza",
+  "title": "Bosque das borboletas azuis",
+  "elements": [
+   {
+    "kreyol": "papiyon",
+    "pt": "borboleta",
+    "fr": "papillon"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   }
+  ]
+ },
+ {
+  "id": "natureza-19",
+  "theme": "Natureza",
+  "title": "Gruta com cascata sagrada",
+  "elements": [
+   {
+    "kreyol": "kaskad",
+    "pt": "cachoeira",
+    "fr": "cascade"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "zwazo",
+    "pt": "pássaro",
+    "fr": "oiseau"
+   }
+  ]
+ },
+ {
+  "id": "natureza-20",
+  "theme": "Natureza",
+  "title": "Dunas costeiras com palmeiras",
+  "elements": [
+   {
+    "kreyol": "palmis",
+    "pt": "palmeira",
+    "fr": "palmier"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "papiyon",
+    "pt": "borboleta",
+    "fr": "papillon"
+   },
+   {
+    "kreyol": "tòti",
+    "pt": "tartaruga",
+    "fr": "tortue"
+   }
+  ]
+ },
+ {
+  "id": "cultura",
+  "theme": "Cultura",
+  "title": "Festa na praça com bandeirolas",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna/lâmpada",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   }
+  ]
+ },
+ {
+  "id": "cultura-02",
+  "theme": "Cultura",
+  "title": "Karnaval na praça",
+  "elements": [
+   {
+    "kreyol": "mask",
+    "pt": "máscara",
+    "fr": "masque"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "cultura-03",
+  "theme": "Cultura",
+  "title": "Mercado de artesanato",
+  "elements": [
+   {
+    "kreyol": "machann",
+    "pt": "comerciante/feira",
+    "fr": "marchand/marché"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "manje",
+    "pt": "comida típica",
+    "fr": "plat typique"
+   },
+   {
+    "kreyol": "parapli",
+    "pt": "guarda-sol/sombrinha",
+    "fr": "parasol"
+   }
+  ]
+ },
+ {
+  "id": "cultura-04",
+  "theme": "Cultura",
+  "title": "Festa das lanternas",
+  "elements": [
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   }
+  ]
+ },
+ {
+  "id": "cultura-05",
+  "theme": "Cultura",
+  "title": "Música no vilarejo",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "manje",
+    "pt": "comida típica",
+    "fr": "plat typique"
+   }
+  ]
+ },
+ {
+  "id": "cultura-06",
+  "theme": "Cultura",
+  "title": "Desfile de roupas tradicionais",
+  "elements": [
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "cultura-07",
+  "theme": "Cultura",
+  "title": "Barracas de comida haitiana",
+  "elements": [
+   {
+    "kreyol": "manje",
+    "pt": "comida típica",
+    "fr": "plat typique"
+   },
+   {
+    "kreyol": "machann",
+    "pt": "comerciante/feira",
+    "fr": "marchand/marché"
+   },
+   {
+    "kreyol": "parapli",
+    "pt": "guarda-sol/sombrinha",
+    "fr": "parasol"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   }
+  ]
+ },
+ {
+  "id": "cultura-08",
+  "theme": "Cultura",
+  "title": "Máscaras e tambores",
+  "elements": [
+   {
+    "kreyol": "mask",
+    "pt": "máscara",
+    "fr": "masque"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   }
+  ]
+ },
+ {
+  "id": "cultura-09",
+  "theme": "Cultura",
+  "title": "Celebração sob as bandeiras",
+  "elements": [
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "manje",
+    "pt": "comida típica",
+    "fr": "plat typique"
+   },
+   {
+    "kreyol": "machann",
+    "pt": "comerciante/feira",
+    "fr": "marchand/marché"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   }
+  ]
+ },
+ {
+  "id": "cultura-10",
+  "theme": "Cultura",
+  "title": "Dança no pátio",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "parapli",
+    "pt": "guarda-sol/sombrinha",
+    "fr": "parasol"
+   }
+  ]
+ },
+ {
+  "id": "cultura-11",
+  "theme": "Cultura",
+  "title": "Ateliê de pintura e arte naïf",
+  "elements": [
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "mask",
+    "pt": "máscara",
+    "fr": "masque"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   }
+  ]
+ },
+ {
+  "id": "cultura-12",
+  "theme": "Cultura",
+  "title": "Roda de contadores de histórias",
+  "elements": [
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "manje",
+    "pt": "comida típica",
+    "fr": "plat typique"
+   }
+  ]
+ },
+ {
+  "id": "cultura-13",
+  "theme": "Cultura",
+  "title": "Oficina de escultura em ferro",
+  "elements": [
+   {
+    "kreyol": "mask",
+    "pt": "máscara",
+    "fr": "masque"
+   },
+   {
+    "kreyol": "machann",
+    "pt": "comerciante/feira",
+    "fr": "marchand/marché"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "cultura-14",
+  "theme": "Cultura",
+  "title": "Feira de tecidos e roupas madan sara",
+  "elements": [
+   {
+    "kreyol": "machann",
+    "pt": "comerciante/feira",
+    "fr": "marchand/marché"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "parapli",
+    "pt": "guarda-sol/sombrinha",
+    "fr": "parasol"
+   },
+   {
+    "kreyol": "manje",
+    "pt": "comida típica",
+    "fr": "plat typique"
+   }
+  ]
+ },
+ {
+  "id": "cultura-15",
+  "theme": "Cultura",
+  "title": "Procissão festiva de Rara",
+  "elements": [
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "cultura-16",
+  "theme": "Cultura",
+  "title": "Banquete comunitário no quintal",
+  "elements": [
+   {
+    "kreyol": "manje",
+    "pt": "comida típica",
+    "fr": "plat typique"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "parapli",
+    "pt": "guarda-sol/sombrinha",
+    "fr": "parasol"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   }
+  ]
+ },
+ {
+  "id": "cultura-17",
+  "theme": "Cultura",
+  "title": "Confecção de tambores tradicionais",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "mask",
+    "pt": "máscara",
+    "fr": "masque"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "cultura-18",
+  "theme": "Cultura",
+  "title": "Dança Yanvalou na praia",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "cultura-19",
+  "theme": "Cultura",
+  "title": "Noite de carnaval com fantasias",
+  "elements": [
+   {
+    "kreyol": "mask",
+    "pt": "máscara",
+    "fr": "masque"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   }
+  ]
+ },
+ {
+  "id": "cultura-20",
+  "theme": "Cultura",
+  "title": "Mercado sob sombrinhas floridas",
+  "elements": [
+   {
+    "kreyol": "parapli",
+    "pt": "guarda-sol/sombrinha",
+    "fr": "parasol"
+   },
+   {
+    "kreyol": "machann",
+    "pt": "comerciante/feira",
+    "fr": "marchand/marché"
+   },
+   {
+    "kreyol": "manje",
+    "pt": "comida típica",
+    "fr": "plat typique"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   }
+  ]
+ },
+ {
+  "id": "turismo",
+  "theme": "Turismo",
+  "title": "Vila costeira, farol e balão",
+  "elements": [
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "balon",
+    "pt": "balão",
+    "fr": "montgolfière"
+   },
+   {
+    "kreyol": "fa",
+    "pt": "farol",
+    "fr": "phare"
+   }
+  ]
+ },
+ {
+  "id": "turismo-02",
+  "theme": "Turismo",
+  "title": "Porto de veleiros",
+  "elements": [
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "fa",
+    "pt": "farol",
+    "fr": "phare"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   }
+  ]
+ },
+ {
+  "id": "turismo-03",
+  "theme": "Turismo",
+  "title": "Viagem de avião",
+  "elements": [
+   {
+    "kreyol": "avyon",
+    "pt": "avião",
+    "fr": "avion"
+   },
+   {
+    "kreyol": "valiz",
+    "pt": "mala de viagem",
+    "fr": "mala de viagem"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "otèl",
+    "pt": "hotel",
+    "fr": "hotel"
+   }
+  ]
+ },
+ {
+  "id": "turismo-04",
+  "theme": "Turismo",
+  "title": "Passeio de balão",
+  "elements": [
+   {
+    "kreyol": "balon",
+    "pt": "balão",
+    "fr": "montgolfière"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "otèl",
+    "pt": "hotel",
+    "fr": "hotel"
+   }
+  ]
+ },
+ {
+  "id": "turismo-05",
+  "theme": "Turismo",
+  "title": "Travessia costeira",
+  "elements": [
+   {
+    "kreyol": "valiz",
+    "pt": "mala de viagem",
+    "fr": "mala de viagem"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "plaj",
+    "pt": "praia",
+    "fr": "praia"
+   }
+  ]
+ },
+ {
+  "id": "turismo-06",
+  "theme": "Turismo",
+  "title": "Farol da ilha",
+  "elements": [
+   {
+    "kreyol": "fa",
+    "pt": "farol",
+    "fr": "phare"
+   },
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "otèl",
+    "pt": "hotel",
+    "fr": "hotel"
+   }
+  ]
+ },
+ {
+  "id": "turismo-07",
+  "theme": "Turismo",
+  "title": "Chegada ao hotel",
+  "elements": [
+   {
+    "kreyol": "otèl",
+    "pt": "hotel",
+    "fr": "hotel"
+   },
+   {
+    "kreyol": "valiz",
+    "pt": "mala de viagem",
+    "fr": "mala de viagem"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "avyon",
+    "pt": "avião",
+    "fr": "avion"
+   }
+  ]
+ },
+ {
+  "id": "turismo-08",
+  "theme": "Turismo",
+  "title": "Descanso na praia",
+  "elements": [
+   {
+    "kreyol": "plaj",
+    "pt": "praia",
+    "fr": "praia"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "balon",
+    "pt": "balão",
+    "fr": "montgolfière"
+   }
+  ]
+ },
+ {
+  "id": "turismo-09",
+  "theme": "Turismo",
+  "title": "Roteiro pelas montanhas",
+  "elements": [
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "valiz",
+    "pt": "mala de viagem",
+    "fr": "mala de viagem"
+   },
+   {
+    "kreyol": "otèl",
+    "pt": "hotel",
+    "fr": "hotel"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   }
+  ]
+ },
+ {
+  "id": "turismo-10",
+  "theme": "Turismo",
+  "title": "Travessia pelo porto",
+  "elements": [
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "fa",
+    "pt": "farol",
+    "fr": "phare"
+   },
+   {
+    "kreyol": "valiz",
+    "pt": "mala de viagem",
+    "fr": "mala de viagem"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   }
+  ]
+ },
+ {
+  "id": "turismo-11",
+  "theme": "Turismo",
+  "title": "Mirante sobre o oceano",
+  "elements": [
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "fa",
+    "pt": "farol",
+    "fr": "phare"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   }
+  ]
+ },
+ {
+  "id": "turismo-12",
+  "theme": "Turismo",
+  "title": "Voo panorâmico sobre o mar",
+  "elements": [
+   {
+    "kreyol": "balon",
+    "pt": "balão",
+    "fr": "montgolfière"
+   },
+   {
+    "kreyol": "avyon",
+    "pt": "avião",
+    "fr": "avion"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   }
+  ]
+ },
+ {
+  "id": "turismo-13",
+  "theme": "Turismo",
+  "title": "Passeio de catamarã ao pôr do sol",
+  "elements": [
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "plaj",
+    "pt": "praia",
+    "fr": "praia"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   }
+  ]
+ },
+ {
+  "id": "turismo-14",
+  "theme": "Turismo",
+  "title": "Resort tropical à beira-mar",
+  "elements": [
+   {
+    "kreyol": "otèl",
+    "pt": "hotel",
+    "fr": "hotel"
+   },
+   {
+    "kreyol": "plaj",
+    "pt": "praia",
+    "fr": "praia"
+   },
+   {
+    "kreyol": "valiz",
+    "pt": "mala de viagem",
+    "fr": "mala de viagem"
+   },
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   }
+  ]
+ },
+ {
+  "id": "turismo-15",
+  "theme": "Turismo",
+  "title": "Farol sob as estrelas",
+  "elements": [
+   {
+    "kreyol": "fa",
+    "pt": "farol",
+    "fr": "phare"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   }
+  ]
+ },
+ {
+  "id": "turismo-16",
+  "theme": "Turismo",
+  "title": "Enseada dos pescadores",
+  "elements": [
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "plaj",
+    "pt": "praia",
+    "fr": "praia"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   }
+  ]
+ },
+ {
+  "id": "turismo-17",
+  "theme": "Turismo",
+  "title": "Aeroporto na ilha caribenha",
+  "elements": [
+   {
+    "kreyol": "avyon",
+    "pt": "avião",
+    "fr": "avion"
+   },
+   {
+    "kreyol": "valiz",
+    "pt": "mala de viagem",
+    "fr": "mala de viagem"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "otèl",
+    "pt": "hotel",
+    "fr": "hotel"
+   }
+  ]
+ },
+ {
+  "id": "turismo-18",
+  "theme": "Turismo",
+  "title": "Aventura de balão no litoral",
+  "elements": [
+   {
+    "kreyol": "balon",
+    "pt": "balão",
+    "fr": "montgolfière"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "plaj",
+    "pt": "praia",
+    "fr": "praia"
+   },
+   {
+    "kreyol": "fa",
+    "pt": "farol",
+    "fr": "phare"
+   }
+  ]
+ },
+ {
+  "id": "turismo-19",
+  "theme": "Turismo",
+  "title": "Recepção elegante do hotel",
+  "elements": [
+   {
+    "kreyol": "otèl",
+    "pt": "hotel",
+    "fr": "hotel"
+   },
+   {
+    "kreyol": "valiz",
+    "pt": "mala de viagem",
+    "fr": "mala de viagem"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   }
+  ]
+ },
+ {
+  "id": "turismo-20",
+  "theme": "Turismo",
+  "title": "Caminhada ao longo da falésia",
+  "elements": [
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "fa",
+    "pt": "farol",
+    "fr": "phare"
+   },
+   {
+    "kreyol": "plaj",
+    "pt": "praia",
+    "fr": "praia"
+   }
+  ]
+ },
+ {
+  "id": "interior",
+  "theme": "Vida no interior",
+  "title": "Fazenda ao meio-dia",
+  "elements": [
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "jaden",
+    "pt": "jardim/plantação",
+    "fr": "jardin/plantation"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   }
+  ]
+ },
+ {
+  "id": "interior-02",
+  "theme": "Vida no interior",
+  "title": "Colheita no campo",
+  "elements": [
+   {
+    "kreyol": "ble",
+    "pt": "trigo",
+    "fr": "trigo"
+   },
+   {
+    "kreyol": "traktè",
+    "pt": "trator",
+    "fr": "trator"
+   },
+   {
+    "kreyol": "fèm",
+    "pt": "fazenda",
+    "fr": "fazenda"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "interior-03",
+  "theme": "Vida no interior",
+  "title": "Horta da fazenda",
+  "elements": [
+   {
+    "kreyol": "jaden",
+    "pt": "jardim/plantação",
+    "fr": "jardin/plantation"
+   },
+   {
+    "kreyol": "fèm",
+    "pt": "fazenda",
+    "fr": "fazenda"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   },
+   {
+    "kreyol": "poul",
+    "pt": "galinha",
+    "fr": "galinha"
+   }
+  ]
+ },
+ {
+  "id": "interior-04",
+  "theme": "Vida no interior",
+  "title": "Cabras perto do poço",
+  "elements": [
+   {
+    "kreyol": "kabrit",
+    "pt": "cabra",
+    "fr": "cabra"
+   },
+   {
+    "kreyol": "pi",
+    "pt": "poço",
+    "fr": "poço"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   }
+  ]
+ },
+ {
+  "id": "interior-05",
+  "theme": "Vida no interior",
+  "title": "Casa entre árvores",
+  "elements": [
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "jaden",
+    "pt": "jardim/plantação",
+    "fr": "jardin/plantation"
+   },
+   {
+    "kreyol": "poul",
+    "pt": "galinha",
+    "fr": "galinha"
+   }
+  ]
+ },
+ {
+  "id": "interior-06",
+  "theme": "Vida no interior",
+  "title": "Trator na plantação",
+  "elements": [
+   {
+    "kreyol": "traktè",
+    "pt": "trator",
+    "fr": "trator"
+   },
+   {
+    "kreyol": "ble",
+    "pt": "trigo",
+    "fr": "trigo"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   },
+   {
+    "kreyol": "kabrit",
+    "pt": "cabra",
+    "fr": "cabra"
+   }
+  ]
+ },
+ {
+  "id": "interior-07",
+  "theme": "Vida no interior",
+  "title": "Manhã no galinheiro",
+  "elements": [
+   {
+    "kreyol": "poul",
+    "pt": "galinha",
+    "fr": "galinha"
+   },
+   {
+    "kreyol": "fèm",
+    "pt": "fazenda",
+    "fr": "fazenda"
+   },
+   {
+    "kreyol": "pi",
+    "pt": "poço",
+    "fr": "poço"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "interior-08",
+  "theme": "Vida no interior",
+  "title": "Caminho da roça",
+  "elements": [
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "ble",
+    "pt": "trigo",
+    "fr": "trigo"
+   },
+   {
+    "kreyol": "kabrit",
+    "pt": "cabra",
+    "fr": "cabra"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   }
+  ]
+ },
+ {
+  "id": "interior-09",
+  "theme": "Vida no interior",
+  "title": "Jardim com poço antigo",
+  "elements": [
+   {
+    "kreyol": "jaden",
+    "pt": "jardim/plantação",
+    "fr": "jardin/plantation"
+   },
+   {
+    "kreyol": "pi",
+    "pt": "poço",
+    "fr": "poço"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "interior-10",
+  "theme": "Vida no interior",
+  "title": "Fazenda ao pôr do sol",
+  "elements": [
+   {
+    "kreyol": "fèm",
+    "pt": "fazenda",
+    "fr": "fazenda"
+   },
+   {
+    "kreyol": "traktè",
+    "pt": "trator",
+    "fr": "trator"
+   },
+   {
+    "kreyol": "poul",
+    "pt": "galinha",
+    "fr": "galinha"
+   },
+   {
+    "kreyol": "ble",
+    "pt": "trigo",
+    "fr": "trigo"
+   }
+  ]
+ },
+ {
+  "id": "interior-11",
+  "theme": "Vida no interior",
+  "title": "Pastoreio no campo verde",
+  "elements": [
+   {
+    "kreyol": "kabrit",
+    "pt": "cabra",
+    "fr": "cabra"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "ble",
+    "pt": "trigo",
+    "fr": "trigo"
+   }
+  ]
+ },
+ {
+  "id": "interior-12",
+  "theme": "Vida no interior",
+  "title": "Pomar de frutas no sítio",
+  "elements": [
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "jaden",
+    "pt": "jardim/plantação",
+    "fr": "jardin/plantation"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "poul",
+    "pt": "galinha",
+    "fr": "galinha"
+   }
+  ]
+ },
+ {
+  "id": "interior-13",
+  "theme": "Vida no interior",
+  "title": "Descanso sob a figueira",
+  "elements": [
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "pi",
+    "pt": "poço",
+    "fr": "poço"
+   },
+   {
+    "kreyol": "fèm",
+    "pt": "fazenda",
+    "fr": "fazenda"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   }
+  ]
+ },
+ {
+  "id": "interior-14",
+  "theme": "Vida no interior",
+  "title": "Galinheiro ao entardecer",
+  "elements": [
+   {
+    "kreyol": "poul",
+    "pt": "galinha",
+    "fr": "galinha"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "interior-15",
+  "theme": "Vida no interior",
+  "title": "Manhã de arado na terra",
+  "elements": [
+   {
+    "kreyol": "traktè",
+    "pt": "trator",
+    "fr": "trator"
+   },
+   {
+    "kreyol": "fèm",
+    "pt": "fazenda",
+    "fr": "fazenda"
+   },
+   {
+    "kreyol": "ble",
+    "pt": "trigo",
+    "fr": "trigo"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "interior-16",
+  "theme": "Vida no interior",
+  "title": "Poço de água na encosta",
+  "elements": [
+   {
+    "kreyol": "pi",
+    "pt": "poço",
+    "fr": "poço"
+   },
+   {
+    "kreyol": "kabrit",
+    "pt": "cabra",
+    "fr": "cabra"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "jaden",
+    "pt": "jardim/plantação",
+    "fr": "jardin/plantation"
+   }
+  ]
+ },
+ {
+  "id": "interior-17",
+  "theme": "Vida no interior",
+  "title": "Celeiro e fardos de trigo",
+  "elements": [
+   {
+    "kreyol": "ble",
+    "pt": "trigo",
+    "fr": "trigo"
+   },
+   {
+    "kreyol": "traktè",
+    "pt": "trator",
+    "fr": "trator"
+   },
+   {
+    "kreyol": "fèm",
+    "pt": "fazenda",
+    "fr": "fazenda"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   }
+  ]
+ },
+ {
+  "id": "interior-18",
+  "theme": "Vida no interior",
+  "title": "Cabritos brincando na cerca",
+  "elements": [
+   {
+    "kreyol": "kabrit",
+    "pt": "cabra",
+    "fr": "cabra"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   },
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "poul",
+    "pt": "galinha",
+    "fr": "galinha"
+   }
+  ]
+ },
+ {
+  "id": "interior-19",
+  "theme": "Vida no interior",
+  "title": "Horta irrigada ao amanhecer",
+  "elements": [
+   {
+    "kreyol": "jaden",
+    "pt": "jardim/plantação",
+    "fr": "jardin/plantation"
+   },
+   {
+    "kreyol": "pi",
+    "pt": "poço",
+    "fr": "poço"
+   },
+   {
+    "kreyol": "poul",
+    "pt": "galinha",
+    "fr": "galinha"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "interior-20",
+  "theme": "Vida no interior",
+  "title": "Noite serena na fazenda",
+  "elements": [
+   {
+    "kreyol": "kay",
+    "pt": "casa",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "kloti",
+    "pt": "cerca",
+    "fr": "clôture"
+   },
+   {
+    "kreyol": "fèm",
+    "pt": "fazenda",
+    "fr": "fazenda"
+   }
+  ]
+ },
+ {
+  "id": "danca",
+  "theme": "Dança",
+  "title": "Dança sob as lanternas",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanternas",
+    "fr": "lanternes"
+   },
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "danca-02",
+  "theme": "Dança",
+  "title": "Baile sob as lanternas",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   }
+  ]
+ },
+ {
+  "id": "danca-03",
+  "theme": "Dança",
+  "title": "Ensaio no salão",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "mizik",
+    "pt": "música",
+    "fr": "música"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "sèn",
+    "pt": "palco",
+    "fr": "palco"
+   }
+  ]
+ },
+ {
+  "id": "danca-04",
+  "theme": "Dança",
+  "title": "Dança das fitas",
+  "elements": [
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   }
+  ]
+ },
+ {
+  "id": "danca-05",
+  "theme": "Dança",
+  "title": "Ritmo dos tambores",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "mizik",
+    "pt": "música",
+    "fr": "música"
+   }
+  ]
+ },
+ {
+  "id": "danca-06",
+  "theme": "Dança",
+  "title": "Apresentação colorida",
+  "elements": [
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "sèn",
+    "pt": "palco",
+    "fr": "palco"
+   },
+   {
+    "kreyol": "fan",
+    "pt": "leque",
+    "fr": "leque"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "danca-07",
+  "theme": "Dança",
+  "title": "Festa no jardim",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   }
+  ]
+ },
+ {
+  "id": "danca-08",
+  "theme": "Dança",
+  "title": "Dança ao ar livre",
+  "elements": [
+   {
+    "kreyol": "sèn",
+    "pt": "palco",
+    "fr": "palco"
+   },
+   {
+    "kreyol": "mizik",
+    "pt": "música",
+    "fr": "música"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   }
+  ]
+ },
+ {
+  "id": "danca-09",
+  "theme": "Dança",
+  "title": "Noite de konpa",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "fan",
+    "pt": "leque",
+    "fr": "leque"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "danca-10",
+  "theme": "Dança",
+  "title": "Festival de dança",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "mizik",
+    "pt": "música",
+    "fr": "música"
+   }
+  ]
+ },
+ {
+  "id": "danca-11",
+  "theme": "Dança",
+  "title": "Dança folclórica na praça",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   }
+  ]
+ },
+ {
+  "id": "danca-12",
+  "theme": "Dança",
+  "title": "Performance no teatro iluminado",
+  "elements": [
+   {
+    "kreyol": "sèn",
+    "pt": "palco",
+    "fr": "palco"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   }
+  ]
+ },
+ {
+  "id": "danca-13",
+  "theme": "Dança",
+  "title": "Dança com leques coloridos",
+  "elements": [
+   {
+    "kreyol": "fan",
+    "pt": "leque",
+    "fr": "leque"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "danca-14",
+  "theme": "Dança",
+  "title": "Tambores e dança sob a lua",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "mizik",
+    "pt": "música",
+    "fr": "música"
+   }
+  ]
+ },
+ {
+  "id": "danca-15",
+  "theme": "Dança",
+  "title": "Bailarinas de fitas e flores",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   }
+  ]
+ },
+ {
+  "id": "danca-16",
+  "theme": "Dança",
+  "title": "Salão de konpa iluminado",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "mizik",
+    "pt": "música",
+    "fr": "música"
+   },
+   {
+    "kreyol": "sèn",
+    "pt": "palco",
+    "fr": "palco"
+   }
+  ]
+ },
+ {
+  "id": "danca-17",
+  "theme": "Dança",
+  "title": "Dança das sombrinhas e leques",
+  "elements": [
+   {
+    "kreyol": "fan",
+    "pt": "leque",
+    "fr": "leque"
+   },
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   }
+  ]
+ },
+ {
+  "id": "danca-18",
+  "theme": "Dança",
+  "title": "Celebração sob as lanternas",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   }
+  ]
+ },
+ {
+  "id": "danca-19",
+  "theme": "Dança",
+  "title": "Cortejo carnavalesco vibrante",
+  "elements": [
+   {
+    "kreyol": "rad",
+    "pt": "vestimentas",
+    "fr": "vêtements"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "riban",
+    "pt": "fitas",
+    "fr": "rubans"
+   }
+  ]
+ },
+ {
+  "id": "danca-20",
+  "theme": "Dança",
+  "title": "Valsa sob as estrelas",
+  "elements": [
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "sèn",
+    "pt": "palco",
+    "fr": "palco"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "geografia",
+  "theme": "Geografia",
+  "title": "Montanhas, rio e bússola",
+  "elements": [
+   {
+    "kreyol": "mòn",
+    "pt": "montanhas",
+    "fr": "montagnes"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "geografia-02",
+  "theme": "Geografia",
+  "title": "Vulcão na ilha",
+  "elements": [
+   {
+    "kreyol": "vòlkan",
+    "pt": "vulcão",
+    "fr": "vulcão"
+   },
+   {
+    "kreyol": "zile",
+    "pt": "ilha",
+    "fr": "ilha"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "geografia-03",
+  "theme": "Geografia",
+  "title": "Rio e ponte de pedra",
+  "elements": [
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "pon",
+    "pt": "ponte",
+    "fr": "ponte"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   }
+  ]
+ },
+ {
+  "id": "geografia-04",
+  "theme": "Geografia",
+  "title": "Exploração da floresta",
+  "elements": [
+   {
+    "kreyol": "forè",
+    "pt": "floresta",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "geografia-05",
+  "theme": "Geografia",
+  "title": "Mapa das montanhas",
+  "elements": [
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   }
+  ]
+ },
+ {
+  "id": "geografia-06",
+  "theme": "Geografia",
+  "title": "Costa e arquipélago",
+  "elements": [
+   {
+    "kreyol": "zile",
+    "pt": "ilha",
+    "fr": "ilha"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "geografia-07",
+  "theme": "Geografia",
+  "title": "Travessia da garganta",
+  "elements": [
+   {
+    "kreyol": "pon",
+    "pt": "ponte",
+    "fr": "ponte"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   }
+  ]
+ },
+ {
+  "id": "geografia-08",
+  "theme": "Geografia",
+  "title": "Mirante do vulcão",
+  "elements": [
+   {
+    "kreyol": "vòlkan",
+    "pt": "vulcão",
+    "fr": "vulcão"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   }
+  ]
+ },
+ {
+  "id": "geografia-09",
+  "theme": "Geografia",
+  "title": "Nascente na floresta",
+  "elements": [
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "forè",
+    "pt": "floresta",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "pon",
+    "pt": "ponte",
+    "fr": "ponte"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   }
+  ]
+ },
+ {
+  "id": "geografia-10",
+  "theme": "Geografia",
+  "title": "Bússola para a ilha",
+  "elements": [
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   },
+   {
+    "kreyol": "zile",
+    "pt": "ilha",
+    "fr": "ilha"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   }
+  ]
+ },
+ {
+  "id": "geografia-11",
+  "theme": "Geografia",
+  "title": "Delta do grande rio",
+  "elements": [
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "pon",
+    "pt": "ponte",
+    "fr": "ponte"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   }
+  ]
+ },
+ {
+  "id": "geografia-12",
+  "theme": "Geografia",
+  "title": "Cume nevado e bandeira guia",
+  "elements": [
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   }
+  ]
+ },
+ {
+  "id": "geografia-13",
+  "theme": "Geografia",
+  "title": "Lago da caldeira vulcânica",
+  "elements": [
+   {
+    "kreyol": "vòlkan",
+    "pt": "vulcão",
+    "fr": "vulcão"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "forè",
+    "pt": "floresta",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "geografia-14",
+  "theme": "Geografia",
+  "title": "Estreito marítimo e arquipélago",
+  "elements": [
+   {
+    "kreyol": "zile",
+    "pt": "ilha",
+    "fr": "ilha"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   }
+  ]
+ },
+ {
+  "id": "geografia-15",
+  "theme": "Geografia",
+  "title": "Floresta equatorial densa",
+  "elements": [
+   {
+    "kreyol": "forè",
+    "pt": "floresta",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   }
+  ]
+ },
+ {
+  "id": "geografia-16",
+  "theme": "Geografia",
+  "title": "Ponte suspensa no desfiladeiro",
+  "elements": [
+   {
+    "kreyol": "pon",
+    "pt": "ponte",
+    "fr": "ponte"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "forè",
+    "pt": "floresta",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "geografia-17",
+  "theme": "Geografia",
+  "title": "Enseada do vulcão adormecido",
+  "elements": [
+   {
+    "kreyol": "vòlkan",
+    "pt": "vulcão",
+    "fr": "vulcão"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "zile",
+    "pt": "ilha",
+    "fr": "ilha"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "geografia-18",
+  "theme": "Geografia",
+  "title": "Cartografia dos três picos",
+  "elements": [
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   },
+   {
+    "kreyol": "mòn",
+    "pt": "montanha",
+    "fr": "montagne"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "geografia-19",
+  "theme": "Geografia",
+  "title": "Encontro das águas no manguezal",
+  "elements": [
+   {
+    "kreyol": "rivyè",
+    "pt": "rio",
+    "fr": "rivière"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "forè",
+    "pt": "floresta",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "pon",
+    "pt": "ponte",
+    "fr": "ponte"
+   }
+  ]
+ },
+ {
+  "id": "geografia-20",
+  "theme": "Geografia",
+  "title": "Vista aérea das ilhas caribenhas",
+  "elements": [
+   {
+    "kreyol": "zile",
+    "pt": "ilha",
+    "fr": "ilha"
+   },
+   {
+    "kreyol": "lanmè",
+    "pt": "mar",
+    "fr": "mer"
+   },
+   {
+    "kreyol": "kat",
+    "pt": "mapa",
+    "fr": "mapa"
+   },
+   {
+    "kreyol": "bousòl",
+    "pt": "bússola",
+    "fr": "boussole"
+   }
+  ]
+ },
+ {
+  "id": "historia",
+  "theme": "História",
+  "title": "Fortaleza de pedra no alto do morro",
+  "elements": [
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "kanon",
+    "pt": "canhão",
+    "fr": "canon"
+   },
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   }
+  ]
+ },
+ {
+  "id": "historia-02",
+  "theme": "História",
+  "title": "Escavação arqueológica",
+  "elements": [
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "moniman",
+    "pt": "monumento",
+    "fr": "monumento"
+   },
+   {
+    "kreyol": "ansyen kay",
+    "pt": "casa histórica",
+    "fr": "maison"
+   }
+  ]
+ },
+ {
+  "id": "historia-03",
+  "theme": "História",
+  "title": "Caravela histórica",
+  "elements": [
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   },
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   }
+  ]
+ },
+ {
+  "id": "historia-04",
+  "theme": "História",
+  "title": "Portões da fortaleza",
+  "elements": [
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   },
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   },
+   {
+    "kreyol": "kanon",
+    "pt": "canhão",
+    "fr": "canon"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "historia-05",
+  "theme": "História",
+  "title": "Cavaleiros no castelo",
+  "elements": [
+   {
+    "kreyol": "chwal",
+    "pt": "cavalo",
+    "fr": "cavalo"
+   },
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   }
+  ]
+ },
+ {
+  "id": "historia-06",
+  "theme": "História",
+  "title": "Monumento da praça",
+  "elements": [
+   {
+    "kreyol": "moniman",
+    "pt": "monumento",
+    "fr": "monumento"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "ansyen kay",
+    "pt": "casa histórica",
+    "fr": "maison"
+   }
+  ]
+ },
+ {
+  "id": "historia-07",
+  "theme": "História",
+  "title": "Biblioteca antiga",
+  "elements": [
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   },
+   {
+    "kreyol": "moniman",
+    "pt": "monumento",
+    "fr": "monumento"
+   }
+  ]
+ },
+ {
+  "id": "historia-08",
+  "theme": "História",
+  "title": "Muralhas e canhões",
+  "elements": [
+   {
+    "kreyol": "kanon",
+    "pt": "canhão",
+    "fr": "canon"
+   },
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   },
+   {
+    "kreyol": "chwal",
+    "pt": "cavalo",
+    "fr": "cavalo"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "historia-09",
+  "theme": "História",
+  "title": "Ruínas de pedra",
+  "elements": [
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   },
+   {
+    "kreyol": "ansyen kay",
+    "pt": "casa histórica",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   }
+  ]
+ },
+ {
+  "id": "historia-10",
+  "theme": "História",
+  "title": "Praça dos heróis",
+  "elements": [
+   {
+    "kreyol": "moniman",
+    "pt": "monumento",
+    "fr": "monumento"
+   },
+   {
+    "kreyol": "chwal",
+    "pt": "cavalo",
+    "fr": "cavalo"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   }
+  ]
+ },
+ {
+  "id": "historia-11",
+  "theme": "História",
+  "title": "Bastilha da cidadela sob o sol",
+  "elements": [
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "kanon",
+    "pt": "canhão",
+    "fr": "canon"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   }
+  ]
+ },
+ {
+  "id": "historia-12",
+  "theme": "História",
+  "title": "Nau capitânia no ancoradouro",
+  "elements": [
+   {
+    "kreyol": "bato",
+    "pt": "barco",
+    "fr": "bateau"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   }
+  ]
+ },
+ {
+  "id": "historia-13",
+  "theme": "História",
+  "title": "Manuscrito dos patriotas",
+  "elements": [
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   },
+   {
+    "kreyol": "ansyen kay",
+    "pt": "casa histórica",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   }
+  ]
+ },
+ {
+  "id": "historia-14",
+  "theme": "História",
+  "title": "Sentinela a cavalo na colina",
+  "elements": [
+   {
+    "kreyol": "chwal",
+    "pt": "cavalo",
+    "fr": "cavalo"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   }
+  ]
+ },
+ {
+  "id": "historia-15",
+  "theme": "História",
+  "title": "Obelisco da independência",
+  "elements": [
+   {
+    "kreyol": "moniman",
+    "pt": "monumento",
+    "fr": "monumento"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   },
+   {
+    "kreyol": "chwal",
+    "pt": "cavalo",
+    "fr": "cavalo"
+   }
+  ]
+ },
+ {
+  "id": "historia-16",
+  "theme": "História",
+  "title": "Mansão colonial preservada",
+  "elements": [
+   {
+    "kreyol": "ansyen kay",
+    "pt": "casa histórica",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "chwal",
+    "pt": "cavalo",
+    "fr": "cavalo"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   },
+   {
+    "kreyol": "moniman",
+    "pt": "monumento",
+    "fr": "monumento"
+   }
+  ]
+ },
+ {
+  "id": "historia-17",
+  "theme": "História",
+  "title": "Canhoneira na muralha alta",
+  "elements": [
+   {
+    "kreyol": "kanon",
+    "pt": "canhão",
+    "fr": "canon"
+   },
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   },
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "historia-18",
+  "theme": "História",
+  "title": "Arquivo de tratados históricos",
+  "elements": [
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "ansyen kay",
+    "pt": "casa histórica",
+    "fr": "maison"
+   },
+   {
+    "kreyol": "moniman",
+    "pt": "monumento",
+    "fr": "monumento"
+   },
+   {
+    "kreyol": "wòch",
+    "pt": "pedra/rocha",
+    "fr": "pedra/rocha"
+   }
+  ]
+ },
+ {
+  "id": "historia-19",
+  "theme": "História",
+  "title": "Tochas acesas na fortaleza",
+  "elements": [
+   {
+    "kreyol": "flanbo",
+    "pt": "tocha",
+    "fr": "torche"
+   },
+   {
+    "kreyol": "fò",
+    "pt": "fortaleza",
+    "fr": "forteresse"
+   },
+   {
+    "kreyol": "kanon",
+    "pt": "canhão",
+    "fr": "canon"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   }
+  ]
+ },
+ {
+  "id": "historia-20",
+  "theme": "História",
+  "title": "Cerimônia junto ao monumento",
+  "elements": [
+   {
+    "kreyol": "moniman",
+    "pt": "monumento",
+    "fr": "monumento"
+   },
+   {
+    "kreyol": "drapo",
+    "pt": "bandeira",
+    "fr": "drapeau"
+   },
+   {
+    "kreyol": "chwal",
+    "pt": "cavalo",
+    "fr": "cavalo"
+   },
+   {
+    "kreyol": "ansyen kay",
+    "pt": "casa histórica",
+    "fr": "maison"
+   }
+  ]
+ },
+ {
+  "id": "cinema",
+  "theme": "Cinema",
+  "title": "Cinema de bairro ao entardecer",
+  "elements": [
+   {
+    "kreyol": "sinema",
+    "pt": "cinema",
+    "fr": "cinéma"
+   },
+   {
+    "kreyol": "pòp-kòn",
+    "pt": "pipoca",
+    "fr": "pop-corn"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvores",
+    "fr": "arbres"
+   }
+  ]
+ },
+ {
+  "id": "cinema-02",
+  "theme": "Cinema",
+  "title": "Cinema ao ar livre",
+  "elements": [
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   }
+  ]
+ },
+ {
+  "id": "cinema-03",
+  "theme": "Cinema",
+  "title": "Cabine de projeção",
+  "elements": [
+   {
+    "kreyol": "projèktè",
+    "pt": "projetor",
+    "fr": "projetor"
+   },
+   {
+    "kreyol": "kamera",
+    "pt": "câmera",
+    "fr": "câmera"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "cinema-04",
+  "theme": "Cinema",
+  "title": "Noite de estreia",
+  "elements": [
+   {
+    "kreyol": "sinema",
+    "pt": "cinema",
+    "fr": "cinéma"
+   },
+   {
+    "kreyol": "tikè",
+    "pt": "ingresso",
+    "fr": "ingresso"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "pòp-kòn",
+    "pt": "pipoca",
+    "fr": "pop-corn"
+   }
+  ]
+ },
+ {
+  "id": "cinema-05",
+  "theme": "Cinema",
+  "title": "Filmagem no bosque",
+  "elements": [
+   {
+    "kreyol": "kamera",
+    "pt": "câmera",
+    "fr": "câmera"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   }
+  ]
+ },
+ {
+  "id": "cinema-06",
+  "theme": "Cinema",
+  "title": "Sala de cinema clássica",
+  "elements": [
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "pòp-kòn",
+    "pt": "pipoca",
+    "fr": "pop-corn"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "cinema-07",
+  "theme": "Cinema",
+  "title": "Festival de curtas",
+  "elements": [
+   {
+    "kreyol": "tikè",
+    "pt": "ingresso",
+    "fr": "ingresso"
+   },
+   {
+    "kreyol": "kamera",
+    "pt": "câmera",
+    "fr": "câmera"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "cinema-08",
+  "theme": "Cinema",
+  "title": "Projetor sob as estrelas",
+  "elements": [
+   {
+    "kreyol": "projèktè",
+    "pt": "projetor",
+    "fr": "projetor"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   }
+  ]
+ },
+ {
+  "id": "cinema-09",
+  "theme": "Cinema",
+  "title": "Bilheteria do cinema",
+  "elements": [
+   {
+    "kreyol": "sinema",
+    "pt": "cinema",
+    "fr": "cinéma"
+   },
+   {
+    "kreyol": "tikè",
+    "pt": "ingresso",
+    "fr": "ingresso"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "pòp-kòn",
+    "pt": "pipoca",
+    "fr": "pop-corn"
+   }
+  ]
+ },
+ {
+  "id": "cinema-10",
+  "theme": "Cinema",
+  "title": "Estúdio de gravação",
+  "elements": [
+   {
+    "kreyol": "kamera",
+    "pt": "câmera",
+    "fr": "câmera"
+   },
+   {
+    "kreyol": "projèktè",
+    "pt": "projetor",
+    "fr": "projetor"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   }
+  ]
+ },
+ {
+  "id": "cinema-11",
+  "theme": "Cinema",
+  "title": "Cineclube na praça florida",
+  "elements": [
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "cinema-12",
+  "theme": "Cinema",
+  "title": "Rolo de filme e câmera retrô",
+  "elements": [
+   {
+    "kreyol": "kamera",
+    "pt": "câmera",
+    "fr": "câmera"
+   },
+   {
+    "kreyol": "tikè",
+    "pt": "ingresso",
+    "fr": "ingresso"
+   },
+   {
+    "kreyol": "projèktè",
+    "pt": "projetor",
+    "fr": "projetor"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   }
+  ]
+ },
+ {
+  "id": "cinema-13",
+  "theme": "Cinema",
+  "title": "Sacola de pipoca e ingressos",
+  "elements": [
+   {
+    "kreyol": "pòp-kòn",
+    "pt": "pipoca",
+    "fr": "pop-corn"
+   },
+   {
+    "kreyol": "tikè",
+    "pt": "ingresso",
+    "fr": "ingresso"
+   },
+   {
+    "kreyol": "sinema",
+    "pt": "cinema",
+    "fr": "cinéma"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "cinema-14",
+  "theme": "Cinema",
+  "title": "Sessão cinema na praia à noite",
+  "elements": [
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "pòp-kòn",
+    "pt": "pipoca",
+    "fr": "pop-corn"
+   }
+  ]
+ },
+ {
+  "id": "cinema-15",
+  "theme": "Cinema",
+  "title": "Iluminação de cena no estúdio",
+  "elements": [
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "kamera",
+    "pt": "câmera",
+    "fr": "câmera"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   }
+  ]
+ },
+ {
+  "id": "cinema-16",
+  "theme": "Cinema",
+  "title": "Fachada neon do cinema",
+  "elements": [
+   {
+    "kreyol": "sinema",
+    "pt": "cinema",
+    "fr": "cinéma"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   },
+   {
+    "kreyol": "pòp-kòn",
+    "pt": "pipoca",
+    "fr": "pop-corn"
+   }
+  ]
+ },
+ {
+  "id": "cinema-17",
+  "theme": "Cinema",
+  "title": "Filmagem no jardim arborizado",
+  "elements": [
+   {
+    "kreyol": "kamera",
+    "pt": "câmera",
+    "fr": "câmera"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "tikè",
+    "pt": "ingresso",
+    "fr": "ingresso"
+   }
+  ]
+ },
+ {
+  "id": "cinema-18",
+  "theme": "Cinema",
+  "title": "Sala com poltronas confortáveis",
+  "elements": [
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "projèktè",
+    "pt": "projetor",
+    "fr": "projetor"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "cinema-19",
+  "theme": "Cinema",
+  "title": "Projetor no piquenique do parque",
+  "elements": [
+   {
+    "kreyol": "projèktè",
+    "pt": "projetor",
+    "fr": "projetor"
+   },
+   {
+    "kreyol": "ekran",
+    "pt": "tela/monitor",
+    "fr": "écran"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "pòp-kòn",
+    "pt": "pipoca",
+    "fr": "pop-corn"
+   }
+  ]
+ },
+ {
+  "id": "cinema-20",
+  "theme": "Cinema",
+  "title": "Noite de gala do festival",
+  "elements": [
+   {
+    "kreyol": "sinema",
+    "pt": "cinema",
+    "fr": "cinéma"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "tikè",
+    "pt": "ingresso",
+    "fr": "ingresso"
+   },
+   {
+    "kreyol": "zetwal",
+    "pt": "estrelas",
+    "fr": "étoiles"
+   }
+  ]
+ },
+ {
+  "id": "musica",
+  "theme": "Música",
+  "title": "Palco ao ar livre",
+  "elements": [
+   {
+    "kreyol": "gita",
+    "pt": "violão",
+    "fr": "guitare"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   }
+  ]
+ },
+ {
+  "id": "musica-02",
+  "theme": "Música",
+  "title": "Concerto na praça",
+  "elements": [
+   {
+    "kreyol": "gita",
+    "pt": "violão/guitarra",
+    "fr": "guitare"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   }
+  ]
+ },
+ {
+  "id": "musica-03",
+  "theme": "Música",
+  "title": "Estúdio de gravação musical",
+  "elements": [
+   {
+    "kreyol": "mikwofòn",
+    "pt": "microfone",
+    "fr": "microfone"
+   },
+   {
+    "kreyol": "kas",
+    "pt": "fones de ouvido",
+    "fr": "fones de ouvido"
+   },
+   {
+    "kreyol": "klavye",
+    "pt": "teclado musical",
+    "fr": "teclado musical"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   }
+  ]
+ },
+ {
+  "id": "musica-04",
+  "theme": "Música",
+  "title": "Piano ao entardecer",
+  "elements": [
+   {
+    "kreyol": "piano",
+    "pt": "piano",
+    "fr": "piano"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   }
+  ]
+ },
+ {
+  "id": "musica-05",
+  "theme": "Música",
+  "title": "Banda de rua",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "gita",
+    "pt": "violão/guitarra",
+    "fr": "guitare"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   }
+  ]
+ },
+ {
+  "id": "musica-06",
+  "theme": "Música",
+  "title": "Palco de konpa",
+  "elements": [
+   {
+    "kreyol": "mikwofòn",
+    "pt": "microfone",
+    "fr": "microfone"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   }
+  ]
+ },
+ {
+  "id": "musica-07",
+  "theme": "Música",
+  "title": "Aula de teclado",
+  "elements": [
+   {
+    "kreyol": "klavye",
+    "pt": "teclado musical",
+    "fr": "teclado musical"
+   },
+   {
+    "kreyol": "piano",
+    "pt": "piano",
+    "fr": "piano"
+   },
+   {
+    "kreyol": "kas",
+    "pt": "fones de ouvido",
+    "fr": "fones de ouvido"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   }
+  ]
+ },
+ {
+  "id": "musica-08",
+  "theme": "Música",
+  "title": "Música no jardim",
+  "elements": [
+   {
+    "kreyol": "gita",
+    "pt": "violão/guitarra",
+    "fr": "guitare"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   }
+  ]
+ },
+ {
+  "id": "musica-09",
+  "theme": "Música",
+  "title": "Show de luzes e som",
+  "elements": [
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   },
+   {
+    "kreyol": "mikwofòn",
+    "pt": "microfone",
+    "fr": "microfone"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   }
+  ]
+ },
+ {
+  "id": "musica-10",
+  "theme": "Música",
+  "title": "Ensaio da banda",
+  "elements": [
+   {
+    "kreyol": "gita",
+    "pt": "violão/guitarra",
+    "fr": "guitare"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "klavye",
+    "pt": "teclado musical",
+    "fr": "teclado musical"
+   },
+   {
+    "kreyol": "kas",
+    "pt": "fones de ouvido",
+    "fr": "fones de ouvido"
+   }
+  ]
+ },
+ {
+  "id": "musica-11",
+  "theme": "Música",
+  "title": "Violão acústico ao luar",
+  "elements": [
+   {
+    "kreyol": "gita",
+    "pt": "violão/guitarra",
+    "fr": "guitare"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   }
+  ]
+ },
+ {
+  "id": "musica-12",
+  "theme": "Música",
+  "title": "Roda de tambor comunitária",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   }
+  ]
+ },
+ {
+  "id": "musica-13",
+  "theme": "Música",
+  "title": "Cabine de mixagem com fones",
+  "elements": [
+   {
+    "kreyol": "kas",
+    "pt": "fones de ouvido",
+    "fr": "fones de ouvido"
+   },
+   {
+    "kreyol": "klavye",
+    "pt": "teclado musical",
+    "fr": "teclado musical"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   },
+   {
+    "kreyol": "mikwofòn",
+    "pt": "microfone",
+    "fr": "microfone"
+   }
+  ]
+ },
+ {
+  "id": "musica-14",
+  "theme": "Música",
+  "title": "Piano de cauda na sala nobre",
+  "elements": [
+   {
+    "kreyol": "piano",
+    "pt": "piano",
+    "fr": "piano"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   },
+   {
+    "kreyol": "mikwofòn",
+    "pt": "microfone",
+    "fr": "microfone"
+   }
+  ]
+ },
+ {
+  "id": "musica-15",
+  "theme": "Música",
+  "title": "Palco do festival ao entardecer",
+  "elements": [
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   },
+   {
+    "kreyol": "mikwofòn",
+    "pt": "microfone",
+    "fr": "microfone"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "gita",
+    "pt": "violão/guitarra",
+    "fr": "guitare"
+   }
+  ]
+ },
+ {
+  "id": "musica-16",
+  "theme": "Música",
+  "title": "Serenata sob as estrelas",
+  "elements": [
+   {
+    "kreyol": "gita",
+    "pt": "violão/guitarra",
+    "fr": "guitare"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   }
+  ]
+ },
+ {
+  "id": "musica-17",
+  "theme": "Música",
+  "title": "Oficina de tambores tradicionais",
+  "elements": [
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   },
+   {
+    "kreyol": "dansè",
+    "pt": "dançarinos",
+    "fr": "danseurs"
+   }
+  ]
+ },
+ {
+  "id": "musica-18",
+  "theme": "Música",
+  "title": "Teclado eletrônico e fones",
+  "elements": [
+   {
+    "kreyol": "klavye",
+    "pt": "teclado musical",
+    "fr": "teclado musical"
+   },
+   {
+    "kreyol": "kas",
+    "pt": "fones de ouvido",
+    "fr": "fones de ouvido"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   }
+  ]
+ },
+ {
+  "id": "musica-19",
+  "theme": "Música",
+  "title": "Trio acústico no parque",
+  "elements": [
+   {
+    "kreyol": "gita",
+    "pt": "violão/guitarra",
+    "fr": "guitare"
+   },
+   {
+    "kreyol": "nòt mizik",
+    "pt": "notas musicais",
+    "fr": "notes de musique"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   },
+   {
+    "kreyol": "piano",
+    "pt": "piano",
+    "fr": "piano"
+   }
+  ]
+ },
+ {
+  "id": "musica-20",
+  "theme": "Música",
+  "title": "Grande orquestra e percussão",
+  "elements": [
+   {
+    "kreyol": "piano",
+    "pt": "piano",
+    "fr": "piano"
+   },
+   {
+    "kreyol": "tanbou",
+    "pt": "tambor",
+    "fr": "tambour"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "opalè",
+    "pt": "alto-falante",
+    "fr": "haut-parleur"
+   }
+  ]
+ },
+ {
+  "id": "lazeres",
+  "theme": "Lazeres",
+  "title": "Tarde de piquenique e pipas",
+  "elements": [
+   {
+    "kreyol": "kap",
+    "pt": "pipa",
+    "fr": "cerf-volant"
+   },
+   {
+    "kreyol": "bisiklèt",
+    "pt": "bicicleta",
+    "fr": "vélo"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-02",
+  "theme": "Lazeres",
+  "title": "Piquenique no parque",
+  "elements": [
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   },
+   {
+    "kreyol": "piknik",
+    "pt": "cesta de piquenique",
+    "fr": "cesta de piquenique"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-03",
+  "theme": "Lazeres",
+  "title": "Pipas no campo",
+  "elements": [
+   {
+    "kreyol": "kap",
+    "pt": "pipa",
+    "fr": "cerf-volant"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "boul",
+    "pt": "bola",
+    "fr": "bola"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-04",
+  "theme": "Lazeres",
+  "title": "Passeio de bicicleta",
+  "elements": [
+   {
+    "kreyol": "bisiklèt",
+    "pt": "bicicleta",
+    "fr": "vélo"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-05",
+  "theme": "Lazeres",
+  "title": "Tarde no lago",
+  "elements": [
+   {
+    "kreyol": "kanna",
+    "pt": "pato",
+    "fr": "pato"
+   },
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-06",
+  "theme": "Lazeres",
+  "title": "Balanço no jardim",
+  "elements": [
+   {
+    "kreyol": "balanse",
+    "pt": "balanço",
+    "fr": "balanço"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "boul",
+    "pt": "bola",
+    "fr": "bola"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-07",
+  "theme": "Lazeres",
+  "title": "Jogos ao ar livre",
+  "elements": [
+   {
+    "kreyol": "boul",
+    "pt": "bola",
+    "fr": "bola"
+   },
+   {
+    "kreyol": "piknik",
+    "pt": "cesta de piquenique",
+    "fr": "cesta de piquenique"
+   },
+   {
+    "kreyol": "kap",
+    "pt": "pipa",
+    "fr": "cerf-volant"
+   },
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-08",
+  "theme": "Lazeres",
+  "title": "Leitura sob a árvore",
+  "elements": [
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   },
+   {
+    "kreyol": "kanna",
+    "pt": "pato",
+    "fr": "pato"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-09",
+  "theme": "Lazeres",
+  "title": "Passeio entre flores",
+  "elements": [
+   {
+    "kreyol": "bisiklèt",
+    "pt": "bicicleta",
+    "fr": "vélo"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "kap",
+    "pt": "pipa",
+    "fr": "cerf-volant"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-10",
+  "theme": "Lazeres",
+  "title": "Domingo no parque",
+  "elements": [
+   {
+    "kreyol": "balanse",
+    "pt": "balanço",
+    "fr": "balanço"
+   },
+   {
+    "kreyol": "piknik",
+    "pt": "cesta de piquenique",
+    "fr": "cesta de piquenique"
+   },
+   {
+    "kreyol": "kanna",
+    "pt": "pato",
+    "fr": "pato"
+   },
+   {
+    "kreyol": "boul",
+    "pt": "bola",
+    "fr": "bola"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-11",
+  "theme": "Lazeres",
+  "title": "Revoada de pipas na colina",
+  "elements": [
+   {
+    "kreyol": "kap",
+    "pt": "pipa",
+    "fr": "cerf-volant"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "boul",
+    "pt": "bola",
+    "fr": "bola"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-12",
+  "theme": "Lazeres",
+  "title": "Piquenique com cesta de vime",
+  "elements": [
+   {
+    "kreyol": "piknik",
+    "pt": "cesta de piquenique",
+    "fr": "cesta de piquenique"
+   },
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "kanna",
+    "pt": "pato",
+    "fr": "pato"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-13",
+  "theme": "Lazeres",
+  "title": "Bicicleta no caminho florido",
+  "elements": [
+   {
+    "kreyol": "bisiklèt",
+    "pt": "bicicleta",
+    "fr": "vélo"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-14",
+  "theme": "Lazeres",
+  "title": "Balanço de corda no bosque",
+  "elements": [
+   {
+    "kreyol": "balanse",
+    "pt": "balanço",
+    "fr": "balanço"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-15",
+  "theme": "Lazeres",
+  "title": "Lago dos patos ao entardecer",
+  "elements": [
+   {
+    "kreyol": "kanna",
+    "pt": "pato",
+    "fr": "pato"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   },
+   {
+    "kreyol": "piknik",
+    "pt": "cesta de piquenique",
+    "fr": "cesta de piquenique"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-16",
+  "theme": "Lazeres",
+  "title": "Jogo de bola no gramado",
+  "elements": [
+   {
+    "kreyol": "boul",
+    "pt": "bola",
+    "fr": "bola"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "bisiklèt",
+    "pt": "bicicleta",
+    "fr": "vélo"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-17",
+  "theme": "Lazeres",
+  "title": "Cantinho de leitura no jardim",
+  "elements": [
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   },
+   {
+    "kreyol": "dra",
+    "pt": "toalha de piquenique",
+    "fr": "nappe de pique-nique"
+   },
+   {
+    "kreyol": "balanse",
+    "pt": "balanço",
+    "fr": "balanço"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-18",
+  "theme": "Lazeres",
+  "title": "Pipa colorida sobre os campos",
+  "elements": [
+   {
+    "kreyol": "kap",
+    "pt": "pipa",
+    "fr": "cerf-volant"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "bisiklèt",
+    "pt": "bicicleta",
+    "fr": "vélo"
+   },
+   {
+    "kreyol": "boul",
+    "pt": "bola",
+    "fr": "bola"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-19",
+  "theme": "Lazeres",
+  "title": "Tarde ensolarada na lagoa",
+  "elements": [
+   {
+    "kreyol": "kanna",
+    "pt": "pato",
+    "fr": "pato"
+   },
+   {
+    "kreyol": "piknik",
+    "pt": "cesta de piquenique",
+    "fr": "cesta de piquenique"
+   },
+   {
+    "kreyol": "boul",
+    "pt": "bola",
+    "fr": "bola"
+   },
+   {
+    "kreyol": "pyebwa",
+    "pt": "árvore",
+    "fr": "arbre"
+   }
+  ]
+ },
+ {
+  "id": "lazeres-20",
+  "theme": "Lazeres",
+  "title": "Passeio de bicicleta no fim da tarde",
+  "elements": [
+   {
+    "kreyol": "bisiklèt",
+    "pt": "bicicleta",
+    "fr": "vélo"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "kap",
+    "pt": "pipa",
+    "fr": "cerf-volant"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo",
+  "theme": "Estoicismo",
+  "title": "Pórtico de pedra e oliveiras",
+  "elements": [
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   },
+   {
+    "kreyol": "moun saj",
+    "pt": "filósofo sábio",
+    "fr": "sage philosophe"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-02",
+  "theme": "Estoicismo",
+  "title": "Pórtico entre oliveiras",
+  "elements": [
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-03",
+  "theme": "Estoicismo",
+  "title": "Estudo à luz da lamparina",
+  "elements": [
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "woulo",
+    "pt": "pergaminho",
+    "fr": "pergaminho"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "krich",
+    "pt": "jarro/ânfora",
+    "fr": "jarro/ânfora"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-04",
+  "theme": "Estoicismo",
+  "title": "Jardim da reflexão",
+  "elements": [
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   },
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   },
+   {
+    "kreyol": "chemen",
+    "pt": "caminho",
+    "fr": "caminho"
+   },
+   {
+    "kreyol": "estati",
+    "pt": "estátua",
+    "fr": "estátua"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-05",
+  "theme": "Estoicismo",
+  "title": "Portão do templo antigo",
+  "elements": [
+   {
+    "kreyol": "pòtay",
+    "pt": "portão",
+    "fr": "portão"
+   },
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "krich",
+    "pt": "jarro/ânfora",
+    "fr": "jarro/ânfora"
+   },
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-06",
+  "theme": "Estoicismo",
+  "title": "Leitura no pátio",
+  "elements": [
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "chemen",
+    "pt": "caminho",
+    "fr": "caminho"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-07",
+  "theme": "Estoicismo",
+  "title": "Estátua entre colunas",
+  "elements": [
+   {
+    "kreyol": "estati",
+    "pt": "estátua",
+    "fr": "estátua"
+   },
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "woulo",
+    "pt": "pergaminho",
+    "fr": "pergaminho"
+   },
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-08",
+  "theme": "Estoicismo",
+  "title": "Caminho da sabedoria",
+  "elements": [
+   {
+    "kreyol": "chemen",
+    "pt": "caminho",
+    "fr": "caminho"
+   },
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   },
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   },
+   {
+    "kreyol": "krich",
+    "pt": "jarro/ânfora",
+    "fr": "jarro/ânfora"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-09",
+  "theme": "Estoicismo",
+  "title": "Biblioteca serena",
+  "elements": [
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "woulo",
+    "pt": "pergaminho",
+    "fr": "pergaminho"
+   },
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-10",
+  "theme": "Estoicismo",
+  "title": "Pátio das meditações",
+  "elements": [
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   },
+   {
+    "kreyol": "estati",
+    "pt": "estátua",
+    "fr": "estátua"
+   },
+   {
+    "kreyol": "pòtay",
+    "pt": "portão",
+    "fr": "portão"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-11",
+  "theme": "Estoicismo",
+  "title": "Ágora clássica sob o céu azul",
+  "elements": [
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "estati",
+    "pt": "estátua",
+    "fr": "estátua"
+   },
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   },
+   {
+    "kreyol": "chemen",
+    "pt": "caminho",
+    "fr": "caminho"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-12",
+  "theme": "Estoicismo",
+  "title": "Escadaria do templo antigo",
+  "elements": [
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "pòtay",
+    "pt": "portão",
+    "fr": "portão"
+   },
+   {
+    "kreyol": "krich",
+    "pt": "jarro/ânfora",
+    "fr": "jarro/ânfora"
+   },
+   {
+    "kreyol": "woulo",
+    "pt": "pergaminho",
+    "fr": "pergaminho"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-13",
+  "theme": "Estoicismo",
+  "title": "Leitura meditativa na oliveira",
+  "elements": [
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   },
+   {
+    "kreyol": "krich",
+    "pt": "jarro/ânfora",
+    "fr": "jarro/ânfora"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-14",
+  "theme": "Estoicismo",
+  "title": "Lamparina acesa sobre o papiro",
+  "elements": [
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "woulo",
+    "pt": "pergaminho",
+    "fr": "pergaminho"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "krich",
+    "pt": "jarro/ânfora",
+    "fr": "jarro/ânfora"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-15",
+  "theme": "Estoicismo",
+  "title": "Busto de mármore do filósofo",
+  "elements": [
+   {
+    "kreyol": "estati",
+    "pt": "estátua",
+    "fr": "estátua"
+   },
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-16",
+  "theme": "Estoicismo",
+  "title": "Portão de pedra para o templo",
+  "elements": [
+   {
+    "kreyol": "pòtay",
+    "pt": "portão",
+    "fr": "portão"
+   },
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "chemen",
+    "pt": "caminho",
+    "fr": "caminho"
+   },
+   {
+    "kreyol": "estati",
+    "pt": "estátua",
+    "fr": "estátua"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-17",
+  "theme": "Estoicismo",
+  "title": "Diálogo filosófico ao ar livre",
+  "elements": [
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   },
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   },
+   {
+    "kreyol": "woulo",
+    "pt": "pergaminho",
+    "fr": "pergaminho"
+   },
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-18",
+  "theme": "Estoicismo",
+  "title": "Pátio circular com ânforas",
+  "elements": [
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "krich",
+    "pt": "jarro/ânfora",
+    "fr": "jarro/ânfora"
+   },
+   {
+    "kreyol": "estati",
+    "pt": "estátua",
+    "fr": "estátua"
+   },
+   {
+    "kreyol": "chemen",
+    "pt": "caminho",
+    "fr": "caminho"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-19",
+  "theme": "Estoicismo",
+  "title": "Vigília filosófica noturna",
+  "elements": [
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   },
+   {
+    "kreyol": "lanp",
+    "pt": "lanterna",
+    "fr": "lanterne"
+   },
+   {
+    "kreyol": "kolòn",
+    "pt": "colunas",
+    "fr": "colonnes"
+   },
+   {
+    "kreyol": "woulo",
+    "pt": "pergaminho",
+    "fr": "pergaminho"
+   }
+  ]
+ },
+ {
+  "id": "estoicismo-20",
+  "theme": "Estoicismo",
+  "title": "Passeio sereno entre oliveiras",
+  "elements": [
+   {
+    "kreyol": "pye oliv",
+    "pt": "oliveira",
+    "fr": "olivier"
+   },
+   {
+    "kreyol": "chemen",
+    "pt": "caminho",
+    "fr": "caminho"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "moun saj",
+    "pt": "sábio/filósofo",
+    "fr": "sábio/filósofo"
+   }
+  ]
+ },
+ {
+  "id": "religiao",
+  "theme": "Religião",
+  "title": "Capela na colina e luz sagrada",
+  "elements": [
+   {
+    "kreyol": "legliz",
+    "pt": "igreja/capela",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   },
+   {
+    "kreyol": "pijon",
+    "pt": "pombas",
+    "fr": "colombes"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   }
+  ]
+ },
+ {
+  "id": "religiao-02",
+  "theme": "Religião",
+  "title": "Capela na montanha",
+  "elements": [
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "vitral",
+    "pt": "vitral",
+    "fr": "vitral"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "religiao-03",
+  "theme": "Religião",
+  "title": "Velas ao anoitecer",
+  "elements": [
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   }
+  ]
+ },
+ {
+  "id": "religiao-04",
+  "theme": "Religião",
+  "title": "Pomba sobre o jardim",
+  "elements": [
+   {
+    "kreyol": "pijon",
+    "pt": "pomba branca",
+    "fr": "pomba branca"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   }
+  ]
+ },
+ {
+  "id": "religiao-05",
+  "theme": "Religião",
+  "title": "Sinos da igreja",
+  "elements": [
+   {
+    "kreyol": "klòch",
+    "pt": "sino",
+    "fr": "cloche"
+   },
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "vitral",
+    "pt": "vitral",
+    "fr": "vitral"
+   }
+  ]
+ },
+ {
+  "id": "religiao-06",
+  "theme": "Religião",
+  "title": "Interior da capela",
+  "elements": [
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "vitral",
+    "pt": "vitral",
+    "fr": "vitral"
+   }
+  ]
+ },
+ {
+  "id": "religiao-07",
+  "theme": "Religião",
+  "title": "Caminho de flores",
+  "elements": [
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "pijon",
+    "pt": "pomba branca",
+    "fr": "pomba branca"
+   },
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   }
+  ]
+ },
+ {
+  "id": "religiao-08",
+  "theme": "Religião",
+  "title": "Vitral iluminado",
+  "elements": [
+   {
+    "kreyol": "vitral",
+    "pt": "vitral",
+    "fr": "vitral"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   }
+  ]
+ },
+ {
+  "id": "religiao-09",
+  "theme": "Religião",
+  "title": "Pequena igreja da vila",
+  "elements": [
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "klòch",
+    "pt": "sino",
+    "fr": "cloche"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "religiao-10",
+  "theme": "Religião",
+  "title": "Celebração ao ar livre",
+  "elements": [
+   {
+    "kreyol": "pijon",
+    "pt": "pomba branca",
+    "fr": "pomba branca"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   }
+  ]
+ },
+ {
+  "id": "religiao-11",
+  "theme": "Religião",
+  "title": "Campanário ao amanhecer",
+  "elements": [
+   {
+    "kreyol": "klòch",
+    "pt": "sino",
+    "fr": "cloche"
+   },
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "pijon",
+    "pt": "pomba branca",
+    "fr": "pomba branca"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   }
+  ]
+ },
+ {
+  "id": "religiao-12",
+  "theme": "Religião",
+  "title": "Vitral gótico multicolorido",
+  "elements": [
+   {
+    "kreyol": "vitral",
+    "pt": "vitral",
+    "fr": "vitral"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   }
+  ]
+ },
+ {
+  "id": "religiao-13",
+  "theme": "Religião",
+  "title": "Altar com velas e escrituras",
+  "elements": [
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   }
+  ]
+ },
+ {
+  "id": "religiao-14",
+  "theme": "Religião",
+  "title": "Revoada de pombas brancas",
+  "elements": [
+   {
+    "kreyol": "pijon",
+    "pt": "pomba branca",
+    "fr": "pomba branca"
+   },
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "klòch",
+    "pt": "sino",
+    "fr": "cloche"
+   }
+  ]
+ },
+ {
+  "id": "religiao-15",
+  "theme": "Religião",
+  "title": "Procissão com flores e velas",
+  "elements": [
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   },
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   }
+  ]
+ },
+ {
+  "id": "religiao-16",
+  "theme": "Religião",
+  "title": "Interior sereno do santuário",
+  "elements": [
+   {
+    "kreyol": "chèz",
+    "pt": "cadeiras",
+    "fr": "cadeiras"
+   },
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   },
+   {
+    "kreyol": "vitral",
+    "pt": "vitral",
+    "fr": "vitral"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   }
+  ]
+ },
+ {
+  "id": "religiao-17",
+  "theme": "Religião",
+  "title": "Capela costeira com cruz de pedra",
+  "elements": [
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "pijon",
+    "pt": "pomba branca",
+    "fr": "pomba branca"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   }
+  ]
+ },
+ {
+  "id": "religiao-18",
+  "theme": "Religião",
+  "title": "Grande sino de bronze",
+  "elements": [
+   {
+    "kreyol": "klòch",
+    "pt": "sino",
+    "fr": "cloche"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "pijon",
+    "pt": "pomba branca",
+    "fr": "pomba branca"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   }
+  ]
+ },
+ {
+  "id": "religiao-19",
+  "theme": "Religião",
+  "title": "Jardim de oração com lírios",
+  "elements": [
+   {
+    "kreyol": "flè",
+    "pt": "flores",
+    "fr": "fleurs"
+   },
+   {
+    "kreyol": "pijon",
+    "pt": "pomba branca",
+    "fr": "pomba branca"
+   },
+   {
+    "kreyol": "kwa",
+    "pt": "cruz",
+    "fr": "croix"
+   },
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   }
+  ]
+ },
+ {
+  "id": "religiao-20",
+  "theme": "Religião",
+  "title": "Vigília de velas sob as estrelas",
+  "elements": [
+   {
+    "kreyol": "bouji",
+    "pt": "velas",
+    "fr": "bougies"
+   },
+   {
+    "kreyol": "limyè",
+    "pt": "luzes/holofotes",
+    "fr": "luzes/holofotes"
+   },
+   {
+    "kreyol": "legliz",
+    "pt": "igreja",
+    "fr": "église/chapelle"
+   },
+   {
+    "kreyol": "liv",
+    "pt": "livro",
+    "fr": "livre"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia",
+  "theme": "Gastronomia",
+  "title": "Cozinha aconchegante",
+  "elements": [
+   {
+    "kreyol": "chodyè",
+    "pt": "panela/caldeirão",
+    "fr": "casserole/chaudron"
+   },
+   {
+    "kreyol": "pen",
+    "pt": "pão",
+    "fr": "pain"
+   },
+   {
+    "kreyol": "fwi",
+    "pt": "frutas",
+    "fr": "fruits"
+   },
+   {
+    "kreyol": "piman",
+    "pt": "pimentas",
+    "fr": "piments"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-02",
+  "theme": "Gastronomia",
+  "title": "Mercado de frutas",
+  "elements": [
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   },
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   },
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-03",
+  "theme": "Gastronomia",
+  "title": "Panela no fogão",
+  "elements": [
+   {
+    "kreyol": "chodyè",
+    "pt": "chodyè",
+    "fr": "chodyè"
+   },
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   },
+   {
+    "kreyol": "boutèy",
+    "pt": "garrafa",
+    "fr": "garrafa"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-04",
+  "theme": "Gastronomia",
+  "title": "Mesa posta para o jantar",
+  "elements": [
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   },
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   },
+   {
+    "kreyol": "kouto",
+    "pt": "faca",
+    "fr": "faca"
+   },
+   {
+    "kreyol": "fouchèt",
+    "pt": "garfo",
+    "fr": "garfo"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-05",
+  "theme": "Gastronomia",
+  "title": "Pães recém-assados",
+  "elements": [
+   {
+    "kreyol": "pen",
+    "pt": "pen",
+    "fr": "pen"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   },
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   },
+   {
+    "kreyol": "boutèy",
+    "pt": "garrafa",
+    "fr": "garrafa"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-06",
+  "theme": "Gastronomia",
+  "title": "Colheita de pimentas",
+  "elements": [
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   },
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-07",
+  "theme": "Gastronomia",
+  "title": "Cozinha haitiana",
+  "elements": [
+   {
+    "kreyol": "chodyè",
+    "pt": "chodyè",
+    "fr": "chodyè"
+   },
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "pen",
+    "pt": "pen",
+    "fr": "pen"
+   },
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-08",
+  "theme": "Gastronomia",
+  "title": "Café da manhã no campo",
+  "elements": [
+   {
+    "kreyol": "pen",
+    "pt": "pen",
+    "fr": "pen"
+   },
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   },
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-09",
+  "theme": "Gastronomia",
+  "title": "Feira de legumes",
+  "elements": [
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   },
+   {
+    "kreyol": "boutèy",
+    "pt": "garrafa",
+    "fr": "garrafa"
+   },
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-10",
+  "theme": "Gastronomia",
+  "title": "Banquete sob as lanternas",
+  "elements": [
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   },
+   {
+    "kreyol": "fouchèt",
+    "pt": "garfo",
+    "fr": "garfo"
+   },
+   {
+    "kreyol": "chodyè",
+    "pt": "chodyè",
+    "fr": "chodyè"
+   },
+   {
+    "kreyol": "pen",
+    "pt": "pen",
+    "fr": "pen"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-11",
+  "theme": "Gastronomia",
+  "title": "Fogão a lenha com caldeirão",
+  "elements": [
+   {
+    "kreyol": "chodyè",
+    "pt": "chodyè",
+    "fr": "chodyè"
+   },
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   },
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "boutèy",
+    "pt": "garrafa",
+    "fr": "garrafa"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-12",
+  "theme": "Gastronomia",
+  "title": "Pães artesanais crocantes",
+  "elements": [
+   {
+    "kreyol": "pen",
+    "pt": "pen",
+    "fr": "pen"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   },
+   {
+    "kreyol": "kouto",
+    "pt": "faca",
+    "fr": "faca"
+   },
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-13",
+  "theme": "Gastronomia",
+  "title": "Mesa com frutas tropicais",
+  "elements": [
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   },
+   {
+    "kreyol": "boutèy",
+    "pt": "garrafa",
+    "fr": "garrafa"
+   },
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-14",
+  "theme": "Gastronomia",
+  "title": "Caldo saboroso na panela",
+  "elements": [
+   {
+    "kreyol": "chodyè",
+    "pt": "chodyè",
+    "fr": "chodyè"
+   },
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   },
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-15",
+  "theme": "Gastronomia",
+  "title": "Mesa posta para banquete",
+  "elements": [
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   },
+   {
+    "kreyol": "fouchèt",
+    "pt": "garfo",
+    "fr": "garfo"
+   },
+   {
+    "kreyol": "kouto",
+    "pt": "faca",
+    "fr": "faca"
+   },
+   {
+    "kreyol": "pen",
+    "pt": "pen",
+    "fr": "pen"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-16",
+  "theme": "Gastronomia",
+  "title": "Banca de pimentas e temperos",
+  "elements": [
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "boutèy",
+    "pt": "garrafa",
+    "fr": "garrafa"
+   },
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   },
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-17",
+  "theme": "Gastronomia",
+  "title": "Café da manhã com pão e frutas",
+  "elements": [
+   {
+    "kreyol": "pen",
+    "pt": "pen",
+    "fr": "pen"
+   },
+   {
+    "kreyol": "fwi",
+    "pt": "fwi",
+    "fr": "fwi"
+   },
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-18",
+  "theme": "Gastronomia",
+  "title": "Cozinhando ao ar livre no quintal",
+  "elements": [
+   {
+    "kreyol": "chodyè",
+    "pt": "chodyè",
+    "fr": "chodyè"
+   },
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   },
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "legim",
+    "pt": "legumes",
+    "fr": "legumes"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-19",
+  "theme": "Gastronomia",
+  "title": "Garrafas artesanais e pimentas",
+  "elements": [
+   {
+    "kreyol": "boutèy",
+    "pt": "garrafa",
+    "fr": "garrafa"
+   },
+   {
+    "kreyol": "piman",
+    "pt": "piman",
+    "fr": "piman"
+   },
+   {
+    "kreyol": "kouto",
+    "pt": "faca",
+    "fr": "faca"
+   },
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   }
+  ]
+ },
+ {
+  "id": "gastronomia-20",
+  "theme": "Gastronomia",
+  "title": "Jantar especial acolhedor",
+  "elements": [
+   {
+    "kreyol": "tab",
+    "pt": "mesa",
+    "fr": "mesa"
+   },
+   {
+    "kreyol": "asyèt",
+    "pt": "prato",
+    "fr": "prato"
+   },
+   {
+    "kreyol": "fouchèt",
+    "pt": "garfo",
+    "fr": "garfo"
+   },
+   {
+    "kreyol": "chodyè",
+    "pt": "chodyè",
+    "fr": "chodyè"
+   }
+  ]
+ }
+]

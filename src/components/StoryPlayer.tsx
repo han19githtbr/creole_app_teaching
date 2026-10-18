@@ -116,6 +116,20 @@ function wrapLines(context: CanvasRenderingContext2D, text: string, maxWidth: nu
   return kept;
 }
 
+/** Triângulo da ponta da seta: a ponta fica exatamente no ponto (ax, ay) do objeto, vindo do rótulo (fx, fy). */
+function arrowHeadPoints(ax: number, ay: number, fx: number, fy: number, size: number): [number, number][] {
+  const dx = ax - fx;
+  const dy = ay - fy;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const bx = ax - ux * size;
+  const by = ay - uy * size;
+  const px = -uy * size * 0.58;
+  const py = ux * size * 0.58;
+  return [[ax, ay], [bx + px, by + py], [bx - px, by - py]];
+}
+
 export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const { language: currentAppLanguage } = useAppLanguage();
   const storyLang = story.language || currentAppLanguage;
@@ -235,7 +249,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const duration = mediaDuration || story.audioDuration || lastCaptionEnd || 0;
 
   const bankImage = useBankImage(story.imageSrc);
-  const sceneElements = useMemo(() => bankImage?.elements ?? [], [bankImage]);
+  const sceneElements = useMemo(() => bankImage?.storyElements ?? bankImage?.elements ?? [], [bankImage]);
 
   // Camada de VIDA: descobre onde há água/chão na imagem (qualquer imagem: banco, SVG ou gerada por IA)
   // e cria o "elenco" animado da cena. O mesmo render(t) alimenta o player e o vídeo exportado.
@@ -545,20 +559,33 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       // Fio fino do rótulo até o objeto (o ponto fica no objeto, o texto fica acima).
       context.save();
       context.globalAlpha = visual.opacity * (isActive ? 0.95 : 0.7);
-      context.strokeStyle = "rgba(245, 207, 114, .9)";
-      context.lineWidth = isActive ? 2.5 : 2;
+      // Seta: fio com contorno escuro (legível sobre qualquer cenário) e ponta exatamente sobre o objeto.
+      const headSize = isActive ? 17 : 14;
+      const tip = arrowHeadPoints(item.ax, item.ay, centerX, centerY, headSize);
       context.lineCap = "round";
+      context.lineJoin = "round";
+      context.strokeStyle = "rgba(18, 32, 26, .85)";
+      context.lineWidth = isActive ? 6 : 5;
       context.beginPath();
-      context.moveTo(item.ax, item.ay);
-      context.lineTo(centerX, centerY);
+      context.moveTo(centerX, centerY);
+      context.lineTo((tip[1][0] + tip[2][0]) / 2, (tip[1][1] + tip[2][1]) / 2);
+      context.stroke();
+      context.strokeStyle = "#f5cf72";
+      context.lineWidth = isActive ? 3 : 2.4;
+      context.beginPath();
+      context.moveTo(centerX, centerY);
+      context.lineTo((tip[1][0] + tip[2][0]) / 2, (tip[1][1] + tip[2][1]) / 2);
       context.stroke();
       context.fillStyle = "#f5cf72";
       context.strokeStyle = "rgba(18, 32, 26, .9)";
-      context.lineWidth = 1.5;
+      context.lineWidth = 2;
       context.beginPath();
-      context.arc(item.ax, item.ay, isActive ? 5.5 : 4.5, 0, Math.PI * 2);
-      context.fill();
+      context.moveTo(tip[0][0], tip[0][1]);
+      context.lineTo(tip[1][0], tip[1][1]);
+      context.lineTo(tip[2][0], tip[2][1]);
+      context.closePath();
       context.stroke();
+      context.fill();
       context.restore();
 
       drawLivingElementOnCanvas(context, {
@@ -1373,17 +1400,23 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   aria-hidden="true"
                   style={{ opacity: visual.opacity * (active ? 0.95 : 0.7) }}
                 >
-                  <line
-                    x1={(anchorLeftPct / 100) * stageSize.w}
-                    y1={(anchorTopPct / 100) * stageSize.h}
-                    x2={(left / 100) * stageSize.w}
-                    y2={(top / 100) * stageSize.h}
-                    stroke="#f5cf72"
-                    strokeOpacity={0.9}
-                    strokeWidth={active ? 1.6 : 1.2}
-                    strokeLinecap="round"
-                  />
-                  <circle cx={(anchorLeftPct / 100) * stageSize.w} cy={(anchorTopPct / 100) * stageSize.h} r={active ? 3.4 : 2.8} fill="#f5cf72" stroke="rgba(18,32,26,.9)" strokeWidth={1} />
+                  {(() => {
+                    const ax = (anchorLeftPct / 100) * stageSize.w;
+                    const ay = (anchorTopPct / 100) * stageSize.h;
+                    const lx = (left / 100) * stageSize.w;
+                    const ly = (top / 100) * stageSize.h;
+                    const head = arrowHeadPoints(ax, ay, lx, ly, active ? 9 : 7.5);
+                    const bx = (head[1][0] + head[2][0]) / 2;
+                    const by = (head[1][1] + head[2][1]) / 2;
+                    const pts = head.map((p) => p.join(",")).join(" ");
+                    return (
+                      <>
+                        <line x1={lx} y1={ly} x2={bx} y2={by} stroke="rgba(18,32,26,.85)" strokeWidth={active ? 4.4 : 3.8} strokeLinecap="round" />
+                        <line x1={lx} y1={ly} x2={bx} y2={by} stroke="#f5cf72" strokeWidth={active ? 2.2 : 1.8} strokeLinecap="round" />
+                        <polygon points={pts} fill="#f5cf72" stroke="rgba(18,32,26,.9)" strokeWidth={1.4} strokeLinejoin="round" />
+                      </>
+                    );
+                  })()}
                 </svg>
               )}
               <div

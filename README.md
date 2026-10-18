@@ -184,6 +184,7 @@ Desempenho medido: ~8 ms por quadro e ~17 KB de SVG por quadro; o resultado é d
 ### Correções de estabilidade (tela "This page couldn't load")
 
 - **`public/ghibli/gastronomia.svg`:** o filtro `softGlow` estava sem a tag de fechamento `</filter>`, o que tornava o SVG inválido (a imagem principal de gastronomia não carregava). Corrigido.
+- **Transcrição automática da narração (`/api/stories/transcribe`):** a rota agora declara `maxDuration = 300` (sem isso a hospedagem cortava a conexão antes da resposta e o navegador mostrava `Failed to fetch` / `ERR_CONNECTION_RESET`), usa um orçamento total de tempo para a IA, não repete modelos e devolve o motivo quando o Gemini falha. O formulário (`StoryForm.tsx`) tenta de novo em caso de 502/503/504 ou queda de rede e **mostra um aviso** em vez de falhar em silêncio; os trechos de tempo continuam prontos para digitação manual. Requer `GEMINI_API_KEY` configurada no servidor.
 
 - **Erros de sintaxe** que impediam compilar: `default:` faltando no `switch` de `calculateLivingElementState` (`storyLifeEngine.ts`) e `}` faltando no bloco de exportação offline (`StoryPlayer.tsx`).
 - **Telas de erro amigáveis:** `src/app/error.tsx` e `src/app/global-error.tsx` com "Tentar de novo" e "Voltar", no lugar da página genérica.

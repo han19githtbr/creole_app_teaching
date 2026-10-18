@@ -128,29 +128,49 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
   async function autoTranscribeAudio(file: File, duration: number) {
     setTranscribing(true);
     setTranscribeNotice(null);
+    const MAX_ATTEMPTS = 2;
+    let failure = "";
     try {
-      const formData = new FormData();
-      formData.append("audio", file);
-      formData.append("language", language);
-      formData.append("duration", String(duration));
-      const res = await fetch("/api/stories/transcribe", {
-        method: "POST",
-        body: formData,
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data.captions) && data.captions.length > 0) {
-          setCaptions(data.captions);
-          setCaptionsEdited(true);
-          if (data.message) {
-            setTranscribeNotice(data.message);
-          } else {
-            setTranscribeNotice(`Narração transcrita e traduzida automaticamente (${targetLangLabel} e Português)! Você pode editar os campos abaixo livremente.`);
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try {
+          const formData = new FormData();
+          formData.append("audio", file);
+          formData.append("language", language);
+          formData.append("duration", String(duration));
+          const res = await fetch("/api/stories/transcribe", {
+            method: "POST",
+            body: formData,
+            // A IA pode levar alguns minutos com áudios longos; depois disso desistimos com uma mensagem clara.
+            signal: AbortSignal.timeout(280_000),
+          });
+          if (!res.ok) {
+            const body = await res.json().catch(() => null);
+            // Erros do servidor (4xx/5xx) não melhoram tentando de novo, exceto 502/503/504.
+            failure = body?.error || `O servidor respondeu ${res.status}.`;
+            if (![502, 503, 504].includes(res.status)) break;
+            continue;
           }
+          const data = await res.json();
+          if (Array.isArray(data.captions) && data.captions.length > 0) {
+            setCaptions(data.captions);
+            setCaptionsEdited(true);
+            setTranscribeNotice(
+              data.message ??
+                `Narração transcrita e traduzida automaticamente (${targetLangLabel} e Português)! Você pode editar os campos abaixo livremente.`
+            );
+            return;
+          }
+          failure = "A transcrição voltou vazia.";
+          break;
+        } catch (err) {
+          console.warn(`Transcrição automática falhou (tentativa ${attempt}):`, err);
+          failure = "Não foi possível falar com o servidor (a conexão caiu ou demorou demais).";
         }
       }
-    } catch (err) {
-      console.warn("Transcrição automática falhou:", err);
+      // Antes a falha era silenciosa: agora o aluno/admin sabe que precisa digitar ou tentar de novo.
+      setTranscribeNotice(
+        `A transcrição automática não funcionou: ${failure} Os trechos de tempo continuam prontos; digite o texto manualmente ou envie o áudio de novo para tentar outra vez.`
+      );
     } finally {
       setTranscribing(false);
     }
@@ -435,12 +455,21 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
           </div>
         )}
 
-        {transcribeNotice && !transcribing && (
-          <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 p-3 text-xs text-emerald-700 dark:text-emerald-300 font-medium border border-emerald-500/30">
-            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-            {transcribeNotice}
-          </div>
-        )}
+        {transcribeNotice && !transcribing && (() => {
+          const failed = /não funcionou|Não foi possível/.test(transcribeNotice);
+          return (
+            <div
+              className={
+                failed
+                  ? "flex items-center gap-2 rounded-lg bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-300 font-medium border border-amber-500/40"
+                  : "flex items-center gap-2 rounded-lg bg-emerald-500/10 p-3 text-xs text-emerald-700 dark:text-emerald-300 font-medium border border-emerald-500/30"
+              }
+            >
+              <CheckCircle2 className={failed ? "h-4 w-4 shrink-0 text-amber-600" : "h-4 w-4 shrink-0 text-emerald-600"} />
+              {transcribeNotice}
+            </div>
+          );
+        })()}
 
         <div className="space-y-3">
           {captions.map((caption, index) => {

@@ -732,9 +732,11 @@ export function drawLivingElementOnCanvas(
     visualScale: number;
     isActive: boolean;
     fontSize?: number;
+    /** Ícone do próprio elemento (ex.: 🥁 para "tambor"). Sem ele, cai no emoji da ação. */
+    icon?: string;
   }
 ) {
-  const { centerX, centerY, kreyol, portuguese, state, visualOpacity, visualScale, isActive, fontSize = 21 } = params;
+  const { centerX, centerY, kreyol, portuguese, state, visualOpacity, visualScale, isActive, fontSize = 21, icon } = params;
   if (visualOpacity <= 0.01) return;
 
   context.save();
@@ -791,7 +793,7 @@ export function drawLivingElementOnCanvas(
   context.font = `${Math.round(fontSize * 0.95)}px "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillText(state.badgeEmoji, pillX + fontSize * 1.05, 1);
+  context.fillText(icon ?? state.badgeEmoji, pillX + fontSize * 1.05, 1);
 
   // Texto Kreyòl · Português (identificador limpo)
   context.font = `700 ${fontSize}px system-ui, -apple-system, sans-serif`;

@@ -11,6 +11,8 @@
  * assiste na plataforma. Sem CSS animado, sem aleatoriedade em tempo de execução (tudo parte de uma semente).
  */
 
+import { SURF_FIRST_SECONDS, SURF_PERIOD_SECONDS, SURF_RIDE_SECONDS } from "@/lib/storySoundscape";
+
 export const LIFE_W = 1200;
 export const LIFE_H = 800;
 
@@ -491,6 +493,30 @@ const THEME_KEYS: Array<[RegExp, string]> = [
   [/lazer/, "lazeres"], [/estoic/, "estoicismo"], [/relig/, "religiao"], [/gastron/, "gastronomia"],
 ];
 
+/** Surfista que cruza o mar de vez em quando (mesma agenda do som "surf" em storySoundscape). */
+function surfer(t: number, y0: number, y1: number): string {
+  if (t < SURF_FIRST_SECONDS) return "";
+  const local = (t - SURF_FIRST_SECONDS) % SURF_PERIOD_SECONDS;
+  if (local > SURF_RIDE_SECONDS) return "";
+  const p = local / SURF_RIDE_SECONDS;
+  const x = -90 + p * 1380;
+  const y = y0 + (y1 - y0) * 0.5 + Math.sin(t * 2.4) * 4;
+  const fade = Math.min(1, p / 0.08, (1 - p) / 0.08);
+  const lean = Math.sin(t * 2.4) * 4 - 6;
+  return `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})" opacity="${fade.toFixed(2)}">
+    <path d="M-86,20 Q-52,-34 -4,-8 Q30,-26 84,20 Z" fill="#e8f9ff" opacity=".92"/>
+    <path d="M-96,22 Q0,-6 98,22 L98,34 L-96,34 Z" fill="#5cc8e8" opacity=".85"/>
+    <g transform="rotate(${lean.toFixed(1)} 0 6)">
+      <ellipse cx="0" cy="4" rx="34" ry="4.5" fill="#ffd166" stroke="#c77d0a" stroke-width="1.4"/>
+      <path d="M-6,2 L-8,-20 M8,2 L6,-20" stroke="#25303b" stroke-width="5" stroke-linecap="round"/>
+      <path d="M0,-20 L2,-42" stroke="#e63946" stroke-width="9" stroke-linecap="round"/>
+      <path d="M2,-36 L-20,-28 M2,-36 L22,-30" stroke="#f1c27d" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="3" cy="-50" r="7" fill="#f1c27d"/>
+      <path d="M-3,-54 Q3,-62 10,-54" fill="#3b2a20"/>
+    </g>
+  </g>`;
+}
+
 export function createSceneLife(input: LifeInput): LifeScene {
   const text = norm([input.title ?? "", ...(input.elements ?? []).flatMap((e) => [e.pt ?? "", e.kreyol ?? "", e.fr ?? ""])].join(" "));
   const themeNorm = norm(input.theme ?? "");
@@ -514,6 +540,7 @@ export function createSceneLife(input: LifeInput): LifeScene {
   if (wantsSea && wz) {
     const mid = wz.y0 + (wz.y1 - wz.y0) * 0.5, lo = wz.y0 + (wz.y1 - wz.y0) * 0.78;
     add("ondas", 1, (t) => waves(t, wz.y0, wz.y1, input.sceneId) + shimmer(t, wz.y0, wz.y1, input.sceneId));
+    if (wz.y1 - wz.y0 >= 100) add("surfista", mid, (t) => surfer(t, wz.y0, wz.y1));
     const dir = r() > 0.5 ? 1 : -1;
     const boatTheme = ["turismo", "geografia", "lazeres", "historia", "natureza", "religiao", "cultura"].includes(theme) || has(/barco|bato|veleiro|porto|canoa|pesc|mar|lanme|praia|rio|lago|ilha/);
     if (boatTheme) {
@@ -687,7 +714,7 @@ export function createSceneLife(input: LifeInput): LifeScene {
   let birds = 0;
   let butterflies = 0;
   names.forEach((name, i) => {
-    if (name === "ondas") keep.push(i);
+    if (name === "ondas" || name === "surfista") keep.push(i);
     else if (AMBIENT_BIRDS.has(name) && birds++ < 2) keep.push(i);
     else if (name === "borboletas" && butterflies++ < 1) keep.push(i);
   });

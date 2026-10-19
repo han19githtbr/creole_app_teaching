@@ -84,6 +84,7 @@ Toda a animação depende somente do **tempo atual do áudio** e da **duração 
 
 - **Legendas**: aparecem entre o início e o fim definidos, lidos do relógio do áudio.
 - **Elementos da cena**: cada elemento fica oculto até o seu momento, entra com fade e zoom em 0,6 s, fica em destaque (cor dourada) até o início do próximo e depois permanece visível, discreto. Sem marcação manual, os 4 elementos se dividem igualmente ao longo da narração (em 60 s: 0, 15, 30 e 45 s). Os momentos podem ser ajustados no formulário (campo **Elementos da cena**) para coincidir com o instante em que você fala cada palavra; o botão **Distribuir automaticamente** volta à divisão igual.
+- **Até 8 rótulos por imagem**: os elementos desenhados da lição (até 4) mais detalhes gerais da própria cena (sol, nuvem, céu, chão/grama/areia/água, montanhas ao fundo), cada um com posição medida na ilustração.
 - **Rótulos que apontam para o objeto**: cada nome tem uma seta cuja ponta cai **dentro do objeto que ele descreve**, nas 280 ilustrações do banco (detalhes em [Rótulos que apontam para o objeto certo](#rótulos-que-apontam-para-o-objeto-certo)). O elemento que não está desenhado numa ilustração não recebe rótulo.
 - **Legenda móvel no player**: a caixa de legenda pode ser arrastada para qualquer ponto do quadro da cena, para que ela não esconda elementos da ilustração (detalhes em [Legenda móvel no player](#legenda-móvel-no-player)).
 - **Cena**: zoom suave (de 100% a 105%) e leve deriva distribuídos por **toda** a narração, qualquer que seja a duração. A barra de progresso e o contador `mm:ss / mm:ss` usam a duração real.
@@ -156,9 +157,30 @@ python3 build-anchors.py                # requer numpy e scipy; reescreve src/li
 
 `bank-elements.json` é a lista de elementos por imagem usada pelo script (gerada a partir de `imageBank.ts`; atualize-a se o banco mudar).
 
+### Mais detalhes por imagem (até 8 rótulos)
+
+Além dos elementos da lição, cada imagem rotula detalhes gerais que existem no desenho: **sol (ou lua), nuvem, céu, chão (grama, areia, piso ou água) e montanhas ao fundo**. As posições ficam em `src/lib/storyElementExtras.json` (`id → [[detalhe, x, y], ...]`) e os nomes em Kreyòl/Français/Português em `EXTRA_DETAIL_NAMES` (`imageBank.ts`). Cada detalhe só entra se estiver **visível** na ilustração (o céu, por exemplo, não é rotulado em cenas de interior), e o total por imagem é limitado a 8. Resultado atual: 78 imagens com 8 rótulos, 116 com 7, 42 com 6 e as demais com 3 a 5 (cenas com poucos elementos desenhados ou internas). Os detalhes foram detectados e medidos a partir dos mesmos objetos renderizados dos SVGs (sol = pico de brilho; céu conferido por cor contra o gradiente do céu). Os scripts dessa etapa não estão no repositório; para regenerar, repita a lógica: renderize os nós do SVG (`measure.mjs`), escolha o nó de sol/nuvem/chão, calcule o ponto mais interno da parte visível e salve em `storyElementExtras.json`. Os rótulos extras não têm marcação de tempo própria: entram divididos igualmente na narração, depois dos elementos da lição.
+
+### Sons da cena (`src/lib/storySoundscape.ts`)
+
+Cada vídeo tem **sons característicos dos elementos e do ambiente**, todos sintetizados com Web Audio (sem arquivos de áudio e sem direitos autorais):
+
+- **Som por elemento:** no instante em que o rótulo de um elemento aparece, toca o som dele (passarinho, onda, tambor, avião, helicóptero, sino, violão, piano, galinha, cabra, cavalo, pato, trator, canhão, projetor de cinema, pipoca, bip de robô/tela, borbulhar da panela, tilintar de talheres, etc.). A tabela `ELEMENT_SOUND` cobre todos os 121 elementos do banco e os detalhes gerais.
+- **Ambiente do tema:** natureza (pássaros e vento), turismo (gaivotas, avião e helicóptero passando), cultura e dança (tambores), música (violão e piano), tecnologia (bips e drone), vida no interior (pássaros, galinha, cabra, trator), história (vento, sino, cavalo), cinema (projetor, pipoca, plateia), religião (sino e pomba), gastronomia (borbulhar e talheres) e assim por diante. Cenas com água ganham ondas.
+- **Surfistas:** em cenas com mar largo, de tempos em tempos uma onda grande passa com um surfista (`surfer` em `storySceneLife.ts`) e o som de onda grande toca junto (`SURF_*` em `storySoundscape.ts`).
+- **No vídeo baixado:** os sons são renderizados em trechos de 30 s (`OfflineAudioContext`) e somados à narração antes da codificação AAC, então o MP4 tem exatamente o que se ouve no player. No botão **Sons da cena** do player dá para ligar/desligar. A gravação em tempo real (usada só quando o navegador não tem WebCodecs) não inclui os sons.
+- O plano de sons é determinístico (`buildSoundPlan`): a mesma história sempre soa igual.
+
+### Vídeo exportado mais nítido
+
+- **Cena bem maior no vídeo vertical (stories):** a cena ocupa a largura inteira do quadro, em uma janela de 1080×1120 (antes ~992×661), e a "câmera" desliza até o elemento em destaque; os rótulos que estão fora da janela naquele momento não são desenhados.
+- **Sem escurecer a cena:** o sombreado agora fica só no fundo e nas faixas de texto.
+- **Rótulos e setas maiores** (31 px no destaque em vez de 19 px) e mais legíveis no celular.
+- **Mais qualidade de codificação:** H.264 a 16 Mbps (stories) e 12 Mbps (feed), áudio AAC 192 kbps; o WhatsApp e o Instagram recomprimem o vídeo, então uma entrada de maior qualidade chega melhor ao final.
+
 ### Cenas Vivas: todas as imagens ganham vida (`src/lib/storySceneLife.ts`)
 
-> **Cena limpa (atual):** para o vídeo ficar claro e cada elemento fácil de identificar, a camada de vida agora mostra apenas animações **ambientes discretas**: ondas e brilho na água, no máximo 2 aves (gaivotas, pássaros, pombas, águia) e 1 borboleta. Pessoas, animais, barcos, tubarão e cardume, confete, brilhos e folhas **não são mais desenhados**, porque cobriam os objetos rotulados e não pertenciam à ilustração. O filtro está no final de `createSceneLife` (`keep`/`AMBIENT_BIRDS`); os atores descritos abaixo continuam no código, mas só os ambientes passam. Para trazer de volta algum ator, inclua o nome dele nesse filtro.
+> **Cena limpa (atual):** para o vídeo ficar claro e cada elemento fácil de identificar, a camada de vida agora mostra apenas animações **ambientes discretas**: ondas e brilho na água, um surfista que passa de vez em quando, no máximo 2 aves (gaivotas, pássaros, pombas, águia) e 1 borboleta. Pessoas, animais, barcos, tubarão e cardume, confete, brilhos e folhas **não são mais desenhados**, porque cobriam os objetos rotulados e não pertenciam à ilustração. O filtro está no final de `createSceneLife` (`keep`/`AMBIENT_BIRDS`); os atores descritos abaixo continuam no código, mas só os ambientes passam. Para trazer de volta algum ator, inclua o nome dele nesse filtro.
 
 Antes, só as cenas principais traziam animação dentro do próprio SVG; as outras ~270 variações e as imagens geradas por IA eram estáticas. Agora **toda cena** (as 280 do banco, as de IA vetoriais e as de IA rasterizadas) recebe uma **camada de vida** desenhada por cima da imagem, imitando o mundo real:
 
@@ -653,6 +675,8 @@ Arquivos principais das histórias:
 | `src/lib/audioVoiceActivity.ts` | Detecção de voz (VAD via Web Audio API) e sincronização estrita da digitação da legenda com as falas e pausas do áudio |
 | `src/lib/storyLifeEngine.ts` | Motor de vida dos elementos da imagem (animações de borboleta voando, asas, farfalhar, etc.) |
 | `src/components/StoryPlayer.tsx` | Player (incluindo a legenda arrastável), setas dos rótulos e exportação do vídeo vertical |
+| `src/lib/storySoundscape.ts` | Sons sintetizados dos elementos e do ambiente (player e exportação) |
+| `src/lib/storyElementExtras.json` | Posição dos detalhes gerais da cena (sol, nuvem, céu, chão...) |
 | `src/lib/storyElementAnchors.json` | Posição medida de cada elemento em cada ilustração (`null` = não desenhado) |
 | `scripts/ghibli/anchors/` | Medição e mapeamento que geram `storyElementAnchors.json` |
 | `src/components/LoadingSpinner.tsx` | Indicador de carregamento (círculo verde girando + porcentagem) usado em todo o app |

@@ -22,7 +22,7 @@ import {
   measureLivingPill,
 } from "@/lib/storyLifeEngine";
 import { Muxer, ArrayBufferTarget } from "mp4-muxer";
-import { resolveLabelCollisions } from "@/lib/storyLabelLayout";
+import { getElementIcon } from "@/lib/storyElementIcon";
 import { buildSvgLayerKit, loadSvgImage, rasterizeLayer, releaseSvgImage } from "@/lib/storySvgLayers";
 import { analyzeSceneZones, createSceneLife, lifeSvgDocument, type SceneZones } from "@/lib/storySceneLife";
 import { useAudioVoiceActivity, computeCaptionTyping } from "@/lib/audioVoiceActivity";
@@ -575,21 +575,23 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const ay = scene.y + scene.height * (anchor.top / 100);
       return { element, label, ax, ay, cx: ax, cy: ay - lift - size.height / 2, w: size.width * 1.06, h: size.height * 1.06 };
     });
-    // Afasta rótulos que se sobreporiam (posições estáveis: não "pulam" durante o vídeo).
-    const offsets = resolveLabelCollisions(
-      items.map(({ cx, cy, w, h }) => ({ cx, cy, w, h })),
-      { x: view.x + 12, y: view.y + 12, w: view.w - 24, h: view.h - 24 },
-      12
-    );
-
-    for (const [index, item] of items.entries()) {
+    for (const item of items) {
       const visual = elementVisual(item.element, seconds);
+      // Um rótulo por vez: os que ainda não entraram ou já saíram não são desenhados.
       if (visual.phase === "hidden" || visual.opacity <= 0.01) continue;
       // Fora da janela do vídeo (a câmera está em outro ponto da cena): não desenha.
       if (item.ax < view.x + 8 || item.ax > view.x + view.w - 8 || item.ay < view.y + 8 || item.ay > view.y + view.h - 8) continue;
       const isActive = visual.phase === "active";
-      const centerX = item.cx + offsets[index].dx;
-      const centerY = item.cy + offsets[index].dy;
+
+      // Mantém a pílula INTEIRA dentro do quadro (nada cortado nas bordas).
+      const fontSize = isActive ? activeFont : idleFont;
+      const pill = measureLivingPill(context, item.label, item.element.pt, fontSize);
+      const halfW = (pill.width * visual.scale * (isActive ? 1.05 : 1)) / 2 + 8;
+      const halfH = (pill.height * visual.scale * (isActive ? 1.05 : 1)) / 2 + 8;
+      const edge = Math.max(12, view.h * 0.03);
+      const clampTo = (value: number, min: number, max: number) => (min > max ? (min + max) / 2 : Math.min(max, Math.max(min, value)));
+      const centerX = clampTo(item.cx, view.x + edge + halfW, view.x + view.w - edge - halfW);
+      const centerY = clampTo(item.cy, view.y + edge + halfH, view.y + view.h - edge - halfH);
 
       const livingState = calculateLivingElementState(
         item.element.pt,
@@ -641,7 +643,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         visualOpacity: visual.opacity * (isActive ? 1 : 0.88),
         visualScale: visual.scale,
         isActive,
-        fontSize: isActive ? activeFont : idleFont,
+        fontSize,
+        icon: getElementIcon(item.element),
       });
     }
   }
@@ -1362,35 +1365,24 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   }, []);
 
   const pillFontPx = Math.max(8, Math.min(12, stageSize.w * 0.0125));
-  const labelOffsets = useMemo(() => {
-    const rawAnchors = sceneLayout?.anchors;
-    const anchors = rawAnchors && rawAnchors.length > 0
-      ? rawAnchors
-      : [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }];
-    if (!anchors.length) return timeline.map(() => ({ x: 0, y: 0 }));
-    const imageScale = 1.03;
-    const imageCrop = 16 / 9 / (1200 / 800);
-    const boxes = timeline.map((element, index) => {
-      const anchor = anchors[index % anchors.length];
-      const chars = getElementLabel(element, storyLang).length + element.pt.length + 3;
-      const boxHeight = pillFontPx * 2.3;
-      const anchorY = (stageSize.h * (50 + (anchor.top - 50) * imageCrop * imageScale)) / 100;
-      return {
-        cx: (stageSize.w * (50 + (anchor.left - 50) * imageScale)) / 100,
-        // O rótulo fica acima do objeto, não em cima dele.
-        cy: anchorY - stageSize.h * 0.075 - boxHeight / 2,
-        anchorY,
-        w: pillFontPx * (0.62 * chars + 3.8) * 1.06,
-        h: boxHeight,
-      };
+  // Os rótulos aparecem um por vez, então não há o que afastar: cada um fica logo ACIMA do seu objeto.
+  // O limite de borda (nada cortado) é aplicado na hora de desenhar, com o tamanho real da pílula.
+  const labelLift = useMemo(
+    () => 7.5 + ((pillFontPx * 2.3) / 2 / Math.max(1, stageSize.h)) * 100,
+    [pillFontPx, stageSize.h]
+  );
+
+  // Tamanho real (px) de cada pílula, medido no DOM; serve para mantê-la inteira dentro do palco.
+  const [labelSizes, setLabelSizes] = useState<Record<number, { w: number; h: number }>>({});
+  const measureLabel = (index: number, el: HTMLDivElement | null) => {
+    if (!el) return;
+    const next = { w: el.offsetWidth, h: el.offsetHeight };
+    setLabelSizes((prev) => {
+      const old = prev[index];
+      if (old && Math.abs(old.w - next.w) <= 1 && Math.abs(old.h - next.h) <= 1) return prev;
+      return { ...prev, [index]: next };
     });
-    const resolved = resolveLabelCollisions(boxes, { x: 6, y: 6, w: stageSize.w - 12, h: stageSize.h - 12 }, 6);
-    // Deslocamento do rótulo em relação ao ponto do objeto, em % do palco.
-    return resolved.map((offset, index) => ({
-      x: (offset.dx / stageSize.w) * 100,
-      y: ((boxes[index].cy + offset.dy - boxes[index].anchorY) / stageSize.h) * 100,
-    }));
-  }, [timeline, sceneLayout, storyLang, stageSize, pillFontPx]);
+  };
 
   const durationLabel = formatStoryTime(duration);
 
@@ -1465,9 +1457,22 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const elementTargetLabel = getElementLabel(element, storyLang);
             const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active, elementTargetLabel);
 
-            const offset = labelOffsets[index] ?? { x: 0, y: 0 };
-            const left = 50 + (anchor.left - 50) * imageScale + frame.driftX + offset.x + (active ? living.dx : 0);
-            const top = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY + offset.y + (active ? living.dy : 0);
+            const rawLeft = 50 + (anchor.left - 50) * imageScale + frame.driftX + (active ? living.dx : 0);
+            const rawTop = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY - labelLift + (active ? living.dy : 0);
+
+            // Mantém a pílula INTEIRA dentro do palco (nada cortado nas bordas) e abaixo da faixa de títulos do topo.
+            const labelScale = visual.scale * (active ? 1.03 * living.scaleX : 1);
+            const measured = labelSizes[index];
+            const labelChars = elementTargetLabel.length + element.pt.length + 3;
+            const labelW = (measured?.w ?? pillFontPx * (0.62 * labelChars + 4.5)) * labelScale + 8;
+            const labelH = (measured?.h ?? pillFontPx * 2.3) * labelScale + 8;
+            const edgePad = 6;
+            const topSafe = stageSize.h >= 300 ? 52 : 38;
+            const clampPx = (value: number, min: number, max: number) => (min > max ? (min + max) / 2 : Math.min(max, Math.max(min, value)));
+            const leftPx = clampPx((rawLeft / 100) * stageSize.w, edgePad + labelW / 2, stageSize.w - edgePad - labelW / 2);
+            const topPx = clampPx((rawTop / 100) * stageSize.h, topSafe + labelH / 2, stageSize.h - edgePad - labelH / 2);
+            const left = (leftPx / stageSize.w) * 100;
+            const top = (topPx / stageSize.h) * 100;
 
             const anchorLeftPct = 50 + (anchor.left - 50) * imageScale + frame.driftX;
             const anchorTopPct = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
@@ -1537,6 +1542,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                 )}
 
                 <div
+                  ref={(el) => measureLabel(index, el)}
                   className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-[0.9em] py-[0.55em] leading-none shadow-lg backdrop-blur-md transition-colors duration-300 ${
                     active
                       ? "border-[#f5cf72] bg-[#f5cf72] text-[#18241d] font-bold ring-2 ring-[#f5cf72]/60 shadow-[0_0_18px_rgba(245,207,114,0.5)]"
@@ -1544,7 +1550,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   }`}
                   style={{ fontSize: `${pillFontPx}px` }}
                 >
-                  <span style={{ fontSize: "1.15em" }}>{living.badgeEmoji}</span>
+                  <span style={{ fontSize: "1.15em" }} aria-hidden="true">{getElementIcon(element)}</span>
                   <span className={`font-bold ${active ? "text-[#18241d]" : "text-[#f5cf72]"}`}>
                     {elementTargetLabel}
                   </span>

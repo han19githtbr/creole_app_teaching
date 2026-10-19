@@ -18,6 +18,8 @@ export interface TimelineElement extends BankElement {
   start: number;
   /** Fim do destaque: início do próximo elemento ou fim da narração. */
   end: number;
+  /** É o último rótulo da história: some suavemente antes do fim, deixando a cena limpa. */
+  fadesAtEnd?: boolean;
 }
 
 export type ElementPhase = "hidden" | "active" | "done";
@@ -27,6 +29,9 @@ const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2,
 
 /** Duração da animação de entrada de cada elemento, em segundos. */
 export const ELEMENT_ENTER_SECONDS = 0.6;
+
+/** Duração do desaparecimento do rótulo quando o próximo elemento entra, em segundos. */
+export const ELEMENT_EXIT_SECONDS = 0.35;
 
 /** Momentos padrão (sem marcação manual): os elementos se dividem igualmente na narração. */
 export function defaultElementStarts(count: number, duration: number): number[] {
@@ -55,11 +60,13 @@ export function buildElementTimeline(
     const next = order[position + 1];
     ends.set(elementIndex, next === undefined ? (duration > 0 ? duration : starts[elementIndex]) : starts[next]);
   });
+  const lastIndex = order.length ? order[order.length - 1] : -1;
   // A ordem original (a do banco de imagens) é mantida para o layout não "pular".
   return elements.map((element, index) => ({
     ...element,
     start: starts[index],
     end: Math.max(starts[index], ends.get(index) ?? starts[index]),
+    fadesAtEnd: index === lastIndex,
   }));
 }
 
@@ -75,16 +82,29 @@ export interface ElementVisual {
   scale: number;
 }
 
-/** Aparência do elemento no instante `time`: entra com fade/zoom e fica em destaque durante a fala. */
+/**
+ * Aparência do elemento no instante `time`: entra com fade/zoom, fica em destaque durante a fala e SOME
+ * quando o próximo elemento entra. Os rótulos aparecem um por vez, para a cena ficar limpa.
+ */
 export function elementVisual(element: TimelineElement, time: number): ElementVisual {
   const phase = elementPhase(element, time);
   if (phase === "hidden") return { phase, opacity: 0, scale: 0.85 };
   const enter = easeInOut(clamp((time - element.start) / ELEMENT_ENTER_SECONDS, 0, 1));
   const base = 0.85 + 0.15 * enter;
+  if (phase === "done") {
+    // O último rótulo já saiu antes do fim da narração.
+    if (element.fadesAtEnd) return { phase, opacity: 0, scale: base };
+    // Saída rápida; depois disso o rótulo não aparece mais.
+    const exit = clamp((time - element.end) / ELEMENT_EXIT_SECONDS, 0, 1);
+    return { phase, opacity: (1 - easeInOut(exit)) * enter, scale: base };
+  }
+  // O último rótulo sai um pouco antes do fim da narração (os demais saem quando o próximo entra).
+  const fadeWindow = Math.min(0.8, Math.max(0.01, element.end - element.start));
+  const outro = element.fadesAtEnd ? clamp((time - (element.end - fadeWindow)) / fadeWindow, 0, 1) : 0;
   return {
     phase,
-    opacity: phase === "done" ? Math.max(0.78, enter * 0.78) : enter,
-    scale: phase === "active" ? base + 0.07 * enter : base,
+    opacity: enter * (1 - easeInOut(outro)),
+    scale: base + 0.07 * enter,
   };
 }
 

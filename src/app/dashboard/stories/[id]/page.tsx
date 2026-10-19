@@ -11,12 +11,23 @@ import { formatStoryTime } from "@/lib/storyAudio";
 
 export const dynamic = "force-dynamic";
 
+async function loadStory(id: string) {
+  await connectDB();
+  return VideoLesson.findOne({ _id: id, story: { $exists: true } }).lean();
+}
+
 export default async function WatchStoryPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
   const { id } = await params;
-  await connectDB();
-  const record = await VideoLesson.findOne({ _id: id, story: { $exists: true } }).lean();
+  // Se o banco estiver indisponível (ex.: limite de conexões do Atlas), tenta uma segunda vez antes de mostrar o erro amigável.
+  let record: Awaited<ReturnType<typeof loadStory>>;
+  try {
+    record = await loadStory(id);
+  } catch {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    record = await loadStory(id);
+  }
   if (!record?.story) notFound();
   const isAdmin = session.user.role === "admin";
   if (!isAdmin && (!record.isPublished || (record.publishAt && record.publishAt > new Date()))) notFound();

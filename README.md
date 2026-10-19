@@ -84,7 +84,8 @@ Toda a animação depende somente do **tempo atual do áudio** e da **duração 
 
 - **Legendas**: aparecem entre o início e o fim definidos, lidos do relógio do áudio.
 - **Elementos da cena**: cada elemento fica oculto até o seu momento, entra com fade e zoom em 0,6 s, fica em destaque (cor dourada) até o início do próximo e depois permanece visível, discreto. Sem marcação manual, os 4 elementos se dividem igualmente ao longo da narração (em 60 s: 0, 15, 30 e 45 s). Os momentos podem ser ajustados no formulário (campo **Elementos da cena**) para coincidir com o instante em que você fala cada palavra; o botão **Distribuir automaticamente** volta à divisão igual.
-- **Posicionamento visual dos rótulos**: cada cena tem um layout específico para que os nomes dos elementos fiquem acima dos objetos e não escondam a imagem nem a legenda principal. A experiência foi refinada para manter a leitura clara em todas as ilustrações do banco, sem sobreposição visual.
+- **Até 8 rótulos por imagem**: os elementos desenhados da lição (até 4) mais detalhes gerais da própria cena (sol, nuvem, céu, chão/grama/areia/água, montanhas ao fundo), cada um com posição medida na ilustração.
+- **Rótulos que apontam para o objeto**: cada nome tem uma seta cuja ponta cai **dentro do objeto que ele descreve**, nas 280 ilustrações do banco (detalhes em [Rótulos que apontam para o objeto certo](#rótulos-que-apontam-para-o-objeto-certo)). O elemento que não está desenhado numa ilustração não recebe rótulo.
 - **Legenda móvel no player**: a caixa de legenda pode ser arrastada para qualquer ponto do quadro da cena, para que ela não esconda elementos da ilustração (detalhes em [Legenda móvel no player](#legenda-móvel-no-player)).
 - **Cena**: zoom suave (de 100% a 105%) e leve deriva distribuídos por **toda** a narração, qualquer que seja a duração. A barra de progresso e o contador `mm:ss / mm:ss` usam a duração real.
 - **Legendas no formulário**: ao enviar/gravar/converter a narração, se o roteiro ainda estiver vazio, os trechos são criados já dentro da duração (cerca de um por minuto, no máximo 12). O botão **Redistribuir tempos** divide os trechos existentes igualmente pela duração. Os tempos aceitam décimos de segundo.
@@ -132,6 +133,95 @@ No player de **Histórias** (`src/components/StoryPlayer.tsx`) e no módulo de a
 - **Sem saltos visuais (Layout Shift Zero):** O trecho ainda não digitado é renderizado com opacidade zero no mesmo fluxo tipográfico, mantendo largura, quebras de linha e altura estáveis desde a primeira letra.
 - **Arrasto livre e reposicionamento:** O aluno pode arrastar a legenda para qualquer ponto da tela com mouse/toque ou via teclado (`Tab` + setas), com botão para redefinir a posição padrão.
 - **Paridade na exportação de vídeo 9:16:** Na gravação vertical em Canvas 2D (`drawCaptionBox`), a legenda utiliza o mesmo motor de atividade de voz, pausando durante silêncios e sumindo nos quadros finais do vídeo exportado.
+
+### Rótulos que apontam para o objeto certo
+
+Antes, as posições dos rótulos eram fixas por tema (4 pontos para as 20 ilustrações de cada tema), então o nome muitas vezes caía longe do objeto. Agora **cada elemento de cada ilustração tem a sua posição medida**:
+
+- **Dados:** `src/lib/storyElementAnchors.json` guarda, para cada imagem do banco (`id`) e cada elemento (na ordem de `elements`), o ponto `[x, y]` em % da imagem 1200×800, ou `null` quando o elemento **não está desenhado** naquela ilustração.
+- **Como o ponto é calculado:** cada objeto do SVG é renderizado isolado, o que fica escondido por objetos desenhados à frente é descontado, e o ponto escolhido é o mais interno da parte visível do objeto (nunca na borda nem fora dele).
+- **Quais objetos são quais:** a ligação elemento → objeto do SVG foi conferida visualmente nas 280 imagens e está em `scripts/ghibli/anchors/element-map.txt` (uma linha por imagem, 4 itens na ordem dos elementos: número do objeto, `a+b` para vários, `x,y` para ponto manual em px da imagem, `-` para ausente).
+- **Elementos ausentes:** `imageBank.ts` expõe `storyElements` (só os elementos desenhados) e `labelLayout.anchors` alinhado a essa lista. O player e a exportação usam `storyElements`; o jogo e as lições continuam usando `elements`. Dos 1120 elementos, 949 recebem rótulo e 171 não estão desenhados.
+- **Seta:** fio dourado com contorno escuro (legível sobre qualquer fundo) e **ponta de seta exatamente sobre o ponto do objeto**, tanto no player (SVG) quanto no vídeo exportado (canvas). O texto fica acima do objeto e, quando dois rótulos colidem, só o texto se afasta: a ponta continua no objeto.
+- **Âncoras dos elementos animados:** em `tecnologia` e `turismo` (cenas principais com animação CSS dentro do SVG), o drone, o barco e o balão são posicionados por `@keyframes`, que a ferramenta de medição não enxerga; por isso o ponto deles foi informado à mão em `element-map.txt` (posição do keyframe inicial, `x,y` em px). As flores pequenas de `natureza-18` e `natureza-19` também têm ponto manual.
+
+Para refazer as âncoras depois de mudar uma ilustração:
+
+```bash
+npm i                                   # inclui @resvg/resvg-js (devDependency)
+cd scripts/ghibli/anchors
+node measure.mjs 0 1                    # renderiza cada objeto dos SVGs (gera nodes.json, ignorado pelo git)
+# ajuste a linha da imagem em element-map.txt se o objeto mudou de número
+python3 build-anchors.py                # requer numpy e scipy; reescreve src/lib/storyElementAnchors.json
+```
+
+`bank-elements.json` é a lista de elementos por imagem usada pelo script (gerada a partir de `imageBank.ts`; atualize-a se o banco mudar).
+
+### Mais detalhes por imagem (até 8 rótulos)
+
+Além dos elementos da lição, cada imagem rotula detalhes gerais que existem no desenho: **sol (ou lua), nuvem, céu, chão (grama, areia, piso ou água) e montanhas ao fundo**. As posições ficam em `src/lib/storyElementExtras.json` (`id → [[detalhe, x, y], ...]`) e os nomes em Kreyòl/Français/Português em `EXTRA_DETAIL_NAMES` (`imageBank.ts`). Cada detalhe só entra se estiver **visível** na ilustração (o céu, por exemplo, não é rotulado em cenas de interior), e o total por imagem é limitado a 8. Resultado atual: 78 imagens com 8 rótulos, 116 com 7, 42 com 6 e as demais com 3 a 5 (cenas com poucos elementos desenhados ou internas). Os detalhes foram detectados e medidos a partir dos mesmos objetos renderizados dos SVGs (sol = pico de brilho; céu conferido por cor contra o gradiente do céu). Os scripts dessa etapa não estão no repositório; para regenerar, repita a lógica: renderize os nós do SVG (`measure.mjs`), escolha o nó de sol/nuvem/chão, calcule o ponto mais interno da parte visível e salve em `storyElementExtras.json`. Os rótulos extras não têm marcação de tempo própria: entram divididos igualmente na narração, depois dos elementos da lição.
+
+### Sons da cena (`src/lib/storySoundscape.ts`)
+
+Cada vídeo tem **sons característicos dos elementos e do ambiente**, todos sintetizados com Web Audio (sem arquivos de áudio e sem direitos autorais):
+
+- **Som por elemento:** no instante em que o rótulo de um elemento aparece, toca o som dele (passarinho, onda, tambor, avião, helicóptero, sino, violão, piano, galinha, cabra, cavalo, pato, trator, canhão, projetor de cinema, pipoca, bip de robô/tela, borbulhar da panela, tilintar de talheres, etc.). A tabela `ELEMENT_SOUND` cobre todos os 121 elementos do banco e os detalhes gerais.
+- **Ambiente do tema:** natureza (pássaros e vento), turismo (gaivotas, avião e helicóptero passando), cultura e dança (tambores), música (violão e piano), tecnologia (bips e drone), vida no interior (pássaros, galinha, cabra, trator), história (vento, sino, cavalo), cinema (projetor, pipoca, plateia), religião (sino e pomba), gastronomia (borbulhar e talheres) e assim por diante. Cenas com água ganham ondas.
+- **Surfistas:** em cenas com mar largo, de tempos em tempos uma onda grande passa com um surfista (`surfer` em `storySceneLife.ts`) e o som de onda grande toca junto (`SURF_*` em `storySoundscape.ts`).
+- **No vídeo baixado:** os sons são renderizados em trechos de 30 s (`OfflineAudioContext`) e somados à narração antes da codificação AAC, então o MP4 tem exatamente o que se ouve no player. No botão **Sons da cena** do player dá para ligar/desligar. A gravação em tempo real (usada só quando o navegador não tem WebCodecs) não inclui os sons.
+- O plano de sons é determinístico (`buildSoundPlan`): a mesma história sempre soa igual.
+
+### Vídeo exportado mais nítido
+
+- **Cena bem maior no vídeo vertical (stories):** a cena ocupa a largura inteira do quadro, em uma janela de 1080×1120 (antes ~992×661), e a "câmera" desliza até o elemento em destaque; os rótulos que estão fora da janela naquele momento não são desenhados.
+- **Sem escurecer a cena:** o sombreado agora fica só no fundo e nas faixas de texto.
+- **Rótulos e setas maiores** (31 px no destaque em vez de 19 px) e mais legíveis no celular.
+- **Mais qualidade de codificação:** H.264 a 16 Mbps (stories) e 12 Mbps (feed), áudio AAC 192 kbps; o WhatsApp e o Instagram recomprimem o vídeo, então uma entrada de maior qualidade chega melhor ao final.
+
+### Cenas Vivas: todas as imagens ganham vida (`src/lib/storySceneLife.ts`)
+
+> **Cena limpa (atual):** para o vídeo ficar claro e cada elemento fácil de identificar, a camada de vida agora mostra apenas animações **ambientes discretas**: ondas e brilho na água, um surfista que passa de vez em quando, no máximo 2 aves (gaivotas, pássaros, pombas, águia) e 1 borboleta. Pessoas, animais, barcos, tubarão e cardume, confete, brilhos e folhas **não são mais desenhados**, porque cobriam os objetos rotulados e não pertenciam à ilustração. O filtro está no final de `createSceneLife` (`keep`/`AMBIENT_BIRDS`); os atores descritos abaixo continuam no código, mas só os ambientes passam. Para trazer de volta algum ator, inclua o nome dele nesse filtro.
+
+Antes, só as cenas principais traziam animação dentro do próprio SVG; as outras ~270 variações e as imagens geradas por IA eram estáticas. Agora **toda cena** (as 280 do banco, as de IA vetoriais e as de IA rasterizadas) recebe uma **camada de vida** desenhada por cima da imagem, imitando o mundo real:
+
+- **Mar, rio e lago:** ondas e brilhos na água, veleiros com esteira, barco a remo com remadores, peixes saltando, **tubarão caçando um cardume** (os peixes se espalham) e gaivotas.
+- **Natureza:** coelho fugindo de uma raposa, cervos pastando, borboletas e pássaros.
+- **Tecnologia:** humanos digitando/apontando e **interagindo com robôs**, drone patrulhando.
+- **Turismo:** turistas apontando e fotografando, pessoas caminhando, avião cruzando o céu, balão subindo.
+- **Gastronomia:** **família jantando** à mesa (comendo, conversando, vapor da comida).
+- **Cinema:** **plateia** assistindo (a tela tremeluz nos rostos), feixe do projetor com poeira, pipoca.
+- **Cultura, Dança, Música:** dançarinos girando, tamborista, banda, notas musicais, confete.
+- **Vida no interior, Lazeres, História, Geografia, Estoicismo, Religião:** galinhas, vacas, cão, pipas, bola, ciclista, cavaleiro, exploradores, filósofos conversando, fiéis, pombas, velas.
+
+**Como funciona**
+
+1. `analyzeSceneZones` lê a própria imagem (transparência e cor) e descobre **onde há água e onde fica o chão**, para pôr barcos no mar e pessoas no chão. Funciona com qualquer imagem; se não conseguir ler (ex.: CORS), usa posições padrão.
+2. `createSceneLife` escolhe o elenco pelo **tema** e pelas palavras dos **elementos/título** da cena (barco, robô, avião, mesa, etc.).
+3. `render(t)` é uma **função pura do tempo**: devolve o SVG do instante `t`. O player usa o tempo do áudio e a exportação usa o tempo de cada quadro. Por isso **o vídeo baixado é idêntico ao assistido** (Stories 9:16 e Feed 1:1).
+4. As cenas `tecnologia`, `natureza`, `turismo` e `gastronomia` principais já têm seus personagens no SVG e **não recebem camada extra** (evita duplicar).
+5. **Imagens geradas por IA** seguem o mesmo caminho: não exigem nada além do tema da imagem; a camada é aplicada na hora de tocar/exportar a história.
+
+Desempenho medido: ~8 ms por quadro e ~17 KB de SVG por quadro; o resultado é determinístico (mesma entrada, mesmo quadro). Para adicionar um ator novo, crie a função de desenho em `storySceneLife.ts` e inclua-a no `case` do tema.
+
+### Correções de estabilidade (tela "This page couldn't load")
+
+- **`public/ghibli/gastronomia.svg`:** o filtro `softGlow` estava sem a tag de fechamento `</filter>`, o que tornava o SVG inválido (a imagem principal de gastronomia não carregava). Corrigido.
+- **Transcrição automática da narração (`/api/stories/transcribe`):** a rota agora declara `maxDuration = 300` (sem isso a hospedagem cortava a conexão antes da resposta e o navegador mostrava `Failed to fetch` / `ERR_CONNECTION_RESET`), usa um orçamento total de tempo para a IA, não repete modelos e devolve o motivo quando o Gemini falha. O formulário (`StoryForm.tsx`) tenta de novo em caso de 502/503/504 ou queda de rede e **mostra um aviso** em vez de falhar em silêncio; os trechos de tempo continuam prontos para digitação manual. Agora são 3 tentativas com espera entre elas (quedas de conexão/DNS), e o tipo do áudio é normalizado (sem `;codecs=...`) antes de ir ao Gemini. Se o console ainda mostrar `Transcrição automática falhou: TypeError` **sem** o trecho `(tentativa N)`, o navegador está rodando uma versão antiga: faça o deploy/reinicie o servidor e recarregue com Ctrl+F5. Requer `GEMINI_API_KEY` configurada no servidor.
+
+- **Erros de sintaxe** que impediam compilar: `default:` faltando no `switch` de `calculateLivingElementState` (`storyLifeEngine.ts`) e `}` faltando no bloco de exportação offline (`StoryPlayer.tsx`).
+- **Telas de erro amigáveis:** `src/app/error.tsx` e `src/app/global-error.tsx` com "Tentar de novo" e "Voltar", no lugar da página genérica.
+- **Página da história** (`dashboard/stories/[id]`): se o banco falhar, tenta uma segunda vez antes de exibir o erro.
+
+### MongoDB Atlas: alerta de conexões acima do limite (cluster M0)
+
+O M0 permite **500 conexões** somando todas as instâncias. O `connectDB` antigo zerava o cache no evento `disconnected`; como o driver já se reconecta sozinho, a requisição seguinte abria **outro pool sem fechar o anterior**, e cada instância serverless ainda mantinha pool grande. Correções em `src/lib/mongodb.ts`:
+
+- cache único em `global` e a promessa só é descartada se a conexão **falhar**;
+- `maxPoolSize: 2`, `minPoolSize: 0`, `maxIdleTimeMS: 5000`, `maxConnecting: 1`;
+- `serverMonitoringMode: "poll"` e `heartbeatFrequencyMS: 30000` (menos conexões de monitoramento);
+- tempos limite definidos (`serverSelectionTimeoutMS`, `connectTimeoutMS`, `socketTimeoutMS`, `waitQueueTimeoutMS`).
+
+Além disso, o batimento da arena no lobby (`useCquoiArena.ts`) passou de 8 s para 20 s. **Depois de publicar:** abra o alerta no Atlas, confira em *Metrics > Connections* que a curva caiu e, se quiser mais folga, considere um plano acima do M0.
 
 ### Paridade entre o Ensino de Crioulo e Francês
 
@@ -584,7 +674,11 @@ Arquivos principais das histórias:
 | `src/lib/storyValidation.ts` | Validação das histórias no servidor |
 | `src/lib/audioVoiceActivity.ts` | Detecção de voz (VAD via Web Audio API) e sincronização estrita da digitação da legenda com as falas e pausas do áudio |
 | `src/lib/storyLifeEngine.ts` | Motor de vida dos elementos da imagem (animações de borboleta voando, asas, farfalhar, etc.) |
-| `src/components/StoryPlayer.tsx` | Player (incluindo a legenda arrastável) e exportação do vídeo vertical |
+| `src/components/StoryPlayer.tsx` | Player (incluindo a legenda arrastável), setas dos rótulos e exportação do vídeo vertical |
+| `src/lib/storySoundscape.ts` | Sons sintetizados dos elementos e do ambiente (player e exportação) |
+| `src/lib/storyElementExtras.json` | Posição dos detalhes gerais da cena (sol, nuvem, céu, chão...) |
+| `src/lib/storyElementAnchors.json` | Posição medida de cada elemento em cada ilustração (`null` = não desenhado) |
+| `scripts/ghibli/anchors/` | Medição e mapeamento que geram `storyElementAnchors.json` |
 | `src/components/LoadingSpinner.tsx` | Indicador de carregamento (círculo verde girando + porcentagem) usado em todo o app |
 | `src/app/api/stories/**` | Listagem, criação, edição, exclusão e upload do áudio |
 

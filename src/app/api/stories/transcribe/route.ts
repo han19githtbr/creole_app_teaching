@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/apiAuth";
-import { evenCaptionSlots, roundTenth, suggestedCaptionCount } from "@/lib/storyAudio";
+import { evenCaptionSlots, resolveAudioContentType, roundTenth, suggestedCaptionCount } from "@/lib/storyAudio";
+
+// A transcrição por IA pode levar de 20 s a alguns minutos (áudio de até 10 min). Sem isto a hospedagem
+// usa o limite padrão (10 s a 60 s), derruba a conexão e o navegador mostra "Failed to fetch".
+export const maxDuration = 300;
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+/** Orçamento total para a IA: sobra tempo para devolver a resposta antes do limite da função. */
+const AI_BUDGET_MS = 240_000;
+/** Teto de cada tentativa (envio do áudio + resposta). */
+const AI_ATTEMPT_MS = 110_000;
 
 interface TranscribedCaption {
   start: number;
@@ -30,12 +41,14 @@ export async function POST(request: NextRequest) {
     const targetLangName = isFrench ? "Francês" : "Kreyòl Ayisyen (Crioulo Haitiano)";
 
     const apiKey = process.env.GEMINI_API_KEY;
+    let aiIssue = "";
     if (apiKey) {
       try {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         const base64Audio = buffer.toString("base64");
-        const mimeType = file.type || "audio/mpeg";
+        // Sem parâmetros de codec ("audio/webm;codecs=opus" é recusado pela API) e com o tipo deduzido da extensão.
+        const mimeType = resolveAudioContentType({ name: file.name, type: file.type }) ?? "audio/mpeg";
 
         const prompt = `Você é um especialista em transcrição e tradução bilíngue para uma plataforma de ensino de línguas.
 O arquivo de áudio anexo tem duração de aproximadamente ${duration.toFixed(1)} segundos e está falado em ${targetLangName}.
@@ -61,22 +74,22 @@ ATENÇÃO:
   ]
 }`;
 
-        // Tentamos a API generateContent com modelos multimodais rápidos
-        const modelsToTry = [
-          process.env.GEMINI_TEXT_MODEL || "gemini-2.5-flash",
-          "gemini-2.5-flash",
-          "gemini-1.5-flash",
-          "gemini-2.0-flash",
-        ];
+        // Modelos a tentar (sem repetir). O primeiro é o configurado em GEMINI_TEXT_MODEL.
+        const modelsToTry = Array.from(
+          new Set([process.env.GEMINI_TEXT_MODEL || "gemini-2.5-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"])
+        );
 
         let geminiJson: { captions?: TranscribedCaption[] } | null = null;
+        const startedAt = Date.now();
 
         for (const modelName of modelsToTry) {
+          const remaining = AI_BUDGET_MS - (Date.now() - startedAt);
+          if (remaining < 15_000) break;
           try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
             const apiRes = await fetch(url, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
               body: JSON.stringify({
                 contents: [
                   {
@@ -96,7 +109,7 @@ ATENÇÃO:
                   temperature: 0.2,
                 },
               }),
-              signal: AbortSignal.timeout(45_000),
+              signal: AbortSignal.timeout(Math.min(AI_ATTEMPT_MS, remaining)),
             });
 
             if (apiRes.ok) {
@@ -109,9 +122,15 @@ ATENÇÃO:
                   break;
                 }
               }
+            } else {
+              aiIssue = `Gemini (${modelName}) respondeu ${apiRes.status}.`;
+              console.warn("Transcrição: resposta de erro do Gemini", modelName, apiRes.status);
+              // Chave inválida ou sem permissão: os outros modelos falhariam do mesmo jeito.
+              if (apiRes.status === 401 || apiRes.status === 403) break;
             }
-          } catch {
-            // Continua para o próximo modelo se falhar
+          } catch (modelError) {
+            aiIssue = `Falha ao falar com o Gemini (${modelName}): ${modelError instanceof Error ? modelError.message : "erro de rede"}.`;
+            console.warn("Transcrição: tentativa falhou", modelName, modelError);
           }
         }
 
@@ -145,7 +164,7 @@ ATENÇÃO:
       captions: fallbackCaptions,
       fallback: true,
       message: apiKey
-        ? "Não foi possível transcrever automaticamente todo o áudio. Os trechos de tempo foram organizados para edição."
+        ? `Não foi possível transcrever automaticamente o áudio${aiIssue ? ` (${aiIssue})` : ""}. Os trechos de tempo foram organizados para você digitar.`
         : "Chave Gemini não configurada. Os trechos de tempo foram organizados para digitação manual.",
     });
   } catch (err) {

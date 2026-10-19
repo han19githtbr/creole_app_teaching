@@ -1,6 +1,8 @@
 // Banco de imagens em estilo Studio Ghibli (ilustrações artísticas
 // com elementos realistas e reconhecíveis, arquivos SVG em /public/ghibli).
 import generatedImages from "../../scripts/ghibli/manifest.json";
+import measuredAnchors from "./storyElementAnchors.json";
+import measuredExtras from "./storyElementExtras.json";
 
 export interface BankElement {
   kreyol: string;
@@ -32,6 +34,11 @@ export interface BankImage {
   labelLayout?: StoryLabelLayout;
   /** Elementos reconhecíveis na cena para o jogo e lições */
   elements: BankElement[];
+  /**
+   * Elementos que de fato aparecem desenhados na ilustração (subconjunto de `elements`, na mesma ordem).
+   * Só estes recebem rótulo na história, e `labelLayout.anchors` está alinhado a esta lista.
+   */
+  storyElements?: BankElement[];
   /** Desafio do jogo de identificar elementos (imagens geradas por IA já trazem o seu). */
   quiz?: { options: string[]; answers: string[] };
   /** true = imagem gerada por IA (guardada no R2 e cadastrada no banco de dados). */
@@ -403,6 +410,57 @@ const sceneVariantsTyped = imageSceneVariants as Record<
 
 const generatedTitles = new Map(generatedImages.map((image) => [image.id, image.title]));
 
+/**
+ * Detalhes gerais da cena que também ganham rótulo (até completar 8 por imagem): sol, nuvem, céu, chão...
+ * A posição de cada um é medida na própria ilustração (storyElementExtras.json) e só entra se estiver visível.
+ */
+const EXTRA_DETAIL_NAMES: Record<string, BankElement> = {
+  sol: { kreyol: "sòlèy", fr: "soleil", pt: "sol" },
+  lua: { kreyol: "lalin", fr: "lune", pt: "lua" },
+  nuvem: { kreyol: "nyaj", fr: "nuage", pt: "nuvem" },
+  ceu: { kreyol: "syèl", fr: "ciel", pt: "céu" },
+  montanhas: { kreyol: "mòn", fr: "montagnes", pt: "montanhas ao fundo" },
+  grama: { kreyol: "zèb", fr: "herbe", pt: "grama" },
+  areia: { kreyol: "sab", fr: "sable", pt: "areia" },
+  piso: { kreyol: "plancher", fr: "sol", pt: "piso" },
+  agua: { kreyol: "dlo", fr: "eau", pt: "água" },
+};
+
+/**
+ * Posições MEDIDAS de cada elemento em cada ilustração (scripts/ghibli/measure-anchors.mjs + revisão visual).
+ * Cada ponto cai dentro do objeto que o nome descreve (em % da imagem 1200x800); `null` = o elemento
+ * não está desenhado nessa ilustração, então não recebe rótulo na história.
+ */
+function measuredStoryLayout(
+  id: string,
+  elements: BankElement[],
+  base: StoryLabelLayout | undefined
+): { storyElements?: BankElement[]; labelLayout?: StoryLabelLayout } {
+  const measured = (measuredAnchors as unknown as Record<string, ([number, number] | null)[]>)[id];
+  if (!measured || measured.length !== elements.length) return {};
+  const storyElements: BankElement[] = [];
+  const anchors: { left: number; top: number }[] = [];
+  elements.forEach((element, index) => {
+    const point = measured[index];
+    if (!point) return;
+    storyElements.push(element);
+    // O palco 16:9 corta ~8% em cima/embaixo da imagem 3:2; mantém o ponto dentro da área visível.
+    anchors.push({ left: Math.min(96, Math.max(4, point[0])), top: Math.min(90, Math.max(10, point[1])) });
+  });
+  // Detalhes extras da cena (sol, nuvem, céu, chão...) até somar 8 rótulos.
+  const extras = (measuredExtras as unknown as Record<string, [string, number, number][]>)[id] ?? [];
+  for (const [key, x, y] of extras) {
+    const detail = EXTRA_DETAIL_NAMES[key];
+    if (!detail || storyElements.length >= 8) continue;
+    storyElements.push(detail);
+    anchors.push({ left: Math.min(96, Math.max(4, x)), top: Math.min(90, Math.max(10, y)) });
+  }
+  return {
+    storyElements,
+    labelLayout: { top: base?.top ?? 12, left: base?.left ?? 50, width: base?.width ?? 78, align: base?.align ?? "center", anchors },
+  };
+}
+
 export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
   Array.from({ length: 20 }, (_, variantIndex) => {
     const variant = variantIndex + 1;
@@ -439,6 +497,7 @@ export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
       isPrimary: variant === 1,
       labelLayout: STORY_LABEL_LAYOUTS[image.id] ?? { top: 12, left: 50, width: 78, align: "center" },
       elements,
+      ...measuredStoryLayout(id, elements, STORY_LABEL_LAYOUTS[image.id]),
     };
   })
 );

@@ -24,7 +24,9 @@ import {
 import { Muxer, ArrayBufferTarget } from "mp4-muxer";
 import { resolveLabelCollisions } from "@/lib/storyLabelLayout";
 import { buildSvgLayerKit, loadSvgImage, rasterizeLayer, releaseSvgImage } from "@/lib/storySvgLayers";
+import { analyzeSceneZones, createSceneLife, lifeSvgDocument, type SceneZones } from "@/lib/storySceneLife";
 import { useAudioVoiceActivity, computeCaptionTyping } from "@/lib/audioVoiceActivity";
+import { buildSoundPlan, createLiveSoundscape, mixSoundPlanInto } from "@/lib/storySoundscape";
 
 
 export interface StoryPlayerData {
@@ -43,6 +45,9 @@ export type ExportFormat = "stories" | "feed";
 
 const EXPORT_WIDTH = 1080;
 const EXPORT_HEIGHT = 1920;
+/** Janela da cena no vídeo vertical (entre o título e a caixa de legenda). */
+const STORY_WINDOW_TOP = 296;
+const STORY_WINDOW_HEIGHT = 1120;
 
 const RECORDER_CANDIDATES = [
   "video/mp4;codecs=avc1.640028,mp4a.40.2",
@@ -115,6 +120,20 @@ function wrapLines(context: CanvasRenderingContext2D, text: string, maxWidth: nu
   return kept;
 }
 
+/** Triângulo da ponta da seta: a ponta fica exatamente no ponto (ax, ay) do objeto, vindo do rótulo (fx, fy). */
+function arrowHeadPoints(ax: number, ay: number, fx: number, fy: number, size: number): [number, number][] {
+  const dx = ax - fx;
+  const dy = ay - fy;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const bx = ax - ux * size;
+  const by = ay - uy * size;
+  const px = -uy * size * 0.58;
+  const py = ux * size * 0.58;
+  return [[ax, ay], [bx + px, by + py], [bx - px, by - py]];
+}
+
 export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const { language: currentAppLanguage } = useAppLanguage();
   const storyLang = story.language || currentAppLanguage;
@@ -124,6 +143,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   // Camadas do SVG animado usadas só durante a exportação (below/above estáticas, mid animada) e fundo desfocado em cache.
+  // Quadro atual da camada de vida (pessoas, animais, barcos...) durante a exportação do vídeo.
+  const lifeImageRef = useRef<HTMLImageElement | null>(null);
   const exportLayersRef = useRef<{ below: CanvasImageSource | null; mid: HTMLImageElement | null; above: CanvasImageSource | null } | null>(null);
   const exportBgRef = useRef<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -145,6 +166,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const [exportError, setExportError] = useState<string | null>(null);
   const [copiedCaption, setCopiedCaption] = useState(false);
   const [muted, setMuted] = useState(false);
+  /** Sons característicos dos elementos e do ambiente (pássaros, ondas, tambores...). */
+  const [soundFx, setSoundFx] = useState(true);
   // Posição da legenda em % do quadro da cena (canto superior esquerdo). `null` = posição original (centralizada na parte inferior).
   const [captionPosition, setCaptionPosition] = useState<{ left: number; top: number } | null>(null);
   const [draggingCaption, setDraggingCaption] = useState(false);
@@ -232,9 +255,78 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const duration = mediaDuration || story.audioDuration || lastCaptionEnd || 0;
 
   const bankImage = useBankImage(story.imageSrc);
-  const sceneElements = useMemo(() => bankImage?.elements ?? [], [bankImage]);
+  const sceneElements = useMemo(() => bankImage?.storyElements ?? bankImage?.elements ?? [], [bankImage]);
+
+  // Camada de VIDA: descobre onde há água/chão na imagem (qualquer imagem: banco, SVG ou gerada por IA)
+  // e cria o "elenco" animado da cena. O mesmo render(t) alimenta o player e o vídeo exportado.
+  const [sceneZones, setSceneZones] = useState<SceneZones | null>(null);
+  useEffect(() => {
+    let alive = true;
+    let blobUrl: string | null = null;
+    setSceneZones(null);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      if (alive) setSceneZones(analyzeSceneZones(img, img.naturalWidth || 1200, img.naturalHeight || 800));
+    };
+    img.onerror = () => undefined;
+    if (svgContent) {
+      blobUrl = URL.createObjectURL(new Blob([svgContent], { type: "image/svg+xml;charset=utf-8" }));
+      img.src = blobUrl;
+    } else {
+      img.src = story.imageSrc;
+    }
+    return () => {
+      alive = false;
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+    };
+  }, [story.imageSrc, svgContent]);
+  const lifeScene = useMemo(
+    () => createSceneLife({ sceneId: story.imageSrc, theme: story.theme, title: story.title, elements: sceneElements, zones: sceneZones }),
+    [story.imageSrc, story.theme, story.title, sceneElements, sceneZones],
+  );
+  const lifeTick = Math.floor(currentTime * 30) / 30;
+  const lifeMarkup = useMemo(() => {
+    if (!lifeScene.actors.length) return "";
+    try {
+      return lifeScene.render(lifeTick);
+    } catch {
+      return "";
+    }
+  }, [lifeScene, lifeTick]);
   const sceneLayout = useMemo(() => bankImage?.labelLayout ?? getStoryLabelLayout(story.imageSrc), [bankImage, story.imageSrc]);
   const timeline = useMemo(() => buildElementTimeline(sceneElements, story.elementCues, duration), [sceneElements, story.elementCues, duration]);
+
+  // Plano de sons da história: ambiente do tema + o som de cada elemento no instante em que o rótulo dele entra.
+  const soundPlan = useMemo(
+    () =>
+      buildSoundPlan({
+        theme: bankImage?.theme ?? story.theme,
+        elements: timeline.map((element) => ({ kreyol: element.kreyol, start: element.start })),
+        duration,
+        hasWater: Boolean(sceneZones?.water),
+        seed: `${story.imageSrc}|${story.title}`,
+      }),
+    [bankImage?.theme, story.theme, story.imageSrc, story.title, timeline, duration, sceneZones]
+  );
+
+  // Toca os sons enquanto a narração toca (agendados com 1 s de antecedência, acompanhando o áudio).
+  useEffect(() => {
+    if (!playing || !soundFx || muted || exporting || soundPlan.length === 0) return;
+    const live = createLiveSoundscape(soundPlan);
+    if (!live) return;
+    const tick = () => {
+      const audio = audioRef.current;
+      if (audio && !audio.paused) live.tick(audio.currentTime);
+    };
+    tick();
+    const timer = window.setInterval(tick, 250);
+    return () => {
+      window.clearInterval(timer);
+      live.stop();
+      live.dispose();
+    };
+  }, [playing, soundFx, muted, exporting, soundPlan]);
 
   const voiceData = useAudioVoiceActivity(story.audioUrl, story.captions);
 
@@ -455,12 +547,17 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     }
   }
 
-  function drawElementPills(context: CanvasRenderingContext2D, scene: { x: number; y: number; width: number; height: number }, seconds: number) {
+  function drawElementPills(
+    context: CanvasRenderingContext2D,
+    scene: { x: number; y: number; width: number; height: number },
+    seconds: number,
+    view: { x: number; y: number; w: number; h: number } = { x: scene.x, y: scene.y, w: scene.width, h: scene.height }
+  ) {
     const activeCap = captionAt(story.captions, seconds);
     const captionText = activeCap ? `${activeCap.portuguese} ${activeCap.kreyol}` : "";
     // Rótulos discretos: pequenos, e o do elemento em destaque só um pouco maior.
     const isSquare = context.canvas.width === context.canvas.height;
-    const activeFont = isSquare ? 16 : 19;
+    const activeFont = isSquare ? 20 : 31;
     const idleFont = Math.round(activeFont * 0.82);
     // O rótulo fica ACIMA do objeto (nunca em cima dele), ligado por um fio fino até o ponto do objeto.
     const lift = scene.height * 0.075;
@@ -481,13 +578,15 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     // Afasta rótulos que se sobreporiam (posições estáveis: não "pulam" durante o vídeo).
     const offsets = resolveLabelCollisions(
       items.map(({ cx, cy, w, h }) => ({ cx, cy, w, h })),
-      { x: scene.x + 10, y: scene.y + 10, w: scene.width - 20, h: scene.height - 20 },
-      10
+      { x: view.x + 12, y: view.y + 12, w: view.w - 24, h: view.h - 24 },
+      12
     );
 
     for (const [index, item] of items.entries()) {
       const visual = elementVisual(item.element, seconds);
       if (visual.phase === "hidden" || visual.opacity <= 0.01) continue;
+      // Fora da janela do vídeo (a câmera está em outro ponto da cena): não desenha.
+      if (item.ax < view.x + 8 || item.ax > view.x + view.w - 8 || item.ay < view.y + 8 || item.ay > view.y + view.h - 8) continue;
       const isActive = visual.phase === "active";
       const centerX = item.cx + offsets[index].dx;
       const centerY = item.cy + offsets[index].dy;
@@ -504,20 +603,33 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       // Fio fino do rótulo até o objeto (o ponto fica no objeto, o texto fica acima).
       context.save();
       context.globalAlpha = visual.opacity * (isActive ? 0.95 : 0.7);
-      context.strokeStyle = "rgba(245, 207, 114, .9)";
-      context.lineWidth = isActive ? 2.5 : 2;
+      // Seta: fio com contorno escuro (legível sobre qualquer cenário) e ponta exatamente sobre o objeto.
+      const headSize = (isActive ? 17 : 14) * (isSquare ? 1 : 1.35);
+      const tip = arrowHeadPoints(item.ax, item.ay, centerX, centerY, headSize);
       context.lineCap = "round";
+      context.lineJoin = "round";
+      context.strokeStyle = "rgba(18, 32, 26, .85)";
+      context.lineWidth = isActive ? 6 : 5;
       context.beginPath();
-      context.moveTo(item.ax, item.ay);
-      context.lineTo(centerX, centerY);
+      context.moveTo(centerX, centerY);
+      context.lineTo((tip[1][0] + tip[2][0]) / 2, (tip[1][1] + tip[2][1]) / 2);
+      context.stroke();
+      context.strokeStyle = "#f5cf72";
+      context.lineWidth = isActive ? 3 : 2.4;
+      context.beginPath();
+      context.moveTo(centerX, centerY);
+      context.lineTo((tip[1][0] + tip[2][0]) / 2, (tip[1][1] + tip[2][1]) / 2);
       context.stroke();
       context.fillStyle = "#f5cf72";
       context.strokeStyle = "rgba(18, 32, 26, .9)";
-      context.lineWidth = 1.5;
+      context.lineWidth = 2;
       context.beginPath();
-      context.arc(item.ax, item.ay, isActive ? 5.5 : 4.5, 0, Math.PI * 2);
-      context.fill();
+      context.moveTo(tip[0][0], tip[0][1]);
+      context.lineTo(tip[1][0], tip[1][1]);
+      context.lineTo(tip[2][0], tip[2][1]);
+      context.closePath();
       context.stroke();
+      context.fill();
       context.restore();
 
       drawLivingElementOnCanvas(context, {
@@ -607,6 +719,25 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     }
   }
 
+  /** Onde a "câmera" do vídeo vertical está olhando (0–1, fração da largura da cena): desliza até o elemento em destaque. */
+  function focusAt(seconds: number): number {
+    const anchors = sceneLayout?.anchors ?? [];
+    if (anchors.length === 0 || timeline.length === 0) return 0.5;
+    const order = timeline
+      .map((element, index) => ({ start: element.start, x: anchors[index % anchors.length].left / 100 }))
+      .sort((a, b) => a.start - b.start);
+    let current = -1;
+    for (let i = 0; i < order.length; i++) if (order[i].start <= seconds) current = i;
+    if (current < 0) return 0.5;
+    const previousX = current > 0 ? order[current - 1].x : 0.5;
+    const target = order[current];
+    const slot = (order[current + 1]?.start ?? duration) - target.start;
+    const travel = Math.max(0.25, Math.min(0.9, slot * 0.6));
+    const p = Math.min(1, Math.max(0, (seconds - target.start) / travel));
+    const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+    return previousX + (target.x - previousX) * eased;
+  }
+
   // Desenha o quadro do vídeo exportado para o instante `seconds` do ÁUDIO.
   function drawExportFrame(
     context: CanvasRenderingContext2D,
@@ -635,19 +766,42 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       context.restore();
     }
 
-    const maxSceneHeight = isSquare ? 520 : 760;
-    const baseScale = Math.min((exportW - (isSquare ? 64 : 88)) / image.width, maxSceneHeight / image.height);
-    const baseHeight = image.height * baseScale;
-    const width = image.width * baseScale * scene.zoom;
-    const height = baseHeight * scene.zoom;
-    const sceneX = (exportW - width) / 2 + (scene.driftX / 100) * width;
-    const sceneY = isSquare
-      ? 152 + (scene.driftY / 100) * height
-      : (exportH - height) / 2 + (scene.driftY / 100) * height - 45;
+    // Sombreado só no fundo e nas faixas de texto: a cena em si NÃO é escurecida (ficava sem nitidez).
+    const shade = context.createLinearGradient(0, 0, 0, exportH);
+    shade.addColorStop(0, "rgba(12, 24, 20, .32)");
+    shade.addColorStop(0.48, "rgba(12, 24, 20, .04)");
+    shade.addColorStop(0.72, "rgba(12, 24, 20, .22)");
+    shade.addColorStop(1, "rgba(12, 24, 20, .92)");
+    context.fillStyle = shade;
+    context.fillRect(0, 0, exportW, exportH);
+
+    // Stories (vertical): a cena ocupa a largura inteira, bem mais alta, e "acompanha" o elemento em destaque
+    // (câmera que desliza até o objeto). Feed (quadrado): cena inteira como antes.
+    let sceneX: number;
+    let sceneY: number;
+    let width: number;
+    let height: number;
+    let windowRect: { x: number; y: number; w: number; h: number };
+    if (isSquare) {
+      const baseScale = Math.min((exportW - 64) / image.width, 520 / image.height);
+      width = image.width * baseScale * scene.zoom;
+      height = image.height * baseScale * scene.zoom;
+      sceneX = (exportW - width) / 2 + (scene.driftX / 100) * width;
+      sceneY = 152 + (scene.driftY / 100) * height;
+      windowRect = { x: sceneX, y: sceneY, w: width, h: height };
+    } else {
+      const winH = STORY_WINDOW_HEIGHT;
+      windowRect = { x: 0, y: STORY_WINDOW_TOP, w: exportW, h: winH };
+      height = winH * Math.max(1, scene.zoom);
+      width = height * (image.width / image.height);
+      const focus = focusAt(seconds);
+      sceneX = Math.min(0, Math.max(exportW - width, exportW / 2 - focus * width));
+      sceneY = windowRect.y + (winH - height) / 2 + (scene.driftY / 100) * height * 0.5;
+    }
 
     context.save();
     context.beginPath();
-    context.roundRect(sceneX, sceneY, width, height, isSquare ? 18 : 22);
+    context.roundRect(windowRect.x, windowRect.y, windowRect.w, windowRect.h, isSquare ? 18 : 0);
     context.clip();
     const layers = exportLayersRef.current;
     if (layers) {
@@ -657,21 +811,15 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     } else {
       context.drawImage(image, sceneX, sceneY, width, height);
     }
+    // Camada de vida do instante atual (mesmo desenho que o player mostra).
+    if (lifeImageRef.current) context.drawImage(lifeImageRef.current, sceneX, sceneY, width, height);
     context.restore();
 
     context.strokeStyle = "rgba(255,255,255,.24)";
     context.lineWidth = 2;
     context.beginPath();
-    context.roundRect(sceneX, sceneY, width, height, isSquare ? 18 : 22);
+    context.roundRect(windowRect.x, windowRect.y, windowRect.w, windowRect.h, isSquare ? 18 : 0);
     context.stroke();
-
-    const shade = context.createLinearGradient(0, 0, 0, exportH);
-    shade.addColorStop(0, "rgba(12, 24, 20, .32)");
-    shade.addColorStop(0.48, "rgba(12, 24, 20, .04)");
-    shade.addColorStop(0.72, "rgba(12, 24, 20, .22)");
-    shade.addColorStop(1, "rgba(12, 24, 20, .92)");
-    context.fillStyle = shade;
-    context.fillRect(0, 0, exportW, exportH);
 
     const barY = isSquare ? 42 : 74;
     context.fillStyle = "rgba(12, 24, 20, .72)";
@@ -708,7 +856,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       context.fillText(titleLine.trim(), 56, titleY);
     }
 
-    drawElementPills(context, { x: sceneX, y: sceneY, width, height }, seconds);
+    drawElementPills(context, { x: sceneX, y: sceneY, width, height }, seconds, windowRect);
 
     const captionIndex = story.captions.findIndex((c) => seconds >= c.start && seconds < c.end);
     const caption = captionIndex >= 0 ? story.captions[captionIndex] : undefined;
@@ -841,8 +989,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         codec,
         width: exportW,
         height: exportH,
-        bitrate: isStories ? 8_000_000 : 6_000_000,
+        bitrate: isStories ? 16_000_000 : 12_000_000,
         framerate: fps,
+        latencyMode: "quality",
         avc: { format: "avc" },
       };
       try {
@@ -858,7 +1007,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
     const audioSupported = async (channels: number) => {
       try {
-        return Boolean((await AudioEncoder.isConfigSupported({ codec: "mp4a.40.2", sampleRate, numberOfChannels: channels, bitrate: 160_000 })).supported);
+        return Boolean((await AudioEncoder.isConfigSupported({ codec: "mp4a.40.2", sampleRate, numberOfChannels: channels, bitrate: 192_000 })).supported);
       } catch {
         return false;
       }
@@ -871,6 +1020,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     const audioBuffer = await new OfflineAudioContext(2, sampleRate, sampleRate).decodeAudioData(await response.arrayBuffer());
     const channels = Math.min(2, audioBuffer.numberOfChannels);
     const channelData = Array.from({ length: channels }, (_, channel) => audioBuffer.getChannelData(channel));
+    // Sons característicos dos elementos e do ambiente entram no áudio do vídeo exportado.
+    if (soundFx) await mixSoundPlanInto(channelData, sampleRate, soundPlan);
 
     const target = new ArrayBufferTarget();
     const muxer = new Muxer({
@@ -892,7 +1043,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
     try {
       videoEncoder.configure(videoConfig);
-      audioEncoder.configure({ codec: "mp4a.40.2", sampleRate, numberOfChannels: channels, bitrate: 160_000 });
+      audioEncoder.configure({ codec: "mp4a.40.2", sampleRate, numberOfChannels: channels, bitrate: 192_000 });
 
       // Entrega o áudio aos poucos, acompanhando o vídeo, para o MP4 ficar bem intercalado.
       let audioOffset = 0;
@@ -920,6 +1071,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const layers = exportLayersRef.current;
       const secondsAt = (index: number) => Math.min(index / fps, duration || audioBuffer.duration);
       let nextMid = layers && layerKit ? loadSvgImage(layerKit.frozen(0), 8000) : null;
+      const life = lifeScene.actors.length ? lifeScene : null;
+      let nextLife = life ? loadSvgImage(lifeSvgDocument(life.render(secondsAt(0))), 8000) : null;
 
       for (let index = 0; index < totalFrames; index++) {
         if (encoderError) throw encoderError;
@@ -932,6 +1085,16 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const previous = layers.mid;
             layers.mid = midImage;
             releaseSvgImage(previous);
+          }
+        }
+
+        if (life && nextLife) {
+          const lifeImage = await nextLife;
+          nextLife = index + 1 < totalFrames ? loadSvgImage(lifeSvgDocument(life.render(secondsAt(index + 1))), 8000) : null;
+          if (lifeImage) {
+            const previousLife = lifeImageRef.current;
+            lifeImageRef.current = lifeImage;
+            releaseSvgImage(previousLife);
           }
         }
 
@@ -1080,7 +1243,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const mimeType = await pickRecorderMime(stream);
       if (!mimeType) throw new Error("Este navegador não oferece codificação de vídeo compatível para exportação.");
       const mp4Type = mimeType.startsWith("video/mp4") ? mimeType : undefined;
-      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: isStories ? 8_000_000 : 6_000_000, audioBitsPerSecond: 160_000 });
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: isStories ? 14_000_000 : 10_000_000, audioBitsPerSecond: 192_000 });
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
       recorder.onerror = (event) => {
@@ -1109,6 +1272,25 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
               releaseSvgImage(previous);
             } else {
               releaseSvgImage(frame);
+            }
+            await new Promise((resolve) => setTimeout(resolve, Math.max(0, interval - (performance.now() - started))));
+          }
+        })();
+      }
+
+      if (producing && lifeScene.actors.length) {
+        const lifeSource = lifeScene;
+        void (async () => {
+          const interval = 1000 / 30;
+          while (producing) {
+            const started = performance.now();
+            const lifeImage = await loadSvgImage(lifeSvgDocument(lifeSource.render(audio.currentTime + 0.03)), 1200);
+            if (lifeImage && producing) {
+              const previousLife = lifeImageRef.current;
+              lifeImageRef.current = lifeImage;
+              releaseSvgImage(previousLife);
+            } else {
+              releaseSvgImage(lifeImage);
             }
             await new Promise((resolve) => setTimeout(resolve, Math.max(0, interval - (performance.now() - started))));
           }
@@ -1150,6 +1332,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       producing = false;
       releaseSvgImage(exportLayersRef.current?.mid);
       exportLayersRef.current = null;
+      releaseSvgImage(lifeImageRef.current);
+      lifeImageRef.current = null;
       exportBgRef.current = null;
       if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
       audio.pause();
@@ -1242,6 +1426,16 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
               <NextImage src={story.imageSrc} alt={story.title} fill unoptimized className="object-cover" />
             )}
           </div>
+          {lifeMarkup && (
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 1200 800"
+              preserveAspectRatio="xMidYMid slice"
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{ transform: `translate(${frame.driftX}%, ${frame.driftY}%) scale(${1.03 * frame.zoom})` }}
+              dangerouslySetInnerHTML={{ __html: lifeMarkup }}
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/35 pointer-events-none" />
           <div className="absolute left-4 top-4 sm:left-5 sm:top-5 flex flex-wrap items-center gap-2 z-20">
             <span className="rounded-md bg-[#14251e]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#f5cf72] border border-[#f5cf72]/30 shadow-sm">{story.theme}</span>
@@ -1286,17 +1480,23 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   aria-hidden="true"
                   style={{ opacity: visual.opacity * (active ? 0.95 : 0.7) }}
                 >
-                  <line
-                    x1={(anchorLeftPct / 100) * stageSize.w}
-                    y1={(anchorTopPct / 100) * stageSize.h}
-                    x2={(left / 100) * stageSize.w}
-                    y2={(top / 100) * stageSize.h}
-                    stroke="#f5cf72"
-                    strokeOpacity={0.9}
-                    strokeWidth={active ? 1.6 : 1.2}
-                    strokeLinecap="round"
-                  />
-                  <circle cx={(anchorLeftPct / 100) * stageSize.w} cy={(anchorTopPct / 100) * stageSize.h} r={active ? 3.4 : 2.8} fill="#f5cf72" stroke="rgba(18,32,26,.9)" strokeWidth={1} />
+                  {(() => {
+                    const ax = (anchorLeftPct / 100) * stageSize.w;
+                    const ay = (anchorTopPct / 100) * stageSize.h;
+                    const lx = (left / 100) * stageSize.w;
+                    const ly = (top / 100) * stageSize.h;
+                    const head = arrowHeadPoints(ax, ay, lx, ly, active ? 9 : 7.5);
+                    const bx = (head[1][0] + head[2][0]) / 2;
+                    const by = (head[1][1] + head[2][1]) / 2;
+                    const pts = head.map((p) => p.join(",")).join(" ");
+                    return (
+                      <>
+                        <line x1={lx} y1={ly} x2={bx} y2={by} stroke="rgba(18,32,26,.85)" strokeWidth={active ? 4.4 : 3.8} strokeLinecap="round" />
+                        <line x1={lx} y1={ly} x2={bx} y2={by} stroke="#f5cf72" strokeWidth={active ? 2.2 : 1.8} strokeLinecap="round" />
+                        <polygon points={pts} fill="#f5cf72" stroke="rgba(18,32,26,.9)" strokeWidth={1.4} strokeLinejoin="round" />
+                      </>
+                    );
+                  })()}
                 </svg>
               )}
               <div
@@ -1502,6 +1702,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
               </button>{captionPosition && 
               <button type="button" title="Voltar a legenda para a posição original" onClick={() => setCaptionPosition(null)} className="flex h-9 items-center gap-1.5 rounded-md px-2.5 text-xs text-white/70 hover:bg-white/10"><Undo2 className="h-4 w-4" /> Reposicionar
               </button>}
+              <button type="button" title={soundFx ? "Desligar os sons da cena" : "Ligar os sons da cena (pássaros, ondas, tambores...)"} onClick={() => setSoundFx((enabled) => !enabled)} className={`flex h-9 items-center gap-1.5 rounded-md px-2.5 text-xs ${soundFx ? "bg-white/15 text-white" : "text-white/60 hover:bg-white/10"}`} aria-pressed={soundFx}><Sparkles className="h-4 w-4" /> Sons da cena
+              </button>
               <button type="button" title={muted ? "Ativar som" : "Silenciar"} disabled={exporting} onClick={() => { const next = !muted; setMuted(next); if (audioRef.current) audioRef.current.muted = next; }} className="flex h-9 w-9 items-center justify-center rounded-md text-white/70 hover:bg-white/10 disabled:opacity-50" aria-label={muted ? "Ativar som" : "Silenciar"}>{muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
               </button>
             </div>

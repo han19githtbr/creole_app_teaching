@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 interface MongooseCache {
+  conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
 }
 
@@ -8,15 +9,21 @@ declare global {
   var _mongooseCache: MongooseCache | undefined;
 }
 
-// Um único cache por processo: reaproveita a mesma conexão em todas as requisições (e no hot reload do dev).
-const cached: MongooseCache = global._mongooseCache ?? { promise: null };
+// Um único cache por processo (sobrevive ao hot reload do dev e é reaproveitado entre requisições na Vercel).
+const cached: MongooseCache = global._mongooseCache ?? { conn: null, promise: null };
 global._mongooseCache = cached;
 
+/**
+ * Conexão única e estável com o MongoDB Atlas.
+ *
+ * Por que o alerta "connections exceeded your threshold" aparecia no cluster M0 (limite de 500 conexões):
+ *  - o listener de "disconnected" zerava o cache; como o driver já se reconecta sozinho, a requisição seguinte
+ *    abria um SEGUNDO pool sem fechar o anterior (vazamento de conexões a cada oscilação de rede);
+ *  - cada instância serverless abria um pool grande (e cada pool ainda mantém conexões de monitoramento).
+ * Agora: a promessa só é descartada se a conexão FALHAR; reconexões ficam por conta do driver; o pool é mínimo.
+ */
 export async function connectDB(): Promise<typeof mongoose> {
-  // Já conectado: reaproveita.
-  if (mongoose.connection.readyState === 1) return mongoose;
-
-  // Conexão em andamento: espera a mesma promessa (nunca abre uma segunda).
+  if (cached.conn && mongoose.connection.readyState === 1) return cached.conn;
   if (cached.promise) return cached.promise;
 
   const uri = process.env.MONGODB_URI;
@@ -24,26 +31,30 @@ export async function connectDB(): Promise<typeof mongoose> {
     throw new Error("MONGODB_URI não está definida. Configure-a no arquivo .env.local (veja README.md).");
   }
 
-  // Se a conexão cair, limpa o cache para a próxima requisição reconectar.
-  if (!mongoose.connection.listeners("disconnected").length) {
-    mongoose.connection.on("disconnected", () => {
-      cached.promise = null;
-    });
-  }
-
   cached.promise = mongoose
     .connect(uri, {
-      // Serverless (Vercel): cada instância da função abre o SEU pool. Pool pequeno + conexões ociosas
-      // fechadas rápido evitam estourar o limite de 500 conexões do plano gratuito (M0) do Atlas.
-      maxPoolSize: 3,
+      // Plano M0: 500 conexões no total para TODAS as instâncias. Pool pequeno e ocioso fechado rápido.
+      maxPoolSize: 2,
       minPoolSize: 0,
-      maxIdleTimeMS: 10_000,
-      serverSelectionTimeoutMS: 8000,
-      socketTimeoutMS: 45000,
+      maxConnecting: 1,
+      maxIdleTimeMS: 5_000,
+      // Em serverless não mantém monitores em streaming (menos conexões abertas por instância).
+      serverMonitoringMode: "poll",
+      heartbeatFrequencyMS: 30_000,
+      serverSelectionTimeoutMS: 8_000,
+      connectTimeoutMS: 8_000,
+      socketTimeoutMS: 45_000,
+      waitQueueTimeoutMS: 10_000,
       bufferCommands: true,
     })
+    .then((m) => {
+      cached.conn = m;
+      return m;
+    })
     .catch((err) => {
+      // Só descarta quando a conexão falhou: a próxima requisição tenta de novo (sem abrir pools extras).
       cached.promise = null;
+      cached.conn = null;
       throw err;
     });
 

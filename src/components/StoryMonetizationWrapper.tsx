@@ -64,7 +64,7 @@ export function StoryMonetizationWrapper({ story }: StoryMonetizationWrapperProp
               className="bg-amber-500 hover:bg-amber-600 text-white font-bold gap-2 px-6 shadow-md"
             >
               <PlusCircle className="h-4 w-4" />
-              Recarregar Minutos (PIX a partir de R$ 15)
+              Recarregar Minutos (a partir de R$ 15)
             </Button>
 
             <Link href="/dashboard/stories">

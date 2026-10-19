@@ -510,9 +510,9 @@ O app vende **pacotes de minutos** (e histórias bônus) pelo modal de recarga. 
 2. No modal de recarga, o botão do Stripe chama `POST /api/user/monetization/checkout` com `method: "stripe"`. A rota cria uma *Checkout Session* (`mode: "payment"`, moeda `brl`, valor = preço do pacote) e devolve a URL; o navegador do aluno é levado para o Stripe.
 3. A sessão carrega no `metadata` o e-mail do aluno, o `packageId`, os minutos e as histórias bônus.
 4. Depois de pagar, o Stripe devolve o aluno para `/dashboard/stories?payment=success` (ou `?payment=canceled`). **Essa página não credita nada.**
-5. Quem credita é o **webhook** `POST /api/webhooks/stripe`: ao receber `checkout.session.completed` (com assinatura válida), ele soma os minutos e as histórias bônus ao usuário com aquele e-mail. Sem o webhook configurado, o aluno paga e não recebe os minutos.
+5. Quem credita é o **webhook** `POST /api/webhooks/stripe`: ao receber `checkout.session.completed` ou `checkout.session.async_payment_succeeded` (com assinatura válida e `payment_status = "paid"`), ele soma os minutos e as histórias bônus ao usuário com aquele e-mail. Cada `session.id` é gravado na coleção `StripePayment` (índice único), então reenvios do Stripe **não creditam duas vezes**. Sem o webhook configurado, o aluno paga e não recebe os minutos.
 
-Arquivos: `src/lib/stripe.ts` (cliente), `src/app/api/user/monetization/checkout/route.ts` (cria a sessão), `src/app/api/webhooks/stripe/route.ts` (credita), `src/components/RechargeModal.tsx` (botão).
+Arquivos: `src/lib/stripe.ts` (cliente), `src/app/api/user/monetization/checkout/route.ts` (cria a sessão), `src/app/api/webhooks/stripe/route.ts` (credita), `src/models/StripePayment.ts` (idempotência), `src/components/RechargeModal.tsx` (botão) e `src/components/MonetizationBar.tsx` (aviso de retorno do pagamento).
 
 ### Variáveis de ambiente
 
@@ -546,7 +546,7 @@ Faça esta parte primeiro: ela não cobra ninguém e prova que o fluxo inteiro f
 **2. Webhook**
 
 1. Em **Developers → Webhooks → Add endpoint**, use a URL `https://seu-dominio.com/api/webhooks/stripe`.
-2. Em eventos, selecione `checkout.session.completed`.
+2. Em eventos, selecione `checkout.session.completed`, `checkout.session.async_payment_succeeded` e `checkout.session.async_payment_failed`.
 3. Salve e copie o **Signing secret** (`whsec_...`) para `STRIPE_WEBHOOK_SECRET`.
 4. Faça novo deploy na Vercel para as variáveis valerem.
 
@@ -577,7 +577,7 @@ Só siga esta parte depois que o teste acima funcionou de ponta a ponta. No modo
 
 **Passo 0: corrija os bloqueadores do código (obrigatório antes de abrir ao público)**
 
-Veja a lista em [Antes de cobrar de verdade](#antes-de-cobrar-de-verdade-pontos-de-atenção-no-código-atual). O mais grave é o `simulateInstant`, que dá minutos grátis a qualquer usuário logado. Com cobrança real, isso é dinheiro perdido. Remova ou restrinja essa opção antes de publicar as chaves reais.
+Os bloqueadores conhecidos **já foram corrigidos** (veja [Proteções já implementadas](#antes-de-cobrar-de-verdade-pontos-de-atenção-no-código-atual)). Confirme apenas que `NODE_ENV` é `production` no deploy (a Vercel já define isso) e faça a primeira compra de teste do Passo 6.
 
 **Passo 1: ative a sua conta Stripe**
 
@@ -600,7 +600,7 @@ A lista de webhooks do modo real é **separada** da do modo de teste, e o segred
 
 1. Ainda no modo real, vá em **Developers → Webhooks → Add endpoint**.
 2. URL: `https://seu-dominio.com/api/webhooks/stripe` (precisa ser https e acessível publicamente; `localhost` não serve).
-3. Evento: `checkout.session.completed`.
+3. Eventos: `checkout.session.completed`, `checkout.session.async_payment_succeeded` e `checkout.session.async_payment_failed`.
 4. Salve e copie o **Signing secret** (começa com `whsec_`).
 
 **Passo 4: configure a Vercel com as chaves reais (só em Produção)**
@@ -633,10 +633,10 @@ Em **Settings → Payment methods** (no modo real), confira quais métodos estã
 
 **Checklist final do modo real**
 
-1. Bloqueadores do código corrigidos (`simulateInstant` fora de produção).
+1. Código com as proteções abaixo (já implementadas); deploy em produção (`NODE_ENV=production`).
 2. Conta Stripe ativada, com conta bancária e dados do negócio.
 3. `STRIPE_SECRET_KEY` real (`sk_live_...`) só em *Production* na Vercel.
-4. Webhook criado **no modo real**, com `checkout.session.completed`, e o `whsec_...` dele em `STRIPE_WEBHOOK_SECRET`.
+4. Webhook criado **no modo real**, com os 3 eventos `checkout.session.*` acima, e o `whsec_...` dele em `STRIPE_WEBHOOK_SECRET`.
 5. `NEXTAUTH_URL` com o domínio final em https.
 6. Novo deploy feito depois de mudar as variáveis.
 7. Primeira compra real conferida (minutos creditados, webhook com `200`).
@@ -653,12 +653,16 @@ Em **Settings → Payment methods** (no modo real), confira quais métodos estã
 
 ### Antes de cobrar de verdade: pontos de atenção no código atual
 
-Estes pontos existem hoje no projeto e merecem correção antes de aceitar pagamentos reais:
+Proteções já implementadas no fluxo de pagamento:
 
-1. **`simulateInstant` credita sem pagar.** A rota `/api/user/monetization/checkout` aceita `simulateInstant: true` e soma os minutos do pacote sem nenhum pagamento, para **qualquer usuário logado**. Em produção, remova essa opção ou restrinja-a ao administrador/ambiente de desenvolvimento.
-2. **O PIX "Copia e Cola" é demonstração.** O código gerado pela rota não cria cobrança nem confirma pagamento. O único caminho de pagamento real hoje é `method: "stripe"`.
-3. **O webhook não é idempotente.** O Stripe pode reenviar o mesmo evento; como o `id` da sessão não é guardado, os minutos seriam creditados de novo. O recomendado é registrar o `session.id` já processado e ignorar repetições.
-4. **O webhook não confere `payment_status`.** Em métodos que confirmam depois (como boleto), `checkout.session.completed` pode chegar antes do dinheiro. O recomendado é creditar só quando `payment_status === "paid"` e tratar também `checkout.session.async_payment_succeeded`.
+1. **Sem minutos de graça.** `simulateInstant` só funciona fora de produção **e** para o administrador; em produção a rota recusa e o botão nem aparece no modal. O PIX "Copia e Cola" de demonstração foi removido (não cobrava nem confirmava nada): o único caminho de pagamento real é `method: "stripe"`.
+2. **Webhook idempotente.** O `session.id` é gravado em `StripePayment` (índice único) antes de creditar; reenvios e a dupla entrega `completed` + `async_payment_succeeded` não duplicam saldo. Se o crédito falhar, o registro é desfeito e o webhook responde 500 para o Stripe reenviar.
+3. **Só credita pagamento confirmado.** O crédito exige `payment_status === "paid"`; métodos assíncronos (como boleto) creditam em `checkout.session.async_payment_succeeded`.
+4. **Preço e créditos sempre do servidor.** O cliente só manda o `packageId`; valor, minutos e bônus vêm do pacote salvo no banco. Os pacotes são validados no admin (preço mínimo R$ 0,50 do Stripe, minutos > 0, ids únicos).
+5. **Saldo sem corrida.** O heartbeat de tempo ativo e o consumo de histórias/jogos usam atualizações atômicas no MongoDB; antes, um heartbeat simultâneo ao webhook podia sobrescrever os minutos recém-pagos.
+6. **Pagamentos sem usuário** (e-mail do Stripe sem conta no app) ficam registrados em `StripePayment` com `status: "user_not_found"` e um `console.error` para conciliação/estorno manual.
+
+Pontos que continuam por sua conta: reembolsos/estornos não removem minutos já creditados (ajuste manual em Admin → Monetização), e o tempo ativo é medido por batimentos enviados pelo navegador do aluno.
 
 ## Geração de imagens por IA
 

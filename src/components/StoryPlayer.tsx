@@ -1226,6 +1226,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           setExportProgress(100);
           await deliverExport(offlineBlob, true, isStories, destination);
           return;
+        }
       } catch (offlineError) {
         console.warn("Exportação quadro a quadro falhou ou não é suportada neste navegador, recorrendo à gravação em tempo real:", offlineError);
       }

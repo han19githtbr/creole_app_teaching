@@ -195,8 +195,19 @@ function pickFrenchVoice(): SpeechSynthesisVoice | null {
     null;
   return cachedVoice;
 }
-function speakFrench(text: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window) || soundEffects.isMuted()) return;
+let speechCallbackId = 0;
+function speakFrench(text: string, onEnd?: () => void) {
+  if (typeof window === "undefined") {
+    onEnd?.();
+    return;
+  }
+  if (!("speechSynthesis" in window) || soundEffects.isMuted()) {
+    if (onEnd) {
+      const readMs = Math.max(2000, Math.round((text.length / 8.5) * 1000) + 800);
+      setTimeout(onEnd, readMs);
+    }
+    return;
+  }
   try {
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
@@ -206,15 +217,37 @@ function speakFrench(text: string) {
     utter.rate = 0.82;
     utter.pitch = 1;
     utter.volume = Math.max(0.2, soundEffects.getVolume());
+
+    const myId = ++speechCallbackId;
+    let completed = false;
+    const finish = () => {
+      if (completed || myId !== speechCallbackId) return;
+      completed = true;
+      onEnd?.();
+    };
+
+    utter.onend = finish;
+    utter.onerror = finish;
+
+    // Timeout de segurança caso o navegador atrase ou suspenda o evento onend
+    const safetyMs = Math.max(3000, Math.round((text.length / 6.5) * 1000) + 2500);
+    setTimeout(() => {
+      if (!completed && myId === speechCallbackId) {
+        finish();
+      }
+    }, safetyMs);
+
     window.speechSynthesis.speak(utter);
   } catch {
-    // sem áudio de pronúncia neste navegador
+    onEnd?.();
   }
 }
-function speakAnswer(item: CestQuoiItem, mode: AnswerMode) {
-  speakFrench(mode === "phrase" ? `${item.speak}. ${phraseOf(item)}` : item.speak);
+function speakAnswer(item: CestQuoiItem, mode: AnswerMode, onEnd?: () => void) {
+  const text = mode === "phrase" ? `${item.speak}. ${phraseOf(item)}` : item.speak;
+  speakFrench(text, onEnd);
 }
 function cancelSpeech() {
+  speechCallbackId++;
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
 }
 
@@ -349,6 +382,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   const lastSecRef = useRef(-1);
   const answeredRef = useRef(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const autoNextTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pickRef = useRef<(option: string) => void>(() => {});
   const startToken = useRef(0);
   const hintRef = useRef(false); // usou a dica nesta imagem
@@ -364,13 +398,21 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   const running = phase === "playing" && roundState === "asking";
   const need = Math.max(1, Math.ceil(rounds.length * PASS_RATIO));
 
+  const clearAutoNext = useCallback(() => {
+    if (autoNextTimeoutRef.current) {
+      clearTimeout(autoNextTimeoutRef.current);
+      autoNextTimeoutRef.current = null;
+    }
+  }, []);
+
   const later = useCallback((fn: () => void, ms: number) => {
     timers.current.push(setTimeout(fn, ms));
   }, []);
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
-  }, []);
+    clearAutoNext();
+  }, [clearAutoNext]);
   useEffect(
     () => () => {
       clearTimers();
@@ -473,6 +515,22 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
     prepareRound(roundsRef.current, next);
   }, [clearTimers, finishGame, prepareRound]);
 
+  const playAnswerAndAdvance = useCallback(
+    (targetItem: CestQuoiItem, targetMode: AnswerMode, startDelayMs = 350, postSpeechBufferMs = 1200) => {
+      clearAutoNext();
+      later(() => {
+        speakAnswer(targetItem, targetMode, () => {
+          clearAutoNext();
+          autoNextTimeoutRef.current = setTimeout(() => {
+            autoNextTimeoutRef.current = null;
+            goNext();
+          }, postSpeechBufferMs);
+        });
+      }, startDelayMs);
+    },
+    [clearAutoNext, later, goNext]
+  );
+
   // ---------- erro (opção errada ou tempo esgotado) ----------
   const registerMiss = useCallback(
     (picked: string | null) => {
@@ -503,11 +561,10 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
         setRoundState("reveal");
         setResults((r) => r.map((v, i) => (i === indexRef.current ? "miss" : v)));
         setMessage("Veja a resposta certa!");
-        later(() => speakAnswer(current, LEVELS[levelRef.current].mode), 500);
-        later(goNext, 4200);
+        playAnswerAndAdvance(current, LEVELS[levelRef.current].mode, 500, 1400);
       }
     },
-    [later, startAttempt, goNext]
+    [later, startAttempt, playAnswerAndAdvance]
   );
 
   // ---------- acerto ----------
@@ -566,10 +623,9 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
       later(() => setFloater(null), 1350);
       if (nextStreak > 1) soundEffects.playStreak(nextStreak);
       else soundEffects.playSuccess();
-      later(() => speakAnswer(current, LEVELS[levelRef.current].mode), 350);
-      later(goNext, 3200);
+      playAnswerAndAdvance(current, LEVELS[levelRef.current].mode, 350, 1200);
     },
-    [later, goNext, registerMiss]
+    [later, playAnswerAndAdvance, registerMiss]
   );
 
   // ---------- dica: congela o tempo enquanto o painel está aberto ----------
@@ -1344,7 +1400,7 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
 
         {answered && (
           <div className="cq2-opt-in flex gap-2">
-            <button type="button" onClick={() => speakAnswer(item, mode)} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-b-4 border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm font-bold text-[var(--text)] hover:bg-[var(--surface-2)] active:translate-y-[2px] active:border-b-2">
+            <button type="button" onClick={() => playAnswerAndAdvance(item, mode, 0, 1400)} className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-b-4 border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm font-bold text-[var(--text)] hover:bg-[var(--surface-2)] active:translate-y-[2px] active:border-b-2">
               <Volume2 className="h-4 w-4" /> Ouvir de novo
             </button>
             <button type="button" onClick={goNext} className="flex-1 cursor-pointer rounded-2xl border-b-4 border-blue-900 bg-[var(--accent)] px-3 py-2 text-sm font-black text-white hover:brightness-110 active:translate-y-[2px] active:border-b-2">

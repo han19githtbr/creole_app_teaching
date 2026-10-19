@@ -105,7 +105,8 @@ const HAIRS = ["#201510", "#3b2416", "#6b3f1d", "#111111", "#8a8a8a", "#b0501f"]
 
 export type Pose =
   | "walk" | "talk" | "wave" | "point" | "cheer" | "dance" | "type" | "guitar" | "drum"
-  | "read" | "pray" | "stir" | "sit-eat" | "sit-talk" | "row" | "cycle" | "ride" | "photo";
+  | "read" | "pray" | "stir" | "sit-eat" | "sit-talk" | "row" | "cycle" | "ride" | "photo"
+  | "phone" | "kick" | "hold-hand";
 
 export interface PersonOpt {
   x: number; y: number; s?: number; face?: 1 | -1; pose: Pose; ph?: number; speed?: number;
@@ -140,6 +141,38 @@ export function person(t: number, o: PersonOpt): string {
     case "sit-talk": aR = -0.9 + sin(w * 2.2) * 0.4; aL = -0.3; nod = sin(w * 2.6) * 2; break;
     case "row": aL = -1.3 + sin(w * 2.2) * 0.7; aR = aL; lean = sin(w * 2.2) * 7; break;
     case "ride": aL = -1.0; aR = -1.0; break;
+    case "phone": {
+      aR = -2.35 + sin(w * 1.1) * 0.12;
+      aL = 0.2 + sin(w * 2.1) * 0.35;
+      nod = sin(w * 2.8) * 2.8;
+      lean = sin(w * 1.4) * 2;
+      const k = sin(w * 4.5);
+      lL = k * 0.35;
+      lR = -k * 0.35;
+      bob = -Math.abs(cos(w * 4.5)) * 1.8;
+      break;
+    }
+    case "kick": {
+      const k = sin(w * 5.5);
+      lL = k > 0 ? -k * 0.85 : 0.15;
+      lR = k < 0 ? k * 0.95 : 0.15;
+      aL = -1.25 + sin(w * 5.5) * 0.3;
+      aR = 0.75 - sin(w * 5.5) * 0.4;
+      lean = -k * 11;
+      bob = -Math.abs(sin(w * 5.5)) * 4;
+      break;
+    }
+    case "hold-hand": {
+      const k = sin(w * 4.8);
+      lL = k * 0.48;
+      lR = -k * 0.48;
+      aL = -k * 0.35;
+      aR = -0.32 + sin(w * 2.4) * 0.08;
+      bob = -Math.abs(cos(w * 4.8)) * 2;
+      lean = sin(w * 1.2) * 1.8;
+      nod = sin(w * 1.6) * 1.5;
+      break;
+    }
   }
   const hipY = seated ? -30 : -40;
   const shY = hipY - 34;
@@ -164,24 +197,46 @@ export function person(t: number, o: PersonOpt): string {
   if (o.pose === "guitar") { const [hx, hy] = end(0, shY + 4, 28, aL); prop = line(-12, shY + 30, hx + 6, hy - 4, 4, "#7a4a22") + ell(-8, shY + 32, 11, 8, "#c0792f"); }
   if (o.pose === "read") { const [hx, hy] = end(0, shY + 4, 28, aL); prop = `<rect x="${f(hx - 2)}" y="${f(hy - 8)}" width="14" height="12" rx="1" fill="#f6efe0" stroke="#8a6b3a" stroke-width="1.5"/>`; }
   if (o.pose === "photo") { const [hx, hy] = end(0, shY + 4, 28, aR); prop = `<rect x="${f(hx - 4)}" y="${f(hy - 5)}" width="11" height="8" rx="2" fill="#222"/>` + (sin(w * 0.9) > 0.92 ? circ(hx + 12, hy - 2, 7, "#fff", ' opacity="0.8"') : ""); }
+  if (o.pose === "phone") { const [hx, hy] = end(0, shY + 4, 28, aR); prop = `<rect x="${f(hx - 3)}" y="${f(hy - 8)}" width="7" height="13" rx="2" fill="#1b242e"/><rect x="${f(hx - 2)}" y="${f(hy - 6)}" width="5" height="9" rx="1" fill="#60a5fa" opacity="0.85"/>`; }
   const shadow = ell(o.x, o.y + 1, 22 * s, 5 * s, "rgba(0,0,0,.2)");
   const face = o.face ?? 1;
-  return shadow + G(o.x, o.y + bob, 0, face * s * sx, s, legs + torso);
+  return shadow + G(o.x, o.y + bob, 0, face * s * sx, s, legs + torso + prop);
 }
 
 /* ------------------------------------------------------------------ robô */
 
-function robot(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; mode: "wave" | "work" | "nod"; ph?: number }): string {
+function robot(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; mode: "wave" | "work" | "nod" | "carry" | "clean" | "scan"; ph?: number }): string {
   const s = o.s ?? 0.85, w = t + (o.ph ?? 0);
-  const arm = o.mode === "wave" ? -2.6 + sin(w * 7) * 0.4 : o.mode === "work" ? -1.2 + sin(w * 9) * 0.1 : -0.2;
+  let arm = -0.2;
+  if (o.mode === "wave") arm = -2.6 + sin(w * 7) * 0.4;
+  else if (o.mode === "work") arm = -1.2 + sin(w * 9) * 0.1;
+  else if (o.mode === "carry") arm = -1.4 + sin(w * 3) * 0.08;
+  else if (o.mode === "clean") arm = -1.1 + sin(w * 6) * 0.35;
+  else if (o.mode === "scan") arm = -0.7 + sin(w * 2) * 0.15;
+
   const blink = sin(w * 3) > 0 ? "#38f5a0" : "#1b8a5c";
   const [hx, hy] = end(14, -62, 26, arm);
+  const [h2x, h2y] = end(-14, -62, 26, o.mode === "carry" ? arm : -0.2);
+
+  let taskProp = "";
+  if (o.mode === "carry") {
+    taskProp = `<rect x="6" y="-72" width="24" height="20" rx="3" fill="#e0a030" stroke="#8a5a1c" stroke-width="1.5"/><circle cx="18" cy="-62" r="3" fill="${sin(w * 5) > 0 ? "#38f5a0" : "#ff5a4a"}"/>`;
+  } else if (o.mode === "clean") {
+    const sweepX = hx + 14 + sin(w * 6) * 12;
+    taskProp = line(hx, hy, sweepX, -2, 3, "#5c6b7a") + `<path d="M${f(sweepX - 10)} -2 L${f(sweepX + 10)} -2" stroke="#38f5a0" stroke-width="4" stroke-linecap="round"/>`;
+  } else if (o.mode === "scan") {
+    taskProp = `<path d="M0 -96 L-35 0 L35 0 Z" fill="#2c9bf0" opacity="${f(0.18 + 0.12 * Math.abs(sin(w * 3)))}"/><line x1="-35" y1="0" x2="35" y2="0" stroke="#2c9bf0" stroke-width="2" opacity="0.6"/>`;
+  }
+
   const body =
     `<rect x="-12" y="-30" width="9" height="30" rx="3" fill="#8a95a3"/><rect x="3" y="-30" width="9" height="30" rx="3" fill="#8a95a3"/>` +
     `<rect x="-17" y="-70" width="34" height="42" rx="8" fill="#c9d3de" stroke="#5c6b7a" stroke-width="2"/>` +
     circ(0, -50, 6, blink) + line(14, -62, hx, hy, 6, "#8a95a3") + circ(hx, hy, 5, "#5c6b7a") +
+    (o.mode === "carry" ? line(-14, -62, h2x, h2y, 6, "#8a95a3") + circ(h2x, h2y, 5, "#5c6b7a") : "") +
+    taskProp +
     `<g transform="rotate(${f(o.mode === "nod" ? sin(w * 3) * 6 : sin(w * 1.5) * 3)} 0 -72)"><rect x="-14" y="-96" width="28" height="24" rx="7" fill="#dfe6ee" stroke="#5c6b7a" stroke-width="2"/>` +
     circ(-5, -85, 3.2, "#2c9bf0") + circ(6, -85, 3.2, "#2c9bf0") + line(0, -96, 0, -106, 2, "#5c6b7a") + circ(0, -108, 3.5, sin(w * 4) > 0 ? "#ff5a4a" : "#8a2a22") + `</g>`;
+
   return ell(o.x, o.y + 1, 22 * s, 5 * s, "rgba(0,0,0,.2)") + G(o.x, o.y + (o.mode === "work" ? 0 : -Math.abs(sin(w * 2)) * 1.5), 0, (o.face ?? 1) * s, s, body);
 }
 
@@ -439,6 +494,286 @@ function projector(t: number): string {
   return beam + dust;
 }
 
+function conversationDuo(t: number, o: { x: number; y: number; s?: number; p1Style?: Partial<PersonOpt>; p2Style?: Partial<PersonOpt> }): string {
+  const s = o.s ?? 0.88;
+  const P = 7.0;
+  const u = (t % P) / P;
+  const p1Talking = u < 0.48;
+  const p2Talking = u >= 0.52;
+
+  const p1 = person(t, {
+    x: o.x - 32 * s,
+    y: o.y,
+    s,
+    face: 1,
+    pose: p1Talking ? "talk" : "read",
+    ph: 0,
+    shirt: "#e8564a",
+    skin: SKINS[1],
+    ...o.p1Style,
+  });
+
+  const p2 = person(t, {
+    x: o.x + 32 * s,
+    y: o.y,
+    s,
+    face: -1,
+    pose: p2Talking ? "talk" : "read",
+    ph: 2.5,
+    shirt: "#3c7dd9",
+    skin: SKINS[3],
+    ...o.p2Style,
+  });
+
+  const waveX = p1Talking ? o.x - 10 * s : o.x + 10 * s;
+  const waveAlpha = (p1Talking || p2Talking) ? 0.35 + 0.35 * Math.abs(sin(t * 6)) : 0;
+  const dialogPulse = `<circle cx="${f(waveX)}" cy="${f(o.y - 68 * s)}" r="${f(3.5 * s)}" fill="#f5cf72" opacity="${f(waveAlpha)}"/>`;
+
+  return p1 + p2 + dialogPulse;
+}
+
+function beachCouple(t: number, o: { x: number; y: number; s?: number; dir?: 1 | -1; ph?: number; speed?: number }): string {
+  const s = o.s ?? 0.85;
+  const dir = o.dir ?? 1;
+  const sp = o.speed ?? 18;
+  const cx = travel(t, sp, o.ph ?? 0.3, 140, dir);
+  const w = t * 5 + (o.ph ?? 0);
+  const bob = -Math.abs(cos(w)) * 2;
+
+  const p1 = person(t, {
+    x: cx - 18 * s * dir,
+    y: o.y,
+    s,
+    face: dir,
+    pose: "hold-hand",
+    ph: (o.ph ?? 0),
+    shirt: "#2fb5b0",
+    pants: "#24313f",
+    skin: SKINS[2],
+  });
+
+  const p2 = person(t, {
+    x: cx + 18 * s * dir,
+    y: o.y,
+    s: s * 0.94,
+    face: dir,
+    pose: "hold-hand",
+    ph: (o.ph ?? 0),
+    shirt: "#e86aa6",
+    pants: "#f4f1e6",
+    robe: true,
+    skin: SKINS[0],
+    hair: HAIRS[1],
+  });
+
+  const handJoin = circ(cx, o.y - 38 * s + bob, 3.5 * s, SKINS[1]);
+  const footStep = `<ellipse cx="${f(cx - 38 * s * dir)}" cy="${f(o.y + 2)}" rx="${f(6 * s)}" ry="${f(2 * s)}" fill="#a89078" opacity="${f(0.25 * Math.abs(sin(w)))}"/>`;
+
+  return footStep + p1 + p2 + handJoin;
+}
+
+function soccerMatch(t: number, o: { x: number; y: number; s?: number }): string {
+  const s = o.s ?? 0.85;
+  const P = 4.2;
+  const u = (t % P) / P;
+
+  const p1X = o.x - 90 * s;
+  const p2X = o.x + 90 * s;
+  const groundY = o.y;
+
+  let bx = p1X;
+  let by = groundY - 6 * s;
+  let ballAlt = 0;
+  let p1Pose: Pose = "walk";
+  let p2Pose: Pose = "walk";
+
+  if (u < 0.5) {
+    const passK = clamp((u - 0.12) / 0.32, 0, 1);
+    p1Pose = u < 0.18 ? "kick" : "cheer";
+    p2Pose = passK > 0.7 ? "kick" : "walk";
+    bx = p1X + passK * (p2X - p1X);
+    ballAlt = sin(passK * PI) * 55 * s;
+    by = groundY - 8 * s - ballAlt;
+  } else {
+    const passK = clamp((u - 0.62) / 0.32, 0, 1);
+    p2Pose = u < 0.68 ? "kick" : "cheer";
+    p1Pose = passK > 0.7 ? "kick" : "walk";
+    bx = p2X - passK * (p2X - p1X);
+    ballAlt = sin(passK * PI) * 65 * s;
+    by = groundY - 8 * s - ballAlt;
+  }
+
+  const p1 = person(t, {
+    x: p1X,
+    y: groundY,
+    s,
+    face: 1,
+    pose: p1Pose,
+    shirt: "#3c7dd9",
+    pants: "#ffffff",
+    skin: SKINS[3],
+    speed: 1.4,
+  });
+
+  const p2 = person(t, {
+    x: p2X,
+    y: groundY,
+    s,
+    face: -1,
+    pose: p2Pose,
+    shirt: "#e8564a",
+    pants: "#24313f",
+    skin: SKINS[1],
+    speed: 1.4,
+  });
+
+  const shadowR = Math.max(3, (9 - ballAlt * 0.08) * s);
+  const shadowAlpha = clamp(0.4 - ballAlt * 0.005, 0.1, 0.45);
+  const ballShadow = ell(bx, groundY + 1, shadowR * 1.5, shadowR * 0.5, `rgba(0,0,0,${f(shadowAlpha)})`);
+
+  const ballRot = t * 380;
+  const ball = G(
+    bx,
+    by,
+    ballRot,
+    s,
+    s,
+    `<circle cx="0" cy="0" r="8" fill="#ffffff" stroke="#222" stroke-width="1.2"/>` +
+      `<path d="M-3 -4 L3 -4 L5 2 L-1 6 L-5 1 Z" fill="#222"/>` +
+      `<circle cx="0" cy="0" r="1.5" fill="#ffffff"/>`
+  );
+
+  const pitchLine = `<line x1="${f(p1X - 30 * s)}" y1="${f(groundY + 2)}" x2="${f(p2X + 30 * s)}" y2="${f(groundY + 2)}" stroke="#ffffff" stroke-opacity="0.3" stroke-width="2" stroke-dasharray="14 10"/>`;
+
+  return pitchLine + ballShadow + p1 + p2 + ball;
+}
+
+function playingAnimals(t: number, o: { x: number; y: number; s?: number; ph?: number }): string {
+  const s = o.s ?? 0.9;
+  const P = 6.0;
+  const u = ((t + (o.ph ?? 0)) % P) / P;
+
+  const d1X = o.x - 50 * s + sin(t * 2.2) * 35 * s;
+  const d2X = o.x + 35 * s + sin(t * 2.2 + 0.6) * 35 * s;
+  const chasing = u < 0.5;
+
+  const ballX = chasing ? d1X + 18 * s : d2X - 18 * s;
+  const ballHop = Math.abs(sin(t * 8)) * 14 * s;
+  const ball = circ(ballX, o.y - 6 * s - ballHop, 5 * s, "#e8564a", ' stroke="#fff" stroke-width="1"');
+  const ballShadow = ell(ballX, o.y + 1, 6 * s, 2 * s, "rgba(0,0,0,0.18)");
+
+  const d1 = dog(t, {
+    x: d1X,
+    y: o.y,
+    s,
+    face: (d2X > d1X ? 1 : -1),
+    color: "#c4793a",
+    ph: (o.ph ?? 0),
+  });
+
+  const d2 = dog(t, {
+    x: d2X,
+    y: o.y,
+    s: s * 0.85,
+    face: (d1X > d2X ? 1 : -1),
+    color: "#2b2b2b",
+    ph: (o.ph ?? 0) + 1.2,
+  });
+
+  return ballShadow + ball + d1 + d2;
+}
+
+function sharkHunt(t: number, wy0: number, wy1: number, seed: string): string {
+  const P = 14;
+  const u = (t % P) / P;
+  const fishY = wy0 + (wy1 - wy0) * 0.62;
+  const x0 = -120 + u * (LIFE_W + 360);
+
+  const gap = 310 - 275 * clamp(u / 0.75, 0, 1);
+  const sx = x0 - gap;
+  const strike = u > 0.74 && u < 0.88;
+
+  const fishes = Array.from({ length: 7 }, (_, i) => {
+    const eaten = i === 6 && u > 0.8;
+    if (eaten) return "";
+    const scatterAngle = (i - 3) * 0.35;
+    const scatterDist = u > 0.72 ? (u - 0.72) * 160 : 0;
+    const fx = x0 + (i % 3) * 24 + cos(scatterAngle) * scatterDist;
+    const fy = fishY + (i - 3) * 8 + sin(scatterAngle) * scatterDist + sin(t * 3 + i) * 5;
+    const color = i % 2 ? "#f2a03c" : "#7fb6e8";
+    return fish(t, { x: fx, y: fy, s: 0.95, ph: i, color, alpha: 0.88 });
+  }).join("");
+
+  const finSurface = u > 0.25 && u < 0.72
+    ? `<path d="M${f(sx + 10)} ${f(fishY - 22)} L${f(sx + 24)} ${f(fishY - 48)} L${f(sx + 36)} ${f(fishY - 22)} Z" fill="#4a5c6e"/><ellipse cx="${f(sx + 24)}" cy="${f(fishY - 20)}" rx="28" ry="3.5" fill="#ffffff" opacity=".65"/>`
+    : "";
+
+  const splash = strike
+    ? `<ellipse cx="${f(sx + 50)}" cy="${f(fishY - 8)}" rx="${f(24 + sin(t * 12) * 8)}" ry="6" fill="none" stroke="#ffffff" stroke-width="2.5" opacity=".85"/>` +
+      `<circle cx="${f(sx + 40)}" cy="${f(fishY - 24)}" r="3" fill="#ffffff" opacity=".8"/>` +
+      `<circle cx="${f(sx + 62)}" cy="${f(fishY - 28)}" r="2.5" fill="#ffffff" opacity=".7"/>`
+    : "";
+
+  const sharkActor = shark(t, { x: sx, y: fishY + 8, s: 1.15, ph: 1 });
+
+  return fishes + finSurface + sharkActor + splash;
+}
+
+function phoneWalker(t: number, o: { x: number; y: number; s?: number; dir?: 1 | -1; speed?: number; ph?: number; shirt?: string }): string {
+  const dir = o.dir ?? 1;
+  const sp = o.speed ?? 19;
+  const x = travel(t, sp, o.ph ?? 0.2, 120, dir);
+  return person(t, {
+    x,
+    y: o.y,
+    s: o.s ?? 0.9,
+    face: dir,
+    pose: "phone",
+    ph: (o.ph ?? 0) * 6,
+    speed: 1,
+    shirt: o.shirt ?? "#3c7dd9",
+    pants: "#2f3e5c",
+    skin: SKINS[2],
+  });
+}
+
+function culturalParty(t: number, o: { x: number; y: number; s?: number }): string {
+  const s = o.s ?? 0.9;
+  const y = o.y;
+
+  const dancers = [0, 1].map((i) => {
+    const dx = o.x - 70 * s + i * 45 * s;
+    return person(t, {
+      x: dx,
+      y: y + (i % 2) * 10 * s,
+      s: s * 0.95,
+      pose: "dance",
+      ph: i * 1.4,
+      skin: SKINS[(i + 1) % 6],
+      shirt: i === 0 ? "#e8564a" : "#f2b632",
+    });
+  }).join("");
+
+  const drummer = ell(o.x + 20 * s, y - 24 * s, 18 * s, 22 * s, "#a86a38") +
+    ell(o.x + 20 * s, y - 44 * s, 18 * s, 5 * s, "#f4e6c0") +
+    person(t, { x: o.x - 14 * s, y, s: s * 0.9, pose: "drum", shirt: "#4aa96c", skin: SKINS[4] });
+
+  const talkers = person(t, { x: o.x + 85 * s, y, s: s * 0.9, face: 1, pose: "talk", shirt: "#9b59b6", skin: SKINS[2] }) +
+    person(t, { x: o.x + 130 * s, y: y + 2, s: s * 0.9, face: -1, pose: "cheer", shirt: "#ef8a3d", skin: SKINS[0] });
+
+  const festiveNotes = notes(t, o.x + 20 * s, y - 80 * s, "cp", 4);
+
+  return dancers + drummer + talkers + festiveNotes;
+}
+
+function taskRobots(t: number, o: { x: number; y: number; s?: number }): string {
+  const s = o.s ?? 0.88;
+  const r1 = robot(t, { x: o.x - 55 * s, y: o.y, s, mode: "carry", ph: 0.5 });
+  const r2 = robot(t, { x: o.x + 45 * s, y: o.y, s, mode: "clean", ph: 1.8, face: -1 });
+  const tech = person(t, { x: o.x + 115 * s, y: o.y, s, face: -1, pose: "type", shirt: "#3c7dd9", skin: SKINS[1] });
+  return r1 + r2 + tech;
+}
+
 /* ------------------------------------------------------------------ zonas (análise da imagem) */
 
 const DEFAULT_ZONES: SceneZones = { water: null, groundTop: 560 };
@@ -532,201 +867,107 @@ export function createSceneLife(input: LifeInput): LifeScene {
   const actors: Actor[] = [];
   const names: string[] = [];
   const add = (name: string, z: number, draw: (t: number) => string) => { names.push(name); actors.push({ z, draw }); };
-  const gy = (k: number) => GT + 34 + (735 - GT - 34) * clamp(k, 0, 1);
+
   const wantsSea = !!wz;
-  const personStyle = () => ({ skin: pick(r, SKINS), shirt: pick(r, SHIRTS), pants: pick(r, PANTS), hair: pick(r, HAIRS) });
-
-  /* --- mar / rio / lago: ondas, barcos com remadores, peixes e tubarões caçando --- */
-  if (wantsSea && wz) {
-    const mid = wz.y0 + (wz.y1 - wz.y0) * 0.5, lo = wz.y0 + (wz.y1 - wz.y0) * 0.78;
-    add("ondas", 1, (t) => waves(t, wz.y0, wz.y1, input.sceneId) + shimmer(t, wz.y0, wz.y1, input.sceneId));
-    if (wz.y1 - wz.y0 >= 100) add("surfista", mid, (t) => surfer(t, wz.y0, wz.y1));
-    const dir = r() > 0.5 ? 1 : -1;
-    const boatTheme = ["turismo", "geografia", "lazeres", "historia", "natureza", "religiao", "cultura"].includes(theme) || has(/barco|bato|veleiro|porto|canoa|pesc|mar|lanme|praia|rio|lago|ilha/);
-    if (boatTheme) {
-      const y1 = mid, ph = r();
-      add("veleiro", y1, (t) => sailboat(t, { x: travel(t, 16, ph, 140, dir), y: y1, s: 0.95, face: dir as 1 | -1, hull: pick(rngFrom("h" + input.sceneId), ["#c8453a", "#2f6fb5", "#e0a030"]) }));
-      const y2 = lo, ph2 = r();
-      add("remadores", y2, (t) => rowboat(t, { x: travel(t, 9, ph2, 140, -dir), y: y2, s: 1.05, face: (-dir) as 1 | -1, ph: ph2 * 6 }));
-    }
-    const fishY = wz.y0 + (wz.y1 - wz.y0) * 0.62;
-    // cardume fugindo de um tubarão (o tubarão aproxima, o cardume se espalha e tudo recomeça)
-    add("tubarao-cacando-peixes", fishY, (t) => {
-      const P = 16, u = (t % P) / P, x0 = -140 + u * (LIFE_W + 420);
-      const gap = 330 - 270 * clamp(u / 0.8, 0, 1);
-      const fishes = Array.from({ length: 7 }, (_, i) => {
-        const scatter = u > 0.78 ? (u - 0.78) / 0.22 : 0, fx = x0 + (i % 3) * 22 + (i % 2) * 8, fy = fishY + sin(t * 2 + i) * 6 + (i - 3) * 6 + (i % 2 ? 1 : -1) * scatter * 40;
-        const eaten = i === 6 && u > 0.8;
-        return eaten ? "" : fish(t, { x: fx, y: fy, s: 0.95, ph: i, color: i % 2 ? "#f2a03c" : "#7fb6e8", alpha: 0.85 });
-      }).join("");
-      const sx = x0 - gap;
-      const surface = u > 0.2 && u < 0.7 ? `<path d="M${f(sx + 10)} ${f(fishY - 24)} L${f(sx + 22)} ${f(fishY - 46)} L${f(sx + 34)} ${f(fishY - 24)} Z" fill="#566a7d"/><ellipse cx="${f(sx + 22)}" cy="${f(fishY - 22)}" rx="30" ry="3" fill="#fff" opacity=".6"/>` : "";
-      return fishes + shark(t, { x: sx, y: fishY + 8, s: 1.1, ph: 1 }) + surface;
-    });
-    add("peixe-saltando", mid, (t) => jumpFish(t, wz.y0, wz.y1, input.sceneId));
-    for (let i = 0; i < 2; i++) { const ph = r(), yy = wz.y0 - 70 - r() * 80; add("gaivotas", 0, (t) => bird(t, { x: travel(t, 30 + i * 9, ph, 80, i ? -1 : 1), y: yy, s: 1 + i * 0.2, ph: i * 2, face: i ? -1 : 1 })); }
-    if (has(/pato|duck|marre/)) add("patos", mid, (t) => ell(travel(t, 8, 0.3, 80), mid + 4, 14, 8, "#fff", ` opacity=".95"`) + circ(travel(t, 8, 0.3, 80) + 12, mid - 6, 6, "#fff") + `<path d="M${f(travel(t, 8, 0.3, 80) + 17)} ${f(mid - 6)} l7 2 l-7 2z" fill="#f2a030"/>`);
-  }
-
-  /* --- terra: elenco por tema --- */
   const landMin = wz ? Math.max(GT, wz.y1 + 10) : GT;
-  const gyL = (k: number) => clamp(landMin + 34 + (735 - landMin - 34) * k, 520, 735);
-  const walker = (ph: number, y: number, dir: 1 | -1, speed: number, o?: Partial<PersonOpt>) =>
-    add("pessoa-caminhando", y, (t) => person(t, { x: travel(t, speed, ph, 80, dir), y, s: 0.95 * depth(y, landMin) + 0.2, face: dir, pose: "walk", ph: ph * 9, ...personStyle0(ph), ...o }));
-  function personStyle0(seedN: number) { const rr = rngFrom(input.sceneId + "p" + seedN); return { skin: pick(rr, SKINS), shirt: pick(rr, SHIRTS), pants: pick(rr, PANTS), hair: pick(rr, HAIRS) }; }
-  const sc = (y: number) => 0.95 * depth(y, landMin) + 0.2;
-  const at = (name: string, y: number, fn: (t: number) => string) => add(name, y, fn);
+  const gyL = (k: number) => clamp(landMin + 30 + (735 - landMin - 30) * k, 520, 735);
+  const sc = (y: number) => 0.85 * depth(y, landMin) + 0.15;
 
-  switch (theme) {
-    case "tecnologia": {
-      const y = gyL(0.5), x = 250 + r() * 200;
-      at("humano-e-robo", y, (t) => person(t, { x, y, s: sc(y), pose: "type", skin: SKINS[1], shirt: "#3c7dd9" }) + robot(t, { x: x + 80, y, s: sc(y), face: -1, mode: "wave" }) + sparkles(t, "tc", 6, y - 120, y - 40, "#7ff0c8"));
-      const y2 = gyL(0.8), x2 = 760 + r() * 200;
-      at("humano-robo-colaborando", y2, (t) => robot(t, { x: x2, y: y2, s: sc(y2), mode: "work", ph: 1 }) + person(t, { x: x2 + 84, y: y2, s: sc(y2), face: -1, pose: "point", shirt: "#f2b632", skin: SKINS[3] }));
-      add("drone", 0, (t) => { const dx = travel(t, 40, r(), 100), dy = 150 + sin(t * 0.8) * 25; return G(dx, dy, sin(t * 1.4) * 6, 1, 1, ell(0, 0, 14, 6, "#f2b632") + [-22, 22].map((px) => `<ellipse cx="${px}" cy="-7" rx="${f(14 * Math.abs(cos(t * 40)))}" ry="2" fill="#dfe6ee" opacity=".8"/>`).join("") + circ(0, 6, 3, "#38f5a0")); });
-      walker(0.2, gyL(0.65), 1, 22);
-      break;
+  /* --- 1. ZONA AQUÁTICA (se houver água detectada na cena) --- */
+  if (wantsSea && wz) {
+    const mid = wz.y0 + (wz.y1 - wz.y0) * 0.5;
+    const lo = wz.y0 + (wz.y1 - wz.y0) * 0.78;
+    add("ondas", 1, (t) => waves(t, wz.y0, wz.y1, input.sceneId) + shimmer(t, wz.y0, wz.y1, input.sceneId));
+    if (wz.y1 - wz.y0 >= 95) {
+      add("surfista", mid, (t) => surfer(t, wz.y0, wz.y1));
     }
-    case "natureza": {
-      const y = gyL(0.55);
-      at("coelho-e-raposa", y, (t) => {
-        const P = 15, u = (t % P) / P, rx = -80 + u * 1300, gap = 280 - 215 * clamp(u / 0.8, 0, 1), hide = u > 0.88 ? clamp((u - 0.88) / 0.08, 0, 1) : 0;
-        const fxp = rx - gap + (u > 0.88 ? (u - 0.88) * 200 : 0);
-        return rabbit(t, { x: rx, y, s: 1.2, mode: "run", ph: 1 }).replace(/<g /, `<g opacity="${f(1 - hide)}" `) + fox(t, { x: fxp, y: y + 4, s: 0.9, ph: 0 });
-      });
-      const y2 = gyL(0.9);
-      at("cervos", y2, (t) => deer(t, { x: 300, y: y2, s: 1, ph: 0 }) + deer(t, { x: 380, y: y2 - 6, s: 0.7, face: -1, ph: 2 }));
-      for (let i = 0; i < 3; i++) { const cx = 250 + i * 320, cy = GT - 20 - r() * 40, ph = r() * 6; add("borboletas", 0, (t) => butterfly(t, { cx, cy, ph, color: pick(rngFrom("b" + i), ["#f08a2b", "#3c9bd9", "#f2d22b"]) })); }
-      for (let i = 0; i < 2; i++) { const ph = r(), yy = 110 + r() * 80; add("passaros", 0, (t) => bird(t, { x: travel(t, 34, ph, 80, i ? -1 : 1), y: yy, ph: i, face: i ? -1 : 1, color: "#fff" })); }
-      break;
+
+    // Ação aquática principal: caça de tubarão, casal na praia, ou veleiro/remadores
+    if (has(/barco|bato|veleiro|porto|canoa|chaloup|bateau/)) {
+      const dir = r() > 0.5 ? 1 : -1;
+      add("veleiro", mid, (t) => sailboat(t, { x: travel(t, 16, 0.2, 140, dir), y: mid, s: 0.95, face: dir as 1 | -1 }));
+      add("remadores", lo, (t) => rowboat(t, { x: travel(t, 9, 0.7, 140, -dir), y: lo, s: 1.05, face: (-dir) as 1 | -1, ph: 2 }));
+    } else if (has(/praia|plaj|plage|areia|sand|costa|beira/) || theme === "turismo") {
+      const shoreY = clamp(wz.y1 + 16, 540, 730);
+      add("casal-passeando-na-praia", shoreY, (t) => beachCouple(t, { x: 480, y: shoreY, s: sc(shoreY) * 1.05, dir: 1 }));
+      add("peixe-saltando", mid, (t) => jumpFish(t, wz.y0, wz.y1, input.sceneId));
+    } else {
+      // Padrão aquático dinâmico e realista: tubarão caçando e comendo peixes
+      add("tubarao-cacando-peixes", mid + 12, (t) => sharkHunt(t, wz.y0, wz.y1, input.sceneId));
+      add("peixe-saltando", mid, (t) => jumpFish(t, wz.y0, wz.y1, input.sceneId));
     }
-    case "cultura": {
-      const y = gyL(0.6);
-      [0, 1, 2].forEach((i) => { const x = 360 + i * 120; at("dancarinos", y + i, (t) => person(t, { x, y: y + i, s: sc(y), pose: "dance", ph: i * 1.1, skin: SKINS[(i + 2) % 6], shirt: SHIRTS[(i * 3) % 9] })); });
-      at("tamborista", y, (t) => ell(820, y - 26, 20, 26, "#a86a38") + ell(820, y - 50, 20, 6, "#f4e6c0") + person(t, { x: 780, y, s: sc(y), pose: "drum", shirt: "#e8564a", skin: SKINS[4] }));
-      at("criancas", gyL(0.9), (t) => person(t, { x: 560, y: gyL(0.9), s: sc(gyL(0.9)) * 0.7, pose: "cheer", shirt: "#f2b632" }) + person(t, { x: 640, y: gyL(0.92), s: sc(gyL(0.9)) * 0.62, pose: "wave", shirt: "#4aa96c", ph: 2 }));
-      walker(0.1, gyL(0.35), -1, 24);
-      add("confete", 0, (t) => confetti(t, input.sceneId));
-      break;
-    }
-    case "turismo": {
-      const y = gyL(0.6);
-      at("turistas", y, (t) => person(t, { x: 300, y, s: sc(y), pose: "point", shirt: "#e8564a", hat: "#f2d27a" }) + person(t, { x: 380, y: y + 2, s: sc(y), face: -1, pose: "photo", shirt: "#3c7dd9", skin: SKINS[3] }));
-      walker(0.2, gyL(0.9), 1, 26, { hat: "#f2d27a" });
-      add("aviao", 0, (t) => plane(t, { x: travel(t, 34, 0.1, 220, -1), y: 130 + sin(t * 0.3) * 10, s: 0.8, face: -1 }));
-      add("balao", 0, (t) => balloon(t, { x: 920 + sin(t * 0.2) * 40, y: 300 - ((t * 5) % 160), s: 0.9, ph: 1 }));
-      break;
-    }
-    case "interior": {
-      const y = gyL(0.5), y2 = gyL(0.85);
-      at("galinhas", y2, (t) => [0, 1, 2, 3].map((i) => chicken(t, { x: 230 + i * 46 + sin(t * 0.4 + i) * 22, y: y2 + (i % 2) * 8, s: 1 + (i % 2) * 0.1, ph: i * 1.7, face: i % 2 ? -1 : 1, color: i === 1 ? "#d9a06a" : "#f4ecd8" })).join(""));
-      at("vaca", y, (t) => cow(t, { x: 820, y, s: 0.95, ph: 0 }) + cow(t, { x: 960, y: y + 12, s: 0.75, face: -1, ph: 2 }));
-      at("cao", gyL(0.75), (t) => dog(t, { x: travel(t, 70, 0.3, 80), y: gyL(0.75), s: 1 }));
-      walker(0.05, gyL(0.55), 1, 20, { hat: "#d9b45a" });
-      at("fazendeiro-crianca", gyL(0.95), (t) => person(t, { x: 560, y: gyL(0.95), s: sc(gyL(0.95)) * 0.7, pose: "wave", shirt: "#f2b632" }));
-      add("folhas", 0, (t) => leaves(t, input.sceneId, 6, ["#9bbf4a", "#c9d86a"]));
-      break;
-    }
-    case "danca": {
-      const y = gyL(0.6);
-      [0, 1, 2, 3].forEach((i) => { const x = 280 + i * 220; at("dancarinos", y + (i % 2) * 18, (t) => person(t, { x, y: y + (i % 2) * 18, s: sc(y) * 1.1, pose: "dance", ph: i * 0.9, skin: SKINS[(i + 1) % 6], shirt: SHIRTS[(i * 2 + 1) % 9] })); });
-      add("brilhos", 0, (t) => sparkles(t, input.sceneId, 22, 200, 700, "#ffe9a8") + confetti(t, input.sceneId, 14));
-      break;
-    }
-    case "geografia": {
-      const y = gyL(0.6);
-      at("exploradores", y, (t) => person(t, { x: 340, y, s: sc(y), pose: "point", shirt: "#4aa96c", hat: "#d9b45a" }) + person(t, { x: 420, y: y + 3, s: sc(y), face: -1, pose: "read", shirt: "#e8564a", skin: SKINS[3] }));
-      walker(0.3, gyL(0.9), -1, 22, { hat: "#d9b45a" });
-      for (let i = 0; i < 2; i++) { const ph = r(); add("aguia", 0, (t) => bird(t, { x: travel(t, 20 + i * 8, ph, 100, i ? -1 : 1), y: 120 + i * 60, s: 1.7, face: i ? -1 : 1, color: "#3a2a1a", ph: i })); }
-      add("nuvens-luz", 0, (t) => motes(t, input.sceneId, 8, 80, 260));
-      break;
-    }
-    case "historia": {
-      const y = gyL(0.55), ph = r();
-      at("cavaleiro", y, (t) => { const x = travel(t, 52, ph, 120); return horse(t, { x, y, s: 1.1 * depth(y, landMin) + 0.1, ph: 0 }) + person(t, { x: x - 2, y: y - 40 * (1.1 * depth(y, landMin) + 0.1), s: 0.55, pose: "ride", shirt: "#8a2a2a", hat: "#555" }); });
-      walker(0.1, gyL(0.85), 1, 18, { robe: true, shirt: "#8a6b3a" });
-      walker(0.55, gyL(0.95), -1, 16, { shirt: "#3c5a9a" });
-      at("tocha", gyL(0.4), (t) => line(150, gyL(0.4), 150, gyL(0.4) - 70, 5, "#5a3a22") + flame(t, 150, gyL(0.4) - 72, 1.4));
-      add("folhas", 0, (t) => leaves(t, input.sceneId, 5));
-      break;
-    }
-    case "cinema": {
-      add("projetor", 0, (t) => projector(t));
-      add("plateia", 700, (t) => audience(t, input.sceneId));
-      walker(0.2, gyL(0.5), 1, 18, { shirt: "#e8564a" });
-      add("brilho-tela", 0, (t) => `<rect x="0" y="0" width="${LIFE_W}" height="${LIFE_H}" fill="hsl(${f(210 + sin(t * 0.7) * 40)} 80% 70%)" opacity="${f(0.04 + 0.05 * (sin(t * 3.1) + 1) / 2)}"/>`);
-      break;
-    }
-    case "musica": {
-      const y = gyL(0.55);
-      at("banda", y, (t) => person(t, { x: 380, y, s: sc(y), pose: "guitar", shirt: "#e8564a", skin: SKINS[2] }) + ell(560, y - 22, 22, 22, "#d6402f") + ell(560, y - 44, 22, 6, "#f4e6c0") + person(t, { x: 600, y, s: sc(y), face: -1, pose: "drum", shirt: "#3c7dd9" }) + person(t, { x: 760, y: y + 4, s: sc(y), pose: "cheer", shirt: "#e86aa6", skin: SKINS[3] }));
-      at("plateia", gyL(0.92), (t) => [0, 1, 2, 3, 4].map((i) => person(t, { x: 200 + i * 190, y: gyL(0.92), s: sc(gyL(0.92)) * 0.85, pose: "cheer", ph: i * 0.8, shirt: SHIRTS[(i * 2) % 9], skin: SKINS[i % 6] })).join(""));
-      add("notas", 0, (t) => notes(t, 560, 480, input.sceneId, 7) + sparkles(t, input.sceneId, 10, 150, 420, "#ffd27a"));
-      break;
-    }
-    case "lazeres": {
-      const y = gyL(0.5), y2 = gyL(0.85);
-      at("pipas", y, (t) => { const hx = 300, hy = y - 48 * sc(y); return kite(t, { x: 360, y: 150, hx, hy, color: "#e8564a" }) + kite(t, { x: 520, y: 210, hx: 340, hy: hy, ph: 2, color: "#3c7dd9" }) + person(t, { x: 300, y, s: sc(y), pose: "point", shirt: "#f2b632" }) + person(t, { x: 340, y: y + 4, s: sc(y) * 0.7, pose: "cheer", shirt: "#4aa96c" }); });
-      at("bola", y2, (t) => { const bx = 620 + sin(t * 0.9) * 90, by = y2 - 20 - Math.abs(sin(t * 3)) * 60; return person(t, { x: 520, y: y2, s: sc(y2), pose: "cheer", shirt: "#e86aa6" }) + person(t, { x: 760, y: y2, s: sc(y2), face: -1, pose: "cheer", ph: 1.4, shirt: "#3c7dd9" }) + circ(bx, by, 9, "#fff", ' stroke="#e8564a" stroke-width="3"'); });
-      at("ciclista", gyL(0.7), (t) => bicycle(t, { x: travel(t, 70, 0.4, 100, -1), y: gyL(0.7), face: -1 }));
-      for (let i = 0; i < 2; i++) { const ph = r(), yy = 100 + r() * 100; add("passaros", 0, (t) => bird(t, { x: travel(t, 30, ph, 80, 1), y: yy, ph: i })); }
-      break;
-    }
-    case "estoicismo": {
-      const y = gyL(0.6);
-      at("filosofos", y, (t) => person(t, { x: 420, y, s: sc(y), pose: "talk", robe: true, shirt: "#e8e2d0", skin: SKINS[1], hair: "#8a8a8a" }) + person(t, { x: 520, y: y + 2, s: sc(y), face: -1, pose: "talk", ph: 1.5, robe: true, shirt: "#b5894a", skin: SKINS[2], hair: "#6b4a2a" }));
-      at("leitor", gyL(0.9), (t) => person(t, { x: 800, y: gyL(0.9), s: sc(gyL(0.9)), pose: "read", robe: true, shirt: "#dbe4ec", skin: SKINS[0] }));
-      add("folhas", 0, (t) => leaves(t, input.sceneId, 8, ["#9bbf4a", "#d9b45a"]));
-      for (let i = 0; i < 2; i++) { const ph = r(); add("passaros", 0, (t) => bird(t, { x: travel(t, 24, ph, 80, 1), y: 120 + i * 50, ph: i })); }
-      add("luz", 0, (t) => motes(t, input.sceneId, 14, 150, 600));
-      break;
-    }
-    case "religiao": {
-      const y = gyL(0.55);
-      walker(0.1, y, 1, 18, { shirt: "#f4f1e6" });
-      walker(0.18, y + 8, 1, 18, { shirt: "#9b59b6" });
-      at("oracao", gyL(0.9), (t) => person(t, { x: 520, y: gyL(0.9), s: sc(gyL(0.9)), pose: "pray", shirt: "#f4f1e6" }) + person(t, { x: 600, y: gyL(0.92), s: sc(gyL(0.9)) * 0.8, pose: "pray", ph: 1, shirt: "#3c7dd9" }));
-      for (let i = 0; i < 3; i++) { const ph = r(); add("pombas", 0, (t) => bird(t, { x: travel(t, 26 + i * 4, ph, 80, i % 2 ? -1 : 1), y: 110 + i * 55, ph: i, color: "#fff" })); }
-      at("velas", gyL(0.3), (t) => [0, 1, 2].map((i) => `<rect x="${860 + i * 24}" y="${f(gyL(0.3) - 20)}" width="8" height="20" fill="#f6efe0"/>` + flame(t + i, 864 + i * 24, gyL(0.3) - 21, 0.8)).join(""));
-      add("luz", 0, (t) => motes(t, input.sceneId, 12, 150, 600));
-      break;
-    }
-    case "gastronomia": {
-      const y = gyL(0.5), x = 600 + (r() - 0.5) * 160, dph = r() * 3;
-      at("familia-jantando", y, (t) => diningSet(t, { x, y, s: 1.35 * depth(y, landMin), ph: dph }));
-      walker(0.3, gyL(0.95), -1, 22, { shirt: "#fff" });
-      add("brilho", 0, (t) => sparkles(t, input.sceneId, 8, 200, 600));
-      break;
+
+    // Aves marinhas discretas no alto
+    add("gaivotas", 0, (t) => bird(t, { x: travel(t, 28, 0.2, 80, 1), y: Math.min(150, wz.y0 - 50), s: 1.1, ph: 0, face: 1 }));
+  }
+
+  /* --- 2. ZONA TERRESTRE (Cenário limpo, bem organizado e perfeitamente visível) --- */
+  // O chão é organizado em duas pistas espaciais equilibradas e não-conflitantes:
+  // - Pista Principal A (centro-esquerda x: 380-480): Ação focal da narrativa da história
+  // - Pista Secundária B (lateral-direita x: 780-920): Ator complementar suave (celular, casal ou caminhante)
+  const yFocal = gyL(0.55);
+  const ySec = gyL(0.85);
+
+  // --- Ação Focal Principal ---
+  if (has(/futebol|bola|estadio|quadra|gol|foot|ballon|jogo\b|jogadores/) || (theme === "lazeres" && has(/bola|jogo/))) {
+    add("jogo-de-futebol", yFocal, (t) => soccerMatch(t, { x: 420, y: yFocal, s: sc(yFocal) }));
+  } else if (theme === "gastronomia" || has(/almoco|jantar|refeicao|restaurante|comer|comida|ceia|table|diner|repas/)) {
+    add("pessoas-conversando-no-almoco", yFocal, (t) => diningSet(t, { x: 460, y: yFocal, s: 1.25 * depth(yFocal, landMin) }));
+  } else if (theme === "tecnologia" || has(/robo|robot|tarefa|laborat|computad|tecnolog|maquina/)) {
+    add("robos-fazendo-tarefas", yFocal, (t) => taskRobots(t, { x: 420, y: yFocal, s: sc(yFocal) }));
+  } else if (theme === "cultura" || theme === "danca" || has(/festa|cultura|danca|carnaval|tambor|fete|danse/)) {
+    add("festa-cultural", yFocal, (t) => culturalParty(t, { x: 430, y: yFocal, s: sc(yFocal) }));
+  } else if (theme === "natureza" || theme === "interior" || has(/animal|animais|cachorro|cao|brinc|briga|chen|chien|pet\b/)) {
+    add("animais-brincando-e-brigando", yFocal, (t) => playingAnimals(t, { x: 420, y: yFocal, s: sc(yFocal) }));
+  } else if (theme === "cinema" || has(/cinema|filme|tela/)) {
+    add("plateia-cinema", 700, (t) => audience(t, input.sceneId));
+    add("projetor", 0, (t) => projector(t));
+  } else if (theme === "musica" || has(/musica|banda|violao|guitarra/)) {
+    add("banda-musical", yFocal, (t) =>
+      person(t, { x: 380, y: yFocal, s: sc(yFocal), pose: "guitar", shirt: "#e8564a", skin: SKINS[2] }) +
+      person(t, { x: 490, y: yFocal, s: sc(yFocal), face: -1, pose: "drum", shirt: "#3c7dd9" }) +
+      notes(t, 435, yFocal - 75 * sc(yFocal), input.sceneId, 4)
+    );
+  } else if (theme === "historia") {
+    add("cavaleiro-historico", yFocal, (t) => {
+      const hx = travel(t, 46, 0.4, 120);
+      return horse(t, { x: hx, y: yFocal, s: 1.05 * depth(yFocal, landMin) + 0.1, ph: 0 }) +
+        person(t, { x: hx - 2, y: yFocal - 38 * (1.05 * depth(yFocal, landMin) + 0.1), s: 0.55, pose: "ride", shirt: "#8a2a2a", hat: "#555" });
+    });
+  } else {
+    // Pessoas conversando naturalmente com gestos de diálogo
+    add("pessoas-conversando", yFocal, (t) => conversationDuo(t, { x: 420, y: yFocal, s: sc(yFocal) }));
+  }
+
+  // --- Ator Secundário Complementar (lateral direita, espaço limpo) ---
+  if (!wantsSea || wz.y1 < 600) {
+    if (has(/celular|telefone|telefon|phone|smartphone|chamada/) || r() > 0.4) {
+      add("pessoa-falando-no-celular", ySec, (t) => phoneWalker(t, { x: 820, y: ySec, s: sc(ySec) * 1.05, dir: -1, shirt: pick(r, SHIRTS) }));
+    } else if (has(/casal|namorados|passeio/) || theme === "turismo") {
+      add("casal-passeando", ySec, (t) => beachCouple(t, { x: 800, y: ySec, s: sc(ySec) * 1.02, dir: 1 }));
+    } else {
+      add("pessoas-conversando-2", ySec, (t) => conversationDuo(t, { x: 820, y: ySec, s: sc(ySec) * 0.95, p1Style: { shirt: "#2fb5b0" }, p2Style: { shirt: "#e86aa6" } }));
     }
   }
 
-  // elementos específicos citados no texto da cena, quando a cena não é "do mar" mas fala de algo vivo
-  if (!wz && has(/robo|robot|laborat/) && theme !== "tecnologia") {
-    const y = gyL(0.7);
-    add("humano-e-robo", y, (t) => person(t, { x: 900, y, s: sc(y), pose: "talk", shirt: "#3c7dd9" }) + robot(t, { x: 980, y, s: sc(y), face: -1, mode: "wave" }));
+  /* --- 3. AMBIENTE DISCRETO NO CÉU / NATUREZA (Mínimo e limpo, sem poluir a visão) --- */
+  if (!wantsSea) {
+    if (theme === "turismo" || has(/aviao|voo|aeroporto/)) {
+      add("aviao", 0, (t) => plane(t, { x: travel(t, 32, 0.15, 200, -1), y: 125 + sin(t * 0.3) * 8, s: 0.75, face: -1 }));
+    } else {
+      add("passaros", 0, (t) => bird(t, { x: travel(t, 28, 0.4, 80, 1), y: 120, ph: 1 }));
+      add("borboletas", 0, (t) => butterfly(t, { cx: 280, cy: GT - 35, ph: 1.5, color: "#f08a2b" }));
+    }
   }
-  if (!wz && has(/passaro|oiseau|zwazo|ave\b/)) { const ph = r(); add("passaros", 0, (t) => bird(t, { x: travel(t, 30, ph, 80, 1), y: 130, ph: 1 })); }
 
-  // Cena limpa: só ficam animações ambientes discretas (ondas na água, poucas aves e uma borboleta).
-  // Pessoas, animais, barcos, tubarões, confete e brilhos sobrepostos cobriam os objetos rotulados
-  // e deixavam difícil identificar cada elemento no vídeo.
-  const keep: number[] = [];
-  let birds = 0;
-  let butterflies = 0;
-  names.forEach((name, i) => {
-    if (name === "ondas" || name === "surfista") keep.push(i);
-    else if (AMBIENT_BIRDS.has(name) && birds++ < 2) keep.push(i);
-    else if (name === "borboletas" && butterflies++ < 1) keep.push(i);
-  });
-  const visibleActors = keep.map((i) => actors[i]);
-  const visibleNames = keep.map((i) => names[i]);
-  visibleActors.sort((a, b) => a.z - b.z);
+  // Ordenação por profundidade z para composição impecável
+  actors.sort((a, b) => a.z - b.z);
   return {
-    actors: Array.from(new Set(visibleNames)),
+    actors: Array.from(new Set(names)),
     render: (t: number) => {
       let out = "";
-      for (const a of visibleActors) {
-        try { out += a.draw(t); } catch { /* um ator com falha não derruba a cena */ }
+      for (const a of actors) {
+        try { out += a.draw(t); } catch { /* ator com falha não derruba a cena */ }
       }
       return out;
     },

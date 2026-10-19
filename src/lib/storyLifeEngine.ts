@@ -672,11 +672,8 @@ export function calculateLivingElementState(
       });
       break;
     }
-<<<<<<< HEAD
-=======
 
     default: {
->>>>>>> ffd6db5548e95e757807010cca8d82b39d57b435
       // Comportamento ocioso vivo (idle): respiração suave e atenção ao ambiente
       const idleBreath = Math.sin(t * 2.2);
       scaleY = 1 + idleBreath * 0.03;

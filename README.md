@@ -178,26 +178,27 @@ Cada vídeo tem **sons característicos dos elementos e do ambiente**, todos sin
 - **Rótulos e setas maiores** (31 px no destaque em vez de 19 px) e mais legíveis no celular.
 - **Mais qualidade de codificação:** H.264 a 16 Mbps (stories) e 12 Mbps (feed), áudio AAC 192 kbps; o WhatsApp e o Instagram recomprimem o vídeo, então uma entrada de maior qualidade chega melhor ao final.
 
-### Cenas Vivas: todas as imagens ganham vida (`src/lib/storySceneLife.ts`)
+### Cenas Vivas e Interações Realistas (`src/lib/storySceneLife.ts`)
 
-> **Cena limpa (atual):** para o vídeo ficar claro e cada elemento fácil de identificar, a camada de vida agora mostra apenas animações **ambientes discretas**: ondas e brilho na água, um surfista que passa de vez em quando, no máximo 2 aves (gaivotas, pássaros, pombas, águia) e 1 borboleta. Pessoas, animais, barcos, tubarão e cardume, confete, brilhos e folhas **não são mais desenhados**, porque cobriam os objetos rotulados e não pertenciam à ilustração. O filtro está no final de `createSceneLife` (`keep`/`AMBIENT_BIRDS`); os atores descritos abaixo continuam no código, mas só os ambientes passam. Para trazer de volta algum ator, inclua o nome dele nesse filtro.
+> **Cenário Limpo, Organizado e Interações Vivas:** Para manter a imagem perfeitamente limpa e os elementos rotulados sempre visíveis e legíveis, a camada de vida conta com um **diretor de layout espacial inteligente**. Ele posiciona as interações em faixas dedicadas (Zona de Água, Zona de Solo Lateral e Céu Superior), evitando o centro focal da ilustração e limitando a cena a no máximo uma interação principal e um elemento secundário.
 
-Antes, só as cenas principais traziam animação dentro do próprio SVG; as outras ~270 variações e as imagens geradas por IA eram estáticas. Agora **toda cena** (as 280 do banco, as de IA vetoriais e as de IA rasterizadas) recebe uma **camada de vida** desenhada por cima da imagem, imitando o mundo real:
+Todas as cenas (banco Ghibli e imagens de IA) recebem interações vivas e comportamentos naturais com características e movimentos autênticos:
 
-- **Mar, rio e lago:** ondas e brilhos na água, veleiros com esteira, barco a remo com remadores, peixes saltando, **tubarão caçando um cardume** (os peixes se espalham) e gaivotas.
-- **Natureza:** coelho fugindo de uma raposa, cervos pastando, borboletas e pássaros.
-- **Tecnologia:** humanos digitando/apontando e **interagindo com robôs**, drone patrulhando.
-- **Turismo:** turistas apontando e fotografando, pessoas caminhando, avião cruzando o céu, balão subindo.
-- **Gastronomia:** **família jantando** à mesa (comendo, conversando, vapor da comida).
-- **Cinema:** **plateia** assistindo (a tela tremeluz nos rostos), feixe do projetor com poeira, pipoca.
-- **Cultura, Dança, Música:** dançarinos girando, tamborista, banda, notas musicais, confete.
-- **Vida no interior, Lazeres, História, Geografia, Estoicismo, Religião:** galinhas, vacas, cão, pipas, bola, ciclista, cavaleiro, exploradores, filósofos conversando, fiéis, pombas, velas.
+- **Pessoas conversando (`conversationDuo`):** Diálogos com alternância real de fala (turnos de ~3,5 s), gesticulação natural dos braços, acenos de cabeça e ondas sonoras sutis de fala.
+- **Diversidade entre animais brincando e brigando (`playingAnimals`):** Cães e animais brincando, correndo atrás da bola com postura de brincadeira (*play-bow*), pequenas disputas brincalhonas (*playful sparring*) e rabos abanando.
+- **Pessoas conversando durante refeição ou festa cultural (`culturalParty`):** Dançarinos caribenhos em movimento rítmico, tamborista tradicional com pulsos de som e amigos brindando em confraternização festiva.
+- **Pessoas falando no celular (`phoneWalker`):** Caminhada natural com passos orgânicos, cabeça inclinada segurando o smartphone junto ao ouvido (com brilho de tela) e gesticulação livre da outra mão.
+- **Casais passeando na praia (`beachCouple`):** Casal caminhando de mãos dadas à beira-mar com passadas sincronizadas, efeito de brisa marítima no vestido e olhares mútuos.
+- **Jogo de futebol na quadra ou estádio (`soccerMatch`):** Dois jogadores trocando passes e finalizando com trajetória parabólica realista da bola, sombra projetada no solo, rotação da bola e saltos de comemoração.
+- **Tubarão caçando e comendo peixes (`sharkHunt`):** Perseguição dinâmica de predador no mar com aceleração, dentes batendo, respingos d'água na superfície e cardume que se dispersa em pânico.
+- **Robôs fazendo tarefas (`taskRobots`):** Robôs autônomos carregando caixas com luzes de telemetria, limpando/varrendo o solo e escaneando o ambiente com feixe holográfico em leque ciano.
+- **Ambientes e elementos naturais:** Ondas com espuma e reflexos, surfistas pegando tubo, barcos a vela, borboletas em voo orgânico e revoadas suaves de aves no céu.
 
-**Como funciona**
+**Como funciona a direção de cena limpa:**
 
-1. `analyzeSceneZones` lê a própria imagem (transparência e cor) e descobre **onde há água e onde fica o chão**, para pôr barcos no mar e pessoas no chão. Funciona com qualquer imagem; se não conseguir ler (ex.: CORS), usa posições padrão.
-2. `createSceneLife` escolhe o elenco pelo **tema** e pelas palavras dos **elementos/título** da cena (barco, robô, avião, mesa, etc.).
-3. `render(t)` é uma **função pura do tempo**: devolve o SVG do instante `t`. O player usa o tempo do áudio e a exportação usa o tempo de cada quadro. Por isso **o vídeo baixado é idêntico ao assistido** (Stories 9:16 e Feed 1:1).
+1. `analyzeSceneZones` identifica a linha do horizonte, faixas de água e solo seguro.
+2. O **diretor de layout** aloca os atores em faixas laterais não sobrepostas (Zona Solo A em $x \approx 380-480$ e Zona Solo B em $x \approx 780-920$), mantendo o centro da ilustração livre de poluição visual para os rótulos e elementos da história.
+3. `render(t)` é uma função pura do tempo: devolve o SVG animado para o instante $t$, garantindo paridade absoluta entre a reprodução no player e a gravação de vídeo MP4 exportado.
 4. As cenas `tecnologia`, `natureza`, `turismo` e `gastronomia` principais já têm seus personagens no SVG e **não recebem camada extra** (evita duplicar).
 5. **Imagens geradas por IA** seguem o mesmo caminho: não exigem nada além do tema da imagem; a camada é aplicada na hora de tocar/exportar a história.
 
@@ -294,6 +295,7 @@ Cada nível exige passar no anterior (o progresso fica no navegador, em `cquoi:p
 
 - Se o tema escolhido tiver menos de 20 imagens, o Nativo completa com imagens de outros temas (aviso na tela inicial).
 - No **Nativo · Frase** só entram imagens que têm frase escrita (as 199 imagens atuais têm; imagens novas geradas por IA também, veja [Conteúdo das dicas e das frases](#conteúdo-das-dicas-e-das-frases)). Ao revelar a resposta, a frase aparece no balão e é lida em voz alta.
+- **Pronúncia Completa Sem Cortes:** Após acertar ou revelar a resposta (seja palavra simples ou frase longa), o avanço automático para a próxima imagem aguarda o término completo da pronúncia em francês (via evento `onend` da Web Speech API e margem suave de 1,2 s), eliminando qualquer corte abrupto de áudio antes da transição da cena.
 - As alternativas erradas nunca são "também corretas": objetos parecidos (ex.: chave / cadeado / chave de sol, chapéu / chapéu de palha, bola de futebol / de basquete) e nomes com palavra em comum nunca aparecem juntos (`isConfusable` em `src/lib/cquoiContent.ts`).
 - A tela inicial mostra o bloco **Nativo** com borda animada e os dois sub-níveis lado a lado.
 

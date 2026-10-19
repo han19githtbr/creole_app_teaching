@@ -1006,7 +1006,7 @@ export default function AdminMonetizationPage() {
               <div>
                 <h2 className="text-lg font-bold text-[var(--text)] flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-emerald-500" />
-                  Pacotes de Minutos (PIX & Cartão)
+                  Pacotes de Minutos (Stripe · Cartão)
                 </h2>
                 <p className="text-xs text-[var(--text-secondary)]">
                   Aumente ou diminua os minutos de cada pacote, altere preços e defina bônus exclusivos de histórias.

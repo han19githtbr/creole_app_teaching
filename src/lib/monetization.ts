@@ -173,19 +173,14 @@ export async function recordActiveHeartbeat(
   const safeSeconds = Math.max(1, Math.min(seconds, 60)); // Limite de 60s por batimento de segurança
   const status = calculateUserMonetizationStatus(user, settings);
 
-  const update: Record<string, unknown> = {
+  // Atualização ATÔMICA (pipeline): nunca grava um saldo calculado a partir de uma leitura antiga.
+  // Antes, o heartbeat lia o saldo, subtraía e gravava o valor absoluto; se o webhook do Stripe
+  // creditasse minutos nesse intervalo, o crédito era sobrescrito e o aluno perdia o que pagou.
+  const timeField = feature === "stories" ? "totalStoriesTimeSeconds" : "totalCquoiTimeSeconds";
+  const setStage: Record<string, unknown> = {
     lastActiveAt: new Date(),
+    [timeField]: { $add: [{ $ifNull: [`$${timeField}`, 0] }, safeSeconds] },
   };
-
-  if (feature === "stories") {
-    update.$inc = {
-      totalStoriesTimeSeconds: safeSeconds,
-    };
-  } else {
-    update.$inc = {
-      totalCquoiTimeSeconds: safeSeconds,
-    };
-  }
 
   // Se o usuário não tiver acesso ilimitado e não estiver com histórias/jogos livres do trial
   if (!status.hasUnlimitedAccess) {
@@ -194,16 +189,17 @@ export async function recordActiveHeartbeat(
         ? status.inTrial && status.trialStoriesLeft > 0
         : status.inTrial && status.trialGamesLeft > 0;
 
-    // Se não estiver coberto pelo trial, deduz o tempo ativo da cota em minutos
+    // Se não estiver coberto pelo trial, deduz o tempo ativo da cota em minutos (nunca abaixo de zero)
     if (!isExemptByTrial) {
       const minutesToDeduct = safeSeconds / 60;
-      const currentMinutes = user.availableMinutes || 0;
-      const newMinutes = Math.max(0, Number((currentMinutes - minutesToDeduct).toFixed(2)));
-      update.availableMinutes = newMinutes;
+      setStage.availableMinutes = {
+        $max: [0, { $subtract: [{ $ifNull: ["$availableMinutes", 0] }, minutesToDeduct] }],
+      };
     }
   }
 
-  const updatedUser = await User.findOneAndUpdate({ email }, update, { new: true });
+  const updatedUser = await User.findOneAndUpdate({ email }, [{ $set: setStage }], { new: true });
+  if (!updatedUser) return null;
   return calculateUserMonetizationStatus(updatedUser, settings);
 }
 
@@ -250,11 +246,12 @@ export async function consumeContentUnit(
   if (feature === "story") {
     // 1. Tenta usar história bônus
     if ((user.bonusStoriesBalance || 0) > 0) {
-      await User.updateOne(
-        { email },
+      const bonusUsed = await User.updateOne(
+        { email, bonusStoriesBalance: { $gte: 1 } },
         { $inc: { bonusStoriesBalance: -1, totalStoriesWatched: 1 } }
       );
-      return { success: true, consumedFrom: "bonus_story" };
+      if (bonusUsed.modifiedCount > 0) return { success: true, consumedFrom: "bonus_story" };
+      // Outra requisição gastou a história bônus primeiro: segue para o saldo de minutos.
     }
 
     // 2. Tenta descontar da cota de minutos: storyCreditsCost * minutesPerCredit
@@ -268,8 +265,8 @@ export async function consumeContentUnit(
       };
     }
 
-    await User.updateOne(
-      { email },
+    const storyPaid = await User.updateOne(
+      { email, availableMinutes: { $gte: requiredMinutes } },
       {
         $inc: {
           availableMinutes: -requiredMinutes,
@@ -277,6 +274,9 @@ export async function consumeContentUnit(
         },
       }
     );
+    if (storyPaid.modifiedCount === 0) {
+      return { success: false, error: "insufficient_balance", requiredMinutes, availableMinutes: user.availableMinutes || 0 };
+    }
     return { success: true, consumedFrom: "minutes", deductedMinutes: requiredMinutes };
   } else {
     // Jogo C'est quoi
@@ -290,8 +290,8 @@ export async function consumeContentUnit(
       };
     }
 
-    await User.updateOne(
-      { email },
+    const gamePaid = await User.updateOne(
+      { email, availableMinutes: { $gte: requiredMinutes } },
       {
         $inc: {
           availableMinutes: -requiredMinutes,
@@ -299,6 +299,9 @@ export async function consumeContentUnit(
         },
       }
     );
+    if (gamePaid.modifiedCount === 0) {
+      return { success: false, error: "insufficient_balance", requiredMinutes, availableMinutes: user.availableMinutes || 0 };
+    }
     return { success: true, consumedFrom: "minutes", deductedMinutes: requiredMinutes };
   }
 }

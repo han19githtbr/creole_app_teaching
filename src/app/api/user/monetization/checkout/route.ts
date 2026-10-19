@@ -6,6 +6,15 @@ import User from "@/models/User";
 import { getMonetizationSettings, calculateUserMonetizationStatus } from "@/lib/monetization";
 import { stripe } from "@/lib/stripe";
 
+// Valor mínimo de cobrança do Stripe para BRL: R$ 0,50 (50 centavos).
+const STRIPE_MIN_AMOUNT_BRL_CENTS = 50;
+
+// Páginas para onde o aluno pode voltar depois do pagamento (lista fechada, nunca vem livre do cliente).
+const RETURN_PATHS: Record<string, string> = {
+  stories: "/dashboard/stories",
+  game: "/dashboard/jogo",
+};
+
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
@@ -14,7 +23,11 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { packageId, method = "pix", simulateInstant = false } = body;
+    const { packageId, method = "stripe", returnTo = "stories", simulateInstant = false } = body ?? {};
+
+    if (typeof packageId !== "string" || !packageId) {
+      return NextResponse.json({ error: "Pacote inválido." }, { status: 400 });
+    }
 
     await connectDB();
     const settings = await getMonetizationSettings();
@@ -24,7 +37,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Pacote não encontrado." }, { status: 404 });
     }
 
-    // Se for checkout com Stripe (Cartão de Crédito / Pagamento Real):
+    const email = session.user.email.toLowerCase().trim();
+
+    // Checkout real com Stripe (preço e créditos SEMPRE vêm do servidor, nunca do cliente).
     if (method === "stripe") {
       if (!stripe) {
         return NextResponse.json(
@@ -36,7 +51,18 @@ export async function POST(req: Request) {
         );
       }
 
-      const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+      const unitAmount = Math.round(pkg.priceBRL * 100);
+      if (!Number.isFinite(unitAmount) || unitAmount < STRIPE_MIN_AMOUNT_BRL_CENTS) {
+        console.error(`[checkout] Pacote ${pkg.id} com preço inválido para o Stripe (${pkg.priceBRL}).`);
+        return NextResponse.json(
+          { error: "invalid_package_price", message: "Este pacote está com preço inválido. Avise o administrador." },
+          { status: 400 }
+        );
+      }
+
+      const appUrl = (process.env.NEXTAUTH_URL || "http://localhost:3000").replace(/\/+$/, "");
+      const returnPath = RETURN_PATHS[String(returnTo)] ?? RETURN_PATHS.stories;
+
       const stripeSession = await stripe.checkout.sessions.create({
         line_items: [
           {
@@ -48,33 +74,41 @@ export async function POST(req: Request) {
                   pkg.bonusStories ? ` + ${pkg.bonusStories} histórias bônus` : ""
                 }`,
               },
-              unit_amount: Math.round(pkg.priceBRL * 100),
+              unit_amount: unitAmount,
             },
             quantity: 1,
           },
         ],
         mode: "payment",
-        customer_email: session.user.email,
+        locale: "pt-BR",
+        customer_email: email,
+        client_reference_id: email,
         metadata: {
-          email: session.user.email,
+          email,
           packageId: pkg.id,
           minutes: String(pkg.minutes),
           bonusStories: String(pkg.bonusStories || 0),
         },
-        success_url: `${appUrl}/dashboard/stories?payment=success&pkg=${pkg.id}`,
-        cancel_url: `${appUrl}/dashboard/stories?payment=canceled`,
+        success_url: `${appUrl}${returnPath}?payment=success&pkg=${encodeURIComponent(pkg.id)}`,
+        cancel_url: `${appUrl}${returnPath}?payment=canceled`,
       });
 
-      return NextResponse.json({
-        success: true,
-        stripeUrl: stripeSession.url,
-      });
+      if (!stripeSession.url) {
+        return NextResponse.json({ error: "Não foi possível iniciar o checkout." }, { status: 502 });
+      }
+
+      return NextResponse.json({ success: true, stripeUrl: stripeSession.url });
     }
 
-    // Se for simulação ou confirmação instantânea em ambiente de teste:
-    if (simulateInstant) {
+    // Liberação instantânea SEM pagamento: existe só para testar a interface localmente.
+    // Nunca funciona em produção e exige administrador, para ninguém ganhar minutos de graça.
+    if (simulateInstant && process.env.NODE_ENV !== "production") {
+      if (session.user.role !== "admin") {
+        return NextResponse.json({ error: "Acesso restrito ao administrador." }, { status: 403 });
+      }
+
       const updatedUser = await User.findOneAndUpdate(
-        { email: session.user.email },
+        { email },
         {
           $inc: {
             availableMinutes: pkg.minutes,
@@ -83,26 +117,19 @@ export async function POST(req: Request) {
         },
         { new: true }
       );
+      if (!updatedUser) {
+        return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
+      }
 
       const status = calculateUserMonetizationStatus(updatedUser, settings);
       return NextResponse.json({
         success: true,
-        message: `Pacote "${pkg.name}" ativado com sucesso! +${pkg.minutes} minutos adicionados.`,
+        message: `[DEV] Pacote "${pkg.name}" liberado sem pagamento. +${pkg.minutes} minutos adicionados.`,
         status,
       });
     }
 
-    // Geração do código PIX Copia-e-Cola (formato padrão EMV/PIX formatado)
-    const pixCode = `00020126580014br.gov.bcb.pix0136kreyol-ayisyen-${packageId}-${Date.now()}520400005303986540${pkg.priceBRL.toFixed(
-      2
-    )}5802BR5915KREYOL PLATAFORMA6009SAO PAULO62070503***6304`;
-
-    return NextResponse.json({
-      success: true,
-      package: pkg,
-      pixCode,
-      qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixCode)}`,
-    });
+    return NextResponse.json({ error: "Método de pagamento inválido." }, { status: 400 });
   } catch (err) {
     console.error("[checkout] Erro no checkout de minutos:", err);
     return NextResponse.json({ error: "Erro ao processar checkout." }, { status: 500 });

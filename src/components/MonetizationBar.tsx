@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { UserMonetizationStatus } from "@/lib/monetization";
 import { RechargeModal } from "@/components/RechargeModal";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Gift, Clock, PlusCircle } from "lucide-react";
+import { ShieldCheck, Gift, Clock, PlusCircle, CheckCircle2, XCircle } from "lucide-react";
 
 interface MonetizationBarProps {
   status: UserMonetizationStatus | null;
@@ -20,11 +20,49 @@ export function MonetizationBar({
   onRefresh,
 }: MonetizationBarProps) {
   const [modalOpen, setModalOpen] = useState(false);
+  // Retorno do Stripe Checkout (?payment=success|canceled), lido uma vez na montagem.
+  const [paymentResult] = useState<"success" | "canceled" | null>(() => {
+    if (typeof window === "undefined") return null;
+    const result = new URLSearchParams(window.location.search).get("payment");
+    return result === "success" || result === "canceled" ? result : null;
+  });
+  const onRefreshRef = useRef(onRefresh);
+  useEffect(() => {
+    onRefreshRef.current = onRefresh;
+  }, [onRefresh]);
+
+  // Quem credita os minutos é o webhook, que pode levar alguns segundos: atualizamos o saldo
+  // algumas vezes e limpamos o parâmetro da URL para o aviso não voltar ao recarregar a página.
+  useEffect(() => {
+    if (!paymentResult) return;
+
+    const params = new URLSearchParams(window.location.search);
+    params.delete("payment");
+    params.delete("pkg");
+    const qs = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}`);
+
+    if (paymentResult !== "success") return;
+    const timers = [0, 2000, 5000, 10000, 20000].map((ms) => setTimeout(() => onRefreshRef.current?.(), ms));
+    return () => timers.forEach(clearTimeout);
+  }, [paymentResult]);
 
   if (!status) return null;
 
   return (
     <>
+      {paymentResult === "success" && (
+        <div className="mb-2 flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <span>Pagamento recebido! Seus minutos são creditados em instantes — se o saldo ainda não mudou, atualize a página em alguns segundos.</span>
+        </div>
+      )}
+      {paymentResult === "canceled" && (
+        <div className="mb-2 flex items-center gap-2 rounded-xl border border-neutral-500/30 bg-neutral-500/10 px-3 py-2 text-xs font-medium text-[var(--text-secondary)]">
+          <XCircle className="h-4 w-4 shrink-0" />
+          <span>Pagamento cancelado. Nenhuma cobrança foi feita.</span>
+        </div>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)]/90 px-3 py-2 text-xs backdrop-blur-sm shadow-sm transition-all">
         {/* Lado Esquerdo: Identificação do Status */}
         <div className="flex items-center gap-2">
@@ -104,6 +142,7 @@ export function MonetizationBar({
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         packages={status.packages}
+        returnTo={feature === "cquoi" ? "game" : "stories"}
         onSuccess={() => {
           onRefresh?.();
         }}

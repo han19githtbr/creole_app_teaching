@@ -534,7 +534,9 @@ NEXTAUTH_URL=https://seu-dominio.com
 - O app **não usa chave publicável** (`pk_...`): o aluno é redirecionado ao Checkout hospedado, então só a chave secreta é necessária, e ela nunca deve ir para o navegador nem para o Git.
 - A moeda é fixa em **BRL** e o valor é calculado em centavos a partir do preço do pacote. O Stripe recusa cobranças abaixo do valor mínimo da moeda; confira o mínimo para BRL na documentação do Stripe antes de criar pacotes baratos.
 
-### Passo a passo
+### Passo a passo no modo de teste
+
+Faça esta parte primeiro: ela não cobra ninguém e prova que o fluxo inteiro funciona. O passo a passo do **pagamento real** vem logo depois.
 
 **1. Conta e chaves de teste**
 
@@ -569,20 +571,82 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 
 O comando imprime um `whsec_...` próprio para o ambiente local: use-o em `STRIPE_WEBHOOK_SECRET` do `.env.local` e reinicie o `npm run dev`. Teste com uma compra de verdade pelo app (cartão `4242...`). O `stripe trigger checkout.session.completed` não serve para testar créditos, porque o evento de exemplo não traz o `metadata` (e-mail, minutos) que o app espera.
 
-**6. Ir para pagamentos reais**
+### Passo a passo para pagamento real (modo live)
 
-1. Ative a conta no painel (dados do titular/empresa e conta bancária para receber). Sem isso, o modo real não libera.
-2. Desligue o modo de teste e copie a **Secret key real** (`sk_live_...`) para `STRIPE_SECRET_KEY` **na Vercel (produção)**.
-3. Crie o webhook de novo **no modo real** (a lista de webhooks é separada da de teste), com a mesma URL e o mesmo evento, e use o novo `whsec_...` em `STRIPE_WEBHOOK_SECRET`.
-4. Confirme `NEXTAUTH_URL` com o domínio final (https) e faça novo deploy.
-5. Faça uma compra real do pacote mais barato com o seu próprio cartão, confira os minutos e, se quiser, devolva o valor em **Payments → Refund** (o reembolso não desfaz os minutos creditados; ajuste o saldo manualmente).
+Só siga esta parte depois que o teste acima funcionou de ponta a ponta. No modo real o dinheiro é cobrado de verdade do cartão do aluno.
+
+**Passo 0: corrija os bloqueadores do código (obrigatório antes de abrir ao público)**
+
+Veja a lista em [Antes de cobrar de verdade](#antes-de-cobrar-de-verdade-pontos-de-atenção-no-código-atual). O mais grave é o `simulateInstant`, que dá minutos grátis a qualquer usuário logado. Com cobrança real, isso é dinheiro perdido. Remova ou restrinja essa opção antes de publicar as chaves reais.
+
+**Passo 1: ative a sua conta Stripe**
+
+1. No painel, abra o aviso de ativação da conta (algo como **Activate your account** / **Ativar conta**) e preencha: tipo de negócio (pessoa física/autônomo ou empresa), CPF ou CNPJ, nome e endereço do titular, data de nascimento e documento de identidade quando pedido.
+2. Informe a **conta bancária** que vai receber os repasses (Settings → Payouts, ou pelo próprio assistente de ativação). Ela precisa estar no nome do titular cadastrado.
+3. Preencha os dados públicos do negócio: site (o domínio do app), descrição do que é vendido (aulas/minutos de aprendizado de idiomas), e-mail e telefone de suporte.
+4. Configure o **nome que aparece na fatura do cartão** (statement descriptor) com algo que o aluno reconheça, para evitar contestações (*chargebacks*).
+5. Aguarde a análise. Enquanto a conta não estiver ativada, as chaves reais não aceitam pagamentos.
+
+**Passo 2: pegue a chave secreta real**
+
+1. Desligue o alternador de teste no painel (o modo real é o que **não** mostra "Test mode"/"Sandbox").
+2. Em **Developers → API keys**, copie a **Secret key** real (começa com `sk_live_`).
+3. Ela só aparece inteira uma vez no painel; guarde-a num gerenciador de senhas. Nunca a coloque no Git, em prints ou no navegador.
+4. Opcional, mais seguro: crie uma **Restricted key** só com permissão de escrita em *Checkout Sessions* e use-a no lugar da chave secreta completa. O app só cria sessões de Checkout e verifica assinatura de webhook.
+
+**Passo 3: crie o webhook no modo real**
+
+A lista de webhooks do modo real é **separada** da do modo de teste, e o segredo é diferente.
+
+1. Ainda no modo real, vá em **Developers → Webhooks → Add endpoint**.
+2. URL: `https://seu-dominio.com/api/webhooks/stripe` (precisa ser https e acessível publicamente; `localhost` não serve).
+3. Evento: `checkout.session.completed`.
+4. Salve e copie o **Signing secret** (começa com `whsec_`).
+
+**Passo 4: configure a Vercel com as chaves reais (só em Produção)**
+
+1. Em **Vercel → Projeto → Settings → Environment Variables**, edite:
+   - `STRIPE_SECRET_KEY` = a chave real (`sk_live_...`);
+   - `STRIPE_WEBHOOK_SECRET` = o `whsec_...` do webhook **real**;
+   - `NEXTAUTH_URL` = `https://seu-dominio.com` (domínio final, https, sem barra no final).
+2. Marque essas variáveis apenas para o ambiente **Production**. Deixe as chaves de teste em *Preview* e *Development*, para que testes e previews nunca cobrem de verdade.
+3. Faça **novo deploy** (variáveis só valem em deploys novos).
+
+**Passo 5: métodos de pagamento no modo real**
+
+Em **Settings → Payment methods** (no modo real), confira quais métodos estão ativos. O código não fixa métodos, então o Checkout mostra exatamente os que estiverem ligados. Cartão costuma vir ativo; outros métodos (como Pix) dependem da sua conta estar habilitada e podem exigir passos extras de ativação. Se ligar um método que confirma o pagamento depois, trate também o ponto 4 da lista [Antes de cobrar de verdade](#antes-de-cobrar-de-verdade-pontos-de-atenção-no-código-atual).
+
+**Passo 6: faça a primeira compra real**
+
+1. No site de produção, entre com a sua conta de aluno e compre o **pacote mais barato** com o seu próprio cartão.
+2. Confira: voltou para `/dashboard/stories?payment=success`, o saldo de minutos subiu e o log da Vercel mostra `[stripe-webhook] Pagamento confirmado!`.
+3. No painel (modo real), abra **Payments**: o pagamento deve aparecer como concluído, e em **Developers → Webhooks → seu endpoint** a entrega do evento deve estar com resposta `200`.
+4. Se quiser devolver o valor, use **Payments → o pagamento → Refund**. O reembolso não remove os minutos já creditados; ajuste o saldo do aluno manualmente.
+
+**Passo 7: rotina depois de entrar no ar**
+
+- Acompanhe **Payments** e **Developers → Webhooks** (entregas com falha precisam de atenção: o aluno pode ter pago sem receber os minutos). O Stripe reenvia eventos que falharam por um tempo, e é por isso que o ponto 3 de "Antes de cobrar de verdade" (webhook sem proteção contra repetição) importa.
+- Responda às contestações (*disputes*) no prazo que o painel indicar.
+- Veja em **Settings → Payouts** a frequência dos repasses para a sua conta bancária.
+- Se uma chave vazar, gire-a em **Developers → API keys** (*Roll key*), atualize a Vercel e faça novo deploy.
+- Obrigações fiscais e de nota fiscal sobre as vendas são suas, não do Stripe; consulte um contador.
+
+**Checklist final do modo real**
+
+1. Bloqueadores do código corrigidos (`simulateInstant` fora de produção).
+2. Conta Stripe ativada, com conta bancária e dados do negócio.
+3. `STRIPE_SECRET_KEY` real (`sk_live_...`) só em *Production* na Vercel.
+4. Webhook criado **no modo real**, com `checkout.session.completed`, e o `whsec_...` dele em `STRIPE_WEBHOOK_SECRET`.
+5. `NEXTAUTH_URL` com o domínio final em https.
+6. Novo deploy feito depois de mudar as variáveis.
+7. Primeira compra real conferida (minutos creditados, webhook com `200`).
 
 ### Problemas comuns
 
 | Sintoma | Causa provável |
 | --- | --- |
 | "Stripe não configurado no servidor" ao clicar no botão | `STRIPE_SECRET_KEY` não existe no ambiente (ou faltou novo deploy depois de cadastrar). |
-| Webhook responde 400 "Webhook Error" | `STRIPE_WEBHOOK_SECRET` de outro endpoint ou de outro modo (teste × real), ou o corpo da requisição foi alterado no caminho. |
+| Webhook responde 400 "Webhook Error" | `STRIPE_WEBHOOK_SECRET` de outro endpoint ou de outro modo (teste × real; ao virar para o modo real, o segredo muda), ou o corpo da requisição foi alterado no caminho. |
 | Webhook responde 500 "Webhook secret missing" | `STRIPE_WEBHOOK_SECRET` não cadastrado. |
 | Aluno pagou, mas os minutos não entraram | O webhook não chegou (veja *Event deliveries*) ou o e-mail do pagamento não existe no cadastro: o crédito é feito pelo e-mail e não cria usuário novo. |
 | Depois de pagar, o aluno cai em `localhost` | `NEXTAUTH_URL` ausente ou com o endereço errado. |

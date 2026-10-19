@@ -13,6 +13,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Visibilidade das lições](#visibilidade-das-lições)
 - [Imagens no Cloudflare R2](#imagens-no-cloudflare-r2)
 - [Configuração das variáveis de imagens e IA](#configuração-das-variáveis-de-imagens-e-ia)
+- [Pagamento real com Stripe](#pagamento-real-com-stripe)
 - [Geração de imagens por IA (Controle Exato de Quantidade)](#geração-de-imagens-por-ia)
 - [Cores, Animações e Legibilidade](#cores-e-legibilidade)
 - [Funcionalidades](#funcionalidades)
@@ -498,6 +499,102 @@ Número de imagens que o robô pode gerar por dia, somando a geração automáti
 4. `node scripts/storage/migrate-to-r2.mjs --dry-run`, depois sem `--dry-run`.
 5. Site conferido; só então apagar `public/ghibli` e `public/c-quoi`.
 6. Em **Admin → Imagens com IA**, o aviso amarelo de configuração não deve aparecer; faça um pedido pequeno (5 imagens) para testar.
+
+## Pagamento real com Stripe
+
+O app vende **pacotes de minutos** (e histórias bônus) pelo modal de recarga. O pagamento real passa pelo **Stripe Checkout** (página de pagamento hospedada pelo Stripe, em reais). Esta seção explica como ligar isso de ponta a ponta. Os nomes dos menus do painel do Stripe mudam de vez em quando; se algo estiver em outro lugar, procure pelo nome do item.
+
+### Como funciona no app
+
+1. O administrador define os pacotes (nome, minutos, preço em R$ e histórias bônus) em **Admin → Monetização → Pacotes de Minutos**.
+2. No modal de recarga, o botão do Stripe chama `POST /api/user/monetization/checkout` com `method: "stripe"`. A rota cria uma *Checkout Session* (`mode: "payment"`, moeda `brl`, valor = preço do pacote) e devolve a URL; o navegador do aluno é levado para o Stripe.
+3. A sessão carrega no `metadata` o e-mail do aluno, o `packageId`, os minutos e as histórias bônus.
+4. Depois de pagar, o Stripe devolve o aluno para `/dashboard/stories?payment=success` (ou `?payment=canceled`). **Essa página não credita nada.**
+5. Quem credita é o **webhook** `POST /api/webhooks/stripe`: ao receber `checkout.session.completed` (com assinatura válida), ele soma os minutos e as histórias bônus ao usuário com aquele e-mail. Sem o webhook configurado, o aluno paga e não recebe os minutos.
+
+Arquivos: `src/lib/stripe.ts` (cliente), `src/app/api/user/monetization/checkout/route.ts` (cria a sessão), `src/app/api/webhooks/stripe/route.ts` (credita), `src/components/RechargeModal.tsx` (botão).
+
+### Variáveis de ambiente
+
+Cadastre nos dois lugares, como nas demais variáveis: `.env.local` (seu computador) e **Vercel → Projeto → Settings → Environment Variables** (produção). Depois de alterar na Vercel, faça um novo deploy.
+
+```env
+# Chave secreta do Stripe: sk_test_... (testes) ou sk_live_... (pagamentos reais)
+STRIPE_SECRET_KEY=cole-aqui-a-chave-secreta-do-stripe
+
+# Segredo de assinatura do webhook: whsec_... (um para cada endpoint e para cada modo)
+STRIPE_WEBHOOK_SECRET=cole-aqui-o-segredo-do-webhook
+
+# Endereço público do site (https, sem barra no final). Usado nas URLs de retorno do Checkout.
+NEXTAUTH_URL=https://seu-dominio.com
+```
+
+- `STRIPE_SECRET_KEY` ausente: o botão do Stripe mostra a mensagem "Stripe não configurado no servidor" e o webhook responde 500.
+- `NEXTAUTH_URL` ausente: o retorno do pagamento cai em `http://localhost:3000`, e o aluno em produção voltaria para um endereço que não existe para ele.
+- O app **não usa chave publicável** (`pk_...`): o aluno é redirecionado ao Checkout hospedado, então só a chave secreta é necessária, e ela nunca deve ir para o navegador nem para o Git.
+- A moeda é fixa em **BRL** e o valor é calculado em centavos a partir do preço do pacote. O Stripe recusa cobranças abaixo do valor mínimo da moeda; confira o mínimo para BRL na documentação do Stripe antes de criar pacotes baratos.
+
+### Passo a passo
+
+**1. Conta e chaves de teste**
+
+1. Crie a conta em stripe.com e entre no painel. Comece no **modo de teste** (alternador "Test mode"/"Sandbox").
+2. Em **Developers → API keys**, copie a **Secret key** (`sk_test_...`) para `STRIPE_SECRET_KEY`.
+
+**2. Webhook**
+
+1. Em **Developers → Webhooks → Add endpoint**, use a URL `https://seu-dominio.com/api/webhooks/stripe`.
+2. Em eventos, selecione `checkout.session.completed`.
+3. Salve e copie o **Signing secret** (`whsec_...`) para `STRIPE_WEBHOOK_SECRET`.
+4. Faça novo deploy na Vercel para as variáveis valerem.
+
+**3. Métodos de pagamento**
+
+O código não fixa os métodos (`payment_method_types`), então o Checkout mostra os que estiverem ativos em **Settings → Payment methods** da sua conta. Cartão vem ativo por padrão; outros (como Pix) dependem de a sua conta estar habilitada para eles.
+
+**4. Testar com cartão de teste**
+
+1. Com as chaves de teste no ar, abra o app, escolha um pacote e clique no botão do Stripe.
+2. Pague com o cartão de teste `4242 4242 4242 4242`, qualquer validade futura, qualquer CVC.
+3. Confira: o aluno volta para `/dashboard/stories?payment=success`, o saldo de minutos aumenta e o log do servidor mostra `[stripe-webhook] Pagamento confirmado!`.
+4. Se algo falhar, veja **Developers → Webhooks → seu endpoint → Event deliveries**: lá aparece o código de resposta de cada tentativa.
+
+**5. Testar no seu computador (opcional)**
+
+Instale o [Stripe CLI](https://docs.stripe.com/stripe-cli), faça `stripe login` e rode:
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
+
+O comando imprime um `whsec_...` próprio para o ambiente local: use-o em `STRIPE_WEBHOOK_SECRET` do `.env.local` e reinicie o `npm run dev`. Teste com uma compra de verdade pelo app (cartão `4242...`). O `stripe trigger checkout.session.completed` não serve para testar créditos, porque o evento de exemplo não traz o `metadata` (e-mail, minutos) que o app espera.
+
+**6. Ir para pagamentos reais**
+
+1. Ative a conta no painel (dados do titular/empresa e conta bancária para receber). Sem isso, o modo real não libera.
+2. Desligue o modo de teste e copie a **Secret key real** (`sk_live_...`) para `STRIPE_SECRET_KEY` **na Vercel (produção)**.
+3. Crie o webhook de novo **no modo real** (a lista de webhooks é separada da de teste), com a mesma URL e o mesmo evento, e use o novo `whsec_...` em `STRIPE_WEBHOOK_SECRET`.
+4. Confirme `NEXTAUTH_URL` com o domínio final (https) e faça novo deploy.
+5. Faça uma compra real do pacote mais barato com o seu próprio cartão, confira os minutos e, se quiser, devolva o valor em **Payments → Refund** (o reembolso não desfaz os minutos creditados; ajuste o saldo manualmente).
+
+### Problemas comuns
+
+| Sintoma | Causa provável |
+| --- | --- |
+| "Stripe não configurado no servidor" ao clicar no botão | `STRIPE_SECRET_KEY` não existe no ambiente (ou faltou novo deploy depois de cadastrar). |
+| Webhook responde 400 "Webhook Error" | `STRIPE_WEBHOOK_SECRET` de outro endpoint ou de outro modo (teste × real), ou o corpo da requisição foi alterado no caminho. |
+| Webhook responde 500 "Webhook secret missing" | `STRIPE_WEBHOOK_SECRET` não cadastrado. |
+| Aluno pagou, mas os minutos não entraram | O webhook não chegou (veja *Event deliveries*) ou o e-mail do pagamento não existe no cadastro: o crédito é feito pelo e-mail e não cria usuário novo. |
+| Depois de pagar, o aluno cai em `localhost` | `NEXTAUTH_URL` ausente ou com o endereço errado. |
+
+### Antes de cobrar de verdade: pontos de atenção no código atual
+
+Estes pontos existem hoje no projeto e merecem correção antes de aceitar pagamentos reais:
+
+1. **`simulateInstant` credita sem pagar.** A rota `/api/user/monetization/checkout` aceita `simulateInstant: true` e soma os minutos do pacote sem nenhum pagamento, para **qualquer usuário logado**. Em produção, remova essa opção ou restrinja-a ao administrador/ambiente de desenvolvimento.
+2. **O PIX "Copia e Cola" é demonstração.** O código gerado pela rota não cria cobrança nem confirma pagamento. O único caminho de pagamento real hoje é `method: "stripe"`.
+3. **O webhook não é idempotente.** O Stripe pode reenviar o mesmo evento; como o `id` da sessão não é guardado, os minutos seriam creditados de novo. O recomendado é registrar o `session.id` já processado e ignorar repetições.
+4. **O webhook não confere `payment_status`.** Em métodos que confirmam depois (como boleto), `checkout.session.completed` pode chegar antes do dinheiro. O recomendado é creditar só quando `payment_status === "paid"` e tratar também `checkout.session.async_payment_succeeded`.
 
 ## Geração de imagens por IA
 

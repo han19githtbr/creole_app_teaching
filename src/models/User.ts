@@ -22,6 +22,23 @@ export interface IUser extends Document {
   /** Progresso de gamificação do painel em Français (o Kreyòl usa gamificationState). */
   gamificationStateFrancais?: GamificationState;
   gamificationRevisionFrancais?: number;
+
+  /** Monetização e Controle de Tempo Ativo */
+  isExemptFromBilling?: boolean;
+  freeAccessReason?: string;
+  availableMinutes?: number;
+  bonusStoriesBalance?: number;
+  bonusGamesBalance?: number;
+  trialStartedAt?: Date;
+  trialExpiresAt?: Date;
+  trialStoriesUsed?: number;
+  trialGamesUsed?: number;
+  totalStoriesTimeSeconds?: number;
+  totalCquoiTimeSeconds?: number;
+  totalStoriesWatched?: number;
+  totalCquoiGamesPlayed?: number;
+  lastActiveAt?: Date;
+
   createdAt: Date;
 }
 
@@ -40,6 +57,22 @@ const UserSchema = new Schema<IUser>(
     gamificationRevision: { type: Number, default: 0 },
     gamificationStateFrancais: { type: Schema.Types.Mixed, default: undefined },
     gamificationRevisionFrancais: { type: Number, default: 0 },
+
+    // Monetização
+    isExemptFromBilling: { type: Boolean, default: false },
+    freeAccessReason: { type: String, default: "" },
+    availableMinutes: { type: Number, default: 0 },
+    bonusStoriesBalance: { type: Number, default: 0 },
+    bonusGamesBalance: { type: Number, default: 0 },
+    trialStartedAt: { type: Date, default: Date.now },
+    trialExpiresAt: { type: Date, default: () => new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) },
+    trialStoriesUsed: { type: Number, default: 0 },
+    trialGamesUsed: { type: Number, default: 0 },
+    totalStoriesTimeSeconds: { type: Number, default: 0 },
+    totalCquoiTimeSeconds: { type: Number, default: 0 },
+    totalStoriesWatched: { type: Number, default: 0 },
+    totalCquoiGamesPlayed: { type: Number, default: 0 },
+    lastActiveAt: { type: Date, default: Date.now },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

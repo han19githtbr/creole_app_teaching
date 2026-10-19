@@ -9,6 +9,7 @@ import { getQuizForImage, isValidImageQuiz } from "@/lib/imageQuiz";
 import Post from "@/models/Post";
 import { ImageQuizGame, type ImageQuizChallenge } from "@/components/ImageQuizGame";
 import { CestQuoiGame, type CestQuoiItem } from "@/components/CestQuoiGame";
+import { GameMonetizationWrapper } from "@/components/GameMonetizationWrapper";
 import { getAppLanguage } from "@/lib/language";
 import cquoiItems from "@/lib/cquoiItems.json";
 
@@ -25,7 +26,11 @@ export default async function ImageQuizPage({
   // Painel em francês: jogo "C'est quoi ?" (objetos da pasta c-quoi + coleção por temas)
   if ((await getAppLanguage()) === "francais") {
     const { theme } = await searchParams;
-    return <CestQuoiGame items={[...(cquoiItems as CestQuoiItem[]), ...(await listApprovedCquoiItems())]} initialTheme={theme} />;
+    return (
+      <GameMonetizationWrapper>
+        <CestQuoiGame items={[...(cquoiItems as CestQuoiItem[]), ...(await listApprovedCquoiItems())]} initialTheme={theme} />
+      </GameMonetizationWrapper>
+    );
   }
 
   const { post: postId, image: imageId } = await searchParams;
@@ -71,5 +76,9 @@ export default async function ImageQuizPage({
     };
   }
 
-  return <ImageQuizGame initialChallenge={challenge} />;
+  return (
+    <GameMonetizationWrapper>
+      <ImageQuizGame initialChallenge={challenge} />
+    </GameMonetizationWrapper>
+  );
 }

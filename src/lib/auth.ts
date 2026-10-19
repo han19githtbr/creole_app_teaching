@@ -30,6 +30,9 @@ export const authOptions: NextAuthOptions = {
         const email = user.email.toLowerCase().trim();
         const role = ADMIN_EMAIL && email === ADMIN_EMAIL ? "admin" : "user";
 
+        const now = new Date();
+        const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+
         await User.findOneAndUpdate(
           { email },
           {
@@ -37,14 +40,31 @@ export const authOptions: NextAuthOptions = {
               name: user.name ?? email,
               image: user.image ?? undefined,
             },
-            $setOnInsert: { role },
+            $setOnInsert: {
+              role,
+              trialStartedAt: now,
+              trialExpiresAt: threeDaysLater,
+              trialStoriesUsed: 0,
+              trialGamesUsed: 0,
+              availableMinutes: 0,
+              bonusStoriesBalance: 0,
+              bonusGamesBalance: 0,
+              totalStoriesTimeSeconds: 0,
+              totalCquoiTimeSeconds: 0,
+              totalStoriesWatched: 0,
+              totalCquoiGamesPlayed: 0,
+              isExemptFromBilling: role === "admin",
+            },
           },
           { upsert: true, new: true }
         );
 
-        // Se a conta de admin já existia como "user", garante a promoção a admin.
+        // Se a conta de admin já existia como "user", garante a promoção a admin e isenção total.
         if (role === "admin") {
-          await User.findOneAndUpdate({ email }, { $set: { role: "admin" } });
+          await User.findOneAndUpdate(
+            { email },
+            { $set: { role: "admin", isExemptFromBilling: true } }
+          );
         }
       } catch (err) {
         console.error("[auth] Erro ao sincronizar usuário no banco durante signIn:", err);

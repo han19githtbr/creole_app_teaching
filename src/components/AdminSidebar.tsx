@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { LANGUAGE_META, type AppLanguage } from "@/lib/languageShared";
-import { LayoutDashboard, BookOpen, MessageSquare, MessageCircleQuestion, Radio, Video, Sparkles, ImagePlus, Megaphone } from "lucide-react";
+import { LayoutDashboard, BookOpen, MessageSquare, MessageCircleQuestion, Radio, Video, Sparkles, ImagePlus, Megaphone, Coins } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Painel geral", icon: LayoutDashboard },
+  { href: "/admin/monetizacao", label: "Monetização e Alunos", icon: Coins },
   { href: "/admin/videos", label: "Vídeos e Gravações", icon: Video },
   { href: "/admin/stories", label: "Histórias", icon: Sparkles },
   { href: "/admin/lessons", label: "Lições", icon: BookOpen },

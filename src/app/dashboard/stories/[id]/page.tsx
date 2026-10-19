@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import VideoLesson from "@/models/VideoLesson";
-import { StoryPlayer } from "@/components/StoryPlayer";
+import { StoryMonetizationWrapper } from "@/components/StoryMonetizationWrapper";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
 import { formatStoryTime } from "@/lib/storyAudio";
 
@@ -42,5 +42,19 @@ export default async function WatchStoryPage({ params }: { params: Promise<{ id:
     elementCues: (record.story.elementCues ?? []).map((cue: { kreyol: string; start: number }) => ({ kreyol: cue.kreyol, start: cue.start })),
   };
   const durationSeconds = story.audioDuration ?? record.duration ?? 0;
-  return <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-7 sm:px-6"><Link href="/dashboard/stories" className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]"><ChevronLeft className="h-4 w-4"/> Todas as histórias</Link><header className="border-b border-[var(--border)] pb-4"><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">{story.theme}{durationSeconds > 0 ? ` · ${formatStoryTime(durationSeconds)}` : ""}</p><h1 className="mt-1 text-2xl font-bold text-[var(--text)]">{record.title}</h1>{record.description && <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">{record.description}</p>}</header><StoryPlayer story={story}/></main>;
+  return (
+    <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-7 sm:px-6">
+      <Link href="/dashboard/stories" className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+        <ChevronLeft className="h-4 w-4"/> Todas as histórias
+      </Link>
+      <header className="border-b border-[var(--border)] pb-4">
+        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
+          {story.theme}{durationSeconds > 0 ? ` · ${formatStoryTime(durationSeconds)}` : ""}
+        </p>
+        <h1 className="mt-1 text-2xl font-bold text-[var(--text)]">{record.title}</h1>
+        {record.description && <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">{record.description}</p>}
+      </header>
+      <StoryMonetizationWrapper story={story} />
+    </main>
+  );
 }

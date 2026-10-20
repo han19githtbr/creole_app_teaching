@@ -3316,5 +3316,252 @@
         ]
       }
     ]
+  },
+  "Idiomas": {
+    "options": [
+      "liv",
+      "diksyonè",
+      "glòb",
+      "dyalòg",
+      "lèt",
+      "drapo",
+      "kas",
+      "kaye",
+      "kreyon",
+      "tablo",
+      "pwofesè",
+      "elèv",
+      "mikwofòn",
+      "òdinatè",
+      "kat"
+    ],
+    "labels": {
+      "book": "liv",
+      "dictionary": "diksyonè",
+      "globe": "glòb",
+      "speech": "dyalòg",
+      "letters": "lèt",
+      "flag": "drapo",
+      "headphones": "kas",
+      "notebook": "kaye",
+      "pencil": "kreyon",
+      "blackboard": "tablo",
+      "teacher": "pwofesè",
+      "student": "elèv",
+      "mic": "mikwofòn",
+      "computer": "òdinatè",
+      "map": "kat"
+    },
+    "scenes": [
+      {
+        "title": "Biblioteca de dicionários",
+        "setting": "library",
+        "palette": "dia",
+        "objects": [
+          "dictionary",
+          "book",
+          "globe",
+          "letters"
+        ]
+      },
+      {
+        "title": "Conversa entre amigos no café",
+        "setting": "cafe",
+        "palette": "entardecer",
+        "objects": [
+          "speech",
+          "flag",
+          "notebook",
+          "pencil"
+        ]
+      },
+      {
+        "title": "Aula com professor e quadro-negro",
+        "setting": "classroom",
+        "palette": "dia",
+        "objects": [
+          "teacher",
+          "blackboard",
+          "student",
+          "notebook"
+        ]
+      },
+      {
+        "title": "Mapa-múndi e bandeiras do mundo",
+        "setting": "hall",
+        "palette": "dia",
+        "objects": [
+          "map",
+          "flag",
+          "globe",
+          "speech"
+        ]
+      },
+      {
+        "title": "Estudo noturno com fones de ouvido",
+        "setting": "classroom",
+        "palette": "night",
+        "objects": [
+          "headphones",
+          "computer",
+          "notebook",
+          "book"
+        ]
+      },
+      {
+        "title": "Estúdio de podcast bilíngue",
+        "setting": "studio",
+        "palette": "entardecer",
+        "objects": [
+          "mic",
+          "headphones",
+          "computer",
+          "speech"
+        ]
+      },
+      {
+        "title": "Alfabeto nos blocos de madeira",
+        "setting": "playroom",
+        "palette": "dia",
+        "objects": [
+          "letters",
+          "student",
+          "book",
+          "pencil"
+        ]
+      },
+      {
+        "title": "Intercâmbio cultural na praça",
+        "setting": "plaza",
+        "palette": "dia",
+        "objects": [
+          "flag",
+          "teacher",
+          "student",
+          "speech"
+        ]
+      },
+      {
+        "title": "Laboratório de idiomas",
+        "setting": "lab",
+        "palette": "dia",
+        "objects": [
+          "computer",
+          "headphones",
+          "mic",
+          "notebook"
+        ]
+      },
+      {
+        "title": "Dicionário e lápis na mesa de estudo",
+        "setting": "classroom",
+        "palette": "entardecer",
+        "objects": [
+          "dictionary",
+          "pencil",
+          "notebook",
+          "globe"
+        ]
+      },
+      {
+        "title": "Clube de conversação",
+        "setting": "cafe",
+        "palette": "dia",
+        "objects": [
+          "speech",
+          "student",
+          "teacher",
+          "book"
+        ]
+      },
+      {
+        "title": "Tradução com mapa e dicionário",
+        "setting": "hall",
+        "palette": "entardecer",
+        "objects": [
+          "map",
+          "dictionary",
+          "pencil",
+          "notebook"
+        ]
+      },
+      {
+        "title": "Viagem pelo mundo das línguas",
+        "setting": "hall",
+        "palette": "dia",
+        "objects": [
+          "globe",
+          "flag",
+          "map",
+          "book"
+        ]
+      },
+      {
+        "title": "Escrevendo no quadro",
+        "setting": "classroom",
+        "palette": "entardecer",
+        "objects": [
+          "blackboard",
+          "pencil",
+          "letters",
+          "student"
+        ]
+      },
+      {
+        "title": "Aula online com fones e computador",
+        "setting": "lab",
+        "palette": "dia",
+        "objects": [
+          "computer",
+          "headphones",
+          "student",
+          "speech"
+        ]
+      },
+      {
+        "title": "Leitura em voz alta na biblioteca",
+        "setting": "library",
+        "palette": "entardecer",
+        "objects": [
+          "book",
+          "student",
+          "teacher",
+          "dictionary"
+        ]
+      },
+      {
+        "title": "Cartas e letras coloridas",
+        "setting": "playroom",
+        "palette": "dia",
+        "objects": [
+          "letters",
+          "notebook",
+          "pencil",
+          "flag"
+        ]
+      },
+      {
+        "title": "Festival de idiomas",
+        "setting": "plaza",
+        "palette": "night",
+        "objects": [
+          "flag",
+          "mic",
+          "speech",
+          "globe"
+        ]
+      },
+      {
+        "title": "Noite de estudo na biblioteca",
+        "setting": "library",
+        "palette": "night",
+        "objects": [
+          "book",
+          "dictionary",
+          "headphones",
+          "globe"
+        ]
+      }
+    ]
   }
 }

@@ -60,6 +60,7 @@ const STORY_LABEL_LAYOUTS: Record<string, StoryLabelLayout> = {
   estoicismo: { top: 12, left: 50, width: 74, align: "center", anchors: [{ left: 25, top: 47 }, { left: 50, top: 70 }, { left: 78, top: 37 }, { left: 78, top: 67 }] },
   religiao: { top: 12, left: 50, width: 78, align: "center", anchors: [{ left: 50, top: 40 }, { left: 28, top: 70 }, { left: 77, top: 27 }, { left: 51, top: 20 }] },
   gastronomia: { top: 12, left: 50, width: 80, align: "center", anchors: [{ left: 48, top: 61 }, { left: 25, top: 67 }, { left: 75, top: 45 }, { left: 78, top: 69 }] },
+  idiomas: { top: 12, left: 50, width: 80, align: "center", anchors: [{ left: 39, top: 72 }, { left: 15, top: 63 }, { left: 83, top: 62 }, { left: 63, top: 69 }] },
 };
 
 const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary" | "labelLayout">[] = [
@@ -273,6 +274,21 @@ const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary" | "labelLayout">[] = [
       { kreyol: "piman", pt: "pimentas" },
     ],
   },
+  {
+    id: "idiomas",
+    theme: "Idiomas",
+    title: "Sala de aula de idiomas",
+    src: "/ghibli/idiomas.svg",
+    kreyol: "Lang",
+    caption: "Lang (idiomas) aproximam os povos! Na sala de aula de idiomas veja o livro aberto (liv), o globo terrestre (glòb), os balões de conversa (dyalòg) e as letras do alfabeto (lèt).",
+    ambientTheme: "chalkboard",
+    elements: [
+      { kreyol: "liv", pt: "livro" },
+      { kreyol: "glòb", pt: "globo terrestre" },
+      { kreyol: "dyalòg", pt: "balões de conversa" },
+      { kreyol: "lèt", pt: "letras do alfabeto" },
+    ],
+  },
 ];
 
 import imageSceneVariants from "./imageSceneVariants.json";
@@ -397,6 +413,16 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "kouto": "faca",
   "fouchèt": "garfo",
   "boutèy": "garrafa",
+  // Idiomas
+  "diksyonè": "dicionário",
+  "glòb": "globo terrestre",
+  "dyalòg": "balões de conversa",
+  "lèt": "letras do alfabeto",
+  "kaye": "caderno",
+  "kreyon": "lápis",
+  "tablo": "quadro-negro",
+  "pwofesè": "professor",
+  "elèv": "aluno",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<
@@ -613,6 +639,18 @@ export const PT_TO_FR: Record<string, string> = {
   "família": "famille",
   "espectadores": "spectateurs",
   "sino": "cloche",
+  "dicionário": "dictionnaire",
+  "globo terrestre": "globe terrestre",
+  "balões de conversa": "bulles de dialogue",
+  "letras do alfabeto": "lettres de l'alphabet",
+  "caderno": "cahier",
+  "lápis": "crayon",
+  "quadro-negro": "tableau noir",
+  "professor": "professeur",
+  "aluno": "élève",
+  "mapa": "carte",
+  "microfone": "microphone",
+  "fones de ouvido": "casque audio",
 };
 
 export function getElementLabel(element: BankElement, language: "kreyol" | "francais" = "kreyol"): string {

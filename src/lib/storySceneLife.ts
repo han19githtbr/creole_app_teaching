@@ -826,6 +826,7 @@ const THEME_KEYS: Array<[RegExp, string]> = [
   [/tecnolog/, "tecnologia"], [/natur/, "natureza"], [/cultur/, "cultura"], [/turism/, "turismo"], [/interior/, "interior"],
   [/danc/, "danca"], [/geograf/, "geografia"], [/histor/, "historia"], [/cinem/, "cinema"], [/music|musica/, "musica"],
   [/lazer/, "lazeres"], [/estoic/, "estoicismo"], [/relig/, "religiao"], [/gastron/, "gastronomia"],
+  [/idioma/, "idiomas"],
 ];
 
 /** Surfista que cruza o mar de vez em quando (mesma agenda do som "surf" em storySoundscape). */
@@ -858,7 +859,9 @@ export function createSceneLife(input: LifeInput): LifeScene {
   const theme = THEME_KEYS.find(([re]) => re.test(themeNorm))?.[1] ?? THEME_KEYS.find(([re]) => re.test(norm(input.sceneId)))?.[1] ?? THEME_KEYS.find(([re]) => re.test(text))?.[1] ?? "natureza";
   const has = (re: RegExp) => re.test(text);
   const idBase = norm(input.sceneId).replace(/\.(svg|png|webp|jpg)$/g, "").split("/").pop() ?? "";
-  if (NATIVE_LIFE_IDS.has(idBase)) return { actors: [], render: () => "" };
+  // As cenas de Idiomas já trazem professor/alunos e balões de conversa desenhados e uma mesa em primeiro plano:
+  // atores extras andando por cima cobririam os objetos rotulados (cenário limpo).
+  if (NATIVE_LIFE_IDS.has(idBase) || theme === "idiomas" || idBase.startsWith("idiomas")) return { actors: [], render: () => "" };
 
   const zones = input.zones ?? DEFAULT_ZONES;
   const wz = zones.water;

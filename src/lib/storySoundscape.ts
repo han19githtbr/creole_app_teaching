@@ -43,6 +43,9 @@ const ELEMENT_SOUND: Record<string, SoundKind> = {
   // detalhes gerais da cena
   "sòlèy": "chime", "lalin": "cricket", "nyaj": "wind", "syèl": "bird", "zèb": "wind", "sab": "wave",
   "plancher": "step", "dlo": "water",
+  // Idiomas
+  "diksyonè": "page", "glòb": "ping", "dyalòg": "crowd", "lèt": "typing", "kaye": "page", "kreyon": "typing",
+  "tablo": "typing", "pwofesè": "chime", "elèv": "crowd",
 };
 
 function normTheme(theme: string): string {
@@ -92,6 +95,7 @@ function ambientRules(theme: string, hasWater: boolean): AmbientRule[] {
   else if (t.includes("estoicismo")) rules.push({ kind: "wind", every: 6, gain: 0.09 }, { kind: "bird", every: 8, gain: 0.08 }, { kind: "chime", every: 22, gain: 0.07, first: 10 });
   else if (t.includes("religiao")) rules.push({ kind: "bell", every: 18, gain: 0.1, first: 2 }, { kind: "dove", every: 10, gain: 0.1, first: 5 }, { kind: "wind", every: 9, gain: 0.07 });
   else if (t.includes("gastronomia")) rules.push({ kind: "bubbles", every: 6, gain: 0.12, first: 1 }, { kind: "clink", every: 9, gain: 0.09, first: 4 });
+  else if (t.includes("idioma")) rules.push({ kind: "crowd", every: 16, gain: 0.06, first: 6 }, { kind: "page", every: 12, gain: 0.08, first: 3 }, { kind: "chime", every: 22, gain: 0.07, first: 10 });
   else rules.push({ kind: "wind", every: 8, gain: 0.08 });
   if (hasWater) rules.push({ kind: "wave", every: 7, gain: 0.17, first: 0.5 });
   return rules;

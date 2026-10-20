@@ -61,7 +61,7 @@ Uma história é um registro de `VideoLesson` com o campo `story`. Ela é criada
 ### Conteúdo de uma história
 
 - **Título** e **apresentação** (opcional).
-- **Cena**: uma das ilustrações do banco Ghibli (`/public/ghibli`, 14 temas × 20 cenas). Cada cena tem 4 elementos (por exemplo, `òdinatè · computador`).
+- **Cena**: uma das ilustrações do banco Ghibli (`/public/ghibli`, 15 temas × 20 cenas). Cada cena tem 4 elementos (por exemplo, `òdinatè · computador`).
 - **Narração em Kreyòl**: áudio de **5 segundos a 10 minutos**. Não existe mais a exigência de 5 minutos: o vídeo dura exatamente o que a narração durar.
 - **Legendas**: trechos com início, fim, texto em Kreyòl e texto em português.
 - **Momentos dos elementos** (opcional): o segundo em que cada elemento da cena entra em destaque.
@@ -156,7 +156,17 @@ node measure.mjs 0 1                    # renderiza cada objeto dos SVGs (gera n
 python3 build-anchors.py                # requer numpy e scipy; reescreve src/lib/storyElementAnchors.json
 ```
 
-`bank-elements.json` é a lista de elementos por imagem usada pelo script (gerada a partir de `imageBank.ts`; atualize-a se o banco mudar).
+`bank-elements.json` é a lista de elementos por imagem usada pelo script (gerada a partir de `imageBank.ts`; atualize-a se o banco mudar). **O tema Idiomas não passa por essa medição** (veja abaixo): como `build-anchors.py` reescreve o arquivo inteiro, depois de rodá-lo execute `node scripts/ghibli/gen-idiomas.mjs` para reacrescentar as âncoras do tema Idiomas.
+
+#### Tema Idiomas (`Lang`)
+
+15º tema do banco, com o mesmo formato dos demais (1 cena principal + 19 variantes, 4 elementos rotulados por cena, ilustrações SVG 1200×800 em `public/ghibli/idiomas*.svg`).
+
+- **Cenas:** salas de aula, biblioteca, café, praça, estúdio de podcast, laboratório, sala de brincar, salão com mapa. Objetos desenhados: livro (`liv`), dicionário (`diksyonè`), globo (`glòb`), balões de conversa (`dyalòg`), letras (`lèt`), bandeiras (`drapo`), fones (`kas`), caderno (`kaye`), lápis (`kreyon`), quadro-negro (`tablo`), professor (`pwofesè`), aluno (`elèv`), microfone (`mikwofòn`), computador (`òdinatè`) e mapa (`kat`).
+- **Fonte única:** `scripts/ghibli/idiomas-lib.mjs` desenha os objetos/cenários e define as 20 cenas; como cada objeto é posicionado no código, a âncora do rótulo é exata (não precisa de medição).
+- **Gerar tudo:** `node scripts/ghibli/gen-idiomas.mjs` (grava a entrada `Idiomas` em `imageSceneVariants.json` e as âncoras/extras em `storyElementAnchors.json`/`storyElementExtras.json`, de forma idempotente) e depois `node scripts/ghibli/build-master.mjs` (escreve `public/ghibli/idiomas*.svg` e atualiza `manifest.json`). O `build-master` também regera os SVGs principais dos outros temas, que no repositório foram ajustados à mão; se for rodá-lo, restaure-os com `git checkout -- public/ghibli/<tema>.svg`.
+- **Sem animais/pessoas extras andando por cima:** as cenas de Idiomas já trazem professor, alunos e balões de conversa e uma mesa em primeiro plano, então a camada de "vida da cena" fica desligada para elas (`storySceneLife.ts`) e o cenário fica limpo. O plano de sons do tema (murmúrio de conversa, folhear de páginas, sino suave) está em `storySoundscape.ts`.
+- **Se as imagens estiverem no R2:** envie as novas com `node scripts/storage/migrate-to-r2.mjs` (ele ignora o que já existe).
 
 ### Mais detalhes por imagem (até 8 rótulos)
 
@@ -232,7 +242,7 @@ A funcionalidade de **Histórias** está integrada com **total paridade de recur
 - **Interface adaptada ao idioma:** Todos os textos, títulos, banners informativos, instruções, colunas de legendas e placeholders alternam dinamicamente com base no idioma ativo (`useAppLanguage()`):
   - Em Crioulo: `Narração em Kreyòl`, coluna `KREYÒL`, exemplos em Kreyòl (`Ex.: Zwazo a ap vole...`).
   - Em Francês: `Narração em Francês`, coluna `FRANÇAIS`, exemplos em Francês (`Ex.: L'oiseau vole dans le ciel...`).
-- **Elementos da cena no idioma selecionado:** As 280 ilustrações do banco Ghibli trazem nomes e categorias nativas para cada idioma através de `getElementLabel(element, language)` e do dicionário `PT_TO_FR` (`src/lib/imageBank.ts`). No painel em francês, os elementos são exibidos exclusivamente em francês e português (ex.: `chien · cachorro`, `oiseau · pássaro`, `arbre · árvore`, `fleur · flor`), eliminando qualquer termo em crioulo da interface de francês.
+- **Elementos da cena no idioma selecionado:** As 300 ilustrações do banco Ghibli trazem nomes e categorias nativas para cada idioma através de `getElementLabel(element, language)` e do dicionário `PT_TO_FR` (`src/lib/imageBank.ts`). No painel em francês, os elementos são exibidos exclusivamente em francês e português (ex.: `chien · cachorro`, `oiseau · pássaro`, `arbre · árvore`, `fleur · flor`), eliminando qualquer termo em crioulo da interface de francês.
 - **Motor de Vida multilíngue:** O motor `Living Elements Engine` (`src/lib/storyLifeEngine.ts`) reconhece entidades e verbos de ação em **Francês**, **Crioulo** e **Português** (`voler/vole/voa`, `courir/kouri/corre`, `sauter/sote/pula`, `chanter/chante/canta`, `aboyer/jape/late`, `briller/klere/brilha`, `vent/van/vento`, etc.).
 
 ### Preenchimento Automático do Roteiro e Legendas
@@ -408,7 +418,7 @@ O mesmo critério é usado nas listagens de lições, na página individual e no
 
 ## Imagens no Cloudflare R2
 
-As ilustrações deixaram de ficar nas pastas do projeto. `public/ghibli` (280 SVGs) e `public/c-quoi` (jogo C'est quoi ?) foram para um bucket do **Cloudflare R2** (plano gratuito: 10 GB, sem custo de saída; as imagens atuais somam ~9 MB).
+As ilustrações deixaram de ficar nas pastas do projeto. `public/ghibli` (300 SVGs) e `public/c-quoi` (jogo C'est quoi ?) foram para um bucket do **Cloudflare R2** (plano gratuito: 10 GB, sem custo de saída; as imagens atuais somam ~9 MB).
 
 - **Mesmos caminhos.** O código continua usando `/ghibli/...`, `/c-quoi/...` e `/gen/...` (imagens geradas). O `next.config.ts` reescreve essas rotas para `ASSETS_BASE_URL`, então o navegador, o `<canvas>` (exportação de vídeo das histórias, cartão de conquista) e o service worker não percebem a diferença e não precisam de CORS.
 - **Transição segura.** O Next procura primeiro em `public/` e só depois no bucket. Sem `ASSETS_BASE_URL` nada é reescrito e o app usa os arquivos locais.
@@ -846,6 +856,7 @@ Arquivos principais das histórias:
 | `src/lib/storyElementExtras.json` | Posição dos detalhes gerais da cena (sol, nuvem, céu, chão...) |
 | `src/lib/storyElementAnchors.json` | Posição medida de cada elemento em cada ilustração (`null` = não desenhado) |
 | `scripts/ghibli/anchors/` | Medição e mapeamento que geram `storyElementAnchors.json` |
+| `scripts/ghibli/idiomas-lib.mjs`, `gen-idiomas.mjs` | Ilustrações, cenas e dados (âncoras, vocabulário) do tema Idiomas |
 | `src/components/LoadingSpinner.tsx` | Indicador de carregamento (círculo verde girando + porcentagem) usado em todo o app |
 | `src/app/api/stories/**` | Listagem, criação, edição, exclusão e upload do áudio |
 

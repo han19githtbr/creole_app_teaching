@@ -1678,5 +1678,125 @@
     "theme": "Gastronomia",
     "title": "Jantar especial acolhedor",
     "src": "/ghibli/gastronomia-20.svg"
+  },
+  {
+    "id": "idiomas",
+    "theme": "Idiomas",
+    "title": "Sala de aula de idiomas",
+    "src": "/ghibli/idiomas.svg"
+  },
+  {
+    "id": "idiomas-02",
+    "theme": "Idiomas",
+    "title": "Biblioteca de dicionários",
+    "src": "/ghibli/idiomas-02.svg"
+  },
+  {
+    "id": "idiomas-03",
+    "theme": "Idiomas",
+    "title": "Conversa entre amigos no café",
+    "src": "/ghibli/idiomas-03.svg"
+  },
+  {
+    "id": "idiomas-04",
+    "theme": "Idiomas",
+    "title": "Aula com professor e quadro-negro",
+    "src": "/ghibli/idiomas-04.svg"
+  },
+  {
+    "id": "idiomas-05",
+    "theme": "Idiomas",
+    "title": "Mapa-múndi e bandeiras do mundo",
+    "src": "/ghibli/idiomas-05.svg"
+  },
+  {
+    "id": "idiomas-06",
+    "theme": "Idiomas",
+    "title": "Estudo noturno com fones de ouvido",
+    "src": "/ghibli/idiomas-06.svg"
+  },
+  {
+    "id": "idiomas-07",
+    "theme": "Idiomas",
+    "title": "Estúdio de podcast bilíngue",
+    "src": "/ghibli/idiomas-07.svg"
+  },
+  {
+    "id": "idiomas-08",
+    "theme": "Idiomas",
+    "title": "Alfabeto nos blocos de madeira",
+    "src": "/ghibli/idiomas-08.svg"
+  },
+  {
+    "id": "idiomas-09",
+    "theme": "Idiomas",
+    "title": "Intercâmbio cultural na praça",
+    "src": "/ghibli/idiomas-09.svg"
+  },
+  {
+    "id": "idiomas-10",
+    "theme": "Idiomas",
+    "title": "Laboratório de idiomas",
+    "src": "/ghibli/idiomas-10.svg"
+  },
+  {
+    "id": "idiomas-11",
+    "theme": "Idiomas",
+    "title": "Dicionário e lápis na mesa de estudo",
+    "src": "/ghibli/idiomas-11.svg"
+  },
+  {
+    "id": "idiomas-12",
+    "theme": "Idiomas",
+    "title": "Clube de conversação",
+    "src": "/ghibli/idiomas-12.svg"
+  },
+  {
+    "id": "idiomas-13",
+    "theme": "Idiomas",
+    "title": "Tradução com mapa e dicionário",
+    "src": "/ghibli/idiomas-13.svg"
+  },
+  {
+    "id": "idiomas-14",
+    "theme": "Idiomas",
+    "title": "Viagem pelo mundo das línguas",
+    "src": "/ghibli/idiomas-14.svg"
+  },
+  {
+    "id": "idiomas-15",
+    "theme": "Idiomas",
+    "title": "Escrevendo no quadro",
+    "src": "/ghibli/idiomas-15.svg"
+  },
+  {
+    "id": "idiomas-16",
+    "theme": "Idiomas",
+    "title": "Aula online com fones e computador",
+    "src": "/ghibli/idiomas-16.svg"
+  },
+  {
+    "id": "idiomas-17",
+    "theme": "Idiomas",
+    "title": "Leitura em voz alta na biblioteca",
+    "src": "/ghibli/idiomas-17.svg"
+  },
+  {
+    "id": "idiomas-18",
+    "theme": "Idiomas",
+    "title": "Cartas e letras coloridas",
+    "src": "/ghibli/idiomas-18.svg"
+  },
+  {
+    "id": "idiomas-19",
+    "theme": "Idiomas",
+    "title": "Festival de idiomas",
+    "src": "/ghibli/idiomas-19.svg"
+  },
+  {
+    "id": "idiomas-20",
+    "theme": "Idiomas",
+    "title": "Noite de estudo na biblioteca",
+    "src": "/ghibli/idiomas-20.svg"
   }
 ]

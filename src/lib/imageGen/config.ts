@@ -69,6 +69,7 @@ export const THEMES: { id: string; label: string; kreyol: string }[] = [
   { id: "estoicismo", label: "Estoicismo", kreyol: "Sajès" },
   { id: "religiao", label: "Religião", kreyol: "Relijyon" },
   { id: "gastronomia", label: "Gastronomia", kreyol: "Manje" },
+  { id: "idiomas", label: "Idiomas", kreyol: "Lang" },
 ];
 
 export const isSection = (value: unknown): value is ImageSection =>

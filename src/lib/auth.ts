@@ -2,8 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.toLowerCase().trim();
+import { getAdminLevel, isPrimaryAdminEmail } from "@/lib/adminAccess";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -28,7 +27,9 @@ export const authOptions: NextAuthOptions = {
       try {
         await connectDB();
         const email = user.email.toLowerCase().trim();
-        const role = ADMIN_EMAIL && email === ADMIN_EMAIL ? "admin" : "user";
+        const level = await getAdminLevel(email);
+        const role = level ? "admin" : "user";
+        const isPrimary = level === "primary";
 
         const now = new Date();
         const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
@@ -53,19 +54,19 @@ export const authOptions: NextAuthOptions = {
               totalCquoiTimeSeconds: 0,
               totalStoriesWatched: 0,
               totalCquoiGamesPlayed: 0,
-              isExemptFromBilling: role === "admin",
+              isExemptFromBilling: isPrimary,
             },
           },
           { upsert: true, new: true }
         );
 
-        // Se a conta de admin já existia como "user", garante a promoção a admin e isenção total.
-        if (role === "admin") {
-          await User.findOneAndUpdate(
-            { email },
-            { $set: { role: "admin", isExemptFromBilling: true } }
-          );
-        }
+        // Se a conta já existia, alinha o papel com a lista de administradores
+        // (principal ou adicionado pelo principal; quem foi removido volta a "user").
+        // Só o principal ganha isenção de cobrança por este caminho.
+        await User.findOneAndUpdate(
+          { email },
+          { $set: isPrimary ? { role: "admin", isExemptFromBilling: true } : { role } }
+        );
       } catch (err) {
         console.error("[auth] Erro ao sincronizar usuário no banco durante signIn:", err);
       }
@@ -74,7 +75,7 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, trigger, session }) {
       const email = (user?.email ?? token.email)?.toLowerCase().trim();
-      const isAdminByEmail = Boolean(ADMIN_EMAIL && email === ADMIN_EMAIL);
+      const isAdminByEmail = isPrimaryAdminEmail(email);
 
       // Na primeira autenticação (login inicial):
       if (user) {
@@ -89,13 +90,12 @@ export const authOptions: NextAuthOptions = {
         token.role = "admin";
       }
 
-      // Se o cliente solicitar atualização da sessão
+      // Se o cliente solicitar atualização da sessão. O papel NUNCA vem do
+      // cliente: o acesso de administrador é recalculado no servidor a cada
+      // requisição (callback session), então só a preferência de idioma é aceita.
       if (trigger === "update" && session) {
         if (session.preferredLanguage) {
           token.preferredLanguage = session.preferredLanguage;
-        }
-        if (session.role && !isAdminByEmail) {
-          token.role = session.role;
         }
       }
 
@@ -131,9 +131,12 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        const email = session.user.email?.toLowerCase().trim();
-        const isAdminByEmail = Boolean(ADMIN_EMAIL && email === ADMIN_EMAIL);
-        session.user.role = isAdminByEmail ? "admin" : (token.role ?? "user");
+        // Acesso de administrador conferido ao vivo (e não pelo token de 30
+        // dias): quem for adicionado ganha acesso sem novo login e quem for
+        // removido perde o acesso imediatamente.
+        const level = await getAdminLevel(session.user.email);
+        session.user.role = level ? "admin" : "user";
+        session.user.isPrimaryAdmin = level === "primary";
         session.user.preferredLanguage = token.preferredLanguage ?? "kreyol";
       }
       return session;

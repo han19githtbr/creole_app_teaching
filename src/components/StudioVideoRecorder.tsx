@@ -8,6 +8,20 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { VIDEO_AVATARS, VIDEO_FRAME_STYLES } from "@/lib/videoThemes";
+import {
+  TalkingAvatarAnimator,
+  SILENT_SPEECH,
+  isTalkingAvatar,
+  speechFeaturesFromSpectrum,
+} from "@/lib/talkingAvatar";
+import {
+  DEFAULT_SOCIAL_HANDLE,
+  DEFAULT_SOCIAL_PLATFORM,
+  SOCIAL_PLATFORMS,
+  isSocialPlatform,
+  sanitizeSocialHandle,
+  type SocialPlatform,
+} from "@/lib/socialLinks";
 import { getBankImage } from "@/lib/imageBank";
 import {
   PersonSegmenter,
@@ -36,6 +50,7 @@ import {
   Layers,
   Palette,
   Camera,
+  Hand,
 } from "lucide-react";
 import {
   CLARITY_PRESETS,
@@ -63,6 +78,13 @@ export function StudioVideoRecorder() {
   const [clarityPreset, setClarityPreset] = useState<string>("studio_bright");
   const [virtualRingLight, setVirtualRingLight] = useState<boolean>(true);
   const [recordingQuality, setRecordingQuality] = useState<"ultra" | "high" | "balanced">("ultra");
+
+  // Rede social anotada no vídeo: o avatar aponta para o ícone dela
+  const [socialEnabled, setSocialEnabled] = useState<boolean>(true);
+  const [socialPlatform, setSocialPlatform] = useState<SocialPlatform>(DEFAULT_SOCIAL_PLATFORM);
+  const [socialHandle, setSocialHandle] = useState<string>(DEFAULT_SOCIAL_HANDLE);
+  const [autoPoint, setAutoPoint] = useState<boolean>(true);
+  const [pointRepeat, setPointRepeat] = useState<number>(45);
 
   // Media & Recording state
   const [, setCameraStream] = useState<MediaStream | null>(null);
@@ -104,6 +126,19 @@ export function StudioVideoRecorder() {
   const cameraStreamRef = useRef<MediaStream | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  // Avatar falante + rede social: o loop de desenho lê tudo por refs para não
+  // recriar o requestAnimationFrame a cada mudança de estado.
+  const avatarAnimatorRef = useRef<TalkingAvatarAnimator | null>(null);
+  const manualPointUntilRef = useRef(0);
+  const recordingStateRef = useRef<"idle" | "recording" | "paused" | "recorded">("idle");
+  const elapsedRef = useRef(0);
+  const socialRef = useRef({
+    enabled: true,
+    platform: DEFAULT_SOCIAL_PLATFORM as SocialPlatform,
+    handle: DEFAULT_SOCIAL_HANDLE,
+    auto: true,
+    repeat: 45,
+  });
 
   // Fundo virtual (estilo Google Meet): segmentação da pessoa + fundo escolhido
   const segmenterRef = useRef<PersonSegmenter | null>(null);
@@ -121,6 +156,8 @@ export function StudioVideoRecorder() {
       const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 256;
+      // Menos suavização = lábios acompanham as sílabas em vez de "boiar".
+      analyser.smoothingTimeConstant = 0.55;
       source.connect(analyser);
 
       audioContextRef.current = audioCtx;
@@ -428,17 +465,33 @@ export function StudioVideoRecorder() {
 
       // 1. Calculate audio level from microphone
       let currentAudioLevel = 0;
+      let speech = SILENT_SPEECH;
       if (analyserRef.current) {
         analyserRef.current.getByteFrequencyData(dataArray);
-        let sum = 0;
-        for (let i = 0; i < dataArray.length; i++) {
-          sum += dataArray[i];
-        }
-        currentAudioLevel = sum / (dataArray.length * 255);
+        speech = speechFeaturesFromSpectrum(dataArray, analyserRef.current.context.sampleRate);
+        currentAudioLevel = speech.level;
         setAudioLevel(currentAudioLevel);
       }
 
       const isSpeaking = currentAudioLevel > 0.04;
+
+      // Rede social anotada: quando o avatar deve apontar para o ícone
+      const social = socialRef.current;
+      const socialBadge =
+        social.enabled && social.handle ? { platform: social.platform, handle: social.handle } : null;
+      let isPointing = false;
+      if (socialBadge) {
+        isPointing = Date.now() < manualPointUntilRef.current;
+        if (social.auto && recordingStateRef.current === "recording") {
+          const e = elapsedRef.current;
+          const first = 4; // primeira indicação, após 4 s de gravação
+          const hold = 7; // segundos apontando
+          if (e >= first && e < first + hold) isPointing = true;
+          if (social.repeat > 0 && e >= first + social.repeat) {
+            if ((e - first) % social.repeat < hold) isPointing = true;
+          }
+        }
+      }
 
       // 2. Clear canvas & draw background
       ctx.clearRect(0, 0, width, height);
@@ -589,7 +642,37 @@ export function StudioVideoRecorder() {
         const centerY = frameStyle === "banner" ? height * 0.44 : height * 0.48;
         const avatarSize = Math.min(width, height) * 0.78;
 
-        avatarPreset.drawAvatar(ctx, centerX, centerY, avatarSize, isSpeaking, currentAudioLevel);
+        if (isTalkingAvatar(avatarType)) {
+          // Avatar falante: lábios na voz, piscar, gestos e mão que aponta
+          if (!avatarAnimatorRef.current) avatarAnimatorRef.current = new TalkingAvatarAnimator();
+          avatarAnimatorRef.current.draw(ctx, {
+            avatarId: avatarType,
+            x: centerX,
+            y: centerY,
+            size: avatarSize,
+            canvasW: width,
+            canvasH: height,
+            features: speech,
+            now,
+            badge: socialBadge,
+            pointing: isPointing,
+          });
+        } else {
+          avatarPreset.drawAvatar(ctx, centerX, centerY, avatarSize, isSpeaking, currentAudioLevel);
+        }
+      }
+
+      // Câmera real: sem avatar para apontar, mas o ícone da rede social aparece
+      if (avatarType === "webcam" && socialBadge) {
+        if (!avatarAnimatorRef.current) avatarAnimatorRef.current = new TalkingAvatarAnimator();
+        avatarAnimatorRef.current.drawBadgeOnly(ctx, {
+          canvasW: width,
+          canvasH: height,
+          now,
+          features: speech,
+          badge: socialBadge,
+          pointing: isPointing,
+        });
       }
 
       // 3.5 Luz Frontal Virtual de Estúdio (Ring Light para iluminar o orador e preencher sombras)
@@ -631,6 +714,19 @@ export function StudioVideoRecorder() {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
   }, [virtualBg, avatarType, frameStyle, bannerText, clarityPreset, virtualRingLight, compositePersonOntoCanvas]);
+
+  // Espelha estado em refs lidas pelo loop de desenho
+  useEffect(() => {
+    recordingStateRef.current = recordingState;
+    elapsedRef.current = elapsedSeconds;
+    socialRef.current = {
+      enabled: socialEnabled,
+      platform: socialPlatform,
+      handle: sanitizeSocialHandle(socialHandle),
+      auto: autoPoint,
+      repeat: pointRepeat,
+    };
+  }, [recordingState, elapsedSeconds, socialEnabled, socialPlatform, socialHandle, autoPoint, pointRepeat]);
 
   // Recording timer control
   useEffect(() => {
@@ -840,6 +936,8 @@ export function StudioVideoRecorder() {
             avatarType,
             frameStyle,
             bannerText,
+            socialPlatform: socialEnabled && sanitizeSocialHandle(socialHandle) ? socialPlatform : "",
+            socialHandle: socialEnabled ? sanitizeSocialHandle(socialHandle) : "",
           },
         }),
       });
@@ -1117,6 +1215,80 @@ export function StudioVideoRecorder() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Rede social anotada no vídeo */}
+            <div className="space-y-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)]/60 p-4">
+              <label className="flex cursor-pointer items-center justify-between gap-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--text)]">
+                  Rede social no vídeo
+                </span>
+                <input
+                  type="checkbox"
+                  checked={socialEnabled}
+                  onChange={(e) => setSocialEnabled(e.target.checked)}
+                  className="h-4 w-4 cursor-pointer accent-[var(--accent)]"
+                />
+              </label>
+              {socialEnabled && (
+                <>
+                  <div className="grid grid-cols-[110px_1fr] gap-2">
+                    <select
+                      value={socialPlatform}
+                      onChange={(e) => {
+                        if (isSocialPlatform(e.target.value)) setSocialPlatform(e.target.value);
+                      }}
+                      className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-2 text-xs text-[var(--text)]"
+                    >
+                      {Object.values(SOCIAL_PLATFORMS).map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.label}
+                        </option>
+                      ))}
+                    </select>
+                    <Input
+                      value={socialHandle}
+                      onChange={(e) => setSocialHandle(e.target.value)}
+                      placeholder="perfil (sem @)"
+                      maxLength={60}
+                    />
+                  </div>
+                  <label className="flex cursor-pointer items-center gap-2 text-xs text-[var(--text-secondary)]">
+                    <input
+                      type="checkbox"
+                      checked={autoPoint}
+                      onChange={(e) => setAutoPoint(e.target.checked)}
+                      className="h-4 w-4 cursor-pointer accent-[var(--accent)]"
+                    />
+                    Apontar sozinho durante a gravação
+                  </label>
+                  {autoPoint && (
+                    <select
+                      value={pointRepeat}
+                      onChange={(e) => setPointRepeat(Number(e.target.value))}
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-2 text-xs text-[var(--text)]"
+                    >
+                      <option value={0}>Só no começo (aos 4 s)</option>
+                      <option value={30}>No começo e a cada 30 s</option>
+                      <option value={45}>No começo e a cada 45 s</option>
+                      <option value={90}>No começo e a cada 90 s</option>
+                    </select>
+                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      manualPointUntilRef.current = Date.now() + 7000;
+                    }}
+                    className="w-full cursor-pointer"
+                  >
+                    <Hand className="mr-2 h-4 w-4" /> Apontar agora
+                  </Button>
+                  <p className="text-[11px] text-[var(--text-secondary)]">
+                    O avatar aponta para o ícone e o link fica clicável na página do vídeo.
+                  </p>
+                </>
+              )}
             </div>
 
             {/* Painel de Clareza da Câmera & Qualidade de Imagem */}

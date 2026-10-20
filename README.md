@@ -8,6 +8,8 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Stack](#stack)
 - [Histórias narradas com Elementos com Vida, Transcrição Automática e Publicação Social](#histórias-narradas)
 - [Jogo C'est quoi ?](#jogo-cest-quoi-)
+- [Avatar falante e rede social no vídeo](#avatar-falante-e-rede-social-no-vídeo)
+- [Administradores adicionais](#administradores-adicionais)
 - [Indicador de carregamento](#indicador-de-carregamento)
 - [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
 - [Visibilidade das lições](#visibilidade-das-lições)
@@ -26,11 +28,11 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 
 ## Visão geral
 
-- Login com Google (NextAuth) e dois papéis: `admin` (o e-mail definido em `ADMIN_EMAIL`) e `user`.
+- Login com Google (NextAuth) e dois papéis: `admin` e `user`. O **administrador principal** é o e-mail de `ADMIN_EMAIL`; ele pode adicionar **administradores adicionais** pelo painel ([detalhes](#administradores-adicionais)).
 - Lições em rascunho, com publicação e anúncio controlados pelo administrador.
 - Painel do aluno com progresso, conteúdo recente e central de notificações.
 - Postagens com texto e/ou imagem (banco de ilustrações ou upload), respostas dos alunos revisadas pelo administrador e jogo de identificação de palavras na imagem.
-- Vídeos com likes, comentários, gravação no navegador e agendamento.
+- Vídeos com likes, comentários, gravação no navegador e agendamento. O **avatar fala de verdade** (lábios na voz do microfone, piscar, gestos) e **aponta para o ícone da rede social** anotada no vídeo, com link clicável na página.
 - **Histórias narradas com Elementos com Vida**: uma cena ilustrada + narração em Kreyòl + legendas bilíngues, onde cada elemento da cena ganha vida e se comporta realisticamente (pássaros voam, cachorros correm/latem, árvores balançam ao vento, etc.) de acordo com as ações descritas na fala ou na legenda. Acompanha exportação de vídeo vertical 9:16 com as mesmas animações gravadas, rótulos inteligentes e legenda móvel arrastável.
 - **Jogo "C'est quoi ?"** (painel em francês): 5 níveis, incluindo o **Nativo** (20 imagens, com os sub-níveis *Palavra* e *Frase*), botão **Dica** que congela o tempo, **arena online** com jogadores online, ranking e duelos.
 - Aulas ao vivo com LiveKit, quando configurado.
@@ -373,6 +375,70 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 | `src/models/CquoiChallenge.ts` | Duelos (somem sozinhos após 14 dias) |
 
 `POST /api/cquoi/arena` aceita as ações `heartbeat`, `leave`, `score`, `challenge` e `respond`; `GET /api/cquoi/arena?board=week|all|<nível>` devolve o painel. Todas exigem login. Não há variável de ambiente nova: o ranking usa o mesmo MongoDB do app.
+
+## Avatar falante e rede social no vídeo
+
+Na gravação de vídeos (`/admin/videos/record`), o avatar (as fotos "Você (…)") deixa de ser uma imagem parada: tudo é desenhado no canvas de gravação (`src/lib/talkingAvatar.ts`), então **fica gravado no vídeo exportado** e aparece igual na reprodução.
+
+### O que o avatar faz
+
+- **Fala com a sua voz**: a boca abre e fecha acompanhando o volume do microfone e muda de formato conforme o som (grave = boca mais redonda, agudo = boca mais larga). O analisador de áudio ficou menos "suavizado" (`smoothingTimeConstant = 0.55`) para os lábios seguirem as sílabas.
+- **Piscar natural** em intervalos aleatórios (às vezes duplo), com a pálpebra na cor da pele da própria foto. O avatar "Pensativo" (de óculos) não pisca, para não desenhar por cima das lentes.
+- **Movimento de cabeça**: respiração, balanço leve, mais vivo enquanto fala, e um aceno nas ênfases (subidas bruscas de volume).
+- **Gestos de mão enquanto fala**: de tempos em tempos uma mão sobe com a palma aberta (alternando os lados), na cor de pele e na cor da camiseta de cada foto.
+- **Ícone da rede social + mão apontando**: um cartão com o ícone (Instagram, Facebook ou YouTube), o texto "Siga no Instagram" e o perfil. O avatar levanta o braço e **aponta para o ícone**, que pulsa e ganha anéis de destaque enquanto isso.
+
+### Rede social no vídeo (painel "Personalização do Vídeo")
+
+| Opção | O que faz |
+| --- | --- |
+| Rede social no vídeo | Liga/desliga o cartão. Valor inicial: **Instagram `frances_com_tres_nativos`** |
+| Rede e perfil | Instagram, Facebook ou YouTube; aceita `@perfil`, `perfil` ou uma URL colada |
+| Apontar sozinho | O avatar aponta aos 4 s de gravação por 7 s e, se escolhido, de novo a cada 30, 45 ou 90 s |
+| Botão **Apontar agora** | Faz o avatar apontar na hora (7 s), na pré-visualização ou durante a gravação |
+
+Com a **câmera real** (sem avatar) o cartão da rede social também aparece, mas não há mão para apontar.
+
+### Link clicável na página do vídeo
+
+O vídeo gravado só mostra o ícone; por isso a página do vídeo ganha um botão **"Siga no Instagram: @perfil"** que abre o perfil em outra aba. O perfil também pode ser editado depois em `/admin/videos/[id]/edit` (deixe vazio para não mostrar). O formulário de edição agora **preserva** campos que ele não edita (como o fundo virtual), que antes eram apagados ao salvar.
+
+### Arquivos e segurança
+
+- `src/lib/talkingAvatar.ts`: animador (boca, piscar, cabeça, mãos, cartão); `TALKING_AVATAR_FACES` guarda onde ficam olhos e boca de cada foto.
+- `src/lib/socialLinks.ts`: redes disponíveis, limpeza do perfil e montagem do link.
+- `src/models/VideoLesson.ts`: `customization.socialPlatform` e `customization.socialHandle`.
+- O perfil é limpo no servidor (só letras, números, `.` e `_`, até 30 caracteres) e a rede precisa ser uma das três permitidas; o link só é montado a partir desses valores, então não dá para gravar um endereço arbitrário.
+- Vídeos antigos, sem esses campos, continuam iguais (nenhum botão aparece).
+
+## Administradores adicionais
+
+O **administrador principal** (a conta de `ADMIN_EMAIL`) continua com o maior privilégio e pode adicionar outros administradores pelo e-mail em **Admin → Administradores** (`/admin/administradores`).
+
+| | Principal | Administrador adicional |
+| --- | --- | --- |
+| Criar, editar e publicar vídeos, lições, postagens, histórias, propagandas, etc. | Sim | Sim |
+| Ver a lista de administradores | Sim | Sim (somente leitura) |
+| **Adicionar ou remover administradores** | **Sim** | **Não** |
+| Ser removido | Nunca | Sim, pelo principal |
+
+### Como funciona
+
+- Você informa o e-mail Google da pessoa. O acesso vale **no primeiro login**, mesmo que ela ainda não tenha conta. Limite de 20 administradores adicionais.
+- O acesso é **conferido no servidor a cada requisição** (`src/lib/adminAccess.ts`, com cache de 15 s), e não pelo token de sessão de 30 dias: quem é adicionado ganha acesso sem sair e entrar, e quem é removido **perde o acesso em segundos**.
+- O campo `role` do usuário no banco é sincronizado ao adicionar/remover (a cobrança continua isentando `role = admin`). Só o principal recebe `isExemptFromBilling` pelo login.
+- As rotas `POST` e `DELETE` de `/api/admin/admins` usam `requirePrimaryAdmin()`; um administrador adicional recebe `403`. A rota `GET` é aberta a qualquer administrador.
+- **Correção de segurança**: o callback de sessão não aceita mais `role` vindo do cliente (`update({ role })`), que permitiria a um usuário se promover a administrador.
+- **Atenção**: quem era `admin` apenas no banco de dados (sem ser `ADMIN_EMAIL` nem estar na lista) **deixa de ser administrador**. Se havia alguém assim, adicione o e-mail da pessoa pela tela.
+- Se `ADMIN_EMAIL` não estiver definido, ninguém é administrador principal e a tela não permite gerenciar.
+
+### Arquivos
+
+- `src/models/CoAdmin.ts`: coleção `coadmins` (e-mail, quem adicionou, data).
+- `src/lib/adminAccess.ts`: níveis de acesso (`primary`, `admin`), cache e sincronização do `role`.
+- `src/lib/apiAuth.ts`: `requireAdmin()` e `requirePrimaryAdmin()`.
+- `src/app/api/admin/admins/route.ts`: `GET`, `POST` e `DELETE`.
+- `src/app/admin/administradores/page.tsx` e `src/components/AdminManager.tsx`: tela de gestão.
 
 ## Indicador de carregamento
 
@@ -942,7 +1008,7 @@ CRON_SECRET=segredo-do-cron
 | `MONGODB_URI` | Conexão com o MongoDB (obrigatória) |
 | `NEXTAUTH_URL`, `NEXTAUTH_SECRET` | NextAuth (obrigatórias) |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Login com Google (obrigatórias) |
-| `ADMIN_EMAIL` | E-mail da conta administradora |
+| `ADMIN_EMAIL` | E-mail do administrador principal (maior privilégio; único que adiciona ou remove outros administradores) |
 | `BLOB_READ_WRITE_TOKEN` | Token do Vercel Blob; necessário para enviar vídeos, imagens de postagem e a narração das histórias (lido automaticamente pelo SDK `@vercel/blob`) |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Push em segundo plano |
 | `NEXT_PUBLIC_LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` | Aulas ao vivo |

@@ -2,7 +2,8 @@
 
 import { useMemo, useRef } from "react";
 import { VIDEO_BACKGROUNDS, VIDEO_AVATARS, ParticleKind, personalizeAvatarName } from "@/lib/videoThemes";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ExternalLink } from "lucide-react";
+import { SOCIAL_PLATFORMS, buildSocialUrl, isSocialPlatform, sanitizeSocialHandle } from "@/lib/socialLinks";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -15,6 +16,8 @@ interface VideoPlayerProps {
     customAvatarUrl?: string;
     frameStyle?: string;
     bannerText?: string;
+    socialPlatform?: string;
+    socialHandle?: string;
   };
   /** Nome do usuário logado, para exibir no lugar de "Você (...)" no cabeçalho. */
   viewerName?: string | null;
@@ -107,6 +110,13 @@ export function VideoPlayer({
   // Apenas o emoji da bandeira do tema de fundo (ex.: 🇭🇹), sem o texto
   // "Bandeira do Haiti" etc.
   const bgFlag = bgTheme.name.split(" ").pop();
+
+  // Link clicável da rede social anotada na gravação (o vídeo em si só mostra o ícone)
+  const socialUrl = buildSocialUrl(customization?.socialPlatform, customization?.socialHandle);
+  const socialMeta = isSocialPlatform(customization?.socialPlatform)
+    ? SOCIAL_PLATFORMS[customization.socialPlatform]
+    : null;
+  const socialHandle = sanitizeSocialHandle(customization?.socialHandle);
 
   const isYouTube = videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
   const isVimeo = videoUrl.includes("vimeo.com");
@@ -202,6 +212,22 @@ export function VideoPlayer({
           />
         )}
       </div>
+
+      {socialUrl && socialMeta && (
+        <div className="relative z-10 mt-3 flex justify-center px-2">
+          <a
+            href={socialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex max-w-full items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-xs font-semibold text-white shadow-lg backdrop-blur-md transition hover:bg-black/70 sm:text-sm"
+          >
+            <span className="truncate">
+              {socialMeta.cta}: @{socialHandle}
+            </span>
+            <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+          </a>
+        </div>
+      )}
 
       {/* Floating Bottom Studio Badge */}
       <div className="relative z-10 mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-2 text-xs text-white/80">

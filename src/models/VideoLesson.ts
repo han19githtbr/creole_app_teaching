@@ -1,5 +1,6 @@
 import mongoose, { Schema, models, model, type Document } from "mongoose";
 import { STORY_AUDIO_MAX_SECONDS, STORY_TIME_TOLERANCE } from "../lib/storyAudio";
+import { isSocialPlatform, sanitizeSocialHandle } from "../lib/socialLinks";
 
 export interface IVideoComment {
   _id?: mongoose.Types.ObjectId;
@@ -20,6 +21,9 @@ export interface IVideoCustomization {
   customAvatarUrl?: string;
   frameStyle: string;
   bannerText?: string;
+  /** Rede social anotada no vídeo (o avatar aponta para o ícone). */
+  socialPlatform?: string;
+  socialHandle?: string;
 }
 
 export interface IVideoStoryCaption {
@@ -88,6 +92,12 @@ const VideoCustomizationSchema = new Schema<IVideoCustomization>(
     customAvatarUrl: { type: String, default: "" },
     frameStyle: { type: String, default: "rounded" },
     bannerText: { type: String, default: "" },
+    socialPlatform: {
+      type: String,
+      default: "",
+      set: (v: unknown) => (isSocialPlatform(v) ? v : ""),
+    },
+    socialHandle: { type: String, default: "", set: sanitizeSocialHandle },
   },
   { _id: false }
 );

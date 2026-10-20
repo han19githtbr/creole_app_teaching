@@ -11,6 +11,13 @@ import {
   VIDEO_FRAME_STYLES,
 } from "@/lib/videoThemes";
 import {
+  DEFAULT_SOCIAL_PLATFORM,
+  SOCIAL_PLATFORMS,
+  isSocialPlatform,
+  sanitizeSocialHandle,
+  type SocialPlatform,
+} from "@/lib/socialLinks";
+import {
   Calendar,
   Layers,
   Palette,
@@ -32,6 +39,9 @@ export interface VideoEditFormValues {
     customAvatarUrl?: string;
     frameStyle?: string;
     bannerText?: string;
+    virtualBackground?: string;
+    socialPlatform?: string;
+    socialHandle?: string;
   };
 }
 
@@ -61,6 +71,12 @@ export function VideoEditForm({ initial }: { initial: VideoEditFormValues }) {
   const [bannerText, setBannerText] = useState(
     initial.customization?.bannerText || ""
   );
+  const [socialPlatform, setSocialPlatform] = useState<SocialPlatform>(
+    isSocialPlatform(initial.customization?.socialPlatform)
+      ? initial.customization.socialPlatform
+      : DEFAULT_SOCIAL_PLATFORM
+  );
+  const [socialHandle, setSocialHandle] = useState(initial.customization?.socialHandle || "");
 
   // Scheduling
   const [publishMode, setPublishMode] = useState<"immediate" | "scheduled" | "draft">(
@@ -119,11 +135,15 @@ export function VideoEditForm({ initial }: { initial: VideoEditFormValues }) {
           isPublished,
           publishAt,
           customization: {
+            // mantém campos que este formulário não edita (fundo virtual etc.)
+            ...initial.customization,
             backgroundStyle,
             customBackgroundUrl: initial.customization?.customBackgroundUrl || "",
             avatarType,
             frameStyle,
             bannerText,
+            socialPlatform: sanitizeSocialHandle(socialHandle) ? socialPlatform : "",
+            socialHandle: sanitizeSocialHandle(socialHandle),
           },
         }),
       });
@@ -295,6 +315,34 @@ export function VideoEditForm({ initial }: { initial: VideoEditFormValues }) {
               placeholder="Ex: Alfabeto e Pronúncia em Kreyòl"
               className="text-xs"
             />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+              Rede social do vídeo (link clicável na página)
+            </label>
+            <div className="grid grid-cols-[110px_1fr] gap-2">
+              <select
+                value={socialPlatform}
+                onChange={(e) => {
+                  if (isSocialPlatform(e.target.value)) setSocialPlatform(e.target.value);
+                }}
+                className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-2 text-xs text-[var(--text)]"
+              >
+                {Object.values(SOCIAL_PLATFORMS).map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+              <Input
+                value={socialHandle}
+                onChange={(e) => setSocialHandle(e.target.value)}
+                placeholder="perfil (deixe vazio para não mostrar)"
+                maxLength={60}
+                className="text-xs"
+              />
+            </div>
           </div>
         </div>
       </div>

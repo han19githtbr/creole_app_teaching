@@ -9,6 +9,13 @@ export async function requireAdmin() {
   return session;
 }
 
+/** Só o administrador principal (ADMIN_EMAIL) — ex.: gerenciar outros administradores. */
+export async function requirePrimaryAdmin() {
+  const session = await requireAdmin();
+  if (!session || !session.user.isPrimaryAdmin) return null;
+  return session;
+}
+
 export async function requireUser() {
   const session = await getServerSession(authOptions);
   if (!session?.user) return null;

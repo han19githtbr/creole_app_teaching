@@ -33,7 +33,7 @@ const ICONS: Record<string, string> = {
   bicicleta: "🚲", pipa: "🪁", bola: "⚽", balanco: "🛝", "cesta de piquenique": "🧺", "toalha de piquenique": "🧺",
   // Idiomas
   dicionario: "📚", "globo terrestre": "🌍", "baloes de conversa": "💬", "letras do alfabeto": "🔤", caderno: "📓",
-  lapis: "✏️", "quadro-negro": "🪧", professor: "🧑‍🏫", aluno: "🧑‍🎓", microfone: "🎤", mapa: "🗺️",
+  lapis: "✏️", "quadro-negro": "🪧", professor: "🧑‍🏫", aluno: "🧑‍🎓",
   // Cinema, música, dança
   cinema: "🎬", pipoca: "🍿", projetor: "📽️", ingresso: "🎟️", camera: "📷", "luzes/holofotes": "🔦", palco: "🎪",
   violao: "🎸", "violao/guitarra": "🎸", piano: "🎹", "teclado musical": "🎹", microfone: "🎤", "alto-falante": "🔊",

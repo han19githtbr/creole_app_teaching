@@ -31,6 +31,9 @@ const ICONS: Record<string, string> = {
   // Turismo, lazer, viagem
   barco: "⛵", balao: "🎈", farol: "🗼", aviao: "✈️", bussola: "🧭", fitas: "🎀", mapa: "🗺️", "mala de viagem": "🧳",
   bicicleta: "🚲", pipa: "🪁", bola: "⚽", balanco: "🛝", "cesta de piquenique": "🧺", "toalha de piquenique": "🧺",
+  // Idiomas
+  dicionario: "📚", "globo terrestre": "🌍", "baloes de conversa": "💬", "letras do alfabeto": "🔤", caderno: "📓",
+  lapis: "✏️", "quadro-negro": "🪧", professor: "🧑‍🏫", aluno: "🧑‍🎓", microfone: "🎤", mapa: "🗺️",
   // Cinema, música, dança
   cinema: "🎬", pipoca: "🍿", projetor: "📽️", ingresso: "🎟️", camera: "📷", "luzes/holofotes": "🔦", palco: "🎪",
   violao: "🎸", "violao/guitarra": "🎸", piano: "🎹", "teclado musical": "🎹", microfone: "🎤", "alto-falante": "🔊",

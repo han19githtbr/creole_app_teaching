@@ -33,6 +33,7 @@ import * as lazeresVariants from "./theme-lazeres-variants.mjs";
 import * as estoicismoVariants from "./theme-estoicismo-variants.mjs";
 import * as religiaoVariants from "./theme-religiao-variants.mjs";
 import * as gastronomiaVariants from "./theme-gastronomia-variants.mjs";
+import * as idiomasVariants from "./theme-idiomas-variants.mjs";
 
 const OUT = path.resolve("./public/ghibli");
 if (!fs.existsSync(OUT)) {
@@ -72,6 +73,7 @@ const DEDICATED_VARIANTS = {
   estoicismo: collectFns(estoicismoVariants, "Estoicismo"),
   religiao: collectFns(religiaoVariants, "Religiao"),
   gastronomia: collectFns(gastronomiaVariants, "Gastronomia"),
+  idiomas: collectFns(idiomasVariants, "Idiomas"),
 };
 
 const MASTER_SCENES = [
@@ -89,6 +91,7 @@ const MASTER_SCENES = [
   { id: "estoicismo", theme: "Estoicismo", title: "Pórtico de pedra e oliveiras", fn: renderEstoicismo },
   { id: "religiao", theme: "Religião", title: "Capela na colina e luz sagrada", fn: renderReligiao },
   { id: "gastronomia", theme: "Gastronomia", title: "Cozinha aconchegante", fn: renderGastronomia },
+  { id: "idiomas", theme: "Idiomas", title: "Sala de aula de idiomas", fn: idiomasVariants.renderIdiomas01 },
 ];
 
 const manifest = [];

@@ -24,6 +24,7 @@ const THEME_QUIZZES: Record<string, ImageQuizConfig> = {
   Estoicismo: { options: ["kolòn", "liv", "pye oliv", "moun saj", "dròn", "tanbou", "balon", "pòp-kòn", "bato", "bouji"], answers: ["kolòn", "liv", "pye oliv", "moun saj"] },
   Religião: { options: ["legliz", "bouji", "pijon", "kwa", "òdinatè", "bisiklèt", "kap", "fa", "gita", "pòm"], answers: ["legliz", "bouji", "pijon", "kwa"] },
   Gastronomia: { options: ["chodyè", "pen", "fwi", "piman", "dròn", "legliz", "bisiklèt", "konpa", "fa", "papiyon"], answers: ["chodyè", "pen", "fwi", "piman"] },
+  Idiomas: { options: ["liv", "glòb", "dyalòg", "lèt", "bato", "tanbou", "legliz", "pòm", "fa", "bisiklèt"], answers: ["liv", "glòb", "dyalòg", "lèt"] },
 };
 
 const sceneData = imageSceneVariants as Record<string, {

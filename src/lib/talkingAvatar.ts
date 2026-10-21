@@ -64,12 +64,17 @@ const easeOutBack = (t: number) => {
 /**
  * Posições em fração (0 a 1) do QUADRADO recortado da foto — o mesmo recorte
  * "cover" usado pelo avatar circular. `eyes: null` = sem piscar (óculos).
- * `jawFree: false` = mão sobre o queixo, então a boca abre menos.
+ * `jaw` < 1 = mão sobre o queixo, então a boca abre menos.
  */
 interface FaceMap {
   src: string;
   focusY: number;
+  /** Centro da linha dos lábios (entre o lábio de cima e o de baixo). */
   mouth: [number, number];
+  /** Meia largura dos lábios, em fração do tamanho do avatar. */
+  mouthHalf: number;
+  /** Inclinação da linha dos lábios na foto, em radianos (positivo = desce para a direita). */
+  roll: number;
   /** Posição de cada olho (esquerdo, direito) — a cabeça pode estar inclinada na foto. */
   eyes: { ys: [number, number]; xs: [number, number] } | null;
   /** Fator da abertura da mandíbula (1 = normal; menor quando há mão sobre o queixo). */
@@ -80,38 +85,50 @@ export const TALKING_AVATAR_FACES: Record<string, FaceMap> = {
   you_sunset: {
     src: "/avatars/you-sunset.png",
     focusY: 0.3,
-    mouth: [0.6, 0.69],
+    mouth: [0.595, 0.692],
+    mouthHalf: 0.098,
+    roll: -0.087,
     eyes: { ys: [0.455, 0.455], xs: [0.46, 0.7] },
   },
   you_studio: {
     src: "/avatars/you-studio.png",
     focusY: 0.265,
-    mouth: [0.49, 0.779],
+    mouth: [0.455, 0.772],
+    mouthHalf: 0.1,
+    roll: 0.07,
     eyes: { ys: [0.52, 0.545], xs: [0.36, 0.61] },
   },
   you_thinking: {
     src: "/avatars/you-thinking.png",
     focusY: 0.266,
-    mouth: [0.58, 0.609],
+    mouth: [0.565, 0.565],
+    mouthHalf: 0.078,
+    roll: -0.22,
     eyes: null,
     jaw: 0.4,
   },
   you_trail: {
     src: "/avatars/you-trail.png",
     focusY: 0.257,
-    mouth: [0.61, 0.829],
+    mouth: [0.565, 0.797],
+    mouthHalf: 0.088,
+    roll: 0.19,
     eyes: { ys: [0.56, 0.615], xs: [0.51, 0.72] },
   },
   you_night: {
     src: "/avatars/you-night.png",
     focusY: 0.356,
-    mouth: [0.48, 0.819],
+    mouth: [0.47, 0.82],
+    mouthHalf: 0.11,
+    roll: -0.02,
     eyes: { ys: [0.53, 0.53], xs: [0.32, 0.62] },
   },
   you_headphones: {
     src: "/avatars/you-headphones.png",
     focusY: 0.363,
-    mouth: [0.6, 0.734],
+    mouth: [0.553, 0.716],
+    mouthHalf: 0.092,
+    roll: 0.108,
     eyes: { ys: [0.44, 0.49], xs: [0.46, 0.71] },
   },
 };
@@ -428,7 +445,7 @@ export class TalkingAvatarAnimator {
     const s = f.features;
 
     // boca: abre rápido, fecha um pouco mais devagar
-    const target = clamp((s.level - 0.025) * 7, 0, 1);
+    const target = clamp((s.level - 0.04) * 7.5, 0, 1);
     const k = target > this.mouthOpen ? 0.6 : 0.3;
     this.mouthOpen += (target - this.mouthOpen) * smoothing(k, dt);
 
@@ -594,10 +611,11 @@ export class TalkingAvatarAnimator {
   }
 
   /**
-   * Boca que fala de verdade: em vez de colar um desenho por cima, o lábio
-   * inferior e o queixo DA PRÓPRIA FOTO descem (mandíbula), e o espaço aberto
-   * entre os lábios mostra um interior escuro. O pedaço que desce tem as
-   * bordas esfumadas para se fundir à pele e à barba ao redor.
+   * Boca que fala de verdade: a própria foto é deformada ao longo da linha dos
+   * lábios. O lábio de baixo e o queixo descem (mais no centro, nada nos
+   * cantos), então a abertura é uma lente que nasce e fecha nos cantos da boca,
+   * sem retângulo e sem emenda. O interior escuro só preenche esse vão.
+   * Tudo é girado pela inclinação dos lábios de cada foto (`roll`).
    */
   private drawMouth(
     ctx: CanvasRenderingContext2D,
@@ -610,123 +628,132 @@ export class TalkingAvatarAnimator {
     const colors = face.colors;
     if (!colors) return;
 
-    const eyeDist = map.eyes ? map.eyes.xs[1] - map.eyes.xs[0] : 0.25;
-    const hw = eyeDist * 0.3 * f.size * (0.9 + this.mouthWide * 0.2); // meia largura da boca
+    const hw = map.mouthHalf * f.size; // meia largura dos lábios
     const norm = clamp(this.mouthOpen * 1.15, 0, 1);
-    // Abertura da mandíbula; boca larga ("i", "e") abre menos que a redonda ("o", "a")
-    const jaw = hw * 0.55 * norm * (map.jaw ?? 1) * (1 - this.mouthWide * 0.25);
+    // boca larga ("i", "e") abre menos que a redonda ("o", "a")
+    const jaw = hw * 0.52 * norm * (map.jaw ?? 1) * (1 - this.mouthWide * 0.2);
     if (jaw < 1.2) return;
 
     const mx = toX(map.mouth[0]);
     const my = toY(map.mouth[1]);
-    const cornerX = hw * (0.85 + this.mouthWide * 0.15);
+    const reach = hw * 1.08;
+    // quanto o queixo desce em cada x (0 nos cantos, máximo no centro)
+    const prof = (x: number) => {
+      const u = x / reach;
+      return u * u >= 1 ? 0 : jaw * Math.pow(1 - u * u, 1.15);
+    };
 
-    // 1) interior da boca (por baixo do queixo que desce)
+    const pw = Math.ceil(reach * 2 + 2);
+    const ph = Math.ceil(hw * 2);
+    const jawC = Math.ceil(jaw) + 2;
+
+    if (!this.patchA) this.patchA = document.createElement("canvas");
+    if (!this.patchB) this.patchB = document.createElement("canvas");
+    const A = this.patchA;
+    const B = this.patchB;
+    if (A.width !== pw || A.height !== ph) {
+      A.width = pw;
+      A.height = ph;
+    }
+    if (B.width !== pw || B.height !== ph + jawC) {
+      B.width = pw;
+      B.height = ph + jawC;
+    }
+    const actx = A.getContext("2d");
+    const bctx = B.getContext("2d");
+    if (!actx || !bctx) return;
+
+    // A = foto "desinclinada": o eixo x segue a linha dos lábios
+    const { sx, sy, side } = cropRect(face.img, map.focusY);
+    const r = f.size / 2;
+    actx.setTransform(1, 0, 0, 1, 0, 0);
+    actx.clearRect(0, 0, pw, ph);
+    actx.save();
+    actx.translate(pw / 2, 0);
+    actx.rotate(-map.roll);
+    actx.translate(-mx, -my);
+    actx.drawImage(face.img, sx, sy, side, side, -r, -r, f.size, f.size);
+    actx.restore();
+
+    // B = A deformada em faixas verticais (cada uma desce o seu tanto)
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.globalCompositeOperation = "source-over";
+    bctx.clearRect(0, 0, pw, ph + jawC);
+    const strips = Math.ceil(pw / 3);
+    const sw = pw / strips;
+    for (let i = 0; i < strips; i++) {
+      const x0 = i * sw;
+      const d = prof(x0 + sw / 2 - pw / 2);
+      bctx.drawImage(A, x0, 0, sw, ph, x0, d, sw + 0.6, ph);
+    }
+    // esfumaça a base (queixo) e as laterais para fundir com a foto
+    bctx.globalCompositeOperation = "destination-in";
+    const vg = bctx.createLinearGradient(0, 0, 0, ph + jawC);
+    vg.addColorStop(0, "rgba(0,0,0,1)");
+    vg.addColorStop(Math.min(0.95, (ph * 0.42 + jaw) / (ph + jawC)), "rgba(0,0,0,1)");
+    vg.addColorStop(1, "rgba(0,0,0,0)");
+    bctx.fillStyle = vg;
+    bctx.fillRect(0, 0, pw, ph + jawC);
+    const hg = bctx.createLinearGradient(0, 0, pw, 0);
+    hg.addColorStop(0, "rgba(0,0,0,0)");
+    hg.addColorStop(0.14, "rgba(0,0,0,1)");
+    hg.addColorStop(0.86, "rgba(0,0,0,1)");
+    hg.addColorStop(1, "rgba(0,0,0,0)");
+    bctx.fillStyle = hg;
+    bctx.fillRect(0, 0, pw, ph + jawC);
+    bctx.globalCompositeOperation = "source-over";
+
     ctx.save();
     ctx.translate(mx, my);
-    const cavity = () => {
+    ctx.rotate(map.roll);
+
+    // interior da boca: só o vão em forma de lente entre a linha dos lábios e o lábio de baixo
+    const lens = () => {
+      const step = Math.max(2, reach / 24);
       ctx.beginPath();
-      ctx.moveTo(-cornerX, 0);
-      ctx.quadraticCurveTo(0, -jaw * 0.14, cornerX, 0);
-      // laterais curvas (a boca afina nos cantos), não um retângulo
-      ctx.quadraticCurveTo(cornerX * 1.0, jaw * 0.55, cornerX * 0.82, jaw + 2);
-      ctx.lineTo(-cornerX * 0.82, jaw + 2);
-      ctx.quadraticCurveTo(-cornerX * 1.0, jaw * 0.55, -cornerX, 0);
+      ctx.moveTo(-reach, 0);
+      for (let x = -reach; x <= reach; x += step) ctx.lineTo(x, -jaw * 0.05 * (1 - (x / reach) ** 2));
+      ctx.lineTo(reach, 0);
+      for (let x = reach; x >= -reach; x -= step) ctx.lineTo(x, prof(x) + 1.2);
       ctx.closePath();
     };
-    cavity();
+    lens();
     const g = ctx.createLinearGradient(0, 0, 0, jaw);
-    g.addColorStop(0, "#1c0a0c");
-    g.addColorStop(1, "#3a1517");
+    g.addColorStop(0, "#1a0809");
+    g.addColorStop(1, "#3b1618");
     ctx.fillStyle = g;
     ctx.fill();
-
     ctx.save();
-    cavity();
+    lens();
     ctx.clip();
-    // dentes de cima só aparecem como uma faixa discreta, sombreada
-    if (jaw > hw * 0.28) {
-      const th = Math.min(jaw * 0.26, hw * 0.14);
-      const tg = ctx.createLinearGradient(0, 0, 0, th);
-      tg.addColorStop(0, "rgba(206,192,172,0.8)");
-      tg.addColorStop(1, "rgba(150,132,116,0.35)");
-      ctx.fillStyle = tg;
-      ctx.fillRect(-cornerX * 0.82, -jaw * 0.05, cornerX * 1.64, th);
-    }
-    // língua
-    if (jaw > hw * 0.34) {
-      ctx.fillStyle = "rgba(120,46,54,0.75)";
+    if (jaw > hw * 0.36) {
+      ctx.fillStyle = "rgba(118,44,52,0.7)";
       ctx.beginPath();
-      ctx.ellipse(0, jaw * 0.95, cornerX * 0.5, jaw * 0.32, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, jaw * 0.95, reach * 0.45, jaw * 0.3, 0, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();
-    // borda de lábio contornando a abertura, para não parecer um recorte
-    cavity();
+
+    // queixo e lábio de baixo deformados
+    ctx.drawImage(B, -pw / 2, 0);
+
+    // borda do lábio de baixo, para o vão não parecer um recorte
     ctx.strokeStyle = colors.lip;
-    ctx.globalAlpha = 0.75;
-    ctx.lineWidth = Math.max(1.5, hw * 0.06);
-    ctx.lineJoin = "round";
-    ctx.stroke();
-    ctx.restore();
-
-    // 2) lábio inferior + queixo da foto descendo, com bordas esfumadas
-    const pw = Math.ceil(cornerX * 2 * 1.5);
-    const ph = Math.ceil(hw * 2.1);
-    if (!this.patch) this.patch = document.createElement("canvas");
-    const patch = this.patch;
-    if (patch.width !== pw || patch.height !== ph) {
-      patch.width = pw;
-      patch.height = ph;
-    }
-    const pctx = patch.getContext("2d");
-    if (pctx) {
-      const { sx, sy, side } = cropRect(face.img, map.focusY);
-      const k = side / f.size;
-      const r = f.size / 2;
-      pctx.globalCompositeOperation = "source-over";
-      pctx.clearRect(0, 0, pw, ph);
-      pctx.drawImage(face.img, sx + (mx - pw / 2 + r) * k, sy + (my + r) * k, pw * k, ph * k, 0, 0, pw, ph);
-
-      pctx.globalCompositeOperation = "destination-in";
-      const hg = pctx.createLinearGradient(0, 0, pw, 0);
-      hg.addColorStop(0, "rgba(0,0,0,0)");
-      hg.addColorStop(0.2, "rgba(0,0,0,1)");
-      hg.addColorStop(0.8, "rgba(0,0,0,1)");
-      hg.addColorStop(1, "rgba(0,0,0,0)");
-      pctx.fillStyle = hg;
-      pctx.fillRect(0, 0, pw, ph);
-      const vg = pctx.createLinearGradient(0, 0, 0, ph);
-      vg.addColorStop(0, "rgba(0,0,0,1)");
-      vg.addColorStop(0.45, "rgba(0,0,0,1)");
-      vg.addColorStop(1, "rgba(0,0,0,0)");
-      pctx.fillStyle = vg;
-      pctx.fillRect(0, 0, pw, ph);
-      pctx.globalCompositeOperation = "source-over";
-
-      ctx.drawImage(patch, mx - pw / 2, my + jaw);
-    }
-
-    // 3) acabamento: sombra sob o lábio de cima e linha do lábio de baixo
-    ctx.save();
-    ctx.translate(mx, my);
+    ctx.globalAlpha = 0.7;
+    ctx.lineWidth = Math.max(1.4, hw * 0.035);
     ctx.lineCap = "round";
-    ctx.strokeStyle = colors.lip;
-    ctx.lineWidth = Math.max(1.5, hw * 0.06);
     ctx.beginPath();
-    ctx.moveTo(-cornerX, 0);
-    ctx.quadraticCurveTo(0, -jaw * 0.14, cornerX, 0);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(30,10,10,0.35)";
-    ctx.lineWidth = Math.max(1, hw * 0.035);
-    ctx.beginPath();
-    ctx.moveTo(-cornerX * 0.9, jaw + 0.5);
-    ctx.lineTo(cornerX * 0.9, jaw + 0.5);
+    for (let x = -reach * 0.96; x <= reach * 0.96; x += Math.max(2, reach / 24)) {
+      const y = prof(x) + 0.6;
+      if (x === -reach * 0.96) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
     ctx.stroke();
     ctx.restore();
   }
 
-  private patch: HTMLCanvasElement | null = null;
+  private patchA: HTMLCanvasElement | null = null;
+  private patchB: HTMLCanvasElement | null = null;
 
   /* ----- ícone da rede social ----- */
 

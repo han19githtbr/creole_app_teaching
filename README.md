@@ -384,9 +384,8 @@ Na gravação de vídeos (`/admin/videos/record`), o avatar (as fotos "Você (�
 
 - **Fala com a sua voz**: a boca abre e fecha acompanhando o volume do microfone e muda de formato conforme o som (grave = boca mais redonda, agudo = boca mais larga). A mandíbula é animada de verdade: o **lábio inferior e o queixo da própria foto descem** (com as bordas esfumadas para se fundir à barba e à pele) e a abertura mostra um interior escuro, em vez de um desenho de boca colado por cima. No avatar "Pensativo", com a mão no queixo, a abertura é menor. O analisador de áudio ficou menos "suavizado" (`smoothingTimeConstant = 0.55`) para os lábios seguirem as sílabas.
 - **Piscar natural** em intervalos aleatórios (às vezes duplo), com a pálpebra na cor da pele da própria foto. O avatar "Pensativo" (de óculos) não pisca, para não desenhar por cima das lentes.
-- **Movimento de cabeça**: respiração, balanço leve, mais vivo enquanto fala, e um aceno nas ênfases (subidas bruscas de volume).
-- **Gestos de mão enquanto fala**: de tempos em tempos uma mão sobe com a palma aberta (alternando os lados), na cor de pele e na cor da camiseta de cada foto.
-- **Ícone da rede social + mão apontando**: um cartão com o ícone (Instagram, Facebook ou YouTube), o texto "Siga no Instagram" e o perfil. O avatar levanta o braço e **aponta para o ícone**, que pulsa e ganha anéis de destaque enquanto isso.
+- **Movimento de cabeça**: respiração, balanço leve, mais vivo enquanto fala, e um aceno nas ênfases (subidas bruscas de volume). Não aparece nenhuma mão ou braço enquanto ele fala.
+- **Ícone da rede social + dedo apontando**: um cartão com o ícone (Instagram, Facebook ou YouTube), o texto "Siga no Instagram" e o perfil. Só um **dedo indicador** (com unha e vincos, na cor de pele da foto) sai de trás do avatar e **aponta para o ícone**, que pulsa e ganha anéis de destaque. Depois o dedo volta a se esconder.
 
 ### Rede social no vídeo (painel "Personalização do Vídeo")
 
@@ -394,10 +393,10 @@ Na gravação de vídeos (`/admin/videos/record`), o avatar (as fotos "Você (�
 | --- | --- |
 | Rede social no vídeo | Liga/desliga o cartão. Valor inicial: **Instagram `frances_com_tres_nativos`** |
 | Rede e perfil | Instagram, Facebook ou YouTube; aceita `@perfil`, `perfil` ou uma URL colada |
-| Apontar sozinho | O avatar aponta aos 4 s de gravação por 7 s e, se escolhido, de novo a cada 30, 45 ou 90 s |
-| Botão **Apontar agora** | Faz o avatar apontar na hora (7 s), na pré-visualização ou durante a gravação |
+| Apontar sozinho | O dedo aparece aos 4 s de gravação por 7 s e, se escolhido, de novo a cada 30, 45 ou 90 s |
+| Botão **Apontar agora** | Faz o dedo apontar na hora (7 s), na pré-visualização ou durante a gravação |
 
-Com a **câmera real** (sem avatar) o cartão da rede social também aparece, mas não há mão para apontar.
+Com a **câmera real** (sem avatar) o cartão da rede social também aparece, mas não há dedo para apontar.
 
 ### Link clicável na página do vídeo
 
@@ -405,7 +404,7 @@ O vídeo gravado só mostra o ícone; por isso a página do vídeo ganha um bot�
 
 ### Arquivos e segurança
 
-- `src/lib/talkingAvatar.ts`: animador (boca, piscar, cabeça, mãos, cartão); `TALKING_AVATAR_FACES` guarda onde ficam olhos e boca de cada foto.
+- `src/lib/talkingAvatar.ts`: animador (boca, piscar, cabeça, dedo que aponta, cartão); `TALKING_AVATAR_FACES` guarda onde ficam olhos e boca de cada foto.
 - `src/lib/socialLinks.ts`: redes disponíveis, limpeza do perfil e montagem do link.
 - `src/models/VideoLesson.ts`: `customization.socialPlatform` e `customization.socialHandle`.
 - O perfil é limpo no servidor (só letras, números, `.` e `_`, até 30 caracteres) e a rede precisa ser uma das três permitidas; o link só é montado a partir desses valores, então não dá para gravar um endereço arbitrário.

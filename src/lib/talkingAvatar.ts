@@ -6,8 +6,8 @@ import { SOCIAL_PLATFORMS, type SocialPlatform } from "./socialLinks";
  *
  *  - boca sincronizada com a voz real do microfone (abertura + largura);
  *  - piscar natural, respiração, balanço e acenos de cabeça nas ênfases;
- *  - gestos de mão enquanto fala (palma aberta, alternando os lados);
- *  - ícone da rede social anotada + mão que aponta para ele.
+ *  - ícone da rede social anotada + um dedo indicador que sai de trás do
+ *    avatar e aponta para ele (sem mão nem braço aparecendo).
  */
 
 /* ------------------------------------------------------------------ */
@@ -72,43 +72,46 @@ interface FaceMap {
   mouth: [number, number];
   /** Posição de cada olho (esquerdo, direito) — a cabeça pode estar inclinada na foto. */
   eyes: { ys: [number, number]; xs: [number, number] } | null;
+  /** Fator da abertura da mandíbula (1 = normal; menor quando há mão sobre o queixo). */
+  jaw?: number;
 }
 
 export const TALKING_AVATAR_FACES: Record<string, FaceMap> = {
   you_sunset: {
     src: "/avatars/you-sunset.png",
     focusY: 0.3,
-    mouth: [0.6, 0.675],
+    mouth: [0.6, 0.69],
     eyes: { ys: [0.455, 0.455], xs: [0.46, 0.7] },
   },
   you_studio: {
     src: "/avatars/you-studio.png",
     focusY: 0.265,
-    mouth: [0.49, 0.765],
+    mouth: [0.49, 0.779],
     eyes: { ys: [0.52, 0.545], xs: [0.36, 0.61] },
   },
   you_thinking: {
     src: "/avatars/you-thinking.png",
     focusY: 0.266,
-    mouth: [0.58, 0.595],
+    mouth: [0.58, 0.609],
     eyes: null,
+    jaw: 0.4,
   },
   you_trail: {
     src: "/avatars/you-trail.png",
     focusY: 0.257,
-    mouth: [0.61, 0.815],
+    mouth: [0.61, 0.829],
     eyes: { ys: [0.56, 0.615], xs: [0.51, 0.72] },
   },
   you_night: {
     src: "/avatars/you-night.png",
     focusY: 0.356,
-    mouth: [0.48, 0.805],
+    mouth: [0.48, 0.819],
     eyes: { ys: [0.53, 0.53], xs: [0.32, 0.62] },
   },
   you_headphones: {
     src: "/avatars/you-headphones.png",
     focusY: 0.363,
-    mouth: [0.6, 0.72],
+    mouth: [0.6, 0.734],
     eyes: { ys: [0.44, 0.49], xs: [0.46, 0.71] },
   },
 };
@@ -205,130 +208,81 @@ function getFace(id: string): LoadedFace | null {
 }
 
 /* ------------------------------------------------------------------ */
-/* Mãos                                                                */
+/* Dedo que aponta                                                     */
 /* ------------------------------------------------------------------ */
 
 type HandColors = NonNullable<LoadedFace["colors"]>;
 
-function paint(ctx: CanvasRenderingContext2D, fill: string, outline: string, lw: number) {
-  ctx.fillStyle = fill;
+/**
+ * Só um dedo indicador (sem mão nem braço). Eixo no +x: a base fica em x = 0
+ * (escondida atrás do avatar) e a ponta em x = length.
+ */
+function drawPointingFinger(
+  ctx: CanvasRenderingContext2D,
+  c: HandColors,
+  length: number,
+  width: number
+) {
+  const wb = width; // largura na base
+  const wt = width * 0.7; // largura na ponta
+  const lw = Math.max(2, width * 0.07);
+
+  const body = () => {
+    ctx.beginPath();
+    ctx.moveTo(0, -wb / 2);
+    ctx.lineTo(length - wt / 2, -wt / 2);
+    ctx.arc(length - wt / 2, 0, wt / 2, -Math.PI / 2, Math.PI / 2);
+    ctx.lineTo(0, wb / 2);
+    ctx.closePath();
+  };
+
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.4)";
+  ctx.shadowBlur = width * 0.5;
+  ctx.shadowOffsetY = width * 0.12;
+  body();
+  ctx.fillStyle = c.skin;
   ctx.fill();
+  ctx.restore();
+
+  // volume: sombra embaixo, luz em cima
+  ctx.save();
+  body();
+  ctx.clip();
+  const g = ctx.createLinearGradient(0, -wb / 2, 0, wb / 2);
+  g.addColorStop(0, "rgba(255,255,255,0.16)");
+  g.addColorStop(0.45, "rgba(255,255,255,0)");
+  g.addColorStop(1, "rgba(0,0,0,0.26)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, -wb, length + wb, wb * 2);
+  ctx.restore();
+
+  body();
   ctx.lineWidth = lw;
   ctx.lineJoin = "round";
-  ctx.strokeStyle = outline;
+  ctx.strokeStyle = c.outline;
   ctx.stroke();
-}
 
-/** Mão aberta (palma para o espectador), pulso na origem, dedos para -y. */
-function drawOpenHand(ctx: CanvasRenderingContext2D, U: number, c: HandColors, wave: number) {
-  const lw = U * 0.05;
-
-  ctx.save();
-  ctx.translate(-0.4 * U, -0.28 * U);
-  ctx.rotate(-0.95 + wave * 0.12);
-  ctx.beginPath();
-  ctx.roundRect(-0.14 * U, -0.66 * U, 0.28 * U, 0.7 * U, 0.14 * U);
-  paint(ctx, c.skin, c.outline, lw);
-  ctx.restore();
-
-  const fingers = [
-    { x: -0.36, len: 0.8, rot: -0.14 },
-    { x: -0.12, len: 0.96, rot: -0.04 },
-    { x: 0.12, len: 0.92, rot: 0.05 },
-    { x: 0.36, len: 0.72, rot: 0.15 },
-  ];
-  for (const f of fingers) {
-    ctx.save();
-    ctx.translate(f.x * U, -0.8 * U);
-    ctx.rotate(f.rot + wave * 0.03);
-    ctx.beginPath();
-    ctx.roundRect(-0.11 * U, -f.len * U, 0.22 * U, f.len * U + 0.2 * U, 0.11 * U);
-    paint(ctx, c.skin, c.outline, lw);
-    ctx.restore();
-  }
-
-  ctx.beginPath();
-  ctx.roundRect(-0.5 * U, -1.0 * U, 1.0 * U, 1.08 * U, 0.3 * U);
-  paint(ctx, c.skin, c.outline, lw);
-
-  // sombra suave na base da palma
-  ctx.save();
-  ctx.beginPath();
-  ctx.roundRect(-0.5 * U, -1.0 * U, 1.0 * U, 1.08 * U, 0.3 * U);
-  ctx.clip();
-  const g = ctx.createLinearGradient(0, -0.4 * U, 0, 0.08 * U);
-  g.addColorStop(0, "rgba(0,0,0,0)");
-  g.addColorStop(1, "rgba(0,0,0,0.22)");
-  ctx.fillStyle = g;
-  ctx.fillRect(-0.5 * U, -1.0 * U, 1.0 * U, 1.1 * U);
-  ctx.restore();
-}
-
-/** Ponta do indicador, em coordenadas locais da mão que aponta. */
-function pointTip(U: number) {
-  return { x: -0.27 * U, y: -2.2 * U };
-}
-
-/** Mão fechada com o indicador esticado (para -y). */
-function drawPointHand(ctx: CanvasRenderingContext2D, U: number, c: HandColors) {
-  const lw = U * 0.05;
-
-  // dedos recolhidos
-  for (const x of [0.02, 0.24, 0.44]) {
-    ctx.beginPath();
-    ctx.roundRect((x - 0.11) * U, -1.12 * U, 0.22 * U, 0.5 * U, 0.11 * U);
-    paint(ctx, c.skin, c.outline, lw);
-  }
-
-  // indicador esticado
-  ctx.beginPath();
-  ctx.roundRect(-0.38 * U, -2.2 * U, 0.22 * U, 1.35 * U, 0.11 * U);
-  paint(ctx, c.skin, c.outline, lw);
-
-  // palma
-  ctx.beginPath();
-  ctx.roundRect(-0.5 * U, -0.98 * U, 1.0 * U, 1.06 * U, 0.3 * U);
-  paint(ctx, c.skin, c.outline, lw);
-
-  // polegar sobre a palma
-  ctx.save();
-  ctx.translate(-0.42 * U, -0.3 * U);
-  ctx.rotate(0.9);
-  ctx.beginPath();
-  ctx.roundRect(-0.13 * U, -0.62 * U, 0.26 * U, 0.66 * U, 0.13 * U);
-  paint(ctx, c.skin, c.outline, lw);
-  ctx.restore();
-
-  // dobra entre os dedos recolhidos e a palma
+  // vincos das articulações
   ctx.strokeStyle = c.skinDark;
-  ctx.lineWidth = lw * 0.9;
+  ctx.lineWidth = lw * 0.8;
+  ctx.lineCap = "round";
+  for (const at of [0.34, 0.52]) {
+    const x = length * at;
+    ctx.beginPath();
+    ctx.moveTo(x, -wb * 0.22);
+    ctx.quadraticCurveTo(x - wb * 0.08, 0, x, wb * 0.22);
+    ctx.stroke();
+  }
+
+  // unha
   ctx.beginPath();
-  ctx.moveTo(-0.05 * U, -0.72 * U);
-  ctx.lineTo(0.48 * U, -0.72 * U);
+  ctx.roundRect(length - wt * 1.45, -wt * 0.3, wt * 1.0, wt * 0.6, wt * 0.3);
+  ctx.fillStyle = "rgba(255,236,224,0.5)";
+  ctx.fill();
+  ctx.lineWidth = lw * 0.7;
+  ctx.strokeStyle = c.outline;
   ctx.stroke();
-}
-
-/** Antebraço: manga da cor da camiseta e punho de pele, do pulso para +y. */
-function drawForearm(ctx: CanvasRenderingContext2D, U: number, c: HandColors, length: number) {
-  const lw = U * 0.05;
-  ctx.beginPath();
-  ctx.roundRect(-0.46 * U, 0.55 * U, 0.92 * U, length, 0.2 * U);
-  paint(ctx, c.sleeve, "rgba(0,0,0,0.55)", lw);
-
-  // dobras da manga
-  ctx.strokeStyle = "rgba(255,255,255,0.12)";
-  ctx.lineWidth = lw;
-  ctx.beginPath();
-  ctx.moveTo(-0.2 * U, 0.8 * U);
-  ctx.lineTo(-0.28 * U, 1.7 * U);
-  ctx.moveTo(0.22 * U, 0.9 * U);
-  ctx.lineTo(0.3 * U, 1.8 * U);
-  ctx.stroke();
-
-  // punho (pele)
-  ctx.beginPath();
-  ctx.roundRect(-0.3 * U, -0.05 * U, 0.6 * U, 0.78 * U, 0.14 * U);
-  paint(ctx, c.skin, c.outline, lw);
 }
 
 /* ------------------------------------------------------------------ */
@@ -415,12 +369,6 @@ export interface TalkingAvatarFrame {
   pointing: boolean;
 }
 
-interface ActiveGesture {
-  side: 1 | -1;
-  start: number;
-  duration: number;
-}
-
 export class TalkingAvatarAnimator {
   private lastNow = 0;
   private mouthOpen = 0;
@@ -431,10 +379,6 @@ export class TalkingAvatarAnimator {
 
   private blinkStart = -1;
   private nextBlink = 0;
-
-  private gesture: ActiveGesture | null = null;
-  private nextGestureAt = 0;
-  private lastSide: 1 | -1 = 1;
 
   private pointP = 0;
   private chipActive = 0;
@@ -449,7 +393,7 @@ export class TalkingAvatarAnimator {
 
     this.drawPerson(ctx, f);
     if (f.badge) this.drawChip(ctx, f, f.badge);
-    this.drawHands(ctx, f);
+    this.drawFinger(ctx, f);
     return dt;
   }
 
@@ -508,20 +452,6 @@ export class TalkingAvatarAnimator {
     }
     if (this.blinkStart >= 0 && f.now - this.blinkStart > 190) this.blinkStart = -1;
 
-    // gestos de mão enquanto fala (nunca junto com o gesto de apontar)
-    if (this.gesture && f.now - this.gesture.start > this.gesture.duration) {
-      this.gesture = null;
-      this.nextGestureAt = f.now + 2200 + Math.random() * 3800;
-    }
-    if (!this.gesture && !f.pointing && this.pointP < 0.05 && this.speakEnergy > 0.28) {
-      if (!this.nextGestureAt) this.nextGestureAt = f.now + 1200;
-      if (f.now >= this.nextGestureAt) {
-        this.lastSide = this.lastSide === 1 ? -1 : 1;
-        this.gesture = { side: this.lastSide, start: f.now, duration: 1500 + Math.random() * 1200 };
-      }
-    }
-    if (f.pointing) this.gesture = null;
-
     // apontar / recolher
     this.pointP = clamp(this.pointP + (f.pointing ? dt / 0.8 : -dt / 0.55), 0, 1);
     this.chipActive += ((f.pointing ? 1 : 0) - this.chipActive) * smoothing(0.12, dt);
@@ -537,7 +467,9 @@ export class TalkingAvatarAnimator {
     const side: 1 | -1 = spaceRight >= spaceLeft ? 1 : -1;
     const space = Math.max(side === 1 ? spaceRight : spaceLeft, f.canvasW * 0.18);
     const chipW = Math.min(space - f.canvasW * 0.04, 400);
-    const cx = side === 1 ? f.x + r + space / 2 : f.x - r - space / 2;
+    // cartão perto do avatar (o dedo fica curto, em vez de um "palito" comprido)
+    const gap = Math.min(f.canvasW * 0.04, space * 0.2);
+    const cx = f.x + side * (r + gap + chipW / 2);
     this.chip = { cx, cy: f.y - r * 0.12, icon: chipW * 0.3, side };
   }
 
@@ -609,7 +541,7 @@ export class TalkingAvatarAnimator {
       const toY = (v: number) => (v - 0.5) * f.size;
 
       if (face.colors && map.eyes) this.drawBlink(ctx, f, map, face.colors, toX, toY, f.now);
-      if (face.colors) this.drawMouth(ctx, f, map, face.colors, toX, toY);
+      if (face.colors) this.drawMouth(ctx, f, map, face, toX, toY);
     } else {
       ctx.fillStyle = "#334155";
       ctx.fillRect(-r, -r, f.size, f.size);
@@ -661,71 +593,140 @@ export class TalkingAvatarAnimator {
     }
   }
 
+  /**
+   * Boca que fala de verdade: em vez de colar um desenho por cima, o lábio
+   * inferior e o queixo DA PRÓPRIA FOTO descem (mandíbula), e o espaço aberto
+   * entre os lábios mostra um interior escuro. O pedaço que desce tem as
+   * bordas esfumadas para se fundir à pele e à barba ao redor.
+   */
   private drawMouth(
     ctx: CanvasRenderingContext2D,
     f: TalkingAvatarFrame,
     map: FaceMap,
-    colors: HandColors,
+    face: LoadedFace,
     toX: (u: number) => number,
     toY: (v: number) => number
   ) {
-    const open = this.mouthOpen;
-    if (open < 0.07) return;
+    const colors = face.colors;
+    if (!colors) return;
 
     const eyeDist = map.eyes ? map.eyes.xs[1] - map.eyes.xs[0] : 0.25;
-    const hw = eyeDist * 0.3 * f.size * (0.88 + this.mouthWide * 0.22);
-    // boca arredondada abre mais na vertical; boca larga fica mais fina
-    const maxH = hw * (0.85 - this.mouthWide * 0.3);
-    const openH = maxH * clamp(open * 1.15, 0, 1);
-    const alpha = clamp((open - 0.07) * 8, 0, 1);
+    const hw = eyeDist * 0.3 * f.size * (0.9 + this.mouthWide * 0.2); // meia largura da boca
+    const norm = clamp(this.mouthOpen * 1.15, 0, 1);
+    // Abertura da mandíbula; boca larga ("i", "e") abre menos que a redonda ("o", "a")
+    const jaw = hw * 0.55 * norm * (map.jaw ?? 1) * (1 - this.mouthWide * 0.25);
+    if (jaw < 1.2) return;
 
     const mx = toX(map.mouth[0]);
     const my = toY(map.mouth[1]);
+    const cornerX = hw * (0.85 + this.mouthWide * 0.15);
 
+    // 1) interior da boca (por baixo do queixo que desce)
     ctx.save();
-    ctx.globalAlpha = alpha;
     ctx.translate(mx, my);
-
-    const cornerX = hw * (0.8 + this.mouthWide * 0.2);
-    const path = () => {
+    const cavity = () => {
       ctx.beginPath();
       ctx.moveTo(-cornerX, 0);
-      ctx.quadraticCurveTo(0, -openH * 0.45, cornerX, 0);
-      ctx.quadraticCurveTo(0, openH * 1.55, -cornerX, 0);
+      ctx.quadraticCurveTo(0, -jaw * 0.14, cornerX, 0);
+      // laterais curvas (a boca afina nos cantos), não um retângulo
+      ctx.quadraticCurveTo(cornerX * 1.0, jaw * 0.55, cornerX * 0.82, jaw + 2);
+      ctx.lineTo(-cornerX * 0.82, jaw + 2);
+      ctx.quadraticCurveTo(-cornerX * 1.0, jaw * 0.55, -cornerX, 0);
       ctx.closePath();
     };
-
-    // interior
-    path();
-    const g = ctx.createLinearGradient(0, -openH * 0.3, 0, openH);
-    g.addColorStop(0, "#2a0c10");
-    g.addColorStop(1, "#14050a");
+    cavity();
+    const g = ctx.createLinearGradient(0, 0, 0, jaw);
+    g.addColorStop(0, "#1c0a0c");
+    g.addColorStop(1, "#3a1517");
     ctx.fillStyle = g;
     ctx.fill();
 
     ctx.save();
-    path();
+    cavity();
     ctx.clip();
-    if (openH > hw * 0.16) {
-      // dentes de cima
-      ctx.fillStyle = "rgba(232,222,206,0.9)";
-      ctx.fillRect(-cornerX, -openH * 0.5, cornerX * 2, openH * 0.5 + Math.min(openH * 0.12, hw * 0.12));
-      // língua
-      ctx.fillStyle = "rgba(150,52,64,0.9)";
+    // dentes de cima só aparecem como uma faixa discreta, sombreada
+    if (jaw > hw * 0.28) {
+      const th = Math.min(jaw * 0.26, hw * 0.14);
+      const tg = ctx.createLinearGradient(0, 0, 0, th);
+      tg.addColorStop(0, "rgba(206,192,172,0.8)");
+      tg.addColorStop(1, "rgba(150,132,116,0.35)");
+      ctx.fillStyle = tg;
+      ctx.fillRect(-cornerX * 0.82, -jaw * 0.05, cornerX * 1.64, th);
+    }
+    // língua
+    if (jaw > hw * 0.34) {
+      ctx.fillStyle = "rgba(120,46,54,0.75)";
       ctx.beginPath();
-      ctx.ellipse(0, openH * 0.82, cornerX * 0.55, openH * 0.38, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, jaw * 0.95, cornerX * 0.5, jaw * 0.32, 0, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();
-
-    // contorno dos lábios
-    path();
-    ctx.lineWidth = Math.max(2, hw * 0.08);
-    ctx.lineJoin = "round";
+    // borda de lábio contornando a abertura, para não parecer um recorte
+    cavity();
     ctx.strokeStyle = colors.lip;
+    ctx.globalAlpha = 0.75;
+    ctx.lineWidth = Math.max(1.5, hw * 0.06);
+    ctx.lineJoin = "round";
+    ctx.stroke();
+    ctx.restore();
+
+    // 2) lábio inferior + queixo da foto descendo, com bordas esfumadas
+    const pw = Math.ceil(cornerX * 2 * 1.5);
+    const ph = Math.ceil(hw * 2.1);
+    if (!this.patch) this.patch = document.createElement("canvas");
+    const patch = this.patch;
+    if (patch.width !== pw || patch.height !== ph) {
+      patch.width = pw;
+      patch.height = ph;
+    }
+    const pctx = patch.getContext("2d");
+    if (pctx) {
+      const { sx, sy, side } = cropRect(face.img, map.focusY);
+      const k = side / f.size;
+      const r = f.size / 2;
+      pctx.globalCompositeOperation = "source-over";
+      pctx.clearRect(0, 0, pw, ph);
+      pctx.drawImage(face.img, sx + (mx - pw / 2 + r) * k, sy + (my + r) * k, pw * k, ph * k, 0, 0, pw, ph);
+
+      pctx.globalCompositeOperation = "destination-in";
+      const hg = pctx.createLinearGradient(0, 0, pw, 0);
+      hg.addColorStop(0, "rgba(0,0,0,0)");
+      hg.addColorStop(0.2, "rgba(0,0,0,1)");
+      hg.addColorStop(0.8, "rgba(0,0,0,1)");
+      hg.addColorStop(1, "rgba(0,0,0,0)");
+      pctx.fillStyle = hg;
+      pctx.fillRect(0, 0, pw, ph);
+      const vg = pctx.createLinearGradient(0, 0, 0, ph);
+      vg.addColorStop(0, "rgba(0,0,0,1)");
+      vg.addColorStop(0.45, "rgba(0,0,0,1)");
+      vg.addColorStop(1, "rgba(0,0,0,0)");
+      pctx.fillStyle = vg;
+      pctx.fillRect(0, 0, pw, ph);
+      pctx.globalCompositeOperation = "source-over";
+
+      ctx.drawImage(patch, mx - pw / 2, my + jaw);
+    }
+
+    // 3) acabamento: sombra sob o lábio de cima e linha do lábio de baixo
+    ctx.save();
+    ctx.translate(mx, my);
+    ctx.lineCap = "round";
+    ctx.strokeStyle = colors.lip;
+    ctx.lineWidth = Math.max(1.5, hw * 0.06);
+    ctx.beginPath();
+    ctx.moveTo(-cornerX, 0);
+    ctx.quadraticCurveTo(0, -jaw * 0.14, cornerX, 0);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(30,10,10,0.35)";
+    ctx.lineWidth = Math.max(1, hw * 0.035);
+    ctx.beginPath();
+    ctx.moveTo(-cornerX * 0.9, jaw + 0.5);
+    ctx.lineTo(cornerX * 0.9, jaw + 0.5);
     ctx.stroke();
     ctx.restore();
   }
+
+  private patch: HTMLCanvasElement | null = null;
 
   /* ----- ícone da rede social ----- */
 
@@ -800,98 +801,44 @@ export class TalkingAvatarAnimator {
 
   private iconCenter = { x: 0, y: 0 };
 
-  /* ----- mãos ----- */
+  /* ----- dedo que aponta ----- */
 
-  private drawHands(ctx: CanvasRenderingContext2D, f: TalkingAvatarFrame) {
+  private drawFinger(ctx: CanvasRenderingContext2D, f: TalkingAvatarFrame) {
+    if (this.pointP < 0.001 || !f.badge || this.badgeAlpha < 0.6) return;
     const face = getFace(f.avatarId);
     if (!face?.colors) return;
-    const colors = face.colors;
-    const r = f.size / 2;
-    const U = r * 0.26;
 
-    if (this.pointP > 0.001 && f.badge && this.badgeAlpha > 0.6) {
-      this.drawPointingArm(ctx, f, colors, U);
-      return;
-    }
-
-    if (this.gesture) {
-      const g = this.gesture;
-      const age = (f.now - g.start) / 1000;
-      const dur = g.duration / 1000;
-      const inT = clamp(age / 0.45, 0, 1);
-      const outT = clamp((dur - age) / 0.45, 0, 1);
-      const e = easeInOut(Math.min(inT, outT));
-      if (e < 0.01) return;
-
-      const t = f.now / 1000;
-      const wave = Math.sin(t * 5.2 + g.start);
-      const restX = f.x + g.side * r * 0.98;
-      const restY = f.y + r * 1.55;
-      const upX = f.x + g.side * r * 0.9;
-      const upY = f.y + r * 0.62 + Math.sin(t * 3.4) * U * 0.1;
-      const hx = restX + (upX - restX) * e;
-      const hy = restY + (upY - restY) * e;
-
-      ctx.save();
-      ctx.translate(hx, hy);
-      ctx.rotate(g.side * (0.28 + wave * 0.07));
-      if (g.side === -1) ctx.scale(-1, 1);
-      // sombra projetada
-      ctx.shadowColor = "rgba(0,0,0,0.35)";
-      ctx.shadowBlur = U * 0.35;
-      drawForearm(ctx, U, colors, f.canvasH);
-      ctx.shadowColor = "transparent";
-      drawOpenHand(ctx, U, colors, wave);
-      ctx.restore();
-    }
-  }
-
-  private drawPointingArm(
-    ctx: CanvasRenderingContext2D,
-    f: TalkingAvatarFrame,
-    colors: HandColors,
-    U: number
-  ) {
     const side = this.chip.side;
     const r = f.size / 2;
     const iconHalf = this.chip.icon / 2;
 
-    // alvo: parte de baixo do ícone (o texto fica acima, então a mão não cobre o perfil)
+    // alvo: parte de baixo do ícone (o texto fica acima, então o dedo não cobre o perfil)
     const target = {
-      x: this.iconCenter.x - side * iconHalf * 0.25,
-      y: this.iconCenter.y + iconHalf * 0.92,
+      x: this.iconCenter.x - side * iconHalf * 0.1,
+      y: this.iconCenter.y + iconHalf * 1.08,
     };
-    // "ombro" fora da tela, embaixo e do lado do ícone
-    const shoulder = { x: f.x + side * r * 0.75, y: f.canvasH + U * 4 };
+    // base do dedo escondida atrás do avatar, no lado do ícone
+    const base = { x: f.x + side * r * 0.3, y: f.y + r * 0.85 };
 
-    const dx = target.x - shoulder.x;
-    const dy = target.y - shoulder.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const dir = { x: dx / len, y: dy / len };
-    // rotação que leva o "para cima" local (0,-1) até a direção do braço
-    const theta = Math.atan2(dir.y, dir.x) + Math.PI / 2;
+    const dx = target.x - base.x;
+    const dy = target.y - base.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const angle = Math.atan2(dy, dx);
 
-    const eased = this.pointP >= 1 || this.pointP === 0 ? this.pointP : (f.pointing ? easeOutBack(this.pointP) : easeInOut(this.pointP));
-    const settle = this.pointP >= 0.98 ? Math.sin(f.now / 1000 * 7) * U * 0.09 : 0;
-
-    const tip = pointTip(U);
-    const cos = Math.cos(theta);
-    const sin = Math.sin(theta);
-    const rotTip = { x: tip.x * cos - tip.y * sin, y: tip.x * sin + tip.y * cos };
-
-    const tipX = shoulder.x + (target.x - shoulder.x) * eased + dir.x * settle;
-    const tipY = shoulder.y + (target.y - shoulder.y) * eased + dir.y * settle;
-    const wristX = tipX - rotTip.x;
-    const wristY = tipY - rotTip.y;
+    const eased =
+      this.pointP >= 1 ? 1 : f.pointing ? easeOutBack(this.pointP) : easeInOut(this.pointP);
+    const bob = this.pointP >= 0.98 ? Math.sin((f.now / 1000) * 7) * r * 0.025 : 0;
+    const length = Math.max(0, dist * eased + bob);
 
     ctx.save();
-    ctx.translate(wristX, wristY);
-    ctx.rotate(theta);
-    ctx.shadowColor = "rgba(0,0,0,0.38)";
-    ctx.shadowBlur = U * 0.4;
-    drawForearm(ctx, U, colors, f.canvasH * 1.4);
-    ctx.shadowColor = "transparent";
-    drawPointHand(ctx, U, colors);
+    // só aparece fora do círculo do avatar: o dedo "sai de trás" dele
+    ctx.beginPath();
+    ctx.rect(0, 0, f.canvasW, f.canvasH);
+    ctx.arc(f.x, f.y, r + 3, 0, Math.PI * 2);
+    ctx.clip("evenodd");
+    ctx.translate(base.x, base.y);
+    ctx.rotate(angle);
+    drawPointingFinger(ctx, face.colors, length, r * 0.25);
     ctx.restore();
   }
 }

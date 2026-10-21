@@ -382,7 +382,7 @@ Na gravação de vídeos (`/admin/videos/record`), o avatar (as fotos "Você (�
 
 ### O que o avatar faz
 
-- **Fala com a sua voz**: a boca abre e fecha acompanhando o volume do microfone e muda de formato conforme o som (grave = boca mais redonda, agudo = boca mais larga). O analisador de áudio ficou menos "suavizado" (`smoothingTimeConstant = 0.55`) para os lábios seguirem as sílabas.
+- **Fala com a sua voz**: a boca abre e fecha acompanhando o volume do microfone e muda de formato conforme o som (grave = boca mais redonda, agudo = boca mais larga). A mandíbula é animada de verdade: o **lábio inferior e o queixo da própria foto descem** (com as bordas esfumadas para se fundir à barba e à pele) e a abertura mostra um interior escuro, em vez de um desenho de boca colado por cima. No avatar "Pensativo", com a mão no queixo, a abertura é menor. O analisador de áudio ficou menos "suavizado" (`smoothingTimeConstant = 0.55`) para os lábios seguirem as sílabas.
 - **Piscar natural** em intervalos aleatórios (às vezes duplo), com a pálpebra na cor da pele da própria foto. O avatar "Pensativo" (de óculos) não pisca, para não desenhar por cima das lentes.
 - **Movimento de cabeça**: respiração, balanço leve, mais vivo enquanto fala, e um aceno nas ênfases (subidas bruscas de volume).
 - **Gestos de mão enquanto fala**: de tempos em tempos uma mão sobe com a palma aberta (alternando os lados), na cor de pele e na cor da camiseta de cada foto.

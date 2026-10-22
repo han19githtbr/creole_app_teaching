@@ -389,6 +389,8 @@ export interface TalkingAvatarFrame {
 export class TalkingAvatarAnimator {
   private lastNow = 0;
   private mouthOpen = 0;
+  private mouthVel = 0;
+  private mouthTarget = 0;
   private mouthWide = 0.5;
   private prevLevel = 0;
   private emphasis = 0;
@@ -445,9 +447,23 @@ export class TalkingAvatarAnimator {
     const s = f.features;
 
     // boca: abre rápido, fecha um pouco mais devagar
-    const target = clamp((s.level - 0.04) * 7.5, 0, 1);
-    const k = target > this.mouthOpen ? 0.6 : 0.3;
-    this.mouthOpen += (target - this.mouthOpen) * smoothing(k, dt);
+    // A abertura segue o volume como uma mola amortecida: acelera, tem uma
+    // leve inércia e desacelera ao fechar, em vez de "seguir" o som de forma seca.
+    const raw = clamp((s.level - 0.04) * 7.5, 0, 1);
+    this.mouthTarget += (raw - this.mouthTarget) * smoothing(0.45, dt);
+    const stiffness = 650;
+    const damping = 2 * Math.sqrt(stiffness) * 0.78;
+    const steps = Math.max(1, Math.ceil(dt * 240));
+    const h = dt / steps;
+    for (let i = 0; i < steps; i++) {
+      this.mouthVel += (stiffness * (this.mouthTarget - this.mouthOpen) - damping * this.mouthVel) * h;
+      this.mouthOpen += this.mouthVel * h;
+    }
+    if (this.mouthOpen < 0) {
+      this.mouthOpen = 0;
+      this.mouthVel = 0;
+    }
+    this.mouthOpen = Math.min(this.mouthOpen, 1.05);
 
     // som agudo => boca larga ("i", "e"); som grave => boca arredondada ("o", "u")
     const total = s.low + s.mid + s.high + 1e-4;
@@ -613,8 +629,11 @@ export class TalkingAvatarAnimator {
   /**
    * Boca que fala de verdade: a própria foto é deformada ao longo da linha dos
    * lábios. O lábio de baixo e o queixo descem (mais no centro, nada nos
-   * cantos), então a abertura é uma lente que nasce e fecha nos cantos da boca,
-   * sem retângulo e sem emenda. O interior escuro só preenche esse vão.
+   * cantos) e o lábio de cima sobe um pouco, então a abertura é uma lente que
+   * nasce e fecha nos cantos da boca. Dentro dela aparecem os dentes de cima
+   * (e os de baixo, nas aberturas grandes), o interior escuro e a língua.
+   * Nos sons arredondados ("o", "u") a abertura fica mais estreita que os
+   * lábios; nos abertos ("a", "e") ela usa a largura toda.
    * Tudo é girado pela inclinação dos lábios de cada foto (`roll`).
    */
   private drawMouth(
@@ -629,35 +648,43 @@ export class TalkingAvatarAnimator {
     if (!colors) return;
 
     const hw = map.mouthHalf * f.size; // meia largura dos lábios
-    const norm = clamp(this.mouthOpen * 1.15, 0, 1);
+    const jawK = map.jaw ?? 1;
+    const norm = clamp(this.mouthOpen * 1.15, 0, 1.1);
     // boca larga ("i", "e") abre menos que a redonda ("o", "a")
-    const jaw = hw * 0.52 * norm * (map.jaw ?? 1) * (1 - this.mouthWide * 0.2);
+    const jaw = hw * 0.55 * norm * jawK * (1 - this.mouthWide * 0.15);
     if (jaw < 1.2) return;
+    const up = jaw * 0.14; // lábio de cima sobe um pouco
 
     const mx = toX(map.mouth[0]);
     const my = toY(map.mouth[1]);
-    const reach = hw * 1.08;
-    // quanto o queixo desce em cada x (0 nos cantos, máximo no centro)
-    const prof = (x: number) => {
+    // som arredondado = abertura mais estreita; aberto = largura toda dos lábios
+    const reach = hw * (0.82 + 0.26 * this.mouthWide);
+    const shape = (x: number) => {
       const u = x / reach;
-      return u * u >= 1 ? 0 : jaw * Math.pow(1 - u * u, 1.15);
+      return u * u >= 1 ? 0 : 1 - u * u;
     };
+    const low = (x: number) => jaw * Math.pow(shape(x), 1.15); // quanto o queixo desce
+    const high = (x: number) => up * shape(x); // quanto o lábio de cima sobe
 
-    const pw = Math.ceil(reach * 2 + 2);
+    const upH = Math.ceil(hw * 0.5);
+    const upMax = Math.ceil(up) + 1;
     const ph = Math.ceil(hw * 2);
     const jawC = Math.ceil(jaw) + 2;
+    const pw = Math.ceil(reach * 2 + 2);
+    const bh = upMax + upH + ph + jawC;
+    const origin = upMax + upH; // onde fica a linha dos lábios dentro de B
 
     if (!this.patchA) this.patchA = document.createElement("canvas");
     if (!this.patchB) this.patchB = document.createElement("canvas");
     const A = this.patchA;
     const B = this.patchB;
-    if (A.width !== pw || A.height !== ph) {
+    if (A.width !== pw || A.height !== upH + ph) {
       A.width = pw;
-      A.height = ph;
+      A.height = upH + ph;
     }
-    if (B.width !== pw || B.height !== ph + jawC) {
+    if (B.width !== pw || B.height !== bh) {
       B.width = pw;
-      B.height = ph + jawC;
+      B.height = bh;
     }
     const actx = A.getContext("2d");
     const bctx = B.getContext("2d");
@@ -667,88 +694,150 @@ export class TalkingAvatarAnimator {
     const { sx, sy, side } = cropRect(face.img, map.focusY);
     const r = f.size / 2;
     actx.setTransform(1, 0, 0, 1, 0, 0);
-    actx.clearRect(0, 0, pw, ph);
+    actx.clearRect(0, 0, pw, upH + ph);
     actx.save();
-    actx.translate(pw / 2, 0);
+    actx.translate(pw / 2, upH);
     actx.rotate(-map.roll);
     actx.translate(-mx, -my);
     actx.drawImage(face.img, sx, sy, side, side, -r, -r, f.size, f.size);
     actx.restore();
 
-    // B = A deformada em faixas verticais (cada uma desce o seu tanto)
+    // B = A deformada em faixas verticais: o lábio de cima sobe, o de baixo e o queixo descem
     bctx.setTransform(1, 0, 0, 1, 0, 0);
     bctx.globalCompositeOperation = "source-over";
-    bctx.clearRect(0, 0, pw, ph + jawC);
+    bctx.clearRect(0, 0, pw, bh);
     const strips = Math.ceil(pw / 3);
     const sw = pw / strips;
     for (let i = 0; i < strips; i++) {
       const x0 = i * sw;
-      const d = prof(x0 + sw / 2 - pw / 2);
-      bctx.drawImage(A, x0, 0, sw, ph, x0, d, sw + 0.6, ph);
+      const xc = x0 + sw / 2 - pw / 2;
+      bctx.drawImage(A, x0, upH, sw, ph, x0, origin + low(xc), sw + 0.6, ph);
+      bctx.drawImage(A, x0, 0, sw, upH, x0, upMax - high(xc), sw + 0.6, upH);
     }
-    // esfumaça a base (queixo) e as laterais para fundir com a foto
+    // esfumaça topo, base (queixo) e laterais para fundir com a foto
     bctx.globalCompositeOperation = "destination-in";
-    const vg = bctx.createLinearGradient(0, 0, 0, ph + jawC);
-    vg.addColorStop(0, "rgba(0,0,0,1)");
-    vg.addColorStop(Math.min(0.95, (ph * 0.42 + jaw) / (ph + jawC)), "rgba(0,0,0,1)");
+    const vg = bctx.createLinearGradient(0, 0, 0, bh);
+    vg.addColorStop(0, "rgba(0,0,0,0)");
+    vg.addColorStop(Math.min(0.4, (upMax + upH * 0.55) / bh), "rgba(0,0,0,1)");
+    vg.addColorStop(Math.min(0.95, (origin + ph * 0.42 + jaw) / bh), "rgba(0,0,0,1)");
     vg.addColorStop(1, "rgba(0,0,0,0)");
     bctx.fillStyle = vg;
-    bctx.fillRect(0, 0, pw, ph + jawC);
+    bctx.fillRect(0, 0, pw, bh);
     const hg = bctx.createLinearGradient(0, 0, pw, 0);
     hg.addColorStop(0, "rgba(0,0,0,0)");
     hg.addColorStop(0.14, "rgba(0,0,0,1)");
     hg.addColorStop(0.86, "rgba(0,0,0,1)");
     hg.addColorStop(1, "rgba(0,0,0,0)");
     bctx.fillStyle = hg;
-    bctx.fillRect(0, 0, pw, ph + jawC);
+    bctx.fillRect(0, 0, pw, bh);
     bctx.globalCompositeOperation = "source-over";
 
     ctx.save();
     ctx.translate(mx, my);
     ctx.rotate(map.roll);
 
-    // interior da boca: só o vão em forma de lente entre a linha dos lábios e o lábio de baixo
+    const step = Math.max(2, reach / 28);
+    // vão da boca: entre a borda do lábio de cima e a do lábio de baixo
     const lens = () => {
-      const step = Math.max(2, reach / 24);
       ctx.beginPath();
       ctx.moveTo(-reach, 0);
-      for (let x = -reach; x <= reach; x += step) ctx.lineTo(x, -jaw * 0.05 * (1 - (x / reach) ** 2));
+      for (let x = -reach; x <= reach; x += step) ctx.lineTo(x, -high(x));
       ctx.lineTo(reach, 0);
-      for (let x = reach; x >= -reach; x -= step) ctx.lineTo(x, prof(x) + 1.2);
+      for (let x = reach; x >= -reach; x -= step) ctx.lineTo(x, low(x) + 1.2);
       ctx.closePath();
     };
     lens();
-    const g = ctx.createLinearGradient(0, 0, 0, jaw);
+    const g = ctx.createLinearGradient(0, -up, 0, jaw);
     g.addColorStop(0, "#1a0809");
     g.addColorStop(1, "#3b1618");
     ctx.fillStyle = g;
     ctx.fill();
+
     ctx.save();
     lens();
     ctx.clip();
-    if (jaw > hw * 0.36) {
-      ctx.fillStyle = "rgba(118,44,52,0.7)";
+
+    // língua (some quando a boca está pouco aberta)
+    if (jaw > hw * 0.34) {
+      ctx.fillStyle = "rgba(122,46,56,0.82)";
       ctx.beginPath();
-      ctx.ellipse(0, jaw * 0.95, reach * 0.45, jaw * 0.3, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, jaw * 0.92, reach * 0.46, jaw * 0.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // dentes de cima: faixa que acompanha a curva do lábio, com sombra do lábio e frestas
+    if (jaw > hw * 0.15) {
+      const teethX = reach * 0.8;
+      const th = (x: number) => Math.max(1.5, (jaw + up) * 0.34 * Math.pow(shape(x), 0.7));
+      ctx.beginPath();
+      ctx.moveTo(-teethX, -high(-teethX));
+      for (let x = -teethX; x <= teethX; x += step) ctx.lineTo(x, -high(x));
+      ctx.lineTo(teethX, -high(teethX));
+      for (let x = teethX; x >= -teethX; x -= step) ctx.lineTo(x, -high(x) + th(x));
+      ctx.closePath();
+      const tg = ctx.createLinearGradient(0, -up, 0, (jaw + up) * 0.34);
+      tg.addColorStop(0, "#cdbfa9");
+      tg.addColorStop(0.35, "#efe6d6");
+      tg.addColorStop(1, "#dccfb9");
+      ctx.fillStyle = tg;
+      ctx.fill();
+      ctx.save();
+      ctx.clip();
+      // sombra que o lábio de cima projeta nos dentes
+      const sg = ctx.createLinearGradient(0, -up, 0, (jaw + up) * 0.3);
+      sg.addColorStop(0, "rgba(70,30,26,0.55)");
+      sg.addColorStop(1, "rgba(70,30,26,0)");
+      ctx.fillStyle = sg;
+      ctx.fillRect(-teethX, -up - 1, teethX * 2, jaw + up + 2);
+      // frestas entre os dentes
+      ctx.strokeStyle = "rgba(140,120,100,0.55)";
+      ctx.lineWidth = Math.max(1, hw * 0.012);
+      for (let k = -3; k <= 3; k++) {
+        if (k === 0) continue;
+        const x = (k * teethX) / 3.6;
+        ctx.beginPath();
+        ctx.moveTo(x, -high(x));
+        ctx.lineTo(x, -high(x) + th(x));
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // dentes de baixo, só quando a boca abre bastante (o lábio de baixo cobre o resto)
+    if (jaw > hw * 0.5) {
+      const lowX = reach * 0.6;
+      const tl = (x: number) => jaw * 0.2 * Math.pow(shape(x), 0.8);
+      ctx.beginPath();
+      ctx.moveTo(-lowX, low(-lowX));
+      for (let x = -lowX; x <= lowX; x += step) ctx.lineTo(x, low(x) - tl(x));
+      ctx.lineTo(lowX, low(lowX));
+      ctx.closePath();
+      ctx.fillStyle = "rgba(214,203,186,0.7)";
       ctx.fill();
     }
     ctx.restore();
 
-    // queixo e lábio de baixo deformados
-    ctx.drawImage(B, -pw / 2, 0);
+    // queixo, lábio de baixo e lábio de cima deformados
+    ctx.drawImage(B, -pw / 2, -origin);
 
-    // borda do lábio de baixo, para o vão não parecer um recorte
+    // bordas dos lábios, para o vão não parecer um recorte
     ctx.strokeStyle = colors.lip;
-    ctx.globalAlpha = 0.7;
-    ctx.lineWidth = Math.max(1.4, hw * 0.035);
+    ctx.globalAlpha = 0.65;
+    ctx.lineWidth = Math.max(1.4, hw * 0.032);
     ctx.lineCap = "round";
-    ctx.beginPath();
-    for (let x = -reach * 0.96; x <= reach * 0.96; x += Math.max(2, reach / 24)) {
-      const y = prof(x) + 0.6;
-      if (x === -reach * 0.96) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    ctx.lineJoin = "round";
+    for (const sign of [1, -1]) {
+      ctx.beginPath();
+      let started = false;
+      for (let x = -reach * 0.96; x <= reach * 0.96; x += step) {
+        const y = sign === 1 ? low(x) + 0.6 : -high(x) - 0.4;
+        if (!started) {
+          ctx.moveTo(x, y);
+          started = true;
+        } else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
     }
-    ctx.stroke();
     ctx.restore();
   }
 

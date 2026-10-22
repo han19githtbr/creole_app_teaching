@@ -306,7 +306,7 @@ function drawPointingFinger(
 /* Ícones de rede social                                               */
 /* ------------------------------------------------------------------ */
 
-function drawSocialIcon(ctx: CanvasRenderingContext2D, platform: SocialPlatform, cx: number, cy: number, s: number) {
+export function drawSocialIcon(ctx: CanvasRenderingContext2D, platform: SocialPlatform, cx: number, cy: number, s: number) {
   const x = cx - s / 2;
   const y = cy - s / 2;
   ctx.save();

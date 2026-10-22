@@ -9,6 +9,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Histórias narradas com Elementos com Vida, Transcrição Automática e Publicação Social](#histórias-narradas)
 - [Jogo C'est quoi ?](#jogo-cest-quoi-)
 - [Avatar falante e rede social no vídeo](#avatar-falante-e-rede-social-no-vídeo)
+- [Vídeos do jogo para redes sociais](#vídeos-do-jogo-para-redes-sociais)
 - [Administradores adicionais](#administradores-adicionais)
 - [Indicador de carregamento](#indicador-de-carregamento)
 - [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
@@ -32,7 +33,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - Lições em rascunho, com publicação e anúncio controlados pelo administrador.
 - Painel do aluno com progresso, conteúdo recente e central de notificações.
 - Postagens com texto e/ou imagem (banco de ilustrações ou upload), respostas dos alunos revisadas pelo administrador e jogo de identificação de palavras na imagem.
-- Vídeos com likes, comentários, gravação no navegador e agendamento. O **avatar fala de verdade** (lábios na voz do microfone, piscar, gestos) e **aponta para o ícone da rede social** anotada no vídeo, com link clicável na página.
+- Vídeos com likes, comentários, gravação no navegador e agendamento. Em **Vídeos do Jogo** o administrador gera vídeos MP4 demonstrando o jogo para Stories, Reels e feed. O **avatar fala de verdade** (lábios na voz do microfone, piscar, gestos) e **aponta para o ícone da rede social** anotada no vídeo, com link clicável na página.
 - **Histórias narradas com Elementos com Vida**: uma cena ilustrada + narração em Kreyòl + legendas bilíngues, onde cada elemento da cena ganha vida e se comporta realisticamente (pássaros voam, cachorros correm/latem, árvores balançam ao vento, etc.) de acordo com as ações descritas na fala ou na legenda. Acompanha exportação de vídeo vertical 9:16 com as mesmas animações gravadas, rótulos inteligentes e legenda móvel arrastável.
 - **Jogo "C'est quoi ?"** (painel em francês): 5 níveis, incluindo o **Nativo** (20 imagens, com os sub-níveis *Palavra* e *Frase*), botão **Dica** que congela o tempo, **arena online** com jogadores online, ranking e duelos.
 - Aulas ao vivo com LiveKit, quando configurado.
@@ -382,7 +383,7 @@ Na gravação de vídeos (`/admin/videos/record`), o avatar (as fotos "Você (�
 
 ### O que o avatar faz
 
-- **Fala com a sua voz**: a boca abre e fecha acompanhando o volume do microfone e muda de formato conforme o som (grave = boca mais redonda, agudo = boca mais larga). A mandíbula é animada de verdade: o **lábio inferior e o queixo da própria foto descem** (com as bordas esfumadas para se fundir à barba e à pele) e a abertura mostra um interior escuro, em vez de um desenho de boca colado por cima. No avatar "Pensativo", com a mão no queixo, a abertura é menor. O analisador de áudio ficou menos "suavizado" (`smoothingTimeConstant = 0.55`) para os lábios seguirem as sílabas.
+- **Fala com a sua voz**: a boca abre e fecha acompanhando o volume do microfone e muda de formato conforme o som (grave = boca mais redonda, agudo = boca mais larga). A mandíbula é animada de verdade: a **própria foto é deformada ao longo da linha dos lábios** (o lábio inferior e o queixo descem, mais no centro e nada nos cantos), então a abertura nasce e fecha nos cantos da boca, sem retângulo e sem emenda, e o interior escuro só preenche esse vão. Os cantos, o centro e a **inclinação dos lábios foram medidos em cada uma das seis fotos** (`mouth`, `mouthHalf` e `roll` em `TALKING_AVATAR_FACES`). O ruído de fundo do microfone não abre a boca. No avatar "Pensativo", com a mão no queixo, a abertura é menor.
 - **Piscar natural** em intervalos aleatórios (às vezes duplo), com a pálpebra na cor da pele da própria foto. O avatar "Pensativo" (de óculos) não pisca, para não desenhar por cima das lentes.
 - **Movimento de cabeça**: respiração, balanço leve, mais vivo enquanto fala, e um aceno nas ênfases (subidas bruscas de volume). Não aparece nenhuma mão ou braço enquanto ele fala.
 - **Ícone da rede social + dedo apontando**: um cartão com o ícone (Instagram, Facebook ou YouTube), o texto "Siga no Instagram" e o perfil. Só um **dedo indicador** (com unha e vincos, na cor de pele da foto) sai de trás do avatar e **aponta para o ícone**, que pulsa e ganha anéis de destaque. Depois o dedo volta a se esconder.
@@ -409,6 +410,50 @@ O vídeo gravado só mostra o ícone; por isso a página do vídeo ganha um bot�
 - `src/models/VideoLesson.ts`: `customization.socialPlatform` e `customization.socialHandle`.
 - O perfil é limpo no servidor (só letras, números, `.` e `_`, até 30 caracteres) e a rede precisa ser uma das três permitidas; o link só é montado a partir desses valores, então não dá para gravar um endereço arbitrário.
 - Vídeos antigos, sem esses campos, continuam iguais (nenhum botão aparece).
+
+## Vídeos do jogo para redes sociais
+
+No painel do administrador, **Admin → Vídeos do Jogo** (`/admin/jogo-videos`) cria vídeos que mostram como o jogo **C'est quoi ?** funciona, para baixar e postar nos **Stories, Reels e feed do Instagram e do Facebook**.
+
+### O que o vídeo mostra
+
+Cada pergunta repete a dinâmica real do jogo, com o mesmo visual (cena, seta vermelha que cai sobre o objeto, relógio com contagem regressiva, 4 alternativas A–D, balão "C'est quoi ?"):
+
+1. a cena aparece e a **seta vermelha** cai sobre o objeto;
+2. as 4 alternativas surgem uma a uma e o **relógio** começa a contar (o tempo é o do nível escolhido);
+3. opcionalmente o vídeo mostra uma **tentativa errada**: a alternativa é tocada, treme, fica vermelha e riscada, a cena pisca em vermelho e o balão diz "Quase! Tente de novo";
+4. a **resposta certa** é tocada: fica verde, a cena pisca em verde, saem estrelas, o balão revela o nome em francês, aparecem os pontos (`+209`) e o placar sobe;
+5. no começo há uma **abertura** com o título e, no fim, um **encerramento** com a pontuação, a chamada final e o cartão da rede social (Instagram `frances_com_tres_nativos` por padrão).
+
+### Como usar
+
+| Passo | O que fazer |
+| --- | --- |
+| 1. Perguntas | Escolha de 1 a 6 objetos (filtro por tema e busca) ou clique em **Sortear 3**. Entram os mesmos objetos do jogo, inclusive as imagens de IA aprovadas |
+| 2. Estilo | Nível (Fácil, Intermediário, Master, Nativo · Palavra: muda tempo e pontos), formato, erros e acertos (misturado, sempre ou só acertos), título, chamada final, rede social e perfil, abertura, encerramento e efeitos sonoros |
+| 3. Gerar | Escolha a qualidade e clique em **Gerar vídeo (MP4)**. Quando terminar, confira no player e clique em **Baixar** |
+
+A **pré-visualização** ao lado toca o mesmo desenho que será exportado, com barra de posição, e **Embaralhar alternativas** troca as respostas erradas.
+
+### Formatos e qualidade
+
+| Formato | Tamanho | Onde usar |
+| --- | --- | --- |
+| Stories e Reels (9:16) | 1080 × 1920 | Stories e Reels do Instagram e do Facebook. Título, alternativas e rodapé ficam fora das faixas que a interface das redes cobre (topo e base) |
+| Feed vertical (4:5) | 1080 × 1350 | Feed do Instagram e do Facebook (ocupa mais tela) |
+| Feed quadrado (1:1) | 1080 × 1080 | Qualquer rede |
+
+- **MP4 com H.264 e áudio AAC, 30 quadros por segundo**, que é o que o Instagram e o Facebook pedem. Qualidade **Máxima (16 Mbps)** ou **Alta (10 Mbps)**.
+- O vídeo é renderizado **quadro a quadro** e codificado com WebCodecs (`mp4-muxer`), o mesmo caminho da exportação das histórias. Não depende da velocidade do computador nem perde quadros, e as cenas são desenhadas direto de SVG na resolução final, então ficam nítidas.
+- Os efeitos sonoros (surgir das alternativas, tique-taque, toque, erro, acerto) são **sintetizados no código**, sem arquivos de áudio.
+- Sem WebCodecs, o navegador grava em tempo real (precisa deixar a aba aberta). Se só sair WebM, gere no **Chrome ou no Edge atualizados, no computador**, porque o Instagram e o Facebook não aceitam bem WebM.
+
+### Arquivos
+
+- `src/lib/gameDemoVideo.ts`: rodadas, linha do tempo, pontuação, desenho de cada quadro (função pura do tempo) e efeitos sonoros.
+- `src/lib/gameDemoExport.ts`: exportação em MP4 (offline com WebCodecs; plano B com `MediaRecorder`).
+- `src/components/GameDemoStudio.tsx`: tela do administrador (perguntas, estilo, pré-visualização e download).
+- `src/app/admin/jogo-videos/page.tsx`: página e item **Vídeos do Jogo** no menu do admin.
 
 ## Administradores adicionais
 

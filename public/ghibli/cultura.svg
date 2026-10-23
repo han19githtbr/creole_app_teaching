@@ -241,7 +241,7 @@
     <polygon points="600,360 960,800 1160,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(200, 160) scale(0.9)" opacity="0.95">
+  <g class="cloud-drift-left" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -260,7 +260,7 @@
     <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
   </g>
   
-  <g transform="translate(960, 180) scale(0.85)" opacity="0.95">
+  <g class="cloud-drift-right" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 
@@ -283,7 +283,7 @@
   <path d="M-50,530 Q300,460 600,510 T1250,480 L1250,800 L-50,800 Z" fill="#6a3e5c" opacity="0.6"/>
 
   <!-- BUNTING FESTIVE FLAGS (Bandeirolas coloridas) -->
-  <g>
+  <g class="bunting-wave-1">
     <!-- String 1 -->
     <path d="M-20,240 Q600,340 1220,260" stroke="#334155" stroke-width="2.5" fill="none"/>
     <polygon points="46,254.07910185362078 74,254.07910185362078 60,292.0791018536208" fill="#00209f" stroke="#1e293b" stroke-width="1"/><polygon points="146,276.606297876822 174,276.606297876822 160,314.606297876822" fill="#d21034" stroke="#1e293b" stroke-width="1"/><polygon points="246,296.63883519448535 274,296.63883519448535 260,334.63883519448535" fill="#f59e0b" stroke="#1e293b" stroke-width="1"/><polygon points="346,312.8115294937453 374,312.8115294937453 360,350.8115294937453" fill="#10b981" stroke="#1e293b" stroke-width="1"/><polygon points="446,324.02223838474816 474,324.02223838474816 460,362.02223838474816" fill="#ffffff" stroke="#1e293b" stroke-width="1"/><polygon points="546,329.5069705831446 574,329.5069705831446 560,367.5069705831446" fill="#00209f" stroke="#1e293b" stroke-width="1"/><polygon points="646,328.8919506535624 674,328.8919506535624 660,366.8919506535624" fill="#d21034" stroke="#1e293b" stroke-width="1"/><polygon points="746,322.21909118783407 774,322.21909118783407 760,360.21909118783407" fill="#f59e0b" stroke="#1e293b" stroke-width="1"/><polygon points="846,309.9431365311274 874,309.9431365311274 860,347.9431365311274" fill="#10b981" stroke="#1e293b" stroke-width="1"/><polygon points="946,292.9006727063226 974,292.9006727063226 960,330.9006727063226" fill="#ffffff" stroke="#1e293b" stroke-width="1"/><polygon points="1046,272.25311545907704 1074,272.25311545907704 1060,310.25311545907704" fill="#00209f" stroke="#1e293b" stroke-width="1"/><polygon points="1146,249.40756169408883 1174,249.40756169408883 1160,287.4075616940888" fill="#d21034" stroke="#1e293b" stroke-width="1"/>
@@ -322,7 +322,7 @@
   <ellipse cx="600" cy="740" rx="480" ry="120" fill="#a8a29e" opacity="0.4"/>
 
   <!-- DRAPO (Bandeira do Haiti) on central flagpole -->
-  <g transform="translate(380, 240)" filter="url(#dropShadow)">
+  <g class="drapo-flutter" transform="translate(380, 240)" filter="url(#dropShadow)">
     <!-- Flagpole -->
     <line x1="0" y1="0" x2="0" y2="400" stroke="#d6d3d1" stroke-width="7" stroke-linecap="round"/>
     <circle cx="0" cy="0" r="9" fill="#f59e0b"/>
@@ -338,30 +338,30 @@
   </g>
 
   <!-- LANP (Lanternas / Lâmpadas Festivas) hanging with warm glow -->
-  <g transform="translate(480, 420)" filter="url(#dropShadow)">
+  <g class="lantern-sway-1" filter="url(#dropShadow)">
     <line x1="0" y1="-80" x2="0" y2="0" stroke="#334155" stroke-width="2"/>
     <!-- Glow halo -->
-    <circle cx="0" cy="15" r="42" fill="#fef08a" opacity="0.3" filter="url(#softGlow)"/>
+    <circle cx="0" cy="15" r="42" class="lantern-glow-pulse" fill="#fef08a" filter="url(#softGlow)"/>
     <!-- Glass & Brass Kerosene Lamp (Lanp tèt gridap) -->
     <ellipse cx="0" cy="18" rx="20" ry="24" fill="#fef08a" opacity="0.85" stroke="#b45309" stroke-width="2"/>
-    <ellipse cx="0" cy="16" rx="6" ry="12" fill="#f97316"/> <!-- Flame -->
+    <ellipse cx="0" cy="16" rx="6" ry="12" class="flame-flicker" fill="#f97316"/> <!-- Flame -->
     <ellipse cx="0" cy="18" rx="3" ry="7" fill="#ffffff"/>
     <rect x="-14" y="38" width="28" height="12" rx="3" fill="#78350f"/>
     <rect x="-10" y="-8" width="20" height="8" rx="2" fill="#78350f"/>
   </g>
 
-  <g transform="translate(740, 400)" filter="url(#dropShadow)">
+  <g class="lantern-sway-2" filter="url(#dropShadow)">
     <line x1="0" y1="-70" x2="0" y2="0" stroke="#334155" stroke-width="2"/>
-    <circle cx="0" cy="15" r="42" fill="#fef08a" opacity="0.3" filter="url(#softGlow)"/>
+    <circle cx="0" cy="15" r="42" class="lantern-glow-pulse" fill="#fef08a" filter="url(#softGlow)"/>
     <ellipse cx="0" cy="18" rx="20" ry="24" fill="#fef08a" opacity="0.85" stroke="#b45309" stroke-width="2"/>
-    <ellipse cx="0" cy="16" rx="6" ry="12" fill="#f97316"/>
+    <ellipse cx="0" cy="16" rx="6" ry="12" class="flame-flicker" fill="#f97316"/>
     <ellipse cx="0" cy="18" rx="3" ry="7" fill="#ffffff"/>
     <rect x="-14" y="38" width="28" height="12" rx="3" fill="#78350f"/>
     <rect x="-10" y="-8" width="20" height="8" rx="2" fill="#78350f"/>
   </g>
 
   <!-- TANBOU (Tambor Tradicional Haitiano Grandioso) in foreground -->
-  <g transform="translate(620, 680)" filter="url(#dropShadow)">
+  <g class="tanbou-playing" filter="url(#dropShadow)">
     <!-- Shadow on cobblestones -->
     <ellipse cx="0" cy="72" rx="68" ry="18" fill="#000000" opacity="0.35"/>
     

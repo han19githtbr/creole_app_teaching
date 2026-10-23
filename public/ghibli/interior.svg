@@ -20,6 +20,77 @@
       <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
     </filter>
 
+    <style>
+      /* Animações cinematográficas para Interior Rural (Andeyò) */
+      .cloud-int-l {
+        animation: cloudIntL 50s ease-in-out infinite alternate;
+      }
+      @keyframes cloudIntL {
+        0% { transform: translate(240px, 140px) scale(1); }
+        100% { transform: translate(286px, 140px) scale(1); }
+      }
+      .cloud-int-r {
+        animation: cloudIntR 44s ease-in-out infinite alternate;
+      }
+      @keyframes cloudIntR {
+        0% { transform: translate(760px, 190px) scale(0.85); }
+        100% { transform: translate(712px, 190px) scale(0.85); }
+      }
+
+      /* Fumaça da chaminé subindo e dissipando */
+      .chimney-smoke {
+        animation: chimneySmoke 4.8s ease-in-out infinite;
+        transform-origin: 104px -190px;
+      }
+      @keyframes chimneySmoke {
+        0% { transform: translate(0,0) scaleX(0.8) opacity(0); opacity: 0; }
+        20% { opacity: 0.55; }
+        60% { transform: translate(-8px, -30px) scaleX(1.2); opacity: 0.4; }
+        100% { transform: translate(-14px, -70px) scaleX(1.6); opacity: 0; }
+      }
+
+      /* Árvore mangueira balançando com a brisa */
+      .mango-tree-sway {
+        transform-origin: 160px 580px;
+        animation: mangoSway 6.4s ease-in-out infinite alternate;
+      }
+      @keyframes mangoSway {
+        0% { transform: rotate(-1.8deg); }
+        100% { transform: rotate(2.2deg); }
+      }
+
+      /* Culturas na horta balançando levemente */
+      .crop-breeze {
+        transform-origin: 0px 15px;
+        animation: cropBreeze 3.8s ease-in-out infinite alternate;
+      }
+      @keyframes cropBreeze {
+        0% { transform: rotate(-2deg); }
+        100% { transform: rotate(2.5deg); }
+      }
+
+      /* Flores na cerca balançando */
+      .fence-vine-sway {
+        transform-origin: 0px 0px;
+        animation: fenceVine 5.2s ease-in-out infinite alternate;
+      }
+      @keyframes fenceVine {
+        0% { transform: scaleY(1) translateY(0); }
+        100% { transform: scaleY(1.02) translateY(-3px); }
+      }
+
+      /* Pássaro voando no horizonte */
+      .bird-fly-int {
+        animation: birdFlyInt 20s linear infinite;
+      }
+      @keyframes birdFlyInt {
+        0% { transform: translate(-60px, 320px) scale(0.5); opacity: 0; }
+        5% { opacity: 0.8; }
+        90% { opacity: 0.8; }
+        100% { transform: translate(1260px, 280px) scale(0.5); opacity: 0; }
+      }
+    </style>
+
     <!-- Sky Gradients -->
     <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#236ca7"/>
@@ -131,7 +202,7 @@
     <polygon points="980,150 1340,800 1540,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(240, 140) scale(1)" opacity="0.95">
+  <g class="cloud-int-l" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 

@@ -109,6 +109,12 @@
         0% { transform: rotate(-1.5deg); }
         100% { transform: rotate(2deg); }
       }
+
+      /* Árvores laterais do cinema balançando */
+      .tree-sway-cin-l { transform-origin: 100px 580px; animation: treeSwayL 7s ease-in-out infinite alternate; }
+      @keyframes treeSwayL { 0% { transform: rotate(-2deg); } 100% { transform: rotate(1.5deg); } }
+      .tree-sway-cin-r { transform-origin: 1100px 580px; animation: treeSwayR 6s ease-in-out infinite alternate; }
+      @keyframes treeSwayR { 0% { transform: rotate(2deg); } 100% { transform: rotate(-1.5deg); } }
     </style>
 
     <!-- Sky Gradients -->
@@ -217,7 +223,7 @@
   <path d="M1020,120 A 28 28 0 0 0 1000,165 A 36 36 0 1 1 1020,120 Z" fill="#fef08a" filter="url(#softGlow)"/>
 
   <!-- ZETWAL (Estrelas no Céu Noturno) -->
-  <circle cx="120" cy="80" r="2" fill="#ffffff" filter="url(#softGlow)"/><circle cx="260" cy="140" r="2.5" fill="#ffffff" filter="url(#softGlow)"/><circle cx="380" cy="90" r="1.8" fill="#ffffff" filter="url(#softGlow)"/><circle cx="520" cy="60" r="2.2" fill="#ffffff" filter="url(#softGlow)"/><circle cx="680" cy="110" r="2" fill="#ffffff" filter="url(#softGlow)"/><circle cx="840" cy="70" r="2.4" fill="#ffffff" filter="url(#softGlow)"/><circle cx="940" cy="130" r="1.8" fill="#ffffff" filter="url(#softGlow)"/><circle cx="1100" cy="90" r="2.5" fill="#ffffff" filter="url(#softGlow)"/><circle cx="180" cy="200" r="1.5" fill="#ffffff" filter="url(#softGlow)"/><circle cx="450" cy="170" r="2" fill="#ffffff" filter="url(#softGlow)"/>
+  <circle cx="120" cy="80" r="2" fill="#ffffff" class="star-twinkle-1" filter="url(#softGlow)"/><circle cx="260" cy="140" r="2.5" fill="#ffffff" class="star-twinkle-2" filter="url(#softGlow)"/><circle cx="380" cy="90" r="1.8" fill="#ffffff" class="star-twinkle-1" filter="url(#softGlow)"/><circle cx="520" cy="60" r="2.2" fill="#ffffff" class="star-twinkle-2" filter="url(#softGlow)"/><circle cx="680" cy="110" r="2" fill="#ffffff" class="star-twinkle-1" filter="url(#softGlow)"/><circle cx="840" cy="70" r="2.4" fill="#ffffff" class="star-twinkle-2" filter="url(#softGlow)"/><circle cx="940" cy="130" r="1.8" fill="#ffffff" class="star-twinkle-1" filter="url(#softGlow)"/><circle cx="1100" cy="90" r="2.5" fill="#ffffff" class="star-twinkle-2" filter="url(#softGlow)"/><circle cx="180" cy="200" r="1.5" fill="#ffffff" class="star-twinkle-1" filter="url(#softGlow)"/><circle cx="450" cy="170" r="2" fill="#ffffff" class="star-twinkle-2" filter="url(#softGlow)"/>
 
   <!-- PYEBWA (Árvores da Calçada com Folhagem de Outono) framing left and right -->
   <g transform="translate(100, 580)" filter="url(#dropShadow)">

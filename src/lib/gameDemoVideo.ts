@@ -1011,7 +1011,11 @@ export function sfxEvents(plan: DemoPlan): SfxEvent[] {
 }
 
 /** Mistura os efeitos num buffer estéreo (Float32 por canal). */
-export function synthDemoAudio(plan: DemoPlan, sampleRate: number): Float32Array[] {
+export function synthDemoAudio(
+  plan: DemoPlan,
+  sampleRate: number,
+  pronunciations?: Map<string, Float32Array>
+): Float32Array[] {
   const length = Math.ceil((plan.total + 0.3) * sampleRate);
   const left = new Float32Array(length);
 
@@ -1066,6 +1070,29 @@ export function synthDemoAudio(plan: DemoPlan, sampleRate: number): Float32Array
         break;
       }
     }
+  }
+
+  // Pronúncia em francês de cada palavra ao acertar a resposta
+  if (pronunciations && pronunciations.size > 0) {
+    plan.timings.forEach((tm, idx) => {
+      const round = plan.rounds[idx];
+      if (!round) return;
+      const key = round.item.speak || round.item.fr;
+      const pcm = pronunciations.get(key) || pronunciations.get(round.item.fr);
+      if (!pcm || pcm.length === 0) return;
+
+      // Inicia a fala 0.15s após o toque na alternativa certa (junto com o banner verde e as estrelas)
+      const speechStart = tm.start + tm.correctTap + 0.15;
+      const from = Math.floor(speechStart * sampleRate);
+      const speechVol = 0.95;
+
+      for (let i = 0; i < pcm.length && from + i < length; i++) {
+        const fadeIn = Math.min(1, i / (0.005 * sampleRate));
+        const fadeOut = Math.min(1, (pcm.length - 1 - i) / (0.01 * sampleRate));
+        const envelope = fadeIn * fadeOut;
+        left[from + i] += pcm[i] * speechVol * envelope;
+      }
+    });
   }
 
   // limitador suave para nunca estourar

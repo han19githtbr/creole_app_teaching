@@ -20,6 +20,83 @@
       <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
     </filter>
 
+    <style>
+      /* Animações cinematográficas para Estoicismo (Sajès) */
+      .cloud-est-l {
+        animation: cloudEstL 52s ease-in-out infinite alternate;
+      }
+      @keyframes cloudEstL {
+        0% { transform: translate(240px, 170px) scale(0.95); }
+        100% { transform: translate(288px, 170px) scale(0.95); }
+      }
+      .cloud-est-r {
+        animation: cloudEstR 44s ease-in-out infinite alternate;
+      }
+      @keyframes cloudEstR {
+        0% { transform: translate(980px, 180px) scale(0.85); }
+        100% { transform: translate(930px, 180px) scale(0.85); }
+      }
+
+      /* Oliveira centenária balançando com a brisa mediterrânea */
+      .olive-tree-sway {
+        transform-origin: 180px 560px;
+        animation: oliveTreeSway 7.5s ease-in-out infinite alternate;
+      }
+      @keyframes oliveTreeSway {
+        0% { transform: rotate(-2deg); }
+        100% { transform: rotate(2.5deg); }
+      }
+
+      /* Mar ao fundo brilhando suavemente */
+      .sea-shimmer {
+        animation: seaShimmer 5s ease-in-out infinite alternate;
+      }
+      @keyframes seaShimmer {
+        0% { opacity: 0.38; transform: scaleX(0.97); }
+        100% { opacity: 0.5; transform: scaleX(1.03); }
+      }
+
+      /* Filósofo respirando serenamente */
+      .sage-breathe {
+        transform-origin: 560px 570px;
+        animation: sageBreathe 5.8s ease-in-out infinite alternate;
+      }
+      @keyframes sageBreathe {
+        0% { transform: scale(1) translateY(0); }
+        100% { transform: scale(1.01) translateY(-3px); }
+      }
+
+      /* Páginas do livro levemente tremulando com o vento */
+      .book-page-flutter {
+        transform-origin: 380px 616px;
+        animation: bookPageFlutter 6.5s ease-in-out infinite alternate;
+      }
+      @keyframes bookPageFlutter {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(0.4deg); }
+      }
+
+      /* Raio de luz dourada no mar ao pôr do sol */
+      .sunset-path {
+        animation: sunsetPath 4.5s ease-in-out infinite alternate;
+      }
+      @keyframes sunsetPath {
+        0% { opacity: 0.35; transform: scaleX(0.95); }
+        100% { opacity: 0.55; transform: scaleX(1.08); }
+      }
+
+      /* Pássaro ao pôr do sol */
+      .stoic-bird {
+        animation: stoicBird 22s linear infinite;
+      }
+      @keyframes stoicBird {
+        0% { transform: translate(-80px, 420px) scale(0.5); opacity: 0; }
+        6% { opacity: 0.7; }
+        90% { opacity: 0.7; }
+        100% { transform: translate(1280px, 380px) scale(0.5); opacity: 0; }
+      }
+    </style>
+
     <!-- Sky Gradients -->
     <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#236ca7"/>
@@ -131,7 +208,7 @@
     <polygon points="850,240 1210,800 1410,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(240, 170) scale(0.95)" opacity="0.95">
+  <g class="cloud-est-l" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 

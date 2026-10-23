@@ -13,6 +13,7 @@ import {
   type DemoImages,
   type DemoPlan,
 } from "@/lib/gameDemoVideo";
+import { loadDemoPronunciations } from "@/lib/gameDemoAudio";
 
 export type DemoQuality = "max" | "high";
 
@@ -25,6 +26,7 @@ export interface ExportParams {
   plan: DemoPlan;
   images: DemoImages;
   quality: DemoQuality;
+  pronunciations?: Map<string, Float32Array>;
   onProgress: (percent: number) => void;
   signal?: AbortSignal;
 }
@@ -63,6 +65,13 @@ export async function exportDemoVideo(params: ExportParams): Promise<ExportResul
       await document.fonts.ready;
     } catch {
       /* segue com as fontes disponíveis */
+    }
+  }
+  if (params.plan.settings.sound && !params.pronunciations) {
+    try {
+      params.pronunciations = await loadDemoPronunciations(params.plan.rounds, SAMPLE_RATE, params.signal);
+    } catch {
+      /* segue com os efeitos sonoros se a rede falhar */
     }
   }
   const offline = await exportOffline(params);
@@ -127,7 +136,7 @@ async function exportOffline(params: ExportParams): Promise<ExportResult | null>
     }
   }
 
-  const channelData = withAudio ? synthDemoAudio(plan, SAMPLE_RATE) : [];
+  const channelData = withAudio ? synthDemoAudio(plan, SAMPLE_RATE, params.pronunciations) : [];
   const target = new ArrayBufferTarget();
   const muxer = new Muxer({
     target,
@@ -249,7 +258,7 @@ async function exportRealtime(params: ExportParams): Promise<ExportResult> {
   if (plan.settings.sound && typeof AudioContext !== "undefined") {
     try {
       audioCtx = new AudioContext({ sampleRate: SAMPLE_RATE });
-      const pcm = synthDemoAudio(plan, SAMPLE_RATE);
+      const pcm = synthDemoAudio(plan, SAMPLE_RATE, params.pronunciations);
       const buffer = audioCtx.createBuffer(2, pcm[0].length, SAMPLE_RATE);
       pcm.forEach((data, channel) => buffer.copyToChannel(new Float32Array(data), channel));
       const destination = audioCtx.createMediaStreamDestination();

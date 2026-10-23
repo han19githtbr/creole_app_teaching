@@ -546,6 +546,108 @@ class SoundEffectsManager {
     } catch {}
   }
 
+  /** Fanfarra triunfante ao completar a rodada com vitória ou bater recorde */
+  public playVictoryFanfare(): void {
+    if (this.muted) return;
+    const ctx = this.getContext();
+    const master = this.getMasterNode();
+    if (!ctx || !master) return;
+
+    try {
+      const now = ctx.currentTime;
+      const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+      notes.forEach((freq, idx) => {
+        const start = now + idx * 0.11;
+        const dur = idx === notes.length - 1 ? 0.75 : 0.22;
+        const osc = ctx.createOscillator();
+        const subOsc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, start);
+
+        subOsc.type = "sine";
+        subOsc.frequency.setValueAtTime(freq * 2, start);
+
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(0.24, start + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+
+        osc.connect(gain);
+        subOsc.connect(gain);
+        gain.connect(master);
+
+        osc.start(start);
+        subOsc.start(start);
+        osc.stop(start + dur + 0.05);
+        subOsc.stop(start + dur + 0.05);
+      });
+    } catch {}
+  }
+
+  /** Som brilhante de moeda/ouro ao somar pontos, moedas Goud ou subir multiplicador */
+  public playCoin(): void {
+    if (this.muted) return;
+    const ctx = this.getContext();
+    const master = this.getMasterNode();
+    if (!ctx || !master) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = "sine";
+      osc1.frequency.setValueAtTime(1975.53, now); // B6
+      osc1.frequency.setValueAtTime(2637.02, now + 0.065); // E7
+
+      osc2.type = "triangle";
+      osc2.frequency.setValueAtTime(3951.07, now + 0.065); // B7 harmonic
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.2, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(master);
+
+      osc1.start(now);
+      osc2.start(now + 0.065);
+      osc1.stop(now + 0.35);
+      osc2.stop(now + 0.35);
+    } catch {}
+  }
+
+  /** Som tátil suave ao alternar filtros, modos ou abas */
+  public playToggle(): void {
+    if (this.muted) return;
+    const ctx = this.getContext();
+    const master = this.getMasterNode();
+    if (!ctx || !master) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(420, now);
+      osc.frequency.exponentialRampToValueAtTime(620, now + 0.03);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.12, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+
+      osc.connect(gain);
+      gain.connect(master);
+
+      osc.start(now);
+      osc.stop(now + 0.06);
+    } catch {}
+  }
+
   /** Alarme curto quando os 5 segundos acabam. */
   public playTimeUp(): void {
     if (this.muted) return;

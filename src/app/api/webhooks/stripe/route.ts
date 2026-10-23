@@ -73,7 +73,12 @@ async function creditCheckoutSession(session: Stripe.Checkout.Session): Promise<
   // 2) Credita o saldo. Se falhar, libera a reserva para o Stripe poder reenviar.
   try {
     const updatedUser = await User.findOneAndUpdate(
-      { email },
+      {
+        $or: [
+          { email },
+          { email: { $regex: new RegExp(`^${email.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&")}$`, "i") } },
+        ],
+      },
       { $inc: { availableMinutes: minutes, bonusStoriesBalance: bonusStories } },
       { new: true }
     );

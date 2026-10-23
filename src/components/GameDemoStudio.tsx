@@ -21,8 +21,9 @@ import {
   type DemoLevel,
 } from "@/lib/gameDemoVideo";
 import { DEMO_QUALITY, exportDemoVideo, type DemoQuality, type ExportResult } from "@/lib/gameDemoExport";
+import { loadDemoPronunciations, DemoPreviewAudioPlayer } from "@/lib/gameDemoAudio";
 import { SOCIAL_PLATFORMS, isSocialPlatform, sanitizeSocialHandle } from "@/lib/socialLinks";
-import { Download, Loader2, Pause, Play, RotateCcw, Shuffle, Square, X } from "lucide-react";
+import { Download, Loader2, Pause, Play, RotateCcw, Shuffle, Square, X, Volume2, VolumeX, Sparkles } from "lucide-react";
 
 const PREVIEW_SCALE = 0.5;
 
@@ -64,6 +65,10 @@ export function GameDemoStudio({ items }: { items: CestQuoiItem[] }) {
 
   const [playing, setPlaying] = useState(true);
   const [time, setTime] = useState(0);
+  const [pronunciations, setPronunciations] = useState<Map<string, Float32Array>>(new Map());
+  const [audioReady, setAudioReady] = useState(false);
+  const [previewMuted, setPreviewMuted] = useState(false);
+  const audioPlayerRef = useRef<DemoPreviewAudioPlayer | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const clockRef = useRef({ start: 0, offset: 0 });
 
@@ -123,6 +128,42 @@ export function GameDemoStudio({ items }: { items: CestQuoiItem[] }) {
   const plan = useMemo(() => planDemo(rounds, cleanSettings), [rounds, cleanSettings]);
   const spec = DEMO_FORMATS[settings.format];
 
+  // Carrega e decodifica a pronúncia em francês de cada palavra para o vídeo
+  useEffect(() => {
+    let cancelled = false;
+    if (!rounds.length) {
+      setPronunciations(new Map());
+      setAudioReady(false);
+      return;
+    }
+    setAudioReady(false);
+    void loadDemoPronunciations(rounds, 48000).then((map) => {
+      if (cancelled) return;
+      setPronunciations(map);
+      setAudioReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [rounds]);
+
+  // Reprodutor de áudio sincronizado para a pré-visualização ao vivo
+  useEffect(() => {
+    audioPlayerRef.current = new DemoPreviewAudioPlayer(48000);
+    return () => {
+      audioPlayerRef.current?.destroy();
+      audioPlayerRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!previewMuted && settings.sound) {
+      audioPlayerRef.current?.updateData(plan, pronunciations);
+    } else {
+      audioPlayerRef.current?.updateData({ ...plan, settings: { ...plan.settings, sound: false } }, pronunciations);
+    }
+  }, [plan, pronunciations, previewMuted, settings.sound]);
+
   /* ---------- pré-visualização ---------- */
   const planRef = useRef(plan);
   const imagesRef = useRef(images);
@@ -147,7 +188,15 @@ export function GameDemoStudio({ items }: { items: CestQuoiItem[] }) {
     const loop = (now: number) => {
       const total = planRef.current.total || 1;
       if (playing) {
-        const t = (clockRef.current.offset + (now - clockRef.current.start) / 1000) % total;
+        const elapsed = (now - clockRef.current.start) / 1000;
+        let t = clockRef.current.offset + elapsed;
+        if (t >= total) {
+          clockRef.current = { start: now, offset: 0 };
+          t = 0;
+          if (!previewMuted && settings.sound) {
+            audioPlayerRef.current?.play(0);
+          }
+        }
         draw(t);
         if (now - lastUi > 100) {
           lastUi = now;
@@ -165,13 +214,24 @@ export function GameDemoStudio({ items }: { items: CestQuoiItem[] }) {
   function seek(t: number) {
     clockRef.current = { start: performance.now(), offset: t };
     setTime(t);
+    if (playing && !previewMuted && settings.sound) {
+      audioPlayerRef.current?.seek(t);
+    } else {
+      audioPlayerRef.current?.pause(t);
+    }
   }
   function togglePlay() {
     if (playing) {
-      clockRef.current.offset = (clockRef.current.offset + (performance.now() - clockRef.current.start) / 1000) % (plan.total || 1);
+      const current = (clockRef.current.offset + (performance.now() - clockRef.current.start) / 1000) % (plan.total || 1);
+      clockRef.current.offset = current;
+      audioPlayerRef.current?.pause(current);
       setPlaying(false);
+    audioPlayerRef.current?.stop();
     } else {
       clockRef.current.start = performance.now();
+      if (!previewMuted && settings.sound) {
+        audioPlayerRef.current?.play(clockRef.current.offset);
+      }
       setPlaying(true);
     }
   }
@@ -226,6 +286,7 @@ export function GameDemoStudio({ items }: { items: CestQuoiItem[] }) {
         plan,
         images,
         quality,
+        pronunciations,
         onProgress: setProgress,
         signal: controller.signal,
       });
@@ -416,7 +477,7 @@ export function GameDemoStudio({ items }: { items: CestQuoiItem[] }) {
               [
                 ["showIntro", "Abertura com título"],
                 ["showOutro", "Encerramento com a rede social"],
-                ["sound", "Efeitos sonoros"],
+                ["sound", "Áudio (efeitos sonoros e pronúncia em francês)"],
               ] as const
             ).map(([key, label]) => (
               <label key={key} className="flex cursor-pointer items-center gap-2">
@@ -425,6 +486,31 @@ export function GameDemoStudio({ items }: { items: CestQuoiItem[] }) {
               </label>
             ))}
           </div>
+
+          {settings.sound && (
+            <div className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-xs">
+              <div className="flex items-center gap-2">
+                <Volume2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <span className="font-semibold text-[var(--text)]">Áudio e pronúncia em francês</span>
+              </div>
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                  audioReady && pronunciations.size > 0
+                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                    : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                }`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    audioReady && pronunciations.size > 0 ? "bg-emerald-500" : "bg-amber-500 animate-pulse"
+                  }`}
+                />
+                {audioReady && pronunciations.size > 0
+                  ? `${pronunciations.size} pronúncias sincronizadas`
+                  : "Carregando pronúncia..."}
+              </span>
+            </div>
+          )}
         </section>
 
         {/* exportação */}
@@ -524,6 +610,29 @@ export function GameDemoStudio({ items }: { items: CestQuoiItem[] }) {
             </Button>
             <Button type="button" variant="outline" size="sm" className="cursor-pointer" onClick={() => seek(0)} disabled={!plan.rounds.length}>
               <RotateCcw className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="cursor-pointer"
+              onClick={() => {
+                const next = !previewMuted;
+                setPreviewMuted(next);
+                if (next) {
+                  audioPlayerRef.current?.stop();
+                } else if (playing && settings.sound) {
+                  audioPlayerRef.current?.play(time);
+                }
+              }}
+              title={previewMuted ? "Ativar áudio da prévia" : "Silenciar áudio da prévia"}
+              disabled={!plan.rounds.length || !settings.sound}
+            >
+              {previewMuted || !settings.sound ? (
+                <VolumeX className="h-4 w-4 text-[var(--text-secondary)]" />
+              ) : (
+                <Volume2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              )}
             </Button>
             <input
               type="range"

@@ -20,6 +20,93 @@
       <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
     </filter>
 
+    <style>
+      /* Animações cinematográficas para Dança (Dans) */
+      .cloud-drift-danca-l {
+        animation: cloudDDL 46s ease-in-out infinite alternate;
+      }
+      @keyframes cloudDDL {
+        0% { transform: translate(220px, 170px) scale(0.9); }
+        100% { transform: translate(268px, 170px) scale(0.9); }
+      }
+      .cloud-drift-danca-r {
+        animation: cloudDDR 54s ease-in-out infinite alternate;
+      }
+      @keyframes cloudDDR {
+        0% { transform: translate(920px, 180px) scale(0.85); }
+        100% { transform: translate(870px, 180px) scale(0.85); }
+      }
+
+      /* Lanternas balançando */
+      .lantern-sway-dans {
+        transform-origin: 0px -30px;
+        animation: lanternSwayDans 4.2s ease-in-out infinite alternate;
+      }
+      @keyframes lanternSwayDans {
+        0% { transform: rotate(-4deg); }
+        100% { transform: rotate(4deg); }
+      }
+      .lantern-glow-dans {
+        animation: lanternGlowDans 2.4s ease-in-out infinite alternate;
+      }
+      @keyframes lanternGlowDans {
+        0% { opacity: 0.28; transform: scale(0.92); }
+        100% { opacity: 0.5; transform: scale(1.15); }
+      }
+
+      /* Dançarina feminina girando a saia */
+      .dancer-female-sway {
+        transform-origin: 660px 550px;
+        animation: femaleDance 2.8s ease-in-out infinite;
+      }
+      @keyframes femaleDance {
+        0%, 100% { transform: rotate(0deg); }
+        20% { transform: rotate(3.5deg); }
+        45% { transform: rotate(-2.5deg); }
+        65% { transform: rotate(4deg); }
+        85% { transform: rotate(-3deg); }
+      }
+
+      /* Dançarino masculino */
+      .dancer-male-sway {
+        transform-origin: 490px 560px;
+        animation: maleDance 3.2s ease-in-out infinite;
+      }
+      @keyframes maleDance {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-3deg); }
+        55% { transform: rotate(2.5deg); }
+        80% { transform: rotate(-2deg); }
+      }
+
+      /* Fitas esvoaçando */
+      .ribbon-float-1 {
+        animation: ribbonFloat1 3.8s ease-in-out infinite;
+      }
+      @keyframes ribbonFloat1 {
+        0%, 100% { transform: scaleX(1) translateY(0); }
+        30% { transform: scaleX(1.04) translateY(-6px); }
+        60% { transform: scaleX(0.97) translateY(4px); }
+      }
+      .ribbon-float-2 {
+        animation: ribbonFloat2 4.4s ease-in-out infinite;
+      }
+      @keyframes ribbonFloat2 {
+        0%, 100% { transform: scaleX(1) translateY(0); }
+        40% { transform: scaleX(1.03) translateY(5px); }
+        70% { transform: scaleX(0.98) translateY(-4px); }
+      }
+
+      /* Flores no chão brilhando */
+      .floor-flower-pulse {
+        animation: flowerPulse 3s ease-in-out infinite alternate;
+      }
+      @keyframes flowerPulse {
+        0% { opacity: 0.7; transform: scale(0.92); }
+        100% { opacity: 1; transform: scale(1.1); }
+      }
+    </style>
+
     <!-- Sky Gradients -->
     <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#236ca7"/>
@@ -131,7 +218,7 @@
     <polygon points="600,390 960,800 1160,800" fill="#fffbe6" opacity="0.06" />
   </g>
   
-  <g transform="translate(220, 170) scale(0.9)" opacity="0.95">
+  <g class="cloud-drift-danca-l" opacity="0.95">
     <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
     <path d="M-180,40 
       C-200,10 -180,-30 -140,-40 

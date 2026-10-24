@@ -3,6 +3,7 @@
 import generatedImages from "../../scripts/ghibli/manifest.json";
 import measuredAnchors from "./storyElementAnchors.json";
 import measuredExtras from "./storyElementExtras.json";
+import { KREYOL_TO_FR, kreyolToFrench, themeToFrench } from "./frenchVocabulary";
 
 export interface BankElement {
   kreyol: string;
@@ -656,6 +657,7 @@ export const PT_TO_FR: Record<string, string> = {
 export function getElementLabel(element: BankElement, language: "kreyol" | "francais" = "kreyol"): string {
   if (language === "francais") {
     if (element.fr) return element.fr;
+    if (KREYOL_TO_FR[element.kreyol] ?? KREYOL_TO_FR[element.kreyol.toLowerCase()]) return kreyolToFrench(element.kreyol);
     const lowerPt = element.pt.toLowerCase().trim();
     if (PT_TO_FR[lowerPt]) return PT_TO_FR[lowerPt];
     for (const [ptKey, frVal] of Object.entries(PT_TO_FR)) {
@@ -664,4 +666,19 @@ export function getElementLabel(element: BankElement, language: "kreyol" | "fran
     return element.pt;
   }
   return element.kreyol;
+}
+
+/**
+ * Legenda sugerida da imagem no idioma do painel. Em Kreyòl é a legenda do banco; em
+ * francês refaz a frase com os nomes dos elementos em francês (português + francês).
+ */
+export function getImageCaption(image: BankImage, language: "kreyol" | "francais" = "kreyol"): string {
+  if (language !== "francais" || !image.elements.length) return image.caption;
+  const words = image.elements.map((element) => `${element.pt} (${getElementLabel(element, "francais")})`);
+  return `${image.title} (${image.theme}): identifique na cena ${words.join(", ")}.`;
+}
+
+/** Vocabulário principal do tema (mostrado ao lado do nome do tema) no idioma do painel. */
+export function getThemeVocab(image: Pick<BankImage, "theme" | "kreyol">, language: "kreyol" | "francais" = "kreyol"): string {
+  return language === "francais" ? themeToFrench(image.theme) : image.kreyol;
 }

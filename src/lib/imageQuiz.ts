@@ -1,5 +1,6 @@
 import imageSceneVariants from "./imageSceneVariants.json";
 import type { BankImage } from "./imageBank";
+import { kreyolToFrench } from "./frenchVocabulary";
 
 export interface ImageQuizConfig {
   options: string[];
@@ -46,9 +47,25 @@ export function getDefaultImageQuiz(theme: string, imageId?: string): ImageQuizC
   return THEME_QUIZZES[theme];
 }
 
-/** Desafio de uma imagem do banco: imagens geradas por IA já trazem o seu; as demais usam o padrão do tema. */
-export function getQuizForImage(image: Pick<BankImage, "theme" | "id" | "quiz">): ImageQuizConfig | undefined {
-  return image.quiz ?? getDefaultImageQuiz(image.theme, image.id);
+/** Passa as palavras do desafio (guardadas em Kreyòl) para o francês, sem repetir palavras. */
+export function translateQuizToFrench(quiz: ImageQuizConfig): ImageQuizConfig {
+  const unique = (words: string[]) => words.filter((word, index) => words.indexOf(word) === index);
+  return {
+    options: unique(quiz.options.map(kreyolToFrench)),
+    answers: unique(quiz.answers.map(kreyolToFrench)),
+  };
+}
+
+/**
+ * Desafio de uma imagem do banco: imagens geradas por IA já trazem o seu; as demais usam o padrão do tema.
+ * No painel em francês as palavras saem em francês.
+ */
+export function getQuizForImage(
+  image: Pick<BankImage, "theme" | "id" | "quiz">,
+  language: "kreyol" | "francais" = "kreyol"
+): ImageQuizConfig | undefined {
+  const quiz = image.quiz ?? getDefaultImageQuiz(image.theme, image.id);
+  return quiz && language === "francais" ? translateQuizToFrench(quiz) : quiz;
 }
 
 export function isValidImageQuiz(value: unknown): value is ImageQuizConfig {

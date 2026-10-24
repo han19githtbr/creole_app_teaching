@@ -290,6 +290,7 @@ export default async function DashboardPage() {
           ) : (
             posts.map((post) => (
               <PostCard
+                language={language}
                 id={`post-${String(post._id)}`}
                 key={String(post._id)}
                 title={post.title}

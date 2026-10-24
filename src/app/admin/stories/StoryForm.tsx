@@ -340,7 +340,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
         </div>
         <details className="sm:col-span-2">
           <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-[var(--accent)]"><ImageIcon className="h-4 w-4" /> {imageSrc ? "Trocar imagem temática" : "Escolher imagem temática"}</summary>
-          <div className="mt-4"><ImageBankPicker section="stories" selectedSrc={imageSrc || null} onSelect={(image) => { setImageSrc(image?.src ?? ""); setTheme(image?.theme ?? ""); setCueOverrides({}); }} /></div>
+          <div className="mt-4"><ImageBankPicker section="stories" language={language} selectedSrc={imageSrc || null} onSelect={(image) => { setImageSrc(image?.src ?? ""); setTheme(image?.theme ?? ""); setCueOverrides({}); }} /></div>
         </details>
       </section>
 

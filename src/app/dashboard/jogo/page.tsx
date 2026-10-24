@@ -23,8 +23,11 @@ export default async function ImageQuizPage({
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
 
-  // Painel em francês: jogo "C'est quoi ?" (objetos da pasta c-quoi + coleção por temas)
-  if ((await getAppLanguage()) === "francais") {
+  const language = await getAppLanguage();
+
+  // Painel em francês: jogo "C'est quoi ?" (objetos da pasta c-quoi + coleção por temas).
+  // O desafio de uma postagem (?post=...) continua sendo o jogo de palavras da própria postagem.
+  if (language === "francais" && !(await searchParams).post) {
     const { theme } = await searchParams;
     return (
       <GameMonetizationWrapper>
@@ -38,7 +41,7 @@ export default async function ImageQuizPage({
   if (imageId && !requestedImage) notFound();
   const pool = requestedImage ? [] : [...IMAGE_BANK, ...(await listApprovedGenerated("posts"))];
   const randomImage = requestedImage ?? pool[randomInt(pool.length)];
-  const randomQuiz = getQuizForImage(randomImage)!;
+  const randomQuiz = getQuizForImage(randomImage, language)!;
   let challenge: ImageQuizChallenge = {
     id: randomImage.id,
     theme: randomImage.theme,
@@ -61,7 +64,7 @@ export default async function ImageQuizPage({
     const quiz = hasCustomQuiz
       ? post.imageQuiz
       : image
-      ? getQuizForImage(image)
+      ? getQuizForImage(image, language)
       : undefined;
     if (!quiz || !isValidImageQuiz(quiz)) notFound();
     challenge = {
@@ -78,7 +81,7 @@ export default async function ImageQuizPage({
 
   return (
     <GameMonetizationWrapper>
-      <ImageQuizGame initialChallenge={challenge} />
+      <ImageQuizGame initialChallenge={challenge} language={language} />
     </GameMonetizationWrapper>
   );
 }

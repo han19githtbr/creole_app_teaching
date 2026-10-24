@@ -9,10 +9,11 @@ import { Input } from "@/components/ui/input";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { ImageBankPicker } from "@/components/ImageBankPicker";
 import { PostCard } from "@/components/PostCard";
-import { getBankImage, type BankImage } from "@/lib/imageBank";
+import { getBankImage, getElementLabel, getImageCaption, type BankImage } from "@/lib/imageBank";
+import type { AppLanguage } from "@/lib/languageShared";
 import {
-  getDefaultImageQuiz,
   getQuizForImage,
+  translateQuizToFrench,
   isValidImageQuiz,
   MAX_IMAGE_QUIZ_OPTIONS,
   MIN_IMAGE_QUIZ_OPTIONS,
@@ -34,7 +35,15 @@ interface PostFormValues {
   imageQuiz?: ImageQuizConfig;
 }
 
-export function PostForm({ initial }: { initial?: PostFormValues }) {
+export function PostForm({
+  initial,
+  language = "kreyol",
+}: {
+  initial?: PostFormValues;
+  /** Idioma do painel: define em que língua saem as palavras sugeridas e o jogo de palavras. */
+  language?: AppLanguage;
+}) {
+  const wordLanguage = language === "francais" ? "Francês" : "Kreyòl";
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState(initial?.title ?? "");
@@ -50,7 +59,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
   const [isPublished, setIsPublished] = useState(initial?.isPublished ?? false);
   const [acceptsAnswers, setAcceptsAnswers] = useState(initial?.acceptsAnswers ?? true);
   const initialBankImage = getBankImage(initial?.imageUrl);
-  const initialQuiz = initial?.imageQuiz ?? getDefaultImageQuiz(initialBankImage?.theme ?? "", initialBankImage?.id);
+  const initialQuiz = initial?.imageQuiz ?? (initialBankImage ? getQuizForImage(initialBankImage, language) : undefined);
   const [quizEnabled, setQuizEnabled] = useState(Boolean(initialQuiz));
   const [quizOptions, setQuizOptions] = useState<string[]>(initialQuiz?.options ?? Array(10).fill(""));
   const [quizAnswers, setQuizAnswers] = useState<string[]>(initialQuiz?.answers ?? []);
@@ -76,9 +85,9 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
       setTitle(img.title);
     }
     if (!content.trim()) {
-      setContent(img.caption);
+      setContent(getImageCaption(img, language));
     }
-    const quiz = getQuizForImage(img);
+    const quiz = getQuizForImage(img, language);
     setQuizOptions(quiz?.options ?? Array(10).fill(""));
     setQuizAnswers(quiz?.answers ?? []);
     setQuizEnabled(Boolean(quiz));
@@ -86,7 +95,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
 
   function useSuggestedCaption() {
     if (!bankImage) return;
-    setContent(bankImage.caption);
+    setContent(getImageCaption(bankImage, language));
   }
 
   function useSuggestedTitle() {
@@ -96,11 +105,23 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
 
   function handleAutoSelectQuizAnswers() {
     if (!bankImage?.elements) return;
-    const elementWords = bankImage.elements.map((el) => el.kreyol.toLowerCase());
+    const elementWords = bankImage.elements.map((el) => getElementLabel(el, language).toLowerCase());
     const matched = quizOptions.filter((opt) => elementWords.includes(opt.trim().toLowerCase()));
     if (matched.length > 0) {
       setQuizAnswers(matched);
     }
+  }
+
+  // Postagens antigas em francês podem ter palavras em Kreyòl: oferece converter de uma vez.
+  const frenchQuiz = language === "francais" ? translateQuizToFrench({ options: quizOptions, answers: quizAnswers }) : null;
+  const canTranslateQuiz =
+    Boolean(frenchQuiz) &&
+    (frenchQuiz!.options.length !== quizOptions.length || frenchQuiz!.options.some((word, index) => word !== quizOptions[index]));
+
+  function translateQuizWords() {
+    if (!frenchQuiz) return;
+    setQuizOptions(frenchQuiz.options);
+    setQuizAnswers(frenchQuiz.answers);
   }
 
   function addQuizOption() {
@@ -269,7 +290,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
                         key={el.kreyol}
                         className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 text-[10px] font-medium text-[var(--text)] border border-[var(--border-soft)]"
                       >
-                        <strong>{el.kreyol}</strong>{" "}
+                        <strong>{getElementLabel(el, language)}</strong>{" "}
                         <span className="text-[var(--text-muted)]">({el.pt})</span>
                       </span>
                     ))}
@@ -302,7 +323,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
             </div>
 
             {imageTab === "bank" ? (
-              <ImageBankPicker section="posts" selectedSrc={bankImage ? bankImage.src : null} onSelect={handleBankSelect} />
+              <ImageBankPicker section="posts" language={language} selectedSrc={bankImage ? bankImage.src : null} onSelect={handleBankSelect} />
             ) : (
               <div className="rounded-xl border border-dashed border-[var(--border-strong)] p-6 text-center">
                 <input
@@ -361,7 +382,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
         <section className="space-y-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h3 className="text-sm font-semibold text-[var(--text)]">Jogo de palavras em Kreyòl</h3>
+              <h3 className="text-sm font-semibold text-[var(--text)]">Jogo de palavras em {wordLanguage}</h3>
               <p className="mt-1 text-xs text-[var(--text-muted)]">
                 Mantenha de {MIN_IMAGE_QUIZ_OPTIONS} a {MAX_IMAGE_QUIZ_OPTIONS} palavras únicas e marque todas as que aparecem na imagem.
               </p>
@@ -377,6 +398,11 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
               >
                 <Plus className="h-3.5 w-3.5" /> Adicionar palavra
               </Button>
+              {canTranslateQuiz && (
+                <Button type="button" size="sm" variant="outline" onClick={translateQuizWords} className="text-xs">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-500" /> Traduzir palavras para o francês
+                </Button>
+              )}
               {bankImage?.elements && (
                 <Button
                   type="button"
@@ -393,7 +419,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
           <div className="grid gap-2 sm:grid-cols-2">
             {quizOptions.map((word, index) => {
               const isVisibleInGhibli = bankImage?.elements?.some(
-                (el) => el.kreyol.toLowerCase() === word.trim().toLowerCase()
+                (el) => getElementLabel(el, language).toLowerCase() === word.trim().toLowerCase()
               );
               return (
                 <div key={index} className="flex items-center gap-2">
@@ -423,7 +449,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
                           answers.map((answer) => (answer === word ? value : answer))
                         );
                       }}
-                      placeholder={`Opção ${index + 1} em Kreyòl`}
+                      placeholder={`Opção ${index + 1} em ${wordLanguage}`}
                       maxLength={40}
                       required
                       className="h-9 text-sm pr-16"
@@ -502,6 +528,7 @@ export function PostForm({ initial }: { initial?: PostFormValues }) {
             content={content}
             imageUrl={imageUrl || undefined}
             imageAlt={imageAlt}
+            language={language}
             createdAt={new Date()}
             isPermanent={isPermanent}
             expiresAt={expiresAt || null}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Check, Loader2, Pause, Play, Sparkles, Trash2, Undo2, X, ZoomIn } from "lucide-react";
+import { AlertTriangle, Check, Loader2, Pause, Play, RotateCcw, Sparkles, Trash2, Undo2, X, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   ENGINE_META,
@@ -98,26 +98,35 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
   const post = (url: string, body: unknown) => ({ method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const patch = (body: unknown) => ({ method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
-  async function runNow(howMany?: number, targetJobId?: string) {
+  async function handleResetUsage() {
+    setBusy("reset-usage");
+    const data = await call("/api/admin/image-gen/usage", post("", { action: "reset" }), "Cota diária zerada com sucesso!");
+    if (data?.usage) {
+      setState((prev) => (prev ? { ...prev, usage: data.usage } : prev));
+    }
+    setBusy(null);
+  }
+
+  async function runNow(howMany?: number, targetJobId?: string, force = false) {
     setRunning(true);
     setMessage(null);
     let saved = 0;
     let rejected = 0;
     const quotaLeft = state?.usage.left ?? 0;
-    if (quotaLeft <= 0) {
-      setMessage({ type: "error", text: "A cota diária de geração já foi esgotada." });
+    if (quotaLeft <= 0 && !force) {
+      setMessage({ type: "error", text: "A cota diária de geração já foi esgotada. Você pode zerar a cota de hoje para continuar." });
       setRunning(false);
       return;
     }
 
     const requested = howMany && howMany > 0 ? howMany : manualCount;
-    const targetCount = Math.min(requested, quotaLeft);
+    const targetCount = force ? requested : Math.min(requested, quotaLeft);
 
     for (let i = 0; i < targetCount; i++) {
       const response = await fetch("/api/admin/image-gen/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count: 1, jobId: targetJobId }),
+        body: JSON.stringify({ count: 1, jobId: targetJobId, force }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -160,7 +169,8 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
       runImmediately ? undefined : `Pedido criado: ${count} imagem(ns). O robô gera até ${state?.config.dailyLimit ?? 5} por dia.`
     );
     if (data?.id && runImmediately) {
-      await runNow(count, data.id);
+      const forceRun = (state?.usage.left ?? 0) === 0;
+      await runNow(count, data.id, forceRun);
     }
     setBusy(null);
   }
@@ -201,9 +211,22 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
           <div className="mt-2 h-2.5 w-56 max-w-full overflow-hidden rounded-full bg-[var(--surface-2)]">
             <div className="h-full bg-[var(--accent-soft)]" style={{ width: `${Math.min(100, (usage.calls / usage.limit) * 100)}%` }} />
           </div>
-          <p className="mt-2 text-xs text-[var(--text-secondary)]">
-            Disponíveis hoje: <span className="font-bold text-[var(--text)]">{usage.left} imagens</span>. Zera à meia-noite (Brasília). {config.cronConfigured ? "Geração automática diária ativa." : "Defina CRON_SECRET para a geração automática diária."}
-          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <p className="text-xs text-[var(--text-secondary)]">
+              Disponíveis hoje: <span className="font-bold text-[var(--text)]">{usage.left} imagens</span>. Zera à meia-noite (Brasília). {config.cronConfigured ? "Geração automática diária ativa." : "Defina CRON_SECRET para a geração automática diária."}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void handleResetUsage()}
+              disabled={busy !== null || running}
+              className="h-7 text-xs font-semibold gap-1.5"
+            >
+              {busy === "reset-usage" ? <Loader2 className="h-3 w-3 animate-spin" /> : <RotateCcw className="h-3 w-3" />}
+              Zerar cota de hoje
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-col items-end gap-2.5">
@@ -227,13 +250,15 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
           </div>
 
           <Button
-            onClick={() => void runNow(manualCount)}
-            disabled={running || !hasActive || usage.left === 0 || !config.r2 || !config.gemini}
+            onClick={() => void runNow(manualCount, undefined, usage.left === 0)}
+            disabled={running || !hasActive || !config.r2 || !config.gemini}
             size="lg"
             className="shadow-sm"
           >
             {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            {running ? `Gerando ${manualCount} imagem(ns)…` : `Gerar agora (${Math.min(manualCount, usage.left)} ${Math.min(manualCount, usage.left) === 1 ? "imagem" : "imagens"})`}
+            {running
+              ? `Gerando ${manualCount} imagem(ns)…`
+              : `Gerar agora (${manualCount} ${manualCount === 1 ? "imagem" : "imagens"})${usage.left === 0 ? " (Forçar)" : ""}`}
           </Button>
         </div>
       </section>
@@ -302,11 +327,11 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button
             onClick={() => void createJob(true)}
-            disabled={busy !== null || running || !form.total || usage.left === 0 || !config.r2 || !config.gemini}
+            disabled={busy !== null || running || !form.total || !config.r2 || !config.gemini}
             className="shadow-sm"
           >
             {busy === "create-run" || (running && busy === null) ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            Criar e gerar agora ({form.total} {form.total === 1 ? "imagem" : "imagens"})
+            Criar e gerar agora ({form.total} {form.total === 1 ? "imagem" : "imagens"}){usage.left === 0 && " (Forçar)"}
           </Button>
 
           <Button
@@ -351,25 +376,25 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
                 {job.lastError && <p className="mt-2 rounded-md bg-red-100 p-2 text-xs font-medium text-red-950">Último erro: {job.lastError}</p>}
                 {(job.status === "active" || job.status === "paused") && (
                   <div className="mt-3 flex flex-wrap items-center gap-2">
-                    {job.status === "active" && job.remaining > 0 && usage.left > 0 && (
+                    {job.status === "active" && job.remaining > 0 && (
                       <>
                         <Button
                           size="sm"
-                          onClick={() => void runNow(1, job.id)}
+                          onClick={() => void runNow(1, job.id, usage.left === 0)}
                           disabled={running}
                           className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold"
                         >
-                          <Sparkles className="h-3.5 w-3.5" /> Gerar 1 agora
+                          <Sparkles className="h-3.5 w-3.5" /> Gerar 1 agora{usage.left === 0 ? " (Forçar)" : ""}
                         </Button>
                         {job.remaining > 1 && (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => void runNow(Math.min(job.remaining, usage.left), job.id)}
+                            onClick={() => void runNow(usage.left > 0 ? Math.min(job.remaining, usage.left) : 1, job.id, usage.left === 0)}
                             disabled={running}
                             className="font-semibold"
                           >
-                            Gerar {Math.min(job.remaining, usage.left)} agora
+                            Gerar {usage.left > 0 ? Math.min(job.remaining, usage.left) : 1} agora{usage.left === 0 ? " (Forçar)" : ""}
                           </Button>
                         )}
                       </>

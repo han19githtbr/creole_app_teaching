@@ -2,7 +2,7 @@
 // os elementos saem da lista já usada (e revisada) pelo app; a IA só desenha e revisa o desenho.
 import imageSceneVariants from "@/lib/imageSceneVariants.json";
 import { KREYOL_TO_PT } from "@/lib/imageBank";
-import { THEMES } from "@/lib/imageGen/config";
+import { THEMES, type ImageEngine } from "@/lib/imageGen/config";
 
 type SceneData = Record<string, { options: string[]; labels: Record<string, string> }>;
 const sceneData = imageSceneVariants as SceneData;
@@ -119,6 +119,7 @@ export function svgScenePrompt(plan: ScenePlan, reference: string | null, forSto
     "Você é ilustrador vetorial. Crie UMA cena em SVG no MESMO formato e estilo da referência (estilo Studio Ghibli: céu em gradiente, colinas em camadas, sombras suaves, textura de papel).",
     "REGRAS OBRIGATÓRIAS:",
     '- viewBox="0 0 1200 800" width="1200" height="800".',
+    '- Fundo: inclua sempre como primeiro elemento visual um <rect width="1200" height="800" fill="..."/> com a cor do céu ou paisagem (nunca deixe o fundo transparente ou sem cor).',
     animationRule,
     `- IDs únicos com prefixo "${prefix}-". No máximo ~12 KB de código.`,
     `- Tema: ${plan.themeLabel}. Clima: ${plan.setting}.`,
@@ -173,6 +174,7 @@ export function cquoiSvgPrompt(themeLabel: string, proposal: CquoiProposal, refe
     "Você é ilustrador vetorial. Crie UMA cena em SVG no MESMO formato e estilo da referência (cena simples e colorida com um único objeto em destaque).",
     "REGRAS OBRIGATÓRIAS:",
     '- viewBox="0 0 490 350" width="490" height="350".',
+    '- Fundo: inclua sempre como primeiro elemento visual um <rect width="490" height="350" fill="..."/> com uma cor suave de ambiente ou cenário (nunca deixe o fundo transparente ou escuro).',
     "- Apenas elementos estáticos: g, defs, linearGradient, radialGradient, path, rect, circle, ellipse, polygon. Sem script, image, text, animações ou links externos.",
     `- IDs únicos com prefixo "${prefix}-". No máximo ~7 KB.`,
     `- Tema: ${themeLabel}. Objeto principal: ${proposal.english}, grande, no centro, bem detalhado e inconfundível. Cenário: ${proposal.context}.`,
@@ -184,15 +186,20 @@ export function cquoiSvgPrompt(themeLabel: string, proposal: CquoiProposal, refe
 // ---------------------------------------------------------------------------
 // Revisão automática (visão): confere os objetos, o estilo e devolve a posição de cada um.
 // ---------------------------------------------------------------------------
-export function reviewPrompt(objects: string[]): string {
+export function reviewPrompt(objects: string[], engine: ImageEngine = "image"): string {
+  const styleInstruction =
+    engine === "svg"
+      ? "ilustração vetorial limpa e colorida (formato SVG), estilizada e harmoniosa, inspirada nas cores e ambientação do Studio Ghibli. Como é uma arte vetorial (SVG), formas geométricas/planas e gradientes fazem parte do formato vetorial e NÃO devem ser penalizados como 'estilo incorreto' ou 'não é pintura à mão'."
+      : "ilustração pintada à mão inspirada no Studio Ghibli, composição limpa e colorida.";
+
   return [
     "Você é revisor de qualidade de ilustrações de um app de ensino de idiomas.",
-    "Estilo desejado: ilustração pintada à mão inspirada no Studio Ghibli, composição limpa e colorida.",
+    `Estilo desejado: ${styleInstruction}`,
     `Objetos obrigatórios: ${JSON.stringify(objects)}.`,
     "Analise a imagem e responda SOMENTE com JSON neste formato:",
     '{"score": 0-10, "has_text_or_watermark": false, "objects": [{"name": "...", "visible": true, "box_2d": [ymin, xmin, ymax, xmax]}], "issues": ["..."]}',
     "box_2d usa coordenadas normalizadas de 0 a 1000. Se o objeto não aparece de forma clara, use visible=false e box_2d=null.",
-    "A nota considera: objetos obrigatórios reconhecíveis (peso maior), formas naturais sem deformações, nitidez, ausência de letras/marca d'água e estilo.",
+    "A nota considera: objetos obrigatórios reconhecíveis (peso maior), formas naturais sem deformações graves, nitidez, ausência de letras/marca d'água e harmonia visual.",
     "Em issues, liste em português (curto) cada problema encontrado; lista vazia se estiver tudo certo.",
   ].join("\n");
 }

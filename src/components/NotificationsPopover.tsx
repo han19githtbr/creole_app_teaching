@@ -35,6 +35,11 @@ export function NotificationsPopover() {
           if (!cancelled) setPushState("unconfigured");
           return;
         }
+        const data = (await keyResponse.json().catch(() => ({}))) as { publicKey?: string | null };
+        if (!data.publicKey) {
+          if (!cancelled) setPushState("unconfigured");
+          return;
+        }
         const registration = await navigator.serviceWorker.ready;
         const subscription = await registration.pushManager.getSubscription();
         if (!cancelled) setPushState(subscription ? "enabled" : "disabled");
@@ -104,8 +109,9 @@ export function NotificationsPopover() {
       }
 
       const keyResponse = await fetch("/api/push/vapid-public-key", { cache: "no-store" });
-      if (!keyResponse.ok) throw new Error("Notificações push ainda não estão configuradas no servidor.");
-      const { publicKey } = (await keyResponse.json()) as { publicKey: string };
+      const data = (await keyResponse.json().catch(() => ({}))) as { publicKey?: string | null };
+      if (!keyResponse.ok || !data.publicKey) throw new Error("Notificações push ainda não estão configuradas no servidor.");
+      const publicKey = data.publicKey;
       const padding = "=".repeat((4 - (publicKey.length % 4)) % 4);
       const decodedKey = atob(publicKey.replace(/-/g, "+").replace(/_/g, "/") + padding);
       const applicationServerKey = Uint8Array.from(decodedKey, (char) => char.charCodeAt(0));

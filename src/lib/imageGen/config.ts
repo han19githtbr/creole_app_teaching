@@ -21,24 +21,27 @@ export const IMAGE_GEN_MAX_PER_JOB = 200;
 
 export const SECTION_META: Record<
   ImageSection,
-  { label: string; short: string; hint: string; language: AppLanguage }
+  { label: string; short: string; hint: string; languages: AppLanguage[]; language: AppLanguage }
 > = {
   posts: {
     label: "Postagens e jogo de identificar elementos",
     short: "Postagens",
     hint: "Cena com 4 elementos em Kreyòl. Aparece no seletor de imagens das postagens e no jogo de identificar elementos.",
+    languages: ["kreyol"],
     language: "kreyol",
   },
   stories: {
     label: "Histórias animadas",
     short: "Histórias",
     hint: "Cena com 4 elementos bem separados (cada um recebe um rótulo animado na história). Aparece no seletor das histórias.",
+    languages: ["kreyol", "francais"],
     language: "kreyol",
   },
   cquoi: {
     label: "Jogo C'est quoi ? (francês)",
     short: "C'est quoi ?",
     hint: "Um objeto novo em contexto, com a seta vermelha apontando para ele. Entra direto no jogo C'est quoi ? depois de aprovado.",
+    languages: ["francais"],
     language: "francais",
   },
 };

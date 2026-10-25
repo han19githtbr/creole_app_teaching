@@ -1,8 +1,9 @@
 // Planejamento de cada imagem + prompts. O vocabulário em Kreyòl NUNCA é inventado pela IA:
 // os elementos saem da lista já usada (e revisada) pelo app; a IA só desenha e revisa o desenho.
 import imageSceneVariants from "@/lib/imageSceneVariants.json";
-import { KREYOL_TO_PT } from "@/lib/imageBank";
-import { THEMES } from "@/lib/imageGen/config";
+import { KREYOL_TO_PT, getElementLabel } from "@/lib/imageBank";
+import { THEMES, type ImageEngine } from "@/lib/imageGen/config";
+import type { AppLanguage } from "@/lib/languageShared";
 
 type SceneData = Record<string, { options: string[]; labels: Record<string, string> }>;
 const sceneData = imageSceneVariants as SceneData;
@@ -11,6 +12,7 @@ export interface Vocab {
   en: string;
   kreyol: string;
   pt: string;
+  fr?: string;
 }
 
 export const SLOTS = [
@@ -47,13 +49,22 @@ export function shuffle<T>(list: T[]): T[] {
   return copy;
 }
 
-/** Palavras do tema (Kreyòl + português + nome em inglês para o prompt de imagem). */
+/** Palavras do tema (Kreyòl + português + francês + nome em inglês para o prompt de imagem). */
 export function vocabularyFor(themeLabel: string): Vocab[] {
   const theme = sceneData[themeLabel];
   if (!theme) return [];
   return Object.entries(theme.labels)
-    .map(([en, kreyol]) => ({ en: en.replace(/_/g, " "), kreyol, pt: KREYOL_TO_PT[kreyol] }))
-    .filter((word): word is Vocab => Boolean(word.pt));
+    .map(([en, kreyol]): Vocab | null => {
+      const pt = KREYOL_TO_PT[kreyol];
+      if (!pt) return null;
+      return {
+        en: en.replace(/_/g, " "),
+        kreyol,
+        pt,
+        fr: getElementLabel({ kreyol, pt }, "francais"),
+      };
+    })
+    .filter((word): word is Vocab => word !== null);
 }
 
 export interface ScenePlan {
@@ -68,20 +79,24 @@ export interface ScenePlan {
 }
 
 /** Escolhe 4 elementos do tema e monta título, legenda e desafio (10 palavras, 4 certas). */
-export function planScene(themeId: string): ScenePlan {
+export function planScene(themeId: string, language: AppLanguage = "kreyol"): ScenePlan {
   const theme = THEMES.find((item) => item.id === themeId) ?? pick(THEMES);
   const pool = vocabularyFor(theme.label);
   if (pool.length < 4) throw new Error(`O tema ${theme.label} não tem vocabulário suficiente para gerar cenas.`);
   const objects = shuffle(pool).slice(0, 4);
 
-  const answers = objects.map((object) => object.kreyol);
+  const isFr = language === "francais";
+  const wordFor = (object: Vocab) => (isFr ? object.fr || object.kreyol : object.kreyol);
+
+  const answers = objects.map(wordFor);
   const distractors = shuffle(
     THEMES.filter((other) => other.id !== theme.id)
-      .flatMap((other) => vocabularyFor(other.label).map((word) => word.kreyol))
+      .flatMap((other) => vocabularyFor(other.label).map(wordFor))
       .filter((word, index, all) => all.indexOf(word) === index && !answers.includes(word))
   ).slice(0, 6);
 
   const title = `${theme.label}: ${objects.map((object) => object.pt.split("/")[0]).join(", ")}`;
+  const captionLabels = objects.map((object) => `${object.pt} (${wordFor(object)})`).join(", ");
   return {
     themeId: theme.id,
     themeLabel: theme.label,
@@ -89,7 +104,7 @@ export function planScene(themeId: string): ScenePlan {
     objects,
     setting: pick(SETTINGS),
     title,
-    caption: `${title} (${theme.label}): identifique na cena ${objects.map((object) => `${object.pt} (${object.kreyol})`).join(", ")}.`,
+    caption: `${title} (${theme.label}): identifique na cena ${captionLabels}.`,
     quiz: { answers, options: shuffle([...answers, ...distractors]) },
   };
 }
@@ -119,6 +134,7 @@ export function svgScenePrompt(plan: ScenePlan, reference: string | null, forSto
     "Você é ilustrador vetorial. Crie UMA cena em SVG no MESMO formato e estilo da referência (estilo Studio Ghibli: céu em gradiente, colinas em camadas, sombras suaves, textura de papel).",
     "REGRAS OBRIGATÓRIAS:",
     '- viewBox="0 0 1200 800" width="1200" height="800".',
+    '- Fundo: inclua sempre como primeiro elemento visual um <rect width="1200" height="800" fill="..."/> com a cor do céu ou paisagem (nunca deixe o fundo transparente ou sem cor).',
     animationRule,
     `- IDs únicos com prefixo "${prefix}-". No máximo ~12 KB de código.`,
     `- Tema: ${plan.themeLabel}. Clima: ${plan.setting}.`,
@@ -173,6 +189,7 @@ export function cquoiSvgPrompt(themeLabel: string, proposal: CquoiProposal, refe
     "Você é ilustrador vetorial. Crie UMA cena em SVG no MESMO formato e estilo da referência (cena simples e colorida com um único objeto em destaque).",
     "REGRAS OBRIGATÓRIAS:",
     '- viewBox="0 0 490 350" width="490" height="350".',
+    '- Fundo: inclua sempre como primeiro elemento visual um <rect width="490" height="350" fill="..."/> com uma cor suave de ambiente ou cenário (nunca deixe o fundo transparente ou escuro).',
     "- Apenas elementos estáticos: g, defs, linearGradient, radialGradient, path, rect, circle, ellipse, polygon. Sem script, image, text, animações ou links externos.",
     `- IDs únicos com prefixo "${prefix}-". No máximo ~7 KB.`,
     `- Tema: ${themeLabel}. Objeto principal: ${proposal.english}, grande, no centro, bem detalhado e inconfundível. Cenário: ${proposal.context}.`,
@@ -184,15 +201,20 @@ export function cquoiSvgPrompt(themeLabel: string, proposal: CquoiProposal, refe
 // ---------------------------------------------------------------------------
 // Revisão automática (visão): confere os objetos, o estilo e devolve a posição de cada um.
 // ---------------------------------------------------------------------------
-export function reviewPrompt(objects: string[]): string {
+export function reviewPrompt(objects: string[], engine: ImageEngine = "image"): string {
+  const styleInstruction =
+    engine === "svg"
+      ? "ilustração vetorial limpa e colorida (formato SVG), estilizada e harmoniosa, inspirada nas cores e ambientação do Studio Ghibli. Como é uma arte vetorial (SVG), formas geométricas/planas e gradientes fazem parte do formato vetorial e NÃO devem ser penalizados como 'estilo incorreto' ou 'não é pintura à mão'."
+      : "ilustração pintada à mão inspirada no Studio Ghibli, composição limpa e colorida.";
+
   return [
     "Você é revisor de qualidade de ilustrações de um app de ensino de idiomas.",
-    "Estilo desejado: ilustração pintada à mão inspirada no Studio Ghibli, composição limpa e colorida.",
+    `Estilo desejado: ${styleInstruction}`,
     `Objetos obrigatórios: ${JSON.stringify(objects)}.`,
     "Analise a imagem e responda SOMENTE com JSON neste formato:",
     '{"score": 0-10, "has_text_or_watermark": false, "objects": [{"name": "...", "visible": true, "box_2d": [ymin, xmin, ymax, xmax]}], "issues": ["..."]}',
     "box_2d usa coordenadas normalizadas de 0 a 1000. Se o objeto não aparece de forma clara, use visible=false e box_2d=null.",
-    "A nota considera: objetos obrigatórios reconhecíveis (peso maior), formas naturais sem deformações, nitidez, ausência de letras/marca d'água e estilo.",
+    "A nota considera: objetos obrigatórios reconhecíveis (peso maior), formas naturais sem deformações graves, nitidez, ausência de letras/marca d'água e harmonia visual.",
     "Em issues, liste em português (curto) cada problema encontrado; lista vazia se estiver tudo certo.",
   ].join("\n");
 }

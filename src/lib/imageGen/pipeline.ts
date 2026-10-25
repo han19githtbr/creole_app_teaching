@@ -13,6 +13,7 @@ import {
   THEMES,
   getTheme,
   saoPauloDay,
+  type ImageEngine,
 } from "@/lib/imageGen/config";
 import {
   GeminiError,
@@ -39,28 +40,42 @@ import {
   type CquoiProposal,
 } from "@/lib/imageGen/prompts";
 import { extractSvg, fetchReferenceSvg, loadReferenceImages, sanitizeSvg } from "@/lib/imageGen/svg";
-import { IMAGE_BANK } from "@/lib/imageBank";
+import { IMAGE_BANK, getElementLabel } from "@/lib/imageBank";
 
 // ---------------------------------------------------------------------------
 // Cota diária
 // ---------------------------------------------------------------------------
-async function reserveCall(day: string): Promise<boolean> {
+async function reserveCall(day: string, force = false): Promise<boolean> {
   try {
+    const filter = force ? { day } : { day, calls: { $lt: IMAGE_GEN_DAILY_LIMIT } };
     const doc = await ImageGenUsage.findOneAndUpdate(
-      { day, calls: { $lt: IMAGE_GEN_DAILY_LIMIT } },
+      filter,
       { $inc: { calls: 1 } },
       { upsert: true, returnDocument: "after" }
     );
     return Boolean(doc);
   } catch (error) {
-    // Já existe a linha do dia e ela está no limite: o upsert tenta inserir e bate na chave única.
-    if ((error as { code?: number }).code === 11000) return false;
+    if ((error as { code?: number }).code === 11000) {
+      if (force) {
+        const doc = await ImageGenUsage.findOneAndUpdate(
+          { day },
+          { $inc: { calls: 1 } },
+          { returnDocument: "after" }
+        );
+        return Boolean(doc);
+      }
+      return false;
+    }
     throw error;
   }
 }
 
 async function refundCall(day: string): Promise<void> {
   await ImageGenUsage.updateOne({ day, calls: { $gt: 0 } }, { $inc: { calls: -1 } });
+}
+
+export async function resetUsage(day = saoPauloDay()): Promise<void> {
+  await ImageGenUsage.updateOne({ day }, { $set: { calls: 0 } }, { upsert: true });
 }
 
 export async function getUsage() {
@@ -129,10 +144,14 @@ interface Review {
   points: ({ left: number; top: number } | null)[];
 }
 
-async function reviewImage(preview: Buffer, expected: string[]): Promise<Review> {
+async function reviewImage(preview: Buffer, expected: string[], engine: ImageEngine = "image"): Promise<Review> {
   try {
-    const jpeg = await sharp(preview).resize({ width: 900, withoutEnlargement: true }).jpeg({ quality: 80 }).toBuffer();
-    const text = await generateText(reviewPrompt(expected), { buffer: jpeg, mime: "image/jpeg" }, reviewModel());
+    const jpeg = await sharp(preview)
+      .flatten({ background: "#ffffff" })
+      .resize({ width: 900, withoutEnlargement: true })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+    const text = await generateText(reviewPrompt(expected, engine), { buffer: jpeg, mime: "image/jpeg" }, reviewModel());
     const data = parseJsonLoose<ReviewJson>(text);
     const listed = Array.isArray(data.objects) ? data.objects : [];
     const issues = Array.isArray(data.issues) ? data.issues.filter((item): item is string => typeof item === "string").slice(0, 8) : [];
@@ -156,10 +175,11 @@ async function reviewImage(preview: Buffer, expected: string[]): Promise<Review>
     const score = Math.min(10, Math.max(0, Number(data.score) || 0));
     if (!allVisible) issues.push("Algum elemento obrigatório não ficou claramente visível.");
     if (data.has_text_or_watermark) issues.push("A imagem contém texto, letras ou marca d'água.");
+    const minScore = engine === "svg" ? 6 : IMAGE_GEN_MIN_SCORE;
     return {
       checked: true,
       score,
-      passed: score >= IMAGE_GEN_MIN_SCORE && !data.has_text_or_watermark,
+      passed: score >= minScore && !data.has_text_or_watermark,
       issues,
       points,
     };
@@ -240,7 +260,7 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
       cquoi = { fr, article, name, speak: fr.toLowerCase(), w: 490, h: 350, arrow: { x: 245, y: 175 }, ...(hint ? { hint } : {}) };
       fallbackPoints = [{ left: 50, top: 50 }];
     } else {
-      const plan = planScene(theme.id);
+      const plan = planScene(theme.id, job.language || "kreyol");
       const forStory = job.section === "stories";
       if (job.engine === "svg") {
         prompt = svgScenePrompt(plan, await fetchReferenceSvg(`/ghibli/${plan.themeId}.svg`), forStory);
@@ -253,12 +273,16 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
       expected = plan.objects.map((object) => object.en);
       title = plan.title;
       caption = plan.caption;
-      elements = plan.objects.map((object) => ({ kreyol: object.kreyol, pt: object.pt }));
+      elements = plan.objects.map((object) => ({
+        kreyol: object.kreyol,
+        pt: object.pt,
+        fr: object.fr || getElementLabel({ kreyol: object.kreyol, pt: object.pt }, "francais"),
+      }));
       quiz = plan.quiz;
       fallbackPoints = SLOTS.map((slot) => slot.anchor);
     }
 
-    const review = await reviewImage(drawn.preview, expected);
+    const review = await reviewImage(drawn.preview, expected, job.engine);
     const points = expected.map((_, index) => review.points[index] ?? fallbackPoints[index] ?? { left: 50, top: 50 });
     if (cquoi) cquoi.arrow = { x: Math.round((points[0].left / 100) * 490), y: Math.round((points[0].top / 100) * 350) };
 
@@ -276,7 +300,7 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
 
     await GeneratedImage.create({
       section: job.section,
-      language: isCquoi ? "francais" : "kreyol",
+      language: isCquoi ? "francais" : (job.language || "kreyol"),
       themeId: theme.id,
       theme: theme.label,
       engine: job.engine,
@@ -325,8 +349,8 @@ export function generationConfigProblem(): string | null {
   return null;
 }
 
-export async function runImageGenBatch(options: { maxItems?: number; deadlineMs?: number; jobId?: string } = {}): Promise<BatchResult> {
-  const { maxItems = IMAGE_GEN_DAILY_LIMIT, deadlineMs = 240_000, jobId } = options;
+export async function runImageGenBatch(options: { maxItems?: number; deadlineMs?: number; jobId?: string; force?: boolean } = {}): Promise<BatchResult> {
+  const { maxItems = IMAGE_GEN_DAILY_LIMIT, deadlineMs = 240_000, jobId, force = false } = options;
   await connectDB();
   const result: BatchResult = { saved: 0, rejected: 0, failed: 0, usage: await getUsage(), stopped: "max" };
   const problem = generationConfigProblem();
@@ -349,7 +373,7 @@ export async function runImageGenBatch(options: { maxItems?: number; deadlineMs?
       result.stopped = "no-jobs";
       break;
     }
-    if (!(await reserveCall(day))) {
+    if (!(await reserveCall(day, force))) {
       result.stopped = "limit";
       break;
     }
@@ -380,7 +404,28 @@ export async function runImageGenBatch(options: { maxItems?: number; deadlineMs?
       if (updated && updated.remaining <= 0) await ImageGenJob.updateOne({ _id: job._id }, { $set: { status: "done" } });
     } else {
       result.rejected++;
-      await ImageGenJob.updateOne({ _id: job._id }, { $inc: { rejectedByReview: 1 }, $set: { lastError: "", lastRunAt: new Date() } });
+      const updated = await ImageGenJob.findOneAndUpdate(
+        { _id: job._id },
+        {
+          $inc: { rejectedByReview: 1 },
+          $set: {
+            lastError: "Imagem reprovada na revisão automática (disponível na aba Rejeitadas).",
+            lastRunAt: new Date(),
+          },
+        },
+        { returnDocument: "after" }
+      );
+      if (updated && updated.rejectedByReview >= 3 && updated.produced === 0) {
+        await ImageGenJob.updateOne(
+          { _id: job._id },
+          {
+            $set: {
+              status: "paused",
+              lastError: "Pausado automaticamente após 3 reprovações. Você pode aprovar as imagens na aba 'Rejeitadas' ou retomar o pedido.",
+            },
+          }
+        );
+      }
     }
   }
 

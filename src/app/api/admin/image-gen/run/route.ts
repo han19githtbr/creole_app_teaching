@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
     ? Math.min(body.count, 5)
     : 1;
 
-  const result = await runImageGenBatch({ maxItems: count, deadlineMs: 200_000, jobId });
+  const force = Boolean(body?.force);
+  const result = await runImageGenBatch({ maxItems: count, deadlineMs: 200_000, jobId, force });
   return NextResponse.json(result);
 }
 

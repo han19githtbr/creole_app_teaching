@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getAppLanguage } from "@/lib/language";
 import { TalesShelf } from "@/components/TalesShelf";
+import { getVisibleTales } from "@/lib/taleAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,9 @@ export default async function ContosPage() {
   if (!session) redirect("/");
   // os contos ilustrados são em francês
   if ((await getAppLanguage()) !== "francais") redirect("/dashboard/stories");
+  const isAdmin = session.user.role === "admin";
+  const { tales, publishedSlugs } = await getVisibleTales(isAdmin);
+  const drafts = new Set(tales.filter((tale) => !publishedSlugs.has(tale.slug)).map((tale) => tale.slug));
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-6">
@@ -20,7 +24,13 @@ export default async function ContosPage() {
           Escolha um conto, aperte play e acompanhe a história em francês: narração, legenda palavra por palavra e tradução opcional em português.
         </p>
       </header>
-      <TalesShelf heading={false} />
+      {tales.length ? (
+        <TalesShelf tales={tales} drafts={isAdmin ? drafts : undefined} heading={false} />
+      ) : (
+        <p className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center text-sm text-[var(--text-secondary)]">
+          Ainda não há contos publicados. Volte em breve!
+        </p>
+      )}
     </main>
   );
 }

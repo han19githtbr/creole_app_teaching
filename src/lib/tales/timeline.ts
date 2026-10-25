@@ -66,3 +66,32 @@ export function planTale(tale: Tale, durations?: Map<string, number>): TalePlan 
 export function allLines(plan: TalePlan): PlannedLine[] {
   return [plan.titleLine, ...plan.scenes.flatMap((scene) => scene.lines)];
 }
+
+export interface TalePart {
+  t0: number;
+  t1: number;
+  /** Cena que abre a parte (entra sem transição suave); null na primeira parte. */
+  hardCut: number | null;
+}
+
+/**
+ * Divide o conto em partes de até `max` segundos, sempre no começo de uma cena
+ * (Stories do Instagram e do Facebook aceitam até 60 s por parte).
+ */
+export function splitForStories(plan: TalePlan, max = 58): TalePart[] {
+  const starts = plan.scenes.map((scene) => scene.start);
+  const points = [...starts, plan.total];
+  const parts: TalePart[] = [];
+  let t0 = 0;
+  let hardCut: number | null = null;
+  for (let k = 1; k < points.length; k++) {
+    if (points[k] - t0 > max && points[k - 1] > t0) {
+      const end = points[k - 1];
+      parts.push({ t0, t1: end, hardCut });
+      t0 = end;
+      hardCut = plan.scenes.findIndex((scene) => scene.start === end);
+    }
+  }
+  parts.push({ t0, t1: plan.total, hardCut });
+  return parts;
+}

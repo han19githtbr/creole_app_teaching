@@ -22,6 +22,8 @@ export interface Tale {
   level: "A2" | "B1";
   synopsisPt: string;
   coverScene: number;
+  /** Já nasce publicado (os contos novos nascem como rascunho até o administrador publicar). */
+  publishedByDefault?: boolean;
   scenes: TaleScene[];
 }
 
@@ -33,6 +35,7 @@ const dawnCam = { x0: -20, y0: 0, z0: 1.02, x1: 30, y1: 0, z1: 1.12 };
 
 const AIGLE: Tale = {
   slug: "l-aigle-qui-se-croyait-poule",
+  publishedByDefault: true,
   title: "L'aigle qui se croyait poule",
   byline: "Une parabole racontée en français",
   level: "A2",
@@ -180,6 +183,7 @@ const meadowProps = [{ k: "tree", x: 90, row: 0.05, s: 1.3 }, { k: "bush", x: 33
 
 const LIEVRE: Tale = {
   slug: "le-lievre-et-la-tortue",
+  publishedByDefault: true,
   title: "Le lièvre et la tortue",
   byline: "D'après Jean de La Fontaine",
   level: "A2",
@@ -286,6 +290,7 @@ const LIEVRE: Tale = {
 
 const CORBEAU: Tale = {
   slug: "le-corbeau-et-le-renard",
+  publishedByDefault: true,
   title: "Le corbeau et le renard",
   byline: "D'après Jean de La Fontaine",
   level: "B1",
@@ -382,6 +387,7 @@ const CORBEAU: Tale = {
 
 const CIGALE: Tale = {
   slug: "la-cigale-et-la-fourmi",
+  publishedByDefault: true,
   title: "La cigale et la fourmi",
   byline: "D'après Jean de La Fontaine",
   level: "B1",

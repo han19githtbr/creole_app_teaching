@@ -227,7 +227,7 @@ export function renderSceneArt(ctx: Ctx, scene: SceneDef, t: number, p: number) 
 
   // vinheta cinematográfica (fora da câmera, sempre na tela)
   ctx.fillStyle = rgrad(ctx, W / 2, 980, 520, 1250, [[0, "rgba(0,0,0,0)"], [1, "rgba(5,8,20,0.42)"]]);
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(-W, -H * 0.5, W * 3, H * 2);
 }
 
 function shade(hex: string, k: number): string {

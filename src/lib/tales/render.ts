@@ -9,14 +9,52 @@ import { CROSSFADE, type PlannedLine, type PlannedScene, type TalePlan } from ".
 
 export const TALE_INSTAGRAM_HANDLE = "frances_com_tres_nativos";
 
+export type TaleFormat = "story" | "feed" | "square";
+
+export interface TaleFormatSpec {
+  id: TaleFormat;
+  label: string;
+  hint: string;
+  /** Pixels do vídeo exportado. */
+  w: number;
+  h: number;
+  /** Zoom da cena (1 = tamanho natural; <1 mostra mais cenário dos lados). */
+  zoom: number;
+  /** Topo da janela da cena, em coordenadas do palco (1080×1920). */
+  y0: number;
+  /** Margem de baixo das legendas (o Instagram cobre a base dos Reels e Stories). */
+  subMargin: number;
+}
+
+export const TALE_FORMATS: Record<TaleFormat, TaleFormatSpec> = {
+  story: { id: "story", label: "Stories e Reels (9:16)", hint: "1080 × 1920 · Stories e Reels do Instagram e do Facebook", w: 1080, h: 1920, zoom: 1, y0: 0, subMargin: 360 },
+  feed: { id: "feed", label: "Feed vertical (4:5)", hint: "1080 × 1350 · ocupa mais tela no feed do Instagram e do Facebook", w: 1080, h: 1350, zoom: 1, y0: 300, subMargin: 100 },
+  square: { id: "square", label: "Feed quadrado (1:1)", hint: "1080 × 1080 · funciona em qualquer rede", w: 1080, h: 1080, zoom: 0.82, y0: 400, subMargin: 90 },
+};
+
 export interface TaleRenderOptions {
   /** Mostra a tradução em português, pequena, abaixo da legenda. */
   showPt: boolean;
+  format?: TaleFormat;
+  /** Parte de um conto dividido (Stories de até 60 s). */
+  part?: { index: number; total: number };
+  /** Cenas que entram sem transição suave (início de uma nova parte). */
+  hardCuts?: number[];
+}
+
+interface Frame {
+  /** Altura da tela em unidades de 1080 de largura. */
+  Ho: number;
+  subBottom: number;
+  /** Centro vertical dos cartões de abertura e encerramento. */
+  cy: number;
+  /** Escala dos cartões (um pouco menor no quadrado). */
+  cardScale: number;
+  topSafe: number;
 }
 
 const SERIF = 'Georgia, "Times New Roman", serif';
 const SANS = '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
-const SUB_BOTTOM = 1560; // legendas acima da faixa que o Instagram cobre
 
 function wrap(ctx: Ctx, text: string, maxW: number): string[] {
   const lines: string[] = [];
@@ -33,35 +71,52 @@ function wrap(ctx: Ctx, text: string, maxW: number): string[] {
 }
 
 export function renderTaleFrame(ctx: Ctx, W: number, H: number, t: number, plan: TalePlan, opts: TaleRenderOptions) {
+  const spec = TALE_FORMATS[opts.format ?? "story"];
   const s = W / STAGE_W;
+  const Ho = H / s;
+  const frame: Frame = {
+    Ho,
+    subBottom: Ho - spec.subMargin,
+    cy: Ho / 2,
+    cardScale: spec.id === "square" ? 0.9 : 1,
+    topSafe: spec.id === "story" ? 250 : 70,
+  };
   ctx.save();
-  ctx.setTransform(s, 0, 0, s, 0, 0);
   ctx.textBaseline = "alphabetic";
   ctx.textAlign = "left";
 
   const scenes = plan.scenes;
+  // a cena é desenhada numa janela do palco; os textos usam a tela inteira (1080 de largura)
   const art = (scene: PlannedScene, time: number) => {
+    const k = s * spec.zoom;
+    const x0 = (STAGE_W - STAGE_W / spec.zoom) / 2;
     ctx.save();
+    ctx.setTransform(k, 0, 0, k, -x0 * k, -spec.y0 * k);
     ctx.beginPath();
-    ctx.rect(0, 0, STAGE_W, STAGE_H);
+    ctx.rect(x0, spec.y0, STAGE_W / spec.zoom, Ho / spec.zoom);
     ctx.clip();
     const local = time - scene.start;
     renderSceneArt(ctx, plan.tale.scenes[scene.index].art, local + scene.index * 3.1, clamp(local / scene.dur));
     ctx.restore();
   };
+  const overlay = () => ctx.setTransform(s, 0, 0, s, 0, 0);
+  void STAGE_H;
 
   if (t < plan.introDur) {
     art(scenes[0], scenes[0].start + (t / plan.introDur) * 1.2);
-    drawIntro(ctx, plan, t);
+    overlay();
+    drawIntro(ctx, plan, t, frame);
   } else if (t >= plan.endStart) {
     const last = scenes[scenes.length - 1];
     art(last, last.end + (t - plan.endStart) * 0.3);
-    drawEnd(ctx, plan, t - plan.endStart);
+    overlay();
+    drawEnd(ctx, plan, t - plan.endStart, frame);
   } else {
     let i = scenes.findIndex((sc) => t >= sc.start && t < sc.end);
     if (i < 0) i = scenes.length - 1;
     const scene = scenes[i];
-    if (i > 0 && t - scene.start < CROSSFADE) {
+    const hardCut = opts.hardCuts?.includes(i) ?? false;
+    if (i > 0 && !hardCut && t - scene.start < CROSSFADE) {
       art(scenes[i - 1], t);
       const a = easeOutCubic((t - scene.start) / CROSSFADE);
       ctx.globalAlpha = a;
@@ -69,15 +124,34 @@ export function renderTaleFrame(ctx: Ctx, W: number, H: number, t: number, plan:
       ctx.globalAlpha = 1;
     } else if (i === 0 && t - scene.start < 0.6) {
       art(scene, t);
+      overlay();
       ctx.fillStyle = `rgba(0,0,0,${0.55 * (1 - (t - scene.start) / 0.6)})`;
-      ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+      ctx.fillRect(0, 0, STAGE_W, Ho);
     } else {
       art(scene, t);
     }
-    drawSubtitle(ctx, plan, scene, t, opts);
+    overlay();
+    drawSubtitle(ctx, plan, scene, t, opts, frame);
   }
+  overlay();
+  if (opts.part && t < plan.endStart + plan.endDur) drawPartTag(ctx, opts.part, frame);
   ctx.restore();
-  void H;
+}
+
+function drawPartTag(ctx: Ctx, part: { index: number; total: number }, frame: Frame) {
+  const label = `Parte ${part.index}/${part.total}`;
+  ctx.save();
+  ctx.font = `800 36px ${SANS}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const w = ctx.measureText(label).width + 56;
+  ctx.beginPath();
+  ctx.roundRect(STAGE_W / 2 - w / 2, frame.topSafe, w, 60, 30);
+  ctx.fillStyle = "rgba(8,12,28,0.6)";
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(label, STAGE_W / 2, frame.topSafe + 31);
+  ctx.restore();
 }
 
 function activeLine(scene: PlannedScene, t: number): PlannedLine | null {
@@ -89,7 +163,7 @@ function activeLine(scene: PlannedScene, t: number): PlannedLine | null {
   return current;
 }
 
-function drawSubtitle(ctx: Ctx, plan: TalePlan, scene: PlannedScene, t: number, opts: TaleRenderOptions) {
+function drawSubtitle(ctx: Ctx, plan: TalePlan, scene: PlannedScene, t: number, opts: TaleRenderOptions, frame: Frame) {
   const line = activeLine(scene, t);
   if (!line) return;
   const def = plan.tale.scenes[scene.index];
@@ -97,7 +171,7 @@ function drawSubtitle(ctx: Ctx, plan: TalePlan, scene: PlannedScene, t: number, 
   const progress = clamp((t - line.start) / Math.max(0.5, line.dur));
 
   if (def.moral) {
-    drawMoral(ctx, line.text, appear, def.pt, opts.showPt);
+    drawMoral(ctx, line.text, appear, def.pt, opts.showPt, frame);
     return;
   }
 
@@ -107,7 +181,7 @@ function drawSubtitle(ctx: Ctx, plan: TalePlan, scene: PlannedScene, t: number, 
   const rowH = 80;
   const ptRows = opts.showPt ? (ctx.font = `italic 600 36px ${SANS}`, wrap(ctx, ptLineFor(def.pt, scene, line), maxW)) : [];
   const boxH = rows.length * rowH + (ptRows.length ? ptRows.length * 48 + 14 : 0) + 52;
-  const boxY = SUB_BOTTOM - boxH;
+  const boxY = frame.subBottom - boxH;
 
   ctx.save();
   ctx.globalAlpha = appear;
@@ -156,7 +230,7 @@ function ptLineFor(pt: string, scene: PlannedScene, line: PlannedLine): string {
   return sentences.length === scene.lines.length ? sentences[idx] ?? pt : pt;
 }
 
-function drawMoral(ctx: Ctx, text: string, appear: number, pt: string, showPt: boolean) {
+function drawMoral(ctx: Ctx, text: string, appear: number, pt: string, showPt: boolean, frame: Frame) {
   const stripped = text.replace(/^Morale\s*:\s*/i, "");
   const body = stripped.charAt(0).toUpperCase() + stripped.slice(1);
   ctx.save();
@@ -166,7 +240,7 @@ function drawMoral(ctx: Ctx, text: string, appear: number, pt: string, showPt: b
   const rows = wrap(ctx, body, 820);
   const rowH = 82;
   const boxH = rows.length * rowH + 190 + (showPt ? 70 : 0);
-  const y = SUB_BOTTOM - boxH;
+  const y = frame.subBottom - boxH;
   ctx.beginPath();
   ctx.roundRect(60, y, STAGE_W - 120, boxH, 52);
   ctx.fillStyle = "rgba(20,14,40,0.72)";
@@ -190,12 +264,16 @@ function drawMoral(ctx: Ctx, text: string, appear: number, pt: string, showPt: b
   ctx.restore();
 }
 
-function drawIntro(ctx: Ctx, plan: TalePlan, t: number) {
+function drawIntro(ctx: Ctx, plan: TalePlan, t: number, frame: Frame) {
   const fadeIn = clamp(t / 0.6);
   const fadeOut = 1 - clamp((t - (plan.introDur - 0.7)) / 0.7);
   ctx.fillStyle = `rgba(8,12,30,${0.5 * fadeOut + 0.12})`;
-  ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+  ctx.fillRect(0, 0, STAGE_W, frame.Ho);
   ctx.save();
+  // o desenho dos cartões foi feito para o centro em y = 960; reposiciona para o centro do formato
+  ctx.translate(STAGE_W / 2, frame.cy);
+  ctx.scale(frame.cardScale, frame.cardScale);
+  ctx.translate(-STAGE_W / 2, -960);
   ctx.globalAlpha = fadeIn * fadeOut;
   ctx.translate(0, (1 - easeOutCubic(t / 0.9)) * 40);
   ctx.textAlign = "center";
@@ -227,16 +305,19 @@ function drawIntro(ctx: Ctx, plan: TalePlan, t: number) {
   ctx.restore();
 }
 
-function drawEnd(ctx: Ctx, plan: TalePlan, lt: number) {
+function drawEnd(ctx: Ctx, plan: TalePlan, lt: number, frame: Frame) {
   const dark = clamp(lt / 0.9) * 0.78;
   ctx.fillStyle = `rgba(8,10,28,${dark})`;
-  ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+  ctx.fillRect(0, 0, STAGE_W, frame.Ho);
   const pop = easeOutCubic((lt - 0.3) / 0.7);
   const fade = clamp((lt - 0.2) / 0.5);
   const cx = STAGE_W / 2;
   const cy = 940;
 
   ctx.save();
+  ctx.translate(STAGE_W / 2, frame.cy);
+  ctx.scale(frame.cardScale, frame.cardScale);
+  ctx.translate(-STAGE_W / 2, -960);
   ctx.globalAlpha = fade;
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
@@ -248,7 +329,7 @@ function drawEnd(ctx: Ctx, plan: TalePlan, lt: number) {
   ctx.shadowColor = "transparent";
   ctx.font = `700 46px ${SANS}`;
   ctx.fillStyle = "rgba(255,255,255,0.88)";
-  ctx.fillText("Suis-nous sur Instagram", cx, cy - 150);
+  ctx.fillText("Suis-nous sur Instagram", cx, cy - 185);
 
   // logo do Instagram com anéis pulsando
   ctx.save();

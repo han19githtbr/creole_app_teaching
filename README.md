@@ -393,7 +393,7 @@ Com o painel em **Francês**, a aba de postagens agora entrega **todo o conteúd
 | Desafio da postagem (aluno) | Em francês abre o jogo de palavras da própria postagem (antes caía no C'est quoi ?), com os textos em francês |
 | Postagens antigas | O botão **Traduzir palavras para o francês** converte as alternativas e as respostas de uma só vez |
 
-As imagens do banco e as geradas por IA guardam as palavras em Kreyòl; o novo dicionário **`src/lib/frenchVocabulary.ts`** (145 palavras e 15 temas) traduz tudo para o francês na hora, sem refazer as imagens. Em verificação com as 300 imagens do banco, todas geram um desafio válido em francês (sem alternativas repetidas e com as respostas dentro das alternativas). O Kreyòl continua exatamente como era.
+As imagens do banco e as geradas por IA guardam as palavras em Kreyòl; o novo dicionário **`src/lib/frenchVocabulary.ts`** (128 palavras e 15 temas) traduz tudo para o francês na hora, sem refazer as imagens. Em verificação com as 300 imagens do banco, todas geram um desafio válido em francês (sem alternativas repetidas e com as respostas dentro das alternativas). O Kreyòl continua exatamente como era.
 
 Arquivos: `src/lib/frenchVocabulary.ts`, `src/lib/imageBank.ts` (`getImageCaption`, `getThemeVocab`, `getElementLabel`), `src/lib/imageQuiz.ts` (`translateQuizToFrench`, `getQuizForImage`), `src/app/admin/posts/PostForm.tsx`, `src/components/ImageBankPicker.tsx`, `src/components/PostCard.tsx` e `src/components/ImageQuizGame.tsx`.
 
@@ -485,12 +485,12 @@ Na seção **Histórias** do painel em francês, há uma nova parte: **Contos il
 
 | Conto | Nível | Duração |
 | --- | --- | --- |
-| L'aigle qui se croyait poule (parábola) | A2 | ≈ 1 min 50 s |
-| Le lièvre et la tortue (La Fontaine) | A2 | ≈ 1 min 25 s |
-| Le corbeau et le renard (La Fontaine) | B1 | ≈ 1 min 10 s |
+| L'aigle qui se croyait poule (parábola) | A2 | ≈ 2 min |
+| Le lièvre et la tortue (La Fontaine) | A2 | ≈ 1 min 30 s |
+| Le corbeau et le renard (La Fontaine) | B1 | ≈ 1 min 15 s |
 | La cigale et la fourmi (La Fontaine) | B1 | ≈ 1 min 25 s |
 
-Cada conto tem uma **abertura** com o título, de 8 a 11 **cenas** com frases curtas em francês, a **moral** em destaque e o **encerramento** com a logo do Instagram.
+Cada conto tem uma **abertura** com o título, de 8 a 11 **cenas** (a duração varia um pouco com a voz) com frases curtas em francês, a **moral** em destaque e o **encerramento** com a logo do Instagram.
 
 ### O que o aluno vê
 

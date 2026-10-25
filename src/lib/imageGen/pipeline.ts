@@ -40,7 +40,7 @@ import {
   type CquoiProposal,
 } from "@/lib/imageGen/prompts";
 import { extractSvg, fetchReferenceSvg, loadReferenceImages, sanitizeSvg } from "@/lib/imageGen/svg";
-import { IMAGE_BANK } from "@/lib/imageBank";
+import { IMAGE_BANK, getElementLabel } from "@/lib/imageBank";
 
 // ---------------------------------------------------------------------------
 // Cota diária
@@ -260,7 +260,7 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
       cquoi = { fr, article, name, speak: fr.toLowerCase(), w: 490, h: 350, arrow: { x: 245, y: 175 }, ...(hint ? { hint } : {}) };
       fallbackPoints = [{ left: 50, top: 50 }];
     } else {
-      const plan = planScene(theme.id);
+      const plan = planScene(theme.id, job.language || "kreyol");
       const forStory = job.section === "stories";
       if (job.engine === "svg") {
         prompt = svgScenePrompt(plan, await fetchReferenceSvg(`/ghibli/${plan.themeId}.svg`), forStory);
@@ -273,7 +273,11 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
       expected = plan.objects.map((object) => object.en);
       title = plan.title;
       caption = plan.caption;
-      elements = plan.objects.map((object) => ({ kreyol: object.kreyol, pt: object.pt }));
+      elements = plan.objects.map((object) => ({
+        kreyol: object.kreyol,
+        pt: object.pt,
+        fr: object.fr || getElementLabel({ kreyol: object.kreyol, pt: object.pt }, "francais"),
+      }));
       quiz = plan.quiz;
       fallbackPoints = SLOTS.map((slot) => slot.anchor);
     }
@@ -296,7 +300,7 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
 
     await GeneratedImage.create({
       section: job.section,
-      language: isCquoi ? "francais" : "kreyol",
+      language: isCquoi ? "francais" : (job.language || "kreyol"),
       themeId: theme.id,
       theme: theme.label,
       engine: job.engine,

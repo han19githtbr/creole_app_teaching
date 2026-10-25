@@ -12,6 +12,9 @@ import {
   isEngine,
   isSection,
 } from "@/lib/imageGen/config";
+import { isAppLanguage, languageFilter } from "@/lib/languageShared";
+import { getAppLanguage } from "@/lib/language";
+import { getElementLabel } from "@/lib/imageBank";
 import { imageModel, isGeminiConfigured, reviewModel, textModel } from "@/lib/imageGen/gemini";
 import { getUsage } from "@/lib/imageGen/pipeline";
 
@@ -25,17 +28,32 @@ export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const status = params.get("status") ?? "pending";
   const section = params.get("section");
+  const langParam = params.get("language");
+  const lang = isAppLanguage(langParam) ? langParam : undefined;
+
   const filter: Record<string, unknown> = {};
   if (["pending", "approved", "rejected"].includes(status)) filter.status = status;
   if (isSection(section)) filter.section = section;
+  if (lang) Object.assign(filter, languageFilter(lang));
+
+  const jobFilter: Record<string, unknown> = { status: { $in: ["active", "paused"] } };
+  const recentJobFilter: Record<string, unknown> = { status: { $in: ["done", "cancelled"] } };
+  if (lang) {
+    Object.assign(jobFilter, languageFilter(lang));
+    Object.assign(recentJobFilter, languageFilter(lang));
+  }
+  const countMatch: Record<string, unknown> = lang ? languageFilter(lang) : {};
 
   const [usage, jobs, images, grouped] = await Promise.all([
     getUsage(),
-    ImageGenJob.find({ status: { $in: ["active", "paused"] } }).sort({ createdAt: 1 }).lean(),
+    ImageGenJob.find(jobFilter).sort({ createdAt: 1 }).lean(),
     GeneratedImage.find(filter).sort({ createdAt: -1 }).limit(60).lean(),
-    GeneratedImage.aggregate([{ $group: { _id: { section: "$section", status: "$status" }, count: { $sum: 1 } } }]),
+    GeneratedImage.aggregate([
+      ...(Object.keys(countMatch).length ? [{ $match: countMatch }] : []),
+      { $group: { _id: { section: "$section", status: "$status" }, count: { $sum: 1 } } },
+    ]),
   ]);
-  const recentJobs = await ImageGenJob.find({ status: { $in: ["done", "cancelled"] } }).sort({ updatedAt: -1 }).limit(5).lean();
+  const recentJobs = await ImageGenJob.find(recentJobFilter).sort({ updatedAt: -1 }).limit(5).lean();
 
   return NextResponse.json({
     config: {
@@ -72,7 +90,11 @@ export async function GET(request: NextRequest) {
       title: image.title,
       src: image.src,
       status: image.status,
-      elements: image.elements ?? [],
+      elements: (image.elements ?? []).map((e: { kreyol: string; pt: string; fr?: string }) => ({
+        kreyol: e.kreyol,
+        pt: e.pt,
+        fr: e.fr || getElementLabel(e, "francais"),
+      })),
       cquoi: image.cquoi ? { fr: image.cquoi.fr } : null,
       qa: image.qa,
       createdAt: image.createdAt.toISOString(),
@@ -100,9 +122,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: `A quantidade deve ficar entre 1 e ${IMAGE_GEN_MAX_PER_JOB}.` }, { status: 400 });
   }
 
+  const jobLanguage = isAppLanguage(body?.language) ? body.language : (await getAppLanguage());
+
   await connectDB();
   const job = await ImageGenJob.create({
     section: body.section,
+    language: jobLanguage,
     themeId,
     engine,
     total,

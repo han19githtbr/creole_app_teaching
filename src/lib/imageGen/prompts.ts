@@ -1,8 +1,9 @@
 // Planejamento de cada imagem + prompts. O vocabulário em Kreyòl NUNCA é inventado pela IA:
 // os elementos saem da lista já usada (e revisada) pelo app; a IA só desenha e revisa o desenho.
 import imageSceneVariants from "@/lib/imageSceneVariants.json";
-import { KREYOL_TO_PT } from "@/lib/imageBank";
+import { KREYOL_TO_PT, getElementLabel } from "@/lib/imageBank";
 import { THEMES, type ImageEngine } from "@/lib/imageGen/config";
+import type { AppLanguage } from "@/lib/languageShared";
 
 type SceneData = Record<string, { options: string[]; labels: Record<string, string> }>;
 const sceneData = imageSceneVariants as SceneData;
@@ -11,6 +12,7 @@ export interface Vocab {
   en: string;
   kreyol: string;
   pt: string;
+  fr?: string;
 }
 
 export const SLOTS = [
@@ -47,13 +49,22 @@ export function shuffle<T>(list: T[]): T[] {
   return copy;
 }
 
-/** Palavras do tema (Kreyòl + português + nome em inglês para o prompt de imagem). */
+/** Palavras do tema (Kreyòl + português + francês + nome em inglês para o prompt de imagem). */
 export function vocabularyFor(themeLabel: string): Vocab[] {
   const theme = sceneData[themeLabel];
   if (!theme) return [];
   return Object.entries(theme.labels)
-    .map(([en, kreyol]) => ({ en: en.replace(/_/g, " "), kreyol, pt: KREYOL_TO_PT[kreyol] }))
-    .filter((word): word is Vocab => Boolean(word.pt));
+    .map(([en, kreyol]): Vocab | null => {
+      const pt = KREYOL_TO_PT[kreyol];
+      if (!pt) return null;
+      return {
+        en: en.replace(/_/g, " "),
+        kreyol,
+        pt,
+        fr: getElementLabel({ kreyol, pt }, "francais"),
+      };
+    })
+    .filter((word): word is Vocab => word !== null);
 }
 
 export interface ScenePlan {
@@ -68,20 +79,24 @@ export interface ScenePlan {
 }
 
 /** Escolhe 4 elementos do tema e monta título, legenda e desafio (10 palavras, 4 certas). */
-export function planScene(themeId: string): ScenePlan {
+export function planScene(themeId: string, language: AppLanguage = "kreyol"): ScenePlan {
   const theme = THEMES.find((item) => item.id === themeId) ?? pick(THEMES);
   const pool = vocabularyFor(theme.label);
   if (pool.length < 4) throw new Error(`O tema ${theme.label} não tem vocabulário suficiente para gerar cenas.`);
   const objects = shuffle(pool).slice(0, 4);
 
-  const answers = objects.map((object) => object.kreyol);
+  const isFr = language === "francais";
+  const wordFor = (object: Vocab) => (isFr ? object.fr || object.kreyol : object.kreyol);
+
+  const answers = objects.map(wordFor);
   const distractors = shuffle(
     THEMES.filter((other) => other.id !== theme.id)
-      .flatMap((other) => vocabularyFor(other.label).map((word) => word.kreyol))
+      .flatMap((other) => vocabularyFor(other.label).map(wordFor))
       .filter((word, index, all) => all.indexOf(word) === index && !answers.includes(word))
   ).slice(0, 6);
 
   const title = `${theme.label}: ${objects.map((object) => object.pt.split("/")[0]).join(", ")}`;
+  const captionLabels = objects.map((object) => `${object.pt} (${wordFor(object)})`).join(", ");
   return {
     themeId: theme.id,
     themeLabel: theme.label,
@@ -89,7 +104,7 @@ export function planScene(themeId: string): ScenePlan {
     objects,
     setting: pick(SETTINGS),
     title,
-    caption: `${title} (${theme.label}): identifique na cena ${objects.map((object) => `${object.pt} (${object.kreyol})`).join(", ")}.`,
+    caption: `${title} (${theme.label}): identifique na cena ${captionLabels}.`,
     quiz: { answers, options: shuffle([...answers, ...distractors]) },
   };
 }

@@ -1,5 +1,6 @@
 import mongoose, { Schema, models, model, type Document } from "mongoose";
 import type { GeneratedStatus, ImageEngine, ImageSection } from "@/lib/imageGen/config";
+import type { AppLanguage } from "@/lib/languageShared";
 
 // ---------------------------------------------------------------------------
 // Imagem gerada por IA (guardada no Cloudflare R2; aqui ficam só os metadados)
@@ -21,7 +22,7 @@ export interface IGeneratedImage extends Document {
   width: number;
   height: number;
   /** Elementos da cena (postagens, histórias e jogo de identificar). */
-  elements: { kreyol: string; pt: string }[];
+  elements: { kreyol: string; pt: string; fr?: string }[];
   /** Posição (em %) de cada elemento, na mesma ordem de `elements`. */
   anchors: { left: number; top: number }[];
   quiz?: { options: string[]; answers: string[] };
@@ -51,7 +52,7 @@ const GeneratedImageSchema = new Schema<IGeneratedImage>(
     mime: { type: String, required: true },
     width: { type: Number, required: true },
     height: { type: Number, required: true },
-    elements: { type: [{ _id: false, kreyol: String, pt: String }], default: [] },
+    elements: { type: [{ _id: false, kreyol: String, pt: String, fr: String }], default: [] },
     anchors: { type: [{ _id: false, left: Number, top: Number }], default: [] },
     quiz: {
       options: { type: [String], default: undefined },
@@ -86,6 +87,7 @@ const GeneratedImageSchema = new Schema<IGeneratedImage>(
 // ---------------------------------------------------------------------------
 export interface IImageGenJob extends Document {
   section: ImageSection;
+  language?: AppLanguage;
   /** "all" = o robô alterna entre os temas. */
   themeId: string;
   engine: ImageEngine;
@@ -105,6 +107,7 @@ export interface IImageGenJob extends Document {
 const ImageGenJobSchema = new Schema<IImageGenJob>(
   {
     section: { type: String, enum: ["posts", "stories", "cquoi"], required: true },
+    language: { type: String, enum: ["kreyol", "francais"], default: "kreyol" },
     themeId: { type: String, default: "all" },
     engine: { type: String, enum: ["image", "svg"], default: "image" },
     total: { type: Number, required: true, min: 1 },

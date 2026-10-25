@@ -35,7 +35,7 @@ interface Img {
   title: string;
   src: string;
   status: GeneratedStatus;
-  elements: { kreyol: string; pt: string }[];
+  elements: { kreyol: string; pt: string; fr?: string }[];
   cquoi: { fr: string } | null;
   qa: { checked: boolean; score: number; passed: boolean; issues: string[] };
 }
@@ -61,7 +61,9 @@ function scoreStyle(img: Img) {
 }
 
 export function ImageGenPanel({ language }: { language: AppLanguage }) {
-  const sections = (Object.keys(SECTION_META) as ImageSection[]).filter((s) => SECTION_META[s].language === language);
+  const sections = (Object.keys(SECTION_META) as ImageSection[]).filter((s) =>
+    (SECTION_META[s].languages ?? [SECTION_META[s].language]).includes(language)
+  );
   const [state, setState] = useState<State | null>(null);
   const [status, setStatus] = useState<GeneratedStatus>("pending");
   const [section, setSection] = useState<ImageSection>(sections[0]);
@@ -72,11 +74,19 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
   const [running, setRunning] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!sections.includes(section)) {
+      setSection(sections[0]);
+    }
+    if (!sections.includes(form.section)) {
+      setForm((prev) => ({ ...prev, section: sections[0] }));
+    }
+  }, [sections, section, form.section]);
 
   const load = useCallback(async () => {
-    const response = await fetch(`/api/admin/image-gen?status=${status}&section=${section}`);
+    const response = await fetch(`/api/admin/image-gen?status=${status}&section=${section}&language=${language}`);
     if (response.ok) setState(await response.json());
-  }, [status, section]);
+  }, [status, section, language]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- carrega o estado do painel ao abrir/trocar filtro
@@ -165,7 +175,7 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
     const count = Math.max(1, form.total);
     const data = await call(
       "/api/admin/image-gen",
-      post("", form),
+      post("", { ...form, language }),
       runImmediately ? undefined : `Pedido criado: ${count} imagem(ns). O robô gera até ${state?.config.dailyLimit ?? 5} por dia.`
     );
     if (data?.id && runImmediately) {
@@ -461,7 +471,9 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
                   <p className="text-sm font-bold text-[var(--text)]">{img.cquoi?.fr ?? img.title}</p>
                   <p className="text-xs text-[var(--text-secondary)]">{img.theme} · {img.engine === "svg" ? "SVG" : "Pintura"}</p>
                   {img.elements.length > 0 && (
-                    <p className="text-xs text-[var(--text)]">{img.elements.map((e) => e.kreyol).join(" · ")}</p>
+                    <p className="text-xs text-[var(--text)]">
+                      {img.elements.map((e) => (language === "francais" ? (e.fr || e.kreyol) : e.kreyol)).join(" · ")}
+                    </p>
                   )}
                   {img.qa.issues.length > 0 && (
                     <ul className="list-disc rounded-md bg-amber-100 py-1.5 pl-6 pr-2 text-xs font-medium text-amber-950">
@@ -514,7 +526,7 @@ export function ImageGenPanel({ language }: { language: AppLanguage }) {
                   <div className="flex flex-wrap gap-1.5">
                     {previewImg.elements.map((e, idx) => (
                       <span key={idx} className="rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 text-xs font-semibold text-[var(--text)]">
-                        {e.kreyol} · {e.pt}
+                        {language === "francais" ? (e.fr || e.kreyol) : e.kreyol} · {e.pt}
                       </span>
                     ))}
                   </div>

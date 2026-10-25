@@ -1,7 +1,7 @@
 // Leitura (servidor) das imagens geradas por IA, convertidas para o mesmo formato do banco de imagens estático.
 import { isValidObjectId } from "mongoose";
 import { connectDB } from "@/lib/mongodb";
-import { IMAGE_BANK, getBankImage, type BankImage } from "@/lib/imageBank";
+import { IMAGE_BANK, getBankImage, getElementLabel, type BankImage } from "@/lib/imageBank";
 import { THEMES, type ImageSection } from "@/lib/imageGen/config";
 import { GeneratedImage, type IGeneratedImage } from "@/models/ImageGen";
 import type { CestQuoiItem } from "@/components/CestQuoiGame";
@@ -27,7 +27,11 @@ export function toBankImage(doc: IGeneratedImage): BankImage {
     ambientTheme: sameTheme?.ambientTheme ?? "natureza",
     isPrimary: true,
     labelLayout: { top: 12, left: 50, width: 78, align: "center", anchors },
-    elements: (doc.elements ?? []).map((element) => ({ kreyol: element.kreyol, pt: element.pt })),
+    elements: (doc.elements ?? []).map((element) => ({
+      kreyol: element.kreyol,
+      pt: element.pt,
+      fr: element.fr || getElementLabel(element, "francais"),
+    })),
     quiz: doc.quiz?.options?.length ? { options: [...doc.quiz.options], answers: [...(doc.quiz.answers ?? [])] } : undefined,
     generated: true,
   };

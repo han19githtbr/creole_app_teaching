@@ -43,6 +43,7 @@ export default async function AdminPostDetailsPage({
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <PostCard
+          language={post.language === "francais" ? "francais" : "kreyol"}
           title={post.title}
           content={post.content}
           imageUrl={post.imageUrl}

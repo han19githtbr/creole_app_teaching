@@ -30,6 +30,7 @@ import { Confetti } from "@/components/Confetti";
 import { RewardUnlockModal } from "@/components/RewardUnlockModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
 import { cn } from "@/lib/utils";
+import type { AppLanguage } from "@/lib/languageShared";
 
 export interface ImageQuizChallenge {
   id: string;
@@ -42,9 +43,18 @@ export interface ImageQuizChallenge {
   answerCount: number;
 }
 
-export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQuizChallenge }) {
+export function ImageQuizGame({
+  initialChallenge,
+  language = "kreyol",
+}: {
+  initialChallenge: ImageQuizChallenge;
+  /** Idioma das palavras do desafio (as postagens em francês têm palavras em francês). */
+  language?: AppLanguage;
+}) {
   const router = useRouter();
-  const { state: gamificationState, levelInfo, activeTitle } = useGamification("kreyol");
+  const isFr = language === "francais";
+  const wordLanguage = isFr ? "Francês" : "Kreyòl";
+  const { state: gamificationState, levelInfo, activeTitle } = useGamification(language);
 
   const [challenge, setChallenge] = useState(initialChallenge);
   const [selected, setSelected] = useState<string[]>([]);
@@ -152,7 +162,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
 
         // Processa recompensas de gamificação completas
         const rewardResult = recordQuizWin({
-          language: "kreyol",
+          language,
           sceneId: challenge.id,
           theme: challenge.theme,
           wordsCount: challenge.answerCount,
@@ -251,10 +261,10 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
   }
 
   async function shareInstagram() {
-    const text = `Acertei todos os elementos de “${challenge.title}” no Jogo das Imagens em Kreyòl!`;
+    const text = `Acertei todos os elementos de “${challenge.title}” no Jogo das Imagens em ${wordLanguage}!`;
     try {
       if (navigator.share) {
-        await navigator.share({ title: "Minha conquista em Kreyòl", text, url: challengeUrl() });
+        await navigator.share({ title: `Minha conquista em ${wordLanguage}`, text, url: challengeUrl() });
         return;
       }
       await navigator.clipboard.writeText(text);
@@ -269,7 +279,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
     shareUrl.searchParams.set("u", challengeUrl());
     shareUrl.searchParams.set(
       "quote",
-      `Acertei todos os elementos de “${challenge.title}” no Jogo das Imagens em Kreyòl!`
+      `Acertei todos os elementos de “${challenge.title}” no Jogo das Imagens em ${wordLanguage}!`
     );
     window.open(shareUrl.toString(), "_blank", "noopener,noreferrer");
   }
@@ -333,10 +343,10 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
         <div>
           <div className="mb-1 flex flex-wrap items-center gap-2">
             <span className="flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-black text-white">
-              <Sparkles className="h-3.5 w-3.5" /> Pratik Kreyòl
+              <Sparkles className="h-3.5 w-3.5" /> {isFr ? "Pratique Français" : "Pratik Kreyòl"}
             </span>
             <span className="text-xs font-bold text-[var(--text-muted)]">
-              {levelInfo.current.badgeEmoji} Nivo {levelInfo.current.level}: {levelInfo.current.native}
+              {levelInfo.current.badgeEmoji} {isFr ? "Niveau" : "Nivo"} {levelInfo.current.level}: {levelInfo.current.native}
             </span>
             <span className="hidden sm:inline-flex items-center gap-1 rounded-full border border-purple-500/25 bg-purple-500/10 px-2 py-0.5 text-[11px] font-bold text-purple-600 dark:text-purple-400">
               {activeTitle.icon} {activeTitle.native}
@@ -346,7 +356,7 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
             Jogo das Imagens
           </h1>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Encontre todas as palavras em Kreyòl que aparecem na ilustração.
+            Encontre todas as palavras em {wordLanguage} que aparecem na ilustração.
           </p>
         </div>
 
@@ -598,10 +608,10 @@ export function ImageQuizGame({ initialChallenge }: { initialChallenge: ImageQui
                   <Check className="h-7 w-7" />
                 </div>
                 <h3 className="text-lg font-black text-[var(--text)]">
-                  Ou byen fè! Acertou tudo! 🎉
+                  {isFr ? "Bravo !" : "Ou byen fè!"} Acertou tudo! 🎉
                 </h3>
                 <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                  Todas as {challenge.answerCount} palavras em Kreyòl foram identificadas com sucesso.
+                  Todas as {challenge.answerCount} palavras em {wordLanguage} foram identificadas com sucesso.
                 </p>
 
                 {/* Banner de Recompensa Coletada */}

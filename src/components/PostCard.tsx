@@ -5,7 +5,8 @@ import { ptBR } from "date-fns/locale";
 import Link from "next/link";
 import { Gamepad2 } from "lucide-react";
 
-import { getBankImage } from "@/lib/imageBank";
+import { getBankImage, getThemeVocab } from "@/lib/imageBank";
+import type { AppLanguage } from "@/lib/languageShared";
 
 export function PostCard({
   id,
@@ -18,6 +19,7 @@ export function PostCard({
   expiresAt,
   footer,
   gamePostId,
+  language = "kreyol",
 }: {
   id?: string;
   title: string;
@@ -30,6 +32,8 @@ export function PostCard({
   /** Área extra abaixo do texto (ex.: caixa de resposta do aluno). */
   footer?: React.ReactNode;
   gamePostId?: string;
+  /** Idioma do painel: o vocabulário do tema aparece em Kreyòl ou em francês. */
+  language?: AppLanguage;
 }) {
   const bankImg = getBankImage(imageUrl);
 
@@ -46,7 +50,7 @@ export function PostCard({
           />
           {bankImg && (
             <span className="absolute bottom-2.5 right-2.5 rounded-full bg-black/65 px-2.5 py-0.5 text-[10px] font-semibold text-amber-300 backdrop-blur-sm shadow">
-              {bankImg.theme} • {bankImg.kreyol}
+              {bankImg.theme} • {getThemeVocab(bankImg, language)}
             </span>
           )}
         </div>

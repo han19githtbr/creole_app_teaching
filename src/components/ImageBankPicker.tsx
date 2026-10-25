@@ -3,24 +3,29 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Check, Eye, Search, Sparkles, X } from "lucide-react";
-import { IMAGE_BANK, IMAGE_THEMES, type BankImage } from "@/lib/imageBank";
+import { IMAGE_BANK, IMAGE_THEMES, getElementLabel, getThemeVocab, type BankImage } from "@/lib/imageBank";
+import type { AppLanguage } from "@/lib/languageShared";
 import type { ImageSection } from "@/lib/imageGen/config";
 import { cn } from "@/lib/utils";
 
 /**
  * Seletor de imagens em estilo Studio Ghibli organizado por temas e elementos.
- * Permite buscar por vocabulário em Kreyòl ou Português e inspecionar detalhes da cena.
+ * Permite buscar por vocabulário em Kreyòl (ou francês, no painel em francês) ou Português e inspecionar detalhes da cena.
  */
 export function ImageBankPicker({
   selectedSrc,
   onSelect,
   section,
+  language = "kreyol",
 }: {
   selectedSrc: string | null;
   onSelect: (image: BankImage | null) => void;
   /** Quando informado, inclui no topo as imagens geradas por IA (e aprovadas) dessa parte do app. */
   section?: ImageSection;
+  /** Idioma do painel: as palavras das cenas aparecem em Kreyòl ou em francês. */
+  language?: AppLanguage;
 }) {
+  const languageName = language === "francais" ? "Francês" : "Kreyòl";
   const [theme, setTheme] = useState<string>("Todos");
   const [search, setSearch] = useState<string>("");
   const [onlyPrimary, setOnlyPrimary] = useState<boolean>(true);
@@ -49,15 +54,15 @@ export function ImageBankPicker({
         const q = search.toLowerCase();
         const matchesTitle = img.title.toLowerCase().includes(q);
         const matchesTheme = img.theme.toLowerCase().includes(q);
-        const matchesKreyol = img.kreyol.toLowerCase().includes(q);
+        const matchesKreyol = getThemeVocab(img, language).toLowerCase().includes(q);
         const matchesElements = img.elements?.some(
-          (el) => el.kreyol.toLowerCase().includes(q) || el.pt.toLowerCase().includes(q)
+          (el) => getElementLabel(el, language).toLowerCase().includes(q) || el.pt.toLowerCase().includes(q)
         );
         return matchesTitle || matchesTheme || matchesKreyol || matchesElements;
       }
       return true;
     });
-  }, [theme, search, onlyPrimary, generated]);
+  }, [theme, search, onlyPrimary, generated, language]);
 
   return (
     <div className="space-y-3.5">
@@ -69,7 +74,11 @@ export function ImageBankPicker({
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por tema ou elemento (ex.: robo, computador, pipa, mar, tanbou)..."
+            placeholder={
+              language === "francais"
+                ? "Buscar por tema ou elemento (ex.: robot, ordinateur, cerf-volant, mer, tambour)..."
+                : "Buscar por tema ou elemento (ex.: robo, computador, pipa, mar, tanbou)..."
+            }
             className="h-8.5 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] pl-8 pr-3 text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:border-[var(--accent)] focus:outline-none"
           />
           {search && (
@@ -209,7 +218,7 @@ export function ImageBankPicker({
                   <div className="flex items-center justify-between gap-1">
                     <span className="font-semibold text-xs text-[var(--text)]">{img.theme}</span>
                     <span className="rounded bg-[var(--surface-2)] px-1.5 py-0.2 text-[10px] font-medium text-[var(--accent)]">
-                      {img.kreyol}
+                      {getThemeVocab(img, language)}
                     </span>
                   </div>
                   <p className="mt-0.5 line-clamp-1 text-[11px] text-[var(--text-muted)] font-medium">
@@ -226,7 +235,7 @@ export function ImageBankPicker({
                         className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 text-[9px] text-[var(--text-secondary)] font-medium"
                         title={el.pt}
                       >
-                        {el.kreyol}
+                        {getElementLabel(el, language)}
                       </span>
                     ))}
                   </div>
@@ -259,7 +268,7 @@ export function ImageBankPicker({
             <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface-2)]/50 px-5 py-3.5 shrink-0">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
-                  Estilo Studio Ghibli • {previewImage.theme} ({previewImage.kreyol})
+                  Estilo Studio Ghibli • {previewImage.theme} ({getThemeVocab(previewImage, language)})
                 </span>
                 <h3 className="text-base sm:text-lg font-bold text-[var(--text)]">{previewImage.title}</h3>
               </div>
@@ -287,7 +296,7 @@ export function ImageBankPicker({
               {/* Recognized Elements Legend */}
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-[var(--text)]">
-                  Elementos identificáveis na cena (Kreyòl / Português):
+                  Elementos identificáveis na cena ({languageName} / Português):
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {previewImage.elements?.map((el) => (
@@ -295,7 +304,7 @@ export function ImageBankPicker({
                       key={el.kreyol}
                       className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 text-xs"
                     >
-                      <span className="font-bold text-[var(--accent)]">{el.kreyol}</span>
+                      <span className="font-bold text-[var(--accent)]">{getElementLabel(el, language)}</span>
                       <span className="text-[var(--text-muted)]">({el.pt})</span>
                     </span>
                   ))}

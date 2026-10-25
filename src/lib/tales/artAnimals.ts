@@ -2,7 +2,7 @@
  * Personagens dos contos (vetor, vistos de lado, virados para a direita, pés na origem).
  * Cada função recebe o tempo `t` (s) e as opções de animação.
  */
-import { TAU, circle, ell, fillStroke, limb, smoothPath, vgrad, clamp, type Ctx } from "./artCore";
+import { TAU, circle, ell, fillStroke, limb, rgrad, smoothPath, vgrad, clamp, type Ctx } from "./artCore";
 
 export interface PoseOpts {
   anim?: string;
@@ -566,6 +566,10 @@ export function drawCrow(ctx: Ctx, t: number, o: PoseOpts) {
   const open = caw ? 0.4 + 0.6 * Math.max(0, Math.sin(t * 7)) : 0;
   const ph = t * 12;
   ctx.translate(0, flap ? -Math.abs(Math.sin(ph)) * 14 : 0);
+  if (anim === "drink") {
+    ctx.translate(0, -30);
+    ctx.rotate(0.55 + Math.sin(t * 2.4) * 0.06);
+  }
   const black = "#1b1f2b";
   const sheen = "#3d4a6d";
   // pernas
@@ -611,6 +615,13 @@ export function drawCrow(ctx: Ctx, t: number, o: PoseOpts) {
   ctx.closePath();
   fillStroke(ctx, "#4a4f5c", "rgba(0,0,0,0.5)", 2);
   ctx.restore();
+  if (o.carry === "pebble") {
+    ctx.save();
+    ctx.translate(98, -131);
+    ell(ctx, 0, 0, 13, 9);
+    fillStroke(ctx, "#9aa0a6", "rgba(0,0,0,0.4)", 2);
+    ctx.restore();
+  }
   if (o.carry === "cheese" && !caw) {
     ctx.save();
     ctx.translate(86, -136);
@@ -861,6 +872,231 @@ function fillStyle(ctx: Ctx, color: string) {
   fillStroke(ctx, color, OUT, 2);
 }
 
+/* ------------------------------ leão ------------------------------ */
+
+export function drawLion(ctx: Ctx, t: number, o: PoseOpts) {
+  const anim = o.anim ?? "idle";
+  const sleep = anim === "sleep";
+  const roar = anim === "roar";
+  const walk = anim === "walk";
+  const ph = t * (o.speed ?? 4);
+  const breathe = Math.sin(t * (sleep ? 1.4 : 2)) * (sleep ? 3 : 1.5);
+  const tan = "#d9a441";
+  const tanD = "#b07d27";
+  const mane = "#8a4f1d";
+  const l = walk ? Math.sin(ph) * 22 : 0;
+
+  if (sleep) {
+    ctx.translate(0, 0);
+    // cauda
+    ctx.save();
+    ctx.translate(-150, -34);
+    smoothPath(ctx, [[0, 0], [-50, -20], [-90, 8], [-70, 36]], false);
+    ctx.lineWidth = 12;
+    ctx.strokeStyle = tanD;
+    ctx.stroke();
+    ctx.restore();
+    ell(ctx, 0, -52 + breathe * 0.2, 150, 54 + breathe);
+    fillStroke(ctx, vgrad(ctx, -110, 0, [[0, tan], [1, tanD]]), OUT);
+    // juba deitada
+    circle(ctx, 130, -66, 78);
+    fillStroke(ctx, vgrad(ctx, -140, 10, [[0, "#a8662a"], [1, mane]]), OUT);
+    ell(ctx, 168, -50, 54, 46, 0.05);
+    fillStroke(ctx, tan, OUT);
+    ell(ctx, 204, -40, 28, 20);
+    fillStroke(ctx, "#f1d9a0", null);
+    circle(ctx, 224, -48, 8);
+    ctx.fillStyle = "#3a2316";
+    ctx.fill();
+    ctx.strokeStyle = "#2a1a0e";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.arc(178, -62, 9, 0.2, Math.PI - 0.2);
+    ctx.stroke();
+    limb(ctx, 100, -22, 190, -6, 34, tan, OUT);
+    return;
+  }
+
+  // cauda com tufo
+  ctx.save();
+  ctx.translate(-132, -150);
+  ctx.rotate(Math.sin(t * 1.8) * 0.08);
+  smoothPath(ctx, [[0, 0], [-46, -30], [-84, -6], [-92, 50]], false);
+  ctx.lineWidth = 13;
+  ctx.strokeStyle = tanD;
+  ctx.lineCap = "round";
+  ctx.stroke();
+  ell(ctx, -94, 62, 22, 34, 0.15);
+  fillStroke(ctx, mane, OUT, 2);
+  ctx.restore();
+  // patas
+  for (const [x, s, c] of [[-84, 1, tanD], [-44, -1, tan], [64, -1, tanD], [104, 1, tan]] as const) {
+    limb(ctx, x, -100, x + l * s, -8, 38, c, OUT);
+    ell(ctx, x + l * s + 8, -6, 28, 14);
+    fillStroke(ctx, c, OUT, 2);
+  }
+  ell(ctx, 0, -146 + breathe, 138, 74 + breathe);
+  fillStroke(ctx, vgrad(ctx, -230, -70, [[0, tan], [1, tanD]]), OUT);
+  ell(ctx, 40, -114, 78, 36);
+  ctx.fillStyle = "rgba(255,240,200,0.4)";
+  ctx.fill();
+  // juba: espinhos em volta da cabeça
+  ctx.save();
+  ctx.translate(150, -212);
+  for (let i = 0; i < 16; i++) {
+    ctx.save();
+    ctx.rotate((i / 16) * TAU + Math.sin(t * 1.6 + i) * 0.03);
+    ctx.beginPath();
+    ctx.moveTo(60, -22);
+    ctx.lineTo(112 + (i % 2) * 14, 0);
+    ctx.lineTo(60, 22);
+    ctx.closePath();
+    fillStroke(ctx, i % 2 ? mane : "#9d5d22", OUT, 2);
+    ctx.restore();
+  }
+  circle(ctx, 0, 0, 78);
+  fillStroke(ctx, rgrad(ctx, -10, -10, 10, 90, [[0, "#b06c2c"], [1, mane]]), OUT);
+  ctx.restore();
+  // cabeça
+  ctx.save();
+  ctx.translate(158, -206);
+  ell(ctx, 0, 0, 58, 56);
+  fillStroke(ctx, tan, OUT);
+  for (const x of [-30, 30]) {
+    circle(ctx, x, -52, 18);
+    fillStroke(ctx, tan, OUT, 2);
+    circle(ctx, x, -52, 8);
+    ctx.fillStyle = "#d89a82";
+    ctx.fill();
+  }
+  ell(ctx, 28, 22, 40, 30);
+  fillStroke(ctx, "#f4dfa8", OUT, 2);
+  ctx.beginPath();
+  ctx.moveTo(14, 2);
+  ctx.lineTo(48, 2);
+  ctx.lineTo(31, 22);
+  ctx.closePath();
+  ctx.fillStyle = "#3a2316";
+  ctx.fill();
+  if (roar) {
+    const open = 12 + Math.abs(Math.sin(t * 6)) * 16;
+    ctx.fillStyle = "#4a1414";
+    ell(ctx, 30, 40 + open * 0.3, 24, open);
+    ctx.fill();
+    ctx.fillStyle = "#fffdf5";
+    ctx.beginPath();
+    ctx.moveTo(14, 33);
+    ctx.lineTo(20, 46);
+    ctx.lineTo(26, 33);
+    ctx.moveTo(34, 33);
+    ctx.lineTo(40, 46);
+    ctx.lineTo(46, 33);
+    ctx.fill();
+  } else {
+    ctx.strokeStyle = "#3a2316";
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(31, 22);
+    ctx.lineTo(31, 34);
+    ctx.moveTo(14, 36);
+    ctx.quadraticCurveTo(31, 46, 48, 36);
+    ctx.stroke();
+  }
+  eye(ctx, 18, -10, 8, t, 0.6, "#3a2208");
+  ctx.strokeStyle = "#5a3a14";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(4, -22);
+  ctx.lineTo(30, -16);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/* ------------------------------ ratinho ------------------------------ */
+
+export function drawMouse(ctx: Ctx, t: number, o: PoseOpts) {
+  const anim = o.anim ?? "idle";
+  const run = anim === "run";
+  const gnaw = anim === "gnaw";
+  const ph = t * (o.speed ?? 16);
+  const hop = run ? Math.abs(Math.sin(ph)) * 6 : 0;
+  const nib = gnaw ? Math.sin(t * 22) * 3 : 0;
+  ctx.translate(0, -hop);
+  // cauda
+  ctx.strokeStyle = "#e7b4b0";
+  ctx.lineWidth = 6;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(-34, -24);
+  ctx.bezierCurveTo(-80, -30 + Math.sin(t * 3) * 6, -92, -70, -128, -52 + Math.sin(t * 3 + 1) * 6);
+  ctx.stroke();
+  limb(ctx, -10, -14, -10 + (run ? Math.sin(ph) * 8 : 0), 0, 9, "#a9aeb8", OUT);
+  limb(ctx, 22, -14, 22 - (run ? Math.sin(ph) * 8 : 0), 0, 9, "#bfc4cc", OUT);
+  ell(ctx, 0, -28, 42, 28, -0.05);
+  fillStroke(ctx, vgrad(ctx, -58, 0, [[0, "#c7ccd4"], [1, "#9ea4ae"]]), OUT, 2);
+  ell(ctx, 6, -18, 26, 14);
+  ctx.fillStyle = "#f2efe8";
+  ctx.fill();
+  // cabeça e orelha grande
+  ell(ctx, 46 + nib * 0.4, -34, 24, 20, 0.12);
+  fillStroke(ctx, "#c7ccd4", OUT, 2);
+  circle(ctx, 36, -62, 19);
+  fillStroke(ctx, "#b1b6c0", OUT, 2);
+  circle(ctx, 36, -62, 11);
+  ctx.fillStyle = "#f0b8b8";
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(60, -42);
+  ctx.lineTo(80 + nib, -30);
+  ctx.lineTo(60, -22);
+  ctx.closePath();
+  fillStroke(ctx, "#c7ccd4", OUT, 2);
+  circle(ctx, 80 + nib, -31, 5);
+  ctx.fillStyle = "#e58a9a";
+  ctx.fill();
+  eye(ctx, 52, -42, 5, t, 1.4);
+  ctx.strokeStyle = "rgba(255,255,255,0.85)";
+  ctx.lineWidth = 1.6;
+  for (const dy of [-2, 4]) {
+    ctx.beginPath();
+    ctx.moveTo(70, -32 + dy);
+    ctx.lineTo(92, -36 + dy * 2);
+    ctx.stroke();
+  }
+}
+
+/* ------------------------------ borboleta ------------------------------ */
+
+export function drawButterfly(ctx: Ctx, t: number) {
+  const flap = Math.abs(Math.sin(t * 9));
+  ctx.translate(0, Math.sin(t * 3) * 14 - 70);
+  for (const side of [-1, 1]) {
+    ctx.save();
+    ctx.scale(side, 1);
+    ctx.rotate(-0.15);
+    ctx.scale(0.25 + flap * 0.75, 1);
+    ell(ctx, 28, -22, 34, 30, -0.4);
+    fillStroke(ctx, "#ffd23f", OUT, 2);
+    ell(ctx, 24, 18, 24, 20, 0.4);
+    fillStroke(ctx, "#ff9a3d", OUT, 2);
+    circle(ctx, 30, -26, 7);
+    ctx.fillStyle = "#7a3b12";
+    ctx.fill();
+    ctx.restore();
+  }
+  limb(ctx, 0, -30, 0, 28, 8, "#3a2316", null);
+  ctx.strokeStyle = "#3a2316";
+  ctx.lineWidth = 2.5;
+  for (const side of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(0, -30);
+    ctx.quadraticCurveTo(side * 12, -50, side * 20, -52);
+    ctx.stroke();
+  }
+}
+
 export const ACTORS: Record<string, (ctx: Ctx, t: number, o: PoseOpts) => void> = {
   hen: drawHen,
   chick: drawChick,
@@ -873,6 +1109,9 @@ export const ACTORS: Record<string, (ctx: Ctx, t: number, o: PoseOpts) => void> 
   cicada: drawCicada,
   person: drawPerson,
   cheese: (ctx) => drawCheese(ctx, 1.5),
+  lion: drawLion,
+  mouse: drawMouse,
+  butterfly: (ctx, t) => drawButterfly(ctx, t),
 };
 
 export { clamp };

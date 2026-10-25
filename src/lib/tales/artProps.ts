@@ -338,17 +338,26 @@ export function drawNest(ctx: Ctx, _t: number, o: PropOpts) {
     ctx.stroke();
   }
   const eggs = o.variant ?? 1;
-  for (let i = 0; i < eggs; i++) drawEggAt(ctx, (i - (eggs - 1) / 2) * 52, -34);
+  const gold = (o.variant ?? 0) >= 10;
+  const count = gold ? o.variant! - 10 : eggs;
+  for (let i = 0; i < count; i++) drawEggAt(ctx, (i - (count - 1) / 2) * 52, -34, 1, gold);
   ell(ctx, 0, -4, 80, 14);
   fillStroke(ctx, "#b98a3a", OUT, 3);
 }
 
-export function drawEggAt(ctx: Ctx, x: number, y: number, s = 1) {
+export function drawEggAt(ctx: Ctx, x: number, y: number, s = 1, gold = false) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(s, s);
   ell(ctx, 0, 0, 24, 31);
-  fillStroke(ctx, rgrad(ctx, -8, -10, 2, 34, [[0, "#fff8ea"], [1, "#e6d6b4"]]), OUT, 2);
+  fillStroke(ctx, gold ? rgrad(ctx, -8, -10, 2, 34, [[0, "#fff2a8"], [0.5, "#ffd23f"], [1, "#c98a10"]]) : rgrad(ctx, -8, -10, 2, 34, [[0, "#fff8ea"], [1, "#e6d6b4"]]), gold ? "rgba(120,70,0,0.55)" : OUT, 2);
+  if (gold) {
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ell(ctx, -8, -12, 5, 10, -0.4);
+    ctx.fill();
+    ctx.restore();
+    return;
+  }
   ctx.fillStyle = "rgba(140,100,60,0.55)";
   for (const [dx, dy, r] of [[-6, -6, 3], [8, 4, 3.4], [-2, 12, 2.6], [10, -10, 2.4]] as const) {
     circle(ctx, dx, dy, r);
@@ -372,6 +381,108 @@ export function drawSign(ctx: Ctx) {
   ctx.fillRect(-70, -176, 70, 8);
 }
 
+/** Parreira com cachos de uva pendurados. */
+export function drawGrapevine(ctx: Ctx, t: number) {
+  limb(ctx, -150, 0, -150, -420, 22, "#7a5232", OUT);
+  limb(ctx, 150, 0, 150, -420, 22, "#7a5232", OUT);
+  limb(ctx, -170, -420, 170, -420, 20, "#7a5232", OUT);
+  const r = rng(31);
+  for (let i = 0; i < 9; i++) {
+    const x = -160 + i * 40;
+    const sw = Math.sin(t * 1.2 + i) * 3;
+    circle(ctx, x + sw, -430 + (i % 2) * 8, 34);
+    fillStroke(ctx, rgrad(ctx, x - 10, -440, 4, 40, [[0, "#5fb260"], [1, "#2f7a3e"]]), OUT, 2);
+  }
+  for (const cx of [-90, 10, 100]) {
+    const sw = Math.sin(t * 1.4 + cx) * 3;
+    ctx.save();
+    ctx.translate(cx + sw, -400);
+    limb(ctx, 0, 0, 0, 20, 6, "#4a7a2e", null);
+    const rows = [[0, 30, 2], [-12, 52, 3], [-24, 74, 4], [-12, 96, 3], [0, 116, 2]] as const;
+    rows.forEach(([ox, oy, n]) => {
+      for (let k = 0; k < n; k++) {
+        circle(ctx, ox + (k - (n - 1) / 2) * 24 + 12, oy + (r() - 0.5) * 2, 15);
+        fillStroke(ctx, rgrad(ctx, -4, oy - 5, 2, 18, [[0, "#b17ad0"], [1, "#5e2a86"]]), "rgba(40,10,60,0.5)", 2);
+      }
+    });
+    ctx.restore();
+  }
+}
+
+/** Jarro de vidro com água e pedrinhas: `v = 9` anima o nível com o progresso da cena. */
+export function drawJug(ctx: Ctx, _t: number, o: PropOpts) {
+  const level = o.variant === 9 ? 0.18 + 0.62 * Math.min(1, Math.max(0, (o.p ?? 0) * 1.1)) : [0.18, 0.4, 0.62, 0.8][Math.min(3, o.variant ?? 0)];
+  const body = () => {
+    ctx.beginPath();
+    ctx.moveTo(-52, 0);
+    ctx.quadraticCurveTo(-66, -90, -34, -170);
+    ctx.lineTo(-30, -250);
+    ctx.lineTo(-44, -262);
+    ctx.lineTo(44, -262);
+    ctx.lineTo(30, -250);
+    ctx.lineTo(34, -170);
+    ctx.quadraticCurveTo(66, -90, 52, 0);
+    ctx.closePath();
+  };
+  body();
+  fillStroke(ctx, "rgba(200,230,245,0.35)", "rgba(80,120,150,0.7)", 4);
+  ctx.save();
+  body();
+  ctx.clip();
+  const waterTop = -level * 250;
+  ctx.fillStyle = vgrad(ctx, waterTop, 0, [[0, "rgba(80,170,230,0.75)"], [1, "rgba(30,110,190,0.85)"]]);
+  ctx.fillRect(-80, waterTop, 160, -waterTop);
+  ctx.fillStyle = "rgba(255,255,255,0.45)";
+  ell(ctx, 0, waterTop, 44, 6);
+  ctx.fill();
+  // pedrinhas no fundo
+  const pebbles = Math.round(level * 18);
+  const r = rng(8);
+  for (let i = 0; i < pebbles; i++) {
+    const x = -34 + r() * 68;
+    const y = -8 - Math.floor(i / 5) * 14 - r() * 4;
+    ell(ctx, x, y, 11, 8, r());
+    fillStroke(ctx, ["#9aa0a6", "#b7bdc2", "#7f868c"][i % 3], "rgba(0,0,0,0.35)", 1.5);
+  }
+  ctx.restore();
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ell(ctx, -34, -130, 5, 52, 0.12);
+  ctx.fill();
+}
+
+/** Rede de corda sobre o personagem (cúpula de malha). */
+export function drawNet(ctx: Ctx, t: number) {
+  const sway = Math.sin(t * 1.6) * 3;
+  const dome = () => {
+    ctx.beginPath();
+    ctx.moveTo(-230, 0);
+    ctx.bezierCurveTo(-230, -270 + sway, 230, -270 + sway, 230, 0);
+    ctx.closePath();
+  };
+  ctx.save();
+  dome();
+  ctx.fillStyle = "rgba(190,150,80,0.1)";
+  ctx.fill();
+  ctx.clip();
+  ctx.strokeStyle = "#b58a4a";
+  ctx.lineWidth = 6;
+  for (let i = -8; i <= 8; i++) {
+    ctx.beginPath();
+    ctx.moveTo(i * 36 - 150, 0);
+    ctx.lineTo(i * 36 + 150, -300);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(i * 36 + 150, 0);
+    ctx.lineTo(i * 36 - 150, -300);
+    ctx.stroke();
+  }
+  ctx.restore();
+  dome();
+  ctx.lineWidth = 8;
+  ctx.strokeStyle = "#8a6430";
+  ctx.stroke();
+}
+
 export const PROPS: Record<string, (ctx: Ctx, t: number, o: PropOpts) => void> = {
   tree: (c, t, o) => drawTree(c, t, o, "round"),
   oak: (c, t, o) => drawTree(c, t, o, "oak"),
@@ -390,4 +501,7 @@ export const PROPS: Record<string, (ctx: Ctx, t: number, o: PropOpts) => void> =
   wheat: drawWheat,
   nest: drawNest,
   sign: (c) => drawSign(c),
+  grapevine: (c, t) => drawGrapevine(c, t),
+  jug: drawJug,
+  net: (c, t) => drawNet(c, t),
 };

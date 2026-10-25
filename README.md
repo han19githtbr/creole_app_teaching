@@ -483,14 +483,31 @@ Na seção **Histórias** do painel em francês, há uma nova parte: **Contos il
 
 ### Os contos
 
-| Conto | Nível | Duração |
-| --- | --- | --- |
-| L'aigle qui se croyait poule (parábola) | A2 | ≈ 2 min |
-| Le lièvre et la tortue (La Fontaine) | A2 | ≈ 1 min 30 s |
-| Le corbeau et le renard (La Fontaine) | B1 | ≈ 1 min 15 s |
-| La cigale et la fourmi (La Fontaine) | B1 | ≈ 1 min 25 s |
+São **10 contos**: 4 clássicos que já estavam no ar e 6 novos, que nascem como **rascunho** até o administrador publicar.
 
-Cada conto tem uma **abertura** com o título, de 8 a 11 **cenas** (a duração varia um pouco com a voz) com frases curtas em francês, a **moral** em destaque e o **encerramento** com a logo do Instagram.
+| Conto | Nível | Duração | Situação inicial |
+| --- | --- | --- | --- |
+| L'aigle qui se croyait poule (parábola) | A2 | ≈ 2 min | Publicado |
+| Le lièvre et la tortue (La Fontaine) | A2 | ≈ 1 min 30 s | Publicado |
+| Le corbeau et le renard (La Fontaine) | B1 | ≈ 1 min 15 s | Publicado |
+| La cigale et la fourmi (La Fontaine) | B1 | ≈ 1 min 25 s | Publicado |
+| La poule aux œufs d'or (La Fontaine) | A2 | ≈ 1 min | Rascunho |
+| Le renard et les raisins (Ésope e La Fontaine) | A2 | ≈ 1 min | Rascunho |
+| Le lion et le rat (La Fontaine) | B1 | ≈ 1 min 15 s | Rascunho |
+| Le petit poussin perdu (original, para iniciantes) | A2 | ≈ 1 min 15 s | Rascunho |
+| Le petit lièvre qui voulait voler (original, para iniciantes) | A2 | ≈ 1 min 15 s | Rascunho |
+| Le corbeau et la cruche (Ésope) | B1 | ≈ 1 min | Rascunho |
+
+Cada conto tem uma **abertura** com o título, de 7 a 11 **cenas** (a duração varia um pouco com a voz) com frases curtas em francês, a **moral** em destaque e o **encerramento** com a logo do Instagram. Os personagens novos desta etapa são o leão, o ratinho e a borboleta, e os cenários novos são a parreira com uvas, o jarro com água e pedrinhas, a rede de caça e o ovo de ouro.
+
+### Publicar para os alunos (administrador)
+
+Em **Admin → Contos ilustrados** (`/admin/contos`) o administrador vê todos os contos, com a capa, o nível, a duração e a situação (**Publicado** ou **Rascunho**):
+
+- **Publicar para os alunos** / **Despublicar** (um clique); só os publicados aparecem para os alunos do painel em francês, na página Histórias e em `/dashboard/contos`. Quem abre o endereço de um rascunho recebe "não encontrado".
+- Os administradores (o principal e os adicionais) veem todos os contos, com o selo **Rascunho** nos ainda não publicados, e podem abrir qualquer um para conferir e baixar o vídeo.
+- **Abrir e baixar vídeo** leva ao conto, onde ficam as opções de download.
+- A situação é guardada na coleção `talesettings` (modelo `TaleSetting`); sem registro, vale o padrão do conto (`publishedByDefault`: os 4 clássicos publicados, os novos em rascunho). API: `GET /api/admin/tales` e `PUT /api/admin/tales/[slug]` com `{ "published": true }`, restritas a administradores.
 
 ### O que o aluno vê
 
@@ -507,18 +524,29 @@ As cenas são **ilustrações vetoriais animadas desenhadas no código** (sem im
 
 ### Baixar para o Instagram e o Facebook (administrador)
 
-Na página de cada conto, o administrador vê o painel **Baixar vídeo para o Instagram e o Facebook**: gera um **MP4 vertical 1080 × 1920** (H.264 + áudio AAC, 30 quadros por segundo, 16 ou 10 Mbps) com a narração, a legenda em francês, a música (opcional), a tradução (opcional) e o encerramento com o Instagram. O vídeo é renderizado **quadro a quadro** com WebCodecs, o mesmo caminho do vídeo do jogo; sem WebCodecs, grava em tempo real. Use o **Chrome ou o Edge no computador** (a geração leva alguns minutos). Contos com mais de 90 s servem para Reels e feed; nos Stories o Instagram divide em partes de 60 s.
+Na página de cada conto, o administrador vê o painel **Baixar vídeo para o Instagram e o Facebook**. A pré-visualização mostra o enquadramento do formato escolhido.
+
+| Formato | Tamanho | Onde usar |
+| --- | --- | --- |
+| Stories e Reels (9:16) | 1080 × 1920 | Stories e Reels do Instagram e do Facebook. As legendas ficam acima da faixa que a interface cobre |
+| Feed vertical (4:5) | 1080 × 1350 | Feed do Instagram e do Facebook (ocupa mais tela) |
+| Feed quadrado (1:1) | 1080 × 1080 | Qualquer rede; o cenário é um pouco mais aberto para caber tudo |
+
+- **Qualidade**: MP4 com **H.264 e áudio AAC, 30 quadros por segundo**, a **16 Mbps (máxima, recomendada)** ou 10 Mbps. O vídeo é renderizado **quadro a quadro** com WebCodecs (o mesmo caminho do vídeo do jogo), em vetor na resolução final, então fica nítido; não depende da velocidade do computador nem perde quadros. Sem WebCodecs, grava em tempo real. A geração leva alguns minutos: use o **Chrome ou o Edge no computador**.
+- **Stories em partes de até 60 s**: no formato 9:16, a opção **Dividir em partes de até 60 s** gera vários vídeos (por exemplo, 2 ou 3), sempre cortados no fim de uma cena. A primeira parte traz a abertura e a última traz a moral e o encerramento com o Instagram; cada parte leva a etiqueta "Parte 1/2" e a seguinte começa sem transição suave.
+- **Opções do vídeo**: música suave e tradução em português (as marcações ao lado do player valem para o vídeo). O encerramento sempre traz a logo do Instagram e `@frances_com_tres_nativos`.
 
 ### Como criar mais contos
 
-Cada conto é um objeto em `src/lib/tales/tales.ts`: título, frases em francês (até ~110 caracteres, por causa da voz), tradução e a descrição de cada cena (clima, relevo, cenário, personagens com animação, partículas e câmera). Os personagens e o cenário disponíveis ficam em `artAnimals.ts` e `artProps.ts`.
+Cada conto é um objeto em `src/lib/tales/tales.ts` (adicione-o à lista `TALES`; sem `publishedByDefault`, ele nasce como rascunho): título, frases em francês (até ~110 caracteres, por causa da voz), tradução e a descrição de cada cena (clima, relevo, cenário, personagens com animação, partículas e câmera). Os personagens (águia, galinha, pintinho, lebre, tartaruga, raposa, corvo, formiga, cigarra, leão, ratinho, borboleta e pessoas) e o cenário disponíveis ficam em `artAnimals.ts` e `artProps.ts`.
 
 ### Arquivos
 
 - `src/lib/tales/tales.ts`: os contos. `artCore.ts`, `artAnimals.ts`, `artProps.ts` e `scene.ts`: o motor de ilustração animada.
 - `src/lib/tales/timeline.ts`: quando cada frase é falada. `render.ts`: cena, legenda, moral, abertura e encerramento com o Instagram.
 - `src/lib/tales/audio.ts`: narração, mixagem com a música e reprodução. `export.ts`: exportação em MP4.
-- `src/components/TalePlayer.tsx`, `TaleCover.tsx` e `TalesShelf.tsx`; páginas em `src/app/dashboard/contos`. O item **Contos ilustrados** também está no menu do administrador.
+- `src/components/TalePlayer.tsx`, `TaleCover.tsx`, `TalesShelf.tsx` e `TalesAdmin.tsx`; páginas em `src/app/dashboard/contos` (alunos) e `src/app/admin/contos` (gestão e publicação). O item **Contos ilustrados** está no menu do administrador.
+- `src/models/TaleSetting.ts`, `src/lib/taleAccess.ts` e `src/app/api/admin/tales`: publicação dos contos.
 
 ## Administradores adicionais
 

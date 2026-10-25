@@ -8,8 +8,10 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Stack](#stack)
 - [Histórias narradas com Elementos com Vida, Transcrição Automática e Publicação Social](#histórias-narradas)
 - [Jogo C'est quoi ?](#jogo-cest-quoi-)
+- [Postagens em francês](#postagens-em-francês)
 - [Avatar falante e rede social no vídeo](#avatar-falante-e-rede-social-no-vídeo)
 - [Vídeos do jogo para redes sociais](#vídeos-do-jogo-para-redes-sociais)
+- [Contos ilustrados em francês](#contos-ilustrados-em-francês)
 - [Administradores adicionais](#administradores-adicionais)
 - [Indicador de carregamento](#indicador-de-carregamento)
 - [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
@@ -33,7 +35,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - Lições em rascunho, com publicação e anúncio controlados pelo administrador.
 - Painel do aluno com progresso, conteúdo recente e central de notificações.
 - Postagens com texto e/ou imagem (banco de ilustrações ou upload), respostas dos alunos revisadas pelo administrador e jogo de identificação de palavras na imagem.
-- Vídeos com likes, comentários, gravação no navegador e agendamento. Em **Vídeos do Jogo** o administrador gera vídeos MP4 demonstrando o jogo para Stories, Reels e feed. O **avatar fala de verdade** (lábios na voz do microfone, piscar, gestos) e **aponta para o ícone da rede social** anotada no vídeo, com link clicável na página.
+- Vídeos com likes, comentários, gravação no navegador e agendamento. Os **Contos ilustrados** em francês (narrados e legendados, com a logo do Instagram no final) podem ser baixados em MP4. Em **Vídeos do Jogo** o administrador gera vídeos MP4 demonstrando o jogo para Stories, Reels e feed. O **avatar fala de verdade** (lábios na voz do microfone, piscar, gestos) e **aponta para o ícone da rede social** anotada no vídeo, com link clicável na página.
 - **Histórias narradas com Elementos com Vida**: uma cena ilustrada + narração em Kreyòl + legendas bilíngues, onde cada elemento da cena ganha vida e se comporta realisticamente (pássaros voam, cachorros correm/latem, árvores balançam ao vento, etc.) de acordo com as ações descritas na fala ou na legenda. Acompanha exportação de vídeo vertical 9:16 com as mesmas animações gravadas, rótulos inteligentes e legenda móvel arrastável.
 - **Jogo "C'est quoi ?"** (painel em francês): 5 níveis, incluindo o **Nativo** (20 imagens, com os sub-níveis *Palavra* e *Frase*), botão **Dica** que congela o tempo, **arena online** com jogadores online, ranking e duelos.
 - Aulas ao vivo com LiveKit, quando configurado.
@@ -377,6 +379,24 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 
 `POST /api/cquoi/arena` aceita as ações `heartbeat`, `leave`, `score`, `challenge` e `respond`; `GET /api/cquoi/arena?board=week|all|<nível>` devolve o painel. Todas exigem login. Não há variável de ambiente nova: o ranking usa o mesmo MongoDB do app.
 
+## Postagens em francês
+
+Com o painel em **Francês**, a aba de postagens agora entrega **todo o conteúdo em francês**. Antes, a legenda sugerida, os elementos da cena e o jogo de palavras continuavam em Kreyòl.
+
+| Onde | O que mudou no painel em francês |
+| --- | --- |
+| Legenda sugerida | Sai com os nomes em francês: `tartaruga (tortue), cachoeira (cascade), flores (fleurs), árvore (arbre)` |
+| Elementos da cena | As etiquetas mostram a palavra em francês, com o português ao lado |
+| Jogo de palavras | O título vira **"Jogo de palavras em Francês"**, as alternativas e as respostas corretas saem em francês, e **Marcar elementos visíveis** compara com as palavras em francês |
+| Seletor de imagens | A busca e as etiquetas usam o francês; o tema aparece em francês (por exemplo, `Natureza • Nature`) |
+| Cartão da postagem | O tema do vocabulário aparece em francês |
+| Desafio da postagem (aluno) | Em francês abre o jogo de palavras da própria postagem (antes caía no C'est quoi ?), com os textos em francês |
+| Postagens antigas | O botão **Traduzir palavras para o francês** converte as alternativas e as respostas de uma só vez |
+
+As imagens do banco e as geradas por IA guardam as palavras em Kreyòl; o novo dicionário **`src/lib/frenchVocabulary.ts`** (145 palavras e 15 temas) traduz tudo para o francês na hora, sem refazer as imagens. Em verificação com as 300 imagens do banco, todas geram um desafio válido em francês (sem alternativas repetidas e com as respostas dentro das alternativas). O Kreyòl continua exatamente como era.
+
+Arquivos: `src/lib/frenchVocabulary.ts`, `src/lib/imageBank.ts` (`getImageCaption`, `getThemeVocab`, `getElementLabel`), `src/lib/imageQuiz.ts` (`translateQuizToFrench`, `getQuizForImage`), `src/app/admin/posts/PostForm.tsx`, `src/components/ImageBankPicker.tsx`, `src/components/PostCard.tsx` e `src/components/ImageQuizGame.tsx`.
+
 ## Avatar falante e rede social no vídeo
 
 Na gravação de vídeos (`/admin/videos/record`), o avatar (as fotos "Você (…)") deixa de ser uma imagem parada: tudo é desenhado no canvas de gravação (`src/lib/talkingAvatar.ts`), então **fica gravado no vídeo exportado** e aparece igual na reprodução.
@@ -456,6 +476,49 @@ A **pré-visualização** ao lado toca o mesmo desenho que será exportado, com 
 - `src/lib/gameDemoExport.ts`: exportação em MP4 (offline com WebCodecs; plano B com `MediaRecorder`).
 - `src/components/GameDemoStudio.tsx`: tela do administrador (perguntas, estilo, pré-visualização e download).
 - `src/app/admin/jogo-videos/page.tsx`: página e item **Vídeos do Jogo** no menu do admin.
+
+## Contos ilustrados em francês
+
+Na seção **Histórias** do painel em francês, há uma nova parte: **Contos ilustrados** (`/dashboard/contos`). São fábulas curtas, no estilo de vídeo vertical ilustrado, **contadas e legendadas em francês**, e no **final de cada conto aparecem a logo do Instagram e o nome @frances_com_tres_nativos**.
+
+### Os contos
+
+| Conto | Nível | Duração |
+| --- | --- | --- |
+| L'aigle qui se croyait poule (parábola) | A2 | ≈ 1 min 50 s |
+| Le lièvre et la tortue (La Fontaine) | A2 | ≈ 1 min 25 s |
+| Le corbeau et le renard (La Fontaine) | B1 | ≈ 1 min 10 s |
+| La cigale et la fourmi (La Fontaine) | B1 | ≈ 1 min 25 s |
+
+Cada conto tem uma **abertura** com o título, de 8 a 11 **cenas** com frases curtas em francês, a **moral** em destaque e o **encerramento** com a logo do Instagram.
+
+### O que o aluno vê
+
+- **Narração em francês** (a mesma voz da pronúncia do jogo) e **música suave** (que abaixa quando alguém fala).
+- **Legenda em francês**, com a palavra que está sendo falada em amarelo.
+- **Tradução em português** opcional, em letra pequena.
+- Barras de progresso por cena (como nos Stories), pausa, recomeçar e barra de posição.
+
+### As ilustrações
+
+As cenas são **ilustrações vetoriais animadas desenhadas no código** (sem imagens nem vídeos externos): céu, nuvens, montanhas e colinas em camadas com paralaxe, personagens que se movem (águia de asas abertas, galinhas, lebre, tartaruga, raposa, corvo, formiga, cigarra e pessoas), partículas (poeira, folhas, neve, chuva, vaga-lumes, pétalas, notas musicais, brilhos) e câmera lenta com zoom e deslocamento. Ficam nítidas em qualquer resolução.
+
+> O vídeo de referência usa cenas animadas por IA de vídeo. Aqui as cenas são ilustrações animadas em tempo real, com movimento próprio de cada personagem e da câmera, mas o desenho é mais simples que o de uma IA generativa.
+
+### Baixar para o Instagram e o Facebook (administrador)
+
+Na página de cada conto, o administrador vê o painel **Baixar vídeo para o Instagram e o Facebook**: gera um **MP4 vertical 1080 × 1920** (H.264 + áudio AAC, 30 quadros por segundo, 16 ou 10 Mbps) com a narração, a legenda em francês, a música (opcional), a tradução (opcional) e o encerramento com o Instagram. O vídeo é renderizado **quadro a quadro** com WebCodecs, o mesmo caminho do vídeo do jogo; sem WebCodecs, grava em tempo real. Use o **Chrome ou o Edge no computador** (a geração leva alguns minutos). Contos com mais de 90 s servem para Reels e feed; nos Stories o Instagram divide em partes de 60 s.
+
+### Como criar mais contos
+
+Cada conto é um objeto em `src/lib/tales/tales.ts`: título, frases em francês (até ~110 caracteres, por causa da voz), tradução e a descrição de cada cena (clima, relevo, cenário, personagens com animação, partículas e câmera). Os personagens e o cenário disponíveis ficam em `artAnimals.ts` e `artProps.ts`.
+
+### Arquivos
+
+- `src/lib/tales/tales.ts`: os contos. `artCore.ts`, `artAnimals.ts`, `artProps.ts` e `scene.ts`: o motor de ilustração animada.
+- `src/lib/tales/timeline.ts`: quando cada frase é falada. `render.ts`: cena, legenda, moral, abertura e encerramento com o Instagram.
+- `src/lib/tales/audio.ts`: narração, mixagem com a música e reprodução. `export.ts`: exportação em MP4.
+- `src/components/TalePlayer.tsx`, `TaleCover.tsx` e `TalesShelf.tsx`; páginas em `src/app/dashboard/contos`. O item **Contos ilustrados** também está no menu do administrador.
 
 ## Administradores adicionais
 

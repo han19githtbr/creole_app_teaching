@@ -11,7 +11,6 @@
  * assiste na plataforma. Sem CSS animado, sem aleatoriedade em tempo de execução (tudo parte de uma semente).
  */
 
-import { drawSceneDetail, type SceneDetail } from "@/lib/storySceneDetails";
 import { SURF_FIRST_SECONDS, SURF_PERIOD_SECONDS, SURF_RIDE_SECONDS } from "@/lib/storySoundscape";
 
 export const LIFE_W = 1200;
@@ -30,8 +29,6 @@ export interface LifeInput {
   title?: string;
   elements?: Array<{ pt?: string; kreyol?: string; fr?: string }>;
   zones?: SceneZones | null;
-  /** objetos extras rotulados (flor, árvore, casa...) calculados em imageBank */
-  details?: SceneDetail[];
 }
 
 export interface LifeScene {
@@ -123,7 +120,7 @@ export function person(t: number, o: PersonOpt): string {
   const seated = o.pose === "sit-eat" || o.pose === "sit-talk" || o.pose === "row" || o.pose === "ride";
   let lL = 0, lR = 0, aL = 0.1, aR = 0.1, bob = 0, lean = 0, nod = 0, sx = 1;
   switch (o.pose) {
-    case "walk": { const k = sin(w * 6); lL = k * 0.55; lR = -k * 0.55; aL = -k * 0.5 * 0.9 - 0.04; aR = k * 0.5 * 0.9 + 0.04; bob = -Math.abs(cos(w * 6)) * 2.5; lean = 3 + sin(w * 6) * 1.4; nod = sin(w * 12) * 1.1; break; }
+    case "walk": { const k = sin(w * 6); lL = k * 0.55; lR = -k * 0.55; aL = -k * 0.5; aR = k * 0.5; bob = -Math.abs(cos(w * 6)) * 2.5; break; }
     case "talk": aR = -1.0 + sin(w * 2.4) * 0.45; aL = 0.1 + sin(w * 1.7) * 0.15; nod = sin(w * 3) * 2; break;
     case "wave": aR = -2.7 + sin(w * 7) * 0.4; break;
     case "point": aR = -1.45 + sin(w * 1.5) * 0.08; aL = 0.15; nod = sin(w * 1.2) * 1.5; break;
@@ -177,12 +174,6 @@ export function person(t: number, o: PersonOpt): string {
       break;
     }
   }
-  // Respiração e balanço sutil de quem está parado/em ação: ninguém fica rígido
-  const idle = o.pose === "walk" || o.pose === "cycle" ? 0 : 1;
-  bob += -Math.abs(sin(w * 1.6)) * 0.9 * idle;
-  lean += sin(w * 0.9 + 1) * 0.9 * idle;
-  nod += sin(w * 0.7) * 0.8 * idle;
-  const blinking = sin(w * 0.55 + 2) > 0.985 || sin(w * 0.55 + 2) < -0.985;
   const hipY = seated ? -30 : -40;
   const shY = hipY - 34;
   let legs = "";
@@ -200,7 +191,7 @@ export function person(t: number, o: PersonOpt): string {
     (o.robe ? `<path d="M-11 ${shY + 8} L-14 ${hipY + 44} L14 ${hipY + 44} L11 ${shY + 8} Z" fill="${shirt}"/>` : "") +
     `<g transform="rotate(${f(nod)} 0 ${shY})">${circ(2, shY - 15, 12, skin)}<path d="M-10 ${shY - 18} Q2 ${shY - 34} 14 ${shY - 18} Q4 ${shY - 24} -10 ${shY - 18} Z" fill="${hair}"/>` +
     (o.hat ? `<ellipse cx="2" cy="${shY - 26}" rx="15" ry="4" fill="${o.hat}"/><rect x="-8" y="${shY - 36}" width="20" height="11" rx="5" fill="${o.hat}"/>` : "") +
-    (blinking ? line(5, shY - 14, 9, shY - 14, 1.4, "#2a1c14") : circ(7, shY - 14, 1.6, "#2a1c14")) + `</g>` +
+    circ(7, shY - 14, 1.6, "#2a1c14") + `</g>` +
     limb(0, shY + 4, 28, aR, 7, shirt) + circ(...end(0, shY + 4, 28, aR), 4, skin) + `</g>`;
   let prop = "";
   if (o.pose === "guitar") { const [hx, hy] = end(0, shY + 4, 28, aL); prop = line(-12, shY + 30, hx + 6, hy - 4, 4, "#7a4a22") + ell(-8, shY + 32, 11, 8, "#c0792f"); }
@@ -307,17 +298,12 @@ function horse(t: number, o: AnimalOpt & { color?: string }): string {
   return ell(o.x, o.y + 1, 44 * s, 6 * s, "rgba(0,0,0,.18)") + G(o.x, o.y - Math.abs(k) * 3, 0, (o.face ?? 1) * s, s, body);
 }
 function bird(t: number, o: { x: number; y: number; s?: number; ph?: number; color?: string; face?: 1 | -1 }): string {
-  const s = o.s ?? 1, ph = o.ph ?? 0, c = o.color ?? "#ffffff";
-  // bate asas em rajadas e planeia entre elas (como uma ave de verdade)
-  const flap = clamp(sin(t * 0.7 + ph * 1.9) * 2.2 + 0.7, 0, 1);
-  const k = sin(t * 8.5 + ph) * (0.18 + 0.82 * flap);
+  const s = o.s ?? 1, k = sin(t * 8 + (o.ph ?? 0)), c = o.color ?? "#ffffff";
   const d = `M-18 ${f(-4 + k * 9)} Q-9 ${f(-9 + k * 8)} 0 0 Q9 ${f(-9 + k * 8)} 18 ${f(-4 + k * 9)}`;
-  return G(o.x, o.y + sin(t * 1.3 + ph) * 4 - cos(t * 8.5 + ph) * 2.6 * flap, sin(t * 0.7 + ph) * 4 - flap * 3, (o.face ?? 1) * s, s, `<path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` + circ(0, 1, 2.6, c));
+  return G(o.x, o.y + sin(t * 1.3 + (o.ph ?? 0)) * 4, 0, (o.face ?? 1) * s, s, `<path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` + circ(0, 1, 2.6, c));
 }
 function butterfly(t: number, o: { cx: number; cy: number; r?: number; ph?: number; color?: string }): string {
-  const w = t * 0.6 + (o.ph ?? 0), R = o.r ?? 120;
-  const x = o.cx + sin(w * 1.7) * R + sin(w * 4.3 + 2) * R * 0.14, y = o.cy + sin(w * 2.3 + 1) * 40 + sin(w * 5.9) * 9 - Math.abs(sin(t * 3.2)) * 5;
-  const fl = 0.25 + 0.75 * Math.abs(sin(t * (12 + 4 * sin(t * 0.5)) + (o.ph ?? 0)));
+  const w = t * 0.6 + (o.ph ?? 0), x = o.cx + sin(w * 1.7) * (o.r ?? 120), y = o.cy + sin(w * 2.3 + 1) * 40, fl = 0.25 + 0.75 * Math.abs(sin(t * 14 + (o.ph ?? 0)));
   const c = o.color ?? "#f08a2b";
   return G(x, y, sin(w * 1.7) * 14, 1, 1, `<ellipse cx="-5" cy="0" rx="${f(6 * fl)}" ry="7" fill="${c}"/><ellipse cx="5" cy="0" rx="${f(6 * fl)}" ry="7" fill="${c}"/>` + line(0, -4, 0, 5, 2, "#3a2414"));
 }
@@ -435,32 +421,6 @@ function leaves(t: number, seed: string, n = 10, cols = ["#e0a030", "#d9622b", "
   return Array.from({ length: n }, (_, i) => {
     const sp = 14 + r() * 16, ph = r(), x0 = r() * LIFE_W, y = ((t * sp + ph * 900) % 900) - 60, x = x0 + sin(t * 0.8 + i) * 40 + y * 0.12;
     return G(x, y, sin(t * 2 + i) * 60, 1, 1, ell(0, 0, 6, 2.8, cols[i % cols.length]), ` opacity=".85"`);
-  }).join("");
-}
-/** tufos de grama que se curvam com o vento (decoração viva do chão, fora das pistas dos atores) */
-function grassTufts(t: number, seed: string, y0: number, y1: number, n = 10): string {
-  const r = rngFrom(seed + "g");
-  const xs = [60, 130, 210, 290, 545, 610, 680, 1010, 1085, 1150];
-  let out = "";
-  for (let i = 0; i < n; i++) {
-    const bx = xs[i % xs.length] + (r() - 0.5) * 30, by = y0 + r() * (y1 - y0), h = 16 + r() * 14, col = i % 3 === 0 ? "#6fb552" : "#4e9a3f";
-    const gust = 0.55 + 0.45 * sin(t * 0.23 + bx * 0.005);
-    const sway = (0.62 * sin(t * 0.9 + bx * 0.013) + 0.28 * sin(t * 2.1 + bx * 0.031 + 1.3)) * gust;
-    for (let b = -1; b <= 1; b++) {
-      const tx = bx + b * 5 + sway * 9 + b * 3, ty = by - h + Math.abs(b) * 4;
-      out += `<path d="M${f(bx + b * 3)} ${f(by)} Q${f(bx + b * 4 + sway * 3)} ${f(by - h * 0.6)} ${f(tx)} ${f(ty)}" stroke="${col}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
-    }
-  }
-  return out;
-}
-/** pétalas que caem girando, balançando de um lado para o outro */
-function petals(t: number, seed: string, n = 8): string {
-  const r = rngFrom(seed + "p");
-  return Array.from({ length: n }, (_, i) => {
-    const sp = 18 + r() * 14, ph = r(), x0 = r() * LIFE_W, y = ((t * sp + ph * 900) % 900) - 40;
-    const x = x0 + sin(t * 0.9 + i * 1.3) * 34 + y * 0.1;
-    const turn = cos(t * 2.2 + i) ;
-    return G(x, y, sin(t * 1.6 + i) * 50, 1, 1, ell(0, 0, 5 * Math.abs(turn) + 1, 3, i % 2 ? "#f7c6d6" : "#ffffff"), ` opacity=".8"`);
   }).join("");
 }
 function confetti(t: number, seed: string, n = 26): string {
@@ -921,12 +881,7 @@ export function createSceneLife(input: LifeInput): LifeScene {
   const idBase = norm(input.sceneId).replace(/\.(svg|png|webp|jpg)$/g, "").split("/").pop() ?? "";
   // As cenas de Idiomas já trazem professor/alunos e balões de conversa desenhados e uma mesa em primeiro plano:
   // atores extras andando por cima cobririam os objetos rotulados (cenário limpo).
-  if (theme === "idiomas" || idBase.startsWith("idiomas")) return { actors: [], render: () => "" };
-  const detailList = input.details ?? [];
-  const detailsOnly = (): LifeScene => detailList.length
-    ? { actors: detailList.map((d) => d.kind), render: (t: number) => detailList.map((d) => drawSceneDetail(t, d)).join("") }
-    : { actors: [], render: () => "" };
-  if (NATIVE_LIFE_IDS.has(idBase)) return detailsOnly();
+  if (NATIVE_LIFE_IDS.has(idBase) || theme === "idiomas" || idBase.startsWith("idiomas")) return { actors: [], render: () => "" };
 
   const zones = input.zones ?? DEFAULT_ZONES;
   const wz = zones.water;
@@ -1040,14 +995,6 @@ export function createSceneLife(input: LifeInput): LifeScene {
     add("par-de-gaivotas", 0, (t) => birdPair(t, Math.min(140, wz.y0 - 45), input.sceneId));
     add("brilho-solar-maritimo", 0, (t) => motes(t, input.sceneId, 8, 80, wz.y0, "#fff8e0", 2));
   }
-
-  // Chão vivo: tufos de grama ao vento e pétalas caindo (somente onde há terra firme)
-  if (!wantsSea || wz.y1 < 600) {
-    add("grama-ao-vento", 1, (t) => grassTufts(t, input.sceneId, 700, 742, 9));
-    if (theme === "natureza" || theme === "lazeres" || theme === "interior" || theme === "religiao") add("petalas-ao-vento", 1, (t) => petals(t, input.sceneId, 7));
-  }
-  // Objetos extras rotulados (flor, árvore, casa, bandeira, lanterna, pássaro, gato, moinho, robô, tambor, sino, livro)
-  for (const d of detailList) add(d.kind, 600 + d.y * 0.1, (t) => drawSceneDetail(t, d));
 
   // Ordenação por profundidade z para composição impecável
   actors.sort((a, b) => a.z - b.z);

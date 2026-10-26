@@ -283,8 +283,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     };
   }, [story.imageSrc, svgContent]);
   const lifeScene = useMemo(
-    () => createSceneLife({ sceneId: story.imageSrc, theme: story.theme, title: story.title, elements: sceneElements, zones: sceneZones, details: bankImage?.sceneDetails }),
-    [story.imageSrc, story.theme, story.title, sceneElements, sceneZones, bankImage],
+    () => createSceneLife({ sceneId: story.imageSrc, theme: story.theme, title: story.title, elements: sceneElements, zones: sceneZones }),
+    [story.imageSrc, story.theme, story.title, sceneElements, sceneZones],
   );
   const lifeTick = Math.floor(currentTime * 30) / 30;
   const lifeMarkup = useMemo(() => {

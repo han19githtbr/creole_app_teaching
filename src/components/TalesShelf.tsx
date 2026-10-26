@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BookOpenText, Clapperboard } from "lucide-react";
-import { TALES } from "@/lib/tales/tales";
+import type { Tale } from "@/lib/tales/tales";
 import { planTale } from "@/lib/tales/timeline";
 import { TaleCover } from "@/components/TaleCover";
 
@@ -11,7 +11,8 @@ function minutes(seconds: number) {
 }
 
 /** Prateleira dos contos ilustrados (somente painel em francês). */
-export function TalesShelf({ heading = true }: { heading?: boolean }) {
+export function TalesShelf({ tales, drafts, heading = true }: { tales: Tale[]; drafts?: Set<string>; heading?: boolean }) {
+  if (!tales.length) return null;
   return (
     <section className="space-y-4">
       {heading && (
@@ -31,7 +32,7 @@ export function TalesShelf({ heading = true }: { heading?: boolean }) {
         </div>
       )}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {TALES.map((tale) => (
+        {tales.map((tale) => (
           <Link
             key={tale.slug}
             href={`/dashboard/contos/${tale.slug}`}
@@ -42,6 +43,9 @@ export function TalesShelf({ heading = true }: { heading?: boolean }) {
               <span className="absolute left-2 top-2 rounded-sm bg-[#14251e]/85 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#f5cf72]">
                 Niveau {tale.level}
               </span>
+              {drafts?.has(tale.slug) && (
+                <span className="absolute right-2 top-2 rounded-sm bg-amber-400 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-950">Rascunho</span>
+              )}
               <span className="absolute bottom-2 right-2 rounded-sm bg-black/70 px-2 py-1 text-[10px] text-white">≈ {minutes(planTale(tale).total)}</span>
             </div>
             <div className="p-3">

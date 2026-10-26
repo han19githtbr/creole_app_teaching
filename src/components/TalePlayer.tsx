@@ -3,14 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getTale } from "@/lib/tales/tales";
-import { planTale } from "@/lib/tales/timeline";
-import { renderTaleFrame } from "@/lib/tales/render";
+import { planTale, splitForStories } from "@/lib/tales/timeline";
+import { TALE_FORMATS, renderTaleFrame, type TaleFormat } from "@/lib/tales/render";
 import { TalePlayback, loadTaleNarration, mixTaleAudio, missingNarration, narrationDurations, type TaleNarration } from "@/lib/tales/audio";
-import { TALE_QUALITY, exportTale, type TaleExportResult, type TaleQuality } from "@/lib/tales/export";
+import { TALE_QUALITY, exportTaleSet, type TaleExportResult, type TaleQuality } from "@/lib/tales/export";
 import { Download, Languages, Loader2, Music, Pause, Play, RotateCcw, Square, Volume2, VolumeX } from "lucide-react";
 
 const PREVIEW_W = 540;
-const PREVIEW_H = 960;
 
 function formatBytes(bytes: number) {
   return bytes > 1_000_000 ? `${(bytes / 1_000_000).toFixed(1)} MB` : `${Math.round(bytes / 1000)} KB`;
@@ -34,11 +33,13 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
   const timeRef = useRef(0);
   const trackKeyRef = useRef("");
 
+  const [format, setFormat] = useState<TaleFormat>("story");
+  const [splitStories, setSplitStories] = useState(false);
   const [quality, setQuality] = useState<TaleQuality>("max");
   const [exporting, setExporting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ url: string; info: TaleExportResult; name: string } | null>(null);
+  const [results, setResults] = useState<{ url: string; info: TaleExportResult; name: string }[]>([]);
   const abortRef = useRef<AbortController | null>(null);
 
   // baixa a narração (voz em francês) de todas as frases
@@ -63,10 +64,12 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
 
   const planRef = useRef(plan);
   const showPtRef = useRef(showPt);
+  const formatRef = useRef(format);
   useEffect(() => {
     planRef.current = plan;
     showPtRef.current = showPt;
-  }, [plan, showPt]);
+    formatRef.current = format;
+  }, [plan, showPt, format]);
 
   const currentTime = useCallback(() => {
     const pb = playbackRef.current;
@@ -140,7 +143,7 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
           setTime(p.total);
         }
         timeRef.current = playbackRef.current?.playing ? t : timeRef.current;
-        renderTaleFrame(ctx, canvas.width, canvas.height, Math.min(t, p.total - 0.001), p, { showPt: showPtRef.current });
+        renderTaleFrame(ctx, canvas.width, canvas.height, Math.min(t, p.total - 0.001), p, { showPt: showPtRef.current, format: formatRef.current });
         if (now - lastUi > 120) {
           lastUi = now;
           setTime(t);
@@ -177,26 +180,37 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
   }
 
   /* ---------- exportação ---------- */
-  useEffect(
-    () => () => {
-      if (result) URL.revokeObjectURL(result.url);
-    },
-    [result]
-  );
+  useEffect(() => () => results.forEach((r) => URL.revokeObjectURL(r.url)), [results]);
 
   async function generate() {
     if (!plan || !narration || exporting) return;
     pause();
     setError(null);
-    setResult(null);
+    setResults([]);
     setExporting(true);
     setProgress(0);
     const controller = new AbortController();
     abortRef.current = controller;
     try {
-      const info = await exportTale({ plan, narration, music, showPt, quality, onProgress: setProgress, signal: controller.signal });
+      const infos = await exportTaleSet({
+        plan,
+        narration,
+        music,
+        showPt,
+        quality,
+        format,
+        splitStories: format === "story" && splitStories,
+        onProgress: setProgress,
+        signal: controller.signal,
+      });
       const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "");
-      setResult({ url: URL.createObjectURL(info.blob), info, name: `${slug}-${stamp}.${info.extension}` });
+      setResults(
+        infos.map((info, i) => ({
+          url: URL.createObjectURL(info.blob),
+          info,
+          name: `${slug}-${format}${infos.length > 1 ? `-parte${i + 1}de${infos.length}` : ""}-${stamp}.${info.extension}`,
+        }))
+      );
     } catch (err) {
       if (!(err instanceof DOMException && err.name === "AbortError")) setError(err instanceof Error ? err.message : "Não foi possível gerar o vídeo.");
     } finally {
@@ -208,6 +222,8 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
   if (!tale || !plan) return <p className="text-sm text-[var(--text-secondary)]">Conto não encontrado.</p>;
 
   const loading = !narration;
+  const spec = TALE_FORMATS[canExport ? format : "story"];
+  const partCount = format === "story" && splitStories ? splitForStories(plan).length : 1;
   const cardCls = "space-y-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm";
   const toggleCls = "flex cursor-pointer items-center gap-2 text-sm text-[var(--text)]";
 
@@ -226,8 +242,14 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
           })}
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl bg-black shadow-xl" style={{ aspectRatio: "9 / 16" }}>
-          <canvas ref={canvasRef} width={PREVIEW_W} height={PREVIEW_H} className="h-full w-full" aria-label={tale.title} />
+        <div className="relative overflow-hidden rounded-3xl bg-black shadow-xl" style={{ aspectRatio: `${spec.w} / ${spec.h}` }}>
+          <canvas
+            ref={canvasRef}
+            width={PREVIEW_W}
+            height={Math.round((PREVIEW_W * spec.h) / spec.w)}
+            className="h-full w-full"
+            aria-label={tale.title}
+          />
           {loading ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/70 p-6 text-center text-white">
               <Loader2 className="h-8 w-8 animate-spin" />
@@ -312,10 +334,26 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
           <section className={cardCls}>
             <h2 className="text-sm font-bold text-[var(--text)]">Baixar vídeo para o Instagram e o Facebook</h2>
             <p className="text-xs text-[var(--text-secondary)]">
-              Gera um MP4 vertical 1080 × 1920 (Reels, Stories e Facebook) com a narração, a legenda em francês e, no final, a logo e o nome do Instagram
-              @frances_com_tres_nativos. As opções de música e de tradução acima valem para o vídeo.
+              Gera um MP4 (H.264 + áudio AAC, 30 quadros por segundo) com a narração, a legenda em francês e, no final, a logo e o nome do Instagram
+              @frances_com_tres_nativos. A música e a tradução marcadas ao lado valem para o vídeo, e a pré-visualização mostra o enquadramento escolhido.
             </p>
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Formato</label>
+                <select
+                  value={format}
+                  onChange={(e) => setFormat(e.target.value as TaleFormat)}
+                  disabled={exporting}
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-2 text-sm text-[var(--text)]"
+                >
+                  {Object.values(TALE_FORMATS).map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-[11px] text-[var(--text-secondary)]">{TALE_FORMATS[format].hint}</p>
+              </div>
               <div>
                 <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Qualidade do arquivo</label>
                 <select
@@ -331,13 +369,27 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
                   ))}
                 </select>
               </div>
+            </div>
+            {format === "story" && (
+              <label className={toggleCls}>
+                <input
+                  type="checkbox"
+                  checked={splitStories}
+                  onChange={(e) => setSplitStories(e.target.checked)}
+                  disabled={exporting}
+                  className="h-4 w-4 cursor-pointer accent-[var(--accent)]"
+                />
+                Dividir em partes de até 60 s para Stories{plan.total > 60 ? ` (${splitForStories(plan).length} vídeos)` : ""}
+              </label>
+            )}
+            <div className="flex flex-wrap gap-2">
               {exporting ? (
                 <Button type="button" variant="outline" className="cursor-pointer" onClick={() => abortRef.current?.abort()}>
                   <Square className="mr-2 h-4 w-4" /> Cancelar
                 </Button>
               ) : (
                 <Button type="button" className="cursor-pointer" onClick={generate} disabled={loading}>
-                  <Download className="mr-2 h-4 w-4" /> Gerar vídeo (MP4)
+                  <Download className="mr-2 h-4 w-4" /> Gerar {partCount > 1 ? `${partCount} vídeos` : "vídeo"} (MP4)
                 </Button>
               )}
             </div>
@@ -348,42 +400,48 @@ export function TalePlayer({ slug, canExport }: { slug: string; canExport: boole
                   <div className="h-full rounded-full bg-[var(--accent)] transition-all" style={{ width: `${progress}%` }} />
                 </div>
                 <p className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Gerando em 1080×1920… {progress}%. Mantenha esta aba aberta.
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Gerando em {spec.w}×{spec.h}… {progress}%. Mantenha esta aba aberta.
                 </p>
               </div>
             )}
             {error && <p className="rounded-lg bg-red-50 p-2 text-xs text-red-700 dark:bg-red-950/30 dark:text-red-300">{error}</p>}
 
-            {result && (
+            {results.length > 0 && (
               <div className="space-y-3 rounded-xl border border-emerald-300/60 bg-emerald-50/50 p-3 dark:border-emerald-800/60 dark:bg-emerald-950/20">
                 <p className="text-sm font-semibold text-[var(--text)]">
-                  Vídeo pronto · {result.info.width}×{result.info.height} · {formatBytes(result.info.blob.size)} · {result.info.extension.toUpperCase()}
-                  {result.info.hasAudio ? " com som" : " sem som"}
+                  {results.length > 1 ? `${results.length} vídeos prontos` : "Vídeo pronto"} · {results[0].info.width}×{results[0].info.height}
+                  {results[0].info.hasAudio ? " · com som" : " · sem som"}
                 </p>
-                <video src={result.url} controls playsInline className="mx-auto max-h-[460px] rounded-lg bg-black" />
-                <a
-                  href={result.url}
-                  download={result.name}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-bold text-white hover:brightness-110"
-                >
-                  <Download className="h-4 w-4" /> Baixar {result.name}
-                </a>
-                {result.info.extension === "webm" && (
+                <div className="flex flex-wrap justify-center gap-3">
+                  {results.map((r, i) => (
+                    <div key={r.name} className="w-full max-w-[260px] space-y-2">
+                      <video src={r.url} controls playsInline className="w-full rounded-lg bg-black" />
+                      <a
+                        href={r.url}
+                        download={r.name}
+                        className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-bold text-white hover:brightness-110"
+                      >
+                        <Download className="h-4 w-4" /> {results.length > 1 ? `Parte ${i + 1}` : "Baixar"} · {r.info.extension.toUpperCase()} · {formatBytes(r.info.blob.size)}
+                      </a>
+                    </div>
+                  ))}
+                </div>
+                {results[0].info.extension === "webm" && (
                   <p className="text-xs text-amber-700 dark:text-amber-300">
                     Este navegador só gerou WebM, que o Instagram e o Facebook não aceitam bem. Gere no Google Chrome ou no Edge atualizados, no computador, para sair em MP4.
                   </p>
                 )}
-                {!result.info.hasAudio && (
+                {!results[0].info.hasAudio && (
                   <p className="text-xs text-[var(--text-secondary)]">Este navegador não codifica áudio AAC, então o vídeo saiu mudo. Gere no Chrome ou no Edge para sair com a narração.</p>
                 )}
-                {result.info.method === "realtime" && (
+                {results[0].info.method === "realtime" && (
                   <p className="text-xs text-[var(--text-secondary)]">Gravado em tempo real (sem o codificador rápido). Para a melhor nitidez, use o Chrome ou o Edge no computador.</p>
                 )}
               </div>
             )}
-            {plan.total > 90 && (
+            {plan.total > 60 && format === "story" && !splitStories && (
               <p className="text-xs text-[var(--text-secondary)]">
-                Este conto tem mais de 90 s: perfeito para Reels e para o feed. Para Stories, o Instagram divide em partes de até 60 s automaticamente.
+                Este conto tem mais de 60 s: serve para Reels. Para Stories, marque &quot;Dividir em partes&quot; e você recebe vídeos de até 60 s, que terminam sempre no fim de uma cena.
               </p>
             )}
           </section>

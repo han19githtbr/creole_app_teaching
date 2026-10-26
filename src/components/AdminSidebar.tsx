@@ -19,7 +19,7 @@ const items = [
   { href: "/admin/propaganda", label: "Propagandas", icon: Megaphone },
   { href: "/admin/live", label: "Ao vivo", icon: Radio },
   { href: "/admin/jogo-videos", label: "Vídeos do Jogo", icon: Clapperboard },
-  { href: "/dashboard/contos", label: "Contos ilustrados", icon: BookOpenText },
+  { href: "/admin/contos", label: "Contos ilustrados", icon: BookOpenText },
   { href: "/admin/administradores", label: "Administradores", icon: ShieldCheck },
 ];
 

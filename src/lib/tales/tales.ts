@@ -22,6 +22,8 @@ export interface Tale {
   level: "A2" | "B1";
   synopsisPt: string;
   coverScene: number;
+  /** Já nasce publicado (os contos novos nascem como rascunho até o administrador publicar). */
+  publishedByDefault?: boolean;
   scenes: TaleScene[];
 }
 
@@ -33,6 +35,7 @@ const dawnCam = { x0: -20, y0: 0, z0: 1.02, x1: 30, y1: 0, z1: 1.12 };
 
 const AIGLE: Tale = {
   slug: "l-aigle-qui-se-croyait-poule",
+  publishedByDefault: true,
   title: "L'aigle qui se croyait poule",
   byline: "Une parabole racontée en français",
   level: "A2",
@@ -180,6 +183,7 @@ const meadowProps = [{ k: "tree", x: 90, row: 0.05, s: 1.3 }, { k: "bush", x: 33
 
 const LIEVRE: Tale = {
   slug: "le-lievre-et-la-tortue",
+  publishedByDefault: true,
   title: "Le lièvre et la tortue",
   byline: "D'après Jean de La Fontaine",
   level: "A2",
@@ -286,6 +290,7 @@ const LIEVRE: Tale = {
 
 const CORBEAU: Tale = {
   slug: "le-corbeau-et-le-renard",
+  publishedByDefault: true,
   title: "Le corbeau et le renard",
   byline: "D'après Jean de La Fontaine",
   level: "B1",
@@ -382,6 +387,7 @@ const CORBEAU: Tale = {
 
 const CIGALE: Tale = {
   slug: "la-cigale-et-la-fourmi",
+  publishedByDefault: true,
   title: "La cigale et la fourmi",
   byline: "D'après Jean de La Fontaine",
   level: "B1",
@@ -483,6 +489,7 @@ const CIGALE: Tale = {
 };
 
 /* ----------------------------------------------------------------- */
+<<<<<<< HEAD
 /* 5. Prendre soin de ce que l'on a                                   */
 /* ----------------------------------------------------------------- */
 
@@ -749,7 +756,594 @@ const AQUARIUM: Tale = {
 };
 
 export const TALES: Tale[] = [AIGLE, LIEVRE, CORBEAU, CIGALE, SOIN, AQUARIUM];
+=======
+/* 5. La poule aux œufs d'or                                          */
+/* ----------------------------------------------------------------- */
+>>>>>>> 1262605a07663215c7998d8dbbc089ef578a0cdb
 
+const POULE: Tale = {
+  slug: "la-poule-aux-oeufs-d-or",
+  title: "La poule aux œufs d'or",
+  byline: "D'après Jean de La Fontaine",
+  level: "A2",
+  synopsisPt: "Um fazendeiro tem uma galinha que põe ovos de ouro. Mas a ganância pode fazer perder tudo.",
+  coverScene: 1,
+  scenes: [
+    {
+      lines: ["Un fermier avait une poule très spéciale.", "Chaque matin, elle pondait un œuf en or !"],
+      pt: "Um fazendeiro tinha uma galinha muito especial. Toda manhã, ela botava um ovo de ouro!",
+      art: {
+        look: "dawn", terrain: "farm", ground: "dirt", seed: 21,
+        props: [{ k: "barn", x: 850, row: 0.05, s: 1.1 }, { k: "haystack", x: 180, row: 0.1, s: 1.1 }, { k: "nest", x: 420, row: 0.8, s: 1.6, v: 11 }, { k: "fence", x: -60, row: 0.28, s: 1.2, w: 700 }],
+        actors: [{ k: "person", x: 220, row: 0.95, s: 1.3, anim: "idle", variant: 0 }, { k: "hen", x: 600, row: 0.85, s: 1.8, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 430, y: 1230, n: 16 }, { k: "rays" }], cam: { x0: -20, y0: 0, z0: 1.02, x1: 30, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Le fermier vendait les œufs au marché.", "Petit à petit, il devint très riche."],
+      pt: "O fazendeiro vendia os ovos no mercado. Aos poucos, ficou muito rico.",
+      art: {
+        look: "day", terrain: "farm", ground: "dirt", seed: 21,
+        props: [{ k: "barn", x: 200, row: 0.05, s: 1.1 }, { k: "nest", x: 760, row: 0.8, s: 1.6, v: 13 }, { k: "tree", x: 960, row: 0.06, s: 1.2 }],
+        actors: [{ k: "person", x: 450, row: 0.95, s: 1.3, anim: "wave", variant: 0 }, { k: "hen", x: 880, row: 0.7, s: 1.5, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 760, y: 1230, n: 22 }, { k: "dust", n: 20 }], cam: { x0: 20, y0: 0, z0: 1.02, x1: -20, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Mais il voulait toujours plus d'or.", "« Pourquoi attendre chaque matin ? » se dit-il."],
+      pt: "Mas ele queria sempre mais ouro. “Por que esperar toda manhã?”, pensou.",
+      art: {
+        look: "sunset", terrain: "farm", ground: "dirt", seed: 22,
+        props: [{ k: "barn", x: 850, row: 0.05, s: 1.1 }, { k: "haystack", x: 120, row: 0.12, s: 1.0 }],
+        actors: [{ k: "person", x: 360, row: 0.95, s: 1.4, anim: "idle", variant: 0 }, { k: "hen", x: 700, row: 0.85, s: 1.6, anim: "peck" }],
+        fx: [{ k: "dust", n: 24 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Un soir, il enferma la poule et lui cria :", "« Donne-moi tout ton or, tout de suite ! »"],
+      pt: "Uma noite, ele prendeu a galinha e gritou: “Dê-me todo o seu ouro, agora mesmo!”",
+      art: {
+        look: "barn", terrain: "interior", ground: "wood", seed: 23,
+        props: [{ k: "haystack", x: 150, row: 0.1, s: 1.2 }, { k: "nest", x: 760, row: 0.7, s: 1.4, v: 0 }],
+        actors: [{ k: "person", x: 300, row: 0.95, s: 1.5, anim: "wave", variant: 0 }, { k: "hen", x: 740, row: 0.8, s: 1.7, anim: "idle", flip: true }],
+        fx: [{ k: "dust", n: 30 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Mais la poule, effrayée, ne pondit plus rien.", "Le lendemain matin, le nid était vide."],
+      pt: "Mas a galinha, assustada, não botou mais nada. Na manhã seguinte, o ninho estava vazio.",
+      art: {
+        look: "dawn", terrain: "interior", ground: "wood", seed: 23,
+        props: [{ k: "nest", x: 540, row: 0.8, s: 1.9, v: 0 }, { k: "haystack", x: 160, row: 0.1, s: 1.2 }],
+        actors: [{ k: "hen", x: 820, row: 0.65, s: 1.3, anim: "idle", variant: 0, flip: true }],
+        fx: [{ k: "rays" }, { k: "dust", n: 40 }], cam: { x0: 0, y0: 0, z0: 1.0, x1: 0, y1: 0, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Le fermier attendit, attendit... mais aucun œuf ne vint.", "Il comprit alors son erreur."],
+      pt: "O fazendeiro esperou, esperou… mas nenhum ovo veio. Então entendeu o seu erro.",
+      art: {
+        look: "sunset", terrain: "farm", ground: "dirt", seed: 22,
+        props: [{ k: "barn", x: 840, row: 0.05, s: 1.1 }, { k: "fence", x: -60, row: 0.3, s: 1.2, w: 700 }],
+        actors: [{ k: "person", x: 440, row: 0.95, s: 1.5, anim: "idle", variant: 0 }, { k: "hen", x: 780, row: 0.85, s: 1.4, anim: "idle" }],
+        fx: [{ k: "dust", n: 18 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Morale : qui veut tout, risque de tout perdre."],
+      pt: "Moral: quem quer tudo corre o risco de perder tudo.",
+      moral: true,
+      art: {
+        look: "sunset", terrain: "farm", ground: "dirt", seed: 22,
+        props: [{ k: "nest", x: 540, row: 0.8, s: 1.7, v: 11 }, { k: "barn", x: 880, row: 0.05, s: 1.0 }],
+        actors: [{ k: "hen", x: 340, row: 0.85, s: 1.6, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 540, y: 1230, n: 18 }], cam: { x0: 0, y0: 0, z0: 1.05, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+  ],
+};
+
+/* ----------------------------------------------------------------- */
+/* 6. Le renard et les raisins                                        */
+/* ----------------------------------------------------------------- */
+
+const RAISINS: Tale = {
+  slug: "le-renard-et-les-raisins",
+  title: "Le renard et les raisins",
+  byline: "D'après Ésope et La Fontaine",
+  level: "A2",
+  synopsisPt: "Uma raposa faminta vê uvas lá no alto. O que ela diz quando não consegue alcançá-las?",
+  coverScene: 2,
+  scenes: [
+    {
+      lines: ["Un renard avait très faim.", "Il marchait depuis le matin sans rien trouver."],
+      pt: "Uma raposa estava com muita fome. Caminhava desde a manhã sem encontrar nada.",
+      art: {
+        look: "day", terrain: "meadow", seed: 31,
+        props: [{ k: "bush", x: 150, row: 0.15 }, { k: "tree", x: 940, row: 0.06, s: 1.2 }],
+        actors: [{ k: "fox", x: 200, row: 0.85, s: 1.5, anim: "walk", dx: 380 }],
+        fx: [{ k: "dust", n: 24 }], cam: { x0: -20, y0: 0, z0: 1.02, x1: 40, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Soudain, il vit de beaux raisins, tout en haut d'une vigne."],
+      pt: "De repente, viu belas uvas no alto de uma parreira.",
+      art: {
+        look: "day", terrain: "meadow", seed: 31,
+        props: [{ k: "grapevine", x: 700, row: 0.45, s: 1.5 }, { k: "bush", x: 120, row: 0.15 }],
+        actors: [{ k: "fox", x: 300, row: 0.88, s: 1.5, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 700, y: 760, n: 14 }], cam: { x0: -10, y0: 0, z0: 1.0, x1: 20, y1: -20, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["« Quel délice ! » dit-il. « Je vais les attraper ! »"],
+      pt: "“Que delícia!”, disse ele. “Vou pegá-las!”",
+      art: {
+        look: "day", terrain: "meadow", seed: 31,
+        props: [{ k: "grapevine", x: 640, row: 0.5, s: 1.7 }],
+        actors: [{ k: "fox", x: 360, row: 0.9, s: 1.6, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 640, y: 700, n: 16 }, { k: "petals", n: 8 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: -20, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Il sauta une fois, deux fois, trois fois...", "Mais les raisins étaient beaucoup trop hauts."],
+      pt: "Pulou uma vez, duas vezes, três vezes… Mas as uvas estavam muito altas.",
+      art: {
+        look: "day", terrain: "meadow", seed: 31,
+        props: [{ k: "grapevine", x: 700, row: 0.5, s: 1.7 }],
+        actors: [{ k: "fox", x: 420, y: 1290, s: 1.6, anim: "walk", speed: 12, dy: -90 }],
+        fx: [{ k: "dust", n: 30 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: -10, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Fatigué, le renard s'assit par terre.", "Il regarda les raisins avec envie."],
+      pt: "Cansada, a raposa sentou no chão. Olhou as uvas com vontade.",
+      art: {
+        look: "sunset", terrain: "meadow", seed: 32,
+        props: [{ k: "grapevine", x: 680, row: 0.5, s: 1.6 }],
+        actors: [{ k: "fox", x: 350, row: 0.92, s: 1.6, anim: "idle" }],
+        fx: [{ k: "dust", n: 20 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Alors il s'éloigna en disant : « Ils sont trop verts ! »", "« De toute façon, je n'en voulais pas ! »"],
+      pt: "Então foi embora dizendo: “Estão verdes demais!” “De qualquer jeito, eu nem queria!”",
+      art: {
+        look: "sunset", terrain: "meadow", seed: 32,
+        props: [{ k: "grapevine", x: 220, row: 0.45, s: 1.3 }, { k: "tree", x: 960, row: 0.06, s: 1.2 }],
+        actors: [{ k: "fox", x: 700, row: 0.9, s: 1.5, anim: "walk", dx: 360, flip: false }],
+        fx: [{ k: "dust", n: 24 }], cam: { x0: 20, y0: 0, z0: 1.02, x1: -20, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Morale : il ne faut pas mépriser ce que l'on n'arrive pas à avoir."],
+      pt: "Moral: não devemos desprezar aquilo que não conseguimos ter.",
+      moral: true,
+      art: {
+        look: "sunset", terrain: "meadow", seed: 32,
+        props: [{ k: "grapevine", x: 540, row: 0.4, s: 1.6 }],
+        actors: [{ k: "fox", x: 800, row: 0.92, s: 1.4, anim: "idle", flip: true }],
+        fx: [{ k: "sparkle", x: 540, y: 740, n: 14 }], cam: { x0: 0, y0: 0, z0: 1.05, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+  ],
+};
+
+/* ----------------------------------------------------------------- */
+/* 7. Le lion et le rat                                               */
+/* ----------------------------------------------------------------- */
+
+const LION: Tale = {
+  slug: "le-lion-et-le-rat",
+  title: "Le lion et le rat",
+  byline: "D'après Jean de La Fontaine",
+  level: "B1",
+  synopsisPt: "Um leão poupa um ratinho. Um dia, é o pequeno quem salva o grande.",
+  coverScene: 2,
+  scenes: [
+    {
+      lines: ["Un lion dormait paisiblement sous un arbre.", "Un petit rat, qui jouait, lui courut sur la patte."],
+      pt: "Um leão dormia tranquilo debaixo de uma árvore. Um ratinho que brincava correu por cima da sua pata.",
+      art: {
+        look: "autumn", terrain: "plain", ground: "sand", seed: 41,
+        props: [{ k: "oak", x: 720, row: 0.15, s: 1.6 }, { k: "rock", x: 150, row: 0.4, w: 120 }],
+        actors: [{ k: "lion", x: 420, row: 0.82, s: 1.0, anim: "sleep" }, { k: "mouse", x: 100, row: 0.95, s: 1.8, anim: "run", dx: 560 }],
+        fx: [{ k: "zzz", x: 440, y: 1170 }, { k: "dust", n: 20 }], cam: { x0: 0, y0: 0, z0: 1.0, x1: 20, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Le lion se réveilla en colère et attrapa le rat."],
+      pt: "O leão acordou furioso e agarrou o ratinho.",
+      art: {
+        look: "autumn", terrain: "plain", ground: "sand", seed: 41,
+        props: [{ k: "oak", x: 860, row: 0.15, s: 1.5 }],
+        actors: [{ k: "lion", x: 380, row: 0.86, s: 1.1, anim: "roar" }, { k: "mouse", x: 700, row: 0.95, s: 2.0, anim: "idle", flip: true }],
+        fx: [{ k: "dust", n: 24 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["« Laisse-moi partir ! » supplia le rat.", "« Un jour, je pourrai t'aider ! »"],
+      pt: "“Deixe-me ir!”, implorou o ratinho. “Um dia eu poderei ajudá-lo!”",
+      art: {
+        look: "autumn", terrain: "plain", ground: "sand", seed: 41,
+        props: [{ k: "oak", x: 140, row: 0.15, s: 1.5 }],
+        actors: [{ k: "lion", x: 700, row: 0.88, s: 1.1, anim: "idle", flip: true }, { k: "mouse", x: 150, row: 0.95, s: 2.2, anim: "idle" }],
+        fx: [{ k: "dust", n: 20 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Le lion éclata de rire : « Toi, m'aider ? Quelle drôle d'idée ! »", "Mais il le laissa partir."],
+      pt: "O leão caiu na gargalhada: “Você, me ajudar? Que ideia engraçada!” Mas deixou o ratinho ir embora.",
+      art: {
+        look: "autumn", terrain: "plain", ground: "sand", seed: 41,
+        props: [{ k: "rock", x: 880, row: 0.45, w: 110 }],
+        actors: [{ k: "lion", x: 700, row: 0.88, s: 1.1, anim: "idle", flip: true }, { k: "mouse", x: 380, row: 0.95, s: 2.0, anim: "run", dx: -280, flip: true, speed: 18 }],
+        fx: [{ k: "dust", n: 28 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: -20, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Quelque temps après, des chasseurs posèrent un grand filet.", "Le lion tomba dedans et ne put plus bouger."],
+      pt: "Algum tempo depois, caçadores armaram uma grande rede. O leão caiu nela e não conseguiu mais se mexer.",
+      art: {
+        look: "sunset", terrain: "forest", ground: "dirt", seed: 42,
+        props: [{ k: "oak", x: 120, row: 0.2, s: 1.6 }, { k: "net", x: 560, row: 0.9, s: 1.2 }],
+        actors: [{ k: "lion", x: 560, row: 0.84, s: 1.0, anim: "idle" }],
+        fx: [{ k: "dust", n: 20 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Il rugissait de toutes ses forces, mais personne ne venait."],
+      pt: "Ele rugia com todas as forças, mas ninguém vinha.",
+      art: {
+        look: "sunset", terrain: "forest", ground: "dirt", seed: 42,
+        props: [{ k: "oak", x: 960, row: 0.2, s: 1.6 }, { k: "net", x: 520, row: 0.9, s: 1.3 }],
+        actors: [{ k: "lion", x: 520, row: 0.84, s: 1.05, anim: "roar" }],
+        fx: [{ k: "dust", n: 24 }], cam: { x0: 0, y0: 0, z0: 1.06, x1: 0, y1: 0, z1: 1.2 },
+      },
+    },
+    {
+      lines: ["Le petit rat entendit le lion et accourut.", "Avec ses dents, il rongea les cordes une à une."],
+      pt: "O ratinho ouviu o leão e correu até ele. Com os dentes, roeu as cordas uma a uma.",
+      art: {
+        look: "sunset", terrain: "forest", ground: "dirt", seed: 42,
+        props: [{ k: "oak", x: 140, row: 0.2, s: 1.6 }, { k: "net", x: 600, row: 0.86, s: 1.1 }],
+        actors: [{ k: "lion", x: 640, row: 0.84, s: 1.0, anim: "idle", flip: true }, { k: "mouse", x: 300, row: 0.98, s: 2.4, anim: "gnaw", dx: 40 }],
+        fx: [{ k: "sparkle", x: 420, y: 1290, n: 8 }], cam: { x0: -20, y0: 0, z0: 1.04, x1: 20, y1: 0, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Bientôt, le lion fut libre.", "« Merci, petit ami ! » dit-il avec un grand sourire."],
+      pt: "Logo o leão estava livre. “Obrigado, pequeno amigo!”, disse com um grande sorriso.",
+      art: {
+        look: "sunset", terrain: "forest", ground: "dirt", seed: 42,
+        props: [{ k: "oak", x: 900, row: 0.2, s: 1.6 }],
+        actors: [{ k: "lion", x: 720, row: 0.86, s: 1.1, anim: "idle", flip: true }, { k: "mouse", x: 150, row: 0.97, s: 2.2, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 440, y: 1180, n: 18 }, { k: "dust", n: 16 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: 0, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Morale : on a parfois besoin d'un plus petit que soi."],
+      pt: "Moral: às vezes precisamos de alguém menor do que nós.",
+      moral: true,
+      art: {
+        look: "sunset", terrain: "plain", ground: "sand", seed: 41,
+        props: [{ k: "oak", x: 140, row: 0.15, s: 1.5 }],
+        actors: [{ k: "lion", x: 720, row: 0.88, s: 1.1, anim: "idle", flip: true }, { k: "mouse", x: 150, row: 0.96, s: 2.2, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 460, y: 1180, n: 14 }], cam: { x0: 0, y0: 0, z0: 1.05, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+  ],
+};
+
+/* ----------------------------------------------------------------- */
+/* 8. Le petit poussin perdu (histoire originale, A1)                 */
+/* ----------------------------------------------------------------- */
+
+const POUSSIN: Tale = {
+  slug: "le-petit-poussin-perdu",
+  title: "Le petit poussin perdu",
+  byline: "Une histoire originale pour débutants",
+  level: "A2",
+  synopsisPt: "Um pintinho curioso segue uma borboleta e se perde. Quem vai ajudá-lo a voltar para casa?",
+  coverScene: 3,
+  scenes: [
+    {
+      lines: ["Un petit poussin jouait dans le jardin de la ferme.", "Il était très curieux et il aimait explorer."],
+      pt: "Um pintinho brincava no jardim da fazenda. Ele era muito curioso e adorava explorar.",
+      art: {
+        look: "day", terrain: "farm", ground: "grass", seed: 51,
+        props: [{ k: "barn", x: 860, row: 0.05, s: 1.1 }, { k: "fence", x: -60, row: 0.3, s: 1.2, w: 800 }, { k: "flowers", x: 220, row: 1, v: 1 }, { k: "flowers", x: 760, row: 0.95, v: 2 }],
+        actors: [{ k: "chick", x: 450, row: 0.9, s: 2.5, anim: "walk", dx: 70 }, { k: "hen", x: 200, row: 0.75, s: 1.4, anim: "peck" }],
+        fx: [{ k: "petals", n: 12 }], cam: { x0: -20, y0: 0, z0: 1.02, x1: 20, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Un jour, il vit un joli papillon jaune.", "« Attends-moi ! » cria-t-il, et il le suivit."],
+      pt: "Um dia, ele viu uma linda borboleta amarela. “Espere por mim!”, gritou, e a seguiu.",
+      art: {
+        look: "day", terrain: "farm", ground: "grass", seed: 51,
+        props: [{ k: "fence", x: 300, row: 0.3, s: 1.2, w: 800 }, { k: "flowers", x: 150, row: 1, v: 0 }],
+        actors: [{ k: "butterfly", x: 700, row: 0.8, s: 2.2, dx: 200, dy: -40 }, { k: "chick", x: 340, row: 0.92, s: 2.5, anim: "walk", dx: 280, speed: 11 }],
+        fx: [{ k: "petals", n: 14 }], cam: { x0: -20, y0: 0, z0: 1.0, x1: 50, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Le poussin suivit le papillon très loin, jusqu'à un grand champ."],
+      pt: "O pintinho seguiu a borboleta muito longe, até um grande campo.",
+      art: {
+        look: "day", terrain: "plain", ground: "grass", seed: 52,
+        props: [{ k: "wheat", x: 250, row: 0.45, w: 420, s: 1.1 }, { k: "wheat", x: 820, row: 0.5, w: 400, s: 1.1 }],
+        actors: [{ k: "butterfly", x: 360, row: 0.8, s: 2.2, dx: 300, dy: -60 }, { k: "chick", x: 240, row: 0.95, s: 2.4, anim: "walk", dx: 320, speed: 11 }],
+        fx: [{ k: "dust", n: 24 }], cam: { x0: -30, y0: 0, z0: 1.0, x1: 50, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Quand il leva la tête, la ferme avait disparu.", "« Maman ? Où es-tu ? » appela-t-il."],
+      pt: "Quando levantou a cabeça, a fazenda tinha sumido. “Mamãe? Onde você está?”, chamou.",
+      art: {
+        look: "sunset", terrain: "plain", ground: "grass", seed: 52,
+        props: [{ k: "wheat", x: 180, row: 0.5, w: 380, s: 1.1 }, { k: "wheat", x: 900, row: 0.5, w: 380, s: 1.1 }],
+        actors: [{ k: "chick", x: 540, row: 0.92, s: 2.8, anim: "idle" }],
+        fx: [{ k: "dust", n: 26 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.2 },
+      },
+    },
+    {
+      lines: ["Soudain, un renard sortit des buissons.", "Le poussin eut très peur et cria : « Piou, piou ! »"],
+      pt: "De repente, uma raposa saiu dos arbustos. O pintinho ficou com muito medo e gritou: “Piu, piu!”",
+      art: {
+        look: "sunset", terrain: "plain", ground: "grass", seed: 52,
+        props: [{ k: "bush", x: 860, row: 0.3, s: 1.4 }, { k: "wheat", x: 160, row: 0.5, w: 380, s: 1.1 }],
+        actors: [{ k: "chick", x: 280, row: 0.95, s: 2.6, anim: "idle" }, { k: "fox", x: 880, row: 0.88, s: 1.4, anim: "walk", dx: -240, flip: true }],
+        fx: [{ k: "dust", n: 22 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: -20, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Mais sa maman, la poule, l'avait entendu.", "Elle arriva en courant, les ailes grandes ouvertes !"],
+      pt: "Mas a mãe dele, a galinha, tinha ouvido. Chegou correndo, com as asas bem abertas!",
+      art: {
+        look: "sunset", terrain: "plain", ground: "grass", seed: 52,
+        props: [{ k: "wheat", x: 880, row: 0.5, w: 380, s: 1.1 }],
+        actors: [{ k: "chick", x: 280, row: 0.96, s: 2.6, anim: "idle" }, { k: "hen", x: 1000, row: 0.88, s: 2.0, anim: "run", dx: -520, speed: 14, variant: 1 }, { k: "fox", x: 130, row: 0.7, s: 1.2, anim: "idle" }],
+        fx: [{ k: "dust", n: 34 }], cam: { x0: 0, y0: 0, z0: 1.0, x1: -30, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Le renard eut peur de la poule et s'enfuit."],
+      pt: "A raposa teve medo da galinha e fugiu.",
+      art: {
+        look: "sunset", terrain: "plain", ground: "grass", seed: 52,
+        props: [{ k: "bush", x: 120, row: 0.3, s: 1.4 }],
+        actors: [{ k: "fox", x: 420, row: 0.86, s: 1.4, anim: "walk", dx: -420, speed: 16 }, { k: "hen", x: 760, row: 0.9, s: 2.0, anim: "idle", variant: 1, flip: true }, { k: "chick", x: 960, row: 0.97, s: 2.4, anim: "idle", flip: true }],
+        fx: [{ k: "dust", n: 40 }], cam: { x0: 20, y0: 0, z0: 1.02, x1: -30, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Le poussin se cacha sous les ailes de sa maman.", "« Je ne m'éloignerai plus jamais ! » dit-il."],
+      pt: "O pintinho se escondeu embaixo das asas da mãe. “Nunca mais vou me afastar!”, disse.",
+      art: {
+        look: "sunset", terrain: "farm", ground: "grass", seed: 51,
+        props: [{ k: "barn", x: 860, row: 0.05, s: 1.1 }, { k: "flowers", x: 200, row: 1, v: 1 }],
+        actors: [{ k: "hen", x: 520, row: 0.9, s: 2.2, anim: "idle", variant: 1 }, { k: "chick", x: 700, row: 0.97, s: 2.4, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 600, y: 1200, n: 16 }, { k: "petals", n: 10 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Morale : reste toujours près de ceux qui t'aiment."],
+      pt: "Moral: fique sempre perto de quem ama você.",
+      moral: true,
+      art: {
+        look: "sunset", terrain: "farm", ground: "grass", seed: 51,
+        props: [{ k: "barn", x: 860, row: 0.05, s: 1.0 }, { k: "flowers", x: 220, row: 1, v: 2 }],
+        actors: [{ k: "hen", x: 480, row: 0.9, s: 2.0, anim: "idle", variant: 1 }, { k: "chick", x: 660, row: 0.97, s: 2.3, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 560, y: 1200, n: 14 }], cam: { x0: 0, y0: 0, z0: 1.05, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+  ],
+};
+
+/* ----------------------------------------------------------------- */
+/* 9. Le petit lièvre qui voulait voler (histoire originale, A1)      */
+/* ----------------------------------------------------------------- */
+
+const PETIT_LIEVRE: Tale = {
+  slug: "le-petit-lievre-qui-voulait-voler",
+  title: "Le petit lièvre qui voulait voler",
+  byline: "Une histoire originale pour débutants",
+  level: "A2",
+  synopsisPt: "Um coelhinho sonha em voar como as aves. A águia lhe ensina o que ele faz melhor que ninguém.",
+  coverScene: 3,
+  scenes: [
+    {
+      lines: ["Un petit lièvre regardait le ciel tous les jours.", "Il rêvait de voler comme les oiseaux."],
+      pt: "Um coelhinho olhava o céu todos os dias. Sonhava em voar como os pássaros.",
+      art: {
+        look: "day", terrain: "meadow", seed: 61,
+        props: [{ k: "tree", x: 940, row: 0.06, s: 1.3 }, { k: "flowers", x: 200, row: 1, v: 1 }],
+        actors: [{ k: "hare", x: 440, row: 0.88, s: 1.6, anim: "idle" }],
+        fx: [{ k: "birds", n: 6, color: "#2f3b57" }, { k: "petals", n: 10 }], cam: { x0: 0, y0: 30, z0: 1.0, x1: 0, y1: -40, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Un jour, une grande aigle passa au-dessus de lui."],
+      pt: "Um dia, uma grande águia passou por cima dele.",
+      art: {
+        look: "day", terrain: "meadow", seed: 61,
+        props: [{ k: "tree", x: 120, row: 0.06, s: 1.3 }],
+        actors: [{ k: "hare", x: 640, row: 0.9, s: 1.6, anim: "idle" }, { k: "eagle", x: 260, y: 760, s: 1.0, anim: "glide", dx: 520, dy: -40 }],
+        fx: [{ k: "rays" }], cam: { x0: 0, y0: 30, z0: 1.0, x1: 0, y1: -30, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["« Je voudrais voler comme toi ! » cria le lièvre.", "L'aigle se posa près de lui, très surprise."],
+      pt: "“Eu queria voar como você!”, gritou o coelhinho. A águia pousou perto dele, muito surpresa.",
+      art: {
+        look: "day", terrain: "meadow", seed: 61,
+        props: [{ k: "rock", x: 880, row: 0.5, w: 130 }, { k: "flowers", x: 150, row: 1, v: 2 }],
+        actors: [{ k: "hare", x: 300, row: 0.9, s: 1.7, anim: "idle" }, { k: "eagle", x: 700, row: 0.85, s: 1.0, anim: "idle", flip: true }],
+        fx: [{ k: "dust", n: 20 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["« Pour voler, il faut des ailes », dit l'aigle avec douceur."],
+      pt: "“Para voar, é preciso ter asas”, disse a águia com carinho.",
+      art: {
+        look: "day", terrain: "meadow", seed: 61,
+        props: [{ k: "rock", x: 880, row: 0.5, w: 130 }],
+        actors: [{ k: "hare", x: 290, row: 0.9, s: 1.7, anim: "idle" }, { k: "eagle", x: 700, row: 0.85, s: 1.05, anim: "spread", flip: true }],
+        fx: [{ k: "sparkle", x: 700, y: 1000, n: 12 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Mais le lièvre voulait essayer.", "Il grimpa sur un gros rocher."],
+      pt: "Mas o coelhinho queria tentar. Subiu em uma grande pedra.",
+      art: {
+        look: "day", terrain: "meadow", seed: 62,
+        props: [{ k: "rock", x: 560, row: 0.7, w: 230, s: 1.2 }, { k: "tree", x: 960, row: 0.06, s: 1.3 }],
+        actors: [{ k: "hare", x: 560, y: 1040, s: 1.5, anim: "idle" }, { k: "eagle", x: 880, row: 0.9, s: 0.9, anim: "idle", flip: true }],
+        fx: [{ k: "dust", n: 18 }], cam: { x0: 0, y0: 0, z0: 1.0, x1: 0, y1: -20, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Il ferma les yeux, prit son élan... et sauta !"],
+      pt: "Fechou os olhos, tomou impulso… e pulou!",
+      art: {
+        look: "day", terrain: "meadow", seed: 62,
+        props: [{ k: "rock", x: 400, row: 0.7, w: 230, s: 1.2 }],
+        actors: [{ k: "hare", x: 460, y: 960, s: 1.5, anim: "run", dx: 280, dy: -140, speed: 13 }],
+        fx: [{ k: "sparkle", x: 700, y: 800, n: 14 }, { k: "birds", n: 3, color: "#2f3b57" }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 30, y1: -30, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Il retomba doucement dans l'herbe, mais il se mit à rire.", "« Je ne vole pas, mais je saute très, très haut ! »"],
+      pt: "Caiu suavemente na grama, mas começou a rir. “Eu não voo, mas pulo muito, muito alto!”",
+      art: {
+        look: "day", terrain: "meadow", seed: 62,
+        props: [{ k: "flowers", x: 220, row: 1, v: 1 }, { k: "flowers", x: 840, row: 0.98, v: 2 }, { k: "tree", x: 940, row: 0.06, s: 1.2 }],
+        actors: [{ k: "hare", x: 560, row: 0.9, s: 1.8, anim: "idle" }],
+        fx: [{ k: "petals", n: 20 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["L'aigle sourit : « Chacun a ses talents. Toi, tu es un champion du saut ! »"],
+      pt: "A águia sorriu: “Cada um tem seus talentos. Você é um campeão de salto!”",
+      art: {
+        look: "sunset", terrain: "meadow", seed: 62,
+        props: [{ k: "tree", x: 120, row: 0.06, s: 1.2 }],
+        actors: [{ k: "hare", x: 320, row: 0.9, s: 1.7, anim: "idle" }, { k: "eagle", x: 740, row: 0.85, s: 1.05, anim: "idle", flip: true }],
+        fx: [{ k: "sparkle", x: 540, y: 1060, n: 16 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Morale : chacun a un don unique. Découvre le tien !"],
+      pt: "Moral: cada um tem um dom único. Descubra o seu!",
+      moral: true,
+      art: {
+        look: "sunset", terrain: "meadow", seed: 62,
+        props: [{ k: "flowers", x: 220, row: 1, v: 2 }],
+        actors: [{ k: "eagle", x: 540, y: 820, s: 1.25, anim: "glide" }],
+        fx: [{ k: "birds", n: 3, color: "#2a2540" }, { k: "sparkle", x: 540, y: 760, n: 14 }], cam: { x0: 0, y0: 0, z0: 1.05, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+  ],
+};
+
+/* ----------------------------------------------------------------- */
+/* 10. Le corbeau et la cruche                                        */
+/* ----------------------------------------------------------------- */
+
+const CRUCHE: Tale = {
+  slug: "le-corbeau-et-la-cruche",
+  title: "Le corbeau et la cruche",
+  byline: "D'après Ésope",
+  level: "B1",
+  synopsisPt: "Um corvo com muita sede encontra um jarro com pouca água. Só a inteligência pode ajudá-lo.",
+  coverScene: 5,
+  scenes: [
+    {
+      lines: ["Il faisait très chaud, et un corbeau avait très soif.", "Il volait depuis des heures sans trouver d'eau."],
+      pt: "Fazia muito calor, e um corvo estava com muita sede. Voava havia horas sem encontrar água.",
+      art: {
+        look: "day", terrain: "plain", ground: "sand", seed: 71, sun: [800, 340],
+        props: [{ k: "rock", x: 180, row: 0.5, w: 110 }, { k: "bare", x: 900, row: 0.3, s: 1.2 }],
+        actors: [{ k: "crow", x: 200, y: 700, s: 1.8, anim: "fly", dx: 560, dy: 60 }],
+        fx: [{ k: "dust", n: 30 }], cam: { x0: 0, y0: 0, z0: 1.0, x1: 20, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Enfin, il vit une cruche posée près d'un arbre."],
+      pt: "Finalmente, viu um jarro perto de uma árvore.",
+      art: {
+        look: "day", terrain: "plain", ground: "sand", seed: 71,
+        props: [{ k: "oak", x: 840, row: 0.2, s: 1.5 }, { k: "jug", x: 400, row: 0.8, s: 1.5, v: 0 }, { k: "rock", x: 130, row: 0.5, w: 100 }],
+        actors: [{ k: "crow", x: 160, y: 760, s: 1.6, anim: "fly", dx: 140, dy: 140 }],
+        fx: [{ k: "sparkle", x: 400, y: 1040, n: 10 }], cam: { x0: 0, y0: 0, z0: 1.0, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Il y avait un peu d'eau au fond, mais le bec du corbeau était trop court."],
+      pt: "Havia um pouco de água no fundo, mas o bico do corvo era curto demais.",
+      art: {
+        look: "day", terrain: "plain", ground: "sand", seed: 71,
+        props: [{ k: "oak", x: 880, row: 0.2, s: 1.5 }, { k: "jug", x: 560, row: 0.86, s: 1.7, v: 0 }],
+        actors: [{ k: "crow", x: 330, row: 0.92, s: 1.8, anim: "idle" }],
+        fx: [{ k: "dust", n: 16 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: 0, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["« Je ne peux pas renverser la cruche », pensa-t-il.", "« Que faire ? »"],
+      pt: "“Não consigo derrubar o jarro”, pensou. “O que fazer?”",
+      art: {
+        look: "day", terrain: "plain", ground: "sand", seed: 71,
+        props: [{ k: "oak", x: 880, row: 0.2, s: 1.5 }, { k: "jug", x: 560, row: 0.86, s: 1.7, v: 0 }, { k: "rock", x: 180, row: 0.95, w: 70, s: 1.3 }],
+        actors: [{ k: "crow", x: 330, row: 0.92, s: 1.8, anim: "idle" }],
+        fx: [{ k: "dust", n: 16 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Soudain, il eut une idée : il ramassa des petits cailloux."],
+      pt: "De repente, teve uma ideia: pegou pedrinhas.",
+      art: {
+        look: "day", terrain: "plain", ground: "sand", seed: 71,
+        props: [{ k: "oak", x: 900, row: 0.2, s: 1.5 }, { k: "jug", x: 640, row: 0.86, s: 1.6, v: 0 }, { k: "rock", x: 160, row: 0.95, w: 70, s: 1.3 }],
+        actors: [{ k: "crow", x: 330, row: 0.92, s: 1.8, anim: "walk", carry: "pebble", dx: 150 }],
+        fx: [{ k: "sparkle", x: 330, y: 1100, n: 10 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: 0, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Il les laissa tomber un par un dans la cruche.", "Peu à peu, l'eau monta !"],
+      pt: "Deixou-as cair uma a uma no jarro. Pouco a pouco, a água subiu!",
+      art: {
+        look: "day", terrain: "plain", ground: "sand", seed: 71,
+        props: [{ k: "oak", x: 900, row: 0.2, s: 1.5 }, { k: "jug", x: 560, row: 0.86, s: 1.8, v: 9 }],
+        actors: [{ k: "crow", x: 380, row: 0.92, s: 1.8, anim: "walk", carry: "pebble", speed: 5 }],
+        fx: [{ k: "sparkle", x: 560, y: 1000, n: 14 }], cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: 0, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Quand l'eau fut assez haute, le corbeau put enfin boire."],
+      pt: "Quando a água ficou alta o bastante, o corvo finalmente pôde beber.",
+      art: {
+        look: "sunset", terrain: "plain", ground: "sand", seed: 71,
+        props: [{ k: "oak", x: 900, row: 0.2, s: 1.5 }, { k: "jug", x: 600, row: 0.86, s: 1.8, v: 3 }],
+        actors: [{ k: "crow", x: 360, row: 0.92, s: 1.8, anim: "drink" }],
+        fx: [{ k: "sparkle", x: 600, y: 940, n: 18 }], cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: 0, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Morale : avec de la patience et de l'intelligence, on trouve toujours une solution."],
+      pt: "Moral: com paciência e inteligência, sempre se encontra uma solução.",
+      moral: true,
+      art: {
+        look: "sunset", terrain: "plain", ground: "sand", seed: 71,
+        props: [{ k: "jug", x: 540, row: 0.86, s: 1.8, v: 3 }, { k: "oak", x: 900, row: 0.2, s: 1.4 }],
+        actors: [{ k: "crow", x: 330, row: 0.92, s: 1.7, anim: "idle" }],
+        fx: [{ k: "sparkle", x: 540, y: 930, n: 14 }], cam: { x0: 0, y0: 0, z0: 1.05, x1: 0, y1: 0, z1: 1.14 },
+      },
+    },
+  ],
+};
+
+export const TALES: Tale[] = [AIGLE, LIEVRE, CORBEAU, CIGALE, POULE, RAISINS, LION, POUSSIN, PETIT_LIEVRE, CRUCHE];
 export function getTale(slug: string): Tale | undefined {
   return TALES.find((tale) => tale.slug === slug);
 }

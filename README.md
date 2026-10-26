@@ -17,6 +17,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Contraste sobre fundo azul](#contraste-sobre-fundo-azul)
 - [Visibilidade das lições](#visibilidade-das-lições)
 - [Imagens no Cloudflare R2](#imagens-no-cloudflare-r2)
+- [Monitoramento do Cloudflare R2 em tempo real](#monitoramento-do-cloudflare-r2-em-tempo-real)
 - [Configuração das variáveis de imagens e IA](#configuração-das-variáveis-de-imagens-e-ia)
 - [Pagamento real com Stripe](#pagamento-real-com-stripe)
 - [Geração de imagens por IA (Controle Exato de Quantidade)](#geração-de-imagens-por-ia)
@@ -628,6 +629,16 @@ As ilustrações deixaram de ficar nas pastas do projeto. `public/ghibli` (300 S
 - **Migração.** `node scripts/storage/migrate-to-r2.mjs --dry-run` lista o que seria enviado; sem `--dry-run` envia (com `Cache-Control: immutable` e o `Content-Type` correto) e ignora arquivos já presentes. Depois de conferir o site, apague `public/ghibli` e `public/c-quoi`. **Não apague `scripts/ghibli/manifest.json`**, que o banco de imagens (`src/lib/imageBank.ts`) lê.
 - **Configuração do R2.** Crie o bucket, ative o acesso público (domínio próprio em produção; a URL `r2.dev` serve para testes) e um token "Object Read & Write". Preencha as variáveis `R2_*` e `ASSETS_BASE_URL`. O Cloudflare pode pedir um cartão para ativar o R2; dentro do plano gratuito não há cobrança.
 - Mídias enviadas por usuários (vídeos, narrações, imagens de postagem) continuam no Vercel Blob.
+
+## Monitoramento do Cloudflare R2 em tempo real
+
+No **Painel do Administrador** (`/admin`), há uma seção interativa para acompanhar a infraestrutura de armazenamento no Cloudflare R2 em tempo real:
+
+- **Memória consumida**: total em bytes, megabytes ou gigabytes (`formatBytes`) obtido consultando diretamente os objetos do bucket via `ListObjectsV2Command` da SDK da AWS/Cloudflare.
+- **Sobra no plano gratuito**: saldo restante em relação ao limite gratuito mensal de **10 GB** (10 GiB = 10.737.418.240 bytes) oferecido pelo Cloudflare R2 sem custo de egress.
+- **Barra de progresso visual**: porcentagem consumida com código de cores (verde abaixo de 80%, âmbar/vermelho em uso elevado).
+- **Contagem de arquivos**: total exato de objetos e imagens guardados no bucket.
+- **Atualização em tempo real**: botão **Atualizar agora** que aciona a rota `GET /api/admin/storage` (restrita a administradores via `requireAdmin`) e atualiza as métricas instantaneamente na tela sem precisar recarregar toda a página.
 
 ## Configuração das variáveis de imagens e IA
 

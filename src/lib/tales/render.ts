@@ -170,8 +170,9 @@ function drawSubtitle(ctx: Ctx, plan: TalePlan, scene: PlannedScene, t: number, 
   const appear = easeOutCubic((t - line.start + 0.05) / 0.3);
   const progress = clamp((t - line.start) / Math.max(0.5, line.dur));
 
-  if (def.moral) {
-    drawMoral(ctx, line.text, appear, def.pt, opts.showPt, frame);
+  const isMoral = /^Morale\s*:/i.test(line.text) || (def.moral && scene.lines.length === 1);
+  if (isMoral) {
+    drawMoral(ctx, line.text, appear, ptLineFor(def.pt, scene, line), opts.showPt, frame);
     return;
   }
 
@@ -236,30 +237,52 @@ function drawMoral(ctx: Ctx, text: string, appear: number, pt: string, showPt: b
   ctx.save();
   ctx.globalAlpha = appear;
   ctx.translate(0, (1 - appear) * 30);
-  ctx.font = `italic 700 62px ${SERIF}`;
+
+  ctx.font = `italic 700 58px ${SERIF}`;
   const rows = wrap(ctx, body, 820);
-  const rowH = 82;
-  const boxH = rows.length * rowH + 190 + (showPt ? 70 : 0);
-  const y = frame.subBottom - boxH;
+  const rowH = 78;
+
+  // Garante que o texto em português seja quebrado em múltiplas linhas para não ser cortado
+  ctx.font = `italic 600 34px ${SANS}`;
+  const ptRows = showPt && pt ? wrap(ctx, pt, 820) : [];
+  const ptRowH = 46;
+  const ptBlockH = ptRows.length ? ptRows.length * ptRowH + 26 : 0;
+
+  const boxH = rows.length * rowH + 170 + ptBlockH + 34;
+  const y = Math.max(frame.topSafe ?? 60, frame.subBottom - boxH);
+
   ctx.beginPath();
-  ctx.roundRect(60, y, STAGE_W - 120, boxH, 52);
-  ctx.fillStyle = "rgba(20,14,40,0.72)";
+  ctx.roundRect(60, y, STAGE_W - 120, boxH, 48);
+  ctx.fillStyle = "rgba(18,12,38,0.78)";
   ctx.fill();
   ctx.lineWidth = 4;
-  ctx.strokeStyle = "rgba(255,213,74,0.8)";
+  ctx.strokeStyle = "rgba(255,213,74,0.85)";
   ctx.stroke();
+
   ctx.textAlign = "center";
   ctx.fillStyle = "#ffd54a";
   ctx.font = `800 40px ${SANS}`;
-  ctx.fillText("MORALE", STAGE_W / 2, y + 78);
-  ctx.fillRect(STAGE_W / 2 - 60, y + 100, 120, 4);
+  ctx.fillText("MORALE", STAGE_W / 2, y + 74);
+  ctx.fillRect(STAGE_W / 2 - 60, y + 94, 120, 4);
+
   ctx.fillStyle = "#ffffff";
-  ctx.font = `italic 700 62px ${SERIF}`;
-  rows.forEach((row, i) => ctx.fillText(row, STAGE_W / 2, y + 190 + i * rowH));
-  if (showPt) {
-    ctx.font = `italic 600 36px ${SANS}`;
-    ctx.fillStyle = "rgba(255,255,255,0.8)";
-    ctx.fillText(pt, STAGE_W / 2, y + boxH - 40);
+  ctx.font = `italic 700 58px ${SERIF}`;
+  const frStartY = y + 172;
+  rows.forEach((row, i) => ctx.fillText(row, STAGE_W / 2, frStartY + i * rowH));
+
+  if (ptRows.length) {
+    const ptSepY = frStartY + (rows.length - 1) * rowH + 40;
+    ctx.strokeStyle = "rgba(255,255,255,0.22)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(STAGE_W / 2 - 80, ptSepY);
+    ctx.lineTo(STAGE_W / 2 + 80, ptSepY);
+    ctx.stroke();
+
+    ctx.font = `italic 600 34px ${SANS}`;
+    ctx.fillStyle = "rgba(255,255,255,0.88)";
+    const ptStartY = ptSepY + 38;
+    ptRows.forEach((row, i) => ctx.fillText(row, STAGE_W / 2, ptStartY + i * ptRowH));
   }
   ctx.restore();
 }

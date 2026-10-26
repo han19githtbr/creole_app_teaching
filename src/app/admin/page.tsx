@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { BookOpen, MessageSquare, Users, Plus, Radio, Video, Camera } from "lucide-react";
 import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
+import { getR2StorageStats } from "@/lib/r2";
+import { CloudflareStorageWidget } from "@/components/CloudflareStorageWidget";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +17,7 @@ export default async function AdminHomePage() {
   await connectDB();
   const language = await getAppLanguage();
   const langMatch = languageFilter(language);
-  const [totalLessons, totalVideos, activePosts, totalUsers, pendingAnswers] = await Promise.all([
+  const [totalLessons, totalVideos, activePosts, totalUsers, pendingAnswers, r2Stats] = await Promise.all([
     Lesson.countDocuments(langMatch),
     VideoLesson.countDocuments(langMatch),
     Post.countDocuments({
@@ -25,6 +27,7 @@ export default async function AdminHomePage() {
     }),
     User.countDocuments(),
     PostAnswer.countDocuments({ status: "pending" }),
+    getR2StorageStats(),
   ]);
 
   return (
@@ -50,6 +53,7 @@ export default async function AdminHomePage() {
         </Link>
       )}
 
+      {/* Estatísticas principais */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat icon={<BookOpen className="h-5 w-5" />} label="Lições" value={totalLessons} />
         <Stat icon={<Video className="h-5 w-5" />} label="Vídeos gravados" value={totalVideos} />
@@ -57,6 +61,10 @@ export default async function AdminHomePage() {
         <Stat icon={<Users className="h-5 w-5" />} label="Usuários cadastrados" value={totalUsers} />
       </div>
 
+      {/* Monitoramento de Armazenamento Cloudflare R2 em tempo real */}
+      <CloudflareStorageWidget initialStats={r2Stats} />
+
+      {/* Ações rápidas */}
       <div>
         <h2 className="mb-3 text-lg font-semibold text-[var(--text)]">Ações rápidas</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">

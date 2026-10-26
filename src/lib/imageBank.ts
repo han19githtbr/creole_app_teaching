@@ -451,6 +451,74 @@ const EXTRA_DETAIL_NAMES: Record<string, BankElement> = {
   areia: { kreyol: "sab", fr: "sable", pt: "areia" },
   piso: { kreyol: "plancher", fr: "sol", pt: "piso" },
   agua: { kreyol: "dlo", fr: "eau", pt: "água" },
+  // Elementos e detalhes ricos adicionais (maison, robot, tambour, fleur, etc.)
+  maison: { kreyol: "kay", fr: "maison", pt: "casa" },
+  casa: { kreyol: "kay", fr: "maison", pt: "casa" },
+  robot: { kreyol: "robo", fr: "robot", pt: "robô" },
+  robo: { kreyol: "robo", fr: "robot", pt: "robô" },
+  tambour: { kreyol: "tanbou", fr: "tambour", pt: "tambor" },
+  tambor: { kreyol: "tanbou", fr: "tambour", pt: "tambor" },
+  fleur: { kreyol: "flè", fr: "fleur", pt: "flor" },
+  fleurs: { kreyol: "flè", fr: "fleurs", pt: "flores" },
+  flores: { kreyol: "flè", fr: "fleurs", pt: "flores" },
+  arbre: { kreyol: "pyebwa", fr: "arbre", pt: "árvore" },
+  arbres: { kreyol: "pyebwa", fr: "arbres", pt: "árvores" },
+  arvore: { kreyol: "pyebwa", fr: "arbre", pt: "árvore" },
+  arvores: { kreyol: "pyebwa", fr: "arbres", pt: "árvores" },
+  oiseau: { kreyol: "zwazo", fr: "oiseau", pt: "pássaro" },
+  passaro: { kreyol: "zwazo", fr: "oiseau", pt: "pássaro" },
+  papillon: { kreyol: "papiyon", fr: "papillon", pt: "borboleta" },
+  borboleta: { kreyol: "papiyon", fr: "papillon", pt: "borboleta" },
+  bateau: { kreyol: "bato", fr: "bateau", pt: "barco" },
+  barco: { kreyol: "bato", fr: "bateau", pt: "barco" },
+  drapeau: { kreyol: "drapo", fr: "drapeau", pt: "bandeira" },
+  bandeira: { kreyol: "drapo", fr: "drapeau", pt: "bandeira" },
+  lanterne: { kreyol: "lanp", fr: "lanterne", pt: "lanterna" },
+  lanternes: { kreyol: "lanp", fr: "lanternes", pt: "lanternas" },
+  lanterna: { kreyol: "lanp", fr: "lanterne", pt: "lanterna" },
+  livre: { kreyol: "liv", fr: "livre", pt: "livro" },
+  livro: { kreyol: "liv", fr: "livre", pt: "livro" },
+  etoile: { kreyol: "zetwal", fr: "étoile", pt: "estrela" },
+  etoiles: { kreyol: "zetwal", fr: "étoiles", pt: "estrelas" },
+  estrelas: { kreyol: "zetwal", fr: "étoiles", pt: "estrelas" },
+  ordinateur: { kreyol: "òdinatè", fr: "ordinateur", pt: "computador" },
+  computador: { kreyol: "òdinatè", fr: "ordinateur", pt: "computador" },
+  cloche: { kreyol: "klòch", fr: "cloche", pt: "sino" },
+  sino: { kreyol: "klòch", fr: "cloche", pt: "sino" },
+  guitare: { kreyol: "gita", fr: "guitare", pt: "violão" },
+  violao: { kreyol: "gita", fr: "guitare", pt: "violão" },
+  musique: { kreyol: "mizik", fr: "musique", pt: "música" },
+  musica: { kreyol: "mizik", fr: "musique", pt: "música" },
+  phare: { kreyol: "fa", fr: "phare", pt: "farol" },
+  farol: { kreyol: "fa", fr: "phare", pt: "farol" },
+  moulin: { kreyol: "moulen", fr: "moulin", pt: "moinho" },
+  moinho: { kreyol: "moulen", fr: "moulin", pt: "moinho" },
+  montgolfiere: { kreyol: "balon", fr: "montgolfière", pt: "balão" },
+  balao: { kreyol: "balon", fr: "montgolfière", pt: "balão" },
+  velo: { kreyol: "bisiklèt", fr: "vélo", pt: "bicicleta" },
+  bicicleta: { kreyol: "bisiklèt", fr: "vélo", pt: "bicicleta" },
+  poisson: { kreyol: "pwason", fr: "poisson", pt: "peixe" },
+  peixe: { kreyol: "pwason", fr: "poisson", pt: "peixe" },
+  cheval: { kreyol: "chwal", fr: "cheval", pt: "cavalo" },
+  cavalo: { kreyol: "chwal", fr: "cheval", pt: "cavalo" },
+  chien: { kreyol: "chen", fr: "chien", pt: "cachorro" },
+  cachorro: { kreyol: "chen", fr: "chien", pt: "cachorro" },
+  chat: { kreyol: "chat", fr: "chat", pt: "gato" },
+  gato: { kreyol: "chat", fr: "chat", pt: "gato" },
+  mer: { kreyol: "lanmè", fr: "mer", pt: "mar" },
+  mar: { kreyol: "lanmè", fr: "mer", pt: "mar" },
+  riviere: { kreyol: "rivyè", fr: "rivière", pt: "rio" },
+  rio: { kreyol: "rivyè", fr: "rivière", pt: "rio" },
+  pont: { kreyol: "pon", fr: "pont", pt: "ponte" },
+  ponte: { kreyol: "pon", fr: "pont", pt: "ponte" },
+  chemin: { kreyol: "wout", fr: "chemin", pt: "caminho" },
+  caminho: { kreyol: "wout", fr: "caminho", pt: "caminho" },
+  plage: { kreyol: "plaj", fr: "plage", pt: "praia" },
+  praia: { kreyol: "plaj", fr: "praia", pt: "praia" },
+  fenetre: { kreyol: "fenèt", fr: "fenêtre", pt: "janela" },
+  porte: { kreyol: "pòt", fr: "porte", pt: "porta" },
+  eglise: { kreyol: "legliz", fr: "église", pt: "igreja" },
+  igreja: { kreyol: "legliz", fr: "église", pt: "igreja" },
 };
 
 /**
@@ -474,11 +542,18 @@ function measuredStoryLayout(
     // O palco 16:9 corta ~8% em cima/embaixo da imagem 3:2; mantém o ponto dentro da área visível.
     anchors.push({ left: Math.min(96, Math.max(4, point[0])), top: Math.min(90, Math.max(10, point[1])) });
   });
-  // Detalhes extras da cena (sol, nuvem, céu, chão...) até somar 8 rótulos.
+  // Detalhes extras da cena até somar de 8 a 10 rótulos ricos e bem organizados.
   const extras = (measuredExtras as unknown as Record<string, [string, number, number][]>)[id] ?? [];
+  const seenKreyol = new Set(storyElements.map(e => e.kreyol.toLowerCase().trim()));
+  const seenFr = new Set(storyElements.map(e => (e.fr || '').toLowerCase().trim()).filter(Boolean));
   for (const [key, x, y] of extras) {
-    const detail = EXTRA_DETAIL_NAMES[key];
-    if (!detail || storyElements.length >= 8) continue;
+    const detail = EXTRA_DETAIL_NAMES[key.toLowerCase()];
+    if (!detail || storyElements.length >= 10) continue;
+    const kNorm = detail.kreyol.toLowerCase().trim();
+    const fNorm = detail.fr ? detail.fr.toLowerCase().trim() : '';
+    if (seenKreyol.has(kNorm) || (fNorm && seenFr.has(fNorm))) continue;
+    seenKreyol.add(kNorm);
+    if (fNorm) seenFr.add(fNorm);
     storyElements.push(detail);
     anchors.push({ left: Math.min(96, Math.max(4, x)), top: Math.min(90, Math.max(10, y)) });
   }

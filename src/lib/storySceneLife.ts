@@ -853,6 +853,26 @@ function surfer(t: number, y0: number, y1: number): string {
   </g>`;
 }
 
+function driftingCloud(t: number, y: number, s = 1, sp = 10, seed = "c"): string {
+  const r = rngFrom(seed + "dc");
+  const x = travel(t, sp, r(), 220, 1);
+  return G(x, y, sin(t * 0.3) * 1.5, s, s,
+    `<ellipse cx="0" cy="0" rx="60" ry="18" fill="#ffffff" opacity="0.45"/>` +
+    `<ellipse cx="-20" cy="-6" rx="35" ry="22" fill="#ffffff" opacity="0.55"/>` +
+    `<ellipse cx="22" cy="-4" rx="38" ry="20" fill="#ffffff" opacity="0.52"/>` +
+    `<ellipse cx="0" cy="-12" rx="26" ry="16" fill="#ffffff" opacity="0.6"/>`
+  );
+}
+
+function birdPair(t: number, y0 = 90, seed = "bp"): string {
+  const r = rngFrom(seed);
+  const x = travel(t, 26, r(), 120, 1);
+  const y = y0 + sin(t * 1.1) * 12;
+  const b1 = bird(t, { x: 0, y: 0, s: 1.0, ph: 0, face: 1 });
+  const b2 = bird(t, { x: -38, y: 14 + sin(t * 1.4) * 6, s: 0.85, ph: 0.45, face: 1 });
+  return G(x, y, sin(t * 0.6) * 3, 1, 1, b1 + b2);
+}
+
 export function createSceneLife(input: LifeInput): LifeScene {
   const text = norm([input.title ?? "", ...(input.elements ?? []).flatMap((e) => [e.pt ?? "", e.kreyol ?? "", e.fr ?? ""])].join(" "));
   const themeNorm = norm(input.theme ?? "");
@@ -953,14 +973,27 @@ export function createSceneLife(input: LifeInput): LifeScene {
     }
   }
 
-  /* --- 3. AMBIENTE DISCRETO NO CÉU / NATUREZA (Mínimo e limpo, sem poluir a visão) --- */
+  /* --- 3. AMBIENTE DISCRETO NO CÉU E NA NATUREZA (Rico em detalhes, poético e imersivo) --- */
+  // Nuvem suave e realista à deriva no céu superior
+  add("nuvens-ao-vento", 0, (t) => driftingCloud(t, 85, 0.95, 12, input.sceneId));
+
   if (!wantsSea) {
     if (theme === "turismo" || has(/aviao|voo|aeroporto/)) {
       add("aviao", 0, (t) => plane(t, { x: travel(t, 32, 0.15, 200, -1), y: 125 + sin(t * 0.3) * 8, s: 0.75, face: -1 }));
+      add("aves-no-horizonte", 0, (t) => birdPair(t, 160, input.sceneId));
     } else {
-      add("passaros", 0, (t) => bird(t, { x: travel(t, 28, 0.4, 80, 1), y: 120, ph: 1 }));
-      add("borboletas", 0, (t) => butterfly(t, { cx: 280, cy: GT - 35, ph: 1.5, color: "#f08a2b" }));
+      add("par-de-aves", 0, (t) => birdPair(t, 105, input.sceneId));
+      add("borboletas", 0, (t) => butterfly(t, { cx: 280, cy: GT - 35, ph: 1.5, color: "#f08a2b" }) + butterfly(t, { cx: 340, cy: GT - 20, ph: 3.2, color: "#4ad0c4" }));
+      add("particulas-de-luz", 0, (t) => motes(t, input.sceneId, 12, 120, 680, "#fff5d0", 2.5));
     }
+    // Efeito suave de brisa natural (folhas ou pétalas de acordo com o tema)
+    if (theme === "natureza" || theme === "interior" || theme === "lazeres") {
+      add("folhas-ao-vento", 1, (t) => leaves(t, input.sceneId, 8, ["#e0a030", "#d9622b", "#88b04b"]));
+    }
+  } else {
+    // Na zona marítima, adiciona gaivotas em pares e reflexos solares na água
+    add("par-de-gaivotas", 0, (t) => birdPair(t, Math.min(140, wz.y0 - 45), input.sceneId));
+    add("brilho-solar-maritimo", 0, (t) => motes(t, input.sceneId, 8, 80, wz.y0, "#fff8e0", 2));
   }
 
   // Ordenação por profundidade z para composição impecável

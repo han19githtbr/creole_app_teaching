@@ -295,7 +295,8 @@ export function calculateLivingElementState(
 
   // Fatores de tempo
   const t = time;
-  const intensity = isActiveInTimeline ? 1.0 : 0.65;
+  // Elementos ativos têm energia total; elementos no ambiente têm vida suave e orgânica
+  const intensity = isActiveInTimeline ? 1.0 : 0.42;
 
   let dx = 0;
   let dy = 0;
@@ -307,91 +308,129 @@ export function calculateLivingElementState(
 
   switch (action) {
     case "flying": {
-      // Voo em arco suave com batimento de asas
-      const flap = Math.sin(t * 9);
-      dx = Math.sin(t * 1.8) * 4.5 * intensity;
-      dy = Math.cos(t * 2.2) * 3.2 * intensity - Math.abs(flap) * 0.8;
-      rotation = Math.sin(t * 1.8) * 12;
-      scaleY = 1 + flap * 0.12;
+      // Voo suave com física aerodinâmica: batimento assimétrico (descida potente + subida suave) e sustentação térmica
+      const flapCycle = (t * 2.6) % 1;
+      const flap = flapCycle < 0.38
+        ? Math.sin((flapCycle / 0.38) * Math.PI)
+        : -Math.sin(((flapCycle - 0.38) / 0.62) * Math.PI) * 0.4;
+      const thermal = Math.sin(t * 1.1) * 2.4 + Math.sin(t * 2.3) * 0.8;
+      dx = Math.cos(t * 1.3) * 3.6 * intensity;
+      dy = (thermal - flap * 1.5) * intensity;
+      // Inclinação proporcional à curva de deslocamento
+      rotation = -Math.sin(t * 1.3) * 7.5 + flap * 3.5;
+      scaleY = 1 + flap * 0.11;
       scaleX = 1 - flap * 0.05;
-      pulse = (Math.sin(t * 4) + 1) / 2;
+      pulse = (flap + 1) / 2;
 
-      // Trilhas de vento ou plumas
       if (isActiveInTimeline) {
+        const pPhase = (t * 1.6) % 1;
         particles.push({
-          x: -18 + Math.sin(t * 3) * 6,
-          y: 8 + Math.cos(t * 4) * 4,
+          x: -16 - pPhase * 14,
+          y: 6 + Math.sin(t * 3.2) * 5,
           char: "🪶",
-          opacity: 0.7 * (Math.sin(t * 5) * 0.5 + 0.5),
-          scale: 0.8,
-          rotation: Math.sin(t * 2) * 30,
+          opacity: 0.85 * Math.sin(pPhase * Math.PI),
+          scale: 0.75 + pPhase * 0.15,
+          rotation: Math.sin(t * 2) * 25,
         });
       }
       break;
     }
 
     case "running": {
-      // Galope / corrida com salto e passadas enérgicas
-      const stride = Math.sin(t * 11);
-      const bounce = Math.abs(Math.sin(t * 11)) * -3.2 * intensity;
-      dx = Math.sin(t * 1.4) * 3.5 * intensity;
-      dy = bounce;
-      rotation = stride * 7;
-      scaleY = 1 + bounce * 0.04;
-      scaleX = 1 - bounce * 0.03;
-      pulse = (stride + 1) / 2;
+      // Galope / corrida orgânica: ciclo contínuo sem solavancos mecânicos
+      const gait = t * 7.2;
+      const verticalBounce = (Math.sin(gait * 2) * 0.7 + Math.sin(gait * 4) * 0.18) * -2.6 * intensity;
+      dx = Math.sin(gait) * 2.8 * intensity;
+      dy = verticalBounce;
+      rotation = Math.sin(gait) * 4.5;
+      const footImpact = Math.cos(gait * 2);
+      scaleY = 1 - footImpact * 0.06 * intensity;
+      scaleX = 1 + footImpact * 0.05 * intensity;
+      pulse = (verticalBounce / -2.6 + 1) / 2;
 
       if (isActiveInTimeline) {
+        const pPhase = (t * 2.2) % 1;
         particles.push({
-          x: -16 + (t % 1) * -12,
-          y: 14 + (t % 0.5) * 4,
+          x: -18 - pPhase * 16,
+          y: 12 + Math.sin(t * 4) * 3,
           char: "💨",
-          opacity: 0.8 * (1 - (t % 0.6)),
-          scale: 0.75,
+          opacity: 0.8 * Math.sin(pPhase * Math.PI),
+          scale: 0.7 + pPhase * 0.2,
           rotation: 0,
         });
       }
       break;
     }
 
-    case "jumping": {
-      // Pulo alto com compressão no solo e estiramento no ar
-      const cycle = (t * 2.2) % 1;
-      const jumpY = Math.sin(cycle * Math.PI) * -6.5 * intensity;
-      dx = Math.sin(t * 2.5) * 2;
-      dy = jumpY;
-      scaleY = cycle < 0.2 ? 0.85 : cycle > 0.8 ? 0.9 : 1.2;
-      scaleX = cycle < 0.2 ? 1.18 : 0.92;
-      rotation = Math.sin(t * 3) * 8;
-      pulse = jumpY / -6.5;
+    case "walking": {
+      // Caminhada compassada e natural: transferência suave de peso entre passadas
+      const cadence = t * 4.2;
+      const bob = Math.sin(cadence * 2) * -1.2 * intensity;
+      dx = Math.sin(cadence) * 1.6 * intensity;
+      dy = bob;
+      rotation = Math.sin(cadence) * 2.5;
+      scaleY = 1 - Math.cos(cadence * 2) * 0.03 * intensity;
+      scaleX = 1 + Math.cos(cadence * 2) * 0.02 * intensity;
+      pulse = (bob / -1.2 + 1) / 2;
+      break;
+    }
 
-      if (isActiveInTimeline) {
+    case "jumping": {
+      // Salto realista com 3 fases físicas: compressão prévia, arco parabólico gravitacional e amortecimento
+      const cycle = (t * 1.7) % 1;
+      if (cycle < 0.22) {
+        // Fase 1: Agachamento preparatório
+        const p = cycle / 0.22;
+        dy = Math.sin(p * Math.PI) * 1.4 * intensity;
+        scaleY = 1 - Math.sin(p * Math.PI) * 0.16;
+        scaleX = 1 + Math.sin(p * Math.PI) * 0.12;
+      } else if (cycle < 0.82) {
+        // Fase 2: Voo parabólico com gravidade
+        const p = (cycle - 0.22) / 0.6;
+        const parabola = 4 * p * (1 - p);
+        dy = parabola * -5.8 * intensity;
+        dx = Math.sin(p * Math.PI) * 1.8 * intensity;
+        scaleY = p < 0.4 ? 1.15 : 0.98;
+        scaleX = 1 / Math.max(0.75, scaleY);
+        rotation = (p - 0.5) * 8;
+        pulse = parabola;
+      } else {
+        // Fase 3: Amortecimento suave no solo
+        const p = (cycle - 0.82) / 0.18;
+        const cushion = Math.sin(p * Math.PI);
+        dy = cushion * 0.6 * intensity;
+        scaleY = 1 - cushion * 0.08;
+        scaleX = 1 + cushion * 0.06;
+      }
+
+      if (isActiveInTimeline && cycle > 0.22 && cycle < 0.82) {
         particles.push({
           x: 0,
-          y: 18,
+          y: 16,
           char: "✨",
-          opacity: cycle > 0.8 ? 0.9 : 0.2,
-          scale: 0.9,
-          rotation: t * 40,
+          opacity: 0.85,
+          scale: 0.85,
+          rotation: t * 50,
         });
       }
       break;
     }
 
     case "barking": {
-      // Cabeça erguida e ondas de som pulsantes
-      const barkPulse = Math.sin(t * 10) > 0.3 ? 1.15 : 1.0;
-      dx = Math.sin(t * 3) * 1.5;
-      dy = barkPulse > 1.05 ? -2.2 : 0;
-      scaleX = barkPulse;
-      scaleY = barkPulse;
-      rotation = Math.sin(t * 6) * 6;
-      pulse = barkPulse > 1.05 ? 1 : 0.2;
+      // Reação expressiva: respiração rápida, elevação corporal e onda sonora suave
+      const barkRhythm = Math.sin(t * 8.5);
+      const isBark = barkRhythm > 0.4;
+      dx = Math.sin(t * 2.4) * 1.2;
+      dy = isBark ? -1.8 * intensity : 0;
+      scaleX = isBark ? 1.1 : 1.0;
+      scaleY = isBark ? 1.08 : 1.0;
+      rotation = Math.sin(t * 4.2) * 4;
+      pulse = isBark ? 1 : 0.2;
 
-      if (isActiveInTimeline) {
+      if (isActiveInTimeline && isBark) {
         particles.push({
-          x: 22 + Math.sin(t * 8) * 8,
-          y: -12 + Math.cos(t * 8) * 4,
+          x: 20 + Math.sin(t * 6) * 6,
+          y: -10 + Math.cos(t * 6) * 4,
           char: "💬",
           opacity: 0.85,
           scale: 0.8,
@@ -403,121 +442,142 @@ export function calculateLivingElementState(
 
     case "singing":
     case "playing_music": {
-      // Pulso harmônico e notas musicais flutuando
-      const beat = Math.abs(Math.sin(t * 7));
-      scaleX = 1 + beat * 0.12 * intensity;
-      scaleY = 1 + beat * 0.12 * intensity;
-      rotation = Math.sin(t * 3) * 6;
-      pulse = beat;
+      // Pulso rítmico musical harmônico (percussão com decay exponencial suave)
+      const beatCycle = (t * 2.8) % 1;
+      const strike = Math.exp(-beatCycle * 5) * Math.sin(beatCycle * 22);
+      const sway = Math.sin(t * 1.4) * 1.6;
+      dx = sway * intensity;
+      dy = strike * -2.0 * intensity;
+      scaleX = 1 + strike * 0.12 * intensity;
+      scaleY = 1 - strike * 0.07 * intensity;
+      rotation = Math.sin(t * 1.4) * 4;
+      pulse = Math.max(0, 1 - beatCycle * 1.6);
 
-      // Notas flutuantes
-      const noteOffset1 = (t * 18) % 36;
-      const noteOffset2 = ((t + 0.5) * 18) % 36;
+      // Notas musicais flutuando em arcos harmoniosos
+      const note1 = (t * 14) % 32;
+      const note2 = ((t + 0.5) * 14) % 32;
       particles.push(
         {
-          x: 18 + Math.sin(t * 4) * 8,
-          y: -14 - noteOffset1,
+          x: 16 + Math.sin(t * 3) * 7,
+          y: -12 - note1,
           char: "♪",
-          opacity: Math.max(0, 1 - noteOffset1 / 36),
-          scale: 0.9,
-          rotation: Math.sin(t * 2) * 20,
+          opacity: Math.sin((note1 / 32) * Math.PI) * 0.9,
+          scale: 0.85,
+          rotation: Math.sin(t * 2.2) * 16,
         },
         {
-          x: -16 + Math.cos(t * 3) * 8,
-          y: -12 - noteOffset2,
+          x: -14 + Math.cos(t * 2.6) * 7,
+          y: -10 - note2,
           char: "♫",
-          opacity: Math.max(0, 1 - noteOffset2 / 36),
+          opacity: Math.sin((note2 / 32) * Math.PI) * 0.85,
           scale: 0.8,
-          rotation: Math.cos(t * 2) * -20,
+          rotation: -Math.sin(t * 2.2) * 16,
         }
       );
       break;
     }
 
     case "shining": {
-      // Respiração luminosa e raios cintilantes
-      const glow = (Math.sin(t * 3.5) + 1) / 2;
-      scaleX = 1 + glow * 0.14 * intensity;
-      scaleY = 1 + glow * 0.14 * intensity;
-      rotation = t * 15;
-      pulse = glow;
+      // Respiração radiante multi-harmônica: pulsação quente de coroa solar e brilho natural
+      const h1 = Math.sin(t * 1.6) * 0.5;
+      const h2 = Math.sin(t * 3.4 + 0.8) * 0.3;
+      const h3 = Math.sin(t * 6.8 + 1.5) * 0.2;
+      const corona = (h1 + h2 + h3 + 1) / 2;
+      scaleX = 1 + corona * 0.11 * intensity;
+      scaleY = 1 + corona * 0.11 * intensity;
+      rotation = Math.sin(t * 0.7) * 3.5;
+      dx = Math.sin(t * 0.9) * 0.7 * intensity;
+      dy = Math.cos(t * 1.1) * 0.7 * intensity;
+      pulse = corona;
 
       particles.push(
         {
-          x: 18 + Math.sin(t * 5) * 10,
-          y: -16 + Math.cos(t * 5) * 10,
+          x: 16 + Math.sin(t * 3.8) * 9,
+          y: -14 + Math.cos(t * 3.8) * 9,
           char: "✨",
-          opacity: glow * 0.9,
-          scale: 0.85 + glow * 0.25,
-          rotation: t * 45,
+          opacity: corona * 0.9,
+          scale: 0.8 + corona * 0.25,
+          rotation: t * 40,
         },
         {
-          x: -18 + Math.cos(t * 4) * 10,
-          y: 14 + Math.sin(t * 4) * 10,
+          x: -16 + Math.cos(t * 3.1) * 9,
+          y: 12 + Math.sin(t * 3.1) * 9,
           char: "⭐",
-          opacity: (1 - glow) * 0.8,
+          opacity: (1 - corona) * 0.8,
           scale: 0.75,
-          rotation: -t * 30,
+          rotation: -t * 25,
         }
       );
       break;
     }
 
     case "blowing": {
-      // Balanço gracioso ao vento
-      const sway = Math.sin(t * 2.8);
-      rotation = sway * 8 * intensity;
-      dx = sway * 2.2 * intensity;
-      scaleX = 1 + Math.abs(sway) * 0.04;
-      pulse = Math.abs(sway);
+      // Balanço realista de vento com rajadas e micro-ondulações na copa/pétalas
+      const gust = Math.sin(t * 1.3) * 0.65 + Math.sin(t * 2.8) * 0.25 + Math.sin(t * 5.6) * 0.1;
+      rotation = gust * 6.5 * intensity;
+      dx = gust * 2.2 * intensity;
+      dy = Math.abs(gust) * 0.5 * intensity;
+      scaleX = 1 + Math.abs(gust) * 0.03;
+      scaleY = 1 - Math.abs(gust) * 0.02;
+      pulse = Math.abs(gust);
 
       if (isActiveInTimeline) {
+        const leafP = (t * 1.4) % 1;
         particles.push({
-          x: 16 + (t % 1.5) * 20,
-          y: -4 + Math.sin(t * 3) * 12,
+          x: 14 + leafP * 24,
+          y: -4 + Math.sin(t * 2.8) * 10,
           char: "🍃",
-          opacity: 0.85 * (1 - (t % 1.5) / 1.5),
-          scale: 0.8,
-          rotation: t * 60,
+          opacity: 0.85 * Math.sin(leafP * Math.PI),
+          scale: 0.75 + leafP * 0.15,
+          rotation: t * 45,
         });
       }
       break;
     }
 
     case "swimming": {
-      // Ondulação aquática e flutuação
-      const wave = Math.sin(t * 2.2);
-      dx = Math.cos(t * 1.5) * 2.5 * intensity;
-      dy = wave * 2.4 * intensity;
-      rotation = wave * 6;
-      pulse = (wave + 1) / 2;
+      // Cinemática aquática orbital (Trochoidal): movimento circular de onda suave e inclinação natural
+      const wave = t * 1.9;
+      dx = Math.cos(wave) * 2.5 * intensity;
+      dy = Math.sin(wave) * 2.1 * intensity;
+      rotation = Math.cos(wave) * 4.2;
+      scaleX = 1 + Math.sin(t * 3.8) * 0.035;
+      scaleY = 1 - Math.sin(t * 3.8) * 0.025;
+      pulse = (Math.sin(wave) + 1) / 2;
 
+      const bubbleP = (t * 1.8) % 1;
       particles.push({
-        x: Math.sin(t * 3) * 14,
-        y: 16,
+        x: Math.sin(t * 2.6) * 12,
+        y: 14 - bubbleP * 18,
         char: "🫧",
-        opacity: 0.75 * (Math.sin(t * 4) * 0.5 + 0.5),
-        scale: 0.8,
+        opacity: 0.85 * Math.sin(bubbleP * Math.PI),
+        scale: 0.7 + bubbleP * 0.2,
         rotation: 0,
       });
       break;
     }
 
     case "sleeping": {
-      // Respiração serena e pacífica com Zzz
-      const breath = (Math.sin(t * 1.8) + 1) / 2;
-      scaleY = 0.92 + breath * 0.12;
-      scaleX = 1.04 - breath * 0.05;
-      rotation = Math.sin(t * 1.2) * 2;
+      // Respiração relaxante 4-segundos: inalação suave, retenção calma, exalação longa
+      const breathCycle = (t * 0.45) % 1;
+      const breath = breathCycle < 0.42
+        ? Math.sin((breathCycle / 0.42) * (Math.PI / 2))
+        : breathCycle < 0.55
+        ? 1.0
+        : Math.cos(((breathCycle - 0.55) / 0.45) * (Math.PI / 2));
+      scaleY = 0.94 + breath * 0.09;
+      scaleX = 1.03 - breath * 0.04;
+      dy = -breath * 0.7 * intensity;
+      rotation = Math.sin(t * 0.8) * 1.2;
       pulse = breath;
 
-      const zOffset = (t * 12) % 30;
+      const zCycle = (t * 10) % 28;
       particles.push({
-        x: 14 + (zOffset / 30) * 12,
-        y: -10 - zOffset,
+        x: 12 + (zCycle / 28) * 10,
+        y: -10 - zCycle,
         char: "💤",
-        opacity: Math.max(0, 1 - zOffset / 30),
-        scale: 0.8 + (zOffset / 30) * 0.4,
+        opacity: Math.sin((zCycle / 28) * Math.PI) * 0.9,
+        scale: 0.75 + (zCycle / 28) * 0.35,
         rotation: 0,
       });
       break;
@@ -525,162 +585,172 @@ export function calculateLivingElementState(
 
     case "dancing":
     case "celebrating": {
-      // Dança alegre com rotação alternada e passos saltitantes
-      const beat = Math.sin(t * 7.5);
-      dx = beat * 3 * intensity;
-      dy = Math.abs(Math.sin(t * 7.5)) * -2.8 * intensity;
-      rotation = beat * 14;
-      scaleX = 1 + Math.abs(beat) * 0.08;
+      // Dança fluida e rítmica com gingado latino/caribenho e balanço alegre
+      const tempo = t * 6.5;
+      const beat = Math.sin(tempo);
+      dx = beat * 2.4 * intensity;
+      dy = (Math.sin(tempo * 2) * 0.5 - 0.5) * 2.2 * intensity;
+      rotation = beat * 9.5;
+      scaleX = 1 + Math.abs(beat) * 0.06;
+      scaleY = 1 - Math.abs(beat) * 0.04;
       pulse = (beat + 1) / 2;
 
+      const confP = (t * 2.0) % 1;
       particles.push({
-        x: Math.sin(t * 5) * 18,
-        y: -16 + Math.cos(t * 5) * 6,
+        x: Math.sin(t * 4) * 16,
+        y: -14 + Math.cos(t * 4) * 5,
         char: "🎉",
-        opacity: 0.85,
+        opacity: 0.85 * Math.sin(confP * Math.PI),
         scale: 0.8,
-        rotation: t * 50,
+        rotation: t * 45,
       });
       break;
     }
 
     case "rowing": {
-      // Remada compassada e oscilação sobre a água
-      const stroke = Math.sin(t * 3.2);
-      dx = stroke * 2.8 * intensity;
-      dy = Math.sin(t * 6.4) * 1.6 * intensity;
-      rotation = stroke * 5;
-      scaleX = 1 + Math.abs(stroke) * 0.05;
+      // Remada orgânica: mergulho do remo (potência), impulso frontal e recuperação suave
+      const strokeP = (t * 1.5) % 1;
+      const stroke = strokeP < 0.45 ? Math.sin((strokeP / 0.45) * Math.PI) : -Math.sin(((strokeP - 0.45) / 0.55) * Math.PI) * 0.35;
+      dx = stroke * 2.6 * intensity;
+      dy = Math.sin(t * 3.0) * 1.4 * intensity;
+      rotation = stroke * 4.5;
+      scaleX = 1 + Math.abs(stroke) * 0.04;
       pulse = (stroke + 1) / 2;
 
-      if (isActiveInTimeline) {
+      if (isActiveInTimeline && strokeP < 0.45) {
         particles.push({
-          x: stroke > 0 ? 16 : -16,
-          y: 12,
+          x: stroke > 0 ? 15 : -15,
+          y: 10,
           char: "🌊",
-          opacity: 0.85 * Math.abs(stroke),
-          scale: 0.8,
-          rotation: stroke * 10,
+          opacity: 0.85 * Math.sin((strokeP / 0.45) * Math.PI),
+          scale: 0.75,
+          rotation: stroke * 8,
         });
       }
       break;
     }
 
     case "hunting": {
-      // Perseguição ágil e focada com impulsos rápidos
-      const lunge = Math.sin(t * 5.5);
-      dx = (Math.cos(t * 2.8) * 3.5 + lunge * 1.5) * intensity;
-      dy = Math.sin(t * 4) * 2 * intensity;
-      rotation = lunge * 8;
-      scaleX = 1.08;
-      scaleY = 0.94;
-      pulse = Math.abs(lunge);
+      // Perseguição ágil com impulsos focados e recuperação rápida
+      const huntPulse = Math.sin(t * 4.8);
+      dx = (Math.cos(t * 2.4) * 3.0 + huntPulse * 1.2) * intensity;
+      dy = Math.sin(t * 3.6) * 1.8 * intensity;
+      rotation = huntPulse * 6.5;
+      scaleX = 1.06;
+      scaleY = 0.95;
+      pulse = Math.abs(huntPulse);
 
       if (isActiveInTimeline) {
         particles.push({
-          x: -18,
-          y: Math.sin(t * 6) * 8,
+          x: -16,
+          y: Math.sin(t * 5) * 6,
           char: "⚡",
-          opacity: 0.9,
-          scale: 0.85,
-          rotation: t * 45,
+          opacity: 0.85,
+          scale: 0.8,
+          rotation: t * 35,
         });
       }
       break;
     }
 
     case "dining": {
-      // Família à mesa com gestos de refeição e conversa calorosa
-      const dine = Math.sin(t * 2.4);
-      dx = Math.cos(t * 1.8) * 1.2 * intensity;
-      dy = Math.abs(dine) * -1.5 * intensity;
-      scaleY = 1 + dine * 0.04;
+      // Calor da refeição em família com gestos acolhedores e vapor suave subindo
+      const dine = Math.sin(t * 2.0);
+      dx = Math.cos(t * 1.5) * 1.0 * intensity;
+      dy = (Math.sin(t * 2.0) * 0.5 - 0.5) * 1.2 * intensity;
+      scaleY = 1 + dine * 0.03;
       scaleX = 1 - dine * 0.02;
-      rotation = Math.sin(t * 2) * 3;
+      rotation = Math.sin(t * 1.7) * 2.5;
       pulse = (dine + 1) / 2;
 
+      const steamP = (t * 12) % 22;
       particles.push({
-        x: Math.sin(t * 2.5) * 12,
-        y: -14 - ((t * 14) % 24),
+        x: Math.sin(t * 2.2) * 10,
+        y: -12 - steamP,
         char: "🍲",
-        opacity: Math.max(0, 0.9 - ((t * 14) % 24) / 24),
-        scale: 0.8,
+        opacity: Math.sin((steamP / 22) * Math.PI) * 0.85,
+        scale: 0.75 + (steamP / 22) * 0.2,
         rotation: 0,
       });
       break;
     }
 
     case "watching_movie": {
-      // Fascinados diante da tela grande do cinema
-      const wonder = Math.sin(t * 1.9);
-      dx = Math.sin(t * 1.5) * 1.4 * intensity;
-      dy = wonder * 1.2 * intensity;
-      scaleX = 1 + wonder * 0.03;
-      scaleY = 1 - wonder * 0.02;
-      rotation = Math.sin(t * 1.2) * 2;
-      pulse = (wonder + 1) / 2;
+      // Encantamento diante da tela grande: atenção viva e respiração sutil
+      const gaze = Math.sin(t * 1.6);
+      dx = Math.sin(t * 1.2) * 1.1 * intensity;
+      dy = gaze * 0.9 * intensity;
+      scaleX = 1 + gaze * 0.025;
+      scaleY = 1 - gaze * 0.02;
+      rotation = Math.sin(t * 0.9) * 1.8;
+      pulse = (gaze + 1) / 2;
 
+      const popP = (t * 1.8) % 1;
       particles.push({
-        x: 14 + Math.sin(t * 3) * 6,
-        y: -12 + Math.cos(t * 3) * 6,
+        x: 12 + Math.sin(t * 2.6) * 5,
+        y: -10 + Math.cos(t * 2.6) * 5,
         char: "🍿",
-        opacity: 0.85,
-        scale: 0.8,
-        rotation: t * 20,
+        opacity: 0.85 * Math.sin(popP * Math.PI),
+        scale: 0.75,
+        rotation: t * 15,
       });
       break;
     }
 
     case "traveling": {
-      // Voo suave cruzando o horizonte
-      const cruise = Math.sin(t * 2.2);
-      dx = Math.cos(t * 1.6) * 4 * intensity;
-      dy = cruise * 2 * intensity;
-      rotation = cruise * 4;
-      scaleX = 1.05;
-      scaleY = 0.96;
+      // Cruzeiro aéreo suave com leve inclinação e flutuação nas correntes de ar
+      const cruise = Math.sin(t * 1.8);
+      dx = Math.cos(t * 1.3) * 3.2 * intensity;
+      dy = cruise * 1.6 * intensity;
+      rotation = cruise * 3.5;
+      scaleX = 1.04;
+      scaleY = 0.97;
       pulse = (cruise + 1) / 2;
 
+      const trailP = (t * 2.0) % 1;
       particles.push({
-        x: -20,
-        y: cruise * 4,
+        x: -18 - trailP * 12,
+        y: cruise * 3,
         char: "✈️",
-        opacity: 0.85,
-        scale: 0.85,
-        rotation: cruise * 6,
+        opacity: 0.8 * Math.sin(trailP * Math.PI),
+        scale: 0.8,
+        rotation: cruise * 4,
       });
       break;
     }
 
     case "interacting": {
-      // Humano e robô colaborando e conversando em harmonia
-      const sync = Math.sin(t * 3.6);
-      dx = Math.sin(t * 2) * 2.2 * intensity;
-      dy = Math.abs(sync) * -2 * intensity;
-      scaleX = 1 + Math.abs(sync) * 0.06;
-      scaleY = 1 + Math.abs(sync) * 0.06;
-      rotation = sync * 6;
-      pulse = (sync + 1) / 2;
+      // Colaboração humano e robô com amortecimento crítico: movimentos inteligentes e fluidos
+      const step = (t * 1.6) % 2;
+      const prog = step < 1 ? step : 2 - step;
+      const smoothAct = prog * prog * (3 - 2 * prog);
+      dx = (smoothAct * 2.2 - 1.1) * intensity;
+      dy = Math.sin(smoothAct * Math.PI) * -1.5 * intensity;
+      rotation = (smoothAct - 0.5) * 4.5;
+      scaleX = 1 + Math.sin(smoothAct * Math.PI) * 0.04;
+      scaleY = 1 - Math.sin(smoothAct * Math.PI) * 0.03;
+      pulse = smoothAct;
 
+      const handP = (t * 1.6) % 1;
       particles.push({
-        x: Math.sin(t * 4) * 16,
-        y: -16 + Math.cos(t * 4) * 6,
+        x: Math.sin(t * 3.2) * 14,
+        y: -14 + Math.cos(t * 3.2) * 5,
         char: "🤝",
-        opacity: 0.9,
-        scale: 0.85,
+        opacity: 0.85 * Math.sin(handP * Math.PI),
+        scale: 0.8,
         rotation: 0,
       });
       break;
     }
 
     default: {
-      // Comportamento ocioso vivo (idle): respiração suave e atenção ao ambiente
-      const idleBreath = Math.sin(t * 2.2);
-      scaleY = 1 + idleBreath * 0.03;
-      scaleX = 1 - idleBreath * 0.02;
-      dy = idleBreath * 0.6;
-      rotation = Math.sin(t * 1.4) * 2;
-      pulse = (idleBreath + 1) / 2;
+      // Comportamento ocioso vivo (idle): respiração calma, presença orgânica e micro-flutuação
+      const breath = Math.sin(t * 1.8);
+      scaleY = 1 + breath * 0.024;
+      scaleX = 1 - breath * 0.016;
+      dy = breath * 0.5 * intensity;
+      rotation = Math.sin(t * 1.1) * 1.4;
+      pulse = (breath + 1) / 2;
       break;
     }
   }

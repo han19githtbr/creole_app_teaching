@@ -1,5 +1,6 @@
 // Banco de imagens em estilo Studio Ghibli (ilustrações artísticas
 // com elementos realistas e reconhecíveis, arquivos SVG em /public/ghibli).
+import { planSceneDetails, type SceneDetail } from "@/lib/storySceneDetails";
 import generatedImages from "../../scripts/ghibli/manifest.json";
 import measuredAnchors from "./storyElementAnchors.json";
 import measuredExtras from "./storyElementExtras.json";
@@ -40,6 +41,8 @@ export interface BankImage {
    * Só estes recebem rótulo na história, e `labelLayout.anchors` está alinhado a esta lista.
    */
   storyElements?: BankElement[];
+  /** Objetos extras animados (flor, árvore, casa, bandeira...) desenhados na camada de vida; cada um tem rótulo em `storyElements`. */
+  sceneDetails?: SceneDetail[];
   /** Desafio do jogo de identificar elementos (imagens geradas por IA já trazem o seu). */
   quiz?: { options: string[]; answers: string[] };
   /** true = imagem gerada por IA (guardada no R2 e cadastrada no banco de dados). */
@@ -530,7 +533,7 @@ function measuredStoryLayout(
   id: string,
   elements: BankElement[],
   base: StoryLabelLayout | undefined
-): { storyElements?: BankElement[]; labelLayout?: StoryLabelLayout } {
+): { storyElements?: BankElement[]; labelLayout?: StoryLabelLayout; sceneDetails?: SceneDetail[] } {
   const measured = (measuredAnchors as unknown as Record<string, ([number, number] | null)[]>)[id];
   if (!measured || measured.length !== elements.length) return {};
   const storyElements: BankElement[] = [];
@@ -557,8 +560,23 @@ function measuredStoryLayout(
     storyElements.push(detail);
     anchors.push({ left: Math.min(96, Math.max(4, x)), top: Math.min(90, Math.max(10, y)) });
   }
+  // Objetos extras com vida: cada um é desenhado na camada de vida e ganha rótulo apontando para ele.
+  const skipKinds = new Set<string>();
+  for (const kind of ["fleur", "arbre", "maison", "drapeau", "lanterne", "oiseau", "chat", "moulin", "robot", "tambour", "cloche", "livre"]) {
+    const d = EXTRA_DETAIL_NAMES[kind];
+    if (d && (seenKreyol.has(d.kreyol.toLowerCase().trim()) || seenFr.has((d.fr || "").toLowerCase().trim()))) skipKinds.add(kind);
+  }
+  const theme = IMAGE_THEMES_DATA.find((t) => id === t.id || id.startsWith(`${t.id}-`))?.theme ?? "";
+  // Idiomas mantém o cenário limpo (camada de vida desligada): sem objetos extras, para nenhum rótulo ficar sem desenho.
+  const sceneDetails = /idiom/i.test(`${theme} ${id}`) ? [] : planSceneDetails(id, theme, anchors, skipKinds, 3);
+  for (const detail of sceneDetails) {
+    const name = EXTRA_DETAIL_NAMES[detail.kind];
+    storyElements.push(name);
+    anchors.push({ left: Math.min(96, Math.max(4, detail.anchor.left)), top: Math.min(90, Math.max(10, detail.anchor.top)) });
+  }
   return {
     storyElements,
+    sceneDetails,
     labelLayout: { top: base?.top ?? 12, left: base?.left ?? 50, width: base?.width ?? 78, align: base?.align ?? "center", anchors },
   };
 }

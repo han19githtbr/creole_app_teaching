@@ -482,7 +482,273 @@ const CIGALE: Tale = {
   ],
 };
 
-export const TALES: Tale[] = [AIGLE, LIEVRE, CORBEAU, CIGALE];
+/* ----------------------------------------------------------------- */
+/* 5. Prendre soin de ce que l'on a                                   */
+/* ----------------------------------------------------------------- */
+
+const SOIN: Tale = {
+  slug: "prendre-soin-de-ce-que-l-on-a",
+  title: "Prendre soin de ce que l'on a",
+  byline: "Une parabole sur la vraie valeur des choses",
+  level: "B1",
+  synopsisPt: "Paulo sonhava em ganhar um carro aos 18 anos. Seu pai mecânico lhe deu uma caixa de ferramentas raras, mas ele descuidou da menor peça... sem saber que ela valeria o próprio carro.",
+  coverScene: 4,
+  scenes: [
+    {
+      lines: ["Paulo avait seize ans et rêvait du jour où il aurait enfin une vraie voiture.", "Dans sa chambre, il collectionnait avec passion de petites autos miniatures."],
+      pt: "Paulo tinha dezesseis anos e sonhava com o dia em que teria um carro de verdade. No seu quarto, colecionava com paixão miniaturas de carros.",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 21,
+        props: [{ k: "miniCars", x: 260, row: 0.65, s: 1.1 }],
+        actors: [{ k: "paulo", x: 640, row: 0.9, s: 1.3, anim: "idle", variant: 0 }],
+        fx: [{ k: "rays" }, { k: "dust", n: 20 }],
+        cam: { x0: -20, y0: 0, z0: 1.02, x1: 20, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Pour ses seize ans, son père Marcos, un mécanicien réputé, lui offrit un coffret.", "« Prends-en soin, dit-il. Ces outils sont rares et précieux. Tu en auras besoin. »"],
+      pt: "Aos dezesseis anos, seu pai Marcos, um mecânico conceituado, deu-lhe uma maleta de ferramentas. “Cuide bem dela”, disse ele. “Estas peças são raras e preciosas. Você vai precisar.”",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 22,
+        props: [{ k: "toolbox", x: 480, row: 0.72, s: 1.15, v: 0 }],
+        actors: [
+          { k: "marcos", x: 280, row: 0.94, s: 1.35, anim: "talk" },
+          { k: "paulo", x: 740, row: 0.9, s: 1.3, anim: "idle", variant: 0, flip: true },
+        ],
+        fx: [{ k: "rays" }, { k: "sparkle", x: 480, y: 1180, n: 10 }],
+        cam: { x0: -15, y0: 0, z0: 1.0, x1: 25, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Déçu de ne pas avoir reçu un présent plus grand, Paulo laissa traîner les outils.", "Par négligence, il perdit la plus petite pièce, la plus rare de toutes."],
+      pt: "Decepcionado por não ganhar um presente maior, Paulo deixou as ferramentas espalhadas. Por descuido, perdeu a menor peça, a mais rara de todas.",
+      art: {
+        look: "sunset", terrain: "interior", ground: "wood", seed: 23,
+        props: [{ k: "toolbox", x: 420, row: 0.7, s: 1.05, v: 1 }],
+        actors: [{ k: "paulo", x: 680, row: 0.92, s: 1.3, anim: "sad", variant: 0 }],
+        fx: [{ k: "dust", n: 26 }],
+        cam: { x0: 20, y0: 0, z0: 1.02, x1: -20, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Deux ans passèrent. Pour ses dix-huit ans, son père l'invita à la remise.", "« Aujourd'hui tu as l'âge des grandes responsabilités. Viens avec moi ! »"],
+      pt: "Dois anos se passaram. Para seus dezoito anos, o pai o convidou até a garagem. “Hoje você tem idade para grandes responsabilidades. Venha comigo!”",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 24,
+        props: [{ k: "garageBenches", x: 200, row: 0.2, s: 1.1 }],
+        actors: [
+          { k: "marcos", x: 340, row: 0.94, s: 1.35, anim: "walk", dx: 70 },
+          { k: "paulo", x: 680, row: 0.92, s: 1.32, anim: "walk", variant: 1, dx: 70, flip: true },
+        ],
+        fx: [{ k: "rays" }, { k: "dust", n: 30 }],
+        cam: { x0: -30, y0: 0, z0: 1.02, x1: 30, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Sous la lumière brillait une automobile rarissime, un chef-d'œuvre de collection.", "Paulo resta bouche bée d'émerveillement devant cette merveille."],
+      pt: "Sob a luz brilhava um automóvel raríssimo, uma verdadeira obra-prima de coleção. Paulo ficou de boca aberta, maravilhado diante de tamanha perfeição.",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 25,
+        props: [{ k: "car", x: 530, row: 0.78, s: 1.35, v: 0 }, { k: "garageBenches", x: 160, row: 0.15, s: 1.0 }],
+        actors: [
+          { k: "marcos", x: 180, row: 0.95, s: 1.35, anim: "point" },
+          { k: "paulo", x: 880, row: 0.94, s: 1.32, anim: "shock", variant: 1, flip: true },
+        ],
+        fx: [{ k: "sparkle", x: 530, y: 1100, n: 18 }, { k: "rays" }],
+        cam: { x0: 0, y0: 20, z0: 1.02, x1: 0, y1: -20, z1: 1.15 },
+      },
+    },
+    {
+      lines: ["« Si tu n'en prends pas soin, avertit Marcos, elle ira à qui sait l'estimer. »", "« Merci mille fois papa, promit Paulo, j'en prendrai le plus grand soin ! »"],
+      pt: "“Se você não cuidar bem dele”, advertiu Marcos, “ele irá para quem saiba estimá-lo.” “Muito obrigado, pai!”, prometeu Paulo. “Vou cuidar dele com todo o zelo!”",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 25,
+        props: [{ k: "car", x: 530, row: 0.78, s: 1.35, v: 0 }],
+        actors: [
+          { k: "marcos", x: 260, row: 0.94, s: 1.35, anim: "talk" },
+          { k: "paulo", x: 820, row: 0.92, s: 1.32, anim: "wave", variant: 1, flip: true },
+        ],
+        fx: [{ k: "dust", n: 20 }],
+        cam: { x0: -20, y0: 0, z0: 1.0, x1: 20, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Quelques mois plus tard, le moteur s'arrêta net. Aucun garage ne trouva la panne.", "Cette mécanique unique était un véritable casse-tête pour les experts."],
+      pt: "Alguns meses depois, o motor parou de repente. Nenhuma oficina encontrou a falha. Aquele mecanismo único era um quebra-cabeça para os especialistas.",
+      art: {
+        look: "storm", terrain: "interior", ground: "wood", seed: 26,
+        props: [{ k: "car", x: 510, row: 0.8, s: 1.35, v: 1 }],
+        actors: [{ k: "paulo", x: 850, row: 0.94, s: 1.32, anim: "sad", variant: 1, flip: true }],
+        fx: [{ k: "dust", n: 32 }],
+        cam: { x0: 20, y0: 0, z0: 1.02, x1: -20, y1: 0, z1: 1.15 },
+      },
+    },
+    {
+      lines: ["Paulo appela son père. Marcos découvrit la boîte et constata l'absence.", "« L'outil que tu as égaré était l'unique clé capable de réparer ce moteur. »"],
+      pt: "Paulo chamou o pai. Marcos olhou a caixa e viu a ausência. “A ferramenta que você perdeu era a única chave capaz de consertar este motor.”",
+      art: {
+        look: "sunset", terrain: "interior", ground: "wood", seed: 27,
+        props: [{ k: "toolbox", x: 510, row: 0.72, s: 1.12, v: 1 }, { k: "car", x: 850, row: 0.45, s: 0.85, v: 1 }],
+        actors: [
+          { k: "marcos", x: 290, row: 0.94, s: 1.35, anim: "talk" },
+          { k: "paulo", x: 720, row: 0.92, s: 1.32, anim: "sad", variant: 1, flip: true },
+        ],
+        fx: [{ k: "dust", n: 24 }],
+        cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: -20, z1: 1.18 },
+      },
+    },
+    {
+      lines: ["Sans cette pièce introuvable, la voiture d'exception fut perdue à jamais.", "Morale : prends soin de ce que tu as ; ce qui paraît banal aujourd'hui sera précieux demain."],
+      pt: "Sem aquela chave insubstituível, o carro dos sonhos foi perdido para sempre. Moral: cuide do que você tem; o que parece banal hoje pode ser precioso amanhã.",
+      moral: true,
+      art: {
+        look: "sunset", terrain: "interior", ground: "wood", seed: 28,
+        props: [{ k: "toolbox", x: 540, row: 0.74, s: 1.12, v: 1 }],
+        actors: [{ k: "paulo", x: 540, row: 0.94, s: 1.32, anim: "sad", variant: 1 }],
+        fx: [{ k: "sparkle", x: 540, y: 1100, n: 12 }, { k: "dust", n: 25 }],
+        cam: { x0: 0, y0: 0, z0: 1.05, x1: 0, y1: 0, z1: 1.15 },
+      },
+    },
+  ],
+};
+
+/* ----------------------------------------------------------------- */
+/* 6. L'aquarium de l'amour                                           */
+/* ----------------------------------------------------------------- */
+
+const AQUARIUM: Tale = {
+  slug: "l-aquarium-de-l-amour",
+  title: "L'aquarium de l'amour",
+  byline: "Une parabole sur le respect et l'attention",
+  level: "B1",
+  synopsisPt: "Pedro e Sabrina pareciam o casal perfeito. Para seus 30 anos, Sabrina deu a Pedro um lindo aquário representando seu coração... mas a cada descuido e promessa quebrada, uma pedra era lançada.",
+  coverScene: 1,
+  scenes: [
+    {
+      lines: ["Pedro et Sabrina formaient pour leur entourage le modèle du couple idéal.", "Lui réussissait dans les affaires ; elle régalait tous les cœurs dans son restaurant."],
+      pt: "Pedro e Sabrina formavam para todos o modelo de casal ideal. Ele prosperava nos negócios; ela encantava a todos em seu restaurante conceituado.",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 31,
+        props: [{ k: "diningTable", x: 540, row: 0.72, s: 1.1 }],
+        actors: [
+          { k: "pedro", x: 310, row: 0.94, s: 1.32, anim: "idle" },
+          { k: "sabrina", x: 740, row: 0.92, s: 1.3, anim: "idle", flip: true },
+        ],
+        fx: [{ k: "rays" }, { k: "petals", n: 10 }],
+        cam: { x0: -20, y0: 0, z0: 1.02, x1: 20, y1: 0, z1: 1.12 },
+      },
+    },
+    {
+      lines: ["Pour ses trente ans, Sabrina lui offrit un aquarium étincelant de vie.", "« Cet aquarium représente mon cœur, dit-elle. Prends-en grand soin, je t'aime. »"],
+      pt: "Para seus trinta anos, Sabrina deu-lhe de presente um aquário repleto de vida. “Este aquário representa o meu coração”, disse ela. “Cuide muito bem dele, te amo.”",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 32,
+        props: [{ k: "aquarium", x: 540, row: 0.75, s: 1.25, v: 0 }],
+        actors: [
+          { k: "pedro", x: 260, row: 0.94, s: 1.32, anim: "talk" },
+          { k: "sabrina", x: 800, row: 0.92, s: 1.3, anim: "idle", flip: true },
+        ],
+        fx: [{ k: "sparkle", x: 540, y: 1100, n: 16 }, { k: "rays" }],
+        cam: { x0: 0, y0: 20, z0: 1.02, x1: 0, y1: -20, z1: 1.15 },
+      },
+    },
+    {
+      lines: ["Sabrina lui demanda une minute d'aide, mais Pedro refusa pour son travail.", "Blessée par son dédain, elle alla poser une première pierre dans l'eau claire."],
+      pt: "Magoada pelo descaso quando Pedro preferiu o trabalho a um minuto de ajuda, ela colocou a primeira pedra na água límpida.",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 33,
+        props: [
+          { k: "officeDesk", x: 280, row: 0.7, s: 1.1 },
+          { k: "aquarium", x: 800, row: 0.75, s: 1.1, v: 1 },
+        ],
+        actors: [
+          { k: "pedro", x: 260, row: 0.92, s: 1.32, anim: "work" },
+          { k: "sabrina", x: 740, row: 0.92, s: 1.3, anim: "drop_stone" },
+        ],
+        fx: [{ k: "dust", n: 20 }],
+        cam: { x0: -25, y0: 0, z0: 1.0, x1: 25, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Le soir de l'anniversaire de Sabrina, Pedro annula leur dîner pour un client.", "Rentrée seule, elle déposa une deuxième pierre lourde dans le bassin."],
+      pt: "Na noite de aniversário de Sabrina, Pedro cancelou o jantar deles por um cliente. Voltando sozinha, ela colocou uma segunda pedra pesada no aquário.",
+      art: {
+        look: "night", terrain: "interior", ground: "wood", seed: 34,
+        props: [
+          { k: "diningTable", x: 280, row: 0.7, s: 1.0 },
+          { k: "aquarium", x: 780, row: 0.75, s: 1.15, v: 2 },
+        ],
+        actors: [{ k: "sabrina", x: 720, row: 0.92, s: 1.3, anim: "drop_stone" }],
+        fx: [{ k: "dust", n: 24 }],
+        cam: { x0: 25, y0: 0, z0: 1.02, x1: -15, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Au restaurant, une fête rendit hommage au dévouement exceptionnel de Sabrina.", "Pedro avait juré de venir, mais il préféra encore un rendez-vous d'affaires."],
+      pt: "No restaurante, uma grande festa homenageou a dedicação de Sabrina. Pedro havia jurado comparecer, mas preferiu mais uma reunião de negócios.",
+      art: {
+        look: "sunset", terrain: "interior", ground: "wood", seed: 35,
+        props: [{ k: "diningTable", x: 540, row: 0.72, s: 1.2 }],
+        actors: [{ k: "sabrina", x: 540, row: 0.92, s: 1.3, anim: "sad" }],
+        fx: [{ k: "petals", n: 12 }, { k: "dust", n: 20 }],
+        cam: { x0: 0, y0: 0, z0: 1.02, x1: 0, y1: -20, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["Sabrina jeta une nouvelle pierre. L'aquarium était désormais étouffé de roches.", "Les plantes étaient broyées, les poissons étaient morts, et l'eau n'était que boue."],
+      pt: "Sabrina jogou outra pedra. O aquário estava agora sufocado de pedras. As plantas foram esmagadas, os peixes morreram e a água virou pura sujeira.",
+      art: {
+        look: "storm", terrain: "interior", ground: "wood", seed: 36,
+        props: [{ k: "aquarium", x: 540, row: 0.75, s: 1.3, v: 3 }],
+        actors: [{ k: "sabrina", x: 780, row: 0.92, s: 1.3, anim: "drop_stone", flip: true }],
+        fx: [{ k: "dust", n: 36 }],
+        cam: { x0: 0, y0: 20, z0: 1.02, x1: 0, y1: -20, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Le samedi, Sabrina prit l'aquarium sans vie pour le jeter aux ordures.", "« Pourquoi est-il plein de cailloux ? » s'étonna Pedro, stupéfait."],
+      pt: "No sábado, Sabrina pegou o aquário sem vida para jogá-lo no lixo. “Por que ele está cheio de pedras?”, espantou-se Pedro, atônito.",
+      art: {
+        look: "day", terrain: "interior", ground: "wood", seed: 37,
+        props: [],
+        actors: [
+          { k: "sabrina", x: 400, row: 0.92, s: 1.3, anim: "carry_tank" },
+          { k: "pedro", x: 800, row: 0.94, s: 1.32, anim: "shock", flip: true },
+        ],
+        fx: [{ k: "dust", n: 24 }],
+        cam: { x0: -20, y0: 0, z0: 1.0, x1: 20, y1: 0, z1: 1.14 },
+      },
+    },
+    {
+      lines: ["« Chaque pierre est l'un de tes mépris », murmura-t-elle avec une peine immense.", "« Voilà ce qu'est devenu mon cœur : un bloc froid et lourd, sans plus aucune vie. »"],
+      pt: "“Cada pedra é um dos seus desprezos”, murmurou ela com imensa tristeza. “Eis o que virou o meu coração: um bloco frio e pesado, sem mais nenhuma vida.”",
+      art: {
+        look: "sunset", terrain: "interior", ground: "wood", seed: 38,
+        props: [{ k: "aquarium", x: 540, row: 0.74, s: 1.25, v: 3 }],
+        actors: [
+          { k: "sabrina", x: 320, row: 0.92, s: 1.3, anim: "talk" },
+          { k: "pedro", x: 780, row: 0.94, s: 1.32, anim: "sad", flip: true },
+        ],
+        fx: [{ k: "dust", n: 28 }],
+        cam: { x0: 0, y0: 0, z0: 1.04, x1: 0, y1: -20, z1: 1.16 },
+      },
+    },
+    {
+      lines: ["Pedro comprit trop tard qu'aucune excuse ne ranimerait ce qu'il avait étouffé.", "Morale : les petits manques d'égard répétés finissent par détruire l'amour le plus pur."],
+      pt: "Pedro compreendeu tarde demais que nenhuma desculpa reviveria o que ele sufocou. Moral: as pequenas faltas de consideração repetidas acabam destruindo o amor mais puro.",
+      moral: true,
+      art: {
+        look: "sunset", terrain: "interior", ground: "wood", seed: 39,
+        props: [{ k: "aquarium", x: 540, row: 0.74, s: 1.25, v: 3 }],
+        actors: [{ k: "pedro", x: 540, row: 0.94, s: 1.32, anim: "sad" }],
+        fx: [{ k: "sparkle", x: 540, y: 1100, n: 12 }, { k: "dust", n: 24 }],
+        cam: { x0: 0, y0: 0, z0: 1.05, x1: 0, y1: 0, z1: 1.15 },
+      },
+    },
+  ],
+};
+
+export const TALES: Tale[] = [AIGLE, LIEVRE, CORBEAU, CIGALE, SOIN, AQUARIUM];
 
 export function getTale(slug: string): Tale | undefined {
   return TALES.find((tale) => tale.slug === slug);

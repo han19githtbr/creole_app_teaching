@@ -2,7 +2,7 @@
  * Personagens dos contos (vetor, vistos de lado, virados para a direita, pés na origem).
  * Cada função recebe o tempo `t` (s) e as opções de animação.
  */
-import { TAU, circle, ell, fillStroke, limb, smoothPath, vgrad, clamp, type Ctx } from "./artCore";
+import { TAU, circle, ell, fillStroke, limb, smoothPath, vgrad, rgrad, clamp, type Ctx } from "./artCore";
 
 export interface PoseOpts {
   anim?: string;
@@ -757,104 +757,693 @@ export function drawCicada(ctx: Ctx, t: number, o: PoseOpts) {
   }
 }
 
-/* ------------------------------ pessoa ------------------------------ */
+/* ------------------------------ Sistema de Personagens Realistas ------------------------------ */
 
-export function drawPerson(ctx: Ctx, t: number, o: PoseOpts) {
+export interface RealisticHumanConfig {
+  gender: "male" | "female";
+  skinBase: string;
+  skinShadow: string;
+  skinHighlight: string;
+  hairColor: string;
+  hairHighlight: string;
+  hairStyle: "farmer_cap" | "sage_long" | "paulo_teen" | "paulo_adult" | "marcos" | "pedro" | "sabrina";
+  hasStubble?: boolean;
+  hasBeard?: boolean;
+  shirtColor: string;
+  shirtShadow: string;
+  pantsColor: string;
+  pantsShadow: string;
+  shoeColor: string;
+  shoeType: "boot" | "sneaker" | "oxford" | "flat";
+  eyeColor?: string;
+  accessories?: "suspenders" | "watch" | "tie" | "necklace" | "apron";
+}
+
+export function drawRealisticHuman(ctx: Ctx, t: number, o: PoseOpts, cfg: RealisticHumanConfig) {
   const anim = o.anim ?? "idle";
   const walk = anim === "walk";
   const wave = anim === "wave";
-  const ph = t * (o.speed ?? 5);
-  const v = o.variant ?? 0;
-  const shirt = ["#6b7f94", "#3f6f8c", "#a8553a"][v % 3];
-  const pants = ["#2f4a73", "#3a3a4a", "#4a3a2a"][v % 3];
-  const hat = ["straw", "cap", "none"][v % 3];
-  const skin = "#e8b48a";
-  const breathe = Math.sin(t * 2) * 2;
-  const s = walk ? Math.sin(ph) * 28 : 0;
-  ctx.translate(0, walk ? -Math.abs(Math.sin(ph)) * 5 : 0);
-  // pernas
-  limb(ctx, -14, -160, -14 + s, -8, 34, pants, OUT);
-  limb(ctx, 16, -160, 16 - s, -8, 34, pants, OUT);
-  ell(ctx, -14 + s + 12, -6, 26, 12);
-  fillStroke(ctx, "#3a2a1c", OUT, 2);
-  ell(ctx, 16 - s + 12, -6, 26, 12);
-  fillStroke(ctx, "#3a2a1c", OUT, 2);
-  // braço de trás
-  limb(ctx, -4, -280 + breathe, -4 - s * 0.7, -190, 26, shirt, OUT);
-  // tronco
-  ctx.beginPath();
-  ctx.moveTo(-42, -300 + breathe);
-  ctx.quadraticCurveTo(-52, -220, -38, -150);
-  ctx.lineTo(40, -150);
-  ctx.quadraticCurveTo(52, -220, 38, -300 + breathe);
-  ctx.closePath();
-  fillStroke(ctx, vgrad(ctx, -300, -150, [[0, shirt], [1, pants]]), OUT);
-  if (v === 0) {
-    ctx.beginPath();
-    ctx.moveTo(-26, -260);
-    ctx.lineTo(26, -260);
-    ctx.lineTo(34, -150);
-    ctx.lineTo(-34, -150);
-    ctx.closePath();
-    fillStroke(ctx, pants, null);
-  }
-  // braço da frente
-  if (wave) {
-    limb(ctx, 6, -282 + breathe, 66, -350, 26, shirt, OUT);
-    limb(ctx, 66, -350, 88 + Math.sin(t * 8) * 16, -420, 24, shirt, OUT);
-    circle(ctx, 90 + Math.sin(t * 8) * 18, -430, 17);
-    fillStroke(ctx, skin, OUT, 2);
-  } else {
-    limb(ctx, 6, -282 + breathe, 6 + s * 0.7, -190, 26, shirt, OUT);
-    circle(ctx, 6 + s * 0.7, -178, 15);
-    fillStroke(ctx, skin, OUT, 2);
-  }
-  // pescoço e cabeça
-  limb(ctx, 0, -306 + breathe, 0, -326 + breathe, 22, skin, null);
+  const talk = anim === "talk";
+  const sad = anim === "sad";
+  const shock = anim === "shock";
+  const point = anim === "point";
+  const work = anim === "work";
+  const dropStone = anim === "drop_stone";
+  const carryTank = anim === "carry_tank";
+
+  const ph = t * (o.speed ?? 4.8);
+  const breathe = Math.sin(t * 1.8) * 2.2;
+  const bob = walk ? Math.abs(Math.sin(ph)) * 6.5 : 0;
+  const legSwing = walk ? Math.sin(ph) * 24 : 0;
+  const armSwing = walk ? Math.sin(ph) * 20 : 0;
+
   ctx.save();
-  ctx.translate(0, breathe);
-  ell(ctx, 4, -360, 36, 42);
-  fillStroke(ctx, vgrad(ctx, -402, -318, [[0, "#f3c39b"], [1, skin]]), OUT);
-  eye(ctx, 18, -364, 5.5, t, 0.9);
-  ctx.strokeStyle = "#3a2416";
-  ctx.lineWidth = 4;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.moveTo(6, -378);
-  ctx.lineTo(26, -376);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(14, -346, 10, 0.2, 1.3);
-  ctx.stroke();
-  if (v === 0) {
-    ctx.fillStyle = "#6b4a2a";
-    ell(ctx, 14, -346, 16, 6);
+  ctx.translate(0, -bob);
+
+  // 1. PERNA DE TRÁS
+  ctx.save();
+  const backLegX = -14 - legSwing;
+  ctx.translate(backLegX, -160);
+  limb(ctx, 0, 0, backLegX * 0.4, 80, 28, cfg.pantsShadow, OUT);
+  limb(ctx, backLegX * 0.4, 80, backLegX * 0.6, 150, 24, cfg.pantsShadow, OUT);
+  // Sapato de trás
+  ctx.translate(backLegX * 0.6, 150);
+  if (cfg.shoeType === "sneaker") {
+    ell(ctx, 10, 8, 24, 11);
+    fillStroke(ctx, cfg.shoeColor, OUT, 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-2, 14, 26, 5); // sola branca
+  } else if (cfg.shoeType === "oxford") {
+    ell(ctx, 12, 8, 25, 10);
+    fillStroke(ctx, cfg.shoeColor, OUT, 2);
+    ctx.fillStyle = "#ffffff";
+    circle(ctx, 16, 5, 2); // brilho de sapato de verniz
     ctx.fill();
-  }
-  circle(ctx, 40, -354, 6);
-  ctx.fillStyle = "#e8a37a";
-  ctx.fill();
-  if (hat === "straw") {
-    ell(ctx, 2, -390, 66, 14);
-    fillStroke(ctx, "#d9b45a", OUT, 2);
-    ctx.beginPath();
-    ctx.ellipse(2, -396, 38, 30, 0, Math.PI, 0);
-    fillStroke(ctx, "#e8c870", OUT, 2);
-    ctx.fillStyle = "#a8542f";
-    ctx.fillRect(-34, -396, 72, 8);
-  } else if (hat === "cap") {
-    ctx.beginPath();
-    ctx.ellipse(2, -392, 38, 26, 0, Math.PI, 0);
-    fillStroke(ctx, "#2f5f8a", OUT, 2);
-    ell(ctx, 40, -390, 22, 6);
-    fillStroke(ctx, "#244a6b", OUT, 2);
   } else {
+    ell(ctx, 10, 8, 25, 13);
+    fillStroke(ctx, cfg.shoeColor, OUT, 2);
+  }
+  ctx.restore();
+
+  // 2. BRAÇO DE TRÁS
+  ctx.save();
+  const backArmY = -280 + breathe;
+  if (carryTank) {
+    limb(ctx, -10, backArmY, 35, -220, 22, cfg.shirtShadow, OUT);
+    limb(ctx, 35, -220, 70, -210, 18, cfg.skinShadow, OUT);
+  } else if (work) {
+    limb(ctx, -10, backArmY, 20, -220, 22, cfg.shirtShadow, OUT);
+    limb(ctx, 20, -220, 45, -190, 18, cfg.skinShadow, OUT);
+  } else {
+    const swingB = walk ? -armSwing : sad ? 5 : 0;
+    limb(ctx, -8, backArmY, -8 + swingB, -190, 22, cfg.shirtShadow, OUT);
+    circle(ctx, -8 + swingB, -180, 12);
+    fillStroke(ctx, cfg.skinShadow, OUT, 1.5);
+  }
+  ctx.restore();
+
+  // 3. TRONCO E VESTIMENTA (ANATOMIA REALISTA COM DOBRAS E GRADIENTES)
+  ctx.save();
+  // Tronco
+  ctx.beginPath();
+  ctx.moveTo(-38, -300 + breathe);
+  ctx.quadraticCurveTo(-46, -225, -34, -155);
+  ctx.lineTo(36, -155);
+  ctx.quadraticCurveTo(48, -225, 36, -300 + breathe);
+  ctx.closePath();
+  fillStroke(ctx, vgrad(ctx, -300, -155, [[0, cfg.shirtColor], [1, cfg.shirtShadow]]), OUT, 2);
+
+  // Dobras de tecido no peito e cintura
+  ctx.strokeStyle = "rgba(0,0,0,0.18)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-20, -240 + breathe);
+  ctx.quadraticCurveTo(0, -230 + breathe, 22, -242 + breathe);
+  ctx.stroke();
+
+  // Acessórios de tronco: suspensórios, gravata, colar, avental
+  if (cfg.accessories === "suspenders") {
+    ctx.fillStyle = "#2c221a";
+    ctx.fillRect(-24, -295 + breathe, 8, 140);
+    ctx.fillRect(16, -295 + breathe, 8, 140);
+  } else if (cfg.accessories === "tie") {
+    // Gravata de seda
+    ctx.fillStyle = "#7a1a28";
     ctx.beginPath();
-    ctx.ellipse(0, -378, 40, 36, 0, Math.PI * 1.02, Math.PI * 1.98);
-    ctx.fillStyle = "#4a3022";
+    ctx.moveTo(10, -305 + breathe);
+    ctx.lineTo(24, -305 + breathe);
+    ctx.lineTo(22, -210 + breathe);
+    ctx.lineTo(17, -195 + breathe);
+    ctx.lineTo(12, -210 + breathe);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.3)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  } else if (cfg.accessories === "necklace") {
+    // Delicado colar de ouro
+    ctx.strokeStyle = "#d4af37";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(10, -295 + breathe, 16, 0.2, Math.PI - 0.2);
+    ctx.stroke();
+    circle(ctx, 10, -278 + breathe, 3);
+    ctx.fillStyle = "#ffd700";
+    ctx.fill();
+  } else if (cfg.accessories === "apron") {
+    // Avental de chef da Sabrina
+    ctx.fillStyle = "#f8fafc";
+    ctx.beginPath();
+    ctx.moveTo(-26, -250 + breathe);
+    ctx.lineTo(26, -250 + breathe);
+    ctx.lineTo(32, -155);
+    ctx.lineTo(-32, -155);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(100,100,100,0.2)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Cinto / cós da calça
+  ctx.fillStyle = "#1e1610";
+  ctx.fillRect(-34, -162, 70, 9);
+  ctx.fillStyle = "#d4af37";
+  ctx.fillRect(-4, -163, 10, 11); // fivela metálica
+  ctx.restore();
+
+  // 4. PERNA DA FRENTE
+  ctx.save();
+  const frontLegX = 14 + legSwing;
+  ctx.translate(frontLegX, -160);
+  limb(ctx, 0, 0, frontLegX * 0.4, 80, 30, cfg.pantsColor, OUT);
+  limb(ctx, frontLegX * 0.4, 80, frontLegX * 0.6, 150, 26, cfg.pantsColor, OUT);
+
+  // Sapato da frente
+  ctx.translate(frontLegX * 0.6, 150);
+  if (cfg.shoeType === "sneaker") {
+    // Tênis moderno com sola branca e detalhes
+    ell(ctx, 12, 8, 26, 12);
+    fillStroke(ctx, cfg.shoeColor, OUT, 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-4, 13, 32, 6);
+    // Linha de cadarço
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(8, 2);
+    ctx.lineTo(16, 5);
+    ctx.stroke();
+  } else if (cfg.shoeType === "oxford") {
+    // Sapato social de verniz brilhante
+    ell(ctx, 14, 8, 27, 11);
+    fillStroke(ctx, cfg.shoeColor, OUT, 2);
+    ctx.fillStyle = "rgba(255,255,255,0.45)";
+    circle(ctx, 18, 5, 2.5);
+    ctx.fill();
+    // Salto
+    ctx.fillStyle = "#0a0a0c";
+    ctx.fillRect(-2, 14, 12, 5);
+  } else if (cfg.shoeType === "flat") {
+    // Sapatilha feminina elegante
+    ell(ctx, 12, 7, 24, 9);
+    fillStroke(ctx, cfg.shoeColor, OUT, 2);
+  } else {
+    // Bota de couro resistente (mecânico/fazendeiro)
+    ell(ctx, 12, 8, 27, 14);
+    fillStroke(ctx, cfg.shoeColor, OUT, 2);
+    ctx.fillStyle = "#0c0805";
+    ctx.fillRect(-4, 15, 34, 6); // sola de borracha pesada
+  }
+  ctx.restore();
+
+  // 5. BRAÇO DA FRENTE COM ARTICULAÇÃO DINÂMICA
+  ctx.save();
+  const armY = -282 + breathe;
+  if (wave) {
+    // Acenando alegremente
+    const waveHand = Math.sin(t * 8) * 16;
+    limb(ctx, 8, armY, 60, -350, 24, cfg.shirtColor, OUT);
+    limb(ctx, 60, -350, 84 + waveHand, -420, 22, cfg.shirtColor, OUT);
+    circle(ctx, 86 + waveHand, -432, 15);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+  } else if (point) {
+    // Apontando confiantemente para a frente (Marcos mostrando o carro)
+    limb(ctx, 8, armY, 75, -270, 24, cfg.shirtColor, OUT);
+    limb(ctx, 75, -270, 140, -260, 22, cfg.skinBase, OUT);
+    circle(ctx, 145, -260, 13);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+  } else if (shock) {
+    // Chocado, mãos próximas ao rosto / peito
+    limb(ctx, 8, armY, 40, -330, 24, cfg.shirtColor, OUT);
+    limb(ctx, 40, -330, 50, -370, 20, cfg.skinBase, OUT);
+    circle(ctx, 52, -376, 14);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+  } else if (talk) {
+    // Gesticulando enquanto fala
+    const gesture = Math.sin(t * 4) * 8;
+    limb(ctx, 8, armY, 55, -270, 24, cfg.shirtColor, OUT);
+    limb(ctx, 55, -270, 85 + gesture, -300, 20, cfg.skinBase, OUT);
+    circle(ctx, 90 + gesture, -305, 14);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+  } else if (dropStone) {
+    // Sabrina soltando a pedra com tristeza no aquário
+    limb(ctx, 8, armY, 55, -280, 22, cfg.shirtColor, OUT);
+    limb(ctx, 55, -280, 95, -260, 18, cfg.skinBase, OUT);
+    // Mão segurando/soltando a pedra
+    circle(ctx, 100, -258, 13);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+    // Pedra escura caindo
+    ctx.fillStyle = "#2d333b";
+    ell(ctx, 104, -242, 10, 8, 0.3);
+    ctx.fill();
+    ctx.strokeStyle = "#1b1f24";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  } else if (carryTank) {
+    // Carregando o aquário nos braços
+    limb(ctx, 8, armY, 55, -230, 22, cfg.shirtColor, OUT);
+    limb(ctx, 55, -230, 90, -225, 18, cfg.skinBase, OUT);
+    circle(ctx, 94, -225, 13);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+  } else if (work) {
+    // Trabalhando/digitando
+    limb(ctx, 8, armY, 35, -220, 24, cfg.shirtColor, OUT);
+    limb(ctx, 35, -220, 65, -195, 20, cfg.skinBase, OUT);
+    circle(ctx, 70, -195, 13);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+  } else if (sad) {
+    // Triste / derrotado, braço caído
+    limb(ctx, 8, armY, 14, -185, 24, cfg.shirtColor, OUT);
+    circle(ctx, 16, -170, 14);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+  } else {
+    // Idle / natural walk
+    const swingF = walk ? armSwing : 0;
+    limb(ctx, 8, armY, 8 + swingF * 0.7, -190, 24, cfg.shirtColor, OUT);
+    circle(ctx, 8 + swingF * 0.7, -178, 14);
+    fillStroke(ctx, cfg.skinBase, OUT, 2);
+  }
+
+  // Relógio de pulso executivo / mestre mecânico
+  if (cfg.accessories === "watch") {
+    ctx.fillStyle = "#d4af37";
+    circle(ctx, 12, -186, 5);
     ctx.fill();
   }
   ctx.restore();
+
+  // 6. PESCOÇO E CABEÇA REALISTA
+  ctx.save();
+  ctx.translate(0, breathe);
+  const headTilt = sad ? 0.12 : shock ? -0.08 : 0;
+  ctx.rotate(headTilt);
+
+  // Pescoço com linha anatômica do músculo esternocleidomastóideo
+  limb(ctx, 2, -300, 2, -328, 24, cfg.skinBase, null);
+  ctx.strokeStyle = cfg.skinShadow;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(8, -304);
+  ctx.lineTo(-2, -326);
+  ctx.stroke();
+
+  // Sombra suave sob a mandíbula
+  ctx.fillStyle = "rgba(40,20,10,0.18)";
+  ell(ctx, 4, -325, 28, 8);
+  ctx.fill();
+
+  // Cabeça: Crânio esculpido e queixo definido
+  ell(ctx, 6, -360, 36, 42);
+  fillStroke(ctx, vgrad(ctx, -402, -318, [[0, cfg.skinHighlight], [0.6, cfg.skinBase], [1, cfg.skinShadow]]), OUT, 2);
+
+  // Orelha detalhada
+  ctx.save();
+  ctx.translate(-16, -358);
+  ell(ctx, 0, 0, 8, 14);
+  fillStroke(ctx, cfg.skinBase, OUT, 1.5);
+  // Sulco interno da orelha (hélice e concha)
+  ctx.strokeStyle = cfg.skinShadow;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(0, -2, 5, -Math.PI * 0.5, Math.PI * 0.5);
+  ctx.stroke();
+  ctx.restore();
+
+  // Olho realista com esclera, íris pigmentada e brilho (catchlight)
+  const eyeBlink = blinkAmt(t, 0.7);
+  const eyeX = 22;
+  const eyeY = -364;
+  const eyeR = 6.5;
+
+  ctx.fillStyle = "#fffdf7";
+  ell(ctx, eyeX, eyeY, eyeR, eyeR * (1 - eyeBlink * 0.9));
+  ctx.fill();
+
+  if (eyeBlink < 0.7) {
+    // Íris pigmentada com gradiente
+    const irisColor = cfg.eyeColor ?? "#4a2e16";
+    ctx.fillStyle = irisColor;
+    circle(ctx, eyeX + 1.2, eyeY, eyeR * 0.58);
+    ctx.fill();
+    // Pupila preta profunda
+    ctx.fillStyle = "#0c0a08";
+    circle(ctx, eyeX + 1.2, eyeY, eyeR * 0.35);
+    ctx.fill();
+    // Ponto de luz especular (catchlight que dá vida ao olhar!)
+    ctx.fillStyle = "#ffffff";
+    circle(ctx, eyeX + 2.5, eyeY - 2, 1.8);
+    ctx.fill();
+  }
+
+  // Dobra da pálpebra superior e cílios
+  ctx.strokeStyle = "#382012";
+  ctx.lineWidth = cfg.gender === "female" ? 2.5 : 2;
+  ctx.beginPath();
+  ctx.moveTo(eyeX - 8, eyeY - 4);
+  ctx.quadraticCurveTo(eyeX, eyeY - 8, eyeX + 9, eyeY - 2);
+  ctx.stroke();
+
+  // Sobrancelha expressiva e desenhada
+  ctx.strokeStyle = cfg.hairColor;
+  ctx.lineWidth = cfg.gender === "female" ? 2.8 : 3.8;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  if (sad) {
+    ctx.moveTo(eyeX - 8, eyeY - 14);
+    ctx.lineTo(eyeX + 10, eyeY - 9);
+  } else if (shock) {
+    ctx.moveTo(eyeX - 8, eyeY - 15);
+    ctx.lineTo(eyeX + 10, eyeY - 17);
+  } else {
+    ctx.moveTo(eyeX - 8, eyeY - 12);
+    ctx.quadraticCurveTo(eyeX, eyeY - 15, eyeX + 10, eyeY - 11);
+  }
+  ctx.stroke();
+
+  // Nariz realista com ponte sombreada e asa nasal
+  ctx.strokeStyle = cfg.skinShadow;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(eyeX + 4, eyeY - 5);
+  ctx.lineTo(eyeX + 14, eyeY + 12);
+  ctx.quadraticCurveTo(eyeX + 12, eyeY + 18, eyeX + 4, eyeY + 17);
+  ctx.stroke();
+
+  // Lábios realistas com arco do cupido e brilho
+  ctx.beginPath();
+  if (shock) {
+    // Boca aberta em choque/surpresa
+    ell(ctx, eyeX + 4, eyeY + 28, 6, 8);
+    fillStroke(ctx, "#3b1616", "#260e0e", 1.5);
+  } else if (sad) {
+    // Cantos caídos com desilusão
+    ctx.strokeStyle = "#6b332a";
+    ctx.lineWidth = 2.5;
+    ctx.moveTo(eyeX - 2, eyeY + 29);
+    ctx.quadraticCurveTo(eyeX + 4, eyeY + 26, eyeX + 10, eyeY + 30);
+    ctx.stroke();
+  } else if (talk) {
+    // Falando / articulando
+    const open = Math.abs(Math.sin(t * 6)) * 4;
+    ell(ctx, eyeX + 4, eyeY + 27, 7, 2 + open);
+    fillStroke(ctx, "#8a4338", "#451c16", 1.5);
+  } else {
+    // Sorriso suave / calmo
+    ctx.strokeStyle = cfg.gender === "female" ? "#b84242" : "#7a372e";
+    ctx.lineWidth = cfg.gender === "female" ? 3.2 : 2.5;
+    ctx.moveTo(eyeX - 2, eyeY + 26);
+    ctx.quadraticCurveTo(eyeX + 4, eyeY + 29, eyeX + 11, eyeY + 26);
+    ctx.stroke();
+  }
+
+  // Barba / Cavanhaque / Stubble
+  if (cfg.hasStubble) {
+    // Barba sombreada elegante de mecânico experiente (Marcos)
+    ctx.fillStyle = "rgba(40, 25, 18, 0.28)";
+    ctx.beginPath();
+    ctx.moveTo(0, -345);
+    ctx.quadraticCurveTo(24, -340, 24, -320);
+    ctx.quadraticCurveTo(8, -315, -4, -325);
+    ctx.closePath();
+    ctx.fill();
+  } else if (cfg.hasBeard) {
+    // Barba nobre de sábio
+    ctx.fillStyle = cfg.hairColor;
+    ctx.beginPath();
+    ctx.moveTo(6, -345);
+    ctx.quadraticCurveTo(34, -330, 24, -300);
+    ctx.quadraticCurveTo(10, -280, -2, -315);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = cfg.hairHighlight;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // CABELO REALISTA COM VOLUME, STRANDS E BRILHOS
+  ctx.save();
+  if (cfg.hairStyle === "farmer_cap") {
+    // Boina rústica estilizada sobre cabelos castanhos
+    ctx.fillStyle = cfg.hairColor;
+    ell(ctx, 4, -385, 34, 18);
+    ctx.fill();
+    // Aba e copa da boina
+    ell(ctx, 2, -394, 46, 14);
+    fillStroke(ctx, "#4a3c30", OUT, 2);
+    ctx.beginPath();
+    ctx.ellipse(4, -398, 38, 22, 0, Math.PI, 0);
+    fillStroke(ctx, "#5c4b3c", OUT, 2);
+  } else if (cfg.hairStyle === "sage_long") {
+    // Cabelos longos e prateados do sábio
+    ctx.fillStyle = cfg.hairColor;
+    ctx.beginPath();
+    ctx.moveTo(-16, -360);
+    ctx.quadraticCurveTo(-24, -310, -10, -280);
+    ctx.lineTo(10, -290);
+    ctx.quadraticCurveTo(15, -340, 10, -380);
+    ctx.quadraticCurveTo(0, -408, -16, -360);
+    ctx.closePath();
+    ctx.fill();
+    // Fios prateados iluminados
+    ctx.strokeStyle = cfg.hairHighlight;
+    ctx.lineWidth = 1.5;
+    for (let h = -10; h <= 10; h += 5) {
+      ctx.beginPath();
+      ctx.moveTo(h, -390);
+      ctx.quadraticCurveTo(h - 10, -340, h - 5, -290);
+      ctx.stroke();
+    }
+  } else if (cfg.hairStyle === "sabrina") {
+    // Cabelo feminino volumoso, ondulado e brilhante com mechas suaves
+    ctx.fillStyle = cfg.hairColor;
+    // Coque elegante no topo traseiro
+    circle(ctx, -14, -390, 24);
+    ctx.fill();
+    // Presilha dourada
+    ctx.fillStyle = "#ffd700";
+    ctx.fillRect(-22, -394, 6, 16);
+
+    // Volume do cabelo ao redor da cabeça
+    ctx.fillStyle = cfg.hairColor;
+    ctx.beginPath();
+    ctx.moveTo(-18, -350);
+    ctx.quadraticCurveTo(-26, -395, 2, -406);
+    ctx.quadraticCurveTo(34, -402, 38, -365);
+    ctx.quadraticCurveTo(24, -370, 18, -382);
+    ctx.quadraticCurveTo(-4, -388, -12, -360);
+    ctx.closePath();
+    ctx.fill();
+
+    // Mechas onduladas emoldurando o rosto
+    ctx.strokeStyle = cfg.hairHighlight;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(14, -388);
+    ctx.quadraticCurveTo(28, -370, 26, -345);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-8, -394);
+    ctx.quadraticCurveTo(8, -378, 4, -350);
+    ctx.stroke();
+  } else if (cfg.hairStyle === "pedro") {
+    // Corte executivo impecável com risca lateral e brilho de pomada
+    ctx.fillStyle = cfg.hairColor;
+    ctx.beginPath();
+    ctx.moveTo(-14, -360);
+    ctx.quadraticCurveTo(-22, -390, 4, -404);
+    ctx.quadraticCurveTo(34, -400, 36, -370);
+    ctx.quadraticCurveTo(18, -375, 4, -386);
+    ctx.quadraticCurveTo(-8, -380, -14, -360);
+    ctx.closePath();
+    ctx.fill();
+
+    // Brilho elegante no topo
+    ctx.strokeStyle = cfg.hairHighlight;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(-4, -398);
+    ctx.lineTo(24, -394);
+    ctx.stroke();
+  } else if (cfg.hairStyle === "marcos") {
+    // Cabelo de mecânico maduro (46 anos) com reflexos grisalhos nas têmporas
+    ctx.fillStyle = cfg.hairColor;
+    ctx.beginPath();
+    ctx.moveTo(-16, -360);
+    ctx.quadraticCurveTo(-20, -390, 6, -402);
+    ctx.quadraticCurveTo(32, -398, 35, -368);
+    ctx.quadraticCurveTo(16, -372, 6, -384);
+    ctx.quadraticCurveTo(-8, -378, -16, -360);
+    ctx.closePath();
+    ctx.fill();
+
+    // Têmporas discretamente grisalhas
+    ctx.strokeStyle = "rgba(220, 225, 230, 0.65)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-10, -362);
+    ctx.lineTo(-4, -372);
+    ctx.stroke();
+  } else {
+    // Paulo (jovem, textura moderna despojada)
+    ctx.fillStyle = cfg.hairColor;
+    ctx.beginPath();
+    ctx.moveTo(-16, -358);
+    ctx.quadraticCurveTo(-22, -390, 2, -406);
+    ctx.quadraticCurveTo(36, -402, 38, -364);
+    ctx.quadraticCurveTo(24, -370, 16, -380);
+    ctx.quadraticCurveTo(-6, -378, -16, -358);
+    ctx.closePath();
+    ctx.fill();
+
+    // Mechas repicadas modernas no topo
+    ctx.strokeStyle = cfg.hairHighlight;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(4, -404);
+    ctx.lineTo(12, -388);
+    ctx.moveTo(14, -402);
+    ctx.lineTo(24, -386);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.restore(); // fim da cabeça
+  ctx.restore(); // fim do personagem
+}
+
+/* ------------------------------ Personagens dos Novos Contos e Clássicos ------------------------------ */
+
+export function drawPaulo(ctx: Ctx, t: number, o: PoseOpts) {
+  const is18 = o.variant === 1;
+  const cfg: RealisticHumanConfig = {
+    gender: "male",
+    skinBase: "#f2cca8",
+    skinShadow: "#d4a37b",
+    skinHighlight: "#fae2cd",
+    hairColor: "#332216",
+    hairHighlight: "#614430",
+    hairStyle: is18 ? "paulo_adult" : "paulo_teen",
+    shirtColor: is18 ? "#1f334d" : "#2f6966", // Jaqueta navy aos 18 / hoodie verde-petróleo aos 16
+    shirtShadow: is18 ? "#122033" : "#1a403e",
+    pantsColor: "#2c3d59", // Jeans slim moderno
+    pantsShadow: "#182333",
+    shoeColor: is18 ? "#332218" : "#f1f3f5", // Botas aos 18 / tênis branco aos 16
+    shoeType: is18 ? "boot" : "sneaker",
+    eyeColor: "#3d2719",
+  };
+  drawRealisticHuman(ctx, t, o, cfg);
+}
+
+export function drawMarcos(ctx: Ctx, t: number, o: PoseOpts) {
+  // Marcos, 46 anos, mecânico experiente e bem-sucedido
+  const cfg: RealisticHumanConfig = {
+    gender: "male",
+    skinBase: "#d89c74",
+    skinShadow: "#b37750",
+    skinHighlight: "#e8b894",
+    hairColor: "#2e2118",
+    hairHighlight: "#544033",
+    hairStyle: "marcos",
+    hasStubble: true,
+    shirtColor: "#314152", // Camisa polo de mecânico profissional
+    shirtShadow: "#1e2936",
+    pantsColor: "#47453d", // Calça de oficina resistente
+    pantsShadow: "#2e2c26",
+    shoeColor: "#2a1c12", // Botas de couro lubrificado
+    shoeType: "boot",
+    eyeColor: "#4a3321",
+    accessories: "watch",
+  };
+  drawRealisticHuman(ctx, t, o, cfg);
+}
+
+export function drawPedro(ctx: Ctx, t: number, o: PoseOpts) {
+  // Pedro, 30 anos, homem de negócios elegante e bem-sucedido
+  const cfg: RealisticHumanConfig = {
+    gender: "male",
+    skinBase: "#edd0b6",
+    skinShadow: "#cca383",
+    skinHighlight: "#fae8d9",
+    hairColor: "#241913",
+    hairHighlight: "#4f372a",
+    hairStyle: "pedro",
+    shirtColor: "#1a2230", // Terno azul-marinho executivo sob medida
+    shirtShadow: "#0f1520",
+    pantsColor: "#1a2230",
+    pantsShadow: "#0f1520",
+    shoeColor: "#08080a", // Sapato Oxford de verniz brilhante
+    shoeType: "oxford",
+    eyeColor: "#2d3748",
+    accessories: "tie",
+  };
+  drawRealisticHuman(ctx, t, o, cfg);
+}
+
+export function drawSabrina(ctx: Ctx, t: number, o: PoseOpts) {
+  // Sabrina, mulher atraente, acolhedora e dona de restaurante de sucesso
+  const cfg: RealisticHumanConfig = {
+    gender: "female",
+    skinBase: "#fbe4d0",
+    skinShadow: "#e0b89b",
+    skinHighlight: "#fff2e6",
+    hairColor: "#331c12", // Castanho elegante e luminoso
+    hairHighlight: "#663e2a",
+    hairStyle: "sabrina",
+    shirtColor: "#802236", // Blusa de seda vinho bordô / avental
+    shirtShadow: "#541221",
+    pantsColor: "#1a1c22", // Calça de alfaiataria preta elegante
+    pantsShadow: "#0d0e12",
+    shoeColor: "#12141a",
+    shoeType: "flat",
+    eyeColor: "#3d2a1c",
+    accessories: "necklace",
+  };
+  drawRealisticHuman(ctx, t, o, cfg);
+}
+
+export function drawPerson(ctx: Ctx, t: number, o: PoseOpts) {
+  const v = o.variant ?? 0;
+  if (v === 1) {
+    // Sábio de barbas prateadas (Tale da Águia)
+    const cfg: RealisticHumanConfig = {
+      gender: "male",
+      skinBase: "#e8cbb0",
+      skinShadow: "#c49e7e",
+      skinHighlight: "#f5e4d3",
+      hairColor: "#d9e2ec",
+      hairHighlight: "#ffffff",
+      hairStyle: "sage_long",
+      hasBeard: true,
+      shirtColor: "#2d3b59",
+      shirtShadow: "#1a243a",
+      pantsColor: "#334155",
+      pantsShadow: "#1e293b",
+      shoeColor: "#241e17",
+      shoeType: "boot",
+    };
+    drawRealisticHuman(ctx, t, o, cfg);
+  } else {
+    // Fazendeiro realista (Tale da Águia)
+    const cfg: RealisticHumanConfig = {
+      gender: "male",
+      skinBase: "#d8a379",
+      skinShadow: "#b5794d",
+      skinHighlight: "#ecc09b",
+      hairColor: "#422e20",
+      hairHighlight: "#6e4f39",
+      hairStyle: "farmer_cap",
+      hasStubble: true,
+      shirtColor: "#576b82",
+      shirtShadow: "#374657",
+      pantsColor: "#3b342a",
+      pantsShadow: "#241f18",
+      shoeColor: "#261a10",
+      shoeType: "boot",
+      accessories: "suspenders",
+    };
+    drawRealisticHuman(ctx, t, o, cfg);
+  }
 }
 
 function fillStyle(ctx: Ctx, color: string) {
@@ -872,6 +1461,10 @@ export const ACTORS: Record<string, (ctx: Ctx, t: number, o: PoseOpts) => void> 
   ant: drawAnt,
   cicada: drawCicada,
   person: drawPerson,
+  paulo: drawPaulo,
+  marcos: drawMarcos,
+  pedro: drawPedro,
+  sabrina: drawSabrina,
   cheese: (ctx) => drawCheese(ctx, 1.5),
 };
 

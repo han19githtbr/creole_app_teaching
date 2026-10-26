@@ -2,11 +2,7 @@
  * Personagens dos contos (vetor, vistos de lado, virados para a direita, pés na origem).
  * Cada função recebe o tempo `t` (s) e as opções de animação.
  */
-<<<<<<< HEAD
 import { TAU, circle, ell, fillStroke, limb, smoothPath, vgrad, rgrad, clamp, type Ctx } from "./artCore";
-=======
-import { TAU, circle, ell, fillStroke, limb, rgrad, smoothPath, vgrad, clamp, type Ctx } from "./artCore";
->>>>>>> 1262605a07663215c7998d8dbbc089ef578a0cdb
 
 export interface PoseOpts {
   anim?: string;

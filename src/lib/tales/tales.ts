@@ -489,7 +489,6 @@ const CIGALE: Tale = {
 };
 
 /* ----------------------------------------------------------------- */
-<<<<<<< HEAD
 /* 5. Prendre soin de ce que l'on a                                   */
 /* ----------------------------------------------------------------- */
 
@@ -755,11 +754,8 @@ const AQUARIUM: Tale = {
   ],
 };
 
-export const TALES: Tale[] = [AIGLE, LIEVRE, CORBEAU, CIGALE, SOIN, AQUARIUM];
-=======
-/* 5. La poule aux œufs d'or                                          */
-/* ----------------------------------------------------------------- */
->>>>>>> 1262605a07663215c7998d8dbbc089ef578a0cdb
+
+/* 7. La poule aux œufs d'or */
 
 const POULE: Tale = {
   slug: "la-poule-aux-oeufs-d-or",
@@ -1343,7 +1339,7 @@ const CRUCHE: Tale = {
   ],
 };
 
-export const TALES: Tale[] = [AIGLE, LIEVRE, CORBEAU, CIGALE, POULE, RAISINS, LION, POUSSIN, PETIT_LIEVRE, CRUCHE];
+export const TALES: Tale[] = [AIGLE, LIEVRE, CORBEAU, CIGALE, SOIN, AQUARIUM, POULE, RAISINS, LION, POUSSIN, PETIT_LIEVRE, CRUCHE];
 export function getTale(slug: string): Tale | undefined {
   return TALES.find((tale) => tale.slug === slug);
 }

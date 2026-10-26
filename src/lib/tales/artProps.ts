@@ -381,7 +381,6 @@ export function drawSign(ctx: Ctx) {
   ctx.fillRect(-70, -176, 70, 8);
 }
 
-<<<<<<< HEAD
 /* ------------------------------ Carro Clássico / Raro ------------------------------ */
 
 export function drawCar(ctx: Ctx, t: number, o: PropOpts) {
@@ -1310,7 +1309,8 @@ export function drawMiniCars(ctx: Ctx, t: number, o: PropOpts) {
   });
 
   ctx.restore();
-=======
+}
+
 /** Parreira com cachos de uva pendurados. */
 export function drawGrapevine(ctx: Ctx, t: number) {
   limb(ctx, -150, 0, -150, -420, 22, "#7a5232", OUT);
@@ -1411,7 +1411,6 @@ export function drawNet(ctx: Ctx, t: number) {
   ctx.lineWidth = 8;
   ctx.strokeStyle = "#8a6430";
   ctx.stroke();
->>>>>>> 1262605a07663215c7998d8dbbc089ef578a0cdb
 }
 
 export const PROPS: Record<string, (ctx: Ctx, t: number, o: PropOpts) => void> = {
@@ -1432,7 +1431,6 @@ export const PROPS: Record<string, (ctx: Ctx, t: number, o: PropOpts) => void> =
   wheat: drawWheat,
   nest: drawNest,
   sign: (c) => drawSign(c),
-<<<<<<< HEAD
   car: drawCar,
   toolbox: drawToolbox,
   aquarium: drawAquarium,
@@ -1440,9 +1438,7 @@ export const PROPS: Record<string, (ctx: Ctx, t: number, o: PropOpts) => void> =
   officeDesk: drawOfficeDesk,
   garageBenches: drawGarageBenches,
   miniCars: drawMiniCars,
-=======
   grapevine: (c, t) => drawGrapevine(c, t),
   jug: drawJug,
   net: (c, t) => drawNet(c, t),
->>>>>>> 1262605a07663215c7998d8dbbc089ef578a0cdb
 };

@@ -16,7 +16,7 @@ const ICONS: Record<string, string> = {
   computador: "💻", robo: "🤖", drone: "🚁", "moinho de vento": "🌬️", satelite: "🛰️", "painel solar": "🔆",
   "celular/telefone": "📱", laboratorio: "🔬", "tela/monitor": "🖥️", antena: "📡",
   // Natureza e cenário
-  arvore: "🌳", arvores: "🌳", flor: "🌸", flores: "🌸", borboleta: "🦋", passaro: "🐦", montanha: "⛰️", montanhas: "⛰️",
+  arvore: "🌳", arvores: "🌳", flores: "🌸", borboleta: "🦋", passaro: "🐦", montanha: "⛰️", montanhas: "⛰️",
   "montanhas ao fundo": "⛰️", rio: "🏞️", cachoeira: "💦", mar: "🌊", agua: "💧", palmeira: "🌴", tartaruga: "🐢",
   sol: "☀️", lua: "🌙", nuvem: "☁️", ceu: "🌤️", grama: "🌱", areia: "🏖️", piso: "🟫", estrelas: "⭐",
   floresta: "🌲", ilha: "🏝️", praia: "🏖️", vulcao: "🌋", "pedra/rocha": "🪨", caminho: "🛤️", ponte: "🌉",
@@ -86,12 +86,10 @@ function lookup(name: string | undefined): string | undefined {
 
 // Francês → português (só o necessário para achar o ícone quando o nome em português não bate).
 const FR_TO_ICON: Record<string, string> = {
-  tambour: "🥁", robot: "🤖", drapeau: "🚩", lanterne: "🏮", lanternes: "🏮", maison: "🏠", montagne: "⛰️", montagnes: "⛰️",
-  nuage: "☁️", ciel: "🌤️", soleil: "☀️", lune: "🌙", arbre: "🌳", arbres: "🌳", fleur: "🌸", fleurs: "🌸", bateau: "⛵",
-  poisson: "🐟", oiseau: "🐦", livre: "📖", eglise: "⛪", cloche: "🔔", etoile: "⭐", etoiles: "⭐", mer: "🌊", eau: "💧",
-  herbe: "🌱", sable: "🏖️", masque: "🎭", phare: "🗼", avion: "✈️", cinema: "🎬", violon: "🎻", guitare: "🎸",
-  musique: "🎶", ordinateur: "💻", velo: "🚲", cheval: "🐴", chien: "🐶", chat: "🐱", pont: "🌉", route: "🛤️",
-  chemin: "🛤️", plage: "🏖️", fenetre: "🪟", porte: "🚪", moulin: "🌬️", montgolfiere: "🎈",
+  tambour: "🥁", drapeau: "🚩", lanterne: "🏮", lanternes: "🏮", maison: "🏠", montagne: "⛰️", montagnes: "⛰️",
+  nuage: "☁️", ciel: "🌤️", soleil: "☀️", lune: "🌙", arbre: "🌳", arbres: "🌳", fleurs: "🌸", bateau: "⛵",
+  poisson: "🐟", oiseau: "🐦", livre: "📖", eglise: "⛪", cloche: "🔔", etoiles: "⭐", mer: "🌊", eau: "💧",
+  herbe: "🌱", sable: "🏖️", masque: "🎭", phare: "🗼", avion: "✈️", cinema: "🎬", violon: "🎻",
 };
 
 /** Ícone do elemento rotulado: sempre derivado do próprio objeto, nunca da animação. */

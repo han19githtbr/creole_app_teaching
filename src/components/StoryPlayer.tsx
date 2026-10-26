@@ -6,7 +6,6 @@ import NextImage from "next/image";
 import { Check, Copy, Download, ExternalLink, Film, GripHorizontal, Languages, MessageCircle, Pause, Play, RotateCcw, Share2, Sparkles, Undo2, Volume2, VolumeX } from "lucide-react";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
 import { getStoryLabelLayout, getElementLabel } from "@/lib/imageBank";
-import { resolveLabelCollisions } from "@/lib/storyLabelLayout";
 import { useBankImage } from "@/hooks/useBankImage";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { describeStoryDuration, formatStoryTime } from "@/lib/storyAudio";
@@ -576,20 +575,6 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const ay = scene.y + scene.height * (anchor.top / 100);
       return { element, label, ax, ay, cx: ax, cy: ay - lift - size.height / 2, w: size.width * 1.06, h: size.height * 1.06 };
     });
-
-    // Resolve colisões mútuas para que todos os rótulos fiquem bem organizados e perfeitamente legíveis
-    const activeCanvasItems = items.filter((item) => {
-      const visual = elementVisual(item.element, seconds);
-      return visual.phase !== "hidden" && visual.opacity > 0.01;
-    });
-    const canvasOffsets = resolveLabelCollisions(
-      activeCanvasItems.map((it) => ({ cx: it.cx, cy: it.cy, w: it.w, h: it.h })),
-      { x: view.x + 12, y: view.y + 12, w: view.w - 24, h: view.h - 24 },
-      10
-    );
-    const canvasOffsetMap = new Map<string, { dx: number; dy: number }>();
-    activeCanvasItems.forEach((it, idx) => canvasOffsetMap.set(it.element.kreyol, canvasOffsets[idx]));
-
     for (const item of items) {
       const visual = elementVisual(item.element, seconds);
       // Um rótulo por vez: os que ainda não entraram ou já saíram não são desenhados.
@@ -605,9 +590,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       const halfH = (pill.height * visual.scale * (isActive ? 1.05 : 1)) / 2 + 8;
       const edge = Math.max(12, view.h * 0.03);
       const clampTo = (value: number, min: number, max: number) => (min > max ? (min + max) / 2 : Math.min(max, Math.max(min, value)));
-      const off = canvasOffsetMap.get(item.element.kreyol) ?? { dx: 0, dy: 0 };
-      const centerX = clampTo(item.cx + off.dx, view.x + edge + halfW, view.x + view.w - edge - halfW);
-      const centerY = clampTo(item.cy + off.dy, view.y + edge + halfH, view.y + view.h - edge - halfH);
+      const centerX = clampTo(item.cx, view.x + edge + halfW, view.x + view.w - edge - halfW);
+      const centerY = clampTo(item.cy, view.y + edge + halfH, view.y + view.h - edge - halfH);
 
       const livingState = calculateLivingElementState(
         item.element.pt,
@@ -1458,76 +1442,43 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
               {story.title}
             </span>
           </div>
-          {(() => {
+          {timeline.map((element, index) => {
+            const visual = elementVisual(element, currentTime);
+            const active = visual.phase === "active";
             const rawAnchors = sceneLayout?.anchors;
             const anchors = rawAnchors && rawAnchors.length > 0
               ? rawAnchors
               : [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }];
+            const anchor = anchors[index % anchors.length];
             const imageScale = 1.03 * frame.zoom;
             const imageCrop = 16 / 9 / (1200 / 800);
+
             const captionText = activeCaption ? `${activeCaption.portuguese} ${activeCaption.kreyol}` : "";
-            const edgePad = 8;
+            const elementTargetLabel = getElementLabel(element, storyLang);
+            const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active, elementTargetLabel);
+
+            const rawLeft = 50 + (anchor.left - 50) * imageScale + frame.driftX + (active ? living.dx : 0);
+            const rawTop = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY - labelLift + (active ? living.dy : 0);
+
+            // Mantém a pílula INTEIRA dentro do palco (nada cortado nas bordas) e abaixo da faixa de títulos do topo.
+            const labelScale = visual.scale * (active ? 1.03 * living.scaleX : 1);
+            const measured = labelSizes[index];
+            const labelChars = elementTargetLabel.length + element.pt.length + 3;
+            const labelW = (measured?.w ?? pillFontPx * (0.62 * labelChars + 4.5)) * labelScale + 8;
+            const labelH = (measured?.h ?? pillFontPx * 2.3) * labelScale + 8;
+            const edgePad = 6;
             const topSafe = stageSize.h >= 300 ? 52 : 38;
             const clampPx = (value: number, min: number, max: number) => (min > max ? (min + max) / 2 : Math.min(max, Math.max(min, value)));
+            const leftPx = clampPx((rawLeft / 100) * stageSize.w, edgePad + labelW / 2, stageSize.w - edgePad - labelW / 2);
+            const topPx = clampPx((rawTop / 100) * stageSize.h, topSafe + labelH / 2, stageSize.h - edgePad - labelH / 2);
+            const left = (leftPx / stageSize.w) * 100;
+            const top = (topPx / stageSize.h) * 100;
 
-            const items = timeline.map((element, index) => {
-              const visual = elementVisual(element, currentTime);
-              const active = visual.phase === "active";
-              const anchor = anchors[index % anchors.length];
-              const elementTargetLabel = getElementLabel(element, storyLang);
-              const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active, elementTargetLabel);
+            const anchorLeftPct = 50 + (anchor.left - 50) * imageScale + frame.driftX;
+            const anchorTopPct = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
 
-              const rawLeft = 50 + (anchor.left - 50) * imageScale + frame.driftX + (active ? living.dx : 0);
-              const rawTop = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY - labelLift + (active ? living.dy : 0);
-
-              const labelScale = visual.scale * (active ? 1.03 * living.scaleX : 1);
-              const measured = labelSizes[index];
-              const labelChars = elementTargetLabel.length + element.pt.length + 3;
-              const labelW = (measured?.w ?? pillFontPx * (0.62 * labelChars + 4.5)) * labelScale + 8;
-              const labelH = (measured?.h ?? pillFontPx * 2.3) * labelScale + 8;
-
-              const cx = clampPx((rawLeft / 100) * stageSize.w, edgePad + labelW / 2, stageSize.w - edgePad - labelW / 2);
-              const cy = clampPx((rawTop / 100) * stageSize.h, topSafe + labelH / 2, stageSize.h - edgePad - labelH / 2);
-
-              const anchorLeftPct = 50 + (anchor.left - 50) * imageScale + frame.driftX;
-              const anchorTopPct = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
-
-              return {
-                element,
-                index,
-                visual,
-                active,
-                elementTargetLabel,
-                living,
-                labelW,
-                labelH,
-                cx,
-                cy,
-                anchorLeftPct,
-                anchorTopPct,
-              };
-            });
-
-            // Resolução de colisões mútuas: evita que pílulas se sobreponham
-            const visibleOnly = items.filter((it) => it.visual.opacity > 0.01);
-            const offsets = resolveLabelCollisions(
-              visibleOnly.map((it) => ({ cx: it.cx, cy: it.cy, w: it.labelW, h: it.labelH })),
-              { x: edgePad, y: topSafe, w: stageSize.w - edgePad * 2, h: stageSize.h - topSafe - edgePad },
-              8
-            );
-            const offsetMap = new Map<number, { dx: number; dy: number }>();
-            visibleOnly.forEach((it, idx) => offsetMap.set(it.index, offsets[idx]));
-
-            return items.map((item) => {
-              const { element, index, visual, active, elementTargetLabel, living, cx, cy, anchorLeftPct, anchorTopPct } = item;
-              const off = offsetMap.get(index) ?? { dx: 0, dy: 0 };
-              const leftPx = cx + off.dx;
-              const topPx = cy + off.dy;
-              const left = (leftPx / stageSize.w) * 100;
-              const top = (topPx / stageSize.h) * 100;
-
-              return (
-                <Fragment key={`${element.kreyol}-${index}`}>
+            return (
+              <Fragment key={`${element.kreyol}-${index}`}>
               {visual.opacity > 0.01 && (
                 <svg
                   className="pointer-events-none absolute inset-0 z-10 h-full w-full"
@@ -1609,8 +1560,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
               </div>
               </Fragment>
             );
-          });
-          })()}
+          })}
 
           {displayedTypingData && (
             <div

@@ -33,23 +33,21 @@ export interface LifeInput {
 
 export interface LifeScene {
   actors: string[];
-  render: (t: number) => string;
+  render: (t: number, opts?: { labelPx?: number }) => string;
 }
 
 /** Cenas principais que JÁ trazem seus personagens animados dentro do próprio SVG (não duplicar). */
-const AMBIENT_BIRDS = new Set(["passaros", "gaivotas", "pombas", "aguia"]);
-const NATIVE_LIFE_IDS = new Set(["tecnologia", "natureza", "turismo", "gastronomia"]);
 
 /* ------------------------------------------------------------------ utilidades */
 
-const sin = Math.sin;
-const cos = Math.cos;
-const PI = Math.PI;
-const f = (n: number) => Math.round(n * 10) / 10;
-const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
-const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+export const sin = Math.sin;
+export const cos = Math.cos;
+export const PI = Math.PI;
+export const f = (n: number) => Math.round(n * 10) / 10;
+export const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+export const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-function hashStr(s: string): number {
+export function hashStr(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) {
     h ^= s.charCodeAt(i);
@@ -57,7 +55,7 @@ function hashStr(s: string): number {
   }
   return h >>> 0;
 }
-function rngFrom(seed: string) {
+export function rngFrom(seed: string) {
   let a = hashStr(seed) || 1;
   return () => {
     a |= 0;
@@ -68,33 +66,33 @@ function rngFrom(seed: string) {
   };
 }
 
-type Rnd = () => number;
-const pick = <T,>(r: Rnd, arr: T[]): T => arr[Math.floor(r() * arr.length) % arr.length];
+export type Rnd = () => number;
+export const pick = <T,>(r: Rnd, arr: T[]): T => arr[Math.floor(r() * arr.length) % arr.length];
 
 /** grupo com transformação */
-function G(x: number, y: number, rot: number, sx: number, sy: number, inner: string, extra = ""): string {
+export function G(x: number, y: number, rot: number, sx: number, sy: number, inner: string, extra = ""): string {
   return `<g transform="translate(${f(x)} ${f(y)}) rotate(${f(rot)}) scale(${f(sx)} ${f(sy)})"${extra}>${inner}</g>`;
 }
-function line(x1: number, y1: number, x2: number, y2: number, w: number, col: string): string {
+export function line(x1: number, y1: number, x2: number, y2: number, w: number, col: string): string {
   return `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
 }
 /** membro: sai de (x,y) com comprimento len e ângulo ang (0 = para baixo, + = para frente) */
-function limb(x: number, y: number, len: number, ang: number, w: number, col: string): string {
+export function limb(x: number, y: number, len: number, ang: number, w: number, col: string): string {
   return line(x, y, x + sin(ang) * len, y + cos(ang) * len, w, col);
 }
-const end = (x: number, y: number, len: number, ang: number): [number, number] => [x + sin(ang) * len, y + cos(ang) * len];
-const circ = (x: number, y: number, r: number, fill: string, extra = "") =>
+export const end = (x: number, y: number, len: number, ang: number): [number, number] => [x + sin(ang) * len, y + cos(ang) * len];
+export const circ = (x: number, y: number, r: number, fill: string, extra = "") =>
   `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="${fill}"${extra}/>`;
-const ell = (x: number, y: number, rx: number, ry: number, fill: string, extra = "") =>
+export const ell = (x: number, y: number, rx: number, ry: number, fill: string, extra = "") =>
   `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(rx)}" ry="${f(ry)}" fill="${fill}"${extra}/>`;
 
 /** posição que atravessa a tela (com margem) e dá a volta */
-function travel(t: number, speed: number, ph: number, margin = 160, dir = 1): number {
+export function travel(t: number, speed: number, ph: number, margin = 160, dir = 1): number {
   const span = LIFE_W + margin * 2;
   const u = (((t * speed + ph * span) % span) + span) % span;
   return dir >= 0 ? -margin + u : LIFE_W + margin - u;
 }
-const depth = (y: number, gt: number) => 0.6 + 0.5 * clamp((y - gt) / Math.max(40, 740 - gt), 0, 1);
+export const depth = (y: number, gt: number) => 0.6 + 0.5 * clamp((y - gt) / Math.max(40, 740 - gt), 0, 1);
 
 /* ------------------------------------------------------------------ pessoas */
 
@@ -120,7 +118,7 @@ export function person(t: number, o: PersonOpt): string {
   const seated = o.pose === "sit-eat" || o.pose === "sit-talk" || o.pose === "row" || o.pose === "ride";
   let lL = 0, lR = 0, aL = 0.1, aR = 0.1, bob = 0, lean = 0, nod = 0, sx = 1;
   switch (o.pose) {
-    case "walk": { const k = sin(w * 6); lL = k * 0.55; lR = -k * 0.55; aL = -k * 0.5; aR = k * 0.5; bob = -Math.abs(cos(w * 6)) * 2.5; break; }
+    case "walk": { const k = sin(w * 6); lL = k * 0.55; lR = -k * 0.55; aL = -k * 0.5 * 0.9 - 0.04; aR = k * 0.5 * 0.9 + 0.04; bob = -Math.abs(cos(w * 6)) * 2.5; lean = 3 + sin(w * 6) * 1.4; nod = sin(w * 12) * 1.1; break; }
     case "talk": aR = -1.0 + sin(w * 2.4) * 0.45; aL = 0.1 + sin(w * 1.7) * 0.15; nod = sin(w * 3) * 2; break;
     case "wave": aR = -2.7 + sin(w * 7) * 0.4; break;
     case "point": aR = -1.45 + sin(w * 1.5) * 0.08; aL = 0.15; nod = sin(w * 1.2) * 1.5; break;
@@ -174,6 +172,12 @@ export function person(t: number, o: PersonOpt): string {
       break;
     }
   }
+  // Respiração e balanço sutil de quem está parado/em ação: ninguém fica rígido
+  const idle = o.pose === "walk" || o.pose === "cycle" ? 0 : 1;
+  bob += -Math.abs(sin(w * 1.6)) * 0.9 * idle;
+  lean += sin(w * 0.9 + 1) * 0.9 * idle;
+  nod += sin(w * 0.7) * 0.8 * idle;
+  const blinking = sin(w * 0.55 + 2) > 0.985 || sin(w * 0.55 + 2) < -0.985;
   const hipY = seated ? -30 : -40;
   const shY = hipY - 34;
   let legs = "";
@@ -191,7 +195,7 @@ export function person(t: number, o: PersonOpt): string {
     (o.robe ? `<path d="M-11 ${shY + 8} L-14 ${hipY + 44} L14 ${hipY + 44} L11 ${shY + 8} Z" fill="${shirt}"/>` : "") +
     `<g transform="rotate(${f(nod)} 0 ${shY})">${circ(2, shY - 15, 12, skin)}<path d="M-10 ${shY - 18} Q2 ${shY - 34} 14 ${shY - 18} Q4 ${shY - 24} -10 ${shY - 18} Z" fill="${hair}"/>` +
     (o.hat ? `<ellipse cx="2" cy="${shY - 26}" rx="15" ry="4" fill="${o.hat}"/><rect x="-8" y="${shY - 36}" width="20" height="11" rx="5" fill="${o.hat}"/>` : "") +
-    circ(7, shY - 14, 1.6, "#2a1c14") + `</g>` +
+    (blinking ? line(5, shY - 14, 9, shY - 14, 1.4, "#2a1c14") : circ(7, shY - 14, 1.6, "#2a1c14")) + `</g>` +
     limb(0, shY + 4, 28, aR, 7, shirt) + circ(...end(0, shY + 4, 28, aR), 4, skin) + `</g>`;
   let prop = "";
   if (o.pose === "guitar") { const [hx, hy] = end(0, shY + 4, 28, aL); prop = line(-12, shY + 30, hx + 6, hy - 4, 4, "#7a4a22") + ell(-8, shY + 32, 11, 8, "#c0792f"); }
@@ -205,7 +209,7 @@ export function person(t: number, o: PersonOpt): string {
 
 /* ------------------------------------------------------------------ robô */
 
-function robot(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; mode: "wave" | "work" | "nod" | "carry" | "clean" | "scan"; ph?: number }): string {
+export function robot(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; mode: "wave" | "work" | "nod" | "carry" | "clean" | "scan"; ph?: number }): string {
   const s = o.s ?? 0.85, w = t + (o.ph ?? 0);
   let arm = -0.2;
   if (o.mode === "wave") arm = -2.6 + sin(w * 7) * 0.4;
@@ -242,9 +246,9 @@ function robot(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; 
 
 /* ------------------------------------------------------------------ animais */
 
-type AnimalOpt = { x: number; y: number; s?: number; face?: 1 | -1; ph?: number; mode?: "run" | "idle" | "graze" };
+export type AnimalOpt = { x: number; y: number; s?: number; face?: 1 | -1; ph?: number; mode?: "run" | "idle" | "graze" };
 
-function rabbit(t: number, o: AnimalOpt & { color?: string }): string {
+export function rabbit(t: number, o: AnimalOpt & { color?: string }): string {
   const s = o.s ?? 1, w = t * (o.mode === "run" ? 9 : 2.4) + (o.ph ?? 0), c = o.color ?? "#f1ece2";
   const hop = o.mode === "idle" ? 0 : Math.abs(sin(w)) * (o.mode === "run" ? 22 : 9);
   const body = ell(0, -14, 15, 9.5, c) + ell(15, -20, 7.5, 6.5, c) + ell(13, -33, 3, 9, c, ` transform="rotate(${f(-8 + sin(w * 2) * 5)} 13 -28)"`) +
@@ -252,7 +256,7 @@ function rabbit(t: number, o: AnimalOpt & { color?: string }): string {
     ell(8, -3, 6, 2.6, c) + ell(-10, -3, 7, 2.8, c);
   return ell(o.x, o.y + 1, 15 * s, 4 * s, "rgba(0,0,0,.18)", "") + G(o.x, o.y - hop, 0, (o.face ?? 1) * s, s, body);
 }
-function fox(t: number, o: AnimalOpt): string {
+export function fox(t: number, o: AnimalOpt): string {
   const s = o.s ?? 1, w = t * 10 + (o.ph ?? 0), k = sin(w);
   const legs = [[-16, k], [-8, -k], [12, -k], [20, k]].map(([lx, a]) => limb(lx, -16, 17, (a as number) * 0.8, 5, "#c4601f")).join("");
   const tail = `<g transform="rotate(${f(sin(w * 0.9) * 12)} -26 -26)">${ell(-40, -28, 17, 7, "#e77a2b", ' transform="rotate(-12 -40 -28)"')}${ell(-54, -31, 6, 5, "#fff6e6")}</g>`;
@@ -260,7 +264,7 @@ function fox(t: number, o: AnimalOpt): string {
     `<path d="M26 -40 L28 -52 L35 -41 Z" fill="#c4601f"/><path d="M33 -41 L38 -51 L41 -39 Z" fill="#c4601f"/>` + circ(48, -31, 2, "#111") + circ(34, -34, 1.7, "#111") + tail;
   return ell(o.x, o.y + 1, 30 * (o.s ?? 1), 5 * (o.s ?? 1), "rgba(0,0,0,.18)") + G(o.x, o.y - Math.abs(k) * 3, 0, (o.face ?? 1) * s, s, body);
 }
-function deer(t: number, o: AnimalOpt): string {
+export function deer(t: number, o: AnimalOpt): string {
   const s = o.s ?? 1, w = t * 0.9 + (o.ph ?? 0), down = (sin(w) + 1) / 2;
   const legs = [-20, -12, 14, 22].map((lx, i) => limb(lx, -34, 36, sin(w * 0.5 + i) * 0.04, 5, "#8a5a2c")).join("");
   const neck = `<g transform="rotate(${f(-8 + down * 50)} 24 -50)">${line(24, -50, 40, -78, 9, "#b87a3c")}${ell(46, -82, 11, 7, "#b87a3c", ' transform="rotate(-20 46 -82)"')}` +
@@ -269,20 +273,20 @@ function deer(t: number, o: AnimalOpt): string {
     ell(-31, -52, 5, 3, "#f3e6c8", ' transform="rotate(-30 -31 -52)"');
   return ell(o.x, o.y + 1, 34 * s, 5 * s, "rgba(0,0,0,.18)") + G(o.x, o.y, 0, (o.face ?? 1) * s, s, body);
 }
-function dog(t: number, o: AnimalOpt & { color?: string }): string {
+export function dog(t: number, o: AnimalOpt & { color?: string }): string {
   const s = o.s ?? 1, w = t * 11 + (o.ph ?? 0), k = sin(w), c = o.color ?? "#8a5a30";
   const legs = [[-14, k], [-7, -k], [10, -k], [17, k]].map(([lx, a]) => limb(lx, -14, 15, (a as number) * 0.9, 4.5, c)).join("");
   const body = legs + ell(0, -22, 21, 9, c) + ell(23, -29, 9, 8, c) + ell(33, -27, 6, 4, "#d9b184") + ell(20, -34, 3.5, 7, "#4a2c14", ' transform="rotate(20 20 -34)"') + circ(27, -31, 1.6, "#111") +
     line(-20, -26, -30, -34 + sin(w * 1.6) * 6, 4, c);
   return ell(o.x, o.y + 1, 22 * s, 4 * s, "rgba(0,0,0,.18)") + G(o.x, o.y - Math.abs(k) * 3, 0, (o.face ?? 1) * s, s, body);
 }
-function chicken(t: number, o: AnimalOpt & { color?: string }): string {
+export function chicken(t: number, o: AnimalOpt & { color?: string }): string {
   const s = o.s ?? 1, w = t * 3.2 + (o.ph ?? 0), peck = Math.max(0, sin(w)) ** 3, c = o.color ?? "#f4ecd8";
   const body = line(-2, -10, -3, 0, 2, "#e0a030") + line(4, -10, 5, 0, 2, "#e0a030") + ell(0, -16, 12, 9, c) + `<path d="M-10 -18 L-18 -26 L-8 -22 Z" fill="${c}"/>` +
     `<g transform="rotate(${f(peck * 55)} 9 -22)">${circ(12, -28, 5.5, c)}<path d="M16 -29 L22 -27 L16 -26 Z" fill="#f0a030"/>${circ(13, -30, 1.2, "#111")}<path d="M10 -34 Q12 -39 14 -34 Z" fill="#d63a3a"/></g>`;
   return ell(o.x, o.y + 1, 11 * s, 3 * s, "rgba(0,0,0,.18)") + G(o.x, o.y, 0, (o.face ?? 1) * s, s, body);
 }
-function cow(t: number, o: AnimalOpt): string {
+export function cow(t: number, o: AnimalOpt): string {
   const s = o.s ?? 1, w = t * 0.8 + (o.ph ?? 0), down = (sin(w) + 1) / 2;
   const legs = [-24, -14, 16, 26].map((lx) => limb(lx, -30, 30, 0, 7, "#efe9dc")).join("");
   const head = `<g transform="rotate(${f(down * 42)} 34 -52)">${ell(46, -48, 14, 10, "#efe9dc", ' transform="rotate(25 46 -48)"')}${ell(54, -42, 7, 5, "#e8b4a8")}${circ(46, -54, 1.8, "#111")}<path d="M38 -60 L36 -68 M44 -62 L46 -70" stroke="#d9cfae" stroke-width="3" stroke-linecap="round"/></g>`;
@@ -290,29 +294,34 @@ function cow(t: number, o: AnimalOpt): string {
     line(-36, -56, -42, -30 + sin(w * 3) * 4, 3, "#efe9dc") + ell(-6, -30, 8, 4, "#e8b4a8");
   return ell(o.x, o.y + 1, 40 * s, 6 * s, "rgba(0,0,0,.18)") + G(o.x, o.y, 0, (o.face ?? 1) * s, s, body);
 }
-function horse(t: number, o: AnimalOpt & { color?: string }): string {
+export function horse(t: number, o: AnimalOpt & { color?: string }): string {
   const s = o.s ?? 1, w = t * 8 + (o.ph ?? 0), k = sin(w), c = o.color ?? "#7a4a26";
   const legs = [[-24, k], [-14, -k], [18, -k], [28, k]].map(([lx, a]) => limb(lx, -42, 42, (a as number) * 0.6, 6, c)).join("");
   const body = legs + ell(0, -56, 38, 17, c) + line(24, -64, 46, -96, 13, c) + ell(54, -100, 15, 8, c, ' transform="rotate(30 54 -100)"') + circ(56, -103, 1.8, "#111") +
     `<path d="M26 -72 Q38 -90 46 -100 L40 -78 Z" fill="#2a1a10"/>` + `<path d="M-36 -62 Q-56 -50 -50 -26 Q-44 -50 -34 -56 Z" fill="#2a1a10" transform="rotate(${f(sin(w * 0.7) * 6)} -36 -62)"/>`;
   return ell(o.x, o.y + 1, 44 * s, 6 * s, "rgba(0,0,0,.18)") + G(o.x, o.y - Math.abs(k) * 3, 0, (o.face ?? 1) * s, s, body);
 }
-function bird(t: number, o: { x: number; y: number; s?: number; ph?: number; color?: string; face?: 1 | -1 }): string {
-  const s = o.s ?? 1, k = sin(t * 8 + (o.ph ?? 0)), c = o.color ?? "#ffffff";
+export function bird(t: number, o: { x: number; y: number; s?: number; ph?: number; color?: string; face?: 1 | -1 }): string {
+  const s = o.s ?? 1, ph = o.ph ?? 0, c = o.color ?? "#ffffff";
+  // bate asas em rajadas e planeia entre elas (como uma ave de verdade)
+  const flap = clamp(sin(t * 0.7 + ph * 1.9) * 2.2 + 0.7, 0, 1);
+  const k = sin(t * 8.5 + ph) * (0.18 + 0.82 * flap);
   const d = `M-18 ${f(-4 + k * 9)} Q-9 ${f(-9 + k * 8)} 0 0 Q9 ${f(-9 + k * 8)} 18 ${f(-4 + k * 9)}`;
-  return G(o.x, o.y + sin(t * 1.3 + (o.ph ?? 0)) * 4, 0, (o.face ?? 1) * s, s, `<path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` + circ(0, 1, 2.6, c));
+  return G(o.x, o.y + sin(t * 1.3 + ph) * 4 - cos(t * 8.5 + ph) * 2.6 * flap, sin(t * 0.7 + ph) * 4 - flap * 3, (o.face ?? 1) * s, s, `<path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` + circ(0, 1, 2.6, c));
 }
-function butterfly(t: number, o: { cx: number; cy: number; r?: number; ph?: number; color?: string }): string {
-  const w = t * 0.6 + (o.ph ?? 0), x = o.cx + sin(w * 1.7) * (o.r ?? 120), y = o.cy + sin(w * 2.3 + 1) * 40, fl = 0.25 + 0.75 * Math.abs(sin(t * 14 + (o.ph ?? 0)));
+export function butterfly(t: number, o: { cx: number; cy: number; r?: number; ph?: number; color?: string }): string {
+  const w = t * 0.6 + (o.ph ?? 0), R = o.r ?? 120;
+  const x = o.cx + sin(w * 1.7) * R + sin(w * 4.3 + 2) * R * 0.14, y = o.cy + sin(w * 2.3 + 1) * 40 + sin(w * 5.9) * 9 - Math.abs(sin(t * 3.2)) * 5;
+  const fl = 0.25 + 0.75 * Math.abs(sin(t * (12 + 4 * sin(t * 0.5)) + (o.ph ?? 0)));
   const c = o.color ?? "#f08a2b";
   return G(x, y, sin(w * 1.7) * 14, 1, 1, `<ellipse cx="-5" cy="0" rx="${f(6 * fl)}" ry="7" fill="${c}"/><ellipse cx="5" cy="0" rx="${f(6 * fl)}" ry="7" fill="${c}"/>` + line(0, -4, 0, 5, 2, "#3a2414"));
 }
-function fish(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; ph?: number; color?: string; alpha?: number }): string {
+export function fish(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; ph?: number; color?: string; alpha?: number }): string {
   const s = o.s ?? 1, k = sin(t * 9 + (o.ph ?? 0)), c = o.color ?? "#f08a3c";
   const body = ell(0, 0, 13, 6, c) + `<path d="M-11 0 L-22 ${f(-6 + k * 4)} L-22 ${f(6 + k * 4)} Z" fill="${c}"/>` + circ(7, -1.5, 1.4, "#111") + `<path d="M-2 -5 Q2 -10 6 -5 Z" fill="${c}" opacity=".8"/>`;
   return G(o.x, o.y, k * 3, (o.face ?? 1) * s, s, body, ` opacity="${o.alpha ?? 0.9}"`);
 }
-function shark(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; ph?: number }): string {
+export function shark(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; ph?: number }): string {
   const s = o.s ?? 1, k = sin(t * 3.2 + (o.ph ?? 0));
   const body = `<path d="M-60 0 Q-20 -20 40 -8 Q62 -2 70 4 Q40 16 -10 14 Q-42 12 -60 0 Z" fill="#6b7f92"/><path d="M-6 6 Q30 14 66 5 Q40 14 -6 14 Z" fill="#dbe4ec"/>` +
     `<path d="M-2 -13 L12 -36 L24 -10 Z" fill="#566a7d"/><path d="M-60 0 L-84 ${f(-16 + k * 8)} L-72 ${f(2 + k * 4)} L-86 ${f(20 + k * 8)} Z" fill="#566a7d"/>` +
@@ -322,11 +331,11 @@ function shark(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; 
 
 /* ------------------------------------------------------------------ barcos, aviões, balões, pipas, bicicleta */
 
-function waveY(x: number, t: number): number {
+export function waveY(x: number, t: number): number {
   return sin(x * 0.012 + t * 1.3) * 3.2 + sin(x * 0.03 - t * 0.9) * 1.6;
 }
 
-function sailboat(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; sail?: string; hull?: string }): string {
+export function sailboat(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; sail?: string; hull?: string }): string {
   const s = o.s ?? 1, sail = o.sail ?? "#fdfbf4", hull = o.hull ?? "#c8453a", b = sin(t * 1.4 + o.x * 0.01) * 5, bil = sin(t * 2.2) * 5;
   const wake = [0, 1, 2].map((i) => `<ellipse cx="${f(-62 - i * 26 + sin(t * 2 + i) * 4)}" cy="${f(14 + i * 1.5)}" rx="${f(26 - i * 4)}" ry="${f(3 - i * 0.5)}" fill="#fff" opacity="${f(0.55 - i * 0.15)}"/>`).join("");
   const body = wake + `<path d="M-44 6 L48 6 L34 26 L-30 26 Z" fill="${hull}"/><path d="M-44 6 L48 6 L46 11 L-42 11 Z" fill="#f1e9d6"/>` + line(2, 6, 2, -78, 3, "#5a3a22") +
@@ -334,7 +343,7 @@ function sailboat(t: number, o: { x: number; y: number; s?: number; face?: 1 | -
     `<path d="M2 -78 L${f(16 + bil)} -73 L2 -68 Z" fill="#e8564a"/>`;
   return G(o.x, o.y + waveY(o.x, t) * 1.3, b * 0.6, (o.face ?? 1) * s, s, body);
 }
-function rowboat(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; ph?: number }): string {
+export function rowboat(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; ph?: number }): string {
   const s = o.s ?? 1, w = t * 2.2 + (o.ph ?? 0), b = sin(t * 1.5 + (o.ph ?? 0)) * 3;
   const ripples = [0, 1, 2].map((i) => `<ellipse cx="${f(-52 - i * 22)}" cy="${f(12 + i)}" rx="${f(20 - i * 3)}" ry="2.6" fill="#fff" opacity="${f(0.5 - i * 0.14)}"/>`).join("");
   const oar = (ox: number, ph: number) => {
@@ -346,7 +355,7 @@ function rowboat(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1
   const p2 = person(t, { x: 20, y: 5, s: 0.62, pose: "row", ph: (o.ph ?? 0), speed: 1, shirt: "#3c7dd9", skin: SKINS[1] });
   return G(o.x, o.y + waveY(o.x, t), b, (o.face ?? 1) * s, s, ripples + hull + p1.replace(/<ellipse[^>]*rgba\(0,0,0,\.2\)"\/>/, "") + p2.replace(/<ellipse[^>]*rgba\(0,0,0,\.2\)"\/>/, "") + oar(-4, 0) + oar(30, 0.4));
 }
-function plane(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; rot?: number }): string {
+export function plane(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; rot?: number }): string {
   const s = o.s ?? 1;
   const body = line(-90, 0, -170, -3, 3, "rgba(255,255,255,.55)") + line(-90, 6, -150, 8, 2, "rgba(255,255,255,.4)") +
     `<path d="M-60 -9 Q0 -16 60 -6 Q74 0 60 6 Q0 12 -60 8 Z" fill="#fafafa" stroke="#c7ced6" stroke-width="1.5"/>` +
@@ -354,20 +363,20 @@ function plane(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; 
     [-30, -18, -6, 6, 18, 30].map((x) => circ(x, -3, 2.1, "#4a7fbf")).join("") + `<path d="M46 -6 Q60 -6 62 0 L46 0 Z" fill="#4a7fbf"/>`;
   return G(o.x, o.y + sin(t * 0.8) * 3, o.rot ?? sin(t * 0.6) * 1.5, (o.face ?? 1) * s, s, body);
 }
-function balloon(t: number, o: { x: number; y: number; s?: number; ph?: number }): string {
+export function balloon(t: number, o: { x: number; y: number; s?: number; ph?: number }): string {
   const s = o.s ?? 1, sw = sin(t * 0.7 + (o.ph ?? 0)) * 4;
   const cols = ["#e8564a", "#f2b632", "#3c7dd9", "#4aa96c"];
   const env = cols.map((c, i) => `<path d="M0 -70 Q${-40 + i * 20} -50 ${-30 + i * 20} 0 L${-10 + i * 20} 0 Q${-20 + i * 20} -50 0 -70 Z" fill="${c}"/>`).join("") + `<ellipse cx="0" cy="-34" rx="34" ry="38" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="2"/>`;
   const p = G(0, 40, 0, 0.5, 0.5, person(t, { x: 0, y: 0, pose: "wave", ph: o.ph ?? 0, shirt: "#e86aa6" }).replace(/<ellipse[^>]*rgba\(0,0,0,\.2\)"\/>/, ""));
   return G(o.x, o.y, sw, s, s, env + line(-14, 2, -10, 22, 2, "#5a3a22") + line(14, 2, 10, 22, 2, "#5a3a22") + `<rect x="-14" y="22" width="28" height="18" rx="3" fill="#a86a38"/>` + p);
 }
-function kite(t: number, o: { x: number; y: number; hx: number; hy: number; ph?: number; color?: string }): string {
+export function kite(t: number, o: { x: number; y: number; hx: number; hy: number; ph?: number; color?: string }): string {
   const w = t * 1.1 + (o.ph ?? 0), kx = o.x + sin(w) * 40, ky = o.y + sin(w * 1.4) * 22, ang = sin(w) * 16, c = o.color ?? "#e8564a";
   const tail = Array.from({ length: 7 }, (_, i) => circ(0 + sin(w * 3 + i) * 8, 24 + i * 11, 3.2, i % 2 ? "#f2b632" : "#3c7dd9")).join("");
   return `<path d="M${f(o.hx)} ${f(o.hy)} Q${f((o.hx + kx) / 2 + 20)} ${f((o.hy + ky) / 2 + 50)} ${f(kx)} ${f(ky)}" stroke="#fff" stroke-opacity=".8" stroke-width="1.4" fill="none"/>` +
     G(kx, ky, ang, 1, 1, `<path d="M0 -26 L18 0 L0 26 L-18 0 Z" fill="${c}" stroke="#fff" stroke-width="1.5"/>${line(0, -26, 0, 26, 1.5, "rgba(255,255,255,.6)")}${line(-18, 0, 18, 0, 1.5, "rgba(255,255,255,.6)")}${tail}`);
 }
-function bicycle(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1 }): string {
+export function bicycle(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1 }): string {
   const s = o.s ?? 0.9, r = t * 260;
   const wheel = (cx: number) => `<circle cx="${cx}" cy="-17" r="17" fill="none" stroke="#2a2a2a" stroke-width="3"/>` + [0, 60, 120].map((a) => line(cx - cos(((a + r) * PI) / 180) * 16, -17 - sin(((a + r) * PI) / 180) * 16, cx + cos(((a + r) * PI) / 180) * 16, -17 + sin(((a + r) * PI) / 180) * 16, 1, "#777")).join("");
   const frame = line(-26, -17, -4, -17, 3, "#d6402f") + line(-4, -17, 6, -40, 3, "#d6402f") + line(6, -40, 26, -17, 3, "#d6402f") + line(-26, -17, 6, -40, 3, "#d6402f") + line(6, -40, 12, -48, 3, "#444");
@@ -377,7 +386,7 @@ function bicycle(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1
 
 /* ------------------------------------------------------------------ efeitos */
 
-function waves(t: number, y0: number, y1: number, seed: string): string {
+export function waves(t: number, y0: number, y1: number, seed: string): string {
   const rows = 7, r = rngFrom(seed + "w"), out: string[] = [];
   for (let i = 0; i < rows; i++) {
     const y = y0 + ((y1 - y0) * (i + 0.6)) / (rows + 0.4), amp = 2.5 + i * 0.9, ph = r() * 6, sp = (0.5 + i * 0.12) * (i % 2 ? 1 : -1);
@@ -387,20 +396,20 @@ function waves(t: number, y0: number, y1: number, seed: string): string {
   }
   return out.join("");
 }
-function shimmer(t: number, y0: number, y1: number, seed: string, n = 16): string {
+export function shimmer(t: number, y0: number, y1: number, seed: string, n = 16): string {
   const r = rngFrom(seed + "s");
   return Array.from({ length: n }, (_, i) => {
     const x = r() * LIFE_W, y = y0 + r() * (y1 - y0), ph = r() * 6, a = Math.max(0, sin(t * 1.8 + ph));
     return `<path d="M${f(x - 7 * a)} ${f(y)} L${f(x + 7 * a)} ${f(y)}" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="${f(a * 0.75)}"/>`;
   }).join("");
 }
-function steam(t: number, x: number, y: number, s = 1, n = 4): string {
+export function steam(t: number, x: number, y: number, s = 1, n = 4): string {
   return Array.from({ length: n }, (_, i) => {
     const u = (t * 0.45 + i / n) % 1;
     return circ(x + sin(u * 7 + i) * 6 * s, y - u * 46 * s, (3 + u * 6) * s, "#fff", ` opacity="${f((1 - u) * 0.5)}"`);
   }).join("");
 }
-function notes(t: number, x: number, y: number, seed: string, n = 5): string {
+export function notes(t: number, x: number, y: number, seed: string, n = 5): string {
   const r = rngFrom(seed + "n"), cols = ["#f2b632", "#ffffff", "#e86aa6", "#4ad0c4"];
   return Array.from({ length: n }, (_, i) => {
     const u = (t * 0.32 + i / n + r()) % 1, nx = x + (i - n / 2) * 18 + sin(u * 6 + i) * 14, ny = y - u * 130;
@@ -408,7 +417,7 @@ function notes(t: number, x: number, y: number, seed: string, n = 5): string {
     return `<g opacity="${f(Math.sin(u * PI))}" transform="translate(${f(nx)} ${f(ny)}) rotate(${f(sin(u * 5) * 12)})">${ell(0, 0, 5.5, 4, c, ' transform="rotate(-20)"')}${line(5, -1, 5, -20, 2, c)}<path d="M5 -20 Q12 -17 11 -10" stroke="${c}" stroke-width="2" fill="none"/></g>`;
   }).join("");
 }
-function motes(t: number, seed: string, n: number, y0: number, y1: number, col = "#fff6d8", big = 3): string {
+export function motes(t: number, seed: string, n: number, y0: number, y1: number, col = "#fff6d8", big = 3): string {
   const r = rngFrom(seed + "m");
   return Array.from({ length: n }, () => {
     const bx = r() * LIFE_W, by = y0 + r() * (y1 - y0), ph = r() * 6, sp = 0.2 + r() * 0.5;
@@ -416,28 +425,54 @@ function motes(t: number, seed: string, n: number, y0: number, y1: number, col =
     return circ(x, y, 1 + r() * big, col, ` opacity="${f(a)}"`);
   }).join("");
 }
-function leaves(t: number, seed: string, n = 10, cols = ["#e0a030", "#d9622b", "#9bbf4a"]): string {
+export function leaves(t: number, seed: string, n = 10, cols = ["#e0a030", "#d9622b", "#9bbf4a"]): string {
   const r = rngFrom(seed + "l");
   return Array.from({ length: n }, (_, i) => {
     const sp = 14 + r() * 16, ph = r(), x0 = r() * LIFE_W, y = ((t * sp + ph * 900) % 900) - 60, x = x0 + sin(t * 0.8 + i) * 40 + y * 0.12;
     return G(x, y, sin(t * 2 + i) * 60, 1, 1, ell(0, 0, 6, 2.8, cols[i % cols.length]), ` opacity=".85"`);
   }).join("");
 }
-function confetti(t: number, seed: string, n = 26): string {
+/** tufos de grama que se curvam com o vento (decoração viva do chão, fora das pistas dos atores) */
+export function grassTufts(t: number, seed: string, y0: number, y1: number, n = 10): string {
+  const r = rngFrom(seed + "g");
+  const xs = [60, 130, 210, 290, 545, 610, 680, 1010, 1085, 1150];
+  let out = "";
+  for (let i = 0; i < n; i++) {
+    const bx = xs[i % xs.length] + (r() - 0.5) * 30, by = y0 + r() * (y1 - y0), h = 16 + r() * 14, col = i % 3 === 0 ? "#6fb552" : "#4e9a3f";
+    const gust = 0.55 + 0.45 * sin(t * 0.23 + bx * 0.005);
+    const sway = (0.62 * sin(t * 0.9 + bx * 0.013) + 0.28 * sin(t * 2.1 + bx * 0.031 + 1.3)) * gust;
+    for (let b = -1; b <= 1; b++) {
+      const tx = bx + b * 5 + sway * 9 + b * 3, ty = by - h + Math.abs(b) * 4;
+      out += `<path d="M${f(bx + b * 3)} ${f(by)} Q${f(bx + b * 4 + sway * 3)} ${f(by - h * 0.6)} ${f(tx)} ${f(ty)}" stroke="${col}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+    }
+  }
+  return out;
+}
+/** pétalas que caem girando, balançando de um lado para o outro */
+export function petals(t: number, seed: string, n = 8): string {
+  const r = rngFrom(seed + "p");
+  return Array.from({ length: n }, (_, i) => {
+    const sp = 18 + r() * 14, ph = r(), x0 = r() * LIFE_W, y = ((t * sp + ph * 900) % 900) - 40;
+    const x = x0 + sin(t * 0.9 + i * 1.3) * 34 + y * 0.1;
+    const turn = cos(t * 2.2 + i) ;
+    return G(x, y, sin(t * 1.6 + i) * 50, 1, 1, ell(0, 0, 5 * Math.abs(turn) + 1, 3, i % 2 ? "#f7c6d6" : "#ffffff"), ` opacity=".8"`);
+  }).join("");
+}
+export function confetti(t: number, seed: string, n = 26): string {
   const r = rngFrom(seed + "c"), cols = ["#e8564a", "#f2b632", "#3c7dd9", "#4aa96c", "#e86aa6"];
   return Array.from({ length: n }, (_, i) => {
     const sp = 40 + r() * 40, ph = r(), x0 = r() * LIFE_W, y = ((t * sp + ph * 700) % 700) - 40;
     return G(x0 + sin(t * 1.5 + i) * 22, y, t * 140 + i * 40, 1, Math.abs(sin(t * 5 + i)), `<rect x="-3" y="-2" width="6" height="4" fill="${cols[i % 5]}"/>`);
   }).join("");
 }
-function sparkles(t: number, seed: string, n: number, y0: number, y1: number, col = "#ffe9a8"): string {
+export function sparkles(t: number, seed: string, n: number, y0: number, y1: number, col = "#ffe9a8"): string {
   const r = rngFrom(seed + "sp");
   return Array.from({ length: n }, () => {
     const x = r() * LIFE_W, y = y0 + r() * (y1 - y0), ph = r() * 6, a = Math.max(0, sin(t * 2.2 + ph)), k = 6 * a;
     return `<path d="M${f(x)} ${f(y - k)} L${f(x + k * 0.3)} ${f(y - k * 0.3)} L${f(x + k)} ${f(y)} L${f(x + k * 0.3)} ${f(y + k * 0.3)} L${f(x)} ${f(y + k)} L${f(x - k * 0.3)} ${f(y + k * 0.3)} L${f(x - k)} ${f(y)} L${f(x - k * 0.3)} ${f(y - k * 0.3)} Z" fill="${col}" opacity="${f(a)}"/>`;
   }).join("");
 }
-function jumpFish(t: number, wy0: number, wy1: number, seed: string): string {
+export function jumpFish(t: number, wy0: number, wy1: number, seed: string): string {
   const P = 9, r = rngFrom(seed + "j"), x0 = 200 + r() * 800, ph = r() * P;
   const u = ((t + ph) % P) / P;
   if (u > 0.2) return "";
@@ -446,7 +481,7 @@ function jumpFish(t: number, wy0: number, wy1: number, seed: string): string {
   const splash = k < 0.15 || k > 0.85 ? `<ellipse cx="${f(k < 0.5 ? x0 : x0 + 120)}" cy="${f((wy0 + wy1) / 2)}" rx="${f(8 + sin(k * 12) * 6)}" ry="3" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/>` : "";
   return splash + G(x, y, ang, 1.1, 1.1, ell(0, 0, 13, 6, "#7fb6e8") + `<path d="M-11 0 L-21 -6 L-21 6 Z" fill="#7fb6e8"/>` + circ(7, -1.5, 1.4, "#111"));
 }
-function flame(t: number, x: number, y: number, s = 1): string {
+export function flame(t: number, x: number, y: number, s = 1): string {
   const k = sin(t * 14 + x) * 1.4, h = 14 + sin(t * 9 + x * 2) * 3;
   return `<ellipse cx="${f(x)}" cy="${f(y - 8 * s)}" rx="${f(14 * s)}" ry="${f(18 * s)}" fill="#ffd27a" opacity=".25"/>` +
     `<path d="M${f(x)} ${f(y - h * s - 4)} Q${f(x + 6 * s + k)} ${f(y - 4 * s)} ${f(x)} ${f(y)} Q${f(x - 6 * s + k)} ${f(y - 4 * s)} ${f(x)} ${f(y - h * s - 4)} Z" fill="#ffb020"/>` + `<ellipse cx="${f(x)}" cy="${f(y - 3 * s)}" rx="${f(2.2 * s)}" ry="${f(4 * s)}" fill="#fff3b0"/>`;
@@ -454,9 +489,9 @@ function flame(t: number, x: number, y: number, s = 1): string {
 
 /* ------------------------------------------------------------------ conjuntos (cenas completas) */
 
-type Actor = { z: number; draw: (t: number) => string };
+export type Actor = { z: number; draw: (t: number) => string };
 
-function diningSet(t: number, o: { x: number; y: number; s?: number; ph?: number }): string {
+export function diningSet(t: number, o: { x: number; y: number; s?: number; ph?: number }): string {
   const s = o.s ?? 1, ph = o.ph ?? 0;
   const seat = (x: number, face: 1 | -1, shirt: string, skin: string, pose: Pose, p: number, sc = 0.82) =>
     person(t, { x, y: 0, s: sc, face, pose, ph: p, shirt, skin, hair: p > 2 ? "#8a8a8a" : HAIRS[0] }).replace(/<ellipse[^>]*rgba\(0,0,0,\.2\)"\/>/, "");
@@ -467,7 +502,7 @@ function diningSet(t: number, o: { x: number; y: number; s?: number; ph?: number
   return ell(0, 12, 150, 9, "rgba(0,0,0,.18)").replace("<ellipse", "<ellipse") + G(o.x, o.y, 0, s, s, ell(0, 12, 150, 9, "rgba(0,0,0,.14)") + people + cloth + steam(t, -60, -60, 1.1, 3) + steam(t, 60, -60, 1.1, 3));
 }
 
-function audience(t: number, seed: string): string {
+export function audience(t: number, seed: string): string {
   const r = rngFrom(seed + "aud"), out: string[] = [];
   const glow = (sin(t * 3.1) + sin(t * 7.3) * 0.6 + 2) / 4; // tremeluzir da tela
   const tint = `hsl(${f(205 + sin(t * 0.7) * 35)} 80% 70%)`;
@@ -484,7 +519,7 @@ function audience(t: number, seed: string): string {
   }
   return out.join("");
 }
-function projector(t: number): string {
+export function projector(t: number): string {
   const a = 0.1 + ((sin(t * 3.1) + sin(t * 7.3) * 0.6 + 2) / 4) * 0.16;
   const beam = `<path d="M600 760 L330 120 L870 120 Z" fill="#cfe8ff" opacity="${f(a)}"/>`;
   const dust = Array.from({ length: 16 }, (_, i) => {
@@ -494,7 +529,7 @@ function projector(t: number): string {
   return beam + dust;
 }
 
-function conversationDuo(t: number, o: { x: number; y: number; s?: number; p1Style?: Partial<PersonOpt>; p2Style?: Partial<PersonOpt> }): string {
+export function conversationDuo(t: number, o: { x: number; y: number; s?: number; p1Style?: Partial<PersonOpt>; p2Style?: Partial<PersonOpt> }): string {
   const s = o.s ?? 0.88;
   const P = 7.0;
   const u = (t % P) / P;
@@ -532,7 +567,7 @@ function conversationDuo(t: number, o: { x: number; y: number; s?: number; p1Sty
   return p1 + p2 + dialogPulse;
 }
 
-function beachCouple(t: number, o: { x: number; y: number; s?: number; dir?: 1 | -1; ph?: number; speed?: number }): string {
+export function beachCouple(t: number, o: { x: number; y: number; s?: number; dir?: 1 | -1; ph?: number; speed?: number }): string {
   const s = o.s ?? 0.85;
   const dir = o.dir ?? 1;
   const sp = o.speed ?? 18;
@@ -572,7 +607,7 @@ function beachCouple(t: number, o: { x: number; y: number; s?: number; dir?: 1 |
   return footStep + p1 + p2 + handJoin;
 }
 
-function soccerMatch(t: number, o: { x: number; y: number; s?: number }): string {
+export function soccerMatch(t: number, o: { x: number; y: number; s?: number }): string {
   const s = o.s ?? 0.85;
   const P = 4.2;
   const u = (t % P) / P;
@@ -648,7 +683,7 @@ function soccerMatch(t: number, o: { x: number; y: number; s?: number }): string
   return pitchLine + ballShadow + p1 + p2 + ball;
 }
 
-function playingAnimals(t: number, o: { x: number; y: number; s?: number; ph?: number }): string {
+export function playingAnimals(t: number, o: { x: number; y: number; s?: number; ph?: number }): string {
   const s = o.s ?? 0.9;
   const P = 6.0;
   const u = ((t + (o.ph ?? 0)) % P) / P;
@@ -683,7 +718,7 @@ function playingAnimals(t: number, o: { x: number; y: number; s?: number; ph?: n
   return ballShadow + ball + d1 + d2;
 }
 
-function sharkHunt(t: number, wy0: number, wy1: number, seed: string): string {
+export function sharkHunt(t: number, wy0: number, wy1: number, seed: string): string {
   const P = 14;
   const u = (t % P) / P;
   const fishY = wy0 + (wy1 - wy0) * 0.62;
@@ -719,7 +754,7 @@ function sharkHunt(t: number, wy0: number, wy1: number, seed: string): string {
   return fishes + finSurface + sharkActor + splash;
 }
 
-function phoneWalker(t: number, o: { x: number; y: number; s?: number; dir?: 1 | -1; speed?: number; ph?: number; shirt?: string }): string {
+export function phoneWalker(t: number, o: { x: number; y: number; s?: number; dir?: 1 | -1; speed?: number; ph?: number; shirt?: string }): string {
   const dir = o.dir ?? 1;
   const sp = o.speed ?? 19;
   const x = travel(t, sp, o.ph ?? 0.2, 120, dir);
@@ -737,7 +772,7 @@ function phoneWalker(t: number, o: { x: number; y: number; s?: number; dir?: 1 |
   });
 }
 
-function culturalParty(t: number, o: { x: number; y: number; s?: number }): string {
+export function culturalParty(t: number, o: { x: number; y: number; s?: number }): string {
   const s = o.s ?? 0.9;
   const y = o.y;
 
@@ -766,7 +801,7 @@ function culturalParty(t: number, o: { x: number; y: number; s?: number }): stri
   return dancers + drummer + talkers + festiveNotes;
 }
 
-function taskRobots(t: number, o: { x: number; y: number; s?: number }): string {
+export function taskRobots(t: number, o: { x: number; y: number; s?: number }): string {
   const s = o.s ?? 0.88;
   const r1 = robot(t, { x: o.x - 55 * s, y: o.y, s, mode: "carry", ph: 0.5 });
   const r2 = robot(t, { x: o.x + 45 * s, y: o.y, s, mode: "clean", ph: 1.8, face: -1 });
@@ -790,23 +825,37 @@ export function analyzeSceneZones(img: CanvasImageSource, iw: number, ih: number
     ctx.drawImage(img, (W - iw * sc) / 2, (H - ih * sc) / 2, iw * sc, ih * sc);
     const d = ctx.getImageData(0, 0, W, H).data;
     const waterRow: number[] = [], opaqueRow: number[] = [];
+    const rowRgb: number[][] = [];
     for (let y = 0; y < H; y++) {
-      let wc = 0, oc = 0;
+      let wc = 0, oc = 0, sr = 0, sg = 0, sb = 0;
       for (let x = 0; x < W; x++) {
         const i = (y * W + x) * 4, a = d[i + 3];
         if (a < 140) continue;
         oc++;
+        sr += d[i]; sg += d[i + 1]; sb += d[i + 2];
         const r = d[i], g = d[i + 1], b = d[i + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
         if (mx - mn > 55 && b >= r + 30 && g >= r + 20 && (r + g + b) / 3 > 105) wc++;
       }
       waterRow.push(wc / W); opaqueRow.push(oc / W);
+      rowRgb.push(oc ? [sr / oc, sg / oc, sb / oc] : [0, 0, 0]);
     }
+    const dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
     let y0 = -1, y1 = -1;
     for (let y = Math.floor(H * 0.28); y < H; y++) {
       if (waterRow[y] >= 0.35) { if (y0 < 0) y0 = y; y1 = y; }
       else if (y0 >= 0 && y - y1 > 2) break;
     }
-    const water = y0 >= 0 && y1 - y0 >= 3 ? { y0: (y0 / H) * LIFE_H, y1: ((y1 + 1) / H) * LIFE_H } : null;
+    // Céu azul NÃO é água: a água começa numa linha de horizonte (mudança brusca de cor em relação à linha de cima)
+    // e tem cor diferente do céu (topo da imagem). Sem isso o "mar" aparecia no meio do céu.
+    let isWater = y0 >= 0 && y1 - y0 >= 3;
+    if (isWater) {
+      const sky = rowRgb[Math.min(H - 1, 2)];
+      const edge = y0 > 0 ? dist(rowRgb[y0 - 1], rowRgb[y0]) : 0;
+      const nearSky = Math.min(dist(rowRgb[y0], sky), dist(rowRgb[Math.min(H - 1, y0 + 2)], sky));
+      if (edge < 22 && nearSky < 70) isWater = false;
+      if (y0 < H * 0.38 && edge < 22) isWater = false;
+    }
+    const water = isWater ? { y0: (y0 / H) * LIFE_H, y1: ((y1 + 1) / H) * LIFE_H } : null;
     let gt: number;
     if (water) gt = water.y1 + 6;
     else {
@@ -820,17 +869,8 @@ export function analyzeSceneZones(img: CanvasImageSource, iw: number, ih: number
   }
 }
 
-/* ------------------------------------------------------------------ direção da cena */
-
-const THEME_KEYS: Array<[RegExp, string]> = [
-  [/tecnolog/, "tecnologia"], [/natur/, "natureza"], [/cultur/, "cultura"], [/turism/, "turismo"], [/interior/, "interior"],
-  [/danc/, "danca"], [/geograf/, "geografia"], [/histor/, "historia"], [/cinem/, "cinema"], [/music|musica/, "musica"],
-  [/lazer/, "lazeres"], [/estoic/, "estoicismo"], [/relig/, "religiao"], [/gastron/, "gastronomia"],
-  [/idioma/, "idiomas"],
-];
-
 /** Surfista que cruza o mar de vez em quando (mesma agenda do som "surf" em storySoundscape). */
-function surfer(t: number, y0: number, y1: number): string {
+export function surfer(t: number, y0: number, y1: number): string {
   if (t < SURF_FIRST_SECONDS) return "";
   const local = (t - SURF_FIRST_SECONDS) % SURF_PERIOD_SECONDS;
   if (local > SURF_RIDE_SECONDS) return "";
@@ -851,130 +891,6 @@ function surfer(t: number, y0: number, y1: number): string {
       <path d="M-3,-54 Q3,-62 10,-54" fill="#3b2a20"/>
     </g>
   </g>`;
-}
-
-export function createSceneLife(input: LifeInput): LifeScene {
-  const text = norm([input.title ?? "", ...(input.elements ?? []).flatMap((e) => [e.pt ?? "", e.kreyol ?? "", e.fr ?? ""])].join(" "));
-  const themeNorm = norm(input.theme ?? "");
-  const theme = THEME_KEYS.find(([re]) => re.test(themeNorm))?.[1] ?? THEME_KEYS.find(([re]) => re.test(norm(input.sceneId)))?.[1] ?? THEME_KEYS.find(([re]) => re.test(text))?.[1] ?? "natureza";
-  const has = (re: RegExp) => re.test(text);
-  const idBase = norm(input.sceneId).replace(/\.(svg|png|webp|jpg)$/g, "").split("/").pop() ?? "";
-  // As cenas de Idiomas já trazem professor/alunos e balões de conversa desenhados e uma mesa em primeiro plano:
-  // atores extras andando por cima cobririam os objetos rotulados (cenário limpo).
-  if (NATIVE_LIFE_IDS.has(idBase) || theme === "idiomas" || idBase.startsWith("idiomas")) return { actors: [], render: () => "" };
-
-  const zones = input.zones ?? DEFAULT_ZONES;
-  const wz = zones.water;
-  const GT = zones.groundTop;
-  const r = rngFrom(input.sceneId + theme);
-  const actors: Actor[] = [];
-  const names: string[] = [];
-  const add = (name: string, z: number, draw: (t: number) => string) => { names.push(name); actors.push({ z, draw }); };
-
-  const wantsSea = !!wz;
-  const landMin = wz ? Math.max(GT, wz.y1 + 10) : GT;
-  const gyL = (k: number) => clamp(landMin + 30 + (735 - landMin - 30) * k, 520, 735);
-  const sc = (y: number) => 0.85 * depth(y, landMin) + 0.15;
-
-  /* --- 1. ZONA AQUÁTICA (se houver água detectada na cena) --- */
-  if (wantsSea && wz) {
-    const mid = wz.y0 + (wz.y1 - wz.y0) * 0.5;
-    const lo = wz.y0 + (wz.y1 - wz.y0) * 0.78;
-    add("ondas", 1, (t) => waves(t, wz.y0, wz.y1, input.sceneId) + shimmer(t, wz.y0, wz.y1, input.sceneId));
-    if (wz.y1 - wz.y0 >= 95) {
-      add("surfista", mid, (t) => surfer(t, wz.y0, wz.y1));
-    }
-
-    // Ação aquática principal: caça de tubarão, casal na praia, ou veleiro/remadores
-    if (has(/barco|bato|veleiro|porto|canoa|chaloup|bateau/)) {
-      const dir = r() > 0.5 ? 1 : -1;
-      add("veleiro", mid, (t) => sailboat(t, { x: travel(t, 16, 0.2, 140, dir), y: mid, s: 0.95, face: dir as 1 | -1 }));
-      add("remadores", lo, (t) => rowboat(t, { x: travel(t, 9, 0.7, 140, -dir), y: lo, s: 1.05, face: (-dir) as 1 | -1, ph: 2 }));
-    } else if (has(/praia|plaj|plage|areia|sand|costa|beira/) || theme === "turismo") {
-      const shoreY = clamp(wz.y1 + 16, 540, 730);
-      add("casal-passeando-na-praia", shoreY, (t) => beachCouple(t, { x: 480, y: shoreY, s: sc(shoreY) * 1.05, dir: 1 }));
-      add("peixe-saltando", mid, (t) => jumpFish(t, wz.y0, wz.y1, input.sceneId));
-    } else {
-      // Padrão aquático dinâmico e realista: tubarão caçando e comendo peixes
-      add("tubarao-cacando-peixes", mid + 12, (t) => sharkHunt(t, wz.y0, wz.y1, input.sceneId));
-      add("peixe-saltando", mid, (t) => jumpFish(t, wz.y0, wz.y1, input.sceneId));
-    }
-
-    // Aves marinhas discretas no alto
-    add("gaivotas", 0, (t) => bird(t, { x: travel(t, 28, 0.2, 80, 1), y: Math.min(150, wz.y0 - 50), s: 1.1, ph: 0, face: 1 }));
-  }
-
-  /* --- 2. ZONA TERRESTRE (Cenário limpo, bem organizado e perfeitamente visível) --- */
-  // O chão é organizado em duas pistas espaciais equilibradas e não-conflitantes:
-  // - Pista Principal A (centro-esquerda x: 380-480): Ação focal da narrativa da história
-  // - Pista Secundária B (lateral-direita x: 780-920): Ator complementar suave (celular, casal ou caminhante)
-  const yFocal = gyL(0.55);
-  const ySec = gyL(0.85);
-
-  // --- Ação Focal Principal ---
-  if (has(/futebol|bola|estadio|quadra|gol|foot|ballon|jogo\b|jogadores/) || (theme === "lazeres" && has(/bola|jogo/))) {
-    add("jogo-de-futebol", yFocal, (t) => soccerMatch(t, { x: 420, y: yFocal, s: sc(yFocal) }));
-  } else if (theme === "gastronomia" || has(/almoco|jantar|refeicao|restaurante|comer|comida|ceia|table|diner|repas/)) {
-    add("pessoas-conversando-no-almoco", yFocal, (t) => diningSet(t, { x: 460, y: yFocal, s: 1.25 * depth(yFocal, landMin) }));
-  } else if (theme === "tecnologia" || has(/robo|robot|tarefa|laborat|computad|tecnolog|maquina/)) {
-    add("robos-fazendo-tarefas", yFocal, (t) => taskRobots(t, { x: 420, y: yFocal, s: sc(yFocal) }));
-  } else if (theme === "cultura" || theme === "danca" || has(/festa|cultura|danca|carnaval|tambor|fete|danse/)) {
-    add("festa-cultural", yFocal, (t) => culturalParty(t, { x: 430, y: yFocal, s: sc(yFocal) }));
-  } else if (theme === "natureza" || theme === "interior" || has(/animal|animais|cachorro|cao|brinc|briga|chen|chien|pet\b/)) {
-    add("animais-brincando-e-brigando", yFocal, (t) => playingAnimals(t, { x: 420, y: yFocal, s: sc(yFocal) }));
-  } else if (theme === "cinema" || has(/cinema|filme|tela/)) {
-    add("plateia-cinema", 700, (t) => audience(t, input.sceneId));
-    add("projetor", 0, (t) => projector(t));
-  } else if (theme === "musica" || has(/musica|banda|violao|guitarra/)) {
-    add("banda-musical", yFocal, (t) =>
-      person(t, { x: 380, y: yFocal, s: sc(yFocal), pose: "guitar", shirt: "#e8564a", skin: SKINS[2] }) +
-      person(t, { x: 490, y: yFocal, s: sc(yFocal), face: -1, pose: "drum", shirt: "#3c7dd9" }) +
-      notes(t, 435, yFocal - 75 * sc(yFocal), input.sceneId, 4)
-    );
-  } else if (theme === "historia") {
-    add("cavaleiro-historico", yFocal, (t) => {
-      const hx = travel(t, 46, 0.4, 120);
-      return horse(t, { x: hx, y: yFocal, s: 1.05 * depth(yFocal, landMin) + 0.1, ph: 0 }) +
-        person(t, { x: hx - 2, y: yFocal - 38 * (1.05 * depth(yFocal, landMin) + 0.1), s: 0.55, pose: "ride", shirt: "#8a2a2a", hat: "#555" });
-    });
-  } else {
-    // Pessoas conversando naturalmente com gestos de diálogo
-    add("pessoas-conversando", yFocal, (t) => conversationDuo(t, { x: 420, y: yFocal, s: sc(yFocal) }));
-  }
-
-  // --- Ator Secundário Complementar (lateral direita, espaço limpo) ---
-  if (!wantsSea || wz.y1 < 600) {
-    if (has(/celular|telefone|telefon|phone|smartphone|chamada/) || r() > 0.4) {
-      add("pessoa-falando-no-celular", ySec, (t) => phoneWalker(t, { x: 820, y: ySec, s: sc(ySec) * 1.05, dir: -1, shirt: pick(r, SHIRTS) }));
-    } else if (has(/casal|namorados|passeio/) || theme === "turismo") {
-      add("casal-passeando", ySec, (t) => beachCouple(t, { x: 800, y: ySec, s: sc(ySec) * 1.02, dir: 1 }));
-    } else {
-      add("pessoas-conversando-2", ySec, (t) => conversationDuo(t, { x: 820, y: ySec, s: sc(ySec) * 0.95, p1Style: { shirt: "#2fb5b0" }, p2Style: { shirt: "#e86aa6" } }));
-    }
-  }
-
-  /* --- 3. AMBIENTE DISCRETO NO CÉU / NATUREZA (Mínimo e limpo, sem poluir a visão) --- */
-  if (!wantsSea) {
-    if (theme === "turismo" || has(/aviao|voo|aeroporto/)) {
-      add("aviao", 0, (t) => plane(t, { x: travel(t, 32, 0.15, 200, -1), y: 125 + sin(t * 0.3) * 8, s: 0.75, face: -1 }));
-    } else {
-      add("passaros", 0, (t) => bird(t, { x: travel(t, 28, 0.4, 80, 1), y: 120, ph: 1 }));
-      add("borboletas", 0, (t) => butterfly(t, { cx: 280, cy: GT - 35, ph: 1.5, color: "#f08a2b" }));
-    }
-  }
-
-  // Ordenação por profundidade z para composição impecável
-  actors.sort((a, b) => a.z - b.z);
-  return {
-    actors: Array.from(new Set(names)),
-    render: (t: number) => {
-      let out = "";
-      for (const a of actors) {
-        try { out += a.draw(t); } catch { /* ator com falha não derruba a cena */ }
-      }
-      return out;
-    },
-  };
 }
 
 /** Documento SVG completo da camada de vida no instante t (para desenhar no canvas / injetar no player). */

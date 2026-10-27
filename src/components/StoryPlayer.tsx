@@ -24,7 +24,9 @@ import {
 import { Muxer, ArrayBufferTarget } from "mp4-muxer";
 import { getElementIcon } from "@/lib/storyElementIcon";
 import { buildSvgLayerKit, loadSvgImage, rasterizeLayer, releaseSvgImage } from "@/lib/storySvgLayers";
-import { analyzeSceneZones, createSceneLife, lifeSvgDocument, type SceneZones } from "@/lib/storySceneLife";
+import { analyzeSceneZones, lifeSvgDocument, type SceneZones } from "@/lib/storySceneLife";
+import { createSceneLife } from "@/lib/storySceneDirector";
+import { WATER, getSceneGrid } from "@/lib/storySceneMap";
 import { useAudioVoiceActivity, computeCaptionTyping } from "@/lib/audioVoiceActivity";
 import { buildSoundPlan, createLiveSoundscape, mixSoundPlanInto } from "@/lib/storySoundscape";
 
@@ -254,8 +256,23 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const lastCaptionEnd = story.captions.reduce((latest, caption) => Math.max(latest, caption.end), 0);
   const duration = mediaDuration || story.audioDuration || lastCaptionEnd || 0;
 
+  // Tamanho real do palco: usado para o tamanho do texto dos rótulos e para afastar rótulos que se sobreporiam.
+  const [stageSize, setStageSize] = useState({ w: 720, h: 405 });
+  useEffect(() => {
+    const element = playerViewportRef.current;
+    if (!element) return;
+    const update = () => setStageSize({ w: element.clientWidth || 720, h: element.clientHeight || 405 });
+    update();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  const pillFontPx = Math.max(8, Math.min(12, stageSize.w * 0.0125));
   const bankImage = useBankImage(story.imageSrc);
   const sceneElements = useMemo(() => bankImage?.storyElements ?? bankImage?.elements ?? [], [bankImage]);
+  const sceneLayout = useMemo(() => bankImage?.labelLayout ?? getStoryLabelLayout(story.imageSrc), [bankImage, story.imageSrc]);
 
   // Camada de VIDA: descobre onde há água/chão na imagem (qualquer imagem: banco, SVG ou gerada por IA)
   // e cria o "elenco" animado da cena. O mesmo render(t) alimenta o player e o vídeo exportado.
@@ -281,21 +298,37 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       if (blobUrl) URL.revokeObjectURL(blobUrl);
     };
   }, [story.imageSrc, svgContent]);
+  // Pontos dos objetos que já têm rótulo (em px de 1200x800): os elementos novos nunca são colocados sobre os nomes existentes.
+  const lifeAnchors = useMemo(
+    () => (sceneLayout?.anchors ?? []).map((anchor) => ({ x: (anchor.left / 100) * 1200, y: (anchor.top / 100) * 800 })),
+    [sceneLayout],
+  );
   const lifeScene = useMemo(
-    () => createSceneLife({ sceneId: story.imageSrc, theme: story.theme, title: story.title, elements: sceneElements, zones: sceneZones }),
-    [story.imageSrc, story.theme, story.title, sceneElements, sceneZones],
+    () => createSceneLife({
+      sceneId: story.imageSrc, theme: story.theme, title: story.title, elements: sceneElements, zones: sceneZones,
+      lang: isFr ? "fr" : "kreyol", anchors: lifeAnchors,
+    }),
+    [story.imageSrc, story.theme, story.title, sceneElements, sceneZones, isFr, lifeAnchors],
   );
   const lifeTick = Math.floor(currentTime * 30) / 30;
+  // tamanho do texto dos nomes dos elementos animados: ~mesma altura aparente das pílulas dos rótulos, em qualquer tela
+  const lifeLabelPx = Math.round(Math.max(22, Math.min(46, (pillFontPx * 1.3) / Math.max(0.2, Math.max(stageSize.w / 1200, stageSize.h / 800)))));
   const lifeMarkup = useMemo(() => {
     if (!lifeScene.actors.length) return "";
     try {
-      return lifeScene.render(lifeTick);
+      return lifeScene.render(lifeTick, { labelPx: lifeLabelPx });
     } catch {
       return "";
     }
-  }, [lifeScene, lifeTick]);
-  const sceneLayout = useMemo(() => bankImage?.labelLayout ?? getStoryLabelLayout(story.imageSrc), [bankImage, story.imageSrc]);
+  }, [lifeScene, lifeTick, lifeLabelPx]);
   const timeline = useMemo(() => buildElementTimeline(sceneElements, story.elementCues, duration), [sceneElements, story.elementCues, duration]);
+
+  // Há água na cena? Nas imagens do banco vale o mapa exato; nas geradas por IA, a análise de pixels.
+  const sceneHasWater = useMemo(() => {
+    const grid = getSceneGrid(story.imageSrc);
+    if (grid) return grid.cells.reduce((n, c) => n + (c === WATER ? 1 : 0), 0) >= 40;
+    return Boolean(sceneZones?.water);
+  }, [story.imageSrc, sceneZones]);
 
   // Plano de sons da história: ambiente do tema + o som de cada elemento no instante em que o rótulo dele entra.
   const soundPlan = useMemo(
@@ -304,10 +337,10 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         theme: bankImage?.theme ?? story.theme,
         elements: timeline.map((element) => ({ kreyol: element.kreyol, start: element.start })),
         duration,
-        hasWater: Boolean(sceneZones?.water),
+        hasWater: sceneHasWater,
         seed: `${story.imageSrc}|${story.title}`,
       }),
-    [bankImage?.theme, story.theme, story.imageSrc, story.title, timeline, duration, sceneZones]
+    [bankImage?.theme, story.theme, story.imageSrc, story.title, timeline, duration, sceneHasWater]
   );
 
   // Toca os sons enquanto a narração toca (agendados com 1 s de antecedência, acompanhando o áudio).
@@ -1351,20 +1384,6 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     }
   }
 
-  // Tamanho real do palco: usado para o tamanho do texto dos rótulos e para afastar rótulos que se sobreporiam.
-  const [stageSize, setStageSize] = useState({ w: 720, h: 405 });
-  useEffect(() => {
-    const element = playerViewportRef.current;
-    if (!element) return;
-    const update = () => setStageSize({ w: element.clientWidth || 720, h: element.clientHeight || 405 });
-    update();
-    if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(update);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-
-  const pillFontPx = Math.max(8, Math.min(12, stageSize.w * 0.0125));
   // Os rótulos aparecem um por vez, então não há o que afastar: cada um fica logo ACIMA do seu objeto.
   // O limite de borda (nada cortado) é aplicado na hora de desenhar, com o tamanho real da pílula.
   const labelLift = useMemo(

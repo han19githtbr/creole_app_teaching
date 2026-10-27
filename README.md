@@ -195,31 +195,41 @@ Cada vídeo tem **sons característicos dos elementos e do ambiente**, todos sin
 - **Rótulos e setas maiores** (31 px no destaque em vez de 19 px) e mais legíveis no celular.
 - **Mais qualidade de codificação:** H.264 a 16 Mbps (stories) e 12 Mbps (feed), áudio AAC 192 kbps; o WhatsApp e o Instagram recomprimem o vídeo, então uma entrada de maior qualidade chega melhor ao final.
 
-### Cenas Vivas e Interações Realistas (`src/lib/storySceneLife.ts`)
+### Cenas Vivas, Mapa da Cena e Elementos Nomeados (`src/lib/storySceneDirector.ts`)
 
-> **Cenário Limpo, Organizado e Interações Vivas:** Para manter a imagem perfeitamente limpa e os elementos rotulados sempre visíveis e legíveis, a camada de vida conta com um **diretor de layout espacial inteligente**. Ele posiciona as interações em faixas dedicadas (Zona de Água, Zona de Solo Lateral e Céu Superior), evitando o centro focal da ilustração e limitando a cena a no máximo uma interação principal e um elemento secundário.
+Sobre cada imagem da história roda uma **camada de vida**: pequenos "filmes" animados (avião decolando e pousando, helicóptero, guitarrista, aula ao ar livre, peixes, patos, tartaruga...) cujos **nomes** aparecem em Kreyòl (ou Français) · Português. Tudo é função pura do tempo (`render(t)`), então o player e o vídeo exportado mostram exatamente o mesmo quadro.
 
-Todas as cenas (banco Ghibli e imagens de IA) recebem interações vivas e comportamentos naturais com características e movimentos autênticos:
+**Cada elemento só aparece onde ele pertence.** Antes, os atores ficavam em faixas fixas e o detector de água confundia o céu azul com mar (tubarão nadando no céu, personagem em cima da bússola). Agora existe um **mapa espacial de cada cena**:
 
-- **Pessoas conversando (`conversationDuo`):** Diálogos com alternância real de fala (turnos de ~3,5 s), gesticulação natural dos braços, acenos de cabeça e ondas sonoras sutis de fala.
-- **Diversidade entre animais brincando e brigando (`playingAnimals`):** Cães e animais brincando, correndo atrás da bola com postura de brincadeira (*play-bow*), pequenas disputas brincalhonas (*playful sparring*) e rabos abanando.
-- **Pessoas conversando durante refeição ou festa cultural (`culturalParty`):** Dançarinos caribenhos em movimento rítmico, tamborista tradicional com pulsos de som e amigos brindando em confraternização festiva.
-- **Pessoas falando no celular (`phoneWalker`):** Caminhada natural com passos orgânicos, cabeça inclinada segurando o smartphone junto ao ouvido (com brilho de tela) e gesticulação livre da outra mão.
-- **Casais passeando na praia (`beachCouple`):** Casal caminhando de mãos dadas à beira-mar com passadas sincronizadas, efeito de brisa marítima no vestido e olhares mútuos.
-- **Jogo de futebol na quadra ou estádio (`soccerMatch`):** Dois jogadores trocando passes e finalizando com trajetória parabólica realista da bola, sombra projetada no solo, rotação da bola e saltos de comemoração.
-- **Tubarão caçando e comendo peixes (`sharkHunt`):** Perseguição dinâmica de predador no mar com aceleração, dentes batendo, respingos d'água na superfície e cardume que se dispersa em pânico.
-- **Robôs fazendo tarefas (`taskRobots`):** Robôs autônomos carregando caixas com luzes de telemetria, limpando/varrendo o solo e escaneando o ambiente com feixe holográfico em leque ciano.
-- **Ambientes e elementos naturais:** Ondas com espuma e reflexos, surfistas pegando tubo, barcos a vela, borboletas em voo orgânico e revoadas suaves de aves no céu.
+- `scripts/ghibli/scene-map/build-scene-map.mjs` lê os 300 SVGs de `public/ghibli`, renderiza cada objeto na ordem em que é desenhado e grava, para cada célula de 25 px (grade 48×32 sobre 1200×800), quem fica por cima: **céu, fundo distante (montanhas), água, chão livre ou objeto**. Camadas azuis/turquesa sem nome (água rasa, espuma) contam como água; cenas externas sem chão desenhado usam a faixa vazia da base como chão; cenas internas (parede clara) e as de Idiomas não recebem elementos extras. Saída: `src/lib/storySceneMap.json` (~100 KB). Para regenerar depois de mudar um SVG: `npm i -D @resvg/resvg-js` (se faltar) e `node scripts/ghibli/scene-map/build-scene-map.mjs`.
+- `src/lib/storySceneMap.ts` lê esse mapa (`getSceneGrid`) e responde "este retângulo cabe no chão / na água / no céu?". Para imagens geradas por IA (que não estão no banco) usa uma grade aproximada vinda de `analyzeSceneZones`, que agora só aceita água se houver **linha de horizonte** (mudança brusca de cor) e cor diferente do céu.
+- O mesmo mapa decide se a cena tem água para o **som ambiente** (`sceneHasWater` em `StoryPlayer.tsx`).
 
-**Como funciona a direção de cena limpa:**
+**Diretor de cena** (`storySceneDirector.ts`): escolhe os elementos pelo tema (e por palavras do texto: "avião", "violão", "professor", "barco"... sobem na fila), coloca cada um num lugar válido do mapa e respeita limites por cena (até 4 de chão, 3 de céu, 3 de água e 1 aeroporto). Regras de organização:
 
-1. `analyzeSceneZones` identifica a linha do horizonte, faixas de água e solo seguro.
-2. O **diretor de layout** aloca os atores em faixas laterais não sobrepostas (Zona Solo A em $x \approx 380-480$ e Zona Solo B em $x \approx 780-920$), mantendo o centro da ilustração livre de poluição visual para os rótulos e elementos da história.
-3. `render(t)` é uma função pura do tempo: devolve o SVG animado para o instante $t$, garantindo paridade absoluta entre a reprodução no player e a gravação de vídeo MP4 exportado.
-4. As cenas `tecnologia`, `natureza`, `turismo` e `gastronomia` principais já têm seus personagens no SVG e **não recebem camada extra** (evita duplicar).
-5. **Imagens geradas por IA** seguem o mesmo caminho: não exigem nada além do tema da imagem; a camada é aplicada na hora de tocar/exportar a história.
+- peixes, patos, golfinho, veleiro e tartaruga nadando só entram em células de **água**; tambor, guitarrista, aula, piquenique, fazenda, gato, ciclista, cavaleiro, tartaruga na terra etc. só em **chão livre**; aviões, helicóptero, aves e balão no **céu**; o aeroporto exige uma **faixa larga de chão** livre;
+- nada é colocado sobre objetos desenhados nem sobre os rótulos já existentes da cena (pouca sobreposição é tolerada, muita não);
+- um elemento cujo nome já existe na cena (ex.: a lição já tem "tambor") não é repetido;
+- à noite não entram aves nem balão; avião e helicóptero ganham luzes piscando.
 
-Desempenho medido: ~8 ms por quadro e ~17 KB de SVG por quadro; o resultado é determinístico (mesma entrada, mesmo quadro). Para adicionar um ator novo, crie a função de desenho em `storySceneLife.ts` e inclua-a no `case` do tema.
+**Catálogo** (`storyVignettes.ts` = céu e aeroporto; `storyVignettesLand.ts` = chão e água; nomes em `NAMES`):
+
+| Onde | Elementos (com comportamento) |
+|---|---|
+| Aeroporto (faixa de chão) | pista com manga de vento e terminal; **avião decolando** (roda, levanta o nariz, recolhe as rodas e sobe); **avião pousando** (desce, toca a pista, freia e para); **passageiros descendo a escada** do avião parado e andando até o terminal |
+| Céu | helicóptero (rotor, rotor de cauda, inclinação ao avançar, vai e volta pairando nas pontas), avião cruzando com rastro, bando de aves em V, balão de ar quente balançando |
+| Chão | guitarrista (notas musicais), tamborileiro (tambor apoiado no chão, anel de som a cada batida), **professor com quadro-negro e alunos** (um levanta a mão), piquenique, vaca e galinhas, gato (pisca e balança o rabo), ciclista e cavaleiro (vão e voltam pelo caminho livre), coelho/raposa/veado, tartaruga na terra (anda devagar), futebol, dança, robôs, refeição, casal passeando, dupla conversando, cães brincando |
+| Água | cardume, golfinho saltando (com respingos), patos (com ondinhas e mergulhos de bico), veleiro, tartaruga nadando |
+
+**Rótulos dos elementos novos** são desenhados dentro da própria camada de vida: pílula escura com texto "Kreyòl/Français · Português", fio dourado e seta até o objeto (mesmo visual dos rótulos existentes). Os rótulos de objetos que **se movem** (avião, helicóptero, ciclista...) acompanham o objeto. A cada quadro eles são posicionados de forma que **não cubram** outros nomes, os rótulos já existentes nem os bonecos parados; se não houver lugar livre naquele instante, o nome de um objeto em movimento some e volta quando houver espaço. O tamanho do texto acompanha a tela (`lifeLabelPx` no player; 28 px no vídeo exportado). Cada elemento novo entra com um fade escalonado nos primeiros segundos.
+
+**Movimento mais natural:** pessoas respiram e piscam, a caminhada tem leve inclinação e balanço de cabeça, aves batem asa em rajadas e planam entre elas, borboletas voam em trajetória irregular, cavalo e ciclista desaceleram ao virar. Os atores antigos (futebol, dança, robôs, refeição, cães brincando, casal) continuam disponíveis, agora com nome.
+
+**O que não mudou:** as animações que já vêm *dentro* de cada SVG (CSS) e os rótulos dos 4 elementos da lição (e do sol, nuvem, céu, chão, montanhas) continuam como estavam; as cenas de Idiomas continuam sem elementos extras (já trazem professor e alunos desenhados).
+
+Desempenho medido em Node (5 cenas, 300 quadros cada): 0,2 a 0,5 ms por quadro e 6 a 17 KB de SVG por quadro; resultado determinístico. Para adicionar um elemento novo: crie a função de desenho e a `VignetteDef` (com `need: "ground" | "sky" | "water" | "strip"`, tamanho e `labels(t)`) em `storyVignettes*.ts`, inclua os nomes em `NAMES` e o id na lista do tema em `PLAN` (`storySceneDirector.ts`).
+
+**Limites conhecidos:** em cenas com pouco chão livre ou muitos objetos, o diretor coloca menos elementos (a média hoje é de ~3 por cena; cenas de interior e de Idiomas, nenhum); "pássaros voando por uma janela" não foi feito porque poucas cenas têm janela desenhada (só as internas de tecnologia e as de Idiomas, que ficam sem elementos extras).
 
 ### Correções de estabilidade (tela "This page couldn't load")
 
@@ -1065,6 +1075,10 @@ Arquivos principais das histórias:
 | `src/lib/storyValidation.ts` | Validação das histórias no servidor |
 | `src/lib/audioVoiceActivity.ts` | Detecção de voz (VAD via Web Audio API) e sincronização estrita da digitação da legenda com as falas e pausas do áudio |
 | `src/lib/storyLifeEngine.ts` | Motor de vida dos elementos da imagem (animações de borboleta voando, asas, farfalhar, etc.) |
+| `src/lib/storySceneDirector.ts` | Diretor de cena: escolhe e posiciona os elementos animados e desenha seus rótulos sem sobreposição |
+| `src/lib/storySceneMap.ts` / `storySceneMap.json` | Mapa de cada cena (céu, água, chão livre, objetos) e consultas espaciais |
+| `src/lib/storyVignettes.ts` / `storyVignettesLand.ts` | Catálogo de elementos animados (céu, aeroporto, chão, água) e `NAMES` (Kreyòl · Français · Português) |
+| `scripts/ghibli/scene-map/build-scene-map.mjs` | Gera `storySceneMap.json` a partir dos SVGs |
 | `src/components/StoryPlayer.tsx` | Player (incluindo a legenda arrastável), setas dos rótulos e exportação do vídeo vertical |
 | `src/lib/storySoundscape.ts` | Sons sintetizados dos elementos e do ambiente (player e exportação) |
 | `src/lib/storyElementExtras.json` | Posição dos detalhes gerais da cena (sol, nuvem, céu, chão...) |

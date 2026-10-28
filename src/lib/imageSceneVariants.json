@@ -2574,220 +2574,237 @@
       "tree": "pyebwa",
       "blanket": "dra",
       "ball": "boul",
-      "swing": "balanse",
-      "picnic": "piknik",
+      "swing": "balanswa",
+      "picnic": "panye piknik",
       "duck": "kanna",
       "flower": "flè",
-      "book": "liv"
+      "book": "liv",
+      "football": "boul foutbòl",
+      "hammock": "hamak",
+      "cards": "kat jwe",
+      "volleynet": "filè volebòl",
+      "chess": "tablo echèk",
+      "pingpong": "tab pingpong",
+      "rod": "kann lapèch",
+      "kayak": "kayak",
+      "rope": "kòd sote",
+      "domino": "domino",
+      "pool": "pisin",
+      "skates": "patin",
+      "slide": "glisad",
+      "grill": "boukann",
+      "skate": "planch a woulèt",
+      "racket": "rakèt tenis",
+      "hoop": "panye baskèt"
     },
     "scenes": [
       {
-        "title": "Piquenique no parque",
-        "setting": "park",
-        "palette": "dia",
+        "title": "Rua ao amanhecer: bola de futebol e rede de descanso",
+        "setting": "asphalt",
+        "palette": "dawn",
         "objects": [
-          "blanket",
-          "picnic",
-          "tree",
-          "flower"
+          "football",
+          "hammock",
+          "cards",
+          "volleynet"
         ]
       },
       {
-        "title": "Pipas no campo",
+        "title": "Tarde com nuvens: cesta de piquenique e tabuleiro de xadrez",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "picnic",
+          "chess",
+          "pingpong",
+          "rod"
+        ]
+      },
+      {
+        "title": "Baía ao entardecer: caiaque e corda de pular",
+        "setting": "sand",
+        "palette": "sunset",
+        "objects": [
+          "kayak",
+          "rope",
+          "domino",
+          "pool"
+        ]
+      },
+      {
+        "title": "Fim de tarde violeta: patins e escorregador",
+        "setting": "cobble",
+        "palette": "violet",
+        "objects": [
+          "skates",
+          "slide",
+          "grill",
+          "skate"
+        ]
+      },
+      {
+        "title": "Amanhecer calmo: pipa e raquete de tênis",
         "setting": "meadow",
-        "palette": "entardecer",
+        "palette": "dawn",
         "objects": [
           "kite",
-          "tree",
-          "ball",
-          "flower"
-        ]
-      },
-      {
-        "title": "Passeio de bicicleta",
-        "setting": "park",
-        "palette": "dia",
-        "objects": [
-          "bike",
-          "tree",
-          "book",
-          "flower"
-        ]
-      },
-      {
-        "title": "Tarde no lago",
-        "setting": "lake",
-        "palette": "entardecer",
-        "objects": [
-          "duck",
-          "blanket",
-          "book",
-          "tree"
-        ]
-      },
-      {
-        "title": "Balanço no jardim",
-        "setting": "garden",
-        "palette": "dia",
-        "objects": [
+          "racket",
           "swing",
-          "flower",
-          "tree",
-          "ball"
+          "hoop"
         ]
       },
       {
-        "title": "Jogos ao ar livre",
-        "setting": "park",
-        "palette": "entardecer",
+        "title": "Entardecer dourado: rede de descanso e bicicleta",
+        "setting": "dirt",
+        "palette": "golden",
         "objects": [
-          "ball",
-          "picnic",
-          "kite",
-          "blanket"
-        ]
-      },
-      {
-        "title": "Leitura sob a árvore",
-        "setting": "grove",
-        "palette": "dia",
-        "objects": [
-          "book",
-          "tree",
-          "blanket",
-          "duck"
-        ]
-      },
-      {
-        "title": "Passeio entre flores",
-        "setting": "meadow",
-        "palette": "entardecer",
-        "objects": [
+          "hammock",
           "bike",
-          "flower",
-          "kite",
-          "tree"
+          "chess",
+          "slide"
         ]
       },
       {
-        "title": "Domingo no parque",
-        "setting": "park",
-        "palette": "dia",
-        "objects": [
-          "swing",
-          "picnic",
-          "duck",
-          "ball"
-        ]
-      },
-      {
-        "title": "Revoada de pipas na colina",
+        "title": "Manhã de névoa: churrasqueira e pipa",
         "setting": "meadow",
-        "palette": "dia",
+        "palette": "mist",
         "objects": [
+          "grill",
           "kite",
-          "tree",
-          "flower",
-          "ball"
+          "pool",
+          "volleynet"
         ]
       },
       {
-        "title": "Piquenique com cesta de vime",
-        "setting": "park",
-        "palette": "dia",
+        "title": "Estrada de terra: vara de pescar e bicicleta",
+        "setting": "dirt",
+        "palette": "clear",
         "objects": [
-          "picnic",
-          "blanket",
-          "tree",
-          "duck"
-        ]
-      },
-      {
-        "title": "Bicicleta no caminho florido",
-        "setting": "meadow",
-        "palette": "entardecer",
-        "objects": [
+          "rod",
           "bike",
-          "tree",
-          "flower",
-          "book"
-        ]
-      },
-      {
-        "title": "Balanço de corda no bosque",
-        "setting": "grove",
-        "palette": "dia",
-        "objects": [
-          "swing",
-          "tree",
-          "blanket",
-          "flower"
-        ]
-      },
-      {
-        "title": "Lago dos patos ao entardecer",
-        "setting": "lake",
-        "palette": "entardecer",
-        "objects": [
-          "duck",
-          "tree",
-          "blanket",
-          "picnic"
-        ]
-      },
-      {
-        "title": "Jogo de bola no gramado",
-        "setting": "park",
-        "palette": "dia",
-        "objects": [
-          "ball",
-          "tree",
-          "bike",
-          "flower"
-        ]
-      },
-      {
-        "title": "Cantinho de leitura no jardim",
-        "setting": "garden",
-        "palette": "dia",
-        "objects": [
-          "book",
-          "tree",
-          "blanket",
+          "domino",
           "swing"
         ]
       },
       {
-        "title": "Pipa colorida sobre os campos",
-        "setting": "meadow",
-        "palette": "entardecer",
+        "title": "Tarde de sol: corda de pular e baralho",
+        "setting": "grass",
+        "palette": "day",
         "objects": [
-          "kite",
-          "flower",
-          "bike",
-          "ball"
+          "rope",
+          "cards",
+          "pingpong",
+          "skates"
         ]
       },
       {
-        "title": "Tarde ensolarada na lagoa",
-        "setting": "lake",
-        "palette": "dia",
+        "title": "Praça ensolarada: skate e raquete de tênis",
+        "setting": "cobble",
+        "palette": "day",
         "objects": [
-          "duck",
+          "skate",
+          "racket",
           "picnic",
-          "ball",
-          "tree"
+          "rope"
         ]
       },
       {
-        "title": "Passeio de bicicleta no fim da tarde",
-        "setting": "park",
-        "palette": "entardecer",
+        "title": "Pôr do sol: cesta de basquete e bola de futebol",
+        "setting": "grass",
+        "palette": "sunset",
         "objects": [
+          "hoop",
+          "football",
+          "picnic",
+          "pool"
+        ]
+      },
+      {
+        "title": "Praia ensolarada: caiaque e escorregador",
+        "setting": "sand",
+        "palette": "clear",
+        "objects": [
+          "kayak",
+          "slide",
+          "cards",
+          "racket"
+        ]
+      },
+      {
+        "title": "Dia nublado: rede de descanso e churrasqueira",
+        "setting": "moss",
+        "palette": "overcast",
+        "objects": [
+          "hammock",
+          "grill",
+          "domino",
+          "hoop"
+        ]
+      },
+      {
+        "title": "Luar tranquilo: skate e bola de futebol",
+        "setting": "night",
+        "palette": "night",
+        "objects": [
+          "skate",
+          "football",
           "bike",
-          "flower",
-          "kite",
-          "book"
+          "kite"
+        ]
+      },
+      {
+        "title": "Céu limpo: tabuleiro de xadrez e balanço",
+        "setting": "grass",
+        "palette": "clear",
+        "objects": [
+          "chess",
+          "swing",
+          "skates",
+          "volleynet"
+        ]
+      },
+      {
+        "title": "Entardecer na vila: vara de pescar e skate",
+        "setting": "cobble",
+        "palette": "sunset",
+        "objects": [
+          "rod",
+          "skate",
+          "volleynet",
+          "hoop"
+        ]
+      },
+      {
+        "title": "Chuva leve: mesa de pingue-pongue e bola de futebol",
+        "setting": "forest",
+        "palette": "rain",
+        "objects": [
+          "pingpong",
+          "football",
+          "domino",
+          "slide"
+        ]
+      },
+      {
+        "title": "Costa de manhã: caiaque e patins",
+        "setting": "sand",
+        "palette": "dawn",
+        "objects": [
+          "kayak",
+          "skates",
+          "rod",
+          "hammock"
+        ]
+      },
+      {
+        "title": "Sol da manhã: piscina e raquete de tênis",
+        "setting": "grass",
+        "palette": "golden",
+        "objects": [
+          "pool",
+          "racket",
+          "pingpong",
+          "bike"
         ]
       }
     ]

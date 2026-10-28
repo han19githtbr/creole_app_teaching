@@ -251,6 +251,23 @@ const ICONS: Record<string, string> = {
   "tira de filme": "🎞️",
   "luz de estudio": "💡",
   "tela verde": "🟩",
+  "bola de futebol": "⚽",
+  "raquete de tenis": "🎾",
+  "rede de volei": "🏐",
+  "vara de pescar": "🎣",
+  "skate": "🛹",
+  "escorregador": "🛝",
+  "piscina": "🏊",
+  "rede de descanso": "🛏️",
+  "tabuleiro de xadrez": "♟️",
+  "baralho": "🃏",
+  "domino": "🁣",
+  "patins": "🛼",
+  "corda de pular": "➰",
+  "cesta de basquete": "🏀",
+  "caiaque": "🛶",
+  "churrasqueira": "🍖",
+  "mesa de pingue-pongue": "🏓",
 };
 
 /** Alguns elementos do banco trazem o nome em Kreyòl no campo `pt`; mapeamos esses nomes também. */

@@ -1,205 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Jogo de bola no gramado - Lwazi</title>
-  <desc>Ghibli anime art: Jogo de bola no gramado com pipas, passeios e momentos de lazer.</desc>
-  
-  <defs>
-    <!-- Paper watercolor texture filter -->
-    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
-      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
-      <feComposite operator="in" in2="SourceGraphic"/>
-    </filter>
-
-    <!-- Soft diffuse drop shadow -->
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
-
-    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
-    </filter>
-
-    <!-- Sky Gradients -->
-    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#236ca7"/>
-      <stop offset="35%" stop-color="#5fa3d6"/>
-      <stop offset="70%" stop-color="#b8e1f2"/>
-      <stop offset="100%" stop-color="#fdf3dc"/>
-    </linearGradient>
-
-    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#31396b"/>
-      <stop offset="35%" stop-color="#73507b"/>
-      <stop offset="65%" stop-color="#cb6b5c"/>
-      <stop offset="85%" stop-color="#f29e5a"/>
-      <stop offset="100%" stop-color="#fedaa2"/>
-    </linearGradient>
-
-    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#121832"/>
-      <stop offset="40%" stop-color="#262f56"/>
-      <stop offset="70%" stop-color="#4e3d64"/>
-      <stop offset="90%" stop-color="#915264"/>
-      <stop offset="100%" stop-color="#d6846c"/>
-    </linearGradient>
-
-    <!-- Cloud Gradients -->
-    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="45%" stop-color="#fcf8f0"/>
-      <stop offset="80%" stop-color="#d9e4ec"/>
-      <stop offset="100%" stop-color="#b6c8d7"/>
-    </linearGradient>
-
-    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#fff5e6"/>
-      <stop offset="40%" stop-color="#fbd0a5"/>
-      <stop offset="75%" stop-color="#cf8ca0"/>
-      <stop offset="100%" stop-color="#7e607c"/>
-    </linearGradient>
-
-    <!-- Sun / Glow Gradients -->
-    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
-      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
-      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
-    </radialGradient>
-
-    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
-      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
-      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
-      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
-    </radialGradient>
-
-    <!-- Hills / Mountains Gradients -->
-    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#6e94a8"/>
-      <stop offset="100%" stop-color="#93b9c7"/>
-    </linearGradient>
-
-    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4a7c4f"/>
-      <stop offset="50%" stop-color="#3c6a40"/>
-      <stop offset="100%" stop-color="#2d5231"/>
-    </linearGradient>
-
-    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#699e4c"/>
-      <stop offset="60%" stop-color="#4c7e33"/>
-      <stop offset="100%" stop-color="#2f5720"/>
-    </linearGradient>
-
-    <!-- Materials: Wood, Brass, Stone, Water -->
-    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#9c6d48"/>
-      <stop offset="50%" stop-color="#784f30"/>
-      <stop offset="100%" stop-color="#55341c"/>
-    </linearGradient>
-
-    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#ffe699"/>
-      <stop offset="35%" stop-color="#d9a536"/>
-      <stop offset="70%" stop-color="#996c14"/>
-      <stop offset="100%" stop-color="#5e4007"/>
-    </linearGradient>
-
-    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#c5beb3"/>
-      <stop offset="60%" stop-color="#999184"/>
-      <stop offset="100%" stop-color="#6c6458"/>
-    </linearGradient>
-
-    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#47a5be"/>
-      <stop offset="50%" stop-color="#2a7796"/>
-      <stop offset="100%" stop-color="#144d6a"/>
-    </linearGradient>
-  </defs>
-  
-  <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
-  
-  <g>
-    <circle cx="900" cy="140" r="168" fill="url(#sunGlowDay)" />
-    <circle cx="900" cy="140" r="48" fill="#fffded" />
-    <!-- Subtle sun rays -->
-    <polygon points="900,140 600,800 780,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="900,140 950,800 1140,800" fill="#fffbe6" opacity="0.08" />
-    <polygon points="900,140 1260,800 1460,800" fill="#fffbe6" opacity="0.06" />
-  </g>
-  
-  <g transform="translate(240, 180) scale(0.9)" opacity="0.95">
-    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
-    <path d="M-180,40 
-      C-200,10 -180,-30 -140,-40 
-      C-150,-80 -100,-110 -50,-100 
-      C-30,-150 40,-160 80,-130 
-      C120,-160 180,-140 200,-90 
-      C240,-80 260,-40 240,10 
-      C270,40 250,90 200,95 
-      L-150,95 
-      C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
-    <!-- Bright inner highlights (Ghibli fluff) -->
-    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
-    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
-    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
-    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
-  </g>
-  
-  <g transform="translate(600, 120) scale(0.75)" opacity="0.95">
-    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
-    <path d="M-180,40 
-      C-200,10 -180,-30 -140,-40 
-      C-150,-80 -100,-110 -50,-100 
-      C-30,-150 40,-160 80,-130 
-      C120,-160 180,-140 200,-90 
-      C240,-80 260,-40 240,10 
-      C270,40 250,90 200,95 
-      L-150,95 
-      C-190,90 -210,60 -180,40 Z" 
-      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
-    <!-- Bright inner highlights (Ghibli fluff) -->
-    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
-    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
-    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
-    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
-  </g>
-  
-  
-        <!-- Rolling Lush Green Park Meadow -->
-  <path d="M-50,560 Q320,500 680,550 T1250,520 L1250,800 L-50,800 Z" fill="url(#hillMid)"/>
-  <path d="M-50,630 Q350,580 750,630 T1250,600 L1250,800 L-50,800 Z" fill="url(#hillNear)"/>
-        <g transform="translate(360, 640) scale(1.35)" filter="url(#dropShadow)">
-    <ellipse cx="0" cy="55" rx="80" ry="14" fill="#000000" opacity="0.3"/>
-    <!-- Wheels -->
-    <circle cx="-55" cy="20" r="32" fill="none" stroke="#334155" stroke-width="4"/>
-    <circle cx="-55" cy="20" r="4" fill="#0f172a"/>
-    <line x1="-55" y1="-12" x2="-55" y2="52" stroke="#94a3b8" stroke-width="1.5" transform="rotate(0 -55 20)"/><line x1="-55" y1="-12" x2="-55" y2="52" stroke="#94a3b8" stroke-width="1.5" transform="rotate(45 -55 20)"/><line x1="-55" y1="-12" x2="-55" y2="52" stroke="#94a3b8" stroke-width="1.5" transform="rotate(90 -55 20)"/><line x1="-55" y1="-12" x2="-55" y2="52" stroke="#94a3b8" stroke-width="1.5" transform="rotate(135 -55 20)"/>
-    
-    <circle cx="55" cy="20" r="32" fill="none" stroke="#334155" stroke-width="4"/>
-    <circle cx="55" cy="20" r="4" fill="#0f172a"/>
-    <line x1="55" y1="-12" x2="55" y2="52" stroke="#94a3b8" stroke-width="1.5" transform="rotate(0 55 20)"/><line x1="55" y1="-12" x2="55" y2="52" stroke="#94a3b8" stroke-width="1.5" transform="rotate(45 55 20)"/><line x1="55" y1="-12" x2="55" y2="52" stroke="#94a3b8" stroke-width="1.5" transform="rotate(90 55 20)"/><line x1="55" y1="-12" x2="55" y2="52" stroke="#94a3b8" stroke-width="1.5" transform="rotate(135 55 20)"/>
-    
-    <!-- Vintage Turquoise Frame -->
-    <line x1="-55" y1="20" x2="-10" y2="20" stroke="#06b6d4" stroke-width="5"/>
-    <line x1="-10" y1="20" x2="-25" y2="-20" stroke="#06b6d4" stroke-width="5"/>
-    <line x1="-55" y1="20" x2="-25" y2="-20" stroke="#06b6d4" stroke-width="5"/>
-    <line x1="-25" y1="-20" x2="35" y2="-20" stroke="#06b6d4" stroke-width="5"/>
-    <line x1="-10" y1="20" x2="35" y2="-20" stroke="#06b6d4" stroke-width="5"/>
-    <line x1="35" y1="-20" x2="55" y2="20" stroke="#06b6d4" stroke-width="5"/>
-    <!-- Handlebars and Wicker Basket -->
-    <path d="M35,-20 L40,-45 Q45,-55 60,-50" stroke="#475569" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <rect x="42" y="-45" width="22" height="18" rx="3" fill="#d97706" stroke="#b45309" stroke-width="1.5"/>
-    <!-- Saddle -->
-    <path d="M-35,-25 Q-25,-32 -15,-25" stroke="#78350f" stroke-width="8" stroke-linecap="round"/>
-  </g>
-        <g transform="translate(750, 670) scale(1.5)" filter="url(#dropShadow)">
-    <circle cx="0" cy="0" r="22" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
-    <path d="M-22,0 Q0,-15 22,0 Q0,15 -22,0 Z" fill="#facc15"/>
-    <path d="M0,-22 Q-15,0 0,22 Q15,0 0,-22 Z" fill="#3b82f6"/>
-  </g>
-      
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800"><title>Céu limpo: tabuleiro de xadrez e balanço</title><defs><linearGradient id="woodTone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a77649"/><stop offset=".5" stop-color="#7d5231"/><stop offset="1" stop-color="#5a381e"/></linearGradient>
+<linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c5beb3"/><stop offset="1" stop-color="#7c7468"/></linearGradient>
+<filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="2" dy="5" stdDeviation="4" flood-color="#1b1a14" flood-opacity=".25"/></filter>
+<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="11"/><feColorMatrix type="matrix" values="0 0 0 0 .34  0 0 0 0 .34  0 0 0 0 .32  0 0 0 .22 -.07"/></filter><linearGradient id="skyMain" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c63a6"/><stop offset=".38" stop-color="#3f8fcf"/><stop offset=".72" stop-color="#8cc7ea"/><stop offset="1" stop-color="#d8f0f8"/></linearGradient>
+<linearGradient id="cloudG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c7d8e6"/></linearGradient>
+<radialGradient id="sunG"><stop offset="0" stop-color="#fffbe0"/><stop offset=".3" stop-color="#ffe38a" stop-opacity=".85"/><stop offset="1" stop-color="#ffe38a" stop-opacity="0"/></radialGradient><linearGradient id="gndG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc063"/><stop offset=".5" stop-color="#5a9440"/><stop offset="1" stop-color="#3a6a2c"/></linearGradient></defs>
+<rect width="1200" height="800" fill="url(#skyMain)"/>
+<!-- sun glow -->
+<g><circle cx="256.2" cy="197.8" r="189.04" fill="url(#sunG)"/><circle cx="256.2" cy="197.8" r="55.6" fill="#fffbe0"/></g>
+<!-- cloud 0 -->
+<g transform="translate(191.3,169.4) scale(0.8)" opacity="0.9"><path d="M-160,10 Q-100,-14 -30,4 Q40,22 100,-4 Q150,-18 190,6" stroke="#fff" stroke-width="12" stroke-linecap="round" fill="none" opacity=".55"/><path d="M-120,34 Q-50,18 20,34 Q80,46 130,30" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none" opacity=".4"/></g>
+<!-- cloud 1 -->
+<g transform="translate(710.3,168) scale(1)" opacity="0.9"><circle cx="-40" cy="0" r="34" fill="url(#cloudG)"/><circle cx="0" cy="-16" r="42" fill="url(#cloudG)"/><circle cx="46" cy="-2" r="32" fill="url(#cloudG)"/><rect x="-62" y="0" width="130" height="32" rx="16" fill="url(#cloudG)"/><circle cx="-4" cy="-26" r="24" fill="#fff" opacity=".4"/></g>
+<!-- distant snow peaks --><path d="M-20,580 L220,330 L460,580 Z" fill="#8a9aaa"/><path d="M158,410 L220,330 L282,410 L250,396 L220,422 L190,394 Z" fill="#f4f8fb"/><path d="M320,580 L560,260 L800,580 Z" fill="#8a9aaa"/><path d="M498,340 L560,260 L622,340 L590,326 L560,352 L530,324 Z" fill="#f4f8fb"/><path d="M660,580 L900,320 L1140,580 Z" fill="#8a9aaa"/><path d="M838,400 L900,320 L962,400 L930,386 L900,412 L870,384 Z" fill="#f4f8fb"/>
+<!-- ground grass -->
+<g><path d="M-20,586 Q60,573.9 120,589.8 Q180,558 240,582.4 Q300,560.2 360,588.9 Q420,563.3 480,582.6 Q540,570.1 600,586.9 Q660,565.4 720,580.4 Q780,580.4 840,582.4 Q900,554.9 960,586.4 Q1020,580.4 1080,588.1 Q1140,566.7 1200,580.1 Q1260,582.2 1320,584.8 L1240,820 L-20,820 Z" fill="url(#gndG)"/><path d="M101.8,743.6 q-3,-14 -8,-18 M101.8,743.6 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M318.3,694.1 q-3,-14 -8,-18 M318.3,694.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M338.5,765.6 q-3,-14 -8,-18 M338.5,765.6 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M906.8,612.4 q-3,-14 -8,-18 M906.8,612.4 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M298,637.5 q-3,-14 -8,-18 M298,637.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M1161.9,718.1 q-3,-14 -8,-18 M1161.9,718.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M981.9,738.1 q-3,-14 -8,-18 M981.9,738.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M961.5,769.8 q-3,-14 -8,-18 M961.5,769.8 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M330.3,722.1 q-3,-14 -8,-18 M330.3,722.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M729.3,725 q-3,-14 -8,-18 M729.3,725 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M941.6,718.5 q-3,-14 -8,-18 M941.6,718.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M857.6,711.5 q-3,-14 -8,-18 M857.6,711.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M707.5,788 q-3,-14 -8,-18 M707.5,788 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M1175.2,614.5 q-3,-14 -8,-18 M1175.2,614.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M1016.4,789.1 q-3,-14 -8,-18 M1016.4,789.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M966.9,796 q-3,-14 -8,-18 M966.9,796 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M584.3,726.5 q-3,-14 -8,-18 M584.3,726.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M679.3,664.3 q-3,-14 -8,-18 M679.3,664.3 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M482.7,630.2 q-3,-14 -8,-18 M482.7,630.2 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M1021.6,647.1 q-3,-14 -8,-18 M1021.6,647.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M641.4,698.4 q-3,-14 -8,-18 M641.4,698.4 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M507,781.2 q-3,-14 -8,-18 M507,781.2 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M431.5,716.8 q-3,-14 -8,-18 M431.5,716.8 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M1191.4,687.6 q-3,-14 -8,-18 M1191.4,687.6 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M443.3,609.6 q-3,-14 -8,-18 M443.3,609.6 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M745.8,736.3 q-3,-14 -8,-18 M745.8,736.3 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M629.1,715.6 q-3,-14 -8,-18 M629.1,715.6 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M576.4,801 q-3,-14 -8,-18 M576.4,801 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M163.2,754 q-3,-14 -8,-18 M163.2,754 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M733.2,764.1 q-3,-14 -8,-18 M733.2,764.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M626,666.2 q-3,-14 -8,-18 M626,666.2 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M334.5,742.3 q-3,-14 -8,-18 M334.5,742.3 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M141.5,600.5 q-3,-14 -8,-18 M141.5,600.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M43.8,768.1 q-3,-14 -8,-18 M43.8,768.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M601.2,668.2 q-3,-14 -8,-18 M601.2,668.2 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M940.3,775.5 q-3,-14 -8,-18 M940.3,775.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M988.7,614.7 q-3,-14 -8,-18 M988.7,614.7 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M761.2,803.2 q-3,-14 -8,-18 M761.2,803.2 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M799.9,605.1 q-3,-14 -8,-18 M799.9,605.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M661.2,721.4 q-3,-14 -8,-18 M661.2,721.4 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M1174.6,803.9 q-3,-14 -8,-18 M1174.6,803.9 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M368.7,599.9 q-3,-14 -8,-18 M368.7,599.9 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M604.5,678.5 q-3,-14 -8,-18 M604.5,678.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M283.8,626.9 q-3,-14 -8,-18 M283.8,626.9 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M786.8,784 q-3,-14 -8,-18 M786.8,784 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M199.1,684.1 q-3,-14 -8,-18 M199.1,684.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M1077.3,804.3 q-3,-14 -8,-18 M1077.3,804.3 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M4,632.9 q-3,-14 -8,-18 M4,632.9 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M954.3,619.1 q-3,-14 -8,-18 M954.3,619.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M763.4,728.5 q-3,-14 -8,-18 M763.4,728.5 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M949,630.4 q-3,-14 -8,-18 M949,630.4 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M404.2,633.1 q-3,-14 -8,-18 M404.2,633.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M550,720.1 q-3,-14 -8,-18 M550,720.1 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M1053.8,805.6 q-3,-14 -8,-18 M1053.8,805.6 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M819.7,732.8 q-3,-14 -8,-18 M819.7,732.8 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M287.8,597.6 q-3,-14 -8,-18 M287.8,597.6 q3,-16 9,-20" stroke="#a5ce85" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/></g>
+<!-- decor birds in flight -->
+<g stroke="#2a3440" stroke-width="3.5" fill="none" stroke-linecap="round"><path d="M263.2,231.6 q5.7,-7.1 11.3,1.4 q5.7,-8.5 11.3,-1.4" /><path d="M802.8,256.9 q6.2,-7.8 12.5,1.6 q6.2,-9.4 12.5,-1.6" /><path d="M498.5,162.3 q11.6,-14.5 23.3,2.9 q11.6,-17.4 23.3,-2.9" /></g>
+<!-- obj patin -->
+<g transform="translate(1055.4,674.4) scale(0.9)"><ellipse cx="0" cy="0" rx="90" ry="18" fill="#1b1a14" opacity="0.28"/><g transform="translate(-50,-2) rotate(-6)"><path d="M-34,-66 L-34,-24 L40,-24 L40,-44 Q40,-62 18,-66 L8,-100 L-34,-100 Z" fill="#e84393" stroke="#802551" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" /><rect x="-38" y="-26" width="82" height="12" rx="4" fill="#2f3944" stroke="#1a1f25" stroke-width="2.5" /><circle cx="-26" cy="-8" r="9" fill="#f7d23e" stroke="#a88a10" stroke-width="2.5"/><circle cx="-4" cy="-8" r="9" fill="#f7d23e" stroke="#a88a10" stroke-width="2.5"/><circle cx="18" cy="-8" r="9" fill="#f7d23e" stroke="#a88a10" stroke-width="2.5"/><circle cx="36" cy="-8" r="9" fill="#f7d23e" stroke="#a88a10" stroke-width="2.5"/><line x1="-24" y1="-80" x2="-8" y2="-90" stroke="#fff" stroke-width="3"/><line x1="-12" y1="-70" x2="4" y2="-80" stroke="#fff" stroke-width="3"/><line x1="0" y1="-60" x2="16" y2="-70" stroke="#fff" stroke-width="3"/></g><g transform="translate(50,-2) rotate(8)"><path d="M-34,-66 L-34,-24 L40,-24 L40,-44 Q40,-62 18,-66 L8,-100 L-34,-100 Z" fill="#e84393" stroke="#802551" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" /><rect x="-38" y="-26" width="82" height="12" rx="4" fill="#2f3944" stroke="#1a1f25" stroke-width="2.5" /><circle cx="-26" cy="-8" r="9" fill="#f7d23e" stroke="#a88a10" stroke-width="2.5"/><circle cx="-4" cy="-8" r="9" fill="#f7d23e" stroke="#a88a10" stroke-width="2.5"/><circle cx="18" cy="-8" r="9" fill="#f7d23e" stroke="#a88a10" stroke-width="2.5"/><circle cx="36" cy="-8" r="9" fill="#f7d23e" stroke="#a88a10" stroke-width="2.5"/><line x1="-24" y1="-80" x2="-8" y2="-90" stroke="#fff" stroke-width="3"/><line x1="-12" y1="-70" x2="4" y2="-80" stroke="#fff" stroke-width="3"/><line x1="0" y1="-60" x2="16" y2="-70" stroke="#fff" stroke-width="3"/></g></g>
+<!-- obj balanswa -->
+<g transform="translate(521.3,690.8) scale(0.8)"><ellipse cx="0" cy="0" rx="120" ry="24" fill="#1b1a14" opacity="0.28"/><line x1="-110" y1="-4" x2="-60" y2="-260" stroke="#7a5230" stroke-width="12" stroke-linecap="round" /><line x1="110" y1="-4" x2="60" y2="-260" stroke="#7a5230" stroke-width="12" stroke-linecap="round" /><line x1="-60" y1="-260" x2="60" y2="-260" stroke="#7a5230" stroke-width="12" stroke-linecap="round" /><line x1="-30" y1="-256" x2="-34" y2="-96" stroke="#6b747d" stroke-width="4" stroke-linecap="round" /><line x1="30" y1="-256" x2="34" y2="-96" stroke="#6b747d" stroke-width="4" stroke-linecap="round" /><rect x="-52" y="-96" width="86" height="14" rx="4" fill="#e8464a" stroke="#802729" stroke-width="3" /></g>
+<!-- obj tablo echk -->
+<g transform="translate(794.2,719.5) scale(1)"><ellipse cx="0" cy="0" rx="96" ry="19.2" fill="#1b1a14" opacity="0.28"/><path d="M-100,-6 L100,-6 L86,-60 L-86,-60 Z" fill="#7a4a22" stroke="#432913" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" /><polygon points="-80,-56 -40,-56 -38,-44 -78,-44" fill="#f1e4c8"/><polygon points="-40,-56 0,-56 2,-44 -38,-44" fill="#2a1a10"/><polygon points="0,-56 40,-56 42,-44 2,-44" fill="#f1e4c8"/><polygon points="40,-56 80,-56 82,-44 42,-44" fill="#2a1a10"/><polygon points="-76,-44 -36,-44 -34,-32 -74,-32" fill="#2a1a10"/><polygon points="-36,-44 4,-44 6,-32 -34,-32" fill="#f1e4c8"/><polygon points="4,-44 44,-44 46,-32 6,-32" fill="#2a1a10"/><polygon points="44,-44 84,-44 86,-32 46,-32" fill="#f1e4c8"/><polygon points="-72,-32 -32,-32 -30,-20 -70,-20" fill="#f1e4c8"/><polygon points="-32,-32 8,-32 10,-20 -30,-20" fill="#2a1a10"/><polygon points="8,-32 48,-32 50,-20 10,-20" fill="#f1e4c8"/><polygon points="48,-32 88,-32 90,-20 50,-20" fill="#2a1a10"/><polygon points="-68,-20 -28,-20 -26,-8 -66,-8" fill="#2a1a10"/><polygon points="-28,-20 12,-20 14,-8 -26,-8" fill="#f1e4c8"/><polygon points="12,-20 52,-20 54,-8 14,-8" fill="#2a1a10"/><polygon points="52,-20 92,-20 94,-8 54,-8" fill="#f1e4c8"/><path d="M-30,-60 Q-34,-90 -26,-100 L-34,-104 L-18,-104 L-22,-112 Q-18,-122 -10,-112 L-14,-104 L2,-104 L-6,-100 Q2,-90 -2,-60 Z" fill="#fafafa" stroke="#8a8a8a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" /><path d="M40,-56 Q36,-96 46,-110 Q60,-112 64,-96 Q66,-80 64,-56 Z" fill="#2a1a10" stroke="#170e09" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" /></g>
+<!-- obj fil volebl -->
+<g transform="translate(203,735.9) scale(0.9)"><ellipse cx="0" cy="0" rx="150" ry="30" fill="#1b1a14" opacity="0.28"/><rect x="-150" y="-250" width="12" height="246" rx="4" fill="#e8e8ee" stroke="#808083" stroke-width="3" /><rect x="138" y="-250" width="12" height="246" rx="4" fill="#e8e8ee" stroke="#808083" stroke-width="3" /><rect x="-146" y="-230" width="296" height="100" rx="3" fill="none" stroke="#252525" stroke-width="0" /><g stroke="#f4f4f0" stroke-width="2.2" opacity=".9"><line x1="-138" y1="-228" x2="-138" y2="-130"/><line x1="-126" y1="-228" x2="-126" y2="-130"/><line x1="-114" y1="-228" x2="-114" y2="-130"/><line x1="-102" y1="-228" x2="-102" y2="-130"/><line x1="-90" y1="-228" x2="-90" y2="-130"/><line x1="-78" y1="-228" x2="-78" y2="-130"/><line x1="-66" y1="-228" x2="-66" y2="-130"/><line x1="-54" y1="-228" x2="-54" y2="-130"/><line x1="-42" y1="-228" x2="-42" y2="-130"/><line x1="-30" y1="-228" x2="-30" y2="-130"/><line x1="-18" y1="-228" x2="-18" y2="-130"/><line x1="-6" y1="-228" x2="-6" y2="-130"/><line x1="6" y1="-228" x2="6" y2="-130"/><line x1="18" y1="-228" x2="18" y2="-130"/><line x1="30" y1="-228" x2="30" y2="-130"/><line x1="42" y1="-228" x2="42" y2="-130"/><line x1="54" y1="-228" x2="54" y2="-130"/><line x1="66" y1="-228" x2="66" y2="-130"/><line x1="78" y1="-228" x2="78" y2="-130"/><line x1="90" y1="-228" x2="90" y2="-130"/><line x1="102" y1="-228" x2="102" y2="-130"/><line x1="114" y1="-228" x2="114" y2="-130"/><line x1="126" y1="-228" x2="126" y2="-130"/><line x1="138" y1="-228" x2="138" y2="-130"/><line x1="-138" y1="-228" x2="138" y2="-228"/><line x1="-138" y1="-216" x2="138" y2="-216"/><line x1="-138" y1="-204" x2="138" y2="-204"/><line x1="-138" y1="-192" x2="138" y2="-192"/><line x1="-138" y1="-180" x2="138" y2="-180"/><line x1="-138" y1="-168" x2="138" y2="-168"/><line x1="-138" y1="-156" x2="138" y2="-156"/><line x1="-138" y1="-144" x2="138" y2="-144"/><line x1="-138" y1="-132" x2="138" y2="-132"/></g><rect x="-146" y="-236" width="296" height="12" rx="3" fill="#fafafa" stroke="#8a8a8a" stroke-width="2.5" /><rect x="-146" y="-138" width="296" height="8" rx="3" fill="#fafafa" stroke="#8a8a8a" stroke-width="2.5" /><g transform="translate(70,-100)"><circle r="26" fill="#f7d23e" stroke="#7c691f" stroke-width="3"/><path d="M-24,-6 Q0,-16 24,-6 M-20,16 Q0,6 22,16" stroke="#2f6bb5" stroke-width="3" fill="none"/></g></g>
+<!-- texture overlay -->
+<rect x="-1" y="0" width="1202" height="800" filter="url(#grain)" opacity=".55"/>
 </svg>

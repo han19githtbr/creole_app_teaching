@@ -1325,216 +1325,231 @@
       "music": "mizik",
       "star": "zetwal",
       "fan": "fan",
-      "stage": "sèn"
+      "stage": "sèn",
+      "flute": "flit",
+      "trumpet": "trompèt",
+      "shoes": "soulye danse",
+      "barre": "barè",
+      "tanbou": "tanbou",
+      "evantay": "evantay",
+      "violin": "vyolon",
+      "lanp": "lanp",
+      "mat": "tapi",
+      "dancerM": "dansè gason",
+      "flamenco": "rad flamenko",
+      "flowercrown": "kouwòn flè",
+      "spotlight": "pwojektè",
+      "skirt": "jip woule",
+      "ballerina": "balerin",
+      "dancerF": "dansè fi",
+      "castanets": "kastayèt",
+      "mirror": "mirwa",
+      "tcha-tcha": "tcha-tcha",
+      "guitar": "gita",
+      "kostim": "kostim",
+      "accordion": "akòdeyon",
+      "discoball": "boul diskò",
+      "plim": "plim"
     },
     "scenes": [
       {
-        "title": "Baile sob as lanternas",
-        "setting": "stage",
-        "palette": "night",
+        "title": "Campo florido: flauta e trompete",
+        "setting": "meadow",
+        "palette": "day",
         "objects": [
-          "dancer",
-          "lantern",
-          "ribbon",
-          "drum"
+          "flute",
+          "trumpet",
+          "shoes",
+          "barre"
         ]
       },
       {
-        "title": "Ensaio no salão",
-        "setting": "studio",
-        "palette": "dia",
-        "objects": [
-          "dancer",
-          "music",
-          "costume",
-          "stage"
-        ]
-      },
-      {
-        "title": "Dança das fitas",
-        "setting": "festival",
-        "palette": "entardecer",
-        "objects": [
-          "ribbon",
-          "flower",
-          "dancer",
-          "star"
-        ]
-      },
-      {
-        "title": "Ritmo dos tambores",
-        "setting": "courtyard",
-        "palette": "night",
-        "objects": [
-          "drum",
-          "dancer",
-          "lantern",
-          "music"
-        ]
-      },
-      {
-        "title": "Apresentação colorida",
-        "setting": "stage",
-        "palette": "dia",
-        "objects": [
-          "costume",
-          "stage",
-          "fan",
-          "flower"
-        ]
-      },
-      {
-        "title": "Festa no jardim",
-        "setting": "garden",
-        "palette": "entardecer",
-        "objects": [
-          "dancer",
-          "flower",
-          "lantern",
-          "ribbon"
-        ]
-      },
-      {
-        "title": "Dança ao ar livre",
-        "setting": "square",
-        "palette": "dia",
+        "title": "Sala de leitura: palco e tambor",
+        "setting": "wood",
         "objects": [
           "stage",
-          "music",
-          "star",
-          "dancer"
+          "tanbou",
+          "evantay",
+          "violin"
         ]
       },
       {
-        "title": "Noite de konpa",
-        "setting": "festival",
+        "title": "Noite estrelada: lanterna e tapete de dança",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "drum",
-          "fan",
-          "costume",
-          "lantern"
+          "lanp",
+          "mat",
+          "dancerM",
+          "flamenco"
         ]
       },
       {
-        "title": "Festival de dança",
-        "setting": "parade",
-        "palette": "entardecer",
+        "title": "Sala de janelas: coroa de flores e holofote",
+        "setting": "wood",
         "objects": [
-          "dancer",
-          "ribbon",
-          "flower",
-          "music"
+          "flowercrown",
+          "spotlight",
+          "skirt",
+          "ballerina"
         ]
       },
       {
-        "title": "Dança folclórica na praça",
-        "setting": "square",
-        "palette": "dia",
+        "title": "Chuva leve: fita de ginástica e dançarina",
+        "setting": "forest",
+        "palette": "rain",
         "objects": [
-          "dancer",
           "ribbon",
-          "flower",
-          "drum"
+          "dancerF",
+          "castanets",
+          "mirror"
         ]
       },
       {
-        "title": "Performance no teatro iluminado",
-        "setting": "stage",
-        "palette": "night",
+        "title": "Salão de pedra: maracá e violão",
+        "setting": "stone",
+        "objects": [
+          "tcha-tcha",
+          "guitar",
+          "kostim",
+          "accordion"
+        ]
+      },
+      {
+        "title": "Pôr do sol: sapatilhas de balé e globo de espelhos",
+        "setting": "grass",
+        "palette": "sunset",
+        "objects": [
+          "shoes",
+          "discoball",
+          "dancerF",
+          "spotlight"
+        ]
+      },
+      {
+        "title": "Sala de verde-claro: penacho de plumas e tambor",
+        "setting": "tile",
+        "objects": [
+          "plim",
+          "tanbou",
+          "ballerina",
+          "dancerM"
+        ]
+      },
+      {
+        "title": "Dia nublado: violino e espelho de ensaio",
+        "setting": "moss",
+        "palette": "overcast",
+        "objects": [
+          "violin",
+          "mirror",
+          "skirt",
+          "accordion"
+        ]
+      },
+      {
+        "title": "Sala azul de manhã: fita de ginástica e tapete de dança",
+        "setting": "wood",
+        "objects": [
+          "ribbon",
+          "mat",
+          "flowercrown",
+          "evantay"
+        ]
+      },
+      {
+        "title": "Céu limpo: barra de balé e fantasia de carnaval",
+        "setting": "grass",
+        "palette": "clear",
+        "objects": [
+          "barre",
+          "kostim",
+          "lanp",
+          "plim"
+        ]
+      },
+      {
+        "title": "Sala de luz suave: flauta e palco",
+        "setting": "carpet",
+        "objects": [
+          "flute",
+          "stage",
+          "discoball",
+          "flamenco"
+        ]
+      },
+      {
+        "title": "Rua ao amanhecer: trompete e maracá",
+        "setting": "asphalt",
+        "palette": "dawn",
+        "objects": [
+          "trumpet",
+          "tcha-tcha",
+          "castanets",
+          "plim"
+        ]
+      },
+      {
+        "title": "Sala dourada: coroa de flores e espelho de ensaio",
+        "setting": "carpet",
+        "objects": [
+          "flowercrown",
+          "mirror",
+          "trumpet",
+          "guitar"
+        ]
+      },
+      {
+        "title": "Entardecer dourado: globo de espelhos e castanholas",
+        "setting": "dirt",
+        "palette": "golden",
+        "objects": [
+          "discoball",
+          "castanets",
+          "guitar",
+          "tanbou"
+        ]
+      },
+      {
+        "title": "Sala de quadros: violino e lanterna",
+        "setting": "wood",
+        "objects": [
+          "violin",
+          "lanp",
+          "tcha-tcha",
+          "spotlight"
+        ]
+      },
+      {
+        "title": "Estrada de terra: flauta e dançarino",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "flute",
+          "dancerM",
+          "accordion",
+          "evantay"
+        ]
+      },
+      {
+        "title": "Biblioteca aconchegante: palco e dançarina",
+        "setting": "wood",
         "objects": [
           "stage",
-          "costume",
-          "lantern",
-          "dancer"
+          "dancerF",
+          "kostim",
+          "ballerina"
         ]
       },
       {
-        "title": "Dança com leques coloridos",
-        "setting": "courtyard",
-        "palette": "entardecer",
-        "objects": [
-          "fan",
-          "dancer",
-          "costume",
-          "flower"
-        ]
-      },
-      {
-        "title": "Tambores e dança sob a lua",
-        "setting": "square",
+        "title": "Luar tranquilo: vestido de flamenco e saia rodada",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "drum",
-          "dancer",
-          "star",
-          "music"
-        ]
-      },
-      {
-        "title": "Bailarinas de fitas e flores",
-        "setting": "garden",
-        "palette": "dia",
-        "objects": [
-          "dancer",
-          "ribbon",
-          "flower",
-          "costume"
-        ]
-      },
-      {
-        "title": "Salão de konpa iluminado",
-        "setting": "studio",
-        "palette": "night",
-        "objects": [
-          "dancer",
-          "lantern",
-          "music",
-          "stage"
-        ]
-      },
-      {
-        "title": "Dança das sombrinhas e leques",
-        "setting": "parade",
-        "palette": "dia",
-        "objects": [
-          "fan",
-          "costume",
-          "dancer",
-          "ribbon"
-        ]
-      },
-      {
-        "title": "Celebração sob as lanternas",
-        "setting": "square",
-        "palette": "night",
-        "objects": [
-          "dancer",
-          "star",
-          "lantern",
-          "drum"
-        ]
-      },
-      {
-        "title": "Cortejo carnavalesco vibrante",
-        "setting": "parade",
-        "palette": "entardecer",
-        "objects": [
-          "costume",
-          "dancer",
-          "drum",
-          "ribbon"
-        ]
-      },
-      {
-        "title": "Valsa sob as estrelas",
-        "setting": "stage",
-        "palette": "night",
-        "objects": [
-          "dancer",
-          "star",
-          "stage",
-          "flower"
+          "flamenco",
+          "skirt",
+          "shoes",
+          "tcha-tcha"
         ]
       }
     ]

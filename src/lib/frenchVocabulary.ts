@@ -249,6 +249,23 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "pye mango": "manguier",
   "ruch": "ruche",
   "bòt pay": "botte de foin",
+  "dansè fi": "danseuse",
+  "dansè gason": "danseur",
+  "balerin": "ballerine",
+  "soulye danse": "chaussons de danse",
+  "rad flamenko": "robe de flamenco",
+  "jip woule": "jupe ample",
+  "mirwa": "miroir de répétition",
+  "barè": "barre de danse",
+  "boul diskò": "boule à facettes",
+  "pwojektè": "projecteur",
+  "tapi": "tapis de danse",
+  "kastayèt": "castagnettes",
+  "akòdeyon": "accordéon",
+  "vyolon": "violon",
+  "flit": "flûte",
+  "trompèt": "trompette",
+  "kouwòn flè": "couronne de fleurs",
 };
 
 /** Tema (nome em português usado no banco) → tema em francês. */

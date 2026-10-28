@@ -541,6 +541,23 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "pye mango": "mangueira",
   "ruch": "colmeia",
   "bòt pay": "fardo de feno",
+  "dansè fi": "dançarina",
+  "dansè gason": "dançarino",
+  "balerin": "bailarina de balé",
+  "soulye danse": "sapatilhas de balé",
+  "rad flamenko": "vestido de flamenco",
+  "jip woule": "saia rodada",
+  "mirwa": "espelho de ensaio",
+  "barè": "barra de balé",
+  "boul diskò": "globo de espelhos",
+  "pwojektè": "holofote",
+  "tapi": "tapete de dança",
+  "kastayèt": "castanholas",
+  "akòdeyon": "acordeão",
+  "vyolon": "violino",
+  "flit": "flauta",
+  "trompèt": "trompete",
+  "kouwòn flè": "coroa de flores",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<

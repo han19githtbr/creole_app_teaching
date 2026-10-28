@@ -1070,216 +1070,234 @@
       "goat": "kabrit",
       "well": "pi",
       "chicken": "poul",
-      "tractor": "traktè"
+      "tractor": "traktè",
+      "hoe": "pyòch",
+      "sheep": "mouton",
+      "sack": "sak ble",
+      "pig": "kochon",
+      "rooster": "kòk",
+      "barn": "grenye",
+      "mangotree": "pye mango",
+      "cow": "bèf",
+      "eggs": "panye ze",
+      "farmhouse": "kay",
+      "hen": "poul",
+      "scarecrow": "epouvantay",
+      "windmill": "moulen",
+      "beehive": "ruch",
+      "horse": "chwal",
+      "hay": "bòt pay",
+      "cart": "charèt",
+      "rake": "rato"
     },
     "scenes": [
       {
-        "title": "Colheita no campo",
-        "setting": "farmland",
-        "palette": "dia",
+        "title": "Tarde de sol: enxada e ovelha",
+        "setting": "grass",
+        "palette": "day",
         "objects": [
-          "wheat",
-          "tractor",
-          "farm",
-          "tree"
+          "hoe",
+          "sheep",
+          "sack",
+          "fence"
         ]
       },
       {
-        "title": "Horta da fazenda",
-        "setting": "garden",
-        "palette": "entardecer",
-        "objects": [
-          "garden",
-          "farm",
-          "fence",
-          "chicken"
-        ]
-      },
-      {
-        "title": "Cabras perto do poço",
+        "title": "Campo florido: porco e galo",
         "setting": "meadow",
-        "palette": "dia",
+        "palette": "day",
         "objects": [
-          "goat",
-          "well",
-          "tree",
-          "fence"
+          "pig",
+          "rooster",
+          "barn",
+          "mangotree"
         ]
       },
       {
-        "title": "Casa entre árvores",
-        "setting": "village",
-        "palette": "entardecer",
+        "title": "Sol da manhã: vaca e cesta de ovos",
+        "setting": "grass",
+        "palette": "golden",
         "objects": [
-          "house",
-          "tree",
-          "garden",
-          "chicken"
-        ]
-      },
-      {
-        "title": "Trator na plantação",
-        "setting": "farmland",
-        "palette": "dia",
-        "objects": [
-          "tractor",
-          "wheat",
-          "fence",
-          "goat"
-        ]
-      },
-      {
-        "title": "Manhã no galinheiro",
-        "setting": "farmyard",
-        "palette": "dia",
-        "objects": [
-          "chicken",
-          "farm",
-          "well",
-          "tree"
-        ]
-      },
-      {
-        "title": "Caminho da roça",
-        "setting": "hill",
-        "palette": "entardecer",
-        "objects": [
-          "house",
-          "wheat",
-          "goat",
-          "fence"
-        ]
-      },
-      {
-        "title": "Jardim com poço antigo",
-        "setting": "garden",
-        "palette": "dia",
-        "objects": [
-          "garden",
-          "well",
-          "house",
-          "tree"
-        ]
-      },
-      {
-        "title": "Fazenda ao pôr do sol",
-        "setting": "farmyard",
-        "palette": "entardecer",
-        "objects": [
-          "farm",
-          "tractor",
-          "chicken",
-          "wheat"
-        ]
-      },
-      {
-        "title": "Pastoreio no campo verde",
-        "setting": "meadow",
-        "palette": "dia",
-        "objects": [
-          "goat",
-          "fence",
-          "tree",
-          "wheat"
-        ]
-      },
-      {
-        "title": "Pomar de frutas no sítio",
-        "setting": "garden",
-        "palette": "dia",
-        "objects": [
-          "tree",
-          "garden",
-          "house",
-          "chicken"
-        ]
-      },
-      {
-        "title": "Descanso sob a figueira",
-        "setting": "farmland",
-        "palette": "entardecer",
-        "objects": [
-          "tree",
-          "well",
-          "farm",
-          "fence"
-        ]
-      },
-      {
-        "title": "Galinheiro ao entardecer",
-        "setting": "farmyard",
-        "palette": "entardecer",
-        "objects": [
-          "chicken",
-          "fence",
-          "house",
-          "tree"
-        ]
-      },
-      {
-        "title": "Manhã de arado na terra",
-        "setting": "farmland",
-        "palette": "dia",
-        "objects": [
-          "tractor",
-          "farm",
-          "wheat",
-          "tree"
-        ]
-      },
-      {
-        "title": "Poço de água na encosta",
-        "setting": "hill",
-        "palette": "dia",
-        "objects": [
-          "well",
-          "goat",
-          "tree",
+          "cow",
+          "eggs",
+          "farmhouse",
           "garden"
         ]
       },
       {
-        "title": "Celeiro e fardos de trigo",
-        "setting": "farmland",
-        "palette": "entardecer",
+        "title": "Céu limpo: trigo e galinha",
+        "setting": "grass",
+        "palette": "clear",
         "objects": [
           "wheat",
+          "hen",
+          "scarecrow",
+          "goat"
+        ]
+      },
+      {
+        "title": "Noite estrelada: moinho de vento e colmeia",
+        "setting": "night",
+        "palette": "night",
+        "objects": [
+          "windmill",
+          "beehive",
           "tractor",
-          "farm",
+          "horse"
+        ]
+      },
+      {
+        "title": "Luar tranquilo: fardo de feno e carroça",
+        "setting": "night",
+        "palette": "night",
+        "objects": [
+          "hay",
+          "cart",
+          "well",
+          "rake"
+        ]
+      },
+      {
+        "title": "Dia nublado: ovelha e cabra",
+        "setting": "moss",
+        "palette": "overcast",
+        "objects": [
+          "sheep",
+          "goat",
+          "tractor",
+          "hay"
+        ]
+      },
+      {
+        "title": "Praça ensolarada: horta e trigo",
+        "setting": "cobble",
+        "palette": "day",
+        "objects": [
+          "garden",
+          "wheat",
+          "fence",
+          "well"
+        ]
+      },
+      {
+        "title": "Amanhecer calmo: colmeia e casa de fazenda",
+        "setting": "meadow",
+        "palette": "dawn",
+        "objects": [
+          "beehive",
+          "farmhouse",
+          "scarecrow",
+          "pig"
+        ]
+      },
+      {
+        "title": "Estrada de terra: galo e vaca",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "rooster",
+          "cow",
+          "cart",
+          "hoe"
+        ]
+      },
+      {
+        "title": "Ao ar livre: sacos de grãos e celeiro",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "sack",
+          "barn",
+          "windmill",
+          "eggs"
+        ]
+      },
+      {
+        "title": "Manhã de névoa: cavalo e galinha",
+        "setting": "meadow",
+        "palette": "mist",
+        "objects": [
+          "horse",
+          "hen",
+          "mangotree",
+          "farmhouse"
+        ]
+      },
+      {
+        "title": "Entardecer na vila: rastelo e porco",
+        "setting": "cobble",
+        "palette": "sunset",
+        "objects": [
+          "rake",
+          "pig",
+          "wheat",
+          "sack"
+        ]
+      },
+      {
+        "title": "Rua ao amanhecer: horta e enxada",
+        "setting": "asphalt",
+        "palette": "dawn",
+        "objects": [
+          "garden",
+          "hoe",
+          "beehive",
+          "rake"
+        ]
+      },
+      {
+        "title": "Fim de tarde violeta: cabra e poço",
+        "setting": "cobble",
+        "palette": "violet",
+        "objects": [
+          "goat",
+          "well",
+          "barn",
+          "horse"
+        ]
+      },
+      {
+        "title": "Entardecer dourado: cerca de madeira e carroça",
+        "setting": "dirt",
+        "palette": "golden",
+        "objects": [
+          "fence",
+          "cart",
+          "tractor",
+          "scarecrow"
+        ]
+      },
+      {
+        "title": "Tarde com nuvens: cesta de ovos e fardo de feno",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "eggs",
+          "hay",
+          "mangotree",
           "fence"
         ]
       },
       {
-        "title": "Cabritos brincando na cerca",
-        "setting": "farmyard",
-        "palette": "dia",
+        "title": "Chuva leve: moinho de vento e vaca",
+        "setting": "forest",
+        "palette": "rain",
         "objects": [
-          "goat",
-          "fence",
-          "house",
-          "chicken"
+          "windmill",
+          "cow",
+          "hen",
+          "pig"
         ]
       },
       {
-        "title": "Horta irrigada ao amanhecer",
-        "setting": "garden",
-        "palette": "dia",
+        "title": "Pôr do sol: ovelha e cavalo",
+        "setting": "grass",
+        "palette": "sunset",
         "objects": [
-          "garden",
-          "well",
-          "chicken",
-          "tree"
-        ]
-      },
-      {
-        "title": "Noite serena na fazenda",
-        "setting": "farmyard",
-        "palette": "night",
-        "objects": [
-          "house",
-          "tree",
-          "fence",
-          "farm"
+          "sheep",
+          "horse",
+          "scarecrow",
+          "cow"
         ]
       }
     ]

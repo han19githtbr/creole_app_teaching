@@ -151,6 +151,23 @@ const ICONS: Record<string, string> = {
   "torre de observacao": "🗼",
   "teleferico": "🚡",
   "scooter": "🛵",
+  "galo": "🐓",
+  "cerca de madeira": "🚧",
+  "casa de fazenda": "🏡",
+  "celeiro": "🏚️",
+  "vaca": "🐄",
+  "porco": "🐖",
+  "ovelha": "🐑",
+  "sacos de graos": "🛍️",
+  "carroca": "🛒",
+  "rastelo": "🧹",
+  "enxada": "⚒️",
+  "cesta de ovos": "🥚",
+  "espantalho": "🧑‍🌾",
+  "mangueira": "🥭",
+  "horta": "🥕",
+  "colmeia": "🐝",
+  "fardo de feno": "🌾",
 };
 
 /** Alguns elementos do banco trazem o nome em Kreyòl no campo `pt`; mapeamos esses nomes também. */

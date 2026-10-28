@@ -21,7 +21,7 @@ function makeScenes(reg, { seed, mode = "out", beach = [], beachScenes = [2, 11,
   return groups.map((g, i) => {
     const env = kind[i] === "beach" ? beachPool[bi++ % beachPool.length] : kind[i] === "in" ? inPool[ii++ % inPool.length] : outPool[oi++ % outPool.length];
     const pt = (id) => reg[id].pt.replace(/\s*\(.*\)/, "");
-    return { n: i + 2, title: `${env.stem}: ${pt(g[0])} e ${pt(g[1])}`, ...env, els: g };
+    return { gap: 48, n: i + 2, title: `${env.stem}: ${pt(g[0])} e ${pt(g[1])}`, ...env, els: g };
   });
 }
 
@@ -36,5 +36,5 @@ export function addTheme(key, label, prefix, reg, opts) {
 }
 
 // ---- temas adicionais (cada um num arquivo próprio) ----
-const extra = ["tecnologia", "turismo"];
+const extra = ["tecnologia", "turismo", "interior"];
 for (const k of extra) await import(`./theme-${k}.mjs`).then((m) => addTheme(k, m.LABEL, m.PREFIX, m.REG, m.OPTS));

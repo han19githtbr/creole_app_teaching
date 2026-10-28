@@ -234,6 +234,21 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "tou": "tour panoramique",
   "teleferik": "téléphérique",
   "skoutè": "scooter",
+  "kòk": "coq",
+  "moulen": "moulin à vent",
+  "grenye": "grange",
+  "bèf": "vache",
+  "kochon": "cochon",
+  "mouton": "mouton",
+  "sak ble": "sacs de grains",
+  "charèt": "charrette",
+  "rato": "râteau",
+  "pyòch": "houe",
+  "panye ze": "panier d'œufs",
+  "epouvantay": "épouvantail",
+  "pye mango": "manguier",
+  "ruch": "ruche",
+  "bòt pay": "botte de foin",
 };
 
 /** Tema (nome em português usado no banco) → tema em francês. */

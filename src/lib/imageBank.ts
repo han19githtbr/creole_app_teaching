@@ -526,6 +526,21 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "tou": "torre de observação",
   "teleferik": "teleférico",
   "skoutè": "scooter",
+  "kòk": "galo",
+  "moulen": "moinho de vento",
+  "grenye": "celeiro",
+  "bèf": "vaca",
+  "kochon": "porco",
+  "mouton": "ovelha",
+  "sak ble": "sacos de grãos",
+  "charèt": "carroça",
+  "rato": "rastelo",
+  "pyòch": "enxada",
+  "panye ze": "cesta de ovos",
+  "epouvantay": "espantalho",
+  "pye mango": "mangueira",
+  "ruch": "colmeia",
+  "bòt pay": "fardo de feno",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<

@@ -97,13 +97,14 @@ function layout(sc, reg, r) {
     it.s0 = it.e.s * (0.88 + 0.22 * it.t);
   });
   // largura total → escala uniforme
-  const gaps = 36 * (rest.length - 1);
+  const GAP = sc.gap ?? 36;
+  const gaps = GAP * (rest.length - 1);
   const total = rest.reduce((a, it) => a + it.e.w * it.s0, 0) + gaps;
   const k = Math.min(1, 1090 / total);
   rest.forEach((it) => { it.s = it.s0 * k; it.wpx = it.e.w * it.s; });
   const used = rest.reduce((a, it) => a + it.wpx, 0) + gaps;
   let x = 600 - used / 2;
-  rest.forEach((it) => { it.x = x + it.wpx / 2; x += it.wpx + 36; });
+  rest.forEach((it) => { it.x = x + it.wpx / 2; x += it.wpx + GAP; });
   // y por habitat
   for (const it of rest) {
     const { hab } = it, h = it.e.h;

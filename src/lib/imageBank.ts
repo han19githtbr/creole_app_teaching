@@ -695,6 +695,20 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "ji": "jarra de suco",
   "planch": "tábua de cortar",
   "kiyè bwa": "colher de pau",
+  "liv ouvè": "livro aberto",
+  "tablo nwa": "quadro-negro",
+  "kib alfabè": "cubos do alfabeto",
+  "etajè liv": "estante de livros",
+  "kat vokabilè": "cartões de vocabulário",
+  "pipit": "carteira escolar",
+  "sak lekòl": "mochila escolar",
+  "règ": "régua",
+  "gonm": "borracha",
+  "alfabè": "cartaz do alfabeto",
+  "bul diskisyon": "balões de fala",
+  "lanp biwo": "luminária de mesa",
+  "revèy": "relógio de parede",
+  "anvlòp": "carta em envelope",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<

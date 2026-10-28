@@ -320,6 +320,20 @@ const ICONS: Record<string, string> = {
   "jarra de suco": "🧃",
   "tabua de cortar": "🔪",
   "colher de pau": "🥄",
+  "livro aberto": "📖",
+  "cubos do alfabeto": "🔤",
+  "estante de livros": "📚",
+  "cartoes de vocabulario": "🗂️",
+  "carteira escolar": "🪑",
+  "mochila escolar": "🎒",
+  "regua": "📏",
+  "borracha": "🧽",
+  "cartaz do alfabeto": "🔠",
+  "baloes de fala": "💬",
+  "bandeiras de paises": "🚩",
+  "luminaria de mesa": "💡",
+  "relogio de parede": "🕰️",
+  "carta em envelope": "✉️",
 };
 
 /** Alguns elementos do banco trazem o nome em Kreyòl no campo `pt`; mapeamos esses nomes também. */

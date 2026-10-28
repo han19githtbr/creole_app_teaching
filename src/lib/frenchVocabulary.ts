@@ -403,6 +403,20 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "ji": "carafe de jus",
   "planch": "planche à découper",
   "kiyè bwa": "cuillère en bois",
+  "liv ouvè": "livre ouvert",
+  "tablo nwa": "tableau noir",
+  "kib alfabè": "cubes de l'alphabet",
+  "etajè liv": "étagère de livres",
+  "kat vokabilè": "cartes de vocabulaire",
+  "pipit": "pupitre",
+  "sak lekòl": "cartable",
+  "règ": "règle",
+  "gonm": "gomme",
+  "alfabè": "affiche de l'alphabet",
+  "bul diskisyon": "bulles de dialogue",
+  "lanp biwo": "lampe de bureau",
+  "revèy": "horloge murale",
+  "anvlòp": "lettre sous enveloppe",
 };
 
 /** Tema (nome em português usado no banco) → tema em francês. */

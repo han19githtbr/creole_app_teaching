@@ -3570,224 +3570,231 @@
       "speech": "dyalòg",
       "letters": "lèt",
       "flag": "drapo",
-      "headphones": "kas",
+      "headphones": "ekouteur",
       "notebook": "kaye",
       "pencil": "kreyon",
-      "blackboard": "tablo",
+      "blackboard": "tablo nwa",
       "teacher": "pwofesè",
       "student": "elèv",
-      "mic": "mikwofòn",
+      "mic": "mikwo",
       "computer": "òdinatè",
-      "map": "kat"
+      "map": "kat",
+      "eraser": "gonm",
+      "envelope": "anvlòp",
+      "desk": "pipit",
+      "ruler": "règ",
+      "flashcards": "kat vokabilè",
+      "blocks": "kib alfabè",
+      "openbook": "liv ouvè",
+      "quill": "plim ak lank",
+      "lamp": "lanp biwo",
+      "bookshelf": "etajè liv",
+      "tablet": "tablèt",
+      "schoolbag": "sak lekòl",
+      "alphabet": "alfabè",
+      "bubble": "bul diskisyon",
+      "flags": "drapo",
+      "clock": "revèy"
     },
     "scenes": [
       {
-        "title": "Biblioteca de dicionários",
-        "setting": "library",
-        "palette": "dia",
+        "title": "Rua ao amanhecer: borracha e carta em envelope",
+        "setting": "asphalt",
+        "palette": "dawn",
         "objects": [
-          "dictionary",
-          "book",
-          "globe",
-          "letters"
+          "eraser",
+          "envelope",
+          "desk",
+          "ruler"
         ]
       },
       {
-        "title": "Conversa entre amigos no café",
-        "setting": "cafe",
-        "palette": "entardecer",
+        "title": "Sala de arcos azuis: cartões de vocabulário e cubos do alfabeto",
+        "setting": "tile",
         "objects": [
-          "speech",
-          "flag",
-          "notebook",
-          "pencil"
-        ]
-      },
-      {
-        "title": "Aula com professor e quadro-negro",
-        "setting": "classroom",
-        "palette": "dia",
-        "objects": [
-          "teacher",
-          "blackboard",
-          "student",
-          "notebook"
-        ]
-      },
-      {
-        "title": "Mapa-múndi e bandeiras do mundo",
-        "setting": "hall",
-        "palette": "dia",
-        "objects": [
-          "map",
-          "flag",
-          "globe",
-          "speech"
-        ]
-      },
-      {
-        "title": "Estudo noturno com fones de ouvido",
-        "setting": "classroom",
-        "palette": "night",
-        "objects": [
-          "headphones",
-          "computer",
-          "notebook",
-          "book"
-        ]
-      },
-      {
-        "title": "Estúdio de podcast bilíngue",
-        "setting": "studio",
-        "palette": "entardecer",
-        "objects": [
-          "mic",
-          "headphones",
-          "computer",
-          "speech"
-        ]
-      },
-      {
-        "title": "Alfabeto nos blocos de madeira",
-        "setting": "playroom",
-        "palette": "dia",
-        "objects": [
-          "letters",
-          "student",
-          "book",
-          "pencil"
-        ]
-      },
-      {
-        "title": "Intercâmbio cultural na praça",
-        "setting": "plaza",
-        "palette": "dia",
-        "objects": [
-          "flag",
-          "teacher",
-          "student",
-          "speech"
-        ]
-      },
-      {
-        "title": "Laboratório de idiomas",
-        "setting": "lab",
-        "palette": "dia",
-        "objects": [
-          "computer",
-          "headphones",
-          "mic",
-          "notebook"
-        ]
-      },
-      {
-        "title": "Dicionário e lápis na mesa de estudo",
-        "setting": "classroom",
-        "palette": "entardecer",
-        "objects": [
-          "dictionary",
-          "pencil",
-          "notebook",
-          "globe"
-        ]
-      },
-      {
-        "title": "Clube de conversação",
-        "setting": "cafe",
-        "palette": "dia",
-        "objects": [
-          "speech",
-          "student",
-          "teacher",
-          "book"
-        ]
-      },
-      {
-        "title": "Tradução com mapa e dicionário",
-        "setting": "hall",
-        "palette": "entardecer",
-        "objects": [
-          "map",
-          "dictionary",
-          "pencil",
-          "notebook"
-        ]
-      },
-      {
-        "title": "Viagem pelo mundo das línguas",
-        "setting": "hall",
-        "palette": "dia",
-        "objects": [
-          "globe",
-          "flag",
-          "map",
-          "book"
-        ]
-      },
-      {
-        "title": "Escrevendo no quadro",
-        "setting": "classroom",
-        "palette": "entardecer",
-        "objects": [
-          "blackboard",
-          "pencil",
-          "letters",
-          "student"
-        ]
-      },
-      {
-        "title": "Aula online com fones e computador",
-        "setting": "lab",
-        "palette": "dia",
-        "objects": [
-          "computer",
-          "headphones",
-          "student",
-          "speech"
-        ]
-      },
-      {
-        "title": "Leitura em voz alta na biblioteca",
-        "setting": "library",
-        "palette": "entardecer",
-        "objects": [
-          "book",
-          "student",
-          "teacher",
+          "flashcards",
+          "blocks",
+          "openbook",
           "dictionary"
         ]
       },
       {
-        "title": "Cartas e letras coloridas",
-        "setting": "playroom",
-        "palette": "dia",
+        "title": "Céu limpo: pena e tinteiro e globo terrestre",
+        "setting": "grass",
+        "palette": "clear",
         "objects": [
-          "letters",
-          "notebook",
-          "pencil",
-          "flag"
+          "quill",
+          "globe",
+          "lamp",
+          "notebook"
         ]
       },
       {
-        "title": "Festival de idiomas",
-        "setting": "plaza",
-        "palette": "night",
+        "title": "Corredor de janelas: estante de livros e fones de ouvido",
+        "setting": "tile",
         "objects": [
-          "flag",
-          "mic",
-          "speech",
-          "globe"
-        ]
-      },
-      {
-        "title": "Noite de estudo na biblioteca",
-        "setting": "library",
-        "palette": "night",
-        "objects": [
-          "book",
-          "dictionary",
+          "bookshelf",
           "headphones",
-          "globe"
+          "tablet",
+          "schoolbag"
+        ]
+      },
+      {
+        "title": "Entardecer na vila: cartaz do alfabeto e balões de fala",
+        "setting": "cobble",
+        "palette": "sunset",
+        "objects": [
+          "alphabet",
+          "bubble",
+          "flags",
+          "clock"
+        ]
+      },
+      {
+        "title": "Ateliê claro: quadro-negro e tablet",
+        "setting": "wood",
+        "objects": [
+          "blackboard",
+          "tablet",
+          "envelope",
+          "mic"
+        ]
+      },
+      {
+        "title": "Tarde com nuvens: lápis e globo terrestre",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "pencil",
+          "globe",
+          "mic",
+          "desk"
+        ]
+      },
+      {
+        "title": "Sala de janelas: dicionário e mochila escolar",
+        "setting": "wood",
+        "objects": [
+          "dictionary",
+          "schoolbag",
+          "lamp",
+          "flags"
+        ]
+      },
+      {
+        "title": "Chuva leve: livro aberto e régua",
+        "setting": "forest",
+        "palette": "rain",
+        "objects": [
+          "openbook",
+          "ruler",
+          "headphones",
+          "bubble"
+        ]
+      },
+      {
+        "title": "Sala de luz suave: cubos do alfabeto e lápis",
+        "setting": "carpet",
+        "objects": [
+          "blocks",
+          "pencil",
+          "blackboard",
+          "alphabet"
+        ]
+      },
+      {
+        "title": "Manhã de névoa: estante de livros e borracha",
+        "setting": "meadow",
+        "palette": "mist",
+        "objects": [
+          "bookshelf",
+          "eraser",
+          "clock",
+          "quill"
+        ]
+      },
+      {
+        "title": "Cozinha de azulejos: cartões de vocabulário e fones de ouvido",
+        "setting": "tile",
+        "objects": [
+          "flashcards",
+          "headphones",
+          "blackboard",
+          "notebook"
+        ]
+      },
+      {
+        "title": "Praça ensolarada: caderno e borracha",
+        "setting": "cobble",
+        "palette": "day",
+        "objects": [
+          "notebook",
+          "eraser",
+          "blocks",
+          "schoolbag"
+        ]
+      },
+      {
+        "title": "Sala dourada: lápis e bandeiras de países",
+        "setting": "carpet",
+        "objects": [
+          "pencil",
+          "flags",
+          "bookshelf",
+          "ruler"
+        ]
+      },
+      {
+        "title": "Noite estrelada: luminária de mesa e balões de fala",
+        "setting": "night",
+        "palette": "night",
+        "objects": [
+          "lamp",
+          "bubble",
+          "flashcards",
+          "mic"
+        ]
+      },
+      {
+        "title": "Sala à noite: tablet e carteira escolar",
+        "setting": "wood",
+        "objects": [
+          "tablet",
+          "desk",
+          "clock",
+          "dictionary"
+        ]
+      },
+      {
+        "title": "Amanhecer calmo: livro aberto e globo terrestre",
+        "setting": "meadow",
+        "palette": "dawn",
+        "objects": [
+          "openbook",
+          "globe",
+          "alphabet",
+          "envelope"
+        ]
+      },
+      {
+        "title": "Salão de pedra: pena e tinteiro e quadro-negro",
+        "setting": "stone",
+        "objects": [
+          "quill",
+          "blackboard",
+          "dictionary",
+          "ruler"
+        ]
+      },
+      {
+        "title": "Tarde de sol: cartões de vocabulário e bandeiras de países",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "flashcards",
+          "flags",
+          "quill",
+          "tablet"
         ]
       }
     ]

@@ -1833,216 +1833,230 @@
       "horse": "chwal",
       "book": "liv",
       "oldhouse": "ansyen kay",
-      "monument": "moniman"
+      "monument": "moniman",
+      "throne": "twòn",
+      "wall": "miray",
+      "candles": "chandèl",
+      "pyramid": "piramid",
+      "column": "kolòn",
+      "oillamp": "lanp lwil",
+      "crown": "kouwòn",
+      "scroll": "parchemen",
+      "caravel": "karavèl",
+      "anchor": "ankre",
+      "bell": "kloch",
+      "quill": "plim ak lank",
+      "sword": "epe",
+      "oldmap": "kat ansyen",
+      "amphora": "anfò",
+      "tower": "tou",
+      "fort": "fò",
+      "helmet": "kask",
+      "chest": "kòf trezò",
+      "spear": "lans",
+      "shield": "bouklye"
     },
     "scenes": [
       {
-        "title": "Escavação arqueológica",
-        "setting": "ruins",
-        "palette": "dia",
+        "title": "Dia nublado: trono e muralha",
+        "setting": "moss",
+        "palette": "overcast",
         "objects": [
-          "stone",
-          "book",
-          "monument",
-          "oldhouse"
+          "throne",
+          "wall",
+          "candles",
+          "pyramid"
         ]
       },
       {
-        "title": "Caravela histórica",
-        "setting": "harbor",
-        "palette": "entardecer",
+        "title": "Estante grande: coluna grega e lamparina a óleo",
+        "setting": "carpet",
         "objects": [
-          "boat",
-          "flag",
-          "stone",
-          "torch"
+          "column",
+          "oillamp",
+          "crown",
+          "scroll"
         ]
       },
       {
-        "title": "Portões da fortaleza",
-        "setting": "ruins",
+        "title": "Praia ensolarada: caravela e âncora",
+        "setting": "sand",
+        "palette": "clear",
+        "objects": [
+          "caravel",
+          "anchor",
+          "bell",
+          "quill"
+        ]
+      },
+      {
+        "title": "Sala de janelas: tocha e espada",
+        "setting": "wood",
+        "objects": [
+          "torch",
+          "sword",
+          "oldmap",
+          "amphora"
+        ]
+      },
+      {
+        "title": "Entardecer dourado: torre de castelo e canhão",
+        "setting": "dirt",
+        "palette": "golden",
+        "objects": [
+          "tower",
+          "cannon",
+          "wall",
+          "fort"
+        ]
+      },
+      {
+        "title": "Sala de luz suave: elmo de cavaleiro e baú de tesouro",
+        "setting": "carpet",
+        "objects": [
+          "helmet",
+          "chest",
+          "spear",
+          "cannon"
+        ]
+      },
+      {
+        "title": "Praça ensolarada: escudo medieval e lamparina a óleo",
+        "setting": "cobble",
+        "palette": "day",
+        "objects": [
+          "shield",
+          "oillamp",
+          "tower",
+          "bell"
+        ]
+      },
+      {
+        "title": "Ateliê claro: elmo de cavaleiro e pena e tinteiro",
+        "setting": "wood",
+        "objects": [
+          "helmet",
+          "quill",
+          "shield",
+          "oldmap"
+        ]
+      },
+      {
+        "title": "Rua ao amanhecer: trono e lança",
+        "setting": "asphalt",
+        "palette": "dawn",
+        "objects": [
+          "throne",
+          "spear",
+          "amphora",
+          "fort"
+        ]
+      },
+      {
+        "title": "Costa de manhã: âncora e tocha",
+        "setting": "sand",
+        "palette": "dawn",
+        "objects": [
+          "anchor",
+          "torch",
+          "scroll",
+          "candles"
+        ]
+      },
+      {
+        "title": "Tarde com nuvens: coluna grega e pirâmide",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "column",
+          "pyramid",
+          "sword",
+          "chest"
+        ]
+      },
+      {
+        "title": "Sala de verde-claro: coroa e lança",
+        "setting": "tile",
+        "objects": [
+          "crown",
+          "spear",
+          "shield",
+          "sword"
+        ]
+      },
+      {
+        "title": "Luar tranquilo: muralha e tocha",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "fortress",
+          "wall",
           "torch",
-          "cannon",
-          "flag"
+          "helmet",
+          "oillamp"
         ]
       },
       {
-        "title": "Cavaleiros no castelo",
-        "setting": "castle",
-        "palette": "dia",
+        "title": "Salão de pedra: pergaminho e mapa antigo",
+        "setting": "stone",
         "objects": [
-          "horse",
-          "fortress",
-          "flag",
-          "stone"
+          "scroll",
+          "oldmap",
+          "bell",
+          "cannon"
         ]
       },
       {
-        "title": "Monumento da praça",
-        "setting": "square",
-        "palette": "entardecer",
+        "title": "Chuva leve: baú de tesouro e fortaleza",
+        "setting": "forest",
+        "palette": "rain",
         "objects": [
-          "monument",
-          "flag",
-          "book",
-          "oldhouse"
+          "chest",
+          "fort",
+          "candles",
+          "quill"
         ]
       },
       {
-        "title": "Biblioteca antiga",
-        "setting": "library",
+        "title": "Baía ao entardecer: caravela e coroa",
+        "setting": "sand",
+        "palette": "sunset",
+        "objects": [
+          "caravel",
+          "crown",
+          "throne",
+          "tower"
+        ]
+      },
+      {
+        "title": "Sol da manhã: ânfora e velas acesas",
+        "setting": "grass",
+        "palette": "golden",
+        "objects": [
+          "amphora",
+          "candles",
+          "column",
+          "cannon"
+        ]
+      },
+      {
+        "title": "Sala ao entardecer: elmo de cavaleiro e coroa",
+        "setting": "wood",
+        "objects": [
+          "helmet",
+          "crown",
+          "bell",
+          "amphora"
+        ]
+      },
+      {
+        "title": "Noite estrelada: trono e pergaminho",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "book",
-          "torch",
-          "stone",
-          "monument"
-        ]
-      },
-      {
-        "title": "Muralhas e canhões",
-        "setting": "castle",
-        "palette": "dia",
-        "objects": [
-          "cannon",
-          "fortress",
-          "horse",
-          "flag"
-        ]
-      },
-      {
-        "title": "Ruínas de pedra",
-        "setting": "ruins",
-        "palette": "entardecer",
-        "objects": [
-          "stone",
-          "oldhouse",
-          "torch",
-          "book"
-        ]
-      },
-      {
-        "title": "Praça dos heróis",
-        "setting": "square",
-        "palette": "dia",
-        "objects": [
-          "monument",
-          "horse",
-          "flag",
-          "fortress"
-        ]
-      },
-      {
-        "title": "Bastilha da cidadela sob o sol",
-        "setting": "castle",
-        "palette": "dia",
-        "objects": [
-          "fortress",
-          "flag",
-          "cannon",
-          "stone"
-        ]
-      },
-      {
-        "title": "Nau capitânia no ancoradouro",
-        "setting": "harbor",
-        "palette": "dia",
-        "objects": [
-          "boat",
-          "stone",
-          "flag",
-          "torch"
-        ]
-      },
-      {
-        "title": "Manuscrito dos patriotas",
-        "setting": "library",
-        "palette": "entardecer",
-        "objects": [
-          "book",
-          "torch",
-          "oldhouse",
-          "stone"
-        ]
-      },
-      {
-        "title": "Sentinela a cavalo na colina",
-        "setting": "ruins",
-        "palette": "entardecer",
-        "objects": [
-          "horse",
-          "flag",
-          "fortress",
-          "stone"
-        ]
-      },
-      {
-        "title": "Obelisco da independência",
-        "setting": "square",
-        "palette": "dia",
-        "objects": [
-          "monument",
-          "flag",
-          "stone",
-          "horse"
-        ]
-      },
-      {
-        "title": "Mansão colonial preservada",
-        "setting": "square",
-        "palette": "dia",
-        "objects": [
-          "oldhouse",
-          "horse",
-          "stone",
-          "monument"
-        ]
-      },
-      {
-        "title": "Canhoneira na muralha alta",
-        "setting": "castle",
-        "palette": "entardecer",
-        "objects": [
-          "cannon",
-          "fortress",
-          "torch",
-          "flag"
-        ]
-      },
-      {
-        "title": "Arquivo de tratados históricos",
-        "setting": "library",
-        "palette": "dia",
-        "objects": [
-          "book",
-          "oldhouse",
-          "monument",
-          "stone"
-        ]
-      },
-      {
-        "title": "Tochas acesas na fortaleza",
-        "setting": "castle",
-        "palette": "night",
-        "objects": [
-          "torch",
-          "fortress",
-          "cannon",
-          "flag"
-        ]
-      },
-      {
-        "title": "Cerimônia junto ao monumento",
-        "setting": "square",
-        "palette": "entardecer",
-        "objects": [
-          "monument",
-          "flag",
-          "horse",
-          "oldhouse"
+          "throne",
+          "scroll",
+          "sword",
+          "quill"
         ]
       }
     ]

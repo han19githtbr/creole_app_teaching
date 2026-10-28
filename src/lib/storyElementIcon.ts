@@ -197,6 +197,23 @@ const ICONS: Record<string, string> = {
   "raio de tempestade": "⚡",
   "cidade": "🏙️",
   "continente": "🌎",
+  "caravela": "⛵",
+  "espada": "🗡️",
+  "elmo de cavaleiro": "⛑️",
+  "escudo medieval": "🛡️",
+  "piramide": "🔺",
+  "bau de tesouro": "💰",
+  "mapa antigo": "🗺️",
+  "pena e tinteiro": "🪶",
+  "lanca": "🔱",
+  "coroa": "👑",
+  "trono": "🪑",
+  "anfora": "🏺",
+  "lamparina a oleo": "🪔",
+  "velas acesas": "🕯️",
+  "muralha": "🧱",
+  "coluna grega": "🏛️",
+  "ancora": "⚓",
 };
 
 /** Alguns elementos do banco trazem o nome em Kreyòl no campo `pt`; mapeamos esses nomes também. */

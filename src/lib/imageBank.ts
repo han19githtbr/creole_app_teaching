@@ -558,6 +558,18 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "flit": "flauta",
   "trompèt": "trompete",
   "kouwòn flè": "coroa de flores",
+  "kat monn": "mapa-múndi",
+  "mòn nèj": "montanha com neve",
+  "glasye": "geleira",
+  "kanyon": "cânion",
+  "plato": "planalto",
+  "tèmomèt": "termômetro",
+  "tònad": "tornado",
+  "nyaj lapli": "nuvem de chuva",
+  "ekla": "raio de tempestade",
+  "vil": "cidade",
+  "kontinan": "continente",
+  "lak": "lago",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<

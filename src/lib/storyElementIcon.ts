@@ -186,6 +186,17 @@ const ICONS: Record<string, string> = {
   "flauta": "🎼",
   "trompete": "🎺",
   "coroa de flores": "🌺",
+  "mapa-mundi": "🗺️",
+  "montanha com neve": "🏔️",
+  "geleira": "🧊",
+  "canion": "🏜️",
+  "planalto": "🏞️",
+  "termometro": "🌡️",
+  "tornado": "🌪️",
+  "nuvem de chuva": "🌧️",
+  "raio de tempestade": "⚡",
+  "cidade": "🏙️",
+  "continente": "🌎",
 };
 
 /** Alguns elementos do banco trazem o nome em Kreyòl no campo `pt`; mapeamos esses nomes também. */

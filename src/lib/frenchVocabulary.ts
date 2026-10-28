@@ -266,6 +266,18 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "flit": "flûte",
   "trompèt": "trompette",
   "kouwòn flè": "couronne de fleurs",
+  "kat monn": "planisphère",
+  "mòn nèj": "montagne enneigée",
+  "glasye": "glacier",
+  "kanyon": "canyon",
+  "plato": "plateau",
+  "tèmomèt": "thermomètre",
+  "tònad": "tornade",
+  "nyaj lapli": "nuage de pluie",
+  "ekla": "éclair",
+  "vil": "ville",
+  "kontinan": "continent",
+  "lak": "lac",
 };
 
 /** Tema (nome em português usado no banco) → tema em francês. */

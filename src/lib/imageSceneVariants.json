@@ -1577,216 +1577,235 @@
       "bridge": "pon",
       "forest": "forè",
       "ocean": "lanmè",
-      "map": "kat"
+      "map": "kat",
+      "thermometer": "tèmomèt",
+      "canyon": "kanyon",
+      "raincloud": "nyaj lapli",
+      "continent": "kontinan",
+      "city": "vil",
+      "dune": "din",
+      "palm": "palmis",
+      "snowpeak": "mòn nèj",
+      "lightning": "ekla",
+      "globe": "glòb",
+      "cliff": "falèz",
+      "lake": "lak",
+      "waterfall": "kaskad",
+      "worldmap": "kat monn",
+      "mesa": "plato",
+      "tornado": "tònad",
+      "rainbow": "lakansyèl",
+      "glacier": "glasye",
+      "cactus": "kaktis"
     },
     "scenes": [
       {
-        "title": "Vulcão na ilha",
-        "setting": "island",
-        "palette": "entardecer",
+        "title": "Céu limpo: termômetro e cânion",
+        "setting": "grass",
+        "palette": "clear",
         "objects": [
-          "volcano",
-          "island",
-          "ocean",
-          "flag"
-        ]
-      },
-      {
-        "title": "Rio e ponte de pedra",
-        "setting": "river",
-        "palette": "dia",
-        "objects": [
-          "river",
+          "thermometer",
+          "canyon",
           "bridge",
+          "volcano"
+        ]
+      },
+      {
+        "title": "Luar tranquilo: nuvem de chuva e continente",
+        "setting": "night",
+        "palette": "night",
+        "objects": [
+          "raincloud",
+          "continent",
+          "city",
+          "dune"
+        ]
+      },
+      {
+        "title": "Entardecer dourado: palmeira e montanha com neve",
+        "setting": "dirt",
+        "palette": "golden",
+        "objects": [
+          "palm",
+          "snowpeak",
+          "lightning",
+          "globe"
+        ]
+      },
+      {
+        "title": "Ao ar livre: montanha e penhasco",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
           "mountain",
-          "map"
-        ]
-      },
-      {
-        "title": "Exploração da floresta",
-        "setting": "forest",
-        "palette": "entardecer",
-        "objects": [
-          "forest",
-          "compass",
-          "river",
-          "flag"
-        ]
-      },
-      {
-        "title": "Mapa das montanhas",
-        "setting": "mountain",
-        "palette": "dia",
-        "objects": [
-          "mountain",
-          "map",
-          "compass",
-          "river"
-        ]
-      },
-      {
-        "title": "Costa e arquipélago",
-        "setting": "coast",
-        "palette": "dia",
-        "objects": [
-          "island",
-          "ocean",
-          "map",
-          "flag"
-        ]
-      },
-      {
-        "title": "Travessia da garganta",
-        "setting": "canyon",
-        "palette": "entardecer",
-        "objects": [
-          "bridge",
-          "river",
-          "mountain",
+          "cliff",
+          "lake",
           "compass"
         ]
       },
       {
-        "title": "Mirante do vulcão",
-        "setting": "volcano",
-        "palette": "night",
-        "objects": [
-          "volcano",
-          "mountain",
-          "flag",
-          "map"
-        ]
-      },
-      {
-        "title": "Nascente na floresta",
+        "title": "Chuva leve: cachoeira e mapa-múndi",
         "setting": "forest",
-        "palette": "dia",
+        "palette": "rain",
         "objects": [
-          "river",
-          "forest",
-          "bridge",
-          "ocean"
+          "waterfall",
+          "worldmap",
+          "mesa",
+          "tornado"
         ]
       },
       {
-        "title": "Bússola para a ilha",
-        "setting": "island",
-        "palette": "entardecer",
+        "title": "Sol da manhã: arco-íris e geleira",
+        "setting": "grass",
+        "palette": "golden",
         "objects": [
+          "rainbow",
+          "glacier",
+          "tornado",
+          "volcano"
+        ]
+      },
+      {
+        "title": "Amanhecer calmo: cacto e arco-íris",
+        "setting": "meadow",
+        "palette": "dawn",
+        "objects": [
+          "cactus",
+          "rainbow",
+          "waterfall",
+          "city"
+        ]
+      },
+      {
+        "title": "Rua ao amanhecer: palmeira e ponte",
+        "setting": "asphalt",
+        "palette": "dawn",
+        "objects": [
+          "palm",
+          "bridge",
           "compass",
-          "island",
-          "mountain",
-          "ocean"
+          "mesa"
         ]
       },
       {
-        "title": "Delta do grande rio",
-        "setting": "river",
-        "palette": "dia",
+        "title": "Campo florido: termômetro e duna de areia",
+        "setting": "meadow",
+        "palette": "day",
         "objects": [
-          "river",
-          "ocean",
-          "bridge",
+          "thermometer",
+          "dune",
+          "lightning",
           "mountain"
         ]
       },
       {
-        "title": "Cume nevado e bandeira guia",
-        "setting": "mountain",
-        "palette": "dia",
+        "title": "Tarde com nuvens: montanha com neve e nuvem de chuva",
+        "setting": "grass",
+        "palette": "day",
         "objects": [
-          "mountain",
-          "flag",
-          "compass",
-          "map"
+          "snowpeak",
+          "raincloud",
+          "cactus",
+          "worldmap"
         ]
       },
       {
-        "title": "Lago da caldeira vulcânica",
-        "setting": "volcano",
-        "palette": "entardecer",
+        "title": "Dia nublado: geleira e cânion",
+        "setting": "moss",
+        "palette": "overcast",
         "objects": [
-          "volcano",
-          "mountain",
-          "forest",
-          "flag"
+          "glacier",
+          "canyon",
+          "globe",
+          "waterfall"
         ]
       },
       {
-        "title": "Estreito marítimo e arquipélago",
-        "setting": "coast",
-        "palette": "dia",
+        "title": "Praça ensolarada: penhasco e continente",
+        "setting": "cobble",
+        "palette": "day",
         "objects": [
-          "island",
-          "ocean",
-          "compass",
-          "map"
+          "cliff",
+          "continent",
+          "mesa",
+          "glacier"
         ]
       },
       {
-        "title": "Floresta equatorial densa",
-        "setting": "forest",
-        "palette": "dia",
-        "objects": [
-          "forest",
-          "river",
-          "mountain",
-          "compass"
-        ]
-      },
-      {
-        "title": "Ponte suspensa no desfiladeiro",
-        "setting": "canyon",
-        "palette": "entardecer",
+        "title": "Entardecer na vila: ponte e nuvem de chuva",
+        "setting": "cobble",
+        "palette": "sunset",
         "objects": [
           "bridge",
-          "mountain",
-          "river",
-          "forest"
+          "raincloud",
+          "lightning",
+          "lake"
         ]
       },
       {
-        "title": "Enseada do vulcão adormecido",
-        "setting": "volcano",
+        "title": "Noite estrelada: montanha com neve e cânion",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "volcano",
-          "ocean",
-          "island",
-          "flag"
+          "snowpeak",
+          "canyon",
+          "dune",
+          "tornado"
         ]
       },
       {
-        "title": "Cartografia dos três picos",
-        "setting": "mountain",
-        "palette": "dia",
+        "title": "Pôr do sol: montanha e mapa-múndi",
+        "setting": "grass",
+        "palette": "sunset",
         "objects": [
-          "map",
-          "compass",
           "mountain",
-          "flag"
+          "worldmap",
+          "city",
+          "globe"
         ]
       },
       {
-        "title": "Encontro das águas no manguezal",
-        "setting": "river",
-        "palette": "entardecer",
+        "title": "Fim de tarde violeta: lago e arco-íris",
+        "setting": "cobble",
+        "palette": "violet",
         "objects": [
-          "river",
-          "ocean",
-          "forest",
-          "bridge"
+          "lake",
+          "rainbow",
+          "palm",
+          "thermometer"
         ]
       },
       {
-        "title": "Vista aérea das ilhas caribenhas",
-        "setting": "island",
-        "palette": "dia",
+        "title": "Manhã de névoa: vulcão e cacto",
+        "setting": "meadow",
+        "palette": "mist",
         "objects": [
-          "island",
-          "ocean",
-          "map",
-          "compass"
+          "volcano",
+          "cactus",
+          "compass",
+          "continent"
+        ]
+      },
+      {
+        "title": "Tarde de sol: penhasco e cidade",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "cliff",
+          "city",
+          "bridge",
+          "snowpeak"
+        ]
+      },
+      {
+        "title": "Estrada de terra: duna de areia e globo terrestre",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "dune",
+          "globe",
+          "mesa",
+          "lake"
         ]
       }
     ]

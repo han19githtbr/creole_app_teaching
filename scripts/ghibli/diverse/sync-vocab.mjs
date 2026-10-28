@@ -14,7 +14,7 @@ function patch(file, startMarker, entries, header) {
   let s = fs.readFileSync(p, "utf8");
   const i = s.indexOf(startMarker), j = s.indexOf("\n};", i);
   const block = s.slice(i, j);
-  const have = new Set([...block.matchAll(/^\s*(?:"([^"]+)"|([A-Za-zÀ-ÿ_][\wÀ-ÿ-]*))\s*:/gm)].map((m) => m[1] ?? m[2]));
+  const have = new Set([...block.matchAll(/(?:^|[\s,{])(?:"([^"]+)"|([A-Za-zÀ-ÿ_][\wÀ-ÿ]*))\s*:\s*["']/g)].map((m) => m[1] ?? m[2]));
   const add = entries.filter(([k]) => !have.has(k));
   if (!add.length) return 0;
   const lines = add.map(([k, v]) => `\n  ${JSON.stringify(k)}: ${JSON.stringify(v)},`).join("");

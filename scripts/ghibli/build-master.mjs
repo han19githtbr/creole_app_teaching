@@ -116,7 +116,8 @@ for (const scene of MASTER_SCENES) {
     const variantId = `${scene.id}-${String(variant).padStart(2, "0")}`;
     const variantSvg = customFns && customFns[variant - 1] ? customFns[variant - 1]() : masterSvg;
     const variantPath = path.join(OUT, `${variantId}.svg`);
-    fs.writeFileSync(variantPath, variantSvg, "utf8");
+    // Cultura e Natureza (cenas 02..20) vêm de scripts/ghibli/diverse/build-diverse.mjs: não sobrescrever.
+    if (scene.theme !== "Cultura" && scene.theme !== "Natureza") fs.writeFileSync(variantPath, variantSvg, "utf8");
 
     const variantTitle =
       themeVariants[variant - 2]?.title || `${scene.title} — Cena ${variant}`;

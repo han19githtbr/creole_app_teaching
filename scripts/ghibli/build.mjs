@@ -32,6 +32,11 @@ SCENES.forEach((s, sceneIndex) => {
     const id = variant === 1 ? s.id : `${s.id}-${String(variant).padStart(2, "0")}`;
     const plan = variant === 1 ? null : VARIANTS[s.theme].scenes[variant - 2];
     const title = plan?.title ?? s.title;
+    // Cultura e Natureza (cenas 02..20) agora vêm de scripts/ghibli/diverse/build-diverse.mjs: não sobrescrever.
+    if (variant > 1 && (s.theme === "Cultura" || s.theme === "Natureza")) {
+      manifest.push({ id, theme: s.theme, title, src: `/ghibli/${id}.svg` });
+      continue;
+    }
     const paletteName = plan?.palette === "night" ? "entardecer" : plan?.palette ?? s.pal;
     const p = PAL[paletteName];
     const sceneRandom = rng(variant === 1 ? 1000 + sceneIndex * 77 : 1000 + sceneIndex * 77 + variant * 3413);

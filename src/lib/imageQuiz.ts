@@ -39,9 +39,23 @@ export function getDefaultImageQuiz(theme: string, imageId?: string): ImageQuizC
   const themeData = sceneData[theme];
   const scene = variant > 1 ? themeData?.scenes[variant - 2] : undefined;
   if (scene && themeData) {
+    const answers = scene.objects.map((object) => themeData.labels[object]);
+    // Temas com vocabulário próprio por cena (ex.: Cultura e Natureza): as respostas nem sempre estão na lista
+    // fixa do tema, então o desafio usa as respostas da cena + palavras distratoras do mesmo tema.
+    if (!answers.every((word) => themeData.options.includes(word))) {
+      const pool = Array.from(new Set(Object.values(themeData.labels))).filter((word) => !answers.includes(word));
+      const start = pool.length ? (variant * 7) % pool.length : 0;
+      const distractors = [...pool.slice(start), ...pool.slice(0, start)].slice(0, Math.max(0, 10 - answers.length));
+      const key = (word: string) => {
+        let h = variant;
+        for (const ch of word) h = (h * 31 + ch.charCodeAt(0)) % 9973;
+        return h;
+      };
+      return { options: [...answers, ...distractors].sort((a, b) => key(a) - key(b)), answers };
+    }
     return {
       options: themeData.options,
-      answers: scene.objects.map((object) => themeData.labels[object]),
+      answers,
     };
   }
   return THEME_QUIZZES[theme];

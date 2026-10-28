@@ -259,216 +259,255 @@
       "waterfall": "kaskad",
       "ocean": "lanmè",
       "palm": "palmis",
-      "turtle": "tòti"
+      "turtle": "tòti",
+      "krab": "krab",
+      "zetwal": "zetwal lanmè",
+      "koki": "koki",
+      "pelikan": "pelikan",
+      "dofen": "dòfen",
+      "balen": "balèn",
+      "zile": "zile",
+      "lakansyel": "lakansyèl",
+      "koray": "koray",
+      "pwason": "pwason",
+      "manglye": "manglye",
+      "flamen": "flamen",
+      "letan": "letan",
+      "nenifa": "nenifa",
+      "malfini": "malfini",
+      "roch": "ròch",
+      "chwet": "chwèt",
+      "fey": "fèy",
+      "kolibri": "kolibri",
+      "krapo": "krapo",
+      "lapen": "lapen",
+      "myel": "myèl",
+      "sef": "sèf",
+      "tounesol": "tounesòl",
+      "din": "din",
+      "kaven": "kavèn",
+      "lezar": "lèzar",
+      "volkan": "vòlkan",
+      "chanpiyon": "chanpiyon",
+      "ekirey": "ekirèy",
+      "nich": "nich",
+      "pen": "pen",
+      "falez": "falèz",
+      "kaktis": "kaktis",
+      "koukouy": "koukouy",
+      "lis": "lis",
+      "bambou": "bambou",
+      "bannann": "pye bannann",
+      "foje": "foujè"
     },
     "scenes": [
       {
-        "title": "Cachoeira na floresta",
-        "setting": "waterfall",
-        "palette": "dia",
+        "title": "Praia de conchas e caranguejos",
+        "setting": "sand",
+        "palette": "day",
         "objects": [
-          "waterfall",
-          "palm",
-          "bird",
-          "flower"
+          "krab",
+          "zetwal",
+          "koki",
+          "pelikan"
         ]
       },
       {
-        "title": "Praia das tartarugas",
-        "setting": "beach",
-        "palette": "entardecer",
+        "title": "Golfinho e baleia no mar aberto",
+        "setting": "sea",
+        "palette": "clear",
         "objects": [
-          "turtle",
-          "ocean",
-          "palm",
-          "flower"
+          "dofen",
+          "balen",
+          "zile",
+          "lakansyel"
         ]
       },
       {
-        "title": "Trilha entre montanhas",
-        "setting": "mountain",
-        "palette": "dia",
+        "title": "Recife de corais",
+        "setting": "sand",
+        "palette": "clear",
         "objects": [
-          "mountain",
-          "river",
-          "bird",
-          "tree"
+          "koray",
+          "pwason",
+          "zetwal",
+          "balen"
         ]
       },
       {
-        "title": "Jardim de borboletas",
-        "setting": "garden",
-        "palette": "dia",
+        "title": "Manguezal ao amanhecer",
+        "setting": "moss",
+        "palette": "dawn",
         "objects": [
-          "butterfly",
-          "flower",
-          "tree",
-          "bird"
+          "manglye",
+          "flamen",
+          "krab",
+          "pwason"
         ]
       },
       {
-        "title": "Rio entre palmeiras",
-        "setting": "river",
-        "palette": "entardecer",
+        "title": "Lagoa dos flamingos",
+        "setting": "moss",
+        "palette": "sunset",
         "objects": [
-          "river",
-          "palm",
-          "turtle",
-          "flower"
+          "letan",
+          "flamen",
+          "pelikan",
+          "nenifa"
         ]
       },
       {
-        "title": "Clareira florida",
+        "title": "Baía tranquila",
+        "setting": "sand",
+        "palette": "violet",
+        "objects": [
+          "dofen",
+          "koki",
+          "manglye",
+          "nenifa"
+        ]
+      },
+      {
+        "title": "Costa rochosa e recife",
+        "setting": "rock",
+        "palette": "overcast",
+        "objects": [
+          "zile",
+          "koray",
+          "malfini",
+          "roch"
+        ]
+      },
+      {
+        "title": "Floresta úmida ao amanhecer",
+        "setting": "forest",
+        "palette": "dawn",
+        "objects": [
+          "chwet",
+          "fey",
+          "kolibri",
+          "krapo"
+        ]
+      },
+      {
+        "title": "Prado de girassóis",
         "setting": "meadow",
-        "palette": "dia",
+        "palette": "day",
         "objects": [
-          "flower",
-          "butterfly",
-          "mountain",
-          "tree"
+          "lapen",
+          "myel",
+          "sef",
+          "tounesol"
         ]
       },
       {
-        "title": "Costa dos pássaros",
-        "setting": "coast",
-        "palette": "dia",
+        "title": "Terra vulcânica e dunas",
+        "setting": "dune",
+        "palette": "golden",
         "objects": [
-          "ocean",
-          "bird",
-          "palm",
-          "turtle"
+          "din",
+          "kaven",
+          "lezar",
+          "volkan"
         ]
       },
       {
-        "title": "Vale verde depois da chuva",
+        "title": "Floresta de pinheiros na neblina",
         "setting": "forest",
-        "palette": "entardecer",
+        "palette": "mist",
         "objects": [
-          "tree",
-          "waterfall",
-          "flower",
-          "mountain"
+          "chanpiyon",
+          "ekirey",
+          "nich",
+          "pen"
         ]
       },
       {
-        "title": "Ilha tropical",
-        "setting": "island",
-        "palette": "dia",
+        "title": "Penhasco seco",
+        "setting": "rock",
+        "palette": "clear",
         "objects": [
-          "turtle",
-          "palm",
-          "ocean",
-          "bird"
+          "falez",
+          "kaktis",
+          "lezar",
+          "pen"
         ]
       },
       {
-        "title": "Lagoa dos lírios ao amanhecer",
-        "setting": "lake",
-        "palette": "dia",
+        "title": "Encosta rochosa com ninhos",
+        "setting": "grass",
+        "palette": "day",
         "objects": [
-          "flower",
-          "bird",
-          "tree",
-          "river"
+          "kaven",
+          "malfini",
+          "myel",
+          "nich"
         ]
       },
       {
-        "title": "Cânion verde e rio caudaloso",
-        "setting": "canyon",
-        "palette": "dia",
+        "title": "Noite na floresta",
+        "setting": "night",
+        "palette": "night",
         "objects": [
-          "mountain",
-          "river",
-          "waterfall",
-          "bird"
+          "chanpiyon",
+          "koukouy",
+          "krapo",
+          "lis"
         ]
       },
       {
-        "title": "Recife de corais e tartarugas",
-        "setting": "reef",
-        "palette": "dia",
+        "title": "Lagoa ao amanhecer",
+        "setting": "meadow",
+        "palette": "dawn",
         "objects": [
-          "turtle",
-          "ocean",
-          "palm",
-          "bird"
+          "kolibri",
+          "letan",
+          "lis",
+          "tounesol"
         ]
       },
       {
-        "title": "Pico da montanha ao pôr do sol",
-        "setting": "peak",
-        "palette": "entardecer",
+        "title": "Vale da montanha",
+        "setting": "moss",
+        "palette": "overcast",
         "objects": [
-          "mountain",
-          "tree",
-          "bird",
-          "butterfly"
+          "ekirey",
+          "falez",
+          "sef",
+          "volkan"
         ]
       },
       {
-        "title": "Floresta tropical de bambus e palmeiras",
-        "setting": "jungle",
-        "palette": "dia",
-        "objects": [
-          "palm",
-          "waterfall",
-          "tree",
-          "flower"
-        ]
-      },
-      {
-        "title": "Ninho dos pássaros no manguezal",
-        "setting": "mangrove",
-        "palette": "entardecer",
-        "objects": [
-          "bird",
-          "tree",
-          "river",
-          "butterfly"
-        ]
-      },
-      {
-        "title": "Enseada secreta com falésias",
-        "setting": "cove",
-        "palette": "dia",
-        "objects": [
-          "ocean",
-          "mountain",
-          "palm",
-          "turtle"
-        ]
-      },
-      {
-        "title": "Bosque das borboletas azuis",
+        "title": "Chuva na floresta tropical",
         "setting": "forest",
-        "palette": "dia",
+        "palette": "rain",
         "objects": [
-          "butterfly",
-          "tree",
-          "flower",
-          "river"
+          "bambou",
+          "bannann",
+          "fey",
+          "foje"
         ]
       },
       {
-        "title": "Gruta com cascata sagrada",
-        "setting": "grotto",
-        "palette": "entardecer",
+        "title": "Deserto depois da chuva",
+        "setting": "dune",
+        "palette": "mist",
         "objects": [
-          "waterfall",
-          "mountain",
-          "flower",
-          "bird"
+          "din",
+          "kaktis",
+          "lakansyel",
+          "roch"
         ]
       },
       {
-        "title": "Dunas costeiras com palmeiras",
-        "setting": "dunes",
-        "palette": "entardecer",
+        "title": "Jardim ao luar",
+        "setting": "night",
+        "palette": "night",
         "objects": [
-          "palm",
-          "ocean",
-          "butterfly",
-          "turtle"
+          "chwet",
+          "foje",
+          "koukouy",
+          "lapen"
         ]
       }
     ]
@@ -496,216 +535,254 @@
       "dancer": "dansè",
       "food": "manje",
       "clothing": "rad",
-      "parasol": "parapli"
+      "parasol": "parapli",
+      "vaksin": "vaksin",
+      "kon": "kòn",
+      "banye": "banyè",
+      "tcha-tcha": "tcha-tcha",
+      "twal": "twal",
+      "chal": "chal",
+      "foula": "foula",
+      "makout": "makout",
+      "penti": "penti",
+      "atis": "atis",
+      "eskilti": "eskilti",
+      "kolye": "kolye",
+      "motye": "mòtye",
+      "kannari": "kannari",
+      "kalbas": "kalbas",
+      "panye": "panye",
+      "konte": "kontè",
+      "dife": "dife",
+      "chez": "chèz",
+      "timoun": "timoun",
+      "tap-tap": "tap-tap",
+      "bourik": "bourik",
+      "granmoun": "granmoun",
+      "chapo": "chapo",
+      "kyosk": "kyòsk",
+      "fonten": "fontèn",
+      "balkon": "balkon",
+      "lanp": "lanp",
+      "teyat": "teyat",
+      "kostim": "kostim",
+      "tanbou": "tanbou",
+      "plim": "plim",
+      "fo": "fòj",
+      "kay pay": "kay pay",
+      "kann": "kann",
+      "kafe": "kafe",
+      "evantay": "evantay",
+      "kanot": "kanòt"
     },
     "scenes": [
       {
-        "title": "Karnaval na praça",
-        "setting": "festival",
-        "palette": "entardecer",
+        "title": "Banda Rara ao entardecer",
+        "setting": "dirt",
+        "palette": "sunset",
         "objects": [
-          "mask",
-          "dancer",
-          "drum",
-          "flag"
+          "vaksin",
+          "kon",
+          "banye",
+          "tcha-tcha"
         ]
       },
       {
-        "title": "Mercado de artesanato",
-        "setting": "market",
-        "palette": "dia",
+        "title": "Mercado de tecidos e lenços",
+        "setting": "cobble",
+        "palette": "day",
         "objects": [
-          "vendor",
-          "clothing",
-          "food",
-          "parasol"
+          "twal",
+          "chal",
+          "foula",
+          "makout"
         ]
       },
       {
-        "title": "Festa das lanternas",
-        "setting": "square",
+        "title": "Ateliê de arte naïf",
+        "setting": "grass",
+        "palette": "golden",
+        "objects": [
+          "penti",
+          "atis",
+          "eskilti",
+          "kolye"
+        ]
+      },
+      {
+        "title": "Cozinha ao ar livre",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "motye",
+          "kannari",
+          "kalbas",
+          "panye"
+        ]
+      },
+      {
+        "title": "Contos ao redor da fogueira",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "lantern",
-          "flag",
-          "house",
-          "drum"
+          "konte",
+          "dife",
+          "chez",
+          "timoun"
         ]
       },
       {
-        "title": "Música no vilarejo",
-        "setting": "village",
-        "palette": "entardecer",
+        "title": "Estrada do tap-tap",
+        "setting": "dirt",
+        "palette": "day",
         "objects": [
-          "drum",
-          "house",
-          "dancer",
-          "food"
+          "tap-tap",
+          "bourik",
+          "granmoun",
+          "chapo"
         ]
       },
       {
-        "title": "Desfile de roupas tradicionais",
-        "setting": "parade",
-        "palette": "dia",
+        "title": "Praça do coreto",
+        "setting": "cobble",
+        "palette": "day",
         "objects": [
-          "clothing",
-          "flag",
-          "dancer",
-          "lantern"
+          "kyosk",
+          "fonten",
+          "balkon",
+          "lanp"
         ]
       },
       {
-        "title": "Barracas de comida haitiana",
-        "setting": "market",
-        "palette": "entardecer",
+        "title": "Bastidores do carnaval",
+        "setting": "cobble",
+        "palette": "violet",
         "objects": [
-          "food",
-          "vendor",
-          "parasol",
-          "house"
+          "teyat",
+          "kostim",
+          "tanbou",
+          "plim"
         ]
       },
       {
-        "title": "Máscaras e tambores",
-        "setting": "stage",
+        "title": "Ferreiro do vilarejo",
+        "setting": "rock",
+        "palette": "overcast",
+        "objects": [
+          "fo",
+          "eskilti",
+          "bourik",
+          "kay pay"
+        ]
+      },
+      {
+        "title": "Colheita de cana e café",
+        "setting": "meadow",
+        "palette": "dawn",
+        "objects": [
+          "kann",
+          "kafe",
+          "panye",
+          "makout"
+        ]
+      },
+      {
+        "title": "Praia dos leques e canoas",
+        "setting": "sand",
+        "palette": "clear",
+        "objects": [
+          "evantay",
+          "kanot",
+          "plim",
+          "chal"
+        ]
+      },
+      {
+        "title": "Festa de rua à noite",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "mask",
-          "drum",
-          "lantern",
-          "dancer"
+          "lanp",
+          "tanbou",
+          "evantay",
+          "vaksin"
         ]
       },
       {
-        "title": "Celebração sob as bandeiras",
-        "setting": "festival",
-        "palette": "dia",
+        "title": "Casa de campo",
+        "setting": "meadow",
+        "palette": "mist",
         "objects": [
-          "flag",
-          "food",
-          "vendor",
-          "house"
+          "kay pay",
+          "chez",
+          "kannari",
+          "kann"
         ]
       },
       {
-        "title": "Dança no pátio",
-        "setting": "courtyard",
-        "palette": "entardecer",
+        "title": "Procissão ao pôr do sol",
+        "setting": "dirt",
+        "palette": "golden",
         "objects": [
-          "dancer",
-          "drum",
-          "clothing",
-          "parasol"
+          "kon",
+          "kostim",
+          "chapo",
+          "timoun"
         ]
       },
       {
-        "title": "Ateliê de pintura e arte naïf",
-        "setting": "atelier",
-        "palette": "dia",
+        "title": "Praça do estandarte",
+        "setting": "cobble",
+        "palette": "day",
         "objects": [
-          "house",
-          "flag",
-          "mask",
-          "clothing"
+          "banye",
+          "kyosk",
+          "foula",
+          "konte"
         ]
       },
       {
-        "title": "Roda de contadores de histórias",
-        "setting": "circle",
+        "title": "Feira de rua",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "tcha-tcha",
+          "balkon",
+          "twal",
+          "granmoun"
+        ]
+      },
+      {
+        "title": "Oficina de arte e fogo",
+        "setting": "cobble",
+        "palette": "violet",
+        "objects": [
+          "penti",
+          "teyat",
+          "dife",
+          "fo"
+        ]
+      },
+      {
+        "title": "Estrada dos artistas",
+        "setting": "grass",
+        "palette": "sunset",
+        "objects": [
+          "atis",
+          "tap-tap",
+          "kalbas",
+          "kafe"
+        ]
+      },
+      {
+        "title": "Beira-mar ao luar",
+        "setting": "nightsand",
         "palette": "night",
         "objects": [
-          "lantern",
-          "drum",
-          "house",
-          "food"
-        ]
-      },
-      {
-        "title": "Oficina de escultura em ferro",
-        "setting": "sculpture",
-        "palette": "dia",
-        "objects": [
-          "mask",
-          "vendor",
-          "house",
-          "flag"
-        ]
-      },
-      {
-        "title": "Feira de tecidos e roupas madan sara",
-        "setting": "market",
-        "palette": "dia",
-        "objects": [
-          "vendor",
-          "clothing",
-          "parasol",
-          "food"
-        ]
-      },
-      {
-        "title": "Procissão festiva de Rara",
-        "setting": "parade",
-        "palette": "entardecer",
-        "objects": [
-          "flag",
-          "drum",
-          "dancer",
-          "lantern"
-        ]
-      },
-      {
-        "title": "Banquete comunitário no quintal",
-        "setting": "courtyard",
-        "palette": "entardecer",
-        "objects": [
-          "food",
-          "house",
-          "parasol",
-          "drum"
-        ]
-      },
-      {
-        "title": "Confecção de tambores tradicionais",
-        "setting": "workshop",
-        "palette": "dia",
-        "objects": [
-          "drum",
-          "house",
-          "mask",
-          "lantern"
-        ]
-      },
-      {
-        "title": "Dança Yanvalou na praia",
-        "setting": "beach",
-        "palette": "entardecer",
-        "objects": [
-          "dancer",
-          "drum",
-          "clothing",
-          "flag"
-        ]
-      },
-      {
-        "title": "Noite de carnaval com fantasias",
-        "setting": "festival",
-        "palette": "night",
-        "objects": [
-          "mask",
-          "dancer",
-          "lantern",
-          "clothing"
-        ]
-      },
-      {
-        "title": "Mercado sob sombrinhas floridas",
-        "setting": "market",
-        "palette": "entardecer",
-        "objects": [
-          "parasol",
-          "vendor",
-          "food",
-          "house"
+          "kolye",
+          "motye",
+          "fonten",
+          "kanot"
         ]
       }
     ]

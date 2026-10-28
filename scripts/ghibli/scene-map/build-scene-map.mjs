@@ -56,8 +56,10 @@ function bbox(r) {
 }
 const rle = (s) => s.replace(/(.)\1*/g, (m) => m[0] + (m.length > 1 ? m.length : ""));
 
-const map = {};
-for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".svg")).sort()) {
+// ONLY="cultura-,natureza-" processa só esses prefixos e mantém as demais cenas do JSON atual
+const ONLY = (process.env.ONLY || "").split(",").map((x) => x.trim()).filter(Boolean);
+const map = ONLY.length && fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, "utf8")) : {};
+for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".svg") && (!ONLY.length || ONLY.some((o) => x.startsWith(o)))).sort()) {
   const id = f.replace(".svg", "");
   const svg = fs.readFileSync(path.join(dir, f), "utf8");
   const { openTag, nodes } = splitTop(svg);

@@ -357,6 +357,17 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "kayak": "kayak",
   "boukann": "barbecue",
   "tab pingpong": "table de ping-pong",
+  "bist": "buste de philosophe",
+  "sablye": "sablier",
+  "balans": "balance de la justice",
+  "oliv": "olivier",
+  "ban wòch": "banc de pierre",
+  "tanp": "temple grec",
+  "sandal": "sandales en cuir",
+  "kouwòn lorye": "couronne de laurier",
+  "ròch ekilib": "cairn de pierres",
+  "mirwa men": "miroir à main",
+  "kle": "clé ancienne",
 };
 
 /** Tema (nome em português usado no banco) → tema em francês. */

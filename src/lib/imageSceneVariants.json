@@ -2825,223 +2825,228 @@
     "labels": {
       "column": "kolòn",
       "book": "liv",
-      "olive": "pye oliv",
+      "olive": "oliv",
       "sage": "moun saj",
       "lamp": "lanp",
       "gate": "pòtay",
       "path": "chemen",
       "statue": "estati",
       "jar": "krich",
-      "scroll": "woulo"
+      "scroll": "parchemen",
+      "bench": "ban wòch",
+      "key": "kle",
+      "torch": "flanbo",
+      "bust": "bist",
+      "scales": "balans",
+      "sandal": "sandal",
+      "balanced": "ròch ekilib",
+      "handmirror": "mirwa men",
+      "temple": "tanp",
+      "hourglass": "sablye",
+      "laurel": "kouwòn lorye",
+      "oillamp": "lanp lwil",
+      "fountain": "fontèn",
+      "owl": "chwèt"
     },
     "scenes": [
       {
-        "title": "Pórtico entre oliveiras",
-        "setting": "columns",
-        "palette": "dia",
+        "title": "Ao ar livre: banco de pedra e chave antiga",
+        "setting": "dirt",
+        "palette": "clear",
         "objects": [
-          "column",
-          "olive",
-          "book",
-          "sage"
-        ]
-      },
-      {
-        "title": "Estudo à luz da lamparina",
-        "setting": "library",
-        "palette": "night",
-        "objects": [
-          "lamp",
-          "scroll",
-          "book",
-          "jar"
-        ]
-      },
-      {
-        "title": "Jardim da reflexão",
-        "setting": "grove",
-        "palette": "entardecer",
-        "objects": [
-          "sage",
-          "olive",
-          "path",
-          "statue"
-        ]
-      },
-      {
-        "title": "Portão do templo antigo",
-        "setting": "columns",
-        "palette": "dia",
-        "objects": [
-          "gate",
-          "column",
-          "jar",
-          "olive"
-        ]
-      },
-      {
-        "title": "Leitura no pátio",
-        "setting": "courtyard",
-        "palette": "entardecer",
-        "objects": [
-          "book",
-          "sage",
-          "lamp",
-          "path"
-        ]
-      },
-      {
-        "title": "Estátua entre colunas",
-        "setting": "ruins",
-        "palette": "dia",
-        "objects": [
-          "statue",
-          "column",
-          "scroll",
-          "olive"
-        ]
-      },
-      {
-        "title": "Caminho da sabedoria",
-        "setting": "hill",
-        "palette": "entardecer",
-        "objects": [
-          "path",
-          "sage",
-          "olive",
-          "jar"
-        ]
-      },
-      {
-        "title": "Biblioteca serena",
-        "setting": "library",
-        "palette": "dia",
-        "objects": [
-          "book",
-          "scroll",
-          "column",
-          "lamp"
-        ]
-      },
-      {
-        "title": "Pátio das meditações",
-        "setting": "courtyard",
-        "palette": "night",
-        "objects": [
-          "sage",
-          "statue",
-          "gate",
-          "lamp"
-        ]
-      },
-      {
-        "title": "Ágora clássica sob o céu azul",
-        "setting": "columns",
-        "palette": "dia",
-        "objects": [
-          "column",
-          "statue",
-          "sage",
-          "path"
-        ]
-      },
-      {
-        "title": "Escadaria do templo antigo",
-        "setting": "ruins",
-        "palette": "dia",
-        "objects": [
-          "column",
-          "gate",
-          "jar",
-          "scroll"
-        ]
-      },
-      {
-        "title": "Leitura meditativa na oliveira",
-        "setting": "grove",
-        "palette": "entardecer",
-        "objects": [
-          "olive",
-          "book",
-          "sage",
-          "jar"
-        ]
-      },
-      {
-        "title": "Lamparina acesa sobre o papiro",
-        "setting": "library",
-        "palette": "night",
-        "objects": [
-          "lamp",
-          "scroll",
-          "book",
-          "jar"
-        ]
-      },
-      {
-        "title": "Busto de mármore do filósofo",
-        "setting": "courtyard",
-        "palette": "dia",
-        "objects": [
-          "statue",
-          "column",
-          "olive",
+          "bench",
+          "key",
+          "torch",
           "book"
         ]
       },
       {
-        "title": "Portão de pedra para o templo",
-        "setting": "columns",
-        "palette": "entardecer",
+        "title": "Salão de pedra: busto de filósofo e pergaminho",
+        "setting": "stone",
         "objects": [
-          "gate",
-          "column",
-          "path",
-          "statue"
+          "bust",
+          "scroll",
+          "scales",
+          "sandal"
         ]
       },
       {
-        "title": "Diálogo filosófico ao ar livre",
-        "setting": "grove",
-        "palette": "dia",
+        "title": "Chuva leve: pedras empilhadas e espelho de mão",
+        "setting": "forest",
+        "palette": "rain",
         "objects": [
-          "sage",
-          "olive",
+          "balanced",
+          "handmirror",
+          "statue",
+          "temple"
+        ]
+      },
+      {
+        "title": "Sala de leitura: coluna grega e ampulheta",
+        "setting": "wood",
+        "objects": [
+          "column",
+          "hourglass",
+          "laurel",
+          "oillamp"
+        ]
+      },
+      {
+        "title": "Manhã de névoa: fonte e portão de ferro",
+        "setting": "meadow",
+        "palette": "mist",
+        "objects": [
+          "fountain",
+          "gate",
+          "owl",
+          "bench"
+        ]
+      },
+      {
+        "title": "Sala dourada: pergaminho e chave antiga",
+        "setting": "carpet",
+        "objects": [
           "scroll",
+          "key",
+          "owl",
           "column"
         ]
       },
       {
-        "title": "Pátio circular com ânforas",
-        "setting": "columns",
-        "palette": "entardecer",
+        "title": "Campo florido: oliveira e coroa de louros",
+        "setting": "meadow",
+        "palette": "day",
         "objects": [
-          "column",
-          "jar",
-          "statue",
-          "path"
+          "olive",
+          "laurel",
+          "handmirror",
+          "book"
         ]
       },
       {
-        "title": "Vigília filosófica noturna",
-        "setting": "ruins",
-        "palette": "night",
+        "title": "Salão de arcos: pedras empilhadas e sandálias de couro",
+        "setting": "tile",
         "objects": [
-          "sage",
-          "lamp",
-          "column",
+          "balanced",
+          "sandal",
+          "torch",
+          "column"
+        ]
+      },
+      {
+        "title": "Pôr do sol: busto de filósofo e lamparina a óleo",
+        "setting": "grass",
+        "palette": "sunset",
+        "objects": [
+          "bust",
+          "oillamp",
+          "fountain",
+          "olive"
+        ]
+      },
+      {
+        "title": "Cozinha de azulejos: estátua de mármore e balança da justiça",
+        "setting": "tile",
+        "objects": [
+          "statue",
+          "scales",
+          "laurel",
+          "torch"
+        ]
+      },
+      {
+        "title": "Sol da manhã: templo grego e ampulheta",
+        "setting": "grass",
+        "palette": "golden",
+        "objects": [
+          "temple",
+          "hourglass",
+          "gate",
+          "bust"
+        ]
+      },
+      {
+        "title": "Sala de bege: espelho de mão e pergaminho",
+        "setting": "wood",
+        "objects": [
+          "handmirror",
+          "scroll",
+          "oillamp",
+          "torch"
+        ]
+      },
+      {
+        "title": "Tarde com nuvens: livros antigos e sandálias de couro",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "book",
+          "sandal",
+          "hourglass",
+          "owl"
+        ]
+      },
+      {
+        "title": "Sala à noite: pedras empilhadas e balança da justiça",
+        "setting": "wood",
+        "objects": [
+          "balanced",
+          "scales",
+          "key",
+          "hourglass"
+        ]
+      },
+      {
+        "title": "Tarde de sol: oliveira e portão de ferro",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "olive",
+          "gate",
+          "statue",
           "scroll"
         ]
       },
       {
-        "title": "Passeio sereno entre oliveiras",
-        "setting": "grove",
-        "palette": "entardecer",
+        "title": "Estante ao anoitecer: estátua de mármore e chave antiga",
+        "setting": "carpet",
         "objects": [
+          "statue",
+          "key",
+          "oillamp",
+          "sandal"
+        ]
+      },
+      {
+        "title": "Luar tranquilo: templo grego e banco de pedra",
+        "setting": "night",
+        "palette": "night",
+        "objects": [
+          "temple",
+          "bench",
           "olive",
-          "path",
-          "book",
-          "sage"
+          "column"
+        ]
+      },
+      {
+        "title": "Sala de arcos azuis: pedras empilhadas e coroa de louros",
+        "setting": "tile",
+        "objects": [
+          "balanced",
+          "laurel",
+          "bust",
+          "owl"
+        ]
+      },
+      {
+        "title": "Fim de tarde violeta: fonte e templo grego",
+        "setting": "cobble",
+        "palette": "violet",
+        "objects": [
+          "fountain",
+          "temple",
+          "scales",
+          "book"
         ]
       }
     ]

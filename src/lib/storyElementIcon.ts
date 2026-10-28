@@ -268,6 +268,19 @@ const ICONS: Record<string, string> = {
   "caiaque": "🛶",
   "churrasqueira": "🍖",
   "mesa de pingue-pongue": "🏓",
+  "busto de filosofo": "🗿",
+  "ampulheta": "⏳",
+  "balanca da justica": "⚖️",
+  "livros antigos": "📚",
+  "banco de pedra": "🪑",
+  "templo grego": "🏛️",
+  "sandalias de couro": "👡",
+  "coroa de louros": "🌿",
+  "pedras empilhadas": "🪨",
+  "espelho de mao": "🪞",
+  "chave antiga": "🗝️",
+  "portao de ferro": "⛩️",
+  "estatua de marmore": "🗽",
 };
 
 /** Alguns elementos do banco trazem o nome em Kreyòl no campo `pt`; mapeamos esses nomes também. */

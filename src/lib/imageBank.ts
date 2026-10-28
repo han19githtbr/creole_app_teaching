@@ -649,6 +649,17 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "kayak": "caiaque",
   "boukann": "churrasqueira",
   "tab pingpong": "mesa de pingue-pongue",
+  "bist": "busto de filósofo",
+  "sablye": "ampulheta",
+  "balans": "balança da justiça",
+  "oliv": "oliveira",
+  "ban wòch": "banco de pedra",
+  "tanp": "templo grego",
+  "sandal": "sandálias de couro",
+  "kouwòn lorye": "coroa de louros",
+  "ròch ekilib": "pedras empilhadas",
+  "mirwa men": "espelho de mão",
+  "kle": "chave antiga",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<

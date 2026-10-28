@@ -3309,7 +3309,7 @@
       "boutèy"
     ],
     "labels": {
-      "pot": "chodyè",
+      "pot": "marmit",
       "bread": "pen",
       "fruit": "fwi",
       "pepper": "piman",
@@ -3318,216 +3318,229 @@
       "plate": "asyèt",
       "knife": "kouto",
       "fork": "fouchèt",
-      "bottle": "boutèy"
+      "bottle": "boutèy",
+      "spoon": "kiyè bwa",
+      "eggs": "ze",
+      "board": "planch",
+      "milk": "lèt",
+      "pineapple": "ananas",
+      "porridge": "labouyi",
+      "rice": "diri ak pwa",
+      "mango": "mango",
+      "plantain": "bannann peze",
+      "akra": "akra",
+      "pikliz": "pikliz",
+      "stove": "recho",
+      "coffee": "kafe",
+      "banana": "fig",
+      "veggies": "legim",
+      "juice": "ji",
+      "cutlery": "kouto ak fouchèt",
+      "chocolate": "chokola",
+      "calabash": "kalbas",
+      "soup": "soup joumou",
+      "griot": "griyo",
+      "mortar": "mòtye"
     },
     "scenes": [
       {
-        "title": "Mercado de frutas",
-        "setting": "market",
-        "palette": "dia",
+        "title": "Amanhecer calmo: colher de pau e ovos",
+        "setting": "meadow",
+        "palette": "dawn",
         "objects": [
-          "fruit",
-          "vegetable",
-          "pepper",
-          "table"
+          "spoon",
+          "eggs",
+          "board",
+          "milk"
         ]
       },
       {
-        "title": "Panela no fogão",
-        "setting": "kitchen",
-        "palette": "entardecer",
+        "title": "Biblioteca aconchegante: abacaxi e mingau",
+        "setting": "wood",
         "objects": [
+          "pineapple",
+          "porridge",
           "pot",
-          "vegetable",
-          "table",
-          "bottle"
-        ]
-      },
-      {
-        "title": "Mesa posta para o jantar",
-        "setting": "dining",
-        "palette": "night",
-        "objects": [
-          "table",
-          "plate",
-          "knife",
-          "fork"
-        ]
-      },
-      {
-        "title": "Pães recém-assados",
-        "setting": "bakery",
-        "palette": "dia",
-        "objects": [
-          "bread",
-          "table",
-          "fruit",
-          "bottle"
-        ]
-      },
-      {
-        "title": "Colheita de pimentas",
-        "setting": "garden",
-        "palette": "entardecer",
-        "objects": [
-          "pepper",
-          "vegetable",
-          "fruit",
-          "table"
-        ]
-      },
-      {
-        "title": "Cozinha haitiana",
-        "setting": "kitchen",
-        "palette": "dia",
-        "objects": [
-          "pot",
-          "pepper",
-          "bread",
-          "vegetable"
-        ]
-      },
-      {
-        "title": "Café da manhã no campo",
-        "setting": "farmhouse",
-        "palette": "dia",
-        "objects": [
-          "bread",
-          "fruit",
-          "plate",
-          "table"
-        ]
-      },
-      {
-        "title": "Feira de legumes",
-        "setting": "market",
-        "palette": "entardecer",
-        "objects": [
-          "vegetable",
-          "bottle",
-          "pepper",
-          "fruit"
-        ]
-      },
-      {
-        "title": "Banquete sob as lanternas",
-        "setting": "dining",
-        "palette": "night",
-        "objects": [
-          "plate",
-          "fork",
-          "pot",
-          "bread"
-        ]
-      },
-      {
-        "title": "Fogão a lenha com caldeirão",
-        "setting": "kitchen",
-        "palette": "entardecer",
-        "objects": [
-          "pot",
-          "vegetable",
-          "pepper",
-          "bottle"
-        ]
-      },
-      {
-        "title": "Pães artesanais crocantes",
-        "setting": "bakery",
-        "palette": "dia",
-        "objects": [
-          "bread",
-          "table",
-          "knife",
-          "fruit"
-        ]
-      },
-      {
-        "title": "Mesa com frutas tropicais",
-        "setting": "garden",
-        "palette": "dia",
-        "objects": [
-          "fruit",
-          "table",
-          "bottle",
           "plate"
         ]
       },
       {
-        "title": "Caldo saboroso na panela",
-        "setting": "kitchen",
-        "palette": "dia",
+        "title": "Tarde de sol: arroz com feijão e mangas",
+        "setting": "grass",
+        "palette": "day",
         "objects": [
-          "pot",
-          "pepper",
-          "vegetable",
-          "plate"
+          "rice",
+          "mango",
+          "plantain",
+          "akra"
         ]
       },
       {
-        "title": "Mesa posta para banquete",
-        "setting": "dining",
-        "palette": "entardecer",
+        "title": "Corredor de janelas: conserva de repolho picante e fogareiro a carvão",
+        "setting": "tile",
         "objects": [
-          "plate",
-          "fork",
-          "knife",
-          "bread"
+          "pikliz",
+          "stove",
+          "coffee",
+          "banana"
         ]
       },
       {
-        "title": "Banca de pimentas e temperos",
-        "setting": "market",
-        "palette": "dia",
+        "title": "Estrada de terra: cesta de legumes e jarra de suco",
+        "setting": "dirt",
+        "palette": "clear",
         "objects": [
-          "pepper",
-          "bottle",
-          "vegetable",
-          "fruit"
+          "veggies",
+          "juice",
+          "cutlery",
+          "chocolate"
         ]
       },
       {
-        "title": "Café da manhã com pão e frutas",
-        "setting": "farmhouse",
-        "palette": "dia",
+        "title": "Sala de luz suave: cabaça e sopa de abóbora",
+        "setting": "carpet",
+        "objects": [
+          "calabash",
+          "soup",
+          "griot",
+          "mortar"
+        ]
+      },
+      {
+        "title": "Entardecer dourado: pão fresco e cesta de legumes",
+        "setting": "dirt",
+        "palette": "golden",
         "objects": [
           "bread",
-          "fruit",
-          "plate",
-          "table"
-        ]
-      },
-      {
-        "title": "Cozinhando ao ar livre no quintal",
-        "setting": "kitchen",
-        "palette": "entardecer",
-        "objects": [
-          "pot",
-          "table",
-          "pepper",
-          "vegetable"
-        ]
-      },
-      {
-        "title": "Garrafas artesanais e pimentas",
-        "setting": "kitchen",
-        "palette": "dia",
-        "objects": [
-          "bottle",
-          "pepper",
-          "knife",
+          "veggies",
+          "soup",
           "plate"
         ]
       },
       {
-        "title": "Jantar especial acolhedor",
-        "setting": "dining",
-        "palette": "night",
+        "title": "Sala à noite: panela de ferro e pilão de madeira",
+        "setting": "wood",
         "objects": [
-          "table",
-          "plate",
-          "fork",
+          "pot",
+          "mortar",
+          "pikliz",
+          "mango"
+        ]
+      },
+      {
+        "title": "Ao ar livre: garrafa de leite e banana-da-terra frita",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "milk",
+          "plantain",
+          "calabash",
+          "pineapple"
+        ]
+      },
+      {
+        "title": "Salão de arcos: chocolate quente e colher de pau",
+        "setting": "tile",
+        "objects": [
+          "chocolate",
+          "spoon",
+          "rice",
+          "griot"
+        ]
+      },
+      {
+        "title": "Praça ensolarada: bolinhos fritos e ovos",
+        "setting": "cobble",
+        "palette": "day",
+        "objects": [
+          "akra",
+          "eggs",
+          "coffee",
+          "cutlery"
+        ]
+      },
+      {
+        "title": "Sala de arcos azuis: fogareiro a carvão e jarra de suco",
+        "setting": "tile",
+        "objects": [
+          "stove",
+          "juice",
+          "bread",
           "pot"
+        ]
+      },
+      {
+        "title": "Campo florido: mingau e tábua de cortar",
+        "setting": "meadow",
+        "palette": "day",
+        "objects": [
+          "porridge",
+          "board",
+          "banana",
+          "calabash"
+        ]
+      },
+      {
+        "title": "Sala de verde-claro: garrafa de leite e pão fresco",
+        "setting": "tile",
+        "objects": [
+          "milk",
+          "bread",
+          "banana",
+          "griot"
+        ]
+      },
+      {
+        "title": "Luar tranquilo: banana-da-terra frita e faca e garfo",
+        "setting": "night",
+        "palette": "night",
+        "objects": [
+          "plantain",
+          "cutlery",
+          "plate",
+          "board"
+        ]
+      },
+      {
+        "title": "Ateliê claro: conserva de repolho picante e jarra de suco",
+        "setting": "wood",
+        "objects": [
+          "pikliz",
+          "juice",
+          "eggs",
+          "rice"
+        ]
+      },
+      {
+        "title": "Manhã de névoa: mingau e colher de pau",
+        "setting": "meadow",
+        "palette": "mist",
+        "objects": [
+          "porridge",
+          "spoon",
+          "coffee",
+          "veggies"
+        ]
+      },
+      {
+        "title": "Sala de leitura: chocolate quente e mangas",
+        "setting": "wood",
+        "objects": [
+          "chocolate",
+          "mango",
+          "soup",
+          "pineapple"
+        ]
+      },
+      {
+        "title": "Noite estrelada: bolinhos fritos e fogareiro a carvão",
+        "setting": "night",
+        "palette": "night",
+        "objects": [
+          "akra",
+          "stove",
+          "mortar",
+          "milk"
         ]
       }
     ]

@@ -134,6 +134,23 @@ const ICONS: Record<string, string> = {
   "carro eletrico": "🚗",
   "carregador de carro": "🔌",
   "oculos de realidade virtual": "🥽",
+  "balao de ar quente": "🎈",
+  "passaporte": "📘",
+  "maquina fotografica": "📸",
+  "mochila": "🎒",
+  "barraca de camping": "⛺",
+  "onibus de turismo": "🚌",
+  "trem": "🚂",
+  "guia turistico": "🧑‍🏫",
+  "placa de direcao": "🪧",
+  "binoculos": "🔭",
+  "guarda-sol de praia": "⛱️",
+  "cadeira de praia": "🪑",
+  "coco com canudo": "🥥",
+  "bilhete de viagem": "🎫",
+  "torre de observacao": "🗼",
+  "teleferico": "🚡",
+  "scooter": "🛵",
 };
 
 /** Alguns elementos do banco trazem o nome em Kreyòl no campo `pt`; mapeamos esses nomes também. */

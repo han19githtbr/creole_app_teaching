@@ -36,5 +36,5 @@ export function addTheme(key, label, prefix, reg, opts) {
 }
 
 // ---- temas adicionais (cada um num arquivo próprio) ----
-const extra = ["tecnologia"];
+const extra = ["tecnologia", "turismo"];
 for (const k of extra) await import(`./theme-${k}.mjs`).then((m) => addTheme(k, m.LABEL, m.PREFIX, m.REG, m.OPTS));

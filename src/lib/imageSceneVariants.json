@@ -816,216 +816,233 @@
       "map": "kat",
       "hotel": "otèl",
       "mountain": "mòn",
-      "beach": "plaj"
+      "beach": "plaj",
+      "tourbus": "bis touristik",
+      "sign": "siy",
+      "train": "tren",
+      "cablecar": "teleferik",
+      "guide": "gid",
+      "scooter": "skoutè",
+      "parasol": "parasòl",
+      "ticket": "tikè",
+      "backpack": "sak a do",
+      "coconut": "kokoye",
+      "tower": "tou",
+      "binoculars": "jumèl",
+      "photocam": "aparèy foto",
+      "passport": "pasp",
+      "tent": "tant",
+      "compass": "bousòl",
+      "beachchair": "chèz plaj"
     },
     "scenes": [
       {
-        "title": "Porto de veleiros",
-        "setting": "harbor",
-        "palette": "dia",
+        "title": "Campo florido: ônibus de turismo e placa de direção",
+        "setting": "meadow",
+        "palette": "day",
         "objects": [
-          "boat",
-          "ocean",
-          "lighthouse",
+          "tourbus",
+          "sign",
+          "train",
+          "cablecar"
+        ]
+      },
+      {
+        "title": "Chuva leve: guia turístico e avião",
+        "setting": "forest",
+        "palette": "rain",
+        "objects": [
+          "guide",
+          "airplane",
+          "scooter",
           "map"
         ]
       },
       {
-        "title": "Viagem de avião",
-        "setting": "airport",
-        "palette": "entardecer",
+        "title": "Costa de manhã: barco e guarda-sol de praia",
+        "setting": "sand",
+        "palette": "dawn",
         "objects": [
-          "airplane",
-          "suitcase",
-          "map",
-          "hotel"
+          "boat",
+          "parasol",
+          "lighthouse",
+          "ticket"
         ]
       },
       {
-        "title": "Passeio de balão",
-        "setting": "valley",
-        "palette": "dia",
+        "title": "Manhã de névoa: balão de ar quente e mochila",
+        "setting": "meadow",
+        "palette": "mist",
         "objects": [
           "balloon",
-          "mountain",
-          "map",
+          "backpack",
+          "coconut",
+          "suitcase"
+        ]
+      },
+      {
+        "title": "Estrada de terra: torre de observação e binóculos",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "tower",
+          "binoculars",
+          "photocam",
+          "passport"
+        ]
+      },
+      {
+        "title": "Entardecer na vila: barraca de camping e hotel",
+        "setting": "cobble",
+        "palette": "sunset",
+        "objects": [
+          "tent",
+          "hotel",
+          "compass",
+          "scooter"
+        ]
+      },
+      {
+        "title": "Fim de tarde violeta: coco com canudo e bússola",
+        "setting": "cobble",
+        "palette": "violet",
+        "objects": [
+          "coconut",
+          "compass",
+          "airplane",
+          "binoculars"
+        ]
+      },
+      {
+        "title": "Praça ensolarada: guia turístico e ônibus de turismo",
+        "setting": "cobble",
+        "palette": "day",
+        "objects": [
+          "guide",
+          "tourbus",
+          "photocam",
+          "tent"
+        ]
+      },
+      {
+        "title": "Baía ao entardecer: cadeira de praia e guarda-sol de praia",
+        "setting": "sand",
+        "palette": "sunset",
+        "objects": [
+          "beachchair",
+          "parasol",
+          "passport",
           "hotel"
         ]
       },
       {
-        "title": "Travessia costeira",
-        "setting": "coast",
-        "palette": "entardecer",
+        "title": "Tarde de sol: bilhete de viagem e teleférico",
+        "setting": "grass",
+        "palette": "day",
         "objects": [
-          "suitcase",
-          "ocean",
-          "boat",
-          "beach"
+          "ticket",
+          "cablecar",
+          "backpack",
+          "tower"
         ]
       },
       {
-        "title": "Farol da ilha",
-        "setting": "island",
+        "title": "Noite estrelada: mapa e farol",
+        "setting": "night",
         "palette": "night",
         "objects": [
+          "map",
           "lighthouse",
-          "boat",
-          "ocean",
+          "suitcase",
+          "compass"
+        ]
+      },
+      {
+        "title": "Entardecer dourado: trem e farol",
+        "setting": "dirt",
+        "palette": "golden",
+        "objects": [
+          "train",
+          "lighthouse",
+          "balloon",
+          "tent"
+        ]
+      },
+      {
+        "title": "Dia nublado: placa de direção e balão de ar quente",
+        "setting": "moss",
+        "palette": "overcast",
+        "objects": [
+          "sign",
+          "balloon",
+          "tower",
           "hotel"
         ]
       },
       {
-        "title": "Chegada ao hotel",
-        "setting": "town",
-        "palette": "dia",
-        "objects": [
-          "hotel",
-          "suitcase",
-          "map",
-          "airplane"
-        ]
-      },
-      {
-        "title": "Descanso na praia",
-        "setting": "beach",
-        "palette": "dia",
-        "objects": [
-          "beach",
-          "ocean",
-          "boat",
-          "balloon"
-        ]
-      },
-      {
-        "title": "Roteiro pelas montanhas",
-        "setting": "mountain",
-        "palette": "entardecer",
-        "objects": [
-          "map",
-          "suitcase",
-          "hotel",
-          "mountain"
-        ]
-      },
-      {
-        "title": "Travessia pelo porto",
-        "setting": "harbor",
+        "title": "Luar tranquilo: guia turístico e mala de viagem",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "boat",
-          "lighthouse",
+          "guide",
           "suitcase",
-          "ocean"
+          "sign",
+          "ticket"
         ]
       },
       {
-        "title": "Mirante sobre o oceano",
-        "setting": "cliff",
-        "palette": "dia",
+        "title": "Praia ensolarada: cadeira de praia e barco",
+        "setting": "sand",
+        "palette": "clear",
         "objects": [
-          "ocean",
-          "lighthouse",
-          "mountain",
+          "beachchair",
+          "boat",
+          "coconut",
           "map"
         ]
       },
       {
-        "title": "Voo panorâmico sobre o mar",
-        "setting": "sky",
-        "palette": "dia",
+        "title": "Pôr do sol: trem e scooter",
+        "setting": "grass",
+        "palette": "sunset",
         "objects": [
-          "balloon",
-          "airplane",
-          "ocean",
-          "mountain"
+          "train",
+          "scooter",
+          "backpack",
+          "passport"
         ]
       },
       {
-        "title": "Passeio de catamarã ao pôr do sol",
-        "setting": "coast",
-        "palette": "entardecer",
+        "title": "Céu limpo: binóculos e teleférico",
+        "setting": "grass",
+        "palette": "clear",
         "objects": [
-          "boat",
-          "ocean",
-          "beach",
-          "mountain"
-        ]
-      },
-      {
-        "title": "Resort tropical à beira-mar",
-        "setting": "beach",
-        "palette": "dia",
-        "objects": [
-          "hotel",
-          "beach",
-          "suitcase",
-          "boat"
-        ]
-      },
-      {
-        "title": "Farol sob as estrelas",
-        "setting": "island",
-        "palette": "night",
-        "objects": [
+          "binoculars",
+          "cablecar",
           "lighthouse",
-          "ocean",
-          "boat",
+          "scooter"
+        ]
+      },
+      {
+        "title": "Rua ao amanhecer: avião e ônibus de turismo",
+        "setting": "asphalt",
+        "palette": "dawn",
+        "objects": [
+          "airplane",
+          "tourbus",
+          "tower",
+          "suitcase"
+        ]
+      },
+      {
+        "title": "Tarde com nuvens: máquina fotográfica e teleférico",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "photocam",
+          "cablecar",
+          "balloon",
           "map"
-        ]
-      },
-      {
-        "title": "Enseada dos pescadores",
-        "setting": "harbor",
-        "palette": "dia",
-        "objects": [
-          "boat",
-          "beach",
-          "ocean",
-          "mountain"
-        ]
-      },
-      {
-        "title": "Aeroporto na ilha caribenha",
-        "setting": "airport",
-        "palette": "dia",
-        "objects": [
-          "airplane",
-          "suitcase",
-          "mountain",
-          "hotel"
-        ]
-      },
-      {
-        "title": "Aventura de balão no litoral",
-        "setting": "coast",
-        "palette": "entardecer",
-        "objects": [
-          "balloon",
-          "ocean",
-          "beach",
-          "lighthouse"
-        ]
-      },
-      {
-        "title": "Recepção elegante do hotel",
-        "setting": "town",
-        "palette": "entardecer",
-        "objects": [
-          "hotel",
-          "suitcase",
-          "map",
-          "boat"
-        ]
-      },
-      {
-        "title": "Caminhada ao longo da falésia",
-        "setting": "cliff",
-        "palette": "dia",
-        "objects": [
-          "mountain",
-          "ocean",
-          "lighthouse",
-          "beach"
         ]
       }
     ]

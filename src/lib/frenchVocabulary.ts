@@ -219,6 +219,21 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "machin elektrik": "voiture électrique",
   "estasyon chaje": "borne de recharge",
   "kas VR": "casque de réalité virtuelle",
+  "pasp": "passeport",
+  "aparèy foto": "appareil photo",
+  "sak a do": "sac à dos",
+  "tant": "tente de camping",
+  "bis touristik": "bus touristique",
+  "tren": "train",
+  "gid": "guide touristique",
+  "siy": "panneau directionnel",
+  "jumèl": "jumelles",
+  "parasòl": "parasol de plage",
+  "chèz plaj": "chaise de plage",
+  "kokoye": "noix de coco",
+  "tou": "tour panoramique",
+  "teleferik": "téléphérique",
+  "skoutè": "scooter",
 };
 
 /** Tema (nome em português usado no banco) → tema em francês. */

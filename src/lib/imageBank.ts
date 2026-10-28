@@ -511,6 +511,21 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "machin elektrik": "carro elétrico",
   "estasyon chaje": "carregador de carro",
   "kas VR": "óculos de realidade virtual",
+  "pasp": "passaporte",
+  "aparèy foto": "máquina fotográfica",
+  "sak a do": "mochila",
+  "tant": "barraca de camping",
+  "bis touristik": "ônibus de turismo",
+  "tren": "trem",
+  "gid": "guia turístico",
+  "siy": "placa de direção",
+  "jumèl": "binóculos",
+  "parasòl": "guarda-sol de praia",
+  "chèz plaj": "cadeira de praia",
+  "kokoye": "coco com canudo",
+  "tou": "torre de observação",
+  "teleferik": "teleférico",
+  "skoutè": "scooter",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<

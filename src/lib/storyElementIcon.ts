@@ -214,6 +214,23 @@ const ICONS: Record<string, string> = {
   "muralha": "🧱",
   "coluna grega": "🏛️",
   "ancora": "⚓",
+  "saxofone": "🎷",
+  "partitura": "🎼",
+  "metronomo": "⏱️",
+  "xilofone": "🎶",
+  "pandeiro": "🪘",
+  "harpa": "🎼",
+  "contrabaixo": "🎻",
+  "clarinete": "🎶",
+  "trombone": "🎺",
+  "djembe": "🥁",
+  "gramofone": "📻",
+  "disco de vinil": "💿",
+  "caixa de musica": "🎵",
+  "cantora": "🧑‍🎤",
+  "maestro": "🎼",
+  "sintetizador": "🎹",
+  "amplificador": "🔊",
 };
 
 /** Alguns elementos do banco trazem o nome em Kreyòl no campo `pt`; mapeamos esses nomes também. */

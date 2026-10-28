@@ -2317,220 +2317,233 @@
       "note": "nòt mizik",
       "speaker": "opalè",
       "dancer": "dansè",
-      "mic": "mikwofòn",
-      "piano": "piano",
+      "mic": "mikwo",
+      "piano": "pyano",
       "keyboard": "klavye",
-      "headphones": "kas",
-      "light": "limyè"
+      "headphones": "ekouteur",
+      "light": "limyè",
+      "bass": "kontrebas",
+      "score": "pàtisyon",
+      "synth": "sentetizè",
+      "clarinet": "klarinèt",
+      "gramophone": "gramofòn",
+      "musicbox": "bwat mizik",
+      "tambourine": "tanbourin",
+      "djembe": "djembe",
+      "trumpet": "trompèt",
+      "vinyl": "vinil",
+      "conductor": "dirijan",
+      "amp": "anplifikatè",
+      "drumkit": "ansanm tanbou",
+      "violin": "vyolon",
+      "trombone": "trombòn",
+      "harp": "arp",
+      "metronome": "metwonòm",
+      "accordion": "akòdeyon",
+      "sax": "saksofòn",
+      "xylophone": "silofòn",
+      "singer": "chantè",
+      "flute": "flit"
     },
     "scenes": [
       {
-        "title": "Concerto na praça",
-        "setting": "stage",
-        "palette": "entardecer",
+        "title": "Chuva leve: contrabaixo e microfone",
+        "setting": "forest",
+        "palette": "rain",
         "objects": [
-          "guitar",
-          "drum",
-          "speaker",
-          "note"
-        ]
-      },
-      {
-        "title": "Estúdio de gravação musical",
-        "setting": "studio",
-        "palette": "night",
-        "objects": [
+          "bass",
           "mic",
-          "headphones",
-          "keyboard",
-          "light"
+          "score",
+          "synth"
         ]
       },
       {
-        "title": "Piano ao entardecer",
-        "setting": "concertHall",
-        "palette": "entardecer",
+        "title": "Estante ao anoitecer: clarinete e violão",
+        "setting": "carpet",
         "objects": [
+          "clarinet",
+          "guitar",
+          "gramophone",
+          "musicbox"
+        ]
+      },
+      {
+        "title": "Tarde com nuvens: pandeiro e djembê",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "tambourine",
+          "djembe",
           "piano",
-          "note",
-          "light",
-          "speaker"
+          "trumpet"
         ]
       },
       {
-        "title": "Banda de rua",
-        "setting": "square",
-        "palette": "dia",
+        "title": "Ateliê claro: disco de vinil e maestro",
+        "setting": "wood",
         "objects": [
-          "drum",
-          "guitar",
-          "dancer",
-          "note"
-        ]
-      },
-      {
-        "title": "Palco de konpa",
-        "setting": "stage",
-        "palette": "night",
-        "objects": [
-          "mic",
-          "speaker",
-          "dancer",
-          "drum"
-        ]
-      },
-      {
-        "title": "Aula de teclado",
-        "setting": "classroom",
-        "palette": "dia",
-        "objects": [
-          "keyboard",
-          "piano",
+          "vinyl",
+          "conductor",
           "headphones",
-          "light"
+          "amp"
         ]
       },
       {
-        "title": "Música no jardim",
-        "setting": "garden",
-        "palette": "entardecer",
+        "title": "Praça ensolarada: bateria e violino",
+        "setting": "cobble",
+        "palette": "day",
         "objects": [
-          "guitar",
-          "dancer",
-          "speaker",
-          "note"
+          "drumkit",
+          "violin",
+          "trombone",
+          "harp"
         ]
       },
       {
-        "title": "Show de luzes e som",
-        "setting": "stage",
-        "palette": "night",
+        "title": "Sala de janelas: metrônomo e acordeão",
+        "setting": "wood",
         "objects": [
-          "light",
-          "speaker",
-          "mic",
-          "note"
+          "metronome",
+          "accordion",
+          "sax",
+          "trombone"
         ]
       },
       {
-        "title": "Ensaio da banda",
-        "setting": "studio",
-        "palette": "dia",
+        "title": "Sol da manhã: xilofone e cantora",
+        "setting": "grass",
+        "palette": "golden",
         "objects": [
-          "guitar",
-          "drum",
-          "keyboard",
-          "headphones"
-        ]
-      },
-      {
-        "title": "Violão acústico ao luar",
-        "setting": "garden",
-        "palette": "night",
-        "objects": [
-          "guitar",
-          "note",
-          "dancer",
-          "light"
-        ]
-      },
-      {
-        "title": "Roda de tambor comunitária",
-        "setting": "square",
-        "palette": "dia",
-        "objects": [
-          "drum",
-          "note",
-          "dancer",
-          "speaker"
-        ]
-      },
-      {
-        "title": "Cabine de mixagem com fones",
-        "setting": "studio",
-        "palette": "dia",
-        "objects": [
-          "headphones",
-          "keyboard",
-          "speaker",
-          "mic"
-        ]
-      },
-      {
-        "title": "Piano de cauda na sala nobre",
-        "setting": "concertHall",
-        "palette": "night",
-        "objects": [
-          "piano",
-          "light",
-          "note",
-          "mic"
-        ]
-      },
-      {
-        "title": "Palco do festival ao entardecer",
-        "setting": "stage",
-        "palette": "entardecer",
-        "objects": [
-          "speaker",
-          "mic",
-          "light",
-          "guitar"
-        ]
-      },
-      {
-        "title": "Serenata sob as estrelas",
-        "setting": "courtyard",
-        "palette": "night",
-        "objects": [
-          "guitar",
-          "note",
-          "light",
-          "dancer"
-        ]
-      },
-      {
-        "title": "Oficina de tambores tradicionais",
-        "setting": "square",
-        "palette": "dia",
-        "objects": [
-          "drum",
-          "note",
-          "speaker",
-          "dancer"
-        ]
-      },
-      {
-        "title": "Teclado eletrônico e fones",
-        "setting": "studio",
-        "palette": "entardecer",
-        "objects": [
-          "keyboard",
-          "headphones",
-          "light",
-          "note"
-        ]
-      },
-      {
-        "title": "Trio acústico no parque",
-        "setting": "garden",
-        "palette": "dia",
-        "objects": [
-          "guitar",
-          "note",
-          "speaker",
+          "xylophone",
+          "singer",
+          "musicbox",
           "piano"
         ]
       },
       {
-        "title": "Grande orquestra e percussão",
-        "setting": "stage",
+        "title": "Sala de leitura: flauta e disco de vinil",
+        "setting": "wood",
+        "objects": [
+          "flute",
+          "vinyl",
+          "singer",
+          "tambourine"
+        ]
+      },
+      {
+        "title": "Céu limpo: microfone e djembê",
+        "setting": "grass",
+        "palette": "clear",
+        "objects": [
+          "mic",
+          "djembe",
+          "headphones",
+          "harp"
+        ]
+      },
+      {
+        "title": "Cozinha de azulejos: violino e trompete",
+        "setting": "tile",
+        "objects": [
+          "violin",
+          "trumpet",
+          "clarinet",
+          "sax"
+        ]
+      },
+      {
+        "title": "Amanhecer calmo: contrabaixo e xilofone",
+        "setting": "meadow",
+        "palette": "dawn",
+        "objects": [
+          "bass",
+          "xylophone",
+          "accordion",
+          "flute"
+        ]
+      },
+      {
+        "title": "Corredor de janelas: amplificador e violão",
+        "setting": "tile",
+        "objects": [
+          "amp",
+          "guitar",
+          "metronome",
+          "synth"
+        ]
+      },
+      {
+        "title": "Luar tranquilo: partitura e bateria",
+        "setting": "night",
         "palette": "night",
         "objects": [
+          "score",
+          "drumkit",
+          "amp",
+          "tambourine"
+        ]
+      },
+      {
+        "title": "Sala de bege: maestro e gramofone",
+        "setting": "wood",
+        "objects": [
+          "conductor",
+          "gramophone",
+          "score",
+          "harp"
+        ]
+      },
+      {
+        "title": "Pôr do sol: fones de ouvido e gramofone",
+        "setting": "grass",
+        "palette": "sunset",
+        "objects": [
+          "headphones",
+          "gramophone",
+          "violin",
+          "synth"
+        ]
+      },
+      {
+        "title": "Sala ao entardecer: saxofone e xilofone",
+        "setting": "wood",
+        "objects": [
+          "sax",
+          "xylophone",
+          "conductor",
+          "guitar"
+        ]
+      },
+      {
+        "title": "Entardecer na vila: disco de vinil e contrabaixo",
+        "setting": "cobble",
+        "palette": "sunset",
+        "objects": [
+          "vinyl",
+          "bass",
+          "metronome",
+          "clarinet"
+        ]
+      },
+      {
+        "title": "Salão de arcos: djembê e acordeão",
+        "setting": "tile",
+        "objects": [
+          "djembe",
+          "accordion",
+          "drumkit",
+          "singer"
+        ]
+      },
+      {
+        "title": "Campo florido: piano e flauta",
+        "setting": "meadow",
+        "palette": "day",
+        "objects": [
           "piano",
-          "drum",
-          "light",
-          "speaker"
+          "flute",
+          "amp",
+          "sax"
         ]
       }
     ]

@@ -660,6 +660,23 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "ròch ekilib": "pedras empilhadas",
   "mirwa men": "espelho de mão",
   "kle": "chave antiga",
+  "chapèl": "capela",
+  "bib": "bíblia",
+  "vitraj": "vitral colorido",
+  "òg": "órgão de igreja",
+  "chaple": "terço",
+  "kalis": "cálice",
+  "kandelab": "candelabro",
+  "zanj": "estátua de anjo",
+  "kantik": "livro de cânticos",
+  "branch palmis": "ramos de palmeira",
+  "pen ak diven": "pão e vinho",
+  "basen batèm": "pia batismal",
+  "lakwa chemen": "cruzeiro de caminho",
+  "klòchè": "campanário",
+  "pòtay legliz": "portal de igreja",
+  "banyè pwosesyon": "estandarte de procissão",
+  "tab otèl": "altar",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<

@@ -3070,220 +3070,227 @@
       "dove": "pijon",
       "cross": "kwa",
       "book": "liv",
-      "window": "vitral",
-      "bell": "klòch",
+      "window": "vitraj",
+      "bell": "kloch",
       "chair": "chèz",
       "flower": "flè",
-      "light": "limyè"
+      "light": "limyè",
+      "angel": "zanj",
+      "rosary": "chaple",
+      "organ": "òg",
+      "altar": "tab otèl",
+      "bread": "pen ak diven",
+      "bible": "bib",
+      "wayside": "lakwa chemen",
+      "chalice": "kalis",
+      "palm": "branch palmis",
+      "candelabra": "kandelab",
+      "font": "basen batèm",
+      "hymnal": "kantik",
+      "churchgate": "pòtay legliz",
+      "steeple": "klòchè",
+      "banner": "banyè pwosesyon",
+      "chapel": "chapèl"
     },
     "scenes": [
       {
-        "title": "Capela na montanha",
-        "setting": "chapel",
-        "palette": "dia",
+        "title": "Tarde com nuvens: estátua de anjo e terço",
+        "setting": "grass",
+        "palette": "day",
         "objects": [
-          "church",
-          "cross",
-          "window",
-          "flower"
+          "angel",
+          "rosary",
+          "organ",
+          "cross"
         ]
       },
       {
-        "title": "Velas ao anoitecer",
-        "setting": "chapel",
-        "palette": "night",
-        "objects": [
-          "candle",
-          "book",
-          "light",
-          "chair"
-        ]
-      },
-      {
-        "title": "Pomba sobre o jardim",
-        "setting": "garden",
-        "palette": "entardecer",
-        "objects": [
-          "dove",
-          "flower",
-          "church",
-          "light"
-        ]
-      },
-      {
-        "title": "Sinos da igreja",
-        "setting": "village",
-        "palette": "dia",
-        "objects": [
-          "bell",
-          "church",
-          "cross",
-          "window"
-        ]
-      },
-      {
-        "title": "Interior da capela",
-        "setting": "chapelInterior",
-        "palette": "entardecer",
-        "objects": [
-          "chair",
-          "candle",
-          "book",
-          "window"
-        ]
-      },
-      {
-        "title": "Caminho de flores",
-        "setting": "chapel",
-        "palette": "dia",
-        "objects": [
-          "flower",
-          "cross",
-          "dove",
-          "church"
-        ]
-      },
-      {
-        "title": "Vitral iluminado",
-        "setting": "chapelInterior",
-        "palette": "night",
+        "title": "Sala azul de manhã: vitral colorido e sino de igreja",
+        "setting": "wood",
         "objects": [
           "window",
-          "light",
-          "candle",
-          "book"
-        ]
-      },
-      {
-        "title": "Pequena igreja da vila",
-        "setting": "village",
-        "palette": "entardecer",
-        "objects": [
-          "church",
           "bell",
-          "chair",
-          "flower"
-        ]
-      },
-      {
-        "title": "Celebração ao ar livre",
-        "setting": "square",
-        "palette": "dia",
-        "objects": [
-          "dove",
-          "book",
-          "cross",
+          "altar",
           "candle"
         ]
       },
       {
-        "title": "Campanário ao amanhecer",
-        "setting": "village",
-        "palette": "dia",
-        "objects": [
-          "bell",
-          "church",
-          "dove",
-          "cross"
-        ]
-      },
-      {
-        "title": "Vitral gótico multicolorido",
-        "setting": "chapelInterior",
-        "palette": "dia",
-        "objects": [
-          "window",
-          "light",
-          "chair",
-          "cross"
-        ]
-      },
-      {
-        "title": "Altar com velas e escrituras",
-        "setting": "chapelInterior",
-        "palette": "entardecer",
-        "objects": [
-          "candle",
-          "book",
-          "cross",
-          "flower"
-        ]
-      },
-      {
-        "title": "Revoada de pombas brancas",
-        "setting": "square",
-        "palette": "dia",
-        "objects": [
-          "dove",
-          "church",
-          "cross",
-          "bell"
-        ]
-      },
-      {
-        "title": "Procissão com flores e velas",
-        "setting": "village",
-        "palette": "entardecer",
-        "objects": [
-          "candle",
-          "flower",
-          "church",
-          "cross"
-        ]
-      },
-      {
-        "title": "Interior sereno do santuário",
-        "setting": "chapelInterior",
+        "title": "Luar tranquilo: pão e vinho e bíblia",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "chair",
-          "candle",
+          "bread",
+          "bible",
+          "wayside",
+          "chalice"
+        ]
+      },
+      {
+        "title": "Sala dourada: ramos de palmeira e candelabro",
+        "setting": "carpet",
+        "objects": [
+          "palm",
+          "candelabra",
+          "font",
+          "hymnal"
+        ]
+      },
+      {
+        "title": "Céu limpo: pomba branca e portal de igreja",
+        "setting": "grass",
+        "palette": "clear",
+        "objects": [
+          "dove",
+          "churchgate",
+          "church",
+          "steeple"
+        ]
+      },
+      {
+        "title": "Biblioteca aconchegante: estandarte de procissão e candelabro",
+        "setting": "wood",
+        "objects": [
+          "banner",
+          "candelabra",
+          "rosary",
+          "bread"
+        ]
+      },
+      {
+        "title": "Rua ao amanhecer: capela e estandarte de procissão",
+        "setting": "asphalt",
+        "palette": "dawn",
+        "objects": [
+          "chapel",
+          "banner",
+          "angel",
+          "candle"
+        ]
+      },
+      {
+        "title": "Sala de arcos azuis: ramos de palmeira e bíblia",
+        "setting": "tile",
+        "objects": [
+          "palm",
+          "bible",
+          "altar",
+          "organ"
+        ]
+      },
+      {
+        "title": "Entardecer dourado: igreja e cruz",
+        "setting": "dirt",
+        "palette": "golden",
+        "objects": [
+          "church",
+          "cross",
+          "chalice",
+          "hymnal"
+        ]
+      },
+      {
+        "title": "Salão de arcos: pia batismal e vitral colorido",
+        "setting": "tile",
+        "objects": [
+          "font",
           "window",
-          "book"
+          "banner",
+          "chalice"
         ]
       },
       {
-        "title": "Capela costeira com cruz de pedra",
-        "setting": "chapel",
-        "palette": "entardecer",
+        "title": "Pôr do sol: cruzeiro de caminho e sino de igreja",
+        "setting": "grass",
+        "palette": "sunset",
         "objects": [
-          "church",
-          "cross",
-          "dove",
-          "light"
-        ]
-      },
-      {
-        "title": "Grande sino de bronze",
-        "setting": "village",
-        "palette": "dia",
-        "objects": [
+          "wayside",
           "bell",
-          "cross",
-          "dove",
-          "light"
+          "churchgate",
+          "chapel"
         ]
       },
       {
-        "title": "Jardim de oração com lírios",
-        "setting": "garden",
-        "palette": "dia",
+        "title": "Sala de janelas: ramos de palmeira e pão e vinho",
+        "setting": "wood",
         "objects": [
-          "flower",
-          "dove",
-          "cross",
-          "church"
+          "palm",
+          "bread",
+          "bell",
+          "cross"
         ]
       },
       {
-        "title": "Vigília de velas sob as estrelas",
-        "setting": "chapel",
-        "palette": "night",
+        "title": "Amanhecer calmo: campanário e livro de cânticos",
+        "setting": "meadow",
+        "palette": "dawn",
         "objects": [
+          "steeple",
+          "hymnal",
+          "chapel",
+          "organ"
+        ]
+      },
+      {
+        "title": "Sala à noite: bíblia e velas de oração",
+        "setting": "wood",
+        "objects": [
+          "bible",
           "candle",
-          "light",
-          "church",
-          "book"
+          "rosary",
+          "font"
+        ]
+      },
+      {
+        "title": "Entardecer na vila: candelabro e pomba branca",
+        "setting": "cobble",
+        "palette": "sunset",
+        "objects": [
+          "candelabra",
+          "dove",
+          "wayside",
+          "angel"
+        ]
+      },
+      {
+        "title": "Ateliê claro: vitral colorido e cruz",
+        "setting": "wood",
+        "objects": [
+          "window",
+          "cross",
+          "bible",
+          "candelabra"
+        ]
+      },
+      {
+        "title": "Chuva leve: portal de igreja e altar",
+        "setting": "forest",
+        "palette": "rain",
+        "objects": [
+          "churchgate",
+          "altar",
+          "hymnal",
+          "banner"
+        ]
+      },
+      {
+        "title": "Estante ao anoitecer: pão e vinho e pia batismal",
+        "setting": "carpet",
+        "objects": [
+          "bread",
+          "font",
+          "angel",
+          "altar"
+        ]
+      },
+      {
+        "title": "Fim de tarde violeta: campanário e sino de igreja",
+        "setting": "cobble",
+        "palette": "violet",
+        "objects": [
+          "steeple",
+          "bell",
+          "rosary",
+          "chalice"
         ]
       }
     ]

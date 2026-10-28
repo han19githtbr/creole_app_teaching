@@ -368,6 +368,23 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "ròch ekilib": "cairn de pierres",
   "mirwa men": "miroir à main",
   "kle": "clé ancienne",
+  "chapèl": "chapelle",
+  "bib": "bible",
+  "vitraj": "vitrail",
+  "òg": "orgue",
+  "chaple": "chapelet",
+  "kalis": "calice",
+  "kandelab": "candélabre",
+  "zanj": "statue d'ange",
+  "kantik": "livre de cantiques",
+  "branch palmis": "rameaux de palmier",
+  "pen ak diven": "pain et vin",
+  "basen batèm": "fonts baptismaux",
+  "lakwa chemen": "calvaire",
+  "klòchè": "clocher",
+  "pòtay legliz": "portail d'église",
+  "banyè pwosesyon": "bannière de procession",
+  "tab otèl": "autel",
 };
 
 /** Tema (nome em português usado no banco) → tema em francês. */

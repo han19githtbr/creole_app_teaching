@@ -2076,224 +2076,231 @@
     ],
     "labels": {
       "cinema": "sinema",
-      "popcorn": "pòp-kòn",
+      "popcorn": "pòpkòn",
       "star": "zetwal",
       "tree": "pyebwa",
       "camera": "kamera",
-      "projector": "projèktè",
-      "ticket": "tikè",
-      "screen": "ekran",
-      "chair": "chèz",
-      "lantern": "lanp"
+      "projector": "pwojektè sinema",
+      "ticket": "bilyè sinema",
+      "screen": "ekran sinema",
+      "chair": "chèz direktè",
+      "lantern": "lanp",
+      "poster": "afich fim",
+      "clapper": "klakèt",
+      "glasses3d": "lunèt 3D",
+      "megaphone": "megafòn",
+      "soda": "soda",
+      "mask": "maske teyat",
+      "boom": "mikwo bom",
+      "seat": "fotèy sinema",
+      "redcarpet": "tapi wouj",
+      "crane": "grèn kamera",
+      "softbox": "lanp studyo",
+      "filmstrip": "bann fim",
+      "trophy": "twofe",
+      "movcam": "kamera sinema",
+      "reel": "bobin fim",
+      "greenscreen": "ekran vèt"
     },
     "scenes": [
       {
-        "title": "Cinema ao ar livre",
-        "setting": "openCinema",
-        "palette": "entardecer",
+        "title": "Entardecer na vila: pôster de filme e claquete",
+        "setting": "cobble",
+        "palette": "sunset",
         "objects": [
-          "screen",
-          "chair",
-          "tree",
-          "star"
+          "poster",
+          "clapper",
+          "ticket",
+          "glasses3d"
         ]
       },
       {
-        "title": "Cabine de projeção",
-        "setting": "studio",
+        "title": "Sala de luz suave: megafone e refrigerante",
+        "setting": "carpet",
+        "objects": [
+          "megaphone",
+          "soda",
+          "mask",
+          "boom"
+        ]
+      },
+      {
+        "title": "Luar tranquilo: poltrona de cinema e tapete vermelho",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "projector",
-          "camera",
-          "screen",
-          "lantern"
+          "seat",
+          "redcarpet",
+          "crane",
+          "softbox"
         ]
       },
       {
-        "title": "Noite de estreia",
-        "setting": "cinema",
-        "palette": "entardecer",
+        "title": "Sala azul de manhã: tira de filme e troféu dourado",
+        "setting": "wood",
         "objects": [
-          "cinema",
-          "ticket",
-          "star",
+          "filmstrip",
+          "trophy",
+          "movcam",
           "popcorn"
         ]
       },
       {
-        "title": "Filmagem no bosque",
-        "setting": "forest",
-        "palette": "dia",
+        "title": "Tarde com nuvens: rolo de filme e tela de cinema",
+        "setting": "grass",
+        "palette": "day",
         "objects": [
-          "camera",
-          "tree",
-          "chair",
-          "star"
-        ]
-      },
-      {
-        "title": "Sala de cinema clássica",
-        "setting": "cinema",
-        "palette": "night",
-        "objects": [
+          "reel",
           "screen",
           "chair",
-          "popcorn",
-          "lantern"
+          "boom"
         ]
       },
       {
-        "title": "Festival de curtas",
-        "setting": "festival",
-        "palette": "entardecer",
+        "title": "Sala de verde-claro: tela verde e projetor de cinema",
+        "setting": "tile",
+        "objects": [
+          "greenscreen",
+          "projector",
+          "popcorn",
+          "mask"
+        ]
+      },
+      {
+        "title": "Céu limpo: refrigerante e tela verde",
+        "setting": "grass",
+        "palette": "clear",
+        "objects": [
+          "soda",
+          "greenscreen",
+          "seat",
+          "poster"
+        ]
+      },
+      {
+        "title": "Sala de arcos azuis: ingresso de cinema e tira de filme",
+        "setting": "tile",
         "objects": [
           "ticket",
-          "camera",
-          "star",
-          "tree"
-        ]
-      },
-      {
-        "title": "Projetor sob as estrelas",
-        "setting": "openCinema",
-        "palette": "night",
-        "objects": [
+          "filmstrip",
           "projector",
-          "screen",
-          "star",
           "chair"
         ]
       },
       {
-        "title": "Bilheteria do cinema",
-        "setting": "town",
-        "palette": "dia",
+        "title": "Campo florido: câmera de cinema e luz de estúdio",
+        "setting": "meadow",
+        "palette": "day",
         "objects": [
-          "cinema",
-          "ticket",
-          "lantern",
-          "popcorn"
+          "movcam",
+          "softbox",
+          "reel",
+          "clapper"
         ]
       },
       {
-        "title": "Estúdio de gravação",
-        "setting": "studio",
-        "palette": "entardecer",
-        "objects": [
-          "camera",
-          "projector",
-          "screen",
-          "chair"
-        ]
-      },
-      {
-        "title": "Cineclube na praça florida",
-        "setting": "square",
-        "palette": "entardecer",
+        "title": "Sala dourada: tela de cinema e troféu dourado",
+        "setting": "carpet",
         "objects": [
           "screen",
-          "chair",
-          "tree",
-          "lantern"
+          "trophy",
+          "megaphone",
+          "glasses3d"
         ]
       },
       {
-        "title": "Rolo de filme e câmera retrô",
-        "setting": "studio",
-        "palette": "dia",
+        "title": "Ao ar livre: tapete vermelho e tela verde",
+        "setting": "dirt",
+        "palette": "clear",
         "objects": [
-          "camera",
-          "ticket",
-          "projector",
-          "screen"
+          "redcarpet",
+          "greenscreen",
+          "reel",
+          "glasses3d"
         ]
       },
       {
-        "title": "Sacola de pipoca e ingressos",
-        "setting": "cinema",
-        "palette": "dia",
+        "title": "Ateliê claro: megafone e ingresso de cinema",
+        "setting": "wood",
         "objects": [
-          "popcorn",
+          "megaphone",
           "ticket",
-          "cinema",
-          "lantern"
+          "seat",
+          "movcam"
         ]
       },
       {
-        "title": "Sessão cinema na praia à noite",
-        "setting": "openCinema",
+        "title": "Noite estrelada: projetor de cinema e claquete",
+        "setting": "night",
         "palette": "night",
         "objects": [
-          "screen",
-          "star",
-          "chair",
-          "popcorn"
+          "projector",
+          "clapper",
+          "crane",
+          "trophy"
         ]
       },
       {
-        "title": "Iluminação de cena no estúdio",
-        "setting": "studio",
-        "palette": "dia",
+        "title": "Corredor de janelas: máscaras de teatro e pôster de filme",
+        "setting": "tile",
         "objects": [
-          "lantern",
-          "camera",
-          "chair",
-          "screen"
+          "mask",
+          "poster",
+          "softbox",
+          "filmstrip"
         ]
       },
       {
-        "title": "Fachada neon do cinema",
-        "setting": "cinema",
-        "palette": "night",
-        "objects": [
-          "cinema",
-          "screen",
-          "star",
-          "popcorn"
-        ]
-      },
-      {
-        "title": "Filmagem no jardim arborizado",
+        "title": "Chuva leve: tela de cinema e pipoca",
         "setting": "forest",
-        "palette": "entardecer",
+        "palette": "rain",
         "objects": [
-          "camera",
+          "screen",
+          "popcorn",
+          "redcarpet",
+          "soda"
+        ]
+      },
+      {
+        "title": "Sala ao entardecer: cadeira de diretor e pôster de filme",
+        "setting": "wood",
+        "objects": [
           "chair",
-          "tree",
+          "poster",
+          "megaphone",
+          "popcorn"
+        ]
+      },
+      {
+        "title": "Rua ao amanhecer: grua de câmera e microfone de girafa",
+        "setting": "asphalt",
+        "palette": "dawn",
+        "objects": [
+          "crane",
+          "boom",
+          "filmstrip",
+          "greenscreen"
+        ]
+      },
+      {
+        "title": "Salão de arcos: troféu dourado e microfone de girafa",
+        "setting": "tile",
+        "objects": [
+          "trophy",
+          "boom",
+          "softbox",
           "ticket"
         ]
       },
       {
-        "title": "Sala com poltronas confortáveis",
-        "setting": "cinema",
-        "palette": "night",
+        "title": "Pôr do sol: grua de câmera e câmera de cinema",
+        "setting": "grass",
+        "palette": "sunset",
         "objects": [
-          "chair",
-          "screen",
-          "projector",
-          "lantern"
-        ]
-      },
-      {
-        "title": "Projetor no piquenique do parque",
-        "setting": "openCinema",
-        "palette": "entardecer",
-        "objects": [
-          "projector",
-          "screen",
-          "tree",
-          "popcorn"
-        ]
-      },
-      {
-        "title": "Noite de gala do festival",
-        "setting": "square",
-        "palette": "night",
-        "objects": [
-          "cinema",
-          "lantern",
-          "ticket",
-          "star"
+          "crane",
+          "movcam",
+          "mask",
+          "chair"
         ]
       }
     ]

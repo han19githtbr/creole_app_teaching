@@ -191,6 +191,12 @@ const GROUNDS = {
   dusk: ["#6a8a5a", "#486a45", "#2e4a3a"],
   night: ["#2d4a45", "#1f3633", "#142624"],
   nightsand: ["#5a5a72", "#43435a", "#2f2f44"],
+  wood: ["#c08a55", "#a06d3e", "#7a4f2a"],
+  tile: ["#e9e2d4", "#cfc6b4", "#aaa190"],
+  stone: ["#c9c5bd", "#a7a29a", "#827d74"],
+  carpet: ["#a8443f", "#8a3430", "#66231f"],
+  asphalt: ["#6e747c", "#565c64", "#3f444b"],
+  snow: ["#f4f8fb", "#dce6ee", "#b9c8d4"],
 };
 export function groundDefs(kind) {
   const c = GROUNDS[kind];
@@ -202,7 +208,20 @@ export function ground(kind, y, r, wave = 26) {
   for (let x = 0; x <= 1240; x += 120) top += ` Q${x + 60},${f(y - wave + r() * wave * 1.2)} ${x + 120},${f(y + r() * 10)}`;
   top += ` L1240,820 L-20,820 Z`;
   let det = "";
-  if (kind === "cobble") {
+  if (kind === "wood") {
+    for (let i = 0; i < 9; i++) det += `<line x1="-10" y1="${f(y + 14 + i * ((800 - y) / 9))}" x2="1210" y2="${f(y + 14 + i * ((800 - y) / 9))}" stroke="${dk(c[1], 0.3)}" stroke-width="2.4" opacity=".45"/>`;
+    for (let i = 0; i < 26; i++) det += `<line x1="${f(r() * 1200)}" y1="${f(y + 6 + r() * (790 - y))}" x2="${f(r() * 1200)}" y2="${f(y + 6 + r() * (790 - y))}" stroke="${dk(c[1], 0.2)}" stroke-width="1.6" opacity="0"/>`;
+  } else if (kind === "tile") {
+    for (let i = 0; i < 10; i++) det += `<line x1="-10" y1="${f(y + 10 + i * ((800 - y) / 10))}" x2="1210" y2="${f(y + 10 + i * ((800 - y) / 10))}" stroke="${dk(c[1], 0.25)}" stroke-width="2.2" opacity=".5"/>`;
+    for (let i = 0; i <= 12; i++) det += `<line x1="${f(i * 100)}" y1="${y + 6}" x2="${f(600 + (i * 100 - 600) * 1.6)}" y2="805" stroke="${dk(c[1], 0.25)}" stroke-width="2.2" opacity=".5"/>`;
+  } else if (kind === "stone" || kind === "asphalt") {
+    for (let i = 0; i < 34; i++) det += `<ellipse cx="${f(r() * 1200)}" cy="${f(y + 20 + r() * (780 - y))}" rx="${f(12 + r() * 16)}" ry="${f(4 + r() * 4)}" fill="${dk(c[1], 0.15)}" opacity=".4"/>`;
+    if (kind === "asphalt") det += `<path d="M-10,${f(y + (800 - y) * 0.55)} L1210,${f(y + (800 - y) * 0.55)}" stroke="#f3d43a" stroke-width="6" stroke-dasharray="46 34" opacity=".85"/>`;
+  } else if (kind === "carpet") {
+    for (let i = 0; i < 8; i++) det += `<line x1="-10" y1="${f(y + 12 + i * ((800 - y) / 8))}" x2="1210" y2="${f(y + 12 + i * ((800 - y) / 8))}" stroke="${lt(c[0], 0.18)}" stroke-width="3" opacity=".35"/>`;
+  } else if (kind === "snow") {
+    for (let i = 0; i < 24; i++) det += `<ellipse cx="${f(r() * 1200)}" cy="${f(y + 16 + r() * (780 - y))}" rx="${f(20 + r() * 30)}" ry="${f(4 + r() * 4)}" fill="#ffffff" opacity=".6"/>`;
+  } else if (kind === "cobble") {
     for (let i = 0; i < 46; i++) det += `<ellipse cx="${f(r() * 1200)}" cy="${f(y + 20 + r() * (800 - y - 24))}" rx="${f(14 + r() * 14)}" ry="${f(5 + r() * 4)}" fill="${dk(c[1], 0.12)}" opacity=".5"/>`;
   } else if (kind === "sand" || kind === "dune") {
     for (let i = 0; i < 34; i++) det += `<path d="M${f(r() * 1200)},${f(y + 24 + r() * (780 - y))} q18,-5 36,0" stroke="${dk(c[1], 0.2)}" stroke-width="2.4" fill="none" opacity=".45"/>`;
@@ -230,3 +249,40 @@ export const commonDefs = `<linearGradient id="woodTone" x1="0" y1="0" x2="1" y2
 <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c5beb3"/><stop offset="1" stop-color="#7c7468"/></linearGradient>
 <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="2" dy="5" stdDeviation="4" flood-color="#1b1a14" flood-opacity=".25"/></filter>
 <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="11"/><feColorMatrix type="matrix" values="0 0 0 0 .34  0 0 0 0 .34  0 0 0 0 .32  0 0 0 .22 -.07"/></filter>`;
+
+/* ------------------------------ interiores ------------------------------ */
+// Parede = retângulo 1200x800 de cor sólida clara (o mapa de cena trata como cena interna) + detalhes por cima.
+const WALLS = {
+  cream: "#efe1c6", sage: "#cfdcc4", rose: "#ecd0cc", sky: "#cfe0ec", sand: "#e6d3b0", lilac: "#ddd0e8", butter: "#f1e4a8", stone: "#d9d3c8", mint: "#cfe8de", peach: "#f3d3b8",
+};
+export function interior(kind, wallKey, wy, r) {
+  const wall = WALLS[wallKey] ?? WALLS.cream;
+  const out = [`<rect width="1200" height="800" fill="${wall}"/>`];
+  out.push(`<!-- wall panel shade -->\n<rect x="0" y="0" width="1200" height="${wy}" fill="${dk(wall, 0.08)}" opacity=".35"/>`);
+  out.push(`<!-- wall baseboard trim -->\n<rect x="0" y="${wy - 22}" width="1200" height="22" fill="${dk(wall, 0.22)}"/><rect x="0" y="${wy - 26}" width="1200" height="5" fill="${lt(wall, 0.4)}"/>`);
+  if (kind === "library") {
+    let sh = `<!-- wall bookshelves -->\n<g>`;
+    for (const x of [30, 420, 810]) {
+      sh += `<rect x="${x}" y="40" width="360" height="${wy - 70}" fill="#7a4f2c" stroke="#4a2e16" stroke-width="3"/>`;
+      for (let row = 0; row < 4; row++) {
+        const y0 = 52 + row * ((wy - 100) / 4);
+        sh += `<rect x="${x + 8}" y="${f(y0 + (wy - 100) / 4 - 10)}" width="344" height="8" fill="#5a381e"/>`;
+        let bx = x + 12;
+        while (bx < x + 340) { const bw = 12 + r() * 14, bh = 40 + r() * 36; sh += `<rect x="${f(bx)}" y="${f(y0 + (wy - 100) / 4 - 10 - bh)}" width="${f(bw)}" height="${f(bh)}" fill="${["#c0392b", "#2f6bb5", "#3f8f5a", "#d19a2a", "#7a3a8a", "#2a8f8f"][Math.floor(r() * 6)]}" stroke="#2a1a10" stroke-width="1.5"/>`; bx += bw + 2; }
+      }
+    }
+    out.push(sh + "</g>");
+  } else if (kind === "window") {
+    out.push(`<!-- wall windows -->\n<g>${[170, 620, 960].map((x) => `<rect x="${x}" y="70" width="170" height="${wy - 190}" fill="url(#winSky)" stroke="#fff6e6" stroke-width="9"/><line x1="${x + 85}" y1="70" x2="${x + 85}" y2="${wy - 120}" stroke="#fff6e6" stroke-width="6"/><line x1="${x}" y1="${70 + (wy - 190) / 2}" x2="${x + 170}" y2="${70 + (wy - 190) / 2}" stroke="#fff6e6" stroke-width="6"/>`).join("")}</g>`);
+  } else if (kind === "arches") {
+    out.push(`<!-- wall arches -->\n<g>${[110, 430, 750, 1070].map((x) => `<path d="M${x - 90},${wy - 26} L${x - 90},230 A90,90 0 0 1 ${x + 90},230 L${x + 90},${wy - 26} Z" fill="url(#winSky)" stroke="#a9a090" stroke-width="12"/>`).join("")}</g>`);
+  } else if (kind === "curtain") {
+    out.push(`<!-- wall stage curtains -->\n<g><rect x="0" y="0" width="1200" height="${wy}" fill="#7a1f2e"/>${Array.from({ length: 16 }, (_, i) => `<path d="M${i * 80},0 Q${i * 80 + 40},${wy / 2} ${i * 80},${wy}" stroke="#5a1220" stroke-width="10" fill="none" opacity=".6"/>`).join("")}<rect x="0" y="0" width="1200" height="40" fill="#e8b92e"/></g>`);
+  } else if (kind === "tiles") {
+    out.push(`<!-- wall tile pattern -->\n<g stroke="${dk(wall, 0.2)}" stroke-width="2" opacity=".5">${Array.from({ length: 14 }, (_, i) => `<line x1="${i * 90}" y1="0" x2="${i * 90}" y2="${wy}"/>`).join("")}${Array.from({ length: 8 }, (_, i) => `<line x1="0" y1="${i * 80}" x2="1200" y2="${i * 80}"/>`).join("")}</g>`);
+  } else if (kind === "pictures") {
+    out.push(`<!-- wall framed pictures -->\n<g>${[[120, 90, 140, 100], [360, 110, 100, 130], [560, 80, 160, 110], [820, 100, 110, 120], [1000, 90, 130, 100]].map(([x, y, w, h], i) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff8e6" stroke="#7a5230" stroke-width="6"/><rect x="${x + 10}" y="${y + 10}" width="${w - 20}" height="${h - 20}" fill="${["#8cc9f0", "#e8b0a0", "#a8d88c", "#f0d27f", "#c0a0e0"][i]}"/><circle cx="${x + w * 0.65}" cy="${y + h * 0.35}" r="${h * 0.12}" fill="#ffd54a"/><path d="M${x + 10},${y + h - 10} Q${x + w * 0.4},${y + h * 0.45} ${x + w - 10},${y + h - 10} Z" fill="#59b84a"/>`).join("")}</g>`);
+  }
+  return out.join("\n");
+}
+export const windowDefs = (top, bottom) => `<linearGradient id="winSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bottom}"/></linearGradient>`;

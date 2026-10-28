@@ -22,216 +22,222 @@
       "phone": "telefòn",
       "lab": "laboratwa",
       "monitor": "ekran",
-      "antenna": "antèn"
+      "antenna": "antèn",
+      "microscope": "mikwoskòp",
+      "charger": "estasyon chaje",
+      "printer3d": "enprimant 3D",
+      "bulb": "ampoul",
+      "telescope": "telesko",
+      "keyboard": "klavye",
+      "battery": "batri",
+      "evcar": "machin elektrik",
+      "tablet": "tablèt",
+      "camera": "kamera",
+      "mouse": "sourit",
+      "radio": "radyo",
+      "server": "sèvè",
+      "roboarm": "bra robo",
+      "vr": "kas VR"
     },
     "scenes": [
       {
-        "title": "Laboratório de robótica",
-        "setting": "lab",
-        "palette": "dia",
+        "title": "Chuva leve: tela e robô",
+        "setting": "forest",
+        "palette": "rain",
         "objects": [
-          "robot",
           "monitor",
-          "lab",
+          "robot",
+          "microscope",
+          "charger"
+        ]
+      },
+      {
+        "title": "Estante ao anoitecer: impressora 3D e mouse de computador",
+        "setting": "carpet",
+        "objects": [
+          "printer3d",
+          "mouse",
+          "tablet",
+          "keyboard"
+        ]
+      },
+      {
+        "title": "Sol da manhã: servidor e rádio",
+        "setting": "grass",
+        "palette": "golden",
+        "objects": [
+          "server",
+          "radio",
+          "drone",
+          "computer"
+        ]
+      },
+      {
+        "title": "Sala de verde-claro: braço robótico e telescópio",
+        "setting": "tile",
+        "objects": [
+          "roboarm",
+          "telescope",
+          "bulb",
           "phone"
         ]
       },
       {
-        "title": "Parque de energia solar",
-        "setting": "hill",
-        "palette": "entardecer",
+        "title": "Campo florido: painel solar e bateria",
+        "setting": "meadow",
+        "palette": "day",
         "objects": [
           "solar",
+          "battery",
           "turbine",
-          "computer",
+          "satellite"
+        ]
+      },
+      {
+        "title": "Sala de leitura: óculos de realidade virtual e câmera",
+        "setting": "wood",
+        "objects": [
+          "vr",
+          "camera",
+          "server",
+          "tablet"
+        ]
+      },
+      {
+        "title": "Amanhecer calmo: torre de antena e telefone",
+        "setting": "meadow",
+        "palette": "dawn",
+        "objects": [
+          "antenna",
+          "phone",
+          "evcar",
+          "printer3d"
+        ]
+      },
+      {
+        "title": "Sala de janelas: tela e câmera",
+        "setting": "wood",
+        "objects": [
+          "monitor",
+          "camera",
+          "battery",
+          "mouse"
+        ]
+      },
+      {
+        "title": "Tarde com nuvens: carro elétrico e painel solar",
+        "setting": "grass",
+        "palette": "day",
+        "objects": [
+          "evcar",
+          "solar",
+          "vr",
+          "radio"
+        ]
+      },
+      {
+        "title": "Sala de bege: braço robótico e robô",
+        "setting": "wood",
+        "objects": [
+          "roboarm",
+          "robot",
+          "keyboard",
+          "computer"
+        ]
+      },
+      {
+        "title": "Estrada de terra: carregador de carro e turbina eólica",
+        "setting": "dirt",
+        "palette": "clear",
+        "objects": [
+          "charger",
+          "turbine",
+          "bulb",
           "drone"
         ]
       },
       {
-        "title": "Estação de satélites",
-        "setting": "mountain",
-        "palette": "dia",
+        "title": "Ateliê claro: tela e tablet",
+        "setting": "wood",
         "objects": [
-          "satellite",
-          "antenna",
           "monitor",
-          "solar"
+          "tablet",
+          "telescope",
+          "computer"
         ]
       },
       {
-        "title": "Oficina de pequenos robôs",
-        "setting": "workshop",
-        "palette": "entardecer",
+        "title": "Luar tranquilo: torre de antena e satélite",
+        "setting": "night",
+        "palette": "night",
         "objects": [
+          "antenna",
+          "satellite",
+          "microscope",
+          "mouse"
+        ]
+      },
+      {
+        "title": "Sala dourada: lâmpada e impressora 3D",
+        "setting": "carpet",
+        "objects": [
+          "bulb",
+          "printer3d",
+          "vr",
+          "microscope"
+        ]
+      },
+      {
+        "title": "Entardecer na vila: teclado e bateria",
+        "setting": "cobble",
+        "palette": "sunset",
+        "objects": [
+          "keyboard",
+          "battery",
+          "evcar",
+          "charger"
+        ]
+      },
+      {
+        "title": "Estante grande: telefone e rádio",
+        "setting": "carpet",
+        "objects": [
+          "phone",
+          "radio",
           "robot",
-          "computer",
-          "phone",
-          "turbine"
+          "camera"
         ]
       },
       {
-        "title": "Satélite em órbita",
-        "setting": "launch",
+        "title": "Noite estrelada: satélite e braço robótico",
+        "setting": "night",
         "palette": "night",
         "objects": [
           "satellite",
-          "antenna",
-          "monitor",
-          "solar"
+          "roboarm",
+          "drone",
+          "evcar"
         ]
       },
       {
-        "title": "Centro de controle digital",
-        "setting": "control",
-        "palette": "night",
+        "title": "Sala à noite: telescópio e óculos de realidade virtual",
+        "setting": "wood",
         "objects": [
-          "monitor",
-          "computer",
-          "phone",
+          "telescope",
+          "vr",
+          "battery",
           "robot"
         ]
       },
       {
-        "title": "Drones sobre a cidade",
-        "setting": "town",
-        "palette": "dia",
-        "objects": [
-          "drone",
-          "antenna",
-          "phone",
-          "solar"
-        ]
-      },
-      {
-        "title": "Invenções na escola",
-        "setting": "classroom",
-        "palette": "dia",
-        "objects": [
-          "computer",
-          "robot",
-          "lab",
-          "monitor"
-        ]
-      },
-      {
-        "title": "Moinho e sensores no campo",
-        "setting": "farmland",
-        "palette": "entardecer",
+        "title": "Ao ar livre: turbina eólica e servidor",
+        "setting": "dirt",
+        "palette": "clear",
         "objects": [
           "turbine",
-          "drone",
-          "solar",
-          "phone"
-        ]
-      },
-      {
-        "title": "Estufa inteligente",
-        "setting": "greenhouse",
-        "palette": "dia",
-        "objects": [
-          "solar",
-          "lab",
-          "drone",
-          "computer"
-        ]
-      },
-      {
-        "title": "Torre de comunicação na colina",
-        "setting": "hill",
-        "palette": "entardecer",
-        "objects": [
-          "antenna",
-          "satellite",
-          "solar",
-          "phone"
-        ]
-      },
-      {
-        "title": "Fábrica de drones artesanais",
-        "setting": "workshop",
-        "palette": "dia",
-        "objects": [
-          "drone",
-          "robot",
-          "monitor",
-          "computer"
-        ]
-      },
-      {
-        "title": "Barco de pesquisa oceanográfica",
-        "setting": "ocean",
-        "palette": "dia",
-        "objects": [
-          "satellite",
-          "antenna",
-          "monitor",
-          "solar"
-        ]
-      },
-      {
-        "title": "Laboratório de energias limpas",
-        "setting": "lab",
-        "palette": "dia",
-        "objects": [
-          "turbine",
-          "solar",
-          "lab",
-          "computer"
-        ]
-      },
-      {
-        "title": "Observatório espacial no platô",
-        "setting": "mountain",
-        "palette": "night",
-        "objects": [
-          "satellite",
-          "antenna",
-          "monitor",
-          "computer"
-        ]
-      },
-      {
-        "title": "Oficina móvel no trem",
-        "setting": "train",
-        "palette": "entardecer",
-        "objects": [
-          "robot",
-          "phone",
-          "monitor",
-          "lab"
-        ]
-      },
-      {
-        "title": "Central hidrelétrica ecológica",
-        "setting": "river",
-        "palette": "dia",
-        "objects": [
-          "turbine",
-          "monitor",
-          "solar",
-          "drone"
-        ]
-      },
-      {
-        "title": "Biblioteca digital comunitária",
-        "setting": "library",
-        "palette": "entardecer",
-        "objects": [
-          "computer",
-          "monitor",
-          "phone",
+          "server",
+          "roboarm",
           "antenna"
-        ]
-      },
-      {
-        "title": "Feira de robótica juvenil",
-        "setting": "festival",
-        "palette": "dia",
-        "objects": [
-          "robot",
-          "drone",
-          "computer",
-          "phone"
         ]
       }
     ]

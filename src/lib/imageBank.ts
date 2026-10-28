@@ -497,6 +497,20 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "manglye": "mangue (manguezal)",
   "koray": "coral",
   "nich": "ninho",
+  // Elementos diversificados dos temas
+  "enprimant 3D": "impressora 3D",
+  "batri": "bateria",
+  "bra robo": "braço robótico",
+  "sourit": "mouse de computador",
+  "tablèt": "tablet",
+  "mikwoskòp": "microscópio",
+  "telesko": "telescópio",
+  "radyo": "rádio",
+  "ampoul": "lâmpada",
+  "sèvè": "servidor",
+  "machin elektrik": "carro elétrico",
+  "estasyon chaje": "carregador de carro",
+  "kas VR": "óculos de realidade virtual",
 };
 
 const sceneVariantsTyped = imageSceneVariants as Record<

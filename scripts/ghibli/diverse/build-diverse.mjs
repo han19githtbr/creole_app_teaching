@@ -11,21 +11,15 @@ import { fileURLToPath } from "node:url";
 import { Resvg } from "@resvg/resvg-js";
 import { rng, f, commonDefs, skyDefs, skyRect, cloud, sunDisc, moonDisc, stars, rain, farLayer, groundDefs, ground, water } from "./kit.mjs";
 import { DECOR } from "./decor.mjs";
-import { CULTURA } from "./cultura-els.mjs";
-import { NATUREZA } from "./natureza-els.mjs";
-import { CULTURA_SCENES, NATUREZA_SCENES } from "./scenes.mjs";
+import { THEMES } from "./themes.mjs";
+import { interior, windowDefs } from "./kit.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "../../..");
 const OUT = path.join(root, "public/ghibli");
 const J = (p) => path.join(root, p);
 
-const THEMES = {
-  cultura: { label: "Cultura", reg: CULTURA, scenes: CULTURA_SCENES },
-  natureza: { label: "Natureza", reg: NATUREZA, scenes: NATUREZA_SCENES },
-};
-
-const GROUND_LABEL = { meadow: "grama", grass: "grama", forest: "grama", moss: "grama", night: "grama", sand: "areia", nightsand: "areia", dune: "areia", cobble: "piso", dirt: "piso", rock: "piso" };
+const GROUND_LABEL = { meadow: "grama", grass: "grama", forest: "grama", moss: "grama", night: "grama", sand: "areia", nightsand: "areia", dune: "areia", cobble: "piso", dirt: "piso", rock: "piso", wood: "piso", tile: "piso", stone: "piso", carpet: "piso", asphalt: "piso", snow: "piso" };
 
 /* ------------------------------ utilitários de máscara ------------------------------ */
 const MW = 300, MH = 200;
@@ -142,11 +136,12 @@ function layout(sc, reg, r) {
 /* ------------------------------ montagem do SVG ------------------------------ */
 function buildScene(theme, sc) {
   const { reg } = THEMES[theme];
-  const id = `${theme}-${String(sc.n).padStart(2, "0")}`;
+  const id = `${THEMES[theme].prefix ?? theme}-${String(sc.n).padStart(2, "0")}`;
   const r = rng(sc.n * 7919 + (theme === "cultura" ? 17 : 101));
-  const sky = buildSky(sc, r);
+  const sky = sc.interior ? { markup: "", info: { sun: null, moon: null, clouds: [] } } : buildSky(sc, r);
   const parts = [];
-  parts.push(sky.markup);
+  if (sc.interior) parts.push(interior(sc.interior[0], sc.interior[1], sc.ground[1], r));
+  else parts.push(sky.markup);
   if (sc.sky === "rain") parts.push(`<!-- rain overlay -->\n${rain(r, 120)}`);
   const gy = sc.ground ? sc.ground[1] : 735;
   if (sc.far) parts.push(farLayer(sc.far[0], sc.far[1], r, sc.far[2]));
@@ -158,7 +153,7 @@ function buildScene(theme, sc) {
     else parts.push(fn(r, ...args));
   }
   const placed = layout(sc, reg, r);
-  const defs = `<defs>${commonDefs}${skyDefs(sc.sky)}${sc.ground ? groundDefs(sc.ground[0]) : ""}</defs>`;
+  const defs = `<defs>${commonDefs}${sc.interior ? (sc.win ? windowDefs(sc.win[0], sc.win[1]) : "") : skyDefs(sc.sky)}${sc.ground ? groundDefs(sc.ground[0]) : ""}</defs>`;
   const open = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">`;
   const groups = placed.map((it) => {
     const tag = it.hab === "sky" ? "light beam rainbow" : "obj";
@@ -208,9 +203,9 @@ function buildScene(theme, sc) {
   const nearCloud = (px, py) => Math.min(...sky.info.clouds.map(([cx, cy]) => Math.hypot(px - cx, py - cy) * 1.0).concat([1e9]));
   if (sc.water) { const p = pick(0.05, (sc.water[1] + 20) / 800, 0.95, Math.min(sc.water[2] - 10, 780) / 800); if (p) extras.push(["agua", p[0], p[1]]); }
   if (sc.ground && !(sc.water && sc.water[2] >= 800)) { const p = pick(0.05, (gy + 36) / 800, 0.95, 0.86); if (p) extras.push([GROUND_LABEL[sc.ground[0]] ?? "grama", p[0], p[1]]); }
-  const ci = sky.info.clouds.sort((a, b) => b[2] - a[2])[0];
+  const ci = sc.interior ? null : sky.info.clouds.sort((a, b) => b[2] - a[2])[0];
   if (ci) { const cxp = ci[0] / 12, cyp = ci[1] / 8; if (cyp > 11 && cyp < 60) extras.push(["nuvem", Math.round(cxp * 10) / 10, Math.round(cyp * 10) / 10]); }
-  const sp = pick(0.06, 0.1, 0.94, 0.42, (px, py) => Math.min(nearCloud(px, py) - 130, sky.info.sun ? Math.hypot(px - sky.info.sun[0], py - sky.info.sun[1]) - 150 : 1e9, sky.info.moon ? Math.hypot(px - sky.info.moon[0], py - sky.info.moon[1]) - 120 : 1e9));
+  const sp = sc.interior ? null : pick(0.06, 0.1, 0.94, 0.42, (px, py) => Math.min(nearCloud(px, py) - 130, sky.info.sun ? Math.hypot(px - sky.info.sun[0], py - sky.info.sun[1]) - 150 : 1e9, sky.info.moon ? Math.hypot(px - sky.info.moon[0], py - sky.info.moon[1]) - 120 : 1e9));
   if (sp) extras.push(["ceu", sp[0], sp[1]]);
   return { id, svg, anchors: anchorsInOrder, extras: extras.slice(0, 4) };
 }

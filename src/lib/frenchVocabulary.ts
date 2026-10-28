@@ -205,6 +205,20 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "manglye": "palétuvier",
   "koray": "corail",
   "nich": "nid",
+  // Elementos diversificados dos temas
+  "enprimant 3D": "imprimante 3D",
+  "batri": "batterie",
+  "bra robo": "bras robotisé",
+  "sourit": "souris d'ordinateur",
+  "tablèt": "tablette",
+  "mikwoskòp": "microscope",
+  "telesko": "télescope",
+  "radyo": "radio",
+  "ampoul": "ampoule",
+  "sèvè": "serveur",
+  "machin elektrik": "voiture électrique",
+  "estasyon chaje": "borne de recharge",
+  "kas VR": "casque de réalité virtuelle",
 };
 
 /** Tema (nome em português usado no banco) → tema em francês. */

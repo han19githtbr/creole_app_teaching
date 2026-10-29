@@ -1472,15 +1472,13 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             const imageScale = 1.03 * frame.zoom;
             const imageCrop = 16 / 9 / (1200 / 800);
 
-            const captionText = activeCaption ? `${activeCaption.portuguese} ${activeCaption.kreyol}` : "";
             const elementTargetLabel = getElementLabel(element, storyLang);
-            const living = calculateLivingElementState(element.pt, element.kreyol, currentTime, captionText, active, elementTargetLabel);
-
-            const rawLeft = 50 + (anchor.left - 50) * imageScale + frame.driftX + (active ? living.dx : 0);
-            const rawTop = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY - labelLift + (active ? living.dy : 0);
+            // Rótulo ESTÁVEL (igual ao vídeo baixado): o texto não balança, não gira e não pula; só a câmera da cena o move.
+            const rawLeft = 50 + (anchor.left - 50) * imageScale + frame.driftX;
+            const rawTop = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY - labelLift;
 
             // Mantém a pílula INTEIRA dentro do palco (nada cortado nas bordas) e abaixo da faixa de títulos do topo.
-            const labelScale = visual.scale * (active ? 1.03 * living.scaleX : 1);
+            const labelScale = visual.scale * (active ? 1.05 : 1);
             const measured = labelSizes[index];
             const labelChars = elementTargetLabel.length + element.pt.length + 3;
             const labelW = (measured?.w ?? pillFontPx * (0.62 * labelChars + 4.5)) * labelScale + 8;
@@ -1530,34 +1528,15 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   left: `${left}%`,
                   top: `${top}%`,
                   opacity: visual.opacity,
-                  transform: `translate(-50%, -50%) scale(${visual.scale * (active ? 1.03 * living.scaleX : 1)}) rotate(${active ? living.rotation : 0}deg)`,
+                  transform: `translate(-50%, -50%) scale(${labelScale})`,
                   transformOrigin: "center center",
                 }}
               >
                 {active && (
                   <div
-                    className="absolute inset-0 -m-2 rounded-full bg-[#f5cf72]/30 blur-md pointer-events-none transition-opacity"
-                    style={{ opacity: 0.5 + living.pulse * 0.5 }}
+                    className="absolute inset-0 -m-2 rounded-full bg-[#f5cf72]/30 blur-md pointer-events-none"
+                    style={{ opacity: 0.7 }}
                   />
-                )}
-
-                {active && living.particles.length > 0 && (
-                  <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-                    {living.particles.map((p, pIdx) => (
-                      <span
-                        key={pIdx}
-                        className="absolute text-xs sm:text-sm select-none transition-all duration-150"
-                        style={{
-                          left: `${p.x}px`,
-                          top: `${p.y}px`,
-                          opacity: p.opacity,
-                          transform: `scale(${p.scale}) rotate(${p.rotation}deg)`,
-                        }}
-                      >
-                        {p.char}
-                      </span>
-                    ))}
-                  </div>
                 )}
 
                 <div

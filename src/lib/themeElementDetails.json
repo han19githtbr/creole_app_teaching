@@ -1,0 +1,1787 @@
+{
+  "Tecnologia": {
+    "computer": {
+      "kreyol": "òdinatè",
+      "pt": "computador",
+      "fr": "ordinateur"
+    },
+    "robot": {
+      "kreyol": "robo",
+      "pt": "robô",
+      "fr": "robot"
+    },
+    "drone": {
+      "kreyol": "dròn",
+      "pt": "drone",
+      "fr": "drone"
+    },
+    "turbine": {
+      "kreyol": "moulen van",
+      "pt": "turbina eólica",
+      "fr": "éolienne"
+    },
+    "satellite": {
+      "kreyol": "satelit",
+      "pt": "satélite",
+      "fr": "satellite"
+    },
+    "solar": {
+      "kreyol": "panno solè",
+      "pt": "painel solar",
+      "fr": "panneau solaire"
+    },
+    "phone": {
+      "kreyol": "telefòn",
+      "pt": "telefone",
+      "fr": "téléphone"
+    },
+    "monitor": {
+      "kreyol": "ekran",
+      "pt": "tela",
+      "fr": "écran"
+    },
+    "antenna": {
+      "kreyol": "antèn",
+      "pt": "torre de antena",
+      "fr": "antenne relais"
+    },
+    "printer3d": {
+      "kreyol": "enprimant 3D",
+      "pt": "impressora 3D",
+      "fr": "imprimante 3D"
+    },
+    "camera": {
+      "kreyol": "kamera",
+      "pt": "câmera",
+      "fr": "caméra"
+    },
+    "battery": {
+      "kreyol": "batri",
+      "pt": "bateria",
+      "fr": "batterie"
+    },
+    "roboarm": {
+      "kreyol": "bra robo",
+      "pt": "braço robótico",
+      "fr": "bras robotisé"
+    },
+    "keyboard": {
+      "kreyol": "klavye",
+      "pt": "teclado",
+      "fr": "clavier"
+    },
+    "mouse": {
+      "kreyol": "sourit",
+      "pt": "mouse de computador",
+      "fr": "souris d'ordinateur"
+    },
+    "tablet": {
+      "kreyol": "tablèt",
+      "pt": "tablet",
+      "fr": "tablette"
+    },
+    "microscope": {
+      "kreyol": "mikwoskòp",
+      "pt": "microscópio",
+      "fr": "microscope"
+    },
+    "telescope": {
+      "kreyol": "telesko",
+      "pt": "telescópio",
+      "fr": "télescope"
+    },
+    "radio": {
+      "kreyol": "radyo",
+      "pt": "rádio",
+      "fr": "radio"
+    },
+    "bulb": {
+      "kreyol": "ampoul",
+      "pt": "lâmpada",
+      "fr": "ampoule"
+    },
+    "server": {
+      "kreyol": "sèvè",
+      "pt": "servidor",
+      "fr": "serveur"
+    },
+    "evcar": {
+      "kreyol": "machin elektrik",
+      "pt": "carro elétrico",
+      "fr": "voiture électrique"
+    },
+    "charger": {
+      "kreyol": "estasyon chaje",
+      "pt": "carregador de carro",
+      "fr": "borne de recharge"
+    },
+    "vr": {
+      "kreyol": "kas VR",
+      "pt": "óculos de realidade virtual",
+      "fr": "casque de réalité virtuelle"
+    }
+  },
+  "Natureza": {
+    "kolibri": {
+      "kreyol": "kolibri",
+      "pt": "beija-flor",
+      "fr": "colibri"
+    },
+    "lezar": {
+      "kreyol": "lèzar",
+      "pt": "lagartixa",
+      "fr": "lézard"
+    },
+    "krab": {
+      "kreyol": "krab",
+      "pt": "caranguejo",
+      "fr": "crabe"
+    },
+    "zetwal": {
+      "kreyol": "zetwal lanmè",
+      "pt": "estrela-do-mar",
+      "fr": "étoile de mer"
+    },
+    "koki": {
+      "kreyol": "koki",
+      "pt": "concha do mar",
+      "fr": "coquillage"
+    },
+    "pwason": {
+      "kreyol": "pwason",
+      "pt": "peixes",
+      "fr": "poissons"
+    },
+    "dofen": {
+      "kreyol": "dòfen",
+      "pt": "golfinho",
+      "fr": "dauphin"
+    },
+    "balen": {
+      "kreyol": "balèn",
+      "pt": "baleia",
+      "fr": "baleine"
+    },
+    "flamen": {
+      "kreyol": "flamen",
+      "pt": "flamingo",
+      "fr": "flamant rose"
+    },
+    "pelikan": {
+      "kreyol": "pelikan",
+      "pt": "pelicano",
+      "fr": "pélican"
+    },
+    "sef": {
+      "kreyol": "sèf",
+      "pt": "veado",
+      "fr": "cerf"
+    },
+    "lapen": {
+      "kreyol": "lapen",
+      "pt": "coelho",
+      "fr": "lapin"
+    },
+    "ekirey": {
+      "kreyol": "ekirèy",
+      "pt": "esquilo",
+      "fr": "écureuil"
+    },
+    "koukouy": {
+      "kreyol": "koukouy",
+      "pt": "vaga-lumes",
+      "fr": "lucioles"
+    },
+    "chwet": {
+      "kreyol": "chwèt",
+      "pt": "coruja",
+      "fr": "chouette"
+    },
+    "myel": {
+      "kreyol": "myèl",
+      "pt": "abelha",
+      "fr": "abeille"
+    },
+    "fey": {
+      "kreyol": "fèy",
+      "pt": "folhas grandes",
+      "fr": "grandes feuilles"
+    },
+    "chanpiyon": {
+      "kreyol": "chanpiyon",
+      "pt": "cogumelos",
+      "fr": "champignons"
+    },
+    "foje": {
+      "kreyol": "foujè",
+      "pt": "samambaia",
+      "fr": "fougère"
+    },
+    "bambou": {
+      "kreyol": "bambou",
+      "pt": "bambuzal",
+      "fr": "bambous"
+    },
+    "kaktis": {
+      "kreyol": "kaktis",
+      "pt": "cacto",
+      "fr": "cactus"
+    },
+    "roch": {
+      "kreyol": "ròch",
+      "pt": "rochas",
+      "fr": "rochers"
+    },
+    "kaven": {
+      "kreyol": "kavèn",
+      "pt": "caverna",
+      "fr": "grotte"
+    },
+    "lakansyel": {
+      "kreyol": "lakansyèl",
+      "pt": "arco-íris",
+      "fr": "arc-en-ciel"
+    },
+    "zile": {
+      "kreyol": "zile",
+      "pt": "ilhota",
+      "fr": "îlot"
+    },
+    "falez": {
+      "kreyol": "falèz",
+      "pt": "penhasco",
+      "fr": "falaise"
+    },
+    "din": {
+      "kreyol": "din",
+      "pt": "duna de areia",
+      "fr": "dune de sable"
+    },
+    "letan": {
+      "kreyol": "letan",
+      "pt": "lagoa",
+      "fr": "étang"
+    },
+    "nenifa": {
+      "kreyol": "nenifa",
+      "pt": "nenúfares",
+      "fr": "nénuphars"
+    },
+    "bannann": {
+      "kreyol": "pye bannann",
+      "pt": "bananeira",
+      "fr": "bananier"
+    },
+    "tounesol": {
+      "kreyol": "tounesòl",
+      "pt": "girassóis",
+      "fr": "tournesols"
+    },
+    "lis": {
+      "kreyol": "lis",
+      "pt": "lírios brancos",
+      "fr": "lys blancs"
+    },
+    "pen": {
+      "kreyol": "pen",
+      "pt": "pinheiro",
+      "fr": "pin"
+    },
+    "volkan": {
+      "kreyol": "vòlkan",
+      "pt": "vulcão",
+      "fr": "volcan"
+    },
+    "malfini": {
+      "kreyol": "malfini",
+      "pt": "gavião",
+      "fr": "faucon"
+    },
+    "krapo": {
+      "kreyol": "krapo",
+      "pt": "sapo",
+      "fr": "crapaud"
+    },
+    "manglye": {
+      "kreyol": "manglye",
+      "pt": "mangue (manguezal)",
+      "fr": "palétuvier"
+    },
+    "koray": {
+      "kreyol": "koray",
+      "pt": "coral",
+      "fr": "corail"
+    },
+    "nich": {
+      "kreyol": "nich",
+      "pt": "ninho",
+      "fr": "nid"
+    }
+  },
+  "Cultura": {
+    "vaksin": {
+      "kreyol": "vaksin",
+      "pt": "trompete de bambu",
+      "fr": "trompette de bambou"
+    },
+    "chapo": {
+      "kreyol": "chapo",
+      "pt": "chapéu de palha",
+      "fr": "chapeau de paille"
+    },
+    "panye": {
+      "kreyol": "panye",
+      "pt": "cesta de vime",
+      "fr": "panier"
+    },
+    "kalbas": {
+      "kreyol": "kalbas",
+      "pt": "cabaça",
+      "fr": "calebasse"
+    },
+    "motye": {
+      "kreyol": "mòtye",
+      "pt": "pilão de madeira",
+      "fr": "mortier en bois"
+    },
+    "kannari": {
+      "kreyol": "kannari",
+      "pt": "pote de barro",
+      "fr": "jarre en terre cuite"
+    },
+    "penti": {
+      "kreyol": "penti",
+      "pt": "pintura",
+      "fr": "peinture"
+    },
+    "eskilti": {
+      "kreyol": "eskilti",
+      "pt": "escultura de metal",
+      "fr": "sculpture en métal"
+    },
+    "kolye": {
+      "kreyol": "kolye",
+      "pt": "colar de contas",
+      "fr": "collier de perles"
+    },
+    "chal": {
+      "kreyol": "chal",
+      "pt": "xale",
+      "fr": "châle"
+    },
+    "evantay": {
+      "kreyol": "evantay",
+      "pt": "leque",
+      "fr": "éventail"
+    },
+    "chez": {
+      "kreyol": "chèz",
+      "pt": "cadeira de palha",
+      "fr": "chaise"
+    },
+    "bourik": {
+      "kreyol": "bourik",
+      "pt": "burro",
+      "fr": "âne"
+    },
+    "balkon": {
+      "kreyol": "balkon",
+      "pt": "casa com varanda",
+      "fr": "maison à balcon"
+    },
+    "fonten": {
+      "kreyol": "fontèn",
+      "pt": "fonte",
+      "fr": "fontaine"
+    },
+    "kyosk": {
+      "kreyol": "kyòsk",
+      "pt": "coreto",
+      "fr": "kiosque à musique"
+    },
+    "twal": {
+      "kreyol": "twal",
+      "pt": "rolos de tecido",
+      "fr": "rouleaux de tissu"
+    },
+    "plim": {
+      "kreyol": "plim",
+      "pt": "penacho de plumas",
+      "fr": "panache de plumes"
+    },
+    "kostim": {
+      "kreyol": "kostim",
+      "pt": "fantasia de carnaval",
+      "fr": "costume de carnaval"
+    },
+    "banye": {
+      "kreyol": "banyè",
+      "pt": "estandarte",
+      "fr": "bannière"
+    },
+    "kon": {
+      "kreyol": "kòn",
+      "pt": "corneta de metal",
+      "fr": "cor de cuivre"
+    },
+    "teyat": {
+      "kreyol": "teyat",
+      "pt": "teatro de fantoches",
+      "fr": "théâtre de marionnettes"
+    },
+    "dife": {
+      "kreyol": "dife",
+      "pt": "fogueira",
+      "fr": "feu de camp"
+    },
+    "makout": {
+      "kreyol": "makout",
+      "pt": "bolsa de palha",
+      "fr": "sac en paille"
+    },
+    "foula": {
+      "kreyol": "foula",
+      "pt": "lenço madras",
+      "fr": "foulard madras"
+    },
+    "konte": {
+      "kreyol": "kontè",
+      "pt": "contadora de histórias",
+      "fr": "conteuse"
+    },
+    "timoun": {
+      "kreyol": "timoun",
+      "pt": "criança",
+      "fr": "enfant"
+    },
+    "atis": {
+      "kreyol": "atis",
+      "pt": "pintor (artista)",
+      "fr": "artiste peintre"
+    },
+    "granmoun": {
+      "kreyol": "granmoun",
+      "pt": "senhor idoso com bengala",
+      "fr": "vieil homme à la canne"
+    },
+    "kanot": {
+      "kreyol": "kanòt",
+      "pt": "canoa de madeira",
+      "fr": "pirogue"
+    },
+    "kann": {
+      "kreyol": "kann",
+      "pt": "cana-de-açúcar",
+      "fr": "canne à sucre"
+    },
+    "kafe": {
+      "kreyol": "kafe",
+      "pt": "saco de café",
+      "fr": "sac de café"
+    },
+    "fo": {
+      "kreyol": "fòj",
+      "pt": "forja com bigorna",
+      "fr": "forge avec enclume"
+    },
+    "tanbou": {
+      "kreyol": "tanbou",
+      "pt": "tambor",
+      "fr": "tambour"
+    },
+    "lanp": {
+      "kreyol": "lanp",
+      "pt": "lanterna",
+      "fr": "lanterne"
+    }
+  },
+  "Turismo": {
+    "boat": {
+      "kreyol": "bato",
+      "pt": "barco",
+      "fr": "bateau"
+    },
+    "balloon": {
+      "kreyol": "balon",
+      "pt": "balão de ar quente",
+      "fr": "montgolfière"
+    },
+    "lighthouse": {
+      "kreyol": "fa",
+      "pt": "farol",
+      "fr": "phare"
+    },
+    "airplane": {
+      "kreyol": "avyon",
+      "pt": "avião",
+      "fr": "avion"
+    },
+    "suitcase": {
+      "kreyol": "valiz",
+      "pt": "mala de viagem",
+      "fr": "valise"
+    },
+    "map": {
+      "kreyol": "kat",
+      "pt": "mapa",
+      "fr": "carte"
+    },
+    "hotel": {
+      "kreyol": "otèl",
+      "pt": "hotel",
+      "fr": "hôtel"
+    },
+    "passport": {
+      "kreyol": "pasp",
+      "pt": "passaporte",
+      "fr": "passeport"
+    },
+    "photocam": {
+      "kreyol": "aparèy foto",
+      "pt": "máquina fotográfica",
+      "fr": "appareil photo"
+    },
+    "backpack": {
+      "kreyol": "sak a do",
+      "pt": "mochila",
+      "fr": "sac à dos"
+    },
+    "tent": {
+      "kreyol": "tant",
+      "pt": "barraca de camping",
+      "fr": "tente de camping"
+    },
+    "tourbus": {
+      "kreyol": "bis touristik",
+      "pt": "ônibus de turismo",
+      "fr": "bus touristique"
+    },
+    "train": {
+      "kreyol": "tren",
+      "pt": "trem",
+      "fr": "train"
+    },
+    "guide": {
+      "kreyol": "gid",
+      "pt": "guia turístico",
+      "fr": "guide touristique"
+    },
+    "sign": {
+      "kreyol": "siy",
+      "pt": "placa de direção",
+      "fr": "panneau directionnel"
+    },
+    "compass": {
+      "kreyol": "bousòl",
+      "pt": "bússola",
+      "fr": "boussole"
+    },
+    "binoculars": {
+      "kreyol": "jumèl",
+      "pt": "binóculos",
+      "fr": "jumelles"
+    },
+    "parasol": {
+      "kreyol": "parasòl",
+      "pt": "guarda-sol de praia",
+      "fr": "parasol de plage"
+    },
+    "beachchair": {
+      "kreyol": "chèz plaj",
+      "pt": "cadeira de praia",
+      "fr": "chaise de plage"
+    },
+    "coconut": {
+      "kreyol": "kokoye",
+      "pt": "coco com canudo",
+      "fr": "noix de coco"
+    },
+    "ticket": {
+      "kreyol": "tikè",
+      "pt": "bilhete de viagem",
+      "fr": "billet de voyage"
+    },
+    "tower": {
+      "kreyol": "tou",
+      "pt": "torre de observação",
+      "fr": "tour panoramique"
+    },
+    "cablecar": {
+      "kreyol": "teleferik",
+      "pt": "teleférico",
+      "fr": "téléphérique"
+    },
+    "scooter": {
+      "kreyol": "skoutè",
+      "pt": "scooter",
+      "fr": "scooter"
+    }
+  },
+  "Vida no interior": {
+    "goat": {
+      "kreyol": "kabrit",
+      "pt": "cabra",
+      "fr": "chèvre"
+    },
+    "hen": {
+      "kreyol": "poul",
+      "pt": "galinha",
+      "fr": "poule"
+    },
+    "rooster": {
+      "kreyol": "kòk",
+      "pt": "galo",
+      "fr": "coq"
+    },
+    "tractor": {
+      "kreyol": "traktè",
+      "pt": "trator",
+      "fr": "tracteur"
+    },
+    "well": {
+      "kreyol": "pi",
+      "pt": "poço",
+      "fr": "puits"
+    },
+    "fence": {
+      "kreyol": "kloti",
+      "pt": "cerca de madeira",
+      "fr": "clôture en bois"
+    },
+    "wheat": {
+      "kreyol": "ble",
+      "pt": "trigo",
+      "fr": "blé"
+    },
+    "farmhouse": {
+      "kreyol": "kay",
+      "pt": "casa de fazenda",
+      "fr": "maison de ferme"
+    },
+    "windmill": {
+      "kreyol": "moulen",
+      "pt": "moinho de vento",
+      "fr": "moulin à vent"
+    },
+    "barn": {
+      "kreyol": "grenye",
+      "pt": "celeiro",
+      "fr": "grange"
+    },
+    "cow": {
+      "kreyol": "bèf",
+      "pt": "vaca",
+      "fr": "vache"
+    },
+    "pig": {
+      "kreyol": "kochon",
+      "pt": "porco",
+      "fr": "cochon"
+    },
+    "sheep": {
+      "kreyol": "mouton",
+      "pt": "ovelha",
+      "fr": "mouton"
+    },
+    "horse": {
+      "kreyol": "chwal",
+      "pt": "cavalo",
+      "fr": "cheval"
+    },
+    "sack": {
+      "kreyol": "sak ble",
+      "pt": "sacos de grãos",
+      "fr": "sacs de grains"
+    },
+    "cart": {
+      "kreyol": "charèt",
+      "pt": "carroça",
+      "fr": "charrette"
+    },
+    "rake": {
+      "kreyol": "rato",
+      "pt": "rastelo",
+      "fr": "râteau"
+    },
+    "hoe": {
+      "kreyol": "pyòch",
+      "pt": "enxada",
+      "fr": "houe"
+    },
+    "eggs": {
+      "kreyol": "panye ze",
+      "pt": "cesta de ovos",
+      "fr": "panier d'œufs"
+    },
+    "scarecrow": {
+      "kreyol": "epouvantay",
+      "pt": "espantalho",
+      "fr": "épouvantail"
+    },
+    "mangotree": {
+      "kreyol": "pye mango",
+      "pt": "mangueira",
+      "fr": "manguier"
+    },
+    "garden": {
+      "kreyol": "jaden",
+      "pt": "horta",
+      "fr": "potager"
+    },
+    "beehive": {
+      "kreyol": "ruch",
+      "pt": "colmeia",
+      "fr": "ruche"
+    },
+    "hay": {
+      "kreyol": "bòt pay",
+      "pt": "fardo de feno",
+      "fr": "botte de foin"
+    }
+  },
+  "Dança": {
+    "dancerF": {
+      "kreyol": "dansè fi",
+      "pt": "dançarina",
+      "fr": "danseuse"
+    },
+    "dancerM": {
+      "kreyol": "dansè gason",
+      "pt": "dançarino",
+      "fr": "danseur"
+    },
+    "ballerina": {
+      "kreyol": "balerin",
+      "pt": "bailarina de balé",
+      "fr": "ballerine"
+    },
+    "shoes": {
+      "kreyol": "soulye danse",
+      "pt": "sapatilhas de balé",
+      "fr": "chaussons de danse"
+    },
+    "ribbon": {
+      "kreyol": "riban",
+      "pt": "fita de ginástica",
+      "fr": "ruban de gymnastique"
+    },
+    "flamenco": {
+      "kreyol": "rad flamenko",
+      "pt": "vestido de flamenco",
+      "fr": "robe de flamenco"
+    },
+    "skirt": {
+      "kreyol": "jip woule",
+      "pt": "saia rodada",
+      "fr": "jupe ample"
+    },
+    "mirror": {
+      "kreyol": "mirwa",
+      "pt": "espelho de ensaio",
+      "fr": "miroir de répétition"
+    },
+    "barre": {
+      "kreyol": "barè",
+      "pt": "barra de balé",
+      "fr": "barre de danse"
+    },
+    "discoball": {
+      "kreyol": "boul diskò",
+      "pt": "globo de espelhos",
+      "fr": "boule à facettes"
+    },
+    "spotlight": {
+      "kreyol": "pwojektè",
+      "pt": "holofote",
+      "fr": "projecteur"
+    },
+    "stage": {
+      "kreyol": "sèn",
+      "pt": "palco",
+      "fr": "scène"
+    },
+    "mat": {
+      "kreyol": "tapi",
+      "pt": "tapete de dança",
+      "fr": "tapis de danse"
+    },
+    "castanets": {
+      "kreyol": "kastayèt",
+      "pt": "castanholas",
+      "fr": "castagnettes"
+    },
+    "guitar": {
+      "kreyol": "gita",
+      "pt": "violão",
+      "fr": "guitare"
+    },
+    "accordion": {
+      "kreyol": "akòdeyon",
+      "pt": "acordeão",
+      "fr": "accordéon"
+    },
+    "violin": {
+      "kreyol": "vyolon",
+      "pt": "violino",
+      "fr": "violon"
+    },
+    "flute": {
+      "kreyol": "flit",
+      "pt": "flauta",
+      "fr": "flûte"
+    },
+    "trumpet": {
+      "kreyol": "trompèt",
+      "pt": "trompete",
+      "fr": "trompette"
+    },
+    "flowercrown": {
+      "kreyol": "kouwòn flè",
+      "pt": "coroa de flores",
+      "fr": "couronne de fleurs"
+    }
+  },
+  "Geografia": {
+    "globe": {
+      "kreyol": "glòb",
+      "pt": "globo terrestre",
+      "fr": "globe terrestre"
+    },
+    "worldmap": {
+      "kreyol": "kat monn",
+      "pt": "mapa-múndi",
+      "fr": "planisphère"
+    },
+    "mountain": {
+      "kreyol": "mòn",
+      "pt": "montanha",
+      "fr": "montagne"
+    },
+    "snowpeak": {
+      "kreyol": "mòn nèj",
+      "pt": "montanha com neve",
+      "fr": "montagne enneigée"
+    },
+    "waterfall": {
+      "kreyol": "kaskad",
+      "pt": "cachoeira",
+      "fr": "cascade"
+    },
+    "glacier": {
+      "kreyol": "glasye",
+      "pt": "geleira",
+      "fr": "glacier"
+    },
+    "bridge": {
+      "kreyol": "pon",
+      "pt": "ponte",
+      "fr": "pont"
+    },
+    "canyon": {
+      "kreyol": "kanyon",
+      "pt": "cânion",
+      "fr": "canyon"
+    },
+    "mesa": {
+      "kreyol": "plato",
+      "pt": "planalto",
+      "fr": "plateau"
+    },
+    "thermometer": {
+      "kreyol": "tèmomèt",
+      "pt": "termômetro",
+      "fr": "thermomètre"
+    },
+    "tornado": {
+      "kreyol": "tònad",
+      "pt": "tornado",
+      "fr": "tornade"
+    },
+    "raincloud": {
+      "kreyol": "nyaj lapli",
+      "pt": "nuvem de chuva",
+      "fr": "nuage de pluie"
+    },
+    "lightning": {
+      "kreyol": "ekla",
+      "pt": "raio de tempestade",
+      "fr": "éclair"
+    },
+    "city": {
+      "kreyol": "vil",
+      "pt": "cidade",
+      "fr": "ville"
+    },
+    "continent": {
+      "kreyol": "kontinan",
+      "pt": "continente",
+      "fr": "continent"
+    },
+    "palm": {
+      "kreyol": "palmis",
+      "pt": "palmeira",
+      "fr": "palmier"
+    },
+    "lake": {
+      "kreyol": "lak",
+      "pt": "lago",
+      "fr": "lac"
+    }
+  },
+  "História": {
+    "caravel": {
+      "kreyol": "karavèl",
+      "pt": "caravela",
+      "fr": "caravelle"
+    },
+    "fort": {
+      "kreyol": "fò",
+      "pt": "fortaleza",
+      "fr": "forteresse"
+    },
+    "cannon": {
+      "kreyol": "kanon",
+      "pt": "canhão",
+      "fr": "canon"
+    },
+    "sword": {
+      "kreyol": "epe",
+      "pt": "espada",
+      "fr": "épée"
+    },
+    "helmet": {
+      "kreyol": "kask",
+      "pt": "elmo de cavaleiro",
+      "fr": "heaume"
+    },
+    "shield": {
+      "kreyol": "bouklye",
+      "pt": "escudo medieval",
+      "fr": "bouclier"
+    },
+    "torch": {
+      "kreyol": "flanbo",
+      "pt": "tocha",
+      "fr": "torche"
+    },
+    "pyramid": {
+      "kreyol": "piramid",
+      "pt": "pirâmide",
+      "fr": "pyramide"
+    },
+    "chest": {
+      "kreyol": "kòf trezò",
+      "pt": "baú de tesouro",
+      "fr": "coffre au trésor"
+    },
+    "oldmap": {
+      "kreyol": "kat ansyen",
+      "pt": "mapa antigo",
+      "fr": "carte ancienne"
+    },
+    "scroll": {
+      "kreyol": "parchemen",
+      "pt": "pergaminho",
+      "fr": "parchemin"
+    },
+    "quill": {
+      "kreyol": "plim ak lank",
+      "pt": "pena e tinteiro",
+      "fr": "plume et encrier"
+    },
+    "tower": {
+      "kreyol": "tou",
+      "pt": "torre de castelo",
+      "fr": "tour de château"
+    },
+    "spear": {
+      "kreyol": "lans",
+      "pt": "lança",
+      "fr": "lance"
+    },
+    "crown": {
+      "kreyol": "kouwòn",
+      "pt": "coroa",
+      "fr": "couronne"
+    },
+    "throne": {
+      "kreyol": "twòn",
+      "pt": "trono",
+      "fr": "trône"
+    },
+    "amphora": {
+      "kreyol": "anfò",
+      "pt": "ânfora",
+      "fr": "amphore"
+    },
+    "oillamp": {
+      "kreyol": "lanp lwil",
+      "pt": "lamparina a óleo",
+      "fr": "lampe à huile"
+    },
+    "bell": {
+      "kreyol": "kloch",
+      "pt": "sino",
+      "fr": "cloche"
+    },
+    "candles": {
+      "kreyol": "chandèl",
+      "pt": "velas acesas",
+      "fr": "bougies"
+    },
+    "wall": {
+      "kreyol": "miray",
+      "pt": "muralha",
+      "fr": "muraille"
+    },
+    "column": {
+      "kreyol": "kolòn",
+      "pt": "coluna grega",
+      "fr": "colonne grecque"
+    },
+    "anchor": {
+      "kreyol": "ankre",
+      "pt": "âncora",
+      "fr": "ancre"
+    }
+  },
+  "Cinema": {
+    "movcam": {
+      "kreyol": "kamera sinema",
+      "pt": "câmera de cinema",
+      "fr": "caméra de cinéma"
+    },
+    "projector": {
+      "kreyol": "pwojektè sinema",
+      "pt": "projetor de cinema",
+      "fr": "projecteur de cinéma"
+    },
+    "screen": {
+      "kreyol": "ekran sinema",
+      "pt": "tela de cinema",
+      "fr": "écran de cinéma"
+    },
+    "clapper": {
+      "kreyol": "klakèt",
+      "pt": "claquete",
+      "fr": "clap de cinéma"
+    },
+    "popcorn": {
+      "kreyol": "pòpkòn",
+      "pt": "pipoca",
+      "fr": "pop-corn"
+    },
+    "ticket": {
+      "kreyol": "bilyè sinema",
+      "pt": "ingresso de cinema",
+      "fr": "billet de cinéma"
+    },
+    "seat": {
+      "kreyol": "fotèy sinema",
+      "pt": "poltrona de cinema",
+      "fr": "fauteuil de cinéma"
+    },
+    "megaphone": {
+      "kreyol": "megafòn",
+      "pt": "megafone",
+      "fr": "mégaphone"
+    },
+    "boom": {
+      "kreyol": "mikwo bom",
+      "pt": "microfone de girafa",
+      "fr": "perche micro"
+    },
+    "reel": {
+      "kreyol": "bobin fim",
+      "pt": "rolo de filme",
+      "fr": "bobine de film"
+    },
+    "chair": {
+      "kreyol": "chèz direktè",
+      "pt": "cadeira de diretor",
+      "fr": "chaise de réalisateur"
+    },
+    "poster": {
+      "kreyol": "afich fim",
+      "pt": "pôster de filme",
+      "fr": "affiche de film"
+    },
+    "redcarpet": {
+      "kreyol": "tapi wouj",
+      "pt": "tapete vermelho",
+      "fr": "tapis rouge"
+    },
+    "trophy": {
+      "kreyol": "twofe",
+      "pt": "troféu dourado",
+      "fr": "trophée doré"
+    },
+    "mask": {
+      "kreyol": "maske teyat",
+      "pt": "máscaras de teatro",
+      "fr": "masques de théâtre"
+    },
+    "glasses3d": {
+      "kreyol": "lunèt 3D",
+      "pt": "óculos 3D",
+      "fr": "lunettes 3D"
+    },
+    "crane": {
+      "kreyol": "grèn kamera",
+      "pt": "grua de câmera",
+      "fr": "grue de caméra"
+    },
+    "soda": {
+      "kreyol": "soda",
+      "pt": "refrigerante",
+      "fr": "boisson gazeuse"
+    },
+    "filmstrip": {
+      "kreyol": "bann fim",
+      "pt": "tira de filme",
+      "fr": "pellicule"
+    },
+    "softbox": {
+      "kreyol": "lanp studyo",
+      "pt": "luz de estúdio",
+      "fr": "lumière de studio"
+    },
+    "greenscreen": {
+      "kreyol": "ekran vèt",
+      "pt": "tela verde",
+      "fr": "écran vert"
+    }
+  },
+  "Música": {
+    "piano": {
+      "kreyol": "pyano",
+      "pt": "piano",
+      "fr": "piano"
+    },
+    "sax": {
+      "kreyol": "saksofòn",
+      "pt": "saxofone",
+      "fr": "saxophone"
+    },
+    "mic": {
+      "kreyol": "mikwo",
+      "pt": "microfone",
+      "fr": "microphone"
+    },
+    "headphones": {
+      "kreyol": "ekouteur",
+      "pt": "fones de ouvido",
+      "fr": "casque audio"
+    },
+    "score": {
+      "kreyol": "pàtisyon",
+      "pt": "partitura",
+      "fr": "partition"
+    },
+    "metronome": {
+      "kreyol": "metwonòm",
+      "pt": "metrônomo",
+      "fr": "métronome"
+    },
+    "xylophone": {
+      "kreyol": "silofòn",
+      "pt": "xilofone",
+      "fr": "xylophone"
+    },
+    "tambourine": {
+      "kreyol": "tanbourin",
+      "pt": "pandeiro",
+      "fr": "tambourin"
+    },
+    "drumkit": {
+      "kreyol": "ansanm tanbou",
+      "pt": "bateria",
+      "fr": "batterie (instrument)"
+    },
+    "harp": {
+      "kreyol": "arp",
+      "pt": "harpa",
+      "fr": "harpe"
+    },
+    "bass": {
+      "kreyol": "kontrebas",
+      "pt": "contrabaixo",
+      "fr": "contrebasse"
+    },
+    "clarinet": {
+      "kreyol": "klarinèt",
+      "pt": "clarinete",
+      "fr": "clarinette"
+    },
+    "trombone": {
+      "kreyol": "trombòn",
+      "pt": "trombone",
+      "fr": "trombone"
+    },
+    "djembe": {
+      "kreyol": "djembe",
+      "pt": "djembê",
+      "fr": "djembé"
+    },
+    "gramophone": {
+      "kreyol": "gramofòn",
+      "pt": "gramofone",
+      "fr": "gramophone"
+    },
+    "vinyl": {
+      "kreyol": "vinil",
+      "pt": "disco de vinil",
+      "fr": "disque vinyle"
+    },
+    "musicbox": {
+      "kreyol": "bwat mizik",
+      "pt": "caixa de música",
+      "fr": "boîte à musique"
+    },
+    "singer": {
+      "kreyol": "chantè",
+      "pt": "cantora",
+      "fr": "chanteuse"
+    },
+    "conductor": {
+      "kreyol": "dirijan",
+      "pt": "maestro",
+      "fr": "chef d'orchestre"
+    },
+    "synth": {
+      "kreyol": "sentetizè",
+      "pt": "sintetizador",
+      "fr": "synthétiseur"
+    },
+    "amp": {
+      "kreyol": "anplifikatè",
+      "pt": "amplificador",
+      "fr": "amplificateur"
+    }
+  },
+  "Lazeres": {
+    "bike": {
+      "kreyol": "bisiklèt",
+      "pt": "bicicleta",
+      "fr": "vélo"
+    },
+    "kite": {
+      "kreyol": "kap",
+      "pt": "pipa",
+      "fr": "cerf-volant"
+    },
+    "football": {
+      "kreyol": "boul foutbòl",
+      "pt": "bola de futebol",
+      "fr": "ballon de foot"
+    },
+    "racket": {
+      "kreyol": "rakèt tenis",
+      "pt": "raquete de tênis",
+      "fr": "raquette de tennis"
+    },
+    "volleynet": {
+      "kreyol": "filè volebòl",
+      "pt": "rede de vôlei",
+      "fr": "filet de volley"
+    },
+    "picnic": {
+      "kreyol": "panye piknik",
+      "pt": "cesta de piquenique",
+      "fr": "panier de pique-nique"
+    },
+    "rod": {
+      "kreyol": "kann lapèch",
+      "pt": "vara de pescar",
+      "fr": "canne à pêche"
+    },
+    "skate": {
+      "kreyol": "planch a woulèt",
+      "pt": "skate",
+      "fr": "skateboard"
+    },
+    "swing": {
+      "kreyol": "balanswa",
+      "pt": "balanço",
+      "fr": "balançoire"
+    },
+    "slide": {
+      "kreyol": "glisad",
+      "pt": "escorregador",
+      "fr": "toboggan"
+    },
+    "pool": {
+      "kreyol": "pisin",
+      "pt": "piscina",
+      "fr": "piscine"
+    },
+    "hammock": {
+      "kreyol": "hamak",
+      "pt": "rede de descanso",
+      "fr": "hamac"
+    },
+    "chess": {
+      "kreyol": "tablo echèk",
+      "pt": "tabuleiro de xadrez",
+      "fr": "échiquier"
+    },
+    "cards": {
+      "kreyol": "kat jwe",
+      "pt": "baralho",
+      "fr": "jeu de cartes"
+    },
+    "domino": {
+      "kreyol": "domino",
+      "pt": "dominó",
+      "fr": "dominos"
+    },
+    "skates": {
+      "kreyol": "patin",
+      "pt": "patins",
+      "fr": "patins à roulettes"
+    },
+    "rope": {
+      "kreyol": "kòd sote",
+      "pt": "corda de pular",
+      "fr": "corde à sauter"
+    },
+    "hoop": {
+      "kreyol": "panye baskèt",
+      "pt": "cesta de basquete",
+      "fr": "panier de basket"
+    },
+    "kayak": {
+      "kreyol": "kayak",
+      "pt": "caiaque",
+      "fr": "kayak"
+    },
+    "grill": {
+      "kreyol": "boukann",
+      "pt": "churrasqueira",
+      "fr": "barbecue"
+    },
+    "pingpong": {
+      "kreyol": "tab pingpong",
+      "pt": "mesa de pingue-pongue",
+      "fr": "table de ping-pong"
+    }
+  },
+  "Estoicismo": {
+    "bust": {
+      "kreyol": "bist",
+      "pt": "busto de filósofo",
+      "fr": "buste de philosophe"
+    },
+    "hourglass": {
+      "kreyol": "sablye",
+      "pt": "ampulheta",
+      "fr": "sablier"
+    },
+    "scales": {
+      "kreyol": "balans",
+      "pt": "balança da justiça",
+      "fr": "balance de la justice"
+    },
+    "olive": {
+      "kreyol": "oliv",
+      "pt": "oliveira",
+      "fr": "olivier"
+    },
+    "book": {
+      "kreyol": "liv",
+      "pt": "livros antigos",
+      "fr": "livres anciens"
+    },
+    "bench": {
+      "kreyol": "ban wòch",
+      "pt": "banco de pedra",
+      "fr": "banc de pierre"
+    },
+    "temple": {
+      "kreyol": "tanp",
+      "pt": "templo grego",
+      "fr": "temple grec"
+    },
+    "sandal": {
+      "kreyol": "sandal",
+      "pt": "sandálias de couro",
+      "fr": "sandales en cuir"
+    },
+    "laurel": {
+      "kreyol": "kouwòn lorye",
+      "pt": "coroa de louros",
+      "fr": "couronne de laurier"
+    },
+    "balanced": {
+      "kreyol": "ròch ekilib",
+      "pt": "pedras empilhadas",
+      "fr": "cairn de pierres"
+    },
+    "handmirror": {
+      "kreyol": "mirwa men",
+      "pt": "espelho de mão",
+      "fr": "miroir à main"
+    },
+    "key": {
+      "kreyol": "kle",
+      "pt": "chave antiga",
+      "fr": "clé ancienne"
+    },
+    "gate": {
+      "kreyol": "pòtay",
+      "pt": "portão de ferro",
+      "fr": "portail en fer"
+    },
+    "fountain": {
+      "kreyol": "fontèn",
+      "pt": "fonte",
+      "fr": "fontaine"
+    },
+    "statue": {
+      "kreyol": "estati",
+      "pt": "estátua de mármore",
+      "fr": "statue de marbre"
+    }
+  },
+  "Religião": {
+    "church": {
+      "kreyol": "legliz",
+      "pt": "igreja",
+      "fr": "église"
+    },
+    "chapel": {
+      "kreyol": "chapèl",
+      "pt": "capela",
+      "fr": "chapelle"
+    },
+    "cross": {
+      "kreyol": "kwa",
+      "pt": "cruz",
+      "fr": "croix"
+    },
+    "bible": {
+      "kreyol": "bib",
+      "pt": "bíblia",
+      "fr": "bible"
+    },
+    "candle": {
+      "kreyol": "bouji",
+      "pt": "velas de oração",
+      "fr": "bougies de prière"
+    },
+    "bell": {
+      "kreyol": "kloch",
+      "pt": "sino de igreja",
+      "fr": "cloche d'église"
+    },
+    "window": {
+      "kreyol": "vitraj",
+      "pt": "vitral colorido",
+      "fr": "vitrail"
+    },
+    "organ": {
+      "kreyol": "òg",
+      "pt": "órgão de igreja",
+      "fr": "orgue"
+    },
+    "rosary": {
+      "kreyol": "chaple",
+      "pt": "terço",
+      "fr": "chapelet"
+    },
+    "chalice": {
+      "kreyol": "kalis",
+      "pt": "cálice",
+      "fr": "calice"
+    },
+    "candelabra": {
+      "kreyol": "kandelab",
+      "pt": "candelabro",
+      "fr": "candélabre"
+    },
+    "dove": {
+      "kreyol": "pijon",
+      "pt": "pomba branca",
+      "fr": "colombe"
+    },
+    "angel": {
+      "kreyol": "zanj",
+      "pt": "estátua de anjo",
+      "fr": "statue d'ange"
+    },
+    "hymnal": {
+      "kreyol": "kantik",
+      "pt": "livro de cânticos",
+      "fr": "livre de cantiques"
+    },
+    "palm": {
+      "kreyol": "branch palmis",
+      "pt": "ramos de palmeira",
+      "fr": "rameaux de palmier"
+    },
+    "bread": {
+      "kreyol": "pen ak diven",
+      "pt": "pão e vinho",
+      "fr": "pain et vin"
+    },
+    "font": {
+      "kreyol": "basen batèm",
+      "pt": "pia batismal",
+      "fr": "fonts baptismaux"
+    },
+    "wayside": {
+      "kreyol": "lakwa chemen",
+      "pt": "cruzeiro de caminho",
+      "fr": "calvaire"
+    },
+    "steeple": {
+      "kreyol": "klòchè",
+      "pt": "campanário",
+      "fr": "clocher"
+    },
+    "churchgate": {
+      "kreyol": "pòtay legliz",
+      "pt": "portal de igreja",
+      "fr": "portail d'église"
+    },
+    "banner": {
+      "kreyol": "banyè pwosesyon",
+      "pt": "estandarte de procissão",
+      "fr": "bannière de procession"
+    },
+    "altar": {
+      "kreyol": "tab otèl",
+      "pt": "altar",
+      "fr": "autel"
+    }
+  },
+  "Gastronomia": {
+    "pot": {
+      "kreyol": "marmit",
+      "pt": "panela de ferro",
+      "fr": "marmite"
+    },
+    "soup": {
+      "kreyol": "soup joumou",
+      "pt": "sopa de abóbora",
+      "fr": "soupe giraumon"
+    },
+    "rice": {
+      "kreyol": "diri ak pwa",
+      "pt": "arroz com feijão",
+      "fr": "riz aux haricots"
+    },
+    "plantain": {
+      "kreyol": "bannann peze",
+      "pt": "banana-da-terra frita",
+      "fr": "bananes plantain frites"
+    },
+    "griot": {
+      "kreyol": "griyo",
+      "pt": "carne de porco frita",
+      "fr": "griot de porc"
+    },
+    "pikliz": {
+      "kreyol": "pikliz",
+      "pt": "conserva de repolho picante",
+      "fr": "pikliz"
+    },
+    "mango": {
+      "kreyol": "mango",
+      "pt": "mangas",
+      "fr": "mangues"
+    },
+    "banana": {
+      "kreyol": "fig",
+      "pt": "cacho de bananas",
+      "fr": "régime de bananes"
+    },
+    "pineapple": {
+      "kreyol": "ananas",
+      "pt": "abacaxi",
+      "fr": "ananas"
+    },
+    "coffee": {
+      "kreyol": "kafe",
+      "pt": "xícara de café",
+      "fr": "tasse de café"
+    },
+    "bread": {
+      "kreyol": "pen",
+      "pt": "pão",
+      "fr": "pain"
+    },
+    "cutlery": {
+      "kreyol": "kouto ak fouchèt",
+      "pt": "faca e garfo",
+      "fr": "couteau et fourchette"
+    },
+    "plate": {
+      "kreyol": "asyèt",
+      "pt": "prato servido",
+      "fr": "assiette garnie"
+    },
+    "stove": {
+      "kreyol": "recho",
+      "pt": "fogareiro a carvão",
+      "fr": "réchaud à charbon"
+    },
+    "veggies": {
+      "kreyol": "legim",
+      "pt": "cesta de legumes",
+      "fr": "panier de légumes"
+    },
+    "eggs": {
+      "kreyol": "ze",
+      "pt": "ovos",
+      "fr": "œufs"
+    },
+    "milk": {
+      "kreyol": "lèt",
+      "pt": "garrafa de leite",
+      "fr": "lait"
+    },
+    "chocolate": {
+      "kreyol": "chokola",
+      "pt": "chocolate quente",
+      "fr": "chocolat chaud"
+    },
+    "porridge": {
+      "kreyol": "labouyi",
+      "pt": "mingau",
+      "fr": "bouillie"
+    },
+    "akra": {
+      "kreyol": "akra",
+      "pt": "bolinhos fritos",
+      "fr": "beignets d'akra"
+    },
+    "juice": {
+      "kreyol": "ji",
+      "pt": "jarra de suco",
+      "fr": "carafe de jus"
+    },
+    "board": {
+      "kreyol": "planch",
+      "pt": "tábua de cortar",
+      "fr": "planche à découper"
+    },
+    "spoon": {
+      "kreyol": "kiyè bwa",
+      "pt": "colher de pau",
+      "fr": "cuillère en bois"
+    },
+    "fruit": {
+      "kreyol": "fwi",
+      "pt": "frutas",
+      "fr": "fruits"
+    },
+    "pepper": {
+      "kreyol": "piman",
+      "pt": "pimentas",
+      "fr": "piments"
+    }
+  },
+  "Idiomas": {
+    "dictionary": {
+      "kreyol": "diksyonè",
+      "pt": "dicionário",
+      "fr": "dictionnaire"
+    },
+    "openbook": {
+      "kreyol": "liv ouvè",
+      "pt": "livro aberto",
+      "fr": "livre ouvert"
+    },
+    "pencil": {
+      "kreyol": "kreyon",
+      "pt": "lápis",
+      "fr": "crayon"
+    },
+    "notebook": {
+      "kreyol": "kaye",
+      "pt": "caderno",
+      "fr": "cahier"
+    },
+    "blackboard": {
+      "kreyol": "tablo nwa",
+      "pt": "quadro-negro",
+      "fr": "tableau noir"
+    },
+    "blocks": {
+      "kreyol": "kib alfabè",
+      "pt": "cubos do alfabeto",
+      "fr": "cubes de l'alphabet"
+    },
+    "bookshelf": {
+      "kreyol": "etajè liv",
+      "pt": "estante de livros",
+      "fr": "étagère de livres"
+    },
+    "flashcards": {
+      "kreyol": "kat vokabilè",
+      "pt": "cartões de vocabulário",
+      "fr": "cartes de vocabulaire"
+    },
+    "desk": {
+      "kreyol": "pipit",
+      "pt": "carteira escolar",
+      "fr": "pupitre"
+    },
+    "schoolbag": {
+      "kreyol": "sak lekòl",
+      "pt": "mochila escolar",
+      "fr": "cartable"
+    },
+    "ruler": {
+      "kreyol": "règ",
+      "pt": "régua",
+      "fr": "règle"
+    },
+    "eraser": {
+      "kreyol": "gonm",
+      "pt": "borracha",
+      "fr": "gomme"
+    },
+    "alphabet": {
+      "kreyol": "alfabè",
+      "pt": "cartaz do alfabeto",
+      "fr": "affiche de l'alphabet"
+    },
+    "bubble": {
+      "kreyol": "bul diskisyon",
+      "pt": "balões de fala",
+      "fr": "bulles de dialogue"
+    },
+    "flags": {
+      "kreyol": "drapo",
+      "pt": "bandeiras de países",
+      "fr": "drapeaux"
+    },
+    "lamp": {
+      "kreyol": "lanp biwo",
+      "pt": "luminária de mesa",
+      "fr": "lampe de bureau"
+    },
+    "clock": {
+      "kreyol": "revèy",
+      "pt": "relógio de parede",
+      "fr": "horloge murale"
+    },
+    "envelope": {
+      "kreyol": "anvlòp",
+      "pt": "carta em envelope",
+      "fr": "lettre sous enveloppe"
+    },
+    "letters": {
+      "kreyol": "lèt",
+      "pt": "letras do alfabeto",
+      "fr": "lettres"
+    },
+    "lèt": {
+      "kreyol": "lèt",
+      "pt": "letras do alfabeto",
+      "fr": "lettres"
+    }
+  }
+}

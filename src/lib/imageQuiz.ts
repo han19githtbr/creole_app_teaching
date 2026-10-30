@@ -79,7 +79,7 @@ export function getQuizForImage(
   language: "kreyol" | "francais" = "kreyol"
 ): ImageQuizConfig | undefined {
   const quiz = image.quiz ?? getDefaultImageQuiz(image.theme, image.id);
-  return quiz && language === "francais" ? translateQuizToFrench(quiz) : quiz;
+  return quiz && language === "francais" ? translateQuizToFrench(quiz, image.theme) : quiz;
 }
 
 export function isValidImageQuiz(value: unknown): value is ImageQuizConfig {

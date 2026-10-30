@@ -314,6 +314,7 @@ const ICONS: Record<string, string> = {
   "cesta de legumes": "🥕",
   "ovos": "🥚",
   "garrafa de leite": "🥛",
+  "leite": "🥛",
   "chocolate quente": "☕",
   "mingau": "🥣",
   "bolinhos fritos": "🧆",
@@ -377,6 +378,7 @@ function lookup(name: string | undefined): string | undefined {
 
 // Francês → português (só o necessário para achar o ícone quando o nome em português não bate).
 const FR_TO_ICON: Record<string, string> = {
+  lait: "🥛", "bouteille de lait": "🥛",
   tambour: "🥁", drapeau: "🚩", lanterne: "🏮", lanternes: "🏮", maison: "🏠", montagne: "⛰️", montagnes: "⛰️",
   nuage: "☁️", ciel: "🌤️", soleil: "☀️", lune: "🌙", arbre: "🌳", arbres: "🌳", fleurs: "🌸", bateau: "⛵",
   poisson: "🐟", oiseau: "🐦", livre: "📖", eglise: "⛪", cloche: "🔔", etoiles: "⭐", mer: "🌊", eau: "💧",

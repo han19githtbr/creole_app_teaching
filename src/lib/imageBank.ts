@@ -1,8 +1,10 @@
-﻿// Banco de imagens em estilo Studio Ghibli (ilustrações artísticas
+// Banco de imagens em estilo Studio Ghibli (ilustrações artísticas
 // com elementos realistas e reconhecíveis, arquivos SVG em /public/ghibli).
 import generatedImages from "../../scripts/ghibli/manifest.json";
 import measuredAnchors from "./storyElementAnchors.json";
 import measuredExtras from "./storyElementExtras.json";
+import themeElementDetails from "./themeElementDetails.json";
+import type { AppLanguage } from "./languageShared";
 import { KREYOL_TO_FR, kreyolToFrench, themeToFrench } from "./frenchVocabulary";
 
 export interface BankElement {
@@ -24,6 +26,8 @@ export interface BankImage {
   theme: string;
   title: string;
   src: string;
+  /** URL da versão em francês da imagem, quando existir texto localizado nela. */
+  srcFr?: string;
   /** Vocabulário principal em Kreyòl */
   kreyol: string;
   /** Legenda sugerida em português com vocabulário em Kreyòl */
@@ -796,6 +800,43 @@ function measuredStoryLayout(
   };
 }
 
+
+export const FRENCH_IMAGE_IDS = new Set([
+  "cinema",
+  "gastronomia-02",
+  "gastronomia-10",
+  "gastronomia-15",
+  "gastronomia-20",
+  "idiomas-03",
+  "idiomas-04",
+  "idiomas-09",
+  "idiomas-13",
+  "idiomas-14",
+  "idiomas-16",
+  "idiomas-17",
+  "idiomas-20",
+  "tecnologia",
+  "turismo-icarai",
+]);
+
+export function getLanguageImageSrc(src: string | null | undefined, language: AppLanguage = "kreyol"): string {
+  if (!src) return "";
+  if (language === "francais") {
+    if (src.startsWith("/ghibli/fr/")) return src;
+    if (src.startsWith("/ghibli/")) {
+      const id = src.replace("/ghibli/", "").replace(/\.(svg|png|webp|jpe?g)$/i, "");
+      if (FRENCH_IMAGE_IDS.has(id)) {
+        return `/ghibli/fr/${id}.svg`;
+      }
+    }
+    return src;
+  }
+  if (src.startsWith("/ghibli/fr/")) {
+    return src.replace("/ghibli/fr/", "/ghibli/");
+  }
+  return src;
+}
+
 export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
   Array.from({ length: 20 }, (_, variantIndex) => {
     const variant = variantIndex + 1;
@@ -811,11 +852,16 @@ export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
 
     if (variantScene && sceneVariantsTyped[image.theme]) {
       const themeLabels = sceneVariantsTyped[image.theme].labels;
+      const detailsMap = (themeElementDetails as Record<string, Record<string, BankElement>>)[image.theme];
       elements = variantScene.objects.map((obj) => {
-        const kreyol = themeLabels[obj] ?? obj;
+        const detail = detailsMap?.[obj];
+        const kreyol = detail?.kreyol ?? themeLabels[obj] ?? obj;
+        const pt = detail?.pt ?? KREYOL_TO_PT[kreyol] ?? kreyol;
+        const fr = detail?.fr ?? (kreyol === "lèt" && (pt.includes("leite") || !pt.includes("alfabeto")) ? "lait" : KREYOL_TO_FR[kreyol]);
         return {
           kreyol,
-          pt: KREYOL_TO_PT[kreyol] ?? kreyol,
+          pt,
+          ...(fr ? { fr } : {}),
         };
       });
       caption = `${title} (${image.theme}): identifique na cena ${elements
@@ -828,6 +874,7 @@ export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
       id,
       title,
       src: `/ghibli/${id}.svg`,
+      srcFr: FRENCH_IMAGE_IDS.has(id) ? `/ghibli/fr/${id}.svg` : undefined,
       caption,
       isPrimary: variant === 1,
       labelLayout: STORY_LABEL_LAYOUTS[image.id] ?? { top: 12, left: 50, width: 78, align: "center" },
@@ -839,26 +886,24 @@ export const IMAGE_BANK: BankImage[] = IMAGE_THEMES_DATA.flatMap((image) =>
 
 export const IMAGE_THEMES = IMAGE_THEMES_DATA.map((image) => image.theme);
 
-export function getBankImage(idOrSrc: string | null | undefined): BankImage | undefined {
+export function getBankImage(idOrSrc: string | null | undefined, language?: AppLanguage): BankImage | undefined {
   if (!idOrSrc) return undefined;
-  return IMAGE_BANK.find((i) => i.id === idOrSrc || i.src === idOrSrc);
-}
-
-export function getStoryLabelLayout(idOrSrc: string | null | undefined): StoryLabelLayout {
-  const bankImage = getBankImage(idOrSrc);
-  return bankImage?.labelLayout ?? {
-    top: 12,
-    left: 50,
-    width: 78,
-    align: "center",
-    anchors: [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }],
-  };
+  const clean = idOrSrc.split("?")[0];
+  const normalizedSrc = clean.replace("/ghibli/fr/", "/ghibli/");
+  const idFromSrc = clean.replace(/^\/ghibli\/(?:fr\/)?/, "").replace(/\.(svg|png|webp|jpe?g)$/i, "");
+  const base = IMAGE_BANK.find((i) => i.id === clean || i.id === idFromSrc || i.src === clean || i.src === normalizedSrc);
+  if (!base) return undefined;
+  if (language === "francais" && base.srcFr) {
+    return { ...base, src: base.srcFr };
+  }
+  return base;
+};
 }
 
 /** URLs de imagem aceitas em postagens: banco Ghibli (/ghibli/*), imagens geradas por IA (/gen/*) ou upload Vercel Blob. */
 export function isAllowedPostImageUrl(url: unknown): url is string {
   if (typeof url !== "string" || !url) return false;
-  if (/^\/(ghibli|images|gen)\/[a-z0-9_-]+\.(svg|png|webp|jpg|jpeg)$/i.test(url)) return true;
+  if (/^\/(ghibli(\/fr)?|images|gen)\/[a-z0-9_-]+\.(svg|png|webp|jpg|jpeg)$/i.test(url)) return true;
   try {
     const u = new URL(url);
     return (
@@ -872,6 +917,12 @@ export function isAllowedPostImageUrl(url: unknown): url is string {
 }
 
 export const PT_TO_FR: Record<string, string> = {
+  "garrafa de leite": "bouteille de lait",
+  "leite": "lait",
+  "colher de pau": "cuillère en bois",
+  "tábua de cortar": "planche à découper",
+  "ovos": "œufs",
+  "teclado": "clavier",
   "computador": "ordinateur",
   "robô": "robot",
   "drone": "drone",

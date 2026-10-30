@@ -18,6 +18,7 @@ export const KREYOL_TO_FR: Record<string, string> = {
   boul: "balle",
   bousòl: "boussole",
   boutèy: "bouteille",
+  "boutèy lèt": "bouteille de lait",
   chemen: "chemin",
   chodyè: "marmite",
   chwal: "cheval",
@@ -439,9 +440,16 @@ export const THEME_TO_FR: Record<string, string> = {
 };
 
 /** Traduz uma palavra em Kreyòl para o francês; o que não estiver no dicionário fica como veio. */
-export function kreyolToFrench(word: string): string {
+export function kreyolToFrench(word: string, context?: string): string {
   const key = word.trim();
-  return KREYOL_TO_FR[key] ?? KREYOL_TO_FR[key.toLowerCase()] ?? word;
+  const lower = key.toLowerCase();
+  if (lower === "lèt") {
+    if (context && /gastro|food|culin|recette|cuisine|leite|garrafa/i.test(context)) return "lait";
+  }
+  if (lower === "pen") {
+    if (context && /gastro|food|culin|recette|cuisine|pão/i.test(context)) return "pain";
+  }
+  return KREYOL_TO_FR[key] ?? KREYOL_TO_FR[lower] ?? word;
 }
 
 export function themeToFrench(theme: string): string {

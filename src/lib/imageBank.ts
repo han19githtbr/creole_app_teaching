@@ -673,7 +673,6 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "patin": "patins",
   "kòd sote": "corda de pular",
   "panye baskèt": "cesta de basquete",
-  "kayak": "caiaque",
   "boukann": "churrasqueira",
   "tab pingpong": "mesa de pingue-pongue",
   "bist": "busto de filósofo",

@@ -1,0 +1,619 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Praia de Icaraí e MAC Niterói - Touris</title>
+  <desc>Ghibli anime art: Praia de Icaraí com o museu MAC de Niemeyer, Baía de Guanabara, rochas, barcos, caiaque, passeio beira-mar e Rio de Janeiro ao fundo.</desc>
+
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <style>
+      /* Animações - Praia de Icaraí / MAC Niterói */
+
+      /* Nuvens */
+      .cloud-icarai-l {
+        animation: cloudIcaraiL 50s ease-in-out infinite alternate;
+      }
+      @keyframes cloudIcaraiL {
+        0%   { transform: translate(80px, 100px) scale(0.9); }
+        100% { transform: translate(140px, 95px) scale(0.9); }
+      }
+      .cloud-icarai-r {
+        animation: cloudIcaraiR 42s ease-in-out infinite alternate;
+      }
+      @keyframes cloudIcaraiR {
+        0%   { transform: translate(820px, 80px) scale(0.8); }
+        100% { transform: translate(880px, 75px) scale(0.8); }
+      }
+      .cloud-icarai-m {
+        animation: cloudIcaraiM 60s ease-in-out infinite alternate;
+      }
+      @keyframes cloudIcaraiM {
+        0%   { transform: translate(460px, 60px) scale(0.7); }
+        100% { transform: translate(500px, 58px) scale(0.7); }
+      }
+
+      /* Mar / ondas */
+      .sea-wave-1 {
+        animation: seaWave1 5.5s ease-in-out infinite alternate;
+      }
+      @keyframes seaWave1 {
+        0%   { transform: translateY(0px) scaleY(1); }
+        50%  { transform: translateY(-8px) scaleY(1.04); }
+        100% { transform: translateY(5px) scaleY(0.97); }
+      }
+      .sea-wave-2 {
+        animation: seaWave2 4.2s ease-in-out infinite alternate;
+      }
+      @keyframes seaWave2 {
+        0%   { transform: translateY(0px) scaleX(1); }
+        50%  { transform: translateY(-10px) scaleX(1.02); }
+        100% { transform: translateY(4px) scaleX(0.98); }
+      }
+      .sea-shimmer {
+        animation: seaShimmer 3.8s ease-in-out infinite alternate;
+      }
+      @keyframes seaShimmer {
+        0%   { opacity: 0.55; }
+        100% { opacity: 0.75; }
+      }
+
+      /* MAC - cúpula branca flutuante */
+      .mac-dome-glow {
+        animation: macGlow 4s ease-in-out infinite alternate;
+      }
+      @keyframes macGlow {
+        0%   { filter: drop-shadow(0 4px 18px rgba(255,255,255,0.3)); }
+        100% { filter: drop-shadow(0 4px 28px rgba(200,220,255,0.55)); }
+      }
+
+      /* Barco à vela */
+      .sailboat-rock {
+        animation: sailRock 5.2s ease-in-out infinite;
+        transform-origin: 900px 500px;
+      }
+      @keyframes sailRock {
+        0%, 100% { transform: translate(900px, 500px) rotate(0deg); }
+        25%       { transform: translate(907px, 492px) rotate(2.5deg); }
+        50%       { transform: translate(896px, 504px) rotate(-2deg); }
+        75%       { transform: translate(890px, 494px) rotate(1.5deg); }
+      }
+
+      /* Caiaque vermelho */
+      .kayak-paddle {
+        animation: kayakRock 3.8s ease-in-out infinite;
+        transform-origin: 560px 560px;
+      }
+      @keyframes kayakRock {
+        0%, 100% { transform: translate(560px, 560px) rotate(0deg); }
+        30%       { transform: translate(567px, 553px) rotate(3deg); }
+        60%       { transform: translate(554px, 558px) rotate(-2deg); }
+      }
+      .paddle-arm {
+        transform-origin: 0px 0px;
+        animation: paddleRow 1.8s ease-in-out infinite;
+      }
+      @keyframes paddleRow {
+        0%, 100% { transform: rotate(0deg); }
+        40%       { transform: rotate(-28deg); }
+        80%       { transform: rotate(20deg); }
+      }
+
+      /* Gaivota */
+      .seagull-fly {
+        animation: seagullFly 14s ease-in-out infinite;
+      }
+      @keyframes seagullFly {
+        0%   { transform: translate(700px, 220px) scale(0.7); }
+        30%  { transform: translate(620px, 195px) scale(0.72); }
+        65%  { transform: translate(500px, 230px) scale(0.68); }
+        100% { transform: translate(700px, 220px) scale(0.7); }
+      }
+      .seagull-fly-2 {
+        animation: seagullFly2 11s ease-in-out infinite;
+      }
+      @keyframes seagullFly2 {
+        0%   { transform: translate(300px, 160px) scale(0.6); }
+        50%  { transform: translate(420px, 140px) scale(0.63); }
+        100% { transform: translate(300px, 160px) scale(0.6); }
+      }
+      .gull-wing {
+        transform-origin: 0px 0px;
+        animation: gullWing 0.45s ease-in-out infinite alternate;
+      }
+      @keyframes gullWing {
+        0%   { transform: rotate(0deg); }
+        100% { transform: rotate(-22deg); }
+      }
+
+      /* Pessoas caminhando no calçadão */
+      .walker-1 {
+        animation: walk1 12s linear infinite;
+      }
+      @keyframes walk1 {
+        0%   { transform: translateX(-40px); }
+        100% { transform: translateX(1240px); }
+      }
+      .walker-2 {
+        animation: walk2 18s linear infinite;
+      }
+      @keyframes walk2 {
+        0%   { transform: translateX(1240px) scaleX(-1); }
+        100% { transform: translateX(-40px) scaleX(-1); }
+      }
+
+      /* Árvores - balançar suave */
+      .tree-sway-l {
+        transform-origin: 160px 700px;
+        animation: treeSway 6s ease-in-out infinite alternate;
+      }
+      .tree-sway-r {
+        transform-origin: 1060px 680px;
+        animation: treeSwayR 7s ease-in-out infinite alternate;
+      }
+      @keyframes treeSway {
+        0%   { transform: rotate(-2deg); }
+        100% { transform: rotate(2.5deg); }
+      }
+      @keyframes treeSwayR {
+        0%   { transform: rotate(2deg); }
+        100% { transform: rotate(-2.5deg); }
+      }
+
+      /* Pedra / morro - sombra pulsante suave */
+      .rock-shadow {
+        animation: rockShadow 6s ease-in-out infinite alternate;
+      }
+      @keyframes rockShadow {
+        0%   { opacity: 0.3; }
+        100% { opacity: 0.5; }
+      }
+
+      /* Prédios Niterói ao fundo - leve brilho */
+      .building-glow {
+        animation: buildingGlow 8s ease-in-out infinite alternate;
+      }
+      @keyframes buildingGlow {
+        0%   { opacity: 0.75; }
+        100% { opacity: 0.95; }
+      }
+
+      /* Rio de Janeiro silhueta ao longe */
+      .rio-silhouette {
+        animation: rioFade 12s ease-in-out infinite alternate;
+      }
+      @keyframes rioFade {
+        0%   { opacity: 0.4; }
+        100% { opacity: 0.65; }
+      }
+    </style>
+
+    <!-- Sky gradients -->
+    <linearGradient id="skyIcarai" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#7ec8e3"/>
+      <stop offset="0.35" stop-color="#b8ddf0"/>
+      <stop offset="0.7"  stop-color="#d9eef8"/>
+      <stop offset="1"    stop-color="#e8f4fb"/>
+    </linearGradient>
+
+    <linearGradient id="seaIcarai" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#4a9db5"/>
+      <stop offset="0.5"  stop-color="#5db5c8"/>
+      <stop offset="1"    stop-color="#7ecfde"/>
+    </linearGradient>
+
+    <linearGradient id="sandGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#d4c4a0"/>
+      <stop offset="1"    stop-color="#c2af88"/>
+    </linearGradient>
+
+    <linearGradient id="macWhite" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#f8f9fa"/>
+      <stop offset="0.6"  stop-color="#eaedf0"/>
+      <stop offset="1"    stop-color="#d0d5da"/>
+    </linearGradient>
+
+    <linearGradient id="macRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#c8504a"/>
+      <stop offset="1"    stop-color="#9e3a35"/>
+    </linearGradient>
+
+    <linearGradient id="hillGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#5a8a4a"/>
+      <stop offset="0.5"  stop-color="#4a7a3a"/>
+      <stop offset="1"    stop-color="#3a6030"/>
+    </linearGradient>
+
+    <linearGradient id="rockGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#9a8a70"/>
+      <stop offset="0.5"  stop-color="#7a6a55"/>
+      <stop offset="1"    stop-color="#5a4a38"/>
+    </linearGradient>
+
+    <linearGradient id="sailWhite" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#f5f7fa"/>
+      <stop offset="1"    stop-color="#d8dde4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ===== CÉU ===== -->
+  <rect width="1200" height="800" fill="url(#skyIcarai)"/>
+
+  <!-- Nuvens -->
+  <g class="cloud-icarai-l">
+    <ellipse cx="0" cy="0" rx="90" ry="30" fill="white" opacity="0.82"/>
+    <ellipse cx="55" cy="-12" rx="65" ry="24" fill="white" opacity="0.78"/>
+    <ellipse cx="110" cy="-5" rx="50" ry="20" fill="white" opacity="0.72"/>
+    <ellipse cx="-30" cy="-8" rx="48" ry="18" fill="white" opacity="0.70"/>
+  </g>
+
+  <g class="cloud-icarai-r">
+    <ellipse cx="0" cy="0" rx="80" ry="26" fill="white" opacity="0.78"/>
+    <ellipse cx="50" cy="-10" rx="58" ry="20" fill="white" opacity="0.74"/>
+    <ellipse cx="100" cy="-4" rx="42" ry="16" fill="white" opacity="0.68"/>
+  </g>
+
+  <g class="cloud-icarai-m">
+    <ellipse cx="0" cy="0" rx="60" ry="20" fill="white" opacity="0.65"/>
+    <ellipse cx="38" cy="-8" rx="44" ry="16" fill="white" opacity="0.60"/>
+  </g>
+
+  <!-- Gaivota 1 -->
+  <g class="seagull-fly">
+    <path d="M0,-5 Q-10,-12 -18,-8" stroke="#334" stroke-width="2.2" fill="none" class="gull-wing"/>
+    <path d="M0,-5 Q10,-12 18,-8" stroke="#334" stroke-width="2.2" fill="none" class="gull-wing"/>
+    <circle cx="0" cy="-5" r="2" fill="#334"/>
+  </g>
+
+  <!-- Gaivota 2 -->
+  <g class="seagull-fly-2">
+    <path d="M0,-4 Q-8,-10 -14,-7" stroke="#445" stroke-width="1.8" fill="none" class="gull-wing"/>
+    <path d="M0,-4 Q8,-10 14,-7" stroke="#445" stroke-width="1.8" fill="none" class="gull-wing"/>
+    <circle cx="0" cy="-4" r="1.5" fill="#445"/>
+  </g>
+
+  <!-- ===== MONTANHAS / SERRAS DO RJ AO FUNDO (Silhueta) ===== -->
+  <g class="rio-silhouette">
+    <!-- Serra dos Órgãos / Corcovado ao longe -->
+    <path d="M0,380 Q80,300 160,340 Q240,280 310,320 Q370,260 420,300 Q470,240 500,280 Q540,250 570,270 Q600,230 620,260 Q660,220 700,255 Q750,240 780,265 Q820,250 860,268 Q900,255 940,270 Q980,260 1020,275 Q1060,265 1100,278 Q1140,268 1200,280 L1200,380 Z"
+          fill="#9ab8c8" opacity="0.5"/>
+    <!-- Perfil Rio de Janeiro -->
+    <path d="M0,370 Q100,320 200,350 Q300,300 380,330 Q450,290 490,315 Q530,275 560,300 Q600,260 640,285 Q680,265 720,282 Q760,270 800,284 Q850,272 900,285 Q950,275 1000,288 Q1050,278 1100,290 Q1150,282 1200,292 L1200,370 Z"
+          fill="#8aa8ba" opacity="0.4"/>
+  </g>
+
+  <!-- ===== MORRO / PENHASCO (como nas fotos 112544/112601) ===== -->
+  <g filter="url(#dropShadow)">
+    <!-- Morro rochoso com vegetação -->
+    <path d="M0,680 Q20,580 60,520 Q90,470 130,450 Q170,440 200,460 Q230,445 250,460 Q270,430 290,450 Q310,420 330,445 Q350,415 370,438 Q380,430 390,445 Q395,455 385,480 Q375,500 360,520 Q340,550 310,580 Q280,610 240,640 Q200,665 160,680 Q100,695 0,700 Z"
+          fill="url(#hillGreen)"/>
+    <!-- Faces rochosas da pedra -->
+    <path d="M250,460 Q265,448 275,455 Q285,440 295,452 Q308,432 318,445 Q335,425 348,440 Q360,420 370,438 Q378,430 385,445 Q390,455 380,475 Q365,495 340,518 Q315,542 285,565 Q260,585 240,600 Q220,618 200,635 L200,680 Q185,690 170,695 Q155,688 155,665 Q160,640 180,615 Q200,590 220,570 Q240,548 255,525 Q268,505 265,485 Q262,468 250,460 Z"
+          fill="url(#rockGrad)"/>
+    <!-- Sombra da pedra na água -->
+    <ellipse cx="300" cy="700" rx="80" ry="15" fill="#2a3a4a" opacity="0.25" class="rock-shadow"/>
+    <!-- Vegetação topo do morro -->
+    <ellipse cx="280" cy="435" rx="35" ry="22" fill="#4a7a3a" opacity="0.9"/>
+    <ellipse cx="320" cy="425" rx="28" ry="18" fill="#5a8a48" opacity="0.85"/>
+    <ellipse cx="250" cy="448" rx="22" ry="14" fill="#3d6e30" opacity="0.8"/>
+    <!-- Casinha branca no morro (como nas fotos) -->
+    <rect x="185" y="595" width="28" height="20" rx="2" fill="#f0ebe0"/>
+    <rect x="183" y="590" width="32" height="8" rx="1" fill="#d44a40"/>
+    <rect x="190" y="600" width="7" height="10" rx="1" fill="#6a9fc0" opacity="0.8"/>
+  </g>
+
+  <!-- ===== MAR / BAÍA DE GUANABARA ===== -->
+  <!-- Camada de mar principal -->
+  <rect x="0" y="450" width="1200" height="350" fill="url(#seaIcarai)" class="sea-wave-1"/>
+
+  <!-- Reflexos no mar -->
+  <g class="sea-shimmer">
+    <ellipse cx="600" cy="520" rx="200" ry="8" fill="white" opacity="0.12"/>
+    <ellipse cx="400" cy="560" rx="150" ry="6" fill="white" opacity="0.10"/>
+    <ellipse cx="850" cy="540" rx="120" ry="5" fill="white" opacity="0.09"/>
+    <ellipse cx="700" cy="600" rx="180" ry="7" fill="white" opacity="0.11"/>
+  </g>
+
+  <!-- Ondas (camada 2) -->
+  <g class="sea-wave-2">
+    <path d="M0,510 Q100,498 200,510 Q300,522 400,510 Q500,498 600,510 Q700,522 800,510 Q900,498 1000,510 Q1100,522 1200,510 L1200,525 Q1100,537 1000,525 Q900,513 800,525 Q700,537 600,525 Q500,513 400,525 Q300,537 200,525 Q100,513 0,525 Z"
+          fill="#5ec8e0" opacity="0.35"/>
+    <path d="M0,555 Q150,543 300,555 Q450,567 600,555 Q750,543 900,555 Q1050,567 1200,555 L1200,568 Q1050,580 900,568 Q750,556 600,568 Q450,580 300,568 Q150,556 0,568 Z"
+          fill="#4ab8d0" opacity="0.28"/>
+  </g>
+
+  <!-- ===== CALÇADÃO / PASSARELA ===== -->
+  <!-- Calçadão branco de pedra portuguesa (como nas fotos do MAC) -->
+  <path d="M0,700 Q300,692 600,695 Q900,698 1200,693 L1200,730 Q900,728 600,725 Q300,722 0,730 Z"
+        fill="#e0ddd5"/>
+  <!-- Linhas do calçadão -->
+  <line x1="0" y1="705" x2="1200" y2="702" stroke="#ccc8be" stroke-width="1" opacity="0.6"/>
+  <line x1="0" y1="712" x2="1200" y2="709" stroke="#ccc8be" stroke-width="1" opacity="0.5"/>
+  <line x1="0" y1="719" x2="1200" y2="716" stroke="#ccc8be" stroke-width="1" opacity="0.4"/>
+  <!-- Gradiente de faixa verde (canteiro) -->
+  <rect x="0" y="680" width="1200" height="22" fill="#5a9a4a" opacity="0.85"/>
+  <rect x="0" y="678" width="1200" height="4" fill="#3a7a2a" opacity="0.7"/>
+
+  <!-- Gradiente areia / praia Icaraí -->
+  <path d="M0,730 Q200,726 400,728 Q600,730 800,728 Q1000,726 1200,728 L1200,800 L0,800 Z"
+        fill="url(#sandGrad)"/>
+  <!-- Textura areia -->
+  <ellipse cx="300" cy="770" rx="80" ry="5" fill="#bfad88" opacity="0.4"/>
+  <ellipse cx="700" cy="760" rx="100" ry="6" fill="#bfad88" opacity="0.35"/>
+  <ellipse cx="1000" cy="775" rx="70" ry="5" fill="#bfad88" opacity="0.38"/>
+
+  <!-- ===== PRÉDIOS DE NITERÓI / ICARAÍ (como nas fotos da orla) ===== -->
+  <g class="building-glow">
+    <!-- Prédio 1 - alto moderno -->
+    <rect x="590" y="390" width="38" height="135" rx="2" fill="#c8d0d8" opacity="0.82"/>
+    <rect x="592" y="392" width="34" height="133" rx="1" fill="#b8c2cc" opacity="0.6"/>
+    <!-- Janelas prédio 1 -->
+    <rect x="595" y="398" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.7"/>
+    <rect x="604" y="398" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.7"/>
+    <rect x="613" y="398" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.7"/>
+    <rect x="595" y="410" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.65"/>
+    <rect x="604" y="410" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.65"/>
+    <rect x="613" y="410" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.65"/>
+    <rect x="595" y="422" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.6"/>
+    <rect x="604" y="422" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.6"/>
+    <rect x="613" y="422" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.6"/>
+    <rect x="595" y="434" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.55"/>
+    <rect x="604" y="434" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.55"/>
+    <rect x="613" y="434" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.55"/>
+    <rect x="595" y="446" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.5"/>
+    <rect x="604" y="446" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.5"/>
+    <rect x="613" y="446" width="6" height="5" rx="0.5" fill="#8aa8c0" opacity="0.5"/>
+
+    <!-- Prédio 2 -->
+    <rect x="635" y="410" width="32" height="115" rx="2" fill="#c0c8d2" opacity="0.78"/>
+    <rect x="637" y="412" width="28" height="113" rx="1" fill="#b0bac6" opacity="0.55"/>
+    <rect x="640" y="418" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.65"/>
+    <rect x="648" y="418" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.65"/>
+    <rect x="656" y="418" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.65"/>
+    <rect x="640" y="428" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.6"/>
+    <rect x="648" y="428" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.6"/>
+    <rect x="656" y="428" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.6"/>
+    <rect x="640" y="438" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.55"/>
+    <rect x="648" y="438" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.55"/>
+    <rect x="656" y="438" width="5" height="4" rx="0.5" fill="#8aa8c0" opacity="0.55"/>
+
+    <!-- Prédio 3 - mais baixo vintage -->
+    <rect x="672" y="425" width="28" height="100" rx="2" fill="#c8c0b0" opacity="0.75"/>
+    <rect x="674" y="427" width="24" height="98" rx="1" fill="#b8b0a0" opacity="0.5"/>
+    <rect x="677" y="432" width="4" height="4" rx="0.5" fill="#9a9488" opacity="0.7"/>
+    <rect x="684" y="432" width="4" height="4" rx="0.5" fill="#9a9488" opacity="0.7"/>
+    <rect x="677" y="441" width="4" height="4" rx="0.5" fill="#9a9488" opacity="0.65"/>
+    <rect x="684" y="441" width="4" height="4" rx="0.5" fill="#9a9488" opacity="0.65"/>
+
+    <!-- Prédio 4 -->
+    <rect x="705" y="420" width="30" height="105" rx="2" fill="#c0cad4" opacity="0.76"/>
+    <rect x="735" y="430" width="26" height="95" rx="2" fill="#b8c2cc" opacity="0.72"/>
+    <rect x="765" y="435" width="24" height="90" rx="2" fill="#c2c8d0" opacity="0.70"/>
+    <rect x="793" y="440" width="22" height="85" rx="2" fill="#bac0ca" opacity="0.68"/>
+    <rect x="819" y="445" width="20" height="80" rx="2" fill="#b8bec8" opacity="0.66"/>
+    <rect x="843" y="448" width="18" height="77" rx="2" fill="#b0b8c2" opacity="0.64"/>
+  </g>
+
+  <!-- ===== MAC NITERÓI - Museu de Arte Contemporânea ===== -->
+  <!-- Estrutura principal: cúpula cônica branca de Niemeyer -->
+  <g class="mac-dome-glow" filter="url(#softGlow)">
+    <!-- Base da plataforma (deck circular) -->
+    <ellipse cx="200" cy="668" rx="105" ry="18" fill="#d8dde4" opacity="0.9"/>
+    <ellipse cx="200" cy="666" rx="100" ry="15" fill="#e0e5ec"/>
+
+    <!-- Pilar central (coluna estilizada Niemeyer) -->
+    <path d="M190,668 Q195,620 200,580 Q205,620 210,668 Z" fill="#d0d5dc"/>
+    <path d="M194,668 Q198,625 200,585 Q202,625 206,668 Z" fill="#e4e8ee"/>
+
+    <!-- Cúpula cônica / prato invertido (forma característica do MAC) -->
+    <path d="M100,600 Q130,560 200,548 Q270,560 300,600 Q290,615 200,618 Q110,615 100,600 Z"
+          fill="url(#macWhite)" opacity="0.97"/>
+    <!-- Anel inferior da cúpula -->
+    <path d="M108,602 Q150,590 200,588 Q250,590 292,602 Q270,610 200,612 Q130,610 108,602 Z"
+          fill="#e8ecf0" opacity="0.85"/>
+    <!-- Janelas / frestas da cúpula -->
+    <path d="M130,582 Q145,574 155,578" stroke="#c8cdd4" stroke-width="2" fill="none" opacity="0.7"/>
+    <path d="M160,572 Q178,566 195,568" stroke="#c8cdd4" stroke-width="2" fill="none" opacity="0.7"/>
+    <path d="M210,568 Q228,565 245,570" stroke="#c8cdd4" stroke-width="2" fill="none" opacity="0.7"/>
+    <path d="M250,575 Q264,579 272,585" stroke="#c8cdd4" stroke-width="2" fill="none" opacity="0.7"/>
+    <!-- Reflexo topo da cúpula -->
+    <ellipse cx="200" cy="560" rx="28" ry="8" fill="white" opacity="0.45"/>
+
+    <!-- Passarela de acesso (rampa curva característica) -->
+    <path d="M295,615 Q340,608 360,590 Q370,575 355,565 Q340,558 320,568 Q305,578 300,600 Z"
+          fill="#d8dde4" opacity="0.85"/>
+    <path d="M297,613 Q338,607 357,590 Q365,577 352,567 Q339,560 322,570 Q308,580 302,600 Z"
+          fill="#e2e6ec" opacity="0.7"/>
+
+    <!-- Estrutura vermelha no topo (detalhe arquitetônico - cor rosa/vermelha vista nas fotos) -->
+    <rect x="170" y="546" width="60" height="12" rx="6" fill="url(#macRed)" opacity="0.82"/>
+    <rect x="178" y="542" width="44" height="8" rx="4" fill="#d85550" opacity="0.7"/>
+    <ellipse cx="200" cy="542" rx="25" ry="6" fill="#c84845" opacity="0.6"/>
+
+    <!-- Corrimão / balaustrada branca (como nas fotos) -->
+    <path d="M110,604 Q160,600 200,600 Q240,600 290,604" stroke="#f0f2f5" stroke-width="3" fill="none" opacity="0.8"/>
+    <!-- Vergalhões do corrimão -->
+    <line x1="120" y1="604" x2="120" y2="615" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="135" y1="602" x2="135" y2="614" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="150" y1="601" x2="150" y2="613" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="165" y1="600" x2="165" y2="612" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="180" y1="600" x2="180" y2="612" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="200" y1="600" x2="200" y2="612" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="220" y1="600" x2="220" y2="612" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="240" y1="601" x2="240" y2="613" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="260" y1="602" x2="260" y2="614" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="278" y1="603" x2="278" y2="615" stroke="#e0e4e8" stroke-width="1.5" opacity="0.7"/>
+  </g>
+
+  <!-- ===== ÁRVORES DO PASSEIO ===== -->
+  <!-- Árvore esquerda (frondosa, tropical) -->
+  <g class="tree-sway-l">
+    <rect x="155" y="640" width="10" height="60" rx="3" fill="#5a3a1a"/>
+    <ellipse cx="160" cy="638" rx="38" ry="30" fill="#3a7028" opacity="0.9"/>
+    <ellipse cx="175" cy="628" rx="28" ry="22" fill="#4a8832" opacity="0.85"/>
+    <ellipse cx="145" cy="630" rx="25" ry="20" fill="#3d7828" opacity="0.8"/>
+    <ellipse cx="160" cy="620" rx="22" ry="18" fill="#508a38" opacity="0.75"/>
+  </g>
+
+  <!-- Árvore direita -->
+  <g class="tree-sway-r">
+    <rect x="1055" y="645" width="10" height="55" rx="3" fill="#5a3a1a"/>
+    <ellipse cx="1060" cy="643" rx="36" ry="28" fill="#3a7028" opacity="0.88"/>
+    <ellipse cx="1074" cy="633" rx="26" ry="21" fill="#4a8832" opacity="0.83"/>
+    <ellipse cx="1046" cy="635" rx="24" ry="19" fill="#3d7828" opacity="0.78"/>
+    <ellipse cx="1060" cy="625" rx="20" ry="17" fill="#508a38" opacity="0.72"/>
+  </g>
+
+  <!-- Arbustos / vegetação calçadão -->
+  <ellipse cx="450" cy="688" rx="30" ry="12" fill="#4a8030" opacity="0.75"/>
+  <ellipse cx="480" cy="685" rx="22" ry="10" fill="#5a9038" opacity="0.7"/>
+  <ellipse cx="780" cy="686" rx="28" ry="11" fill="#4a8030" opacity="0.72"/>
+  <ellipse cx="810" cy="683" rx="20" ry="9" fill="#5a9038" opacity="0.68"/>
+
+  <!-- ===== BARCO À VELA (Baía de Guanabara) ===== -->
+  <g class="sailboat-rock">
+    <!-- Casco -->
+    <path d="M-28,8 Q-20,18 0,20 Q20,18 28,8 Q15,5 0,5 Q-15,5 -28,8 Z" fill="#5a3a20"/>
+    <path d="M-26,8 Q0,16 26,8 L24,12 Q0,20 -24,12 Z" fill="#4a2a14"/>
+    <!-- Mastro -->
+    <line x1="0" y1="5" x2="0" y2="-55" stroke="#4a3a28" stroke-width="2.5"/>
+    <!-- Vela grande -->
+    <path d="M0,-52 L0,5 L-38,0 Z" fill="url(#sailWhite)" opacity="0.9"/>
+    <!-- Vela menor -->
+    <path d="M0,-48 L0,-5 L32,-15 Z" fill="#f0f3f8" opacity="0.85"/>
+    <!-- Bandeira topo -->
+    <path d="M0,-55 L10,-50 L0,-47 Z" fill="#d44a3a" opacity="0.9"/>
+  </g>
+
+  <!-- ===== CAIAQUE VERMELHO (como nas fotos 112601) ===== -->
+  <g class="kayak-paddle">
+    <!-- Casco do caiaque -->
+    <path d="M-40,0 Q-20,8 0,8 Q20,8 40,0 Q25,-5 0,-5 Q-25,-5 -40,0 Z" fill="#c8403a"/>
+    <path d="M-38,0 Q0,7 38,0 L35,3 Q0,11 -35,3 Z" fill="#a83530"/>
+    <!-- Remador -->
+    <ellipse cx="0" cy="-10" rx="6" ry="7" fill="#e8c89a"/>
+    <rect x="-3" y="-7" width="6" height="10" rx="2" fill="#3a70c0"/>
+    <!-- Remo esquerdo -->
+    <g class="paddle-arm">
+      <line x1="-5" y1="-5" x2="-30" y2="5" stroke="#5a3a1a" stroke-width="2.5"/>
+      <ellipse cx="-33" cy="6" rx="7" ry="3" fill="#4a2a10"/>
+    </g>
+    <!-- Remo direito -->
+    <g class="paddle-arm">
+      <line x1="5" y1="-5" x2="30" y2="5" stroke="#5a3a1a" stroke-width="2.5"/>
+      <ellipse cx="33" cy="6" rx="7" ry="3" fill="#4a2a10"/>
+    </g>
+  </g>
+
+  <!-- Barquinho pesqueiro menor ao fundo -->
+  <g transform="translate(760, 485)">
+    <path d="M-22,4 Q0,10 22,4 Q14,1 0,1 Q-14,1 -22,4 Z" fill="#4a3828" opacity="0.7"/>
+    <line x1="0" y1="1" x2="0" y2="-25" stroke="#5a4030" stroke-width="1.5" opacity="0.7"/>
+    <path d="M0,-24 L0,2 L-16,0 Z" fill="#f0ebe0" opacity="0.7"/>
+  </g>
+
+  <!-- ===== PLATAFORMA PETROLÍFERA AO FUNDO (como nas fotos da Baía) ===== -->
+  <g transform="translate(1050, 370)" opacity="0.55">
+    <rect x="-25" y="-20" width="50" height="35" rx="2" fill="#5a5048"/>
+    <rect x="-12" y="-35" width="8" height="16" rx="1" fill="#6a6058"/>
+    <rect x="5" y="-30" width="6" height="11" rx="1" fill="#6a6058"/>
+    <line x1="-8" y1="-35" x2="-8" y2="-55" stroke="#4a4038" stroke-width="1.5"/>
+    <line x1="8" y1="-30" x2="8" y2="-50" stroke="#4a4038" stroke-width="1.5"/>
+    <!-- Chama da plataforma -->
+    <ellipse cx="-8" cy="-57" rx="3" ry="5" fill="#ff8a2a" opacity="0.8"/>
+    <ellipse cx="-8" cy="-59" rx="2" ry="4" fill="#ffcc44" opacity="0.7"/>
+  </g>
+
+  <!-- ===== PESSOAS NO CALÇADÃO ===== -->
+  <!-- Walker 1 -->
+  <g class="walker-1">
+    <circle cx="0" cy="-25" r="7" fill="#e8c8a0"/>
+    <rect x="-5" y="-18" width="10" height="14" rx="2" fill="#3a60a8"/>
+    <line x1="-4" y1="-4" x2="-6" y2="10" stroke="#2a3a7a" stroke-width="2"/>
+    <line x1="4" y1="-4" x2="6" y2="10" stroke="#2a3a7a" stroke-width="2"/>
+    <line x1="-5" y1="-12" x2="-10" y2="-2" stroke="#4a70b8" stroke-width="2"/>
+    <line x1="5" y1="-12" x2="10" y2="-2" stroke="#4a70b8" stroke-width="2"/>
+  </g>
+  <g transform="translate(0, 705)">
+    <g class="walker-1">
+      <circle cx="0" cy="-25" r="6" fill="#d0a888"/>
+      <rect x="-4" y="-19" width="8" height="13" rx="2" fill="#c84860"/>
+      <line x1="-3" y1="-6" x2="-5" y2="7" stroke="#a83848" stroke-width="1.8"/>
+      <line x1="3" y1="-6" x2="5" y2="7" stroke="#a83848" stroke-width="1.8"/>
+    </g>
+  </g>
+
+  <!-- Walker 2 (voltando) -->
+  <g transform="translate(0, 710)">
+    <g class="walker-2">
+      <circle cx="0" cy="-25" r="6" fill="#c8a888"/>
+      <rect x="-4" y="-19" width="8" height="12" rx="2" fill="#5a8838"/>
+      <line x1="-3" y1="-7" x2="-5" y2="6" stroke="#3a6828" stroke-width="1.8"/>
+      <line x1="3" y1="-7" x2="5" y2="6" stroke="#3a6828" stroke-width="1.8"/>
+    </g>
+  </g>
+
+  <!-- Pedestre parado tirando foto do MAC -->
+  <g transform="translate(380, 668)">
+    <circle cx="0" cy="-26" r="7" fill="#e0c090"/>
+    <rect x="-5" y="-19" width="10" height="13" rx="2" fill="#d84040"/>
+    <!-- Câmera na mão -->
+    <rect x="6" y="-16" width="8" height="6" rx="1" fill="#2a2a2a"/>
+    <circle cx="12" cy="-13" r="2" fill="#5a5a5a"/>
+    <line x1="5" y1="-13" x2="6" y2="-13" stroke="#e0c090" stroke-width="1.5"/>
+  </g>
+
+  <!-- ===== TEXTURA WATERCOLOR (por cima de tudo) ===== -->
+  <rect width="1200" height="800" fill="url(#ghibliPaper)" opacity="0.08"/>
+
+  <!-- ===== LABEL KREYÒL ===== -->
+  <g filter="url(#dropShadow)">
+    <!-- Placa/etiqueta -->
+    <rect x="18" y="18" width="320" height="56" rx="12" fill="#1a2a3a" opacity="0.75"/>
+    <rect x="20" y="20" width="316" height="52" rx="10" fill="#2a3a4a" opacity="0.65"/>
+    <text x="178" y="42" font-family="Georgia, serif" font-size="13" fill="#d4c8a8" text-anchor="middle" opacity="0.9">Touris — Niterói</text>
+    <text x="178" y="62" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#f0e8c8" text-anchor="middle">Icaraí / Mize Nimeye (MAC)</text>
+  </g>
+
+  <!-- Elementos identificados (vocabulário) -->
+  <g opacity="0.82">
+    <!-- MAR -->
+    <rect x="480" y="460" width="58" height="20" rx="6" fill="#1a2a3a" opacity="0.65"/>
+    <text x="509" y="474" font-family="Georgia, serif" font-size="11" fill="#d4f0f8" text-anchor="middle">lame</text>
+    <!-- BARCO -->
+    <rect x="870" y="464" width="64" height="20" rx="6" fill="#1a2a3a" opacity="0.65"/>
+    <text x="902" y="478" font-family="Georgia, serif" font-size="11" fill="#d4f0f8" text-anchor="middle">bato</text>
+    <!-- MUSEU -->
+    <rect x="122" y="548" width="70" height="20" rx="6" fill="#1a2a3a" opacity="0.65"/>
+    <text x="157" y="562" font-family="Georgia, serif" font-size="11" fill="#d4f0f8" text-anchor="middle">mize</text>
+    <!-- PRAIA -->
+    <rect x="540" y="750" width="66" height="20" rx="6" fill="#1a2a3a" opacity="0.65"/>
+    <text x="573" y="764" font-family="Georgia, serif" font-size="11" fill="#d4f0f8" text-anchor="middle">plaj</text>
+    <!-- MORRO -->
+    <rect x="252" y="454" width="70" height="20" rx="6" fill="#1a2a3a" opacity="0.65"/>
+    <text x="287" y="468" font-family="Georgia, serif" font-size="11" fill="#d4f0f8" text-anchor="middle">mòn</text>
+    <!-- CAIAQUE -->
+    <rect x="490" y="545" width="78" height="20" rx="6" fill="#1a2a3a" opacity="0.65"/>
+    <text x="529" y="559" font-family="Georgia, serif" font-size="11" fill="#d4f0f8" text-anchor="middle">kayak</text>
+    <!-- ÁRVORE -->
+    <rect x="110" y="620" width="70" height="20" rx="6" fill="#1a2a3a" opacity="0.65"/>
+    <text x="145" y="634" font-family="Georgia, serif" font-size="11" fill="#d4f0f8" text-anchor="middle">pye bwa</text>
+    <!-- GAIVOTA -->
+    <rect x="615" y="200" width="80" height="20" rx="6" fill="#1a2a3a" opacity="0.65"/>
+    <text x="655" y="214" font-family="Georgia, serif" font-size="11" fill="#d4f0f8" text-anchor="middle">gòlèt</text>
+  </g>
+
+</svg>
+

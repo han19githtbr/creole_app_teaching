@@ -1,4 +1,4 @@
-// Banco de imagens em estilo Studio Ghibli (ilustrações artísticas
+﻿// Banco de imagens em estilo Studio Ghibli (ilustrações artísticas
 // com elementos realistas e reconhecíveis, arquivos SVG em /public/ghibli).
 import generatedImages from "../../scripts/ghibli/manifest.json";
 import measuredAnchors from "./storyElementAnchors.json";
@@ -123,6 +123,25 @@ const IMAGE_THEMES_DATA: Omit<BankImage, "isPrimary" | "labelLayout">[] = [
       { kreyol: "lanmè", pt: "mar" },
       { kreyol: "balon", pt: "balão" },
       { kreyol: "fa", pt: "farol" },
+    ],
+  },
+  {
+    id: "turismo-icarai",
+    theme: "Turismo",
+    title: "Praia de Icarai e MAC Niteroi",
+    src: "/ghibli/turismo-icarai.svg",
+    kreyol: "Touris - Icarai / Niteroi",
+    caption: "Touris Niteroi: Praia Icarai (plaj), museu MAC de Niemeyer (mize), mar da Baia de Guanabara (lame), barco a vela (bato), caiaque vermelho (kayak) e morro com vegetacao (mon).",
+    ambientTheme: "turismo",
+    elements: [
+      { kreyol: "plaj", pt: "praia" },
+      { kreyol: "mize", pt: "museu" },
+      { kreyol: "lame", pt: "mar/baia" },
+      { kreyol: "bato", pt: "barco" },
+      { kreyol: "kayak", pt: "caiaque" },
+      { kreyol: "mon", pt: "morro/montanha" },
+      { kreyol: "pye bwa", pt: "arvore" },
+      { kreyol: "golet", pt: "gaivota" },
     ],
   },
   {
@@ -337,6 +356,10 @@ export const KREYOL_TO_PT: Record<string, string> = {
   "kat": "mapa",
   "otèl": "hotel",
   "plaj": "praia",
+  "mize": "museu",
+  "lame": "mar/baia",
+  "kayak": "caiaque",
+  "golet": "gaivota",
   // Vida no interior
   "jaden": "jardim/plantação",
   "kloti": "cerca",

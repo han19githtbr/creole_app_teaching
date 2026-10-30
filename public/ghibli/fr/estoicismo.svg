@@ -1,0 +1,352 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Pórtico de pedra e oliveiras - Stoïcisme</title>
+  <desc>Ghibli anime art: Colunas clássicas, filósofo sábio, oliveiras e livro aberto.</desc>
+  
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Soft diffuse drop shadow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <style>
+      /* Animações cinematográficas para Estoicismo (Sajès) */
+      .cloud-est-l {
+        animation: cloudEstL 52s ease-in-out infinite alternate;
+      }
+      @keyframes cloudEstL {
+        0% { transform: translate(240px, 170px) scale(0.95); }
+        100% { transform: translate(288px, 170px) scale(0.95); }
+      }
+      .cloud-est-r {
+        animation: cloudEstR 44s ease-in-out infinite alternate;
+      }
+      @keyframes cloudEstR {
+        0% { transform: translate(980px, 180px) scale(0.85); }
+        100% { transform: translate(930px, 180px) scale(0.85); }
+      }
+
+      /* Oliveira centenária balançando com a brisa mediterrânea */
+      .olive-tree-sway {
+        transform-origin: 180px 560px;
+        animation: oliveTreeSway 7.5s ease-in-out infinite alternate;
+      }
+      @keyframes oliveTreeSway {
+        0% { transform: rotate(-2deg); }
+        100% { transform: rotate(2.5deg); }
+      }
+
+      /* Mar ao fundo brilhando suavemente */
+      .sea-shimmer {
+        animation: seaShimmer 5s ease-in-out infinite alternate;
+      }
+      @keyframes seaShimmer {
+        0% { opacity: 0.38; transform: scaleX(0.97); }
+        100% { opacity: 0.5; transform: scaleX(1.03); }
+      }
+
+      /* Filósofo respirando serenamente */
+      .sage-breathe {
+        transform-origin: 560px 570px;
+        animation: sageBreathe 5.8s ease-in-out infinite alternate;
+      }
+      @keyframes sageBreathe {
+        0% { transform: scale(1) translateY(0); }
+        100% { transform: scale(1.01) translateY(-3px); }
+      }
+
+      /* Páginas do livro levemente tremulando com o vento */
+      .book-page-flutter {
+        transform-origin: 380px 616px;
+        animation: bookPageFlutter 6.5s ease-in-out infinite alternate;
+      }
+      @keyframes bookPageFlutter {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(0.4deg); }
+      }
+
+      /* Raio de luz dourada no mar ao pôr do sol */
+      .sunset-path {
+        animation: sunsetPath 4.5s ease-in-out infinite alternate;
+      }
+      @keyframes sunsetPath {
+        0% { opacity: 0.35; transform: scaleX(0.95); }
+        100% { opacity: 0.55; transform: scaleX(1.08); }
+      }
+
+      /* Pássaro ao pôr do sol */
+      .stoic-bird {
+        animation: stoicBird 22s linear infinite;
+      }
+      @keyframes stoicBird {
+        0% { transform: translate(-80px, 420px) scale(0.5); opacity: 0; }
+        6% { opacity: 0.7; }
+        90% { opacity: 0.7; }
+        100% { transform: translate(1280px, 380px) scale(0.5); opacity: 0; }
+      }
+    </style>
+
+    <!-- Sky Gradients -->
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#236ca7"/>
+      <stop offset="35%" stop-color="#5fa3d6"/>
+      <stop offset="70%" stop-color="#b8e1f2"/>
+      <stop offset="100%" stop-color="#fdf3dc"/>
+    </linearGradient>
+
+    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#31396b"/>
+      <stop offset="35%" stop-color="#73507b"/>
+      <stop offset="65%" stop-color="#cb6b5c"/>
+      <stop offset="85%" stop-color="#f29e5a"/>
+      <stop offset="100%" stop-color="#fedaa2"/>
+    </linearGradient>
+
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#121832"/>
+      <stop offset="40%" stop-color="#262f56"/>
+      <stop offset="70%" stop-color="#4e3d64"/>
+      <stop offset="90%" stop-color="#915264"/>
+      <stop offset="100%" stop-color="#d6846c"/>
+    </linearGradient>
+
+    <!-- Cloud Gradients -->
+    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fcf8f0"/>
+      <stop offset="80%" stop-color="#d9e4ec"/>
+      <stop offset="100%" stop-color="#b6c8d7"/>
+    </linearGradient>
+
+    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5e6"/>
+      <stop offset="40%" stop-color="#fbd0a5"/>
+      <stop offset="75%" stop-color="#cf8ca0"/>
+      <stop offset="100%" stop-color="#7e607c"/>
+    </linearGradient>
+
+    <!-- Sun / Glow Gradients -->
+    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Hills / Mountains Gradients -->
+    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e94a8"/>
+      <stop offset="100%" stop-color="#93b9c7"/>
+    </linearGradient>
+
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c4f"/>
+      <stop offset="50%" stop-color="#3c6a40"/>
+      <stop offset="100%" stop-color="#2d5231"/>
+    </linearGradient>
+
+    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#699e4c"/>
+      <stop offset="60%" stop-color="#4c7e33"/>
+      <stop offset="100%" stop-color="#2f5720"/>
+    </linearGradient>
+
+    <!-- Materials: Wood, Brass, Stone, Water -->
+    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9c6d48"/>
+      <stop offset="50%" stop-color="#784f30"/>
+      <stop offset="100%" stop-color="#55341c"/>
+    </linearGradient>
+
+    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#d9a536"/>
+      <stop offset="70%" stop-color="#996c14"/>
+      <stop offset="100%" stop-color="#5e4007"/>
+    </linearGradient>
+
+    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c5beb3"/>
+      <stop offset="60%" stop-color="#999184"/>
+      <stop offset="100%" stop-color="#6c6458"/>
+    </linearGradient>
+
+    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#47a5be"/>
+      <stop offset="50%" stop-color="#2a7796"/>
+      <stop offset="100%" stop-color="#144d6a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Warm Contemplative Sunset Sky -->
+  <rect width="1200" height="800" fill="url(#skySunset)" filter="url(#ghibliPaper)" />
+  
+  <g>
+    <circle cx="850" cy="240" r="182" fill="url(#sunGlowSunset)" />
+    <circle cx="850" cy="240" r="52" fill="#ffdf99" />
+    <!-- Subtle sun rays -->
+    <polygon points="850,240 550,800 730,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="850,240 900,800 1090,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="850,240 1210,800 1410,800" fill="#fffbe6" opacity="0.06" />
+  </g>
+  
+  <g class="cloud-est-l" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodySunset)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+  
+  <g transform="translate(980, 180) scale(0.85)" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodySunset)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+
+  <!-- Tranquil Distant Sea & Horizon Islands -->
+  <path d="M-50,510 L1250,510 L1250,800 L-50,800 Z" fill="url(#waterTone)"/>
+  <ellipse cx="600" cy="520" rx="350" ry="15" fill="#fde047" opacity="0.4" filter="url(#softGlow)"/> <!-- Sunset path on water -->
+
+  <!-- PYE OLIV (Oliveiras Centenárias com Folhagem Prateada) on left -->
+  <g transform="translate(180, 560)" filter="url(#dropShadow)">
+    <path d="M-18,0 Q-35,-110 -12,-220 Q15,-110 18,0 Z" fill="url(#woodTone)"/>
+    <!-- Twisted gnarled olive branches -->
+    <ellipse cx="0" cy="-250" rx="100" ry="85" fill="#3f6212"/>
+    <ellipse cx="-45" cy="-230" rx="80" ry="70" fill="#4d7c0f"/>
+    <ellipse cx="45" cy="-230" rx="80" ry="70" fill="#65a30d"/>
+    <ellipse cx="0" cy="-290" rx="70" ry="60" fill="#84cc16" opacity="0.8"/>
+    <!-- Small dark olives -->
+    <circle cx="-30" cy="-240" r="5" fill="#1e293b"/>
+    <circle cx="20" cy="-260" r="5" fill="#1e293b"/>
+    <circle cx="40" cy="-220" r="5" fill="#1e293b"/>
+  </g>
+
+  <!-- KOLÒN (Colunas Clássicas de Mármore e Pórtico de Pedra) on right terrace -->
+  <g transform="translate(760, 480)" filter="url(#dropShadow)">
+    <!-- Entablature / Architrave beam on top -->
+    <rect x="-80" y="-240" width="460" height="35" rx="3" fill="url(#stoneTone)" stroke="#44403c" stroke-width="3"/>
+    
+    <!-- Column 1 -->
+    <g transform="translate(0, 0)">
+      <!-- Capital -->
+      <rect x="-24" y="-205" width="48" height="15" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
+      <!-- Fluted Column Shaft -->
+      <rect x="-18" y="-190" width="36" height="230" fill="#e7e5e4" stroke="#44403c" stroke-width="2.5"/>
+      <line x1="-8" y1="-190" x2="-8" y2="40" stroke="#a8a29e" stroke-width="2"/>
+      <line x1="8" y1="-190" x2="8" y2="40" stroke="#a8a29e" stroke-width="2"/>
+      <!-- Base -->
+      <rect x="-24" y="40" width="48" height="18" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
+    </g>
+
+    <!-- Column 2 -->
+    <g transform="translate(140, 0)">
+      <rect x="-24" y="-205" width="48" height="15" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
+      <rect x="-18" y="-190" width="36" height="230" fill="#e7e5e4" stroke="#44403c" stroke-width="2.5"/>
+      <line x1="-8" y1="-190" x2="-8" y2="40" stroke="#a8a29e" stroke-width="2"/>
+      <line x1="8" y1="-190" x2="8" y2="40" stroke="#a8a29e" stroke-width="2"/>
+      <rect x="-24" y="40" width="48" height="18" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
+    </g>
+
+    <!-- Column 3 -->
+    <g transform="translate(280, 0)">
+      <rect x="-24" y="-205" width="48" height="15" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
+      <rect x="-18" y="-190" width="36" height="230" fill="#e7e5e4" stroke="#44403c" stroke-width="2.5"/>
+      <line x1="-8" y1="-190" x2="-8" y2="40" stroke="#a8a29e" stroke-width="2"/>
+      <line x1="8" y1="-190" x2="8" y2="40" stroke="#a8a29e" stroke-width="2"/>
+      <rect x="-24" y="40" width="48" height="18" fill="#d6d3d1" stroke="#44403c" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Stone Terrace Platform -->
+  <path d="M-50,620 L1250,620 L1250,800 L-50,800 Z" fill="url(#stoneTone)"/>
+  <rect x="0" y="620" width="1200" height="20" fill="#57534e"/>
+
+  <!-- MOUN SAJ (Filósofo Sábio Estoico em Túnica Branca e Contemplação Serena) -->
+  <g transform="translate(560, 610)" filter="url(#dropShadow)">
+    <ellipse cx="0" cy="15" rx="35" ry="10" fill="#000000" opacity="0.35"/>
+    
+    <!-- Flowing Classical Linen Robes (Himation) -->
+    <path d="M-18,-70 
+      C-30,-20 -40,30 -25,12 
+      L25,12 
+      C40,30 30,-20 18,-70 Z" 
+      fill="#f5f5f4" stroke="#d6d3d1" stroke-width="2"/>
+    <!-- Draped fabric folds -->
+    <path d="M-15,-60 Q0,-30 18,-50" stroke="#a8a29e" stroke-width="3" fill="none"/>
+    <path d="M-22,-30 Q0,0 20,-20" stroke="#a8a29e" stroke-width="3" fill="none"/>
+    
+    <!-- Head with thoughtful profile and wise beard -->
+    <circle cx="0" cy="-90" r="14" fill="#d7a179"/>
+    <!-- Silver/grey hair and beard -->
+    <path d="M-12,-95 Q0,-112 14,-95 Q18,-80 8,-75 Q0,-65 -8,-75 Z" fill="#e7e5e4" stroke="#a8a29e" stroke-width="1.5"/>
+    <!-- Serene gaze toward sunset -->
+  </g>
+
+  <!-- LIV (Livro / Manuscrito Aberto sobre Pedestal de Pedra em Destaque) -->
+  <g transform="translate(380, 640)" filter="url(#dropShadow)">
+    <!-- Carved Stone Lectern -->
+    <polygon points="-40,40 40,40 25,-20 -25,-20" fill="url(#stoneTone)" stroke="#44403c" stroke-width="2.5"/>
+    <rect x="-35" y="-30" width="70" height="12" rx="2" fill="#78716c"/>
+    
+    <!-- Open Bound Leather Book -->
+    <!-- Leather cover backing -->
+    <path d="M-48,-32 L0,-24 L48,-32 L52,-60 L0,-52 L-52,-60 Z" fill="#78350f" stroke="#451a03" stroke-width="2"/>
+    <!-- Left open page -->
+    <polygon points="-46,-34 -2,-26 -2,-54 -48,-58" fill="#fffbeb" stroke="#d6d3d1" stroke-width="1.5"/>
+    <!-- Right open page -->
+    <polygon points="2,-26 46,-34 48,-58 2,-54" fill="#fef3c7" stroke="#d6d3d1" stroke-width="1.5"/>
+    <!-- Text lines in book -->
+    <line x1="-38" y1="-50" x2="-8" y2="-47" stroke="#78350f" stroke-width="1.5"/>
+    <line x1="-38" y1="-44" x2="-8" y2="-41" stroke="#78350f" stroke-width="1.5"/>
+    <line x1="-38" y1="-38" x2="-14" y2="-35" stroke="#78350f" stroke-width="1.5"/>
+    
+    <line x1="8" y1="-47" x2="38" y2="-50" stroke="#78350f" stroke-width="1.5"/>
+    <line x1="8" y1="-41" x2="38" y2="-44" stroke="#78350f" stroke-width="1.5"/>
+    <line x1="8" y1="-35" x2="32" y2="-38" stroke="#78350f" stroke-width="1.5"/>
+    <!-- Red ribbon bookmark -->
+    <path d="M0,-24 Q6,-10 4,8" stroke="#dc2626" stroke-width="3" fill="none"/>
+  </g>
+</svg>

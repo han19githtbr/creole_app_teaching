@@ -62,11 +62,11 @@ export function getDefaultImageQuiz(theme: string, imageId?: string): ImageQuizC
 }
 
 /** Passa as palavras do desafio (guardadas em Kreyòl) para o francês, sem repetir palavras. */
-export function translateQuizToFrench(quiz: ImageQuizConfig): ImageQuizConfig {
+export function translateQuizToFrench(quiz: ImageQuizConfig, theme?: string): ImageQuizConfig {
   const unique = (words: string[]) => words.filter((word, index) => words.indexOf(word) === index);
   return {
-    options: unique(quiz.options.map(kreyolToFrench)),
-    answers: unique(quiz.answers.map(kreyolToFrench)),
+    options: unique(quiz.options.map((word) => kreyolToFrench(word, theme))),
+    answers: unique(quiz.answers.map((word) => kreyolToFrench(word, theme))),
   };
 }
 

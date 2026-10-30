@@ -5,7 +5,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import NextImage from "next/image";
 import { Check, Copy, Download, ExternalLink, Film, GripHorizontal, Languages, MessageCircle, Pause, Play, RotateCcw, Share2, Sparkles, Undo2, Volume2, VolumeX } from "lucide-react";
 import type { IVideoStoryCaption } from "@/models/VideoLesson";
-import { getStoryLabelLayout, getElementLabel } from "@/lib/imageBank";
+import { getStoryLabelLayout, getElementLabel, getLanguageImageSrc } from "@/lib/imageBank";
 import { useBankImage } from "@/hooks/useBankImage";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { describeStoryDuration, formatStoryTime } from "@/lib/storyAudio";
@@ -140,6 +140,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
   const { language: currentAppLanguage } = useAppLanguage();
   const storyLang = story.language || currentAppLanguage;
   const isFr = storyLang === "francais";
+  // A história guarda o caminho original da imagem; o que é exibido depende do idioma (rótulos do SVG em francês).
+  const displaySrc = getLanguageImageSrc(story.imageSrc, storyLang);
   const targetLangLabel = isFr ? "Français" : "Kreyòl";
   const targetLangUpper = isFr ? "FRANÇAIS" : "KREYÒL";
 
@@ -215,8 +217,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
 
   useEffect(() => {
     let isMounted = true;
-    if (story.imageSrc && (story.imageSrc.endsWith(".svg") || story.imageSrc.includes(".svg?"))) {
-      fetch(story.imageSrc)
+    if (displaySrc && (displaySrc.endsWith(".svg") || displaySrc.includes(".svg?"))) {
+      fetch(displaySrc)
         .then((res) => (res.ok ? res.text() : null))
         .then((text) => {
           if (isMounted && text) {
@@ -232,7 +234,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     return () => {
       isMounted = false;
     };
-  }, [story.imageSrc]);
+  }, [displaySrc]);
 
   // Divide o SVG em camadas: o fundo vira imagem estática (rasterizada uma vez) e só os elementos animados são redesenhados.
   const layerKit = useMemo(() => (svgContent ? buildSvgLayerKit(svgContent) : null), [svgContent]);
@@ -291,13 +293,13 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       blobUrl = URL.createObjectURL(new Blob([svgContent], { type: "image/svg+xml;charset=utf-8" }));
       img.src = blobUrl;
     } else {
-      img.src = story.imageSrc;
+      img.src = displaySrc;
     }
     return () => {
       alive = false;
       if (blobUrl) URL.revokeObjectURL(blobUrl);
     };
-  }, [story.imageSrc, svgContent]);
+  }, [displaySrc, svgContent]);
   // Pontos dos objetos que já têm rótulo (em px de 1200x800): os elementos novos nunca são colocados sobre os nomes existentes.
   const lifeAnchors = useMemo(
     () => (sceneLayout?.anchors ?? []).map((anchor) => ({ x: (anchor.left / 100) * 1200, y: (anchor.top / 100) * 800 })),
@@ -1204,7 +1206,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     try {
       const image = new Image();
       image.crossOrigin = "anonymous";
-      image.src = story.imageSrc;
+      image.src = displaySrc;
       await image.decode();
 
       // Fundo desfocado: calculado uma única vez (aplicar o blur a cada quadro era a parte mais pesada da exportação).
@@ -1435,7 +1437,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                 dangerouslySetInnerHTML={{ __html: svgContent }}
               />
             ) : (
-              <NextImage src={story.imageSrc} alt={story.title} fill unoptimized className="object-cover" />
+              <NextImage src={displaySrc} alt={story.title} fill unoptimized className="object-cover" />
             )}
           </div>
           {lifeMarkup && (

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { ImageBankPicker } from "@/components/ImageBankPicker";
 import { PostCard } from "@/components/PostCard";
-import { getBankImage, getElementLabel, getImageCaption, type BankImage } from "@/lib/imageBank";
+import { getBankImage, getElementLabel, getImageCaption, getLanguageImageSrc, type BankImage } from "@/lib/imageBank";
 import type { AppLanguage } from "@/lib/languageShared";
 import {
   getQuizForImage,
@@ -249,7 +249,7 @@ export function PostForm({
                   </span>
                 </div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imageUrl} alt={imageAlt || "Imagem da postagem"} className="max-h-72 w-full object-cover" />
+                <img src={getLanguageImageSrc(imageUrl, language)} alt={imageAlt || "Imagem da postagem"} className="max-h-72 w-full object-cover" />
                 <div className="flex flex-wrap items-center gap-2 bg-[var(--surface-2)] p-2.5">
                   <Input
                     value={imageAlt}

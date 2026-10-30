@@ -5,7 +5,7 @@ import { ptBR } from "date-fns/locale";
 import Link from "next/link";
 import { Gamepad2 } from "lucide-react";
 
-import { getBankImage, getThemeVocab } from "@/lib/imageBank";
+import { getBankImage, getLanguageImageSrc, getThemeVocab } from "@/lib/imageBank";
 import type { AppLanguage } from "@/lib/languageShared";
 
 export function PostCard({
@@ -43,7 +43,7 @@ export function PostCard({
         <div className="relative aspect-[3/2] w-full overflow-hidden bg-[var(--surface-2)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={imageUrl}
+            src={getLanguageImageSrc(imageUrl, language)}
             alt={imageAlt || title}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.02]"

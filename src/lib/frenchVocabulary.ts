@@ -6,6 +6,9 @@
 /** Palavra em Kreyòl → francês (substantivos simples, como nos jogos). */
 export const KREYOL_TO_FR: Record<string, string> = {
   "ansyen kay": "maison ancienne",
+  golet: "mouette",
+  mize: "musée",
+  "pye bwa": "arbre",
   antèn: "antenne",
   asyèt: "assiette",
   avyon: "avion",

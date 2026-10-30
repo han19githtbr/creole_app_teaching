@@ -109,16 +109,51 @@ export function planScene(themeId: string, language: AppLanguage = "kreyol"): Sc
   };
 }
 
+
+/**
+ * O que pertence (e o que NÃO pertence) a cada tema. Entra nos prompts de geração e na revisão automática, para que
+ * a IA não "invente" cenário genérico (mar e barcos, por exemplo) em temas que não têm nada a ver com isso.
+ */
+export const THEME_SCENE_RULES: Record<string, { context: string; life: string; forbid: string }> = {
+  Tecnologia: { context: "technology, computers, robots, drones, satellites, renewable energy and science labs", life: "a small robot working, a drone flying, a wind turbine turning, a satellite dish tracking", forbid: "farm animals, traditional festivals, religious buildings, historic castles, sailing boats" },
+  Natureza: { context: "wild nature: forests, rivers, waterfalls, oceans, palm trees, flowers and wild animals", life: "butterflies and birds flying, a river flowing, a turtle walking, flowers swaying in the wind", forbid: "cities, vehicles, machines, crowds, buildings, roads, electronics" },
+  Cultura: { context: "Haitian culture: festivals, drums, flags, lanterns, traditional clothes, masks, crafts and street markets", life: "people dancing and playing drums, vendors selling food and cloth, a parade with flags and lanterns", forbid: "airports, modern gadgets, sports stadiums, castles, sailing ships, office or laboratory scenes" },
+  Turismo: { context: "tourism and travel: beaches, lighthouses, boats, hotels, airplanes, hot-air balloons, maps and suitcases", life: "boats sailing, an airplane taking off, tourists with suitcases arriving at a hotel, a hot-air balloon drifting", forbid: "farms, laboratories, churches, theatre or cinema interiors, battle scenes" },
+  "Vida no interior": { context: "rural life in the countryside: farm houses, gardens, wells, fences, wheat, goats, chickens and tractors", life: "chickens pecking, a farmer driving a tractor, goats grazing, smoke rising from a chimney", forbid: "skyscrapers, airports, laboratories, beaches with hotels, stages, cinemas" },
+  Dança: { context: "dance: dancers in colourful costumes, drums, ribbons, fans, lanterns and a stage", life: "dancers spinning with ribbons, drummers playing, fans waving", forbid: "farm work, vehicles, laboratories, boats, sports, cooking" },
+  Geografia: { context: "geography: mountains, rivers, islands, volcanoes, bridges, forests, oceans, maps and compasses", life: "a river flowing, smoke rising from a volcano, a flag waving on a summit, a hiker consulting a compass", forbid: "festivals, interiors, kitchens, stages, cinemas, concerts" },
+  História: { context: "history: fortresses, cannons, torches, old sailing ships, horses, monuments, old houses and books", life: "torches flickering, a knight on a horse, an old ship sailing, flags waving on the fortress", forbid: "modern cars, airplanes, computers, phones, skyscrapers, electronics, modern clothes" },
+  Cinema: { context: "cinema: movie theatres, projectors, screens, popcorn, tickets, film cameras and audience seats", life: "a projector beam, an audience watching, popcorn being eaten, a film crew filming", forbid: "farms, beaches, laboratories, churches, sports fields, kitchens" },
+  Música: { context: "music: guitars, drums, pianos, keyboards, speakers, microphones, headphones and stage lights", life: "musical notes floating, a guitarist and drummer performing, stage lights sweeping", forbid: "farm work, vehicles, laboratories, boats, sports, kitchens" },
+  Lazeres: { context: "leisure: kites, bicycles, picnics, swings, balls, ducks in a pond, parks and books", life: "a kite flying, children playing with a ball, a family on a picnic blanket, someone cycling", forbid: "laboratories, battle scenes, churches, stages, industrial machines" },
+  Estoicismo: { context: "Stoic philosophy: marble columns, scrolls, books, olive trees, statues, lamps, gates and quiet paths", life: "a sage reading a scroll, a student listening, olive leaves moving in the breeze, a lamp flickering", forbid: "modern gadgets, vehicles, festivals, sports, farm machinery, crowds" },
+  Religião: { context: "religion: churches, candles, doves, crosses, holy books, stained-glass windows, bells and pews", life: "doves flying, candle flames flickering, people praying quietly, a bell ringing", forbid: "sports, parties, machines, weapons, laboratories, cooking, cinemas" },
+  Gastronomia: { context: "gastronomy: kitchens, pots, bread, fruit, peppers, vegetables, tables, plates and cutlery", life: "steam rising from a pot, a cook stirring, a family eating at a table", forbid: "laboratories, vehicles, battle scenes, stages, churches, sports" },
+  Idiomas: { context: "language learning: books, dictionaries, globes, speech bubbles, letters, a blackboard, a teacher and students", life: "a teacher writing on a blackboard, students raising hands, speech bubbles appearing", forbid: "farms, boats, battle scenes, sports, kitchens, machines" },
+};
+
+const themeRule = (label: string) => THEME_SCENE_RULES[label];
+
+function themeLines(label: string): string[] {
+  const r = themeRule(label);
+  if (!r) return [];
+  return [
+    `EVERYTHING in the image must belong to the theme "${label}" (${r.context}). The whole scene, the background and every extra detail must clearly say "${label}" at first glance.`,
+    `Do NOT draw anything that does not belong to this theme (for example: ${r.forbid}).`,
+  ];
+}
+
 export function scenePrompt(plan: ScenePlan, forStory: boolean): string {
   const list = plan.objects.map((object, index) => `${index + 1}. ${object.en} — in the ${SLOTS[index].where}`).join("\n");
   return [
     `Illustration for a language-learning app, theme "${plan.themeLabel}".`,
     `Style: ${GHIBLI_STYLE}. Wide 3:2 landscape composition.`,
     `Mood: ${plan.setting}.`,
+    ...themeLines(plan.themeLabel),
     `Show EXACTLY these 4 key objects, each one clearly recognisable, completely visible (never cropped), large (about 15-25% of the image width), with open space around it, and not overlapping any other key object:`,
     list,
     forStory
-      ? "Leave a calm area above each object so an animated label can sit there. Compose elements with vivid movie-like life and realistic interactions (e.g. sea waves and boats with rowers, interacting people, playing animals, dining family, or moviegoers), matching a frame of an animated film."
+      ? `Leave a calm area above each object so an animated label can sit there. Add movie-like life that fits THIS theme only (${themeRule(plan.themeLabel)?.life ?? "small natural movements"}), matching a frame of an animated film.`
       : "Keep the rest of the scene simple and uncluttered so the four objects stand out.",
     "Do not draw any text, letters, numbers, logos, written signs, borders, frames or watermarks. Avoid close-up faces.",
   ].join("\n");
@@ -138,6 +173,12 @@ export function svgScenePrompt(plan: ScenePlan, reference: string | null, forSto
     animationRule,
     `- IDs únicos com prefixo "${prefix}-". No máximo ~12 KB de código.`,
     `- Tema: ${plan.themeLabel}. Clima: ${plan.setting}.`,
+    ...(themeRule(plan.themeLabel)
+      ? [
+          `- TUDO na imagem deve pertencer ao tema "${plan.themeLabel}" (${themeRule(plan.themeLabel)!.context}). Cenário e detalhes extras também devem ser do tema.`,
+          `- NÃO desenhe nada fora do tema (por exemplo: ${themeRule(plan.themeLabel)!.forbid}).`,
+        ]
+      : []),
     `- Desenhe EXATAMENTE estes 4 objetos, grandes, com vários detalhes, bem separados e sem sobreposição: ${plan.objects
       .map((object, index) => `${index + 1}) ${object.en} (${SLOTS[index].where})`)
       .join("; ")}.`,
@@ -201,7 +242,7 @@ export function cquoiSvgPrompt(themeLabel: string, proposal: CquoiProposal, refe
 // ---------------------------------------------------------------------------
 // Revisão automática (visão): confere os objetos, o estilo e devolve a posição de cada um.
 // ---------------------------------------------------------------------------
-export function reviewPrompt(objects: string[], engine: ImageEngine = "image"): string {
+export function reviewPrompt(objects: string[], engine: ImageEngine = "image", themeLabel?: string): string {
   const styleInstruction =
     engine === "svg"
       ? "ilustração vetorial limpa e colorida (formato SVG), estilizada e harmoniosa, inspirada nas cores e ambientação do Studio Ghibli. Como é uma arte vetorial (SVG), formas geométricas/planas e gradientes fazem parte do formato vetorial e NÃO devem ser penalizados como 'estilo incorreto' ou 'não é pintura à mão'."
@@ -211,8 +252,14 @@ export function reviewPrompt(objects: string[], engine: ImageEngine = "image"): 
     "Você é revisor de qualidade de ilustrações de um app de ensino de idiomas.",
     `Estilo desejado: ${styleInstruction}`,
     `Objetos obrigatórios: ${JSON.stringify(objects)}.`,
+    ...(themeLabel && THEME_SCENE_RULES[themeLabel]
+      ? [
+          `Tema da imagem: "${themeLabel}" (${THEME_SCENE_RULES[themeLabel].context}).`,
+          `Avalie também "theme_fit" (0-10): o quanto a cena INTEIRA (cenário, fundo e detalhes extras, não só os objetos pedidos) combina com esse tema. Dê nota baixa se houver elementos claramente fora do tema (ex.: ${THEME_SCENE_RULES[themeLabel].forbid}) e liste-os em "off_theme_items".`,
+        ]
+      : []),
     "Analise a imagem e responda SOMENTE com JSON neste formato:",
-    '{"score": 0-10, "has_text_or_watermark": false, "objects": [{"name": "...", "visible": true, "box_2d": [ymin, xmin, ymax, xmax]}], "issues": ["..."]}',
+    '{"score": 0-10, "theme_fit": 0-10, "off_theme_items": ["..."], "has_text_or_watermark": false, "objects": [{"name": "...", "visible": true, "box_2d": [ymin, xmin, ymax, xmax]}], "issues": ["..."]}',
     "box_2d usa coordenadas normalizadas de 0 a 1000. Se o objeto não aparece de forma clara, use visible=false e box_2d=null.",
     "A nota considera: objetos obrigatórios reconhecíveis (peso maior), formas naturais sem deformações graves, nitidez, ausência de letras/marca d'água e harmonia visual.",
     "Em issues, liste em português (curto) cada problema encontrado; lista vazia se estiver tudo certo.",

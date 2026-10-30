@@ -6,6 +6,7 @@
 // animado do estúdio ou ilustração do banco de imagens) e colocamos a pessoa
 // recortada por cima.
 
+import { sourceSize } from "@/lib/faceEnhancer";
 import type { SelfieSegmentation as SelfieSegmentationClass, Results } from "@mediapipe/selfie_segmentation";
 import { VIDEO_BACKGROUNDS, drawThemeParticles } from "@/lib/videoThemes";
 import { IMAGE_BANK, getBankImage } from "@/lib/imageBank";
@@ -171,14 +172,15 @@ export function createScratch(): VirtualBgScratch {
   return { person: document.createElement("canvas"), small: document.createElement("canvas") };
 }
 
-function videoSize(video: HTMLVideoElement, w: number, h: number) {
-  return { vw: video.videoWidth || w, vh: video.videoHeight || h };
+function videoSize(video: CanvasImageSource, w: number, h: number) {
+  // aceita <video> (câmera crua) ou canvas (câmera já melhorada por `FaceEnhancer`)
+  return sourceSize(video, w, h);
 }
 
 /** Desfoque barato e compatível com Safari: reduz e amplia com suavização. */
 function drawBlurredVideo(
   ctx: CanvasRenderingContext2D,
-  video: HTMLVideoElement,
+  video: CanvasImageSource,
   scratch: VirtualBgScratch,
   w: number,
   h: number,
@@ -210,7 +212,7 @@ function drawBlurredVideo(
 export function drawBackgroundLayer(
   ctx: CanvasRenderingContext2D,
   bg: ParsedVirtualBg,
-  video: HTMLVideoElement | null,
+  video: CanvasImageSource | null,
   scratch: VirtualBgScratch,
   w: number,
   h: number,
@@ -247,7 +249,7 @@ export function drawBackgroundLayer(
  */
 export function drawVirtualBackground(
   ctx: CanvasRenderingContext2D,
-  video: HTMLVideoElement,
+  video: CanvasImageSource,
   mask: MaskImage | null,
   bgId: string,
   scratch: VirtualBgScratch,

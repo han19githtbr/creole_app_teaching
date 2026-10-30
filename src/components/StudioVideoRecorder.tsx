@@ -57,8 +57,10 @@ import {
   RECORDING_QUALITIES,
   getAvailableVideoDevices,
   drawVirtualRingLight,
+  tuneCameraTrack,
   type VideoDeviceOption,
 } from "@/lib/cameraEnhancer";
+import { FaceEnhancer, sourceSize } from "@/lib/faceEnhancer";
 import { cn } from "@/lib/utils";
 
 const MAX_DURATION_SECONDS = 600; // 10 minutes maximum
@@ -77,6 +79,8 @@ export function StudioVideoRecorder() {
   const [selectedCameraId, setSelectedCameraId] = useState<string>("");
   const [clarityPreset, setClarityPreset] = useState<string>("studio_bright");
   const [virtualRingLight, setVirtualRingLight] = useState<boolean>(true);
+  // Nitidez e exposição automática do rosto (WebGL). Ligado por padrão; vale para prévia, gravação e download.
+  const [faceEnhance, setFaceEnhance] = useState<boolean>(true);
   const [recordingQuality, setRecordingQuality] = useState<"ultra" | "high" | "balanced">("ultra");
 
   // Rede social anotada no vídeo: o avatar aponta para o ícone dela
@@ -117,6 +121,9 @@ export function StudioVideoRecorder() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoInputRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const enhancerRef = useRef<FaceEnhancer | null>(null);
+  const faceEnhanceRef = useRef<boolean>(true);
+  useEffect(() => { faceEnhanceRef.current = faceEnhance; }, [faceEnhance]);
   const recordedChunksRef = useRef<Blob[]>([]);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -239,13 +246,8 @@ export function StudioVideoRecorder() {
         const { width, height } = videoTrack.getSettings();
         if (width && height) setCameraResolution({ width, height });
 
-        // Tenta ativar foco contínuo e exposição contínua por hardware se suportado
-        try {
-          const caps = videoTrack.getCapabilities?.() as Record<string, unknown> | undefined;
-          if (caps && Array.isArray(caps.focusMode) && caps.focusMode.includes("continuous")) {
-            void videoTrack.applyConstraints({ advanced: [{ focusMode: "continuous" } as MediaTrackConstraintSet] });
-          }
-        } catch {}
+        // Ajustes de hardware: resolução máxima (até Full HD), foco/exposição/balanço de branco contínuos, nitidez e exposição do rosto
+        void tuneCameraTrack(videoTrack).then((res) => { if (res) setCameraResolution(res); });
 
         const vStream = new MediaStream([videoTrack]);
         setCameraStream(vStream);
@@ -374,7 +376,7 @@ export function StudioVideoRecorder() {
   const compositePersonOntoCanvas = useCallback(
     (
       ctx: CanvasRenderingContext2D,
-      video: HTMLVideoElement,
+      video: CanvasImageSource,
       destX: number,
       destY: number,
       destWidth: number,
@@ -401,8 +403,7 @@ export function StudioVideoRecorder() {
         return;
       }
 
-      const nativeWidth = video.videoWidth || destWidth;
-      const nativeHeight = video.videoHeight || destHeight;
+      const { vw: nativeWidth, vh: nativeHeight } = sourceSize(video, destWidth, destHeight);
 
       let offscreen = segmentationOffscreenRef.current;
       if (!offscreen) {
@@ -502,17 +503,24 @@ export function StudioVideoRecorder() {
       const camReady =
         avatarType === "webcam" && !!videoInputRef.current && videoInputRef.current.readyState >= 2;
       const isMeetFrame = camReady && frameStyle === "meet";
+      // Imagem da câmera já com nitidez e exposição do rosto melhoradas (ou o vídeo cru, se desligado/sem WebGL)
+      let camSource: CanvasImageSource | null = camReady ? videoInputRef.current : null;
+      if (camReady && videoInputRef.current && faceEnhanceRef.current) {
+        let enh = enhancerRef.current;
+        if (!enh) { enh = new FaceEnhancer(); enhancerRef.current = enh; }
+        camSource = enh.process(videoInputRef.current);
+      }
 
       const activePreset =
         CLARITY_PRESETS.find((p) => p.id === clarityPreset) || CLARITY_PRESETS[0];
       const activeFilter = activePreset.filter;
 
-      if (isMeetFrame && videoInputRef.current) {
+      if (isMeetFrame && camSource) {
         // Modo Meet: câmera em tela cheia com recorte da pessoa e filtro de clareza
         const seg = segmenterRef.current;
         drawVirtualBackground(
           ctx,
-          videoInputRef.current,
+          camSource,
           seg?.ready ? seg.mask : null,
           virtualBg,
           scratch,
@@ -528,7 +536,7 @@ export function StudioVideoRecorder() {
       // 3. Draw Avatar or Webcam feed based on avatarType
       if (isMeetFrame) {
         // já desenhado acima (pessoa + fundo virtual)
-      } else if (camReady && videoInputRef.current) {
+      } else if (camSource) {
         if (frameStyle === "circle_pip") {
           // Circular PiP in bottom-right
           ctx.save();
@@ -545,7 +553,7 @@ export function StudioVideoRecorder() {
 
           compositePersonOntoCanvas(
             ctx,
-            videoInputRef.current,
+            camSource,
             pipX - pipRadius,
             pipY - pipRadius,
             pipRadius * 2,
@@ -561,7 +569,7 @@ export function StudioVideoRecorder() {
           ctx.clip();
           compositePersonOntoCanvas(
             ctx,
-            videoInputRef.current,
+            camSource,
             width - splitWidth - 30,
             40,
             splitWidth,
@@ -590,7 +598,7 @@ export function StudioVideoRecorder() {
           ctx.beginPath();
           ctx.roundRect(boxX, boxY, boxW, boxH, 28);
           ctx.clip();
-          compositePersonOntoCanvas(ctx, videoInputRef.current, boxX, boxY, boxW, boxH);
+          compositePersonOntoCanvas(ctx, camSource, boxX, boxY, boxW, boxH);
           ctx.restore();
         } else if (frameStyle === "banner") {
           // Estúdio quase em tela cheia, mas com uma margem fina para o
@@ -605,7 +613,7 @@ export function StudioVideoRecorder() {
           ctx.beginPath();
           ctx.roundRect(boxX, boxY, boxW, boxH, 18);
           ctx.clip();
-          compositePersonOntoCanvas(ctx, videoInputRef.current, boxX, boxY, boxW, boxH);
+          compositePersonOntoCanvas(ctx, camSource, boxX, boxY, boxW, boxH);
           ctx.restore();
         } else {
           // Padrão "Bordas Arredondadas": moldura com cantos arredondados
@@ -632,7 +640,7 @@ export function StudioVideoRecorder() {
           ctx.beginPath();
           ctx.roundRect(boxX, boxY, boxW, boxH, 32);
           ctx.clip();
-          compositePersonOntoCanvas(ctx, videoInputRef.current, boxX, boxY, boxW, boxH);
+          compositePersonOntoCanvas(ctx, camSource, boxX, boxY, boxW, boxH);
           ctx.restore();
         }
       } else {
@@ -772,6 +780,8 @@ export function StudioVideoRecorder() {
 
     // Capture 30fps canvas stream
     const canvasStream = canvas.captureStream(30);
+    // "detail": o codificador prioriza nitidez (rosto/texto) em vez de fluidez a qualquer custo
+    canvasStream.getVideoTracks().forEach((t) => { try { t.contentHint = "detail"; } catch { /* não suportado */ } });
 
     // Monta um único MediaStream já com vídeo (canvas) + áudio (microfone),
     // em vez de usar addTrack() depois de criado — mais confiável entre navegadores.
@@ -780,7 +790,11 @@ export function StudioVideoRecorder() {
       ...audioTracks,
     ]);
 
+    // MP4/H.264 primeiro: é o formato aceito direto pelo Instagram e pelo Facebook e toca em qualquer celular.
+    // Sem suporte do navegador, cai para WebM (VP9).
     const mimeTypes = [
+      "video/mp4;codecs=avc1.640028,mp4a.40.2",
+      "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
       "video/webm;codecs=vp9,opus",
       "video/webm;codecs=vp8,opus",
       "video/webm",
@@ -868,7 +882,7 @@ export function StudioVideoRecorder() {
     if (!recordedBlob) return;
     const a = document.createElement("a");
     a.href = recordedVideoUrl || URL.createObjectURL(recordedBlob);
-    a.download = `kreyol_aula_${Date.now()}.webm`;
+    a.download = `kreyol_aula_${Date.now()}.${recordedBlob.type.includes("mp4") ? "mp4" : "webm"}`;
     a.click();
   }
 
@@ -893,7 +907,7 @@ export function StudioVideoRecorder() {
       const cleanContentType = (recordedBlob.type || "video/webm").split(";")[0];
 
       const blob = await upload(
-        `studio_recording_${Date.now()}.webm`,
+        `studio_recording_${Date.now()}.${cleanContentType.includes("mp4") ? "mp4" : "webm"}`,
         recordedBlob,
         {
           access: "public",
@@ -1158,7 +1172,7 @@ export function StudioVideoRecorder() {
                     variant="secondary"
                     className="gap-2"
                   >
-                    <Download className="h-4 w-4" /> Baixar Cópia (.webm)
+                    <Download className="h-4 w-4" /> Baixar Cópia (.{recordedBlob?.type.includes("mp4") ? "mp4" : "webm"})
                   </Button>
                 </>
               )}
@@ -1366,6 +1380,22 @@ export function StudioVideoRecorder() {
                     ))}
                   </div>
                 </div>
+
+                {/* Nitidez e exposição automática do rosto */}
+                <label className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2.5 cursor-pointer hover:border-[var(--accent)]">
+                  <input
+                    type="checkbox"
+                    checked={faceEnhance}
+                    onChange={(e) => setFaceEnhance(e.target.checked)}
+                    className="h-4 w-4 rounded text-[var(--accent)] accent-[var(--accent)] cursor-pointer"
+                  />
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-[var(--text)]">🔍 Rosto nítido e bem iluminado</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">
+                      Realça os detalhes do rosto e clareia automaticamente quando a câmera está escura (recomendado)
+                    </p>
+                  </div>
+                </label>
 
                 {/* Luz Frontal Virtual (Ring Light) */}
                 <label className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2.5 cursor-pointer hover:border-[var(--accent)]/40 transition-colors">

@@ -10,6 +10,7 @@ import {
   IMAGE_GEN_AUTO_APPROVE_SCORE,
   IMAGE_GEN_DAILY_LIMIT,
   IMAGE_GEN_MIN_SCORE,
+  IMAGE_GEN_MIN_THEME_FIT,
   THEMES,
   getTheme,
   saoPauloDay,
@@ -130,6 +131,8 @@ async function drawSvg(prompt: string, width: number, height: number): Promise<D
 // ---------------------------------------------------------------------------
 interface ReviewJson {
   score?: number;
+  theme_fit?: number;
+  off_theme_items?: string[];
   has_text_or_watermark?: boolean;
   objects?: { name?: string; visible?: boolean; box_2d?: number[] | null }[];
   issues?: string[];
@@ -144,14 +147,14 @@ interface Review {
   points: ({ left: number; top: number } | null)[];
 }
 
-async function reviewImage(preview: Buffer, expected: string[], engine: ImageEngine = "image"): Promise<Review> {
+async function reviewImage(preview: Buffer, expected: string[], engine: ImageEngine = "image", themeLabel?: string): Promise<Review> {
   try {
     const jpeg = await sharp(preview)
       .flatten({ background: "#ffffff" })
       .resize({ width: 900, withoutEnlargement: true })
       .jpeg({ quality: 80 })
       .toBuffer();
-    const text = await generateText(reviewPrompt(expected, engine), { buffer: jpeg, mime: "image/jpeg" }, reviewModel());
+    const text = await generateText(reviewPrompt(expected, engine, themeLabel), { buffer: jpeg, mime: "image/jpeg" }, reviewModel());
     const data = parseJsonLoose<ReviewJson>(text);
     const listed = Array.isArray(data.objects) ? data.objects : [];
     const issues = Array.isArray(data.issues) ? data.issues.filter((item): item is string => typeof item === "string").slice(0, 8) : [];
@@ -175,11 +178,16 @@ async function reviewImage(preview: Buffer, expected: string[], engine: ImageEng
     const score = Math.min(10, Math.max(0, Number(data.score) || 0));
     if (!allVisible) issues.push("Algum elemento obrigatório não ficou claramente visível.");
     if (data.has_text_or_watermark) issues.push("A imagem contém texto, letras ou marca d'água.");
+    // Aderência ao tema: a cena inteira precisa ser do tema (nota mínima 7) e não pode ter itens claramente fora dele
+    const themeFit = typeof data.theme_fit === "number" ? Math.min(10, Math.max(0, data.theme_fit)) : null;
+    const offTheme = Array.isArray(data.off_theme_items) ? data.off_theme_items.filter((item): item is string => typeof item === "string").slice(0, 4) : [];
+    const themeOk = themeLabel ? themeFit === null || (themeFit >= IMAGE_GEN_MIN_THEME_FIT && offTheme.length <= 1) : true;
+    if (themeLabel && !themeOk) issues.push(`Fora do tema ${themeLabel}${offTheme.length ? `: ${offTheme.join(", ")}` : ""}.`);
     const minScore = engine === "svg" ? 6 : IMAGE_GEN_MIN_SCORE;
     return {
       checked: true,
       score,
-      passed: score >= minScore && !data.has_text_or_watermark,
+      passed: score >= minScore && !data.has_text_or_watermark && themeOk,
       issues,
       points,
     };
@@ -282,7 +290,7 @@ async function produceOne(job: IImageGenJob, day: string): Promise<Outcome> {
       fallbackPoints = SLOTS.map((slot) => slot.anchor);
     }
 
-    const review = await reviewImage(drawn.preview, expected, job.engine);
+    const review = await reviewImage(drawn.preview, expected, job.engine, theme.label);
     const points = expected.map((_, index) => review.points[index] ?? fallbackPoints[index] ?? { left: 50, top: 50 });
     if (cquoi) cquoi.arrow = { x: Math.round((points[0].left / 100) * 490), y: Math.round((points[0].top / 100) * 350) };
 

@@ -22,22 +22,26 @@ const THEME_KEYS: Array<[RegExp, string]> = [
 
 const ALL: Record<string, VignetteDef> = Object.fromEntries([...SKY_DEFS, ...STRIP_DEFS, ...GROUND_DEFS, ...WATER_DEFS].map((d) => [d.id, d]));
 
-/** o que cada tema costuma ter, em ordem de preferência */
+/**
+ * O que PERTENCE a cada tema, em ordem de preferência. Nada fora desta lista entra na cena, nem por palavra-chave:
+ * um avião não aparece numa fortaleza (História), um balão não aparece numa igreja (Religião), um gato doméstico não
+ * aparece na mata (Natureza). Por isso as listas são curtas de propósito.
+ */
 const PLAN: Record<string, { ground: string[]; sky: string[]; water: string[]; strip: string[] }> = {
-  tecnologia: { ground: ["robots", "classroom", "cyclist", "talkers", "cat"], sky: ["helicopter", "airplane", "flock"], water: ["fishSchool"], strip: ["airport"] },
-  natureza: { ground: ["critters", "turtleLand", "cat", "picnic", "couple"], sky: ["flock", "balloon"], water: ["ducks", "fishSchool", "turtleSwim"], strip: [] },
-  cultura: { ground: ["drummer", "dancers", "guitarist", "picnic", "talkers"], sky: ["flock", "balloon"], water: ["ducks"], strip: [] },
-  turismo: { ground: ["couple", "picnic", "cyclist", "turtleLand", "guitarist"], sky: ["balloon", "airplane", "flock"], water: ["sailing", "dolphin", "fishSchool", "turtleSwim"], strip: ["airport"] },
-  interior: { ground: ["farm", "petsPlay", "cat", "cyclist", "picnic"], sky: ["flock", "balloon"], water: ["ducks", "fishSchool"], strip: [] },
-  danca: { ground: ["dancers", "guitarist", "drummer", "picnic", "cat"], sky: ["flock"], water: [], strip: [] },
-  geografia: { ground: ["classroom", "cyclist", "picnic", "talkers", "cat"], sky: ["airplane", "balloon", "helicopter", "flock"], water: ["sailing", "dolphin", "fishSchool"], strip: ["airport"] },
-  historia: { ground: ["rider", "classroom", "talkers", "cat"], sky: ["flock", "airplane"], water: ["sailing", "fishSchool"], strip: [] },
-  cinema: { ground: ["talkers", "cat", "couple"], sky: ["airplane", "helicopter"], water: [], strip: [] },
-  musica: { ground: ["guitarist", "drummer", "dancers", "cat"], sky: ["flock", "balloon"], water: [], strip: [] },
-  lazeres: { ground: ["soccer", "picnic", "cyclist", "petsPlay", "guitarist"], sky: ["balloon", "flock", "airplane"], water: ["ducks", "fishSchool"], strip: [] },
-  estoicismo: { ground: ["classroom", "talkers", "cat", "picnic"], sky: ["flock", "balloon"], water: ["ducks", "fishSchool"], strip: [] },
-  religiao: { ground: ["talkers", "couple", "cat", "picnic"], sky: ["flock", "balloon"], water: ["ducks", "fishSchool"], strip: [] },
-  gastronomia: { ground: ["dining", "cat", "talkers"], sky: ["flock"], water: ["fishSchool"], strip: [] },
+  tecnologia: { ground: ["robots", "classroom"], sky: ["helicopter", "airplane"], water: [], strip: [] },
+  natureza: { ground: ["critters", "turtleLand"], sky: ["flock"], water: ["ducks", "fishSchool", "turtleSwim"], strip: [] },
+  cultura: { ground: ["drummer", "dancers", "guitarist", "talkers"], sky: ["flock"], water: [], strip: [] },
+  turismo: { ground: ["couple", "picnic", "cyclist", "turtleLand"], sky: ["balloon", "airplane"], water: ["sailing", "dolphin", "fishSchool", "turtleSwim"], strip: ["airport"] },
+  interior: { ground: ["farm", "petsPlay", "cat", "cyclist"], sky: ["flock"], water: ["ducks", "fishSchool"], strip: [] },
+  danca: { ground: ["dancers", "drummer", "guitarist"], sky: [], water: [], strip: [] },
+  geografia: { ground: ["classroom"], sky: ["airplane", "balloon", "helicopter"], water: ["sailing", "dolphin", "fishSchool"], strip: [] },
+  historia: { ground: ["rider", "classroom", "talkers"], sky: ["flock"], water: ["sailing"], strip: [] },
+  cinema: { ground: ["talkers", "couple"], sky: [], water: [], strip: [] },
+  musica: { ground: ["guitarist", "drummer", "dancers"], sky: [], water: [], strip: [] },
+  lazeres: { ground: ["soccer", "picnic", "cyclist", "petsPlay", "guitarist"], sky: ["balloon", "flock"], water: ["ducks", "fishSchool"], strip: [] },
+  estoicismo: { ground: ["classroom", "talkers"], sky: ["flock"], water: ["ducks"], strip: [] },
+  religiao: { ground: ["talkers"], sky: ["flock"], water: [], strip: [] },
+  gastronomia: { ground: ["dining"], sky: [], water: [], strip: [] },
   idiomas: { ground: [], sky: [], water: [], strip: [] },
 };
 
@@ -61,7 +65,7 @@ export interface RenderOpts { labelPx?: number }
 const LABEL_FONT = 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 const pillRectOf = (a: { x: number; y: number }): Rect => ({ x0: a.x - 115, y0: a.y - 104, x1: a.x + 115, y1: a.y - 34 });
 
-interface Planned { def: VignetteDef; inst: VignetteInst; rect: Rect; order: number; moving: Set<string> }
+interface Planned { def: VignetteDef; inst: VignetteInst; rect: Rect; order: number; moving: Set<string>; skip: Set<string> }
 
 export function createSceneLife(input: DirectorInput): LifeScene {
   const text = norm([input.title ?? "", ...(input.elements ?? []).flatMap((e) => [e.pt ?? "", e.kreyol ?? "", e.fr ?? ""])].join(" "));
@@ -84,9 +88,14 @@ export function createSceneLife(input: DirectorInput): LifeScene {
 
   // nomes que já existem na cena: um elemento novo com o mesmo nome seria repetição
   const existing = new Set((input.elements ?? []).flatMap((e) => [e.pt, e.kreyol, e.fr]).filter(Boolean).map((s) => norm(String(s))));
-  const clashes = (inst: VignetteInst): boolean => {
-    const keys = inst.labels(0).map((l) => NAMES[l.key as string]).filter(Boolean) as Name[];
-    return keys.some((n) => existing.has(norm(n.p)) || existing.has(norm(n.k)) || existing.has(norm(n.f)));
+  /** rótulos do elemento novo cujo nome já existe na cena (ex.: a lição já tem "tambor"): esses nomes não são repetidos */
+  const clashKeys = (inst: VignetteInst): Set<string> => {
+    const out = new Set<string>();
+    for (const l of inst.labels(0)) {
+      const n = NAMES[l.key as string];
+      if (n && (existing.has(norm(n.p)) || existing.has(norm(n.k)) || existing.has(norm(n.f)))) out.add(String(l.key));
+    }
+    return out;
   };
   // fração do retângulo coberta pelos nomes já existentes (um pouco de sobreposição é tolerada; muito, não)
   const coveredByNames = (rect: Rect) => {
@@ -99,7 +108,7 @@ export function createSceneLife(input: DirectorInput): LifeScene {
     }
     return sum / area;
   };
-  const free = (rect: Rect, pad = 14) => !taken.some((t) => overlaps(rect, t, pad)) && coveredByNames(rect) <= 0.18;
+  const free = (rect: Rect, pad = 14) => !taken.some((t) => overlaps(rect, t, pad)) && coveredByNames(rect) <= 0.30;
 
   const sOf = (y: number) => clamp(depth(y, gt) * 1.1, 0.78, 1.2);
 
@@ -154,7 +163,8 @@ export function createSceneLife(input: DirectorInput): LifeScene {
   const caps = { ground: 4, sky: night ? 1 : 3, water: 3, strip: 1 };
   const used = { ground: 0, sky: 0, water: 0, strip: 0 };
   const plan = PLAN[theme] ?? PLAN.natureza;
-  const boosted = BOOST.filter(([re]) => re.test(text)).map(([, id]) => id);
+  const allowed = new Set([...plan.ground, ...plan.sky, ...plan.water, ...plan.strip]);
+  const boosted = BOOST.filter(([re]) => re.test(text)).map(([, id]) => id).filter((id) => allowed.has(id));
   const queue = (list: string[], kind: keyof typeof caps) => {
     const mine = boosted.filter((id) => ALL[id]?.need === (kind === "strip" ? "strip" : kind));
     return Array.from(new Set([...mine, ...list]));
@@ -173,13 +183,14 @@ export function createSceneLife(input: DirectorInput): LifeScene {
       const spot = def.need === "ground" ? tryGround(def, false) : def.need === "strip" ? tryGround(def, true) : def.need === "sky" ? trySky(def) : tryWater(def);
       if (!spot) continue;
       const inst = def.build(spot.p, rngFrom(`${input.sceneId}|${id}`));
-      if (clashes(inst)) continue;
+      const skip = clashKeys(inst);
+      if (skip.size >= inst.labels(0).length) continue; // todos os nomes já existem na cena: o elemento seria repetição
       // quais rótulos se movem (decide a ordem de colocação: os parados primeiro)
       const moving = new Set<string>();
       const probes = [0, 3.7, 9.1, 15.3];
       const base = inst.labels(0);
       base.forEach((l, i) => { if (probes.some((t) => { const q = inst.labels(t)[i]; return q && (Math.abs(q.x - l.x) > 3 || Math.abs(q.y - l.y) > 3); })) moving.add(String(l.key)); });
-      planned.push({ def, inst, rect: spot.rect, order: planned.length, moving });
+      planned.push({ def, inst, rect: spot.rect, order: planned.length, moving, skip });
       taken.push(spot.rect);
       used[kind]++;
     }
@@ -198,7 +209,7 @@ export function createSceneLife(input: DirectorInput): LifeScene {
     planned.forEach((pl, vi) => {
       pl.inst.labels(t).forEach((spec, li) => {
         const a = (spec.alpha ?? 1);
-        if (a <= 0.02) return;
+        if (a <= 0.02 || pl.skip.has(String(spec.key))) return;
         const nm = nameOf(String(spec.key));
         const w = (nm.main.length + nm.pt.length + 3) * fs * 0.56 + fs * 1.3;
         items.push({ id: `${vi}:${li}`, spec, vi, li, moving: pl.moving.has(String(spec.key)), main: nm.main, pt: nm.pt, w, h: fs * 1.6 });

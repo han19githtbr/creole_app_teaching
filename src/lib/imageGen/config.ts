@@ -14,6 +14,8 @@ export const IMAGE_GEN_DAILY_LIMIT = (() => {
 
 /** Nota mínima (0–10) da revisão automática para a imagem seguir para a fila de aprovação. */
 export const IMAGE_GEN_MIN_SCORE = 7;
+/** Nota mínima (0–10) de aderência da cena INTEIRA ao tema; abaixo disso a imagem não segue para a fila. */
+export const IMAGE_GEN_MIN_THEME_FIT = 7;
 /** Nota a partir da qual a aprovação automática (opcional, por pedido) é permitida. */
 export const IMAGE_GEN_AUTO_APPROVE_SCORE = 8.5;
 /** Máximo de imagens que um único pedido pode solicitar. */

@@ -195,6 +195,14 @@ Cada vídeo tem **sons característicos dos elementos e do ambiente**, todos sin
 - **Rótulos e setas maiores** (31 px no destaque em vez de 19 px) e mais legíveis no celular.
 - **Mais qualidade de codificação:** H.264 a 16 Mbps (stories) e 12 Mbps (feed), áudio AAC 192 kbps; o WhatsApp e o Instagram recomprimem o vídeo, então uma entrada de maior qualidade chega melhor ao final.
 
+### Fidelidade ao tema (imagens e elementos animados)
+
+Cada imagem deve ser inequivocamente do seu tema; nada deve "fugir do contexto". Auditoria feita no banco de 300 imagens (títulos e elementos de Cultura e Turismo, visual completo de Tecnologia, Natureza, Cultura, Vida no interior, Dança, Geografia, História, Cinema, Música e Lazeres, e o vocabulário dos 15 temas): estão coerentes. Os pontos que podiam fugir do tema e foram corrigidos:
+
+- **Imagens geradas por IA** (`src/lib/imageGen/prompts.ts`): o prompt de "vida" citava mar, barcos e remadores como exemplo para qualquer tema. Agora `THEME_SCENE_RULES` define, para cada tema, o contexto que pertence a ele, o tipo de movimento adequado e o que é proibido (ex.: História não pode ter carros, aviões ou eletrônicos; Natureza não pode ter prédios nem máquinas). Essas regras entram nos prompts de imagem e de SVG.
+- **Revisão automática** (`reviewPrompt` + `reviewImage` em `pipeline.ts`): além dos objetos, a IA revisora dá `theme_fit` (0 a 10, a cena inteira combina com o tema?) e lista `off_theme_items`. A imagem só segue para a fila de aprovação com `theme_fit >= 7` (`IMAGE_GEN_MIN_THEME_FIT` em `config.ts`) e no máximo 1 item fora do tema; o motivo aparece em "issues". Imagens já aprovadas antes não são reavaliadas.
+- **Elementos animados** (`PLAN` em `storySceneDirector.ts`): cada tema tem uma lista curta do que pode aparecer, e palavras-chave só reordenam dentro dela. Exemplos: História tem cavaleiro, aula e conversa (sem avião); Religião tem pombas e fiéis (sem balão ou piquenique); Natureza tem bichos silvestres, tartaruga, patos e peixes (sem gato doméstico, pessoas ou balão); Estoicismo tem aula/diálogo e pombas. Consequência: temas muito específicos (Dança, Música, Cinema, Gastronomia, Religião) recebem poucos ou nenhum elemento extra.
+
 ### Cenas Vivas, Mapa da Cena e Elementos Nomeados (`src/lib/storySceneDirector.ts`)
 
 Sobre cada imagem da história roda uma **camada de vida**: pequenos "filmes" animados (avião decolando e pousando, helicóptero, guitarrista, aula ao ar livre, peixes, patos, tartaruga...) cujos **nomes** aparecem em Kreyòl (ou Français) · Português. Tudo é função pura do tempo (`render(t)`), então o player e o vídeo exportado mostram exatamente o mesmo quadro.
@@ -1017,6 +1025,9 @@ O aluno envia uma resposta à legenda/pergunta de uma postagem. Ela fica **Em an
 - Estúdio de gravação no navegador com câmera e microfone, de até 10 minutos.
 - Fundo virtual estilo Google Meet: sem efeito, desfoque leve, desfoque, tema animado do estúdio ou ilustração do banco de imagens. A pessoa é recortada pelo MediaPipe Selfie Segmentation, cujos arquivos ficam em `public/mediapipe`.
 - O mesmo motor de fundo virtual é usado nas aulas ao vivo.
+- **Rosto nítido** (`src/lib/faceEnhancer.ts`, ligado por padrão; caixa "Rosto nítido e bem iluminado" no painel): cada quadro da câmera passa por um shader WebGL que (1) aplica máscara de nitidez só na luminância, com limiar para não realçar o ruído da webcam, (2) mede o brilho do centro da imagem (onde fica o rosto) ~2 vezes por segundo e clareia as sombras de forma suave quando a câmera está escura (nunca escurece) e (3) ajusta levemente a saturação. A imagem melhorada é a que entra na prévia, no fundo virtual e no vídeo gravado, então vale para a plataforma, para o download e para o que for publicado. Sem WebGL, o estúdio usa a câmera crua. O botão desliga a melhoria.
+- **Câmera por hardware** (`tuneCameraTrack` em `cameraEnhancer.ts`): sobe a resolução até Full HD quando a câmera permite e tenta foco, exposição e balanço de branco contínuos, nitidez em ~70% e leve compensação de exposição; cada ajuste é tentado separadamente (o que a câmera não suporta é ignorado).
+- **Gravação:** o canvas é gravado com `contentHint = "detail"` (o codificador prioriza nitidez) a 12 Mbps no modo Ultra. O formato preferido agora é **MP4/H.264** (aceito direto pelo Instagram e pelo Facebook); se o navegador não gravar MP4, cai para WebM. Baixar cópia e envio usam a extensão correspondente (`.mp4` ou `.webm`).
 - Publicação imediata ou agendada, likes e comentários.
 
 ### Gamificação

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
-  <title>Oficina tecnológica no campo - Teknoloji</title>
+  <title>Oficina tecnológica no campo - Technologie</title>
   <desc>Ghibli anime art: Oficina com computador, robô, drone e moinho de vento.</desc>
   
   <defs>
@@ -361,9 +361,9 @@
       <rect x="12" y="10" width="106" height="82" rx="8" fill="#1e2822" stroke="#4a554d" stroke-width="2"/>
       <!-- Glowing CRT Display with code -->
       <rect x="16" y="14" width="98" height="74" rx="6" fill="#0f1f17"/>
-      <text x="24" y="36" font-family="monospace" font-size="11" font-weight="bold" fill="#34d399">> FRANÇAIS v2.0</text>
-      <text x="24" y="52" font-family="monospace" font-size="10" fill="#10b981">> Technologie...</text>
-      <text x="24" y="68" font-family="monospace" font-size="9" fill="#059669">> Apprendre plus vite!</text>
+      <text x="24" y="36" font-family="monospace" font-size="11" font-weight="bold" fill="#34d399">FRANÇAIS v2.0</text>
+      <text x="24" y="52" font-family="monospace" font-size="10" fill="#10b981">Technologie...</text>
+      <text x="24" y="68" font-family="monospace" font-size="9" fill="#059669">Apprendre plus vite !</text>
       <rect x="24" y="72" width="7" height="9" fill="#34d399">
         <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
       </rect>

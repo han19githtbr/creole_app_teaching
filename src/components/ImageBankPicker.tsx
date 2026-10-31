@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Check, Eye, Search, Sparkles, X } from "lucide-react";
-import { IMAGE_BANK, IMAGE_THEMES, getElementLabel, getThemeVocab, type BankImage } from "@/lib/imageBank";
+import { IMAGE_BANK, IMAGE_THEMES, getElementLabel, getLanguageImageSrc, getThemeVocab, type BankImage } from "@/lib/imageBank";
 import type { AppLanguage } from "@/lib/languageShared";
 import type { ImageSection } from "@/lib/imageGen/config";
 import { cn } from "@/lib/utils";
@@ -166,7 +166,7 @@ export function ImageBankPicker({
               <div className="relative aspect-[3/2] w-full overflow-hidden bg-[var(--surface-2)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={img.src}
+                  src={getLanguageImageSrc(img.src, language)}
                   alt={img.title}
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -287,7 +287,7 @@ export function ImageBankPicker({
               <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-black/10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={previewImage.src}
+                  src={getLanguageImageSrc(previewImage.src, language)}
                   alt={previewImage.title}
                   className="max-h-[46vh] w-full object-contain bg-black/20"
                 />

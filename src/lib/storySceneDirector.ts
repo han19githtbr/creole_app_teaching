@@ -12,6 +12,9 @@ import {
 } from "@/lib/storySceneMap";
 import { NAMES, SKY_DEFS, STRIP_DEFS, type LabelSpec, type Name, type VignetteDef, type VignetteInst } from "@/lib/storyVignettes";
 import { GROUND_DEFS, WATER_DEFS } from "@/lib/storyVignettesLand";
+import { buildWindowViews, getSceneWindows } from "@/lib/storyWindowLife";
+import { buildWeather } from "@/lib/storyWeatherLife";
+import { CABIN_DEFS, NIGHT_GROUND_DEFS, NIGHT_SKY_DEFS } from "@/lib/storyVignettesExtra";
 
 const THEME_KEYS: Array<[RegExp, string]> = [
   [/tecnolog/, "tecnologia"], [/natureza/, "natureza"], [/cultura/, "cultura"], [/turismo/, "turismo"],
@@ -20,17 +23,17 @@ const THEME_KEYS: Array<[RegExp, string]> = [
   [/gastronom/, "gastronomia"], [/idioma/, "idiomas"],
 ];
 
-const ALL: Record<string, VignetteDef> = Object.fromEntries([...SKY_DEFS, ...STRIP_DEFS, ...GROUND_DEFS, ...WATER_DEFS].map((d) => [d.id, d]));
+const ALL: Record<string, VignetteDef> = Object.fromEntries([...SKY_DEFS, ...STRIP_DEFS, ...GROUND_DEFS, ...WATER_DEFS, ...NIGHT_SKY_DEFS, ...NIGHT_GROUND_DEFS, ...CABIN_DEFS].map((d) => [d.id, d]));
 
 /** o que cada tema costuma ter, em ordem de preferência */
 const PLAN: Record<string, { ground: string[]; sky: string[]; water: string[]; strip: string[] }> = {
   tecnologia: { ground: ["robots", "classroom", "cyclist", "talkers", "cat"], sky: ["helicopter", "airplane", "flock"], water: ["fishSchool"], strip: ["airport"] },
   natureza: { ground: ["critters", "turtleLand", "cat", "picnic", "couple"], sky: ["flock", "balloon"], water: ["ducks", "fishSchool", "turtleSwim"], strip: [] },
   cultura: { ground: ["drummer", "dancers", "guitarist", "picnic", "talkers"], sky: ["flock", "balloon"], water: ["ducks"], strip: [] },
-  turismo: { ground: ["couple", "picnic", "cyclist", "turtleLand", "guitarist"], sky: ["balloon", "airplane", "flock"], water: ["sailing", "dolphin", "fishSchool", "turtleSwim"], strip: ["airport"] },
+  turismo: { ground: ["couple", "picnic", "cyclist", "turtleLand", "guitarist"], sky: ["balloon", "airplane", "cabin", "flock"], water: ["sailing", "dolphin", "fishSchool", "turtleSwim"], strip: ["airport"] },
   interior: { ground: ["farm", "petsPlay", "cat", "cyclist", "picnic"], sky: ["flock", "balloon"], water: ["ducks", "fishSchool"], strip: [] },
   danca: { ground: ["dancers", "guitarist", "drummer", "picnic", "cat"], sky: ["flock"], water: [], strip: [] },
-  geografia: { ground: ["classroom", "cyclist", "picnic", "talkers", "cat"], sky: ["airplane", "balloon", "helicopter", "flock"], water: ["sailing", "dolphin", "fishSchool"], strip: ["airport"] },
+  geografia: { ground: ["classroom", "cyclist", "picnic", "talkers", "cat"], sky: ["airplane", "cabin", "balloon", "helicopter", "flock"], water: ["sailing", "dolphin", "fishSchool"], strip: ["airport"] },
   historia: { ground: ["rider", "classroom", "talkers", "cat"], sky: ["flock", "airplane"], water: ["sailing", "fishSchool"], strip: [] },
   cinema: { ground: ["talkers", "cat", "couple"], sky: ["airplane", "helicopter"], water: [], strip: [] },
   musica: { ground: ["guitarist", "drummer", "dancers", "cat"], sky: ["flock", "balloon"], water: [], strip: [] },
@@ -41,9 +44,15 @@ const PLAN: Record<string, { ground: string[]; sky: string[]; water: string[]; s
   idiomas: { ground: [], sky: [], water: [], strip: [] },
 };
 
+/** chance de a história ganhar o ciclo de chuva + interior da casa + arco-íris (cenas externas de dia) */
+const WEATHER_CHANCE: Record<string, number> = {
+  natureza: 0.9, lazeres: 0.8, interior: 0.8, cultura: 0.6, turismo: 0.6, geografia: 0.6, religiao: 0.5, historia: 0.5,
+  estoicismo: 0.5, musica: 0.4, danca: 0.4, tecnologia: 0.25, cinema: 0.3, gastronomia: 0.3,
+};
+
 /** palavras do texto da cena que puxam um elemento para o começo da fila */
 const BOOST: Array<[RegExp, string]> = [
-  [/aviao|aeroporto|voo|avyon|avion/, "airport"], [/helicopt|elikopte/, "helicopter"], [/violao|guitarra|gita|guitare/, "guitarist"],
+  [/aviao|aeroporto|voo|avyon|avion/, "airport"], [/aviao|voo|avyon|avion|passageir/, "cabin"], [/helicopt|elikopte/, "helicopter"], [/violao|guitarra|gita|guitare/, "guitarist"],
   [/tambor|tanbou|tambour/, "drummer"], [/professor|aula|escola|pwofese|ecole|quadro/, "classroom"], [/piquenique|pikniks/, "picnic"],
   [/vaca|galinha|fazenda|vach|poul|ferme/, "farm"], [/bicicleta|bisiklet|velo/, "cyclist"], [/cavalo|chwal|cheval/, "rider"],
   [/barco|veleiro|bato|voilier|navio/, "sailing"], [/golfinho|dofen|dauphin/, "dolphin"], [/tartaruga|toti|tortue/, "turtleLand"],
@@ -68,10 +77,12 @@ export function createSceneLife(input: DirectorInput): LifeScene {
   const themeNorm = norm(input.theme ?? "");
   const idBase = norm(input.sceneId).replace(/\.(svg|png|webp|jpg|jpeg)$/g, "").split("/").pop() ?? "";
   const theme = THEME_KEYS.find(([re]) => re.test(themeNorm))?.[1] ?? THEME_KEYS.find(([re]) => re.test(idBase))?.[1] ?? "natureza";
-  if (theme === "idiomas" || idBase.startsWith("idiomas")) return { actors: [], render: () => "" };
-
   const grid: SceneGrid = getSceneGrid(input.sceneId) ?? gridFromZones(input.zones ?? null);
-  if (grid.indoor) return { actors: [], render: () => "" };
+  // Cena interna (cozinha, sala de aula, cinema...): nada de chão aberto, mas as JANELAS ganham vida
+  // (pássaros, gente passando, noite com coruja e morcegos). Sem janela desenhada, a cena fica como está.
+  const indoor = grid.indoor || theme === "idiomas" || idBase.startsWith("idiomas");
+  const sceneWindows = indoor ? getSceneWindows(input.sceneId) : null;
+  if (indoor && !sceneWindows) return { actors: [], render: () => "" };
   const night = Boolean(grid.night);
   const lang = input.lang ?? "kreyol";
   const r = rngFrom(`${input.sceneId}|${theme}|vida`);
@@ -151,9 +162,22 @@ export function createSceneLife(input: DirectorInput): LifeScene {
     return null;
   };
 
-  const caps = { ground: 4, sky: night ? 1 : 3, water: 3, strip: 1 };
+  if (sceneWindows) {
+    const winNight = night || rngFrom(`${input.sceneId}|noite`)() < 0.4;
+    const views = buildWindowViews(sceneWindows, { sceneId: input.sceneId, night: winNight });
+    views.forEach((inst, k) => {
+      const w = sceneWindows.w[k].r;
+      planned.push({ def: { id: "window", need: "sky", w: w[2] - w[0], h: w[3] - w[1], build: () => inst }, inst, rect: { x0: w[0], y0: w[1], x1: w[2], y1: w[3] }, order: planned.length, moving: new Set<string>() });
+      taken.push({ x0: w[0], y0: w[1], x1: w[2], y1: w[3] });
+    });
+  }
+  const caps = indoor ? { ground: 0, sky: 0, water: 0, strip: 0 } : { ground: 4, sky: night ? 2 : 3, water: 3, strip: 1 };
   const used = { ground: 0, sky: 0, water: 0, strip: 0 };
-  const plan = PLAN[theme] ?? PLAN.natureza;
+  const basePlan = PLAN[theme] ?? PLAN.natureza;
+  // de noite: morcegos e coruja no céu, vaga-lumes (e grilos) no chão — nada de bando de pássaros ou balão
+  const plan = night
+    ? { ...basePlan, sky: ["bats", "owlFly", ...basePlan.sky.filter((id) => id !== "flock" && id !== "balloon")], ground: ["fireflies", ...basePlan.ground] }
+    : basePlan;
   const boosted = BOOST.filter(([re]) => re.test(text)).map(([, id]) => id);
   const queue = (list: string[], kind: keyof typeof caps) => {
     const mine = boosted.filter((id) => ALL[id]?.need === (kind === "strip" ? "strip" : kind));
@@ -184,6 +208,23 @@ export function createSceneLife(input: DirectorInput): LifeScene {
       used[kind]++;
     }
   }
+  // clima: chuva, guarda-chuvas, interior da casa e arco-íris (só em cena externa, de dia, com céu aberto)
+  const skyShare = rectShare(grid, { x0: 0, y0: 0, x1: LIFE_W, y1: LIFE_H }, [SKY, FAR]);
+  if (!indoor && !night && skyShare > 0.12 && rngFrom(`${input.sceneId}|clima-on`)() < (WEATHER_CHANCE[theme] ?? 0.5)) {
+    const inst = buildWeather({ sceneId: input.sceneId, gt });
+    planned.push({ def: { id: "weather", need: "sky", w: 0, h: 0, build: () => inst }, inst, rect: { x0: -9, y0: -9, x1: -8, y1: -8 }, order: planned.length, moving: new Set<string>() });
+  }
+  // rótulos que mudam de lugar ao longo do tempo (janela/clima): os parados são colocados primeiro
+  for (const pl of planned) {
+    if (pl.def.id !== "window" && pl.def.id !== "weather") continue;
+    const samples = Array.from({ length: 24 }, (_, k) => pl.inst.labels(k * 2.1));
+    const first = new Map<string, { x: number; y: number }>();
+    for (const ls of samples) for (const l of ls) {
+      const k0 = String(l.key), prev = first.get(k0);
+      if (!prev) first.set(k0, { x: l.x, y: l.y });
+      else if (Math.abs(prev.x - l.x) > 3 || Math.abs(prev.y - l.y) > 3) pl.moving.add(k0);
+    }
+  }
   planned.sort((a, b) => a.inst.z - b.inst.z);
 
   const nameOf = (key: string): { main: string; pt: string } => {
@@ -191,12 +232,16 @@ export function createSceneLife(input: DirectorInput): LifeScene {
     return n ? { main: lang === "fr" ? n.f : n.k, pt: n.p } : { main: key, pt: "" };
   };
 
+  const cover = (t: number) => planned.reduce((m, p) => Math.max(m, p.inst.cover?.(t) ?? 0), 0);
+
   /* ---- rótulos: pílula acima do objeto, ligada por fio com seta; sem encavalar ---- */
   const labelLayer = (t: number, fs: number): string => {
     type Item = { id: string; spec: LabelSpec; vi: number; li: number; moving: boolean; main: string; pt: string; w: number; h: number };
     const items: Item[] = [];
     planned.forEach((pl, vi) => {
-      pl.inst.labels(t).forEach((spec, li) => {
+      const cvNow = pl.inst.cover ? 0 : cover(t);
+      pl.inst.labels(t).forEach((rawSpec, li) => {
+        const spec: LabelSpec = cvNow > 0 ? { ...rawSpec, alpha: (rawSpec.alpha ?? 1) * (1 - cvNow) } : rawSpec;
         const a = (spec.alpha ?? 1);
         if (a <= 0.02) return;
         const nm = nameOf(String(spec.key));
@@ -247,6 +292,8 @@ export function createSceneLife(input: DirectorInput): LifeScene {
   const actorNames = planned.map((p) => p.inst.id);
   return {
     actors: actorNames,
+    soundCues: (duration: number) => planned.flatMap((p) => p.inst.cues?.(duration) ?? []),
+    cover,
     render: (t: number, opts?: RenderOpts) => {
       let out = "";
       for (const pl of planned) {

@@ -4,6 +4,7 @@ import generatedImages from "../../scripts/ghibli/manifest.json";
 import measuredAnchors from "./storyElementAnchors.json";
 import measuredExtras from "./storyElementExtras.json";
 import themeElementDetails from "./themeElementDetails.json";
+import frenchImageIds from "./frenchImageIds.json";
 import type { AppLanguage } from "./languageShared";
 import { KREYOL_TO_FR, kreyolToFrench, themeToFrench } from "./frenchVocabulary";
 
@@ -762,6 +763,8 @@ const EXTRA_DETAIL_NAMES: Record<string, BankElement> = {
   areia: { kreyol: "sab", fr: "sable", pt: "areia" },
   piso: { kreyol: "plancher", fr: "sol", pt: "piso" },
   agua: { kreyol: "dlo", fr: "eau", pt: "água" },
+  janela: { kreyol: "fenèt", fr: "fenêtre", pt: "janela" },
+  lousa: { kreyol: "tablo", fr: "tableau noir", pt: "lousa/quadro-negro" },
 };
 
 /**
@@ -800,23 +803,8 @@ function measuredStoryLayout(
 }
 
 
-export const FRENCH_IMAGE_IDS = new Set([
-  "cinema",
-  "gastronomia-02",
-  "gastronomia-10",
-  "gastronomia-15",
-  "gastronomia-20",
-  "idiomas-03",
-  "idiomas-04",
-  "idiomas-09",
-  "idiomas-13",
-  "idiomas-14",
-  "idiomas-16",
-  "idiomas-17",
-  "idiomas-20",
-  "tecnologia",
-  "turismo-icarai",
-]);
+/** Imagens com versão em francês em /ghibli/fr (gerada por scripts/generate-french-svgs.mjs). */
+export const FRENCH_IMAGE_IDS = new Set<string>(frenchImageIds);
 
 export function getLanguageImageSrc(src: string | null | undefined, language: AppLanguage = "kreyol"): string {
   if (!src) return "";
@@ -896,7 +884,17 @@ export function getBankImage(idOrSrc: string | null | undefined, language?: AppL
     return { ...base, src: base.srcFr };
   }
   return base;
-};
+}
+
+export function getStoryLabelLayout(idOrSrc: string | null | undefined): StoryLabelLayout {
+  const bankImage = getBankImage(idOrSrc);
+  return bankImage?.labelLayout ?? {
+    top: 12,
+    left: 50,
+    width: 78,
+    align: "center",
+    anchors: [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }],
+  };
 }
 
 /** URLs de imagem aceitas em postagens: banco Ghibli (/ghibli/*), imagens geradas por IA (/gen/*) ou upload Vercel Blob. */

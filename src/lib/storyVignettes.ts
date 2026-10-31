@@ -52,6 +52,27 @@ export const NAMES: Record<string, Name> = {
   casal: { k: "koup", f: "couple", p: "casal" },
   conversa: { k: "moun k ap pale", f: "personnes qui parlent", p: "pessoas conversando" },
   borboletas: { k: "papiyon", f: "papillons", p: "borboletas" },
+  // vida vista pela janela (cenas internas) e fauna da noite
+  passante: { k: "moun k ap pase", f: "passant", p: "pessoa passando" },
+  coruja: { k: "koukou", f: "chouette", p: "coruja" },
+  morcegos: { k: "chòvsouri", f: "chauves-souris", p: "morcegos" },
+  vagalumes: { k: "mouch limyè", f: "lucioles", p: "vaga-lumes" },
+  passarosNoite: { k: "zwazo nwit", f: "oiseaux de nuit", p: "pássaros noturnos" },
+  // chuva e interior da casa
+  chuva: { k: "lapli", f: "pluie", p: "chuva" },
+  guardaChuva: { k: "parapli", f: "parapluie", p: "guarda-chuva" },
+  arcoIris: { k: "lakansyèl", f: "arc-en-ciel", p: "arco-íris" },
+  casa: { k: "kay", f: "maison", p: "casa" },
+  janela: { k: "fenèt", f: "fenêtre", p: "janela" },
+  cama: { k: "kabann", f: "lit", p: "cama" },
+  porta: { k: "pòt", f: "porte", p: "porta" },
+  mesa: { k: "tab", f: "table", p: "mesa" },
+  abajur: { k: "lanp", f: "lampe", p: "abajur" },
+  // cabine do avião
+  comissaria: { k: "hotès avyon", f: "hôtesse de l'air", p: "comissária de bordo" },
+  poltrona: { k: "chèz avyon", f: "siège", p: "poltrona" },
+  carrinhoBordo: { k: "charyo", f: "chariot de service", p: "carrinho de bordo" },
+  janelinha: { k: "fenèt avyon", f: "hublot", p: "janelinha do avião" },
 };
 
 /* ------------------------------------------------------------------ tipos */
@@ -63,11 +84,16 @@ export interface LabelSpec {
   /** 0..1: se o objeto some (ex.: avião fora de cena) o rótulo some junto */
   alpha?: number;
 }
+export interface SoundCue { t: number; kind: string; gain: number }
 export interface VignetteInst {
   id: string;
   z: number;
   draw: (t: number) => string;
   labels: (t: number) => LabelSpec[];
+  /** sons que acompanham a vinheta (segundos da narração); o mesmo cálculo do desenho garante sincronia */
+  cues?: (duration: number) => SoundCue[];
+  /** 0..1: quanto a vinheta cobre a imagem da lição (o player esmaece os rótulos da lição enquanto > 0) */
+  cover?: (t: number) => number;
 }
 export interface Placement { x: number; y: number; s: number; w: number; h: number; dir: 1 | -1; seed: string; night: boolean; gt: number }
 export interface VignetteDef {

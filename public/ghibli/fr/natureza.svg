@@ -1,0 +1,682 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <title>Árvore ancestral e prado florido - Nature</title>
+  <desc>Ghibli anime art: Árvore grandiosa, prado com flores, borboletas e pássaro.</desc>
+  
+  <defs>
+    <!-- Paper watercolor texture filter -->
+    <filter id="ghibliPaper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" seed="42"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Soft diffuse drop shadow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#141e28" flood-opacity="0.28"/>
+    </filter>
+
+    <style>
+      /* Animações realistas dos elementos vivos da imagem (Lanati / Natureza) */
+      .butterfly-monarch-flight {
+        animation: monarchFlight 7.4s ease-in-out infinite;
+      }
+      @keyframes monarchFlight {
+        0% { transform: translate(560px, 520px) scale(1.1) rotate(0deg); }
+        15% { transform: translate(595px, 465px) scale(1.15) rotate(14deg); }
+        30% { transform: translate(640px, 490px) scale(1.08) rotate(-6deg); }
+        48% { transform: translate(580px, 420px) scale(1.18) rotate(-16deg); }
+        65% { transform: translate(515px, 455px) scale(1.05) rotate(12deg); }
+        82% { transform: translate(535px, 505px) scale(1.12) rotate(-5deg); }
+        100% { transform: translate(560px, 520px) scale(1.1) rotate(0deg); }
+      }
+
+      .butterfly-monarch .wing-left {
+        transform-origin: 0px 0px;
+        animation: butterflyWingFlapLeft 0.18s ease-in-out infinite alternate;
+      }
+      .butterfly-monarch .wing-right {
+        transform-origin: 0px 0px;
+        animation: butterflyWingFlapRight 0.18s ease-in-out infinite alternate;
+      }
+
+      .butterfly-morpho-flight {
+        animation: morphoFlight 6.2s ease-in-out infinite;
+      }
+      @keyframes morphoFlight {
+        0% { transform: translate(740px, 460px) scale(0.9) rotate(0deg); }
+        20% { transform: translate(705px, 405px) scale(0.94) rotate(-14deg); }
+        40% { transform: translate(650px, 435px) scale(0.88) rotate(8deg); }
+        60% { transform: translate(695px, 495px) scale(0.92) rotate(16deg); }
+        80% { transform: translate(765px, 475px) scale(0.9) rotate(-10deg); }
+        100% { transform: translate(740px, 460px) scale(0.9) rotate(0deg); }
+      }
+
+      .butterfly-morpho .wing-left {
+        transform-origin: 0px 0px;
+        animation: butterflyWingFlapLeft 0.16s ease-in-out infinite alternate;
+      }
+      .butterfly-morpho .wing-right {
+        transform-origin: 0px 0px;
+        animation: butterflyWingFlapRight 0.16s ease-in-out infinite alternate;
+      }
+
+      @keyframes butterflyWingFlapLeft {
+        0% { transform: scaleX(1) skewY(0deg); }
+        100% { transform: scaleX(0.12) skewY(-10deg); }
+      }
+      @keyframes butterflyWingFlapRight {
+        0% { transform: scaleX(1) skewY(0deg); }
+        100% { transform: scaleX(0.12) skewY(10deg); }
+      }
+
+      /* Pássaro no galho */
+      .perched-bird {
+        transform-origin: 0px -10px;
+        animation: birdBreath 4.2s ease-in-out infinite;
+      }
+      .perched-bird .bird-head {
+        transform-origin: 16px -24px;
+        animation: birdHeadBob 3.6s ease-in-out infinite;
+      }
+      .perched-bird .bird-tail {
+        transform-origin: -15px -6px;
+        animation: birdTailFlick 2.8s ease-in-out infinite;
+      }
+
+      @keyframes birdBreath {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        50% { transform: scale(1.03) rotate(-1deg); }
+      }
+      @keyframes birdHeadBob {
+        0%, 100% { transform: rotate(0deg); }
+        15% { transform: rotate(-10deg); }
+        30% { transform: rotate(6deg); }
+        55% { transform: rotate(-12deg); }
+        75% { transform: rotate(0deg); }
+      }
+      @keyframes birdTailFlick {
+        0%, 100% { transform: rotate(0deg); }
+        18% { transform: rotate(10deg); }
+        35% { transform: rotate(-5deg); }
+        60% { transform: rotate(12deg); }
+        78% { transform: rotate(0deg); }
+      }
+
+      /* Flores balançando com a brisa */
+      .flower-sway-1 {
+        transform-origin: 0px 20px;
+        animation: flowerSway1 3.8s ease-in-out infinite alternate;
+      }
+      .flower-sway-2 {
+        transform-origin: 0px 20px;
+        animation: flowerSway2 4.6s ease-in-out infinite alternate;
+      }
+      .flower-sway-daisies {
+        transform-origin: 0px 20px;
+        animation: flowerSway3 3.2s ease-in-out infinite alternate;
+      }
+
+      @keyframes flowerSway1 {
+        0% { transform: rotate(-4deg); }
+        100% { transform: rotate(4.5deg); }
+      }
+      @keyframes flowerSway2 {
+        0% { transform: rotate(4deg); }
+        100% { transform: rotate(-3.5deg); }
+      }
+      @keyframes flowerSway3 {
+        0% { transform: rotate(-3deg); }
+        100% { transform: rotate(3deg); }
+      }
+
+      /* Copa da árvore balançando suavemente */
+      .tree-canopy {
+        transform-origin: 0px -550px;
+        animation: treeBreeze 6.5s ease-in-out infinite alternate;
+      }
+      @keyframes treeBreeze {
+        0% { transform: rotate(-0.8deg) scaleY(1); }
+        50% { transform: rotate(0.6deg) scaleY(1.015); }
+        100% { transform: rotate(-0.4deg) scaleY(0.995); }
+      }
+
+      /* Animais brincando/caçando no prado: Coelho veloz e Raposa em perseguição */
+      .wildlife-chase {
+        animation: chaseCycle 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+      @keyframes chaseCycle {
+        0% { transform: translateX(-160px); opacity: 0; }
+        5% { opacity: 1; }
+        45% { transform: translateX(520px); opacity: 1; }
+        50% { transform: translateX(600px); opacity: 0; }
+        51% { transform: translateX(-160px); opacity: 0; }
+        55% { opacity: 1; }
+        95% { transform: translateX(520px); opacity: 1; }
+        100% { transform: translateX(600px); opacity: 0; }
+      }
+
+      .rabbit-living {
+        animation: rabbitHop 0.65s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+        transform-origin: 30px 20px;
+      }
+      @keyframes rabbitHop {
+        0%, 100% { transform: translateY(0) scaleY(0.92) scaleX(1.05); }
+        40% { transform: translateY(-26px) scaleY(1.08) scaleX(0.95) rotate(-6deg); }
+        70% { transform: translateY(-8px) scaleY(1) rotate(4deg); }
+      }
+
+      .rabbit-ears {
+        transform-origin: 10px 0px;
+        animation: rabbitEarsBob 0.65s ease-in-out infinite alternate;
+      }
+      @keyframes rabbitEarsBob {
+        0% { transform: rotate(-8deg); }
+        100% { transform: rotate(12deg); }
+      }
+
+      .fox-living {
+        animation: foxBound 0.65s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+        animation-delay: 0.12s;
+        transform-origin: 40px 25px;
+      }
+      @keyframes foxBound {
+        0%, 100% { transform: translateY(0) scaleY(0.9) scaleX(1.06); }
+        42% { transform: translateY(-24px) scaleY(1.06) scaleX(0.96) rotate(-8deg); }
+        72% { transform: translateY(-6px) scaleY(1) rotate(5deg); }
+      }
+
+      .fox-tail {
+        transform-origin: -10px 5px;
+        animation: foxTailWave 0.65s ease-in-out infinite alternate;
+      }
+      @keyframes foxTailWave {
+        0% { transform: rotate(-20deg); }
+        100% { transform: rotate(16deg); }
+      }
+
+      /* Peixe saltando no rio cristalino */
+      .river-fish-leap {
+        animation: fishLeap 6.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        transform-origin: 0px 0px;
+      }
+      @keyframes fishLeap {
+        0%, 75% { transform: translate(755px, 630px) scale(0) rotate(-40deg); opacity: 0; }
+        78% { transform: translate(755px, 620px) scale(0.8) rotate(-35deg); opacity: 1; }
+        84% { transform: translate(770px, 575px) scale(1) rotate(0deg); opacity: 1; }
+        90% { transform: translate(788px, 625px) scale(0.85) rotate(45deg); opacity: 1; }
+        93%, 100% { transform: translate(792px, 640px) scale(0) rotate(50deg); opacity: 0; }
+      }
+
+      /* Esporos / Pólen cintilante e vaga-lumes */
+      .pollen-particle-1 {
+        animation: pollenFloat1 5.4s ease-in-out infinite alternate;
+      }
+      .pollen-particle-2 {
+        animation: pollenFloat2 6.8s ease-in-out infinite alternate;
+      }
+      .pollen-particle-3 {
+        animation: pollenFloat3 4.8s ease-in-out infinite alternate;
+      }
+      @keyframes pollenFloat1 {
+        0% { transform: translate(0, 0); opacity: 0.35; }
+        50% { transform: translate(25px, -35px); opacity: 0.85; }
+        100% { transform: translate(-15px, -65px); opacity: 0.2; }
+      }
+      @keyframes pollenFloat2 {
+        0% { transform: translate(0, 0); opacity: 0.2; }
+        50% { transform: translate(-30px, -45px); opacity: 0.8; }
+        100% { transform: translate(20px, -75px); opacity: 0.3; }
+      }
+      @keyframes pollenFloat3 {
+        0% { transform: translate(0, 0); opacity: 0.4; }
+        100% { transform: translate(35px, -50px); opacity: 0.9; }
+      }
+    </style>
+
+    <!-- Sky Gradients -->
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#236ca7"/>
+      <stop offset="35%" stop-color="#5fa3d6"/>
+      <stop offset="70%" stop-color="#b8e1f2"/>
+      <stop offset="100%" stop-color="#fdf3dc"/>
+    </linearGradient>
+
+    <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#31396b"/>
+      <stop offset="35%" stop-color="#73507b"/>
+      <stop offset="65%" stop-color="#cb6b5c"/>
+      <stop offset="85%" stop-color="#f29e5a"/>
+      <stop offset="100%" stop-color="#fedaa2"/>
+    </linearGradient>
+
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#121832"/>
+      <stop offset="40%" stop-color="#262f56"/>
+      <stop offset="70%" stop-color="#4e3d64"/>
+      <stop offset="90%" stop-color="#915264"/>
+      <stop offset="100%" stop-color="#d6846c"/>
+    </linearGradient>
+
+    <!-- Cloud Gradients -->
+    <linearGradient id="cloudBodyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fcf8f0"/>
+      <stop offset="80%" stop-color="#d9e4ec"/>
+      <stop offset="100%" stop-color="#b6c8d7"/>
+    </linearGradient>
+
+    <linearGradient id="cloudBodySunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5e6"/>
+      <stop offset="40%" stop-color="#fbd0a5"/>
+      <stop offset="75%" stop-color="#cf8ca0"/>
+      <stop offset="100%" stop-color="#7e607c"/>
+    </linearGradient>
+
+    <!-- Sun / Glow Gradients -->
+    <radialGradient id="sunGlowDay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffced" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#ffebaa" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#ffd573" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffd573" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sunGlowSunset" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffb753" stop-opacity="0.9"/>
+      <stop offset="65%" stop-color="#f46e45" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#e04a43" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Hills / Mountains Gradients -->
+    <linearGradient id="hillDistant" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e94a8"/>
+      <stop offset="100%" stop-color="#93b9c7"/>
+    </linearGradient>
+
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c4f"/>
+      <stop offset="50%" stop-color="#3c6a40"/>
+      <stop offset="100%" stop-color="#2d5231"/>
+    </linearGradient>
+
+    <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#699e4c"/>
+      <stop offset="60%" stop-color="#4c7e33"/>
+      <stop offset="100%" stop-color="#2f5720"/>
+    </linearGradient>
+
+    <!-- Materials: Wood, Brass, Stone, Water -->
+    <linearGradient id="woodTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9c6d48"/>
+      <stop offset="50%" stop-color="#784f30"/>
+      <stop offset="100%" stop-color="#55341c"/>
+    </linearGradient>
+
+    <linearGradient id="brassTone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#d9a536"/>
+      <stop offset="70%" stop-color="#996c14"/>
+      <stop offset="100%" stop-color="#5e4007"/>
+    </linearGradient>
+
+    <linearGradient id="stoneTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c5beb3"/>
+      <stop offset="60%" stop-color="#999184"/>
+      <stop offset="100%" stop-color="#6c6458"/>
+    </linearGradient>
+
+    <linearGradient id="waterTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#47a5be"/>
+      <stop offset="50%" stop-color="#2a7796"/>
+      <stop offset="100%" stop-color="#144d6a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky -->
+  <rect width="1200" height="800" fill="url(#skyDay)" filter="url(#ghibliPaper)" />
+  
+  <!-- Sun & Volumetric Clouds -->
+  
+  <g>
+    <circle cx="950" cy="150" r="182" fill="url(#sunGlowDay)" />
+    <circle cx="950" cy="150" r="52" fill="#fffded" />
+    <!-- Subtle sun rays -->
+    <polygon points="950,150 650,800 830,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="950,150 1000,800 1190,800" fill="#fffbe6" opacity="0.08" />
+    <polygon points="950,150 1310,800 1510,800" fill="#fffbe6" opacity="0.06" />
+  </g>
+  
+  <g transform="translate(220, 160) scale(1.05)" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+  
+  <g transform="translate(760, 180) scale(0.9)" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+  
+  <g transform="translate(1060, 110) scale(0.75)" opacity="0.95">
+    <!-- Cloud puff cluster with painterly soft overlapping ellipses -->
+    <path d="M-180,40 
+      C-200,10 -180,-30 -140,-40 
+      C-150,-80 -100,-110 -50,-100 
+      C-30,-150 40,-160 80,-130 
+      C120,-160 180,-140 200,-90 
+      C240,-80 260,-40 240,10 
+      C270,40 250,90 200,95 
+      L-150,95 
+      C-190,90 -210,60 -180,40 Z" 
+      fill="url(#cloudBodyDay)" filter="url(#dropShadow)" />
+    <!-- Bright inner highlights (Ghibli fluff) -->
+    <ellipse cx="60" cy="-110" rx="45" ry="32" fill="#ffffff" opacity="0.55" />
+    <ellipse cx="-20" cy="-80" rx="55" ry="38" fill="#ffffff" opacity="0.45" />
+    <ellipse cx="150" cy="-70" rx="40" ry="28" fill="#ffffff" opacity="0.5" />
+    <ellipse cx="-110" cy="-25" rx="35" ry="22" fill="#ffffff" opacity="0.35" />
+  </g>
+
+  <!-- Distant Blue Ridge Mountains -->
+  <path d="M-50,480 Q240,360 520,440 T1150,390 Q1220,410 1250,440 L1250,800 L-50,800 Z" fill="url(#hillDistant)" opacity="0.6"/>
+
+  <!-- Mid Forest Hills -->
+  <path d="M-30,550 Q280,480 600,530 T1250,510 L1250,800 L-30,800 Z" fill="url(#hillMid)"/>
+
+  <!-- Sparkling River curving through meadow -->
+  <path d="M720,530 Q680,600 780,680 T880,800 L1020,800 Q920,680 840,600 T860,530 Z" fill="url(#waterTone)" opacity="0.85"/>
+  <path d="M740,550 Q710,610 800,690" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6"/>
+
+  <!-- PWASO (Peixe Truta Saltando da Água Cristalina) -->
+  <g class="river-fish-leap" filter="url(#dropShadow)">
+    <g transform="scale(0.85)">
+      <!-- Fish Body -->
+      <path d="M-22,0 C-14,-10 14,-10 24,0 C14,10 -14,10 -22,0 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
+      <ellipse cx="-4" cy="-2" rx="10" ry="5" fill="#bae6fd" opacity="0.6"/>
+      <!-- Tail fin -->
+      <polygon points="-22,0 -34,-10 -30,0 -34,10" fill="#0284c7"/>
+      <!-- Dorsal fin -->
+      <polygon points="-4,-7 4,-14 6,-7" fill="#0284c7"/>
+      <!-- Eye -->
+      <circle cx="16" cy="-2" r="2.5" fill="#ffffff"/>
+      <circle cx="17" cy="-2" r="1.2" fill="#0f172a"/>
+      <!-- Water splash droplets -->
+      <circle cx="-16" cy="14" r="2" fill="#e0f2fe" opacity="0.8"/>
+      <circle cx="2" cy="18" r="2.5" fill="#e0f2fe" opacity="0.8"/>
+      <circle cx="18" cy="12" r="1.8" fill="#e0f2fe" opacity="0.8"/>
+    </g>
+  </g>
+
+  <!-- PYEBWA (Árvore Ancestral Ghibli Colossal) on the left -->
+  <g transform="translate(190, 800)" filter="url(#dropShadow)">
+    <!-- Massive Gnarled Roots and Trunk -->
+    <path d="M-130,0 
+      C-110,-120 -150,-240 -120,-380 
+      C-100,-460 -140,-540 -70,-620 
+      C-40,-650 30,-640 60,-590 
+      C120,-500 80,-420 110,-320 
+      C140,-200 170,-100 210,0 Z" 
+      fill="url(#woodTone)" stroke="#382110" stroke-width="4"/>
+    <!-- Bark Texture Grooves & Moss -->
+    <path d="M-70,-100 Q-80,-280 -40,-420" stroke="#361e0f" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M0,-80 Q-20,-260 20,-450" stroke="#361e0f" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M70,-90 Q60,-240 70,-380" stroke="#361e0f" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <!-- Moss patches on bark -->
+    <ellipse cx="-45" cy="-220" rx="18" ry="40" fill="#4d7c0f" opacity="0.7"/>
+    <ellipse cx="35" cy="-300" rx="14" ry="32" fill="#4d7c0f" opacity="0.65"/>
+    <!-- Major Sprawling Canopy Branches -->
+    <path d="M-100,-420 Q-240,-460 -320,-540 Q-200,-510 -70,-460" fill="url(#woodTone)"/>
+    <path d="M70,-400 Q220,-440 330,-500 Q200,-470 50,-430" fill="url(#woodTone)"/>
+
+    <!-- Lush Foliage Billows (Ghibli painted leaf canopy) -->
+    <g class="tree-canopy">
+      <!-- Back layer (Dark Forest Green) -->
+      <ellipse cx="-80" cy="-620" rx="260" ry="190" fill="#14532d"/>
+      <ellipse cx="140" cy="-580" rx="240" ry="180" fill="#166534"/>
+      <ellipse cx="-220" cy="-540" rx="170" ry="130" fill="#14532d"/>
+      <ellipse cx="260" cy="-510" rx="160" ry="120" fill="#166534"/>
+      <!-- Mid layer (Rich Emerald / Olive) -->
+      <ellipse cx="-60" cy="-640" rx="220" ry="160" fill="#15803d"/>
+      <ellipse cx="120" cy="-610" rx="200" ry="150" fill="#22c55e"/>
+      <ellipse cx="-190" cy="-560" rx="140" ry="110" fill="#16a34a"/>
+      <ellipse cx="230" cy="-530" rx="130" ry="100" fill="#15803d"/>
+      <!-- Top Highlights (Sun-kissed Chartreuse Green) -->
+      <ellipse cx="-40" cy="-680" rx="160" ry="110" fill="#4ade80" opacity="0.8"/>
+      <ellipse cx="100" cy="-650" rx="150" ry="100" fill="#86efac" opacity="0.75"/>
+      <ellipse cx="-160" cy="-590" rx="100" ry="70" fill="#4ade80" opacity="0.75"/>
+      <ellipse cx="200" cy="-560" rx="90" ry="60" fill="#86efac" opacity="0.7"/>
+    </g>
+
+    <!-- ZWAZO (Pássaro Tropical Haitiano) perched on branch -->
+    <g transform="translate(180, -435)">
+      <!-- Branch perch -->
+      <line x1="-30" y1="10" x2="40" y2="10" stroke="#361e0f" stroke-width="8" stroke-linecap="round"/>
+      <g class="perched-bird">
+        <!-- Bird Body -->
+        <ellipse cx="0" cy="-14" rx="22" ry="14" fill="#0284c7" transform="rotate(-15)"/>
+        <ellipse cx="-6" cy="-8" rx="14" ry="10" fill="#ef4444"/> <!-- Crimson chest -->
+        <!-- Head -->
+        <g class="bird-head">
+          <circle cx="16" cy="-24" r="11" fill="#047857"/>
+          <polygon points="26,-26 38,-22 26,-18" fill="#eab308"/>
+          <circle cx="20" cy="-25" r="2.5" fill="#000000"/>
+          <circle cx="21" cy="-26" r="0.8" fill="#ffffff"/>
+        </g>
+        <!-- Tail feathers -->
+        <g class="bird-tail">
+          <polygon points="-20,-10 -52,6 -44,12 -15,-6" fill="#0369a1"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- Rolling Fore Meadow -->
+  <path d="M-50,680 Q320,620 680,670 T1250,650 L1250,800 L-50,800 Z" fill="url(#hillNear)"/>
+
+  <!-- BÈT NAN PRAIRIE (Animais Brincando no Prado: Coelho Correndo e Raposa Brincalhona) -->
+  <g transform="translate(540, 640)">
+    <g class="wildlife-chase">
+      <!-- 1. Playful Rabbit (Lapin / Coelho) bounding ahead -->
+      <g transform="translate(180, 0)">
+        <g class="rabbit-living" filter="url(#dropShadow)">
+          <!-- Rabbit Shadow -->
+          <ellipse cx="0" cy="12" rx="20" ry="6" fill="#0f172a" opacity="0.25"/>
+          <!-- Fluffy tail -->
+          <circle cx="-24" cy="-8" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+          <!-- Body -->
+          <ellipse cx="-4" cy="-4" rx="22" ry="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8"/>
+          <!-- Hind leg -->
+          <ellipse cx="-12" cy="4" rx="12" ry="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" transform="rotate(-15 -12 4)"/>
+          <!-- Fore leg -->
+          <ellipse cx="8" cy="6" rx="5" ry="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" transform="rotate(20 8 6)"/>
+          <!-- Head -->
+          <circle cx="14" cy="-12" r="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8"/>
+          <!-- Pink nose & eye -->
+          <circle cx="22" cy="-10" r="2" fill="#f43f5e"/>
+          <circle cx="16" cy="-14" r="2.2" fill="#0f172a"/>
+          <!-- Perky Ears -->
+          <g class="rabbit-ears">
+            <ellipse cx="10" cy="-28" rx="4" ry="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" transform="rotate(-18 10 -28)"/>
+            <ellipse cx="10" cy="-28" rx="2" ry="10" fill="#fda4af" transform="rotate(-18 10 -28)"/>
+            <ellipse cx="16" cy="-28" rx="4" ry="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" transform="rotate(-2 16 -28)"/>
+            <ellipse cx="16" cy="-28" rx="2" ry="10" fill="#fda4af" transform="rotate(-2 16 -28)"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- 2. Playful Young Fox (Wena / Raposa) chasing behind -->
+      <g transform="translate(0, 0)">
+        <g class="fox-living" filter="url(#dropShadow)">
+          <!-- Shadow -->
+          <ellipse cx="10" cy="14" rx="28" ry="7" fill="#0f172a" opacity="0.25"/>
+          <!-- Bushy Tail with white tip -->
+          <g class="fox-tail">
+            <path d="M-22,-4 C-38,-15 -52,-10 -60,2 C-52,14 -35,16 -20,2 Z" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
+            <path d="M-50,-2 C-55,-1 -58,2 -60,2 C-55,8 -48,8 -44,3 Z" fill="#ffffff"/>
+          </g>
+          <!-- Body -->
+          <ellipse cx="6" cy="-2" rx="26" ry="15" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
+          <ellipse cx="10" cy="2" rx="18" ry="8" fill="#ffffff" opacity="0.9"/>
+          <!-- Hind legs bounding -->
+          <path d="M-8,5 Q-16,22 -6,20" stroke="#9a3412" stroke-width="4" stroke-linecap="round"/>
+          <!-- Front legs reaching forward -->
+          <path d="M22,6 Q32,20 38,16" stroke="#9a3412" stroke-width="4" stroke-linecap="round"/>
+          <!-- Head -->
+          <polygon points="26,-12 44,-2 26,8" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
+          <polygon points="28,0 42,-2 28,6" fill="#ffffff"/>
+          <!-- Black nose and cunning playful eye -->
+          <circle cx="43" cy="-2" r="2.2" fill="#0f172a"/>
+          <circle cx="32" cy="-6" r="2" fill="#0f172a"/>
+          <!-- Pointed Ears -->
+          <polygon points="24,-12 28,-26 34,-10" fill="#ea580c" stroke="#9a3412" stroke-width="1.8"/>
+          <polygon points="26,-13 28,-22 32,-11" fill="#0f172a"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- PÓLEN E ESPOROS DOURADOS FLUTUANDO (Ghibli Magic Pollen Particles) -->
+  <g filter="url(#softGlow)">
+    <g class="pollen-particle-1">
+      <circle cx="460" cy="540" r="3" fill="#fef08a" opacity="0.75"/>
+      <circle cx="820" cy="460" r="2.5" fill="#fef08a" opacity="0.6"/>
+    </g>
+    <g class="pollen-particle-2">
+      <circle cx="590" cy="480" r="3.2" fill="#fde047" opacity="0.8"/>
+      <circle cx="910" cy="520" r="2.8" fill="#fef08a" opacity="0.7"/>
+    </g>
+    <g class="pollen-particle-3">
+      <circle cx="340" cy="500" r="2.5" fill="#fde047" opacity="0.7"/>
+      <circle cx="720" cy="420" r="3" fill="#fef08a" opacity="0.8"/>
+    </g>
+  </g>
+
+  <!-- PAPIYON (Borboletas) fluttering over meadow -->
+  <!-- Butterfly 1: Monarch (Orange & Black) -->
+  <g class="butterfly-monarch-flight" filter="url(#dropShadow)">
+    <g class="butterfly-monarch">
+      <!-- Wings left -->
+      <g class="wing-left">
+        <path d="M0,0 Q-42,-38 -36,-72 Q-10,-68 0,-24" fill="#f97316" stroke="#0f172a" stroke-width="3"/>
+        <path d="M0,-12 Q-38,-4 -28,32 Q-6,22 0,0" fill="#ea580c" stroke="#0f172a" stroke-width="3"/>
+        <circle cx="-30" cy="-60" r="2.5" fill="#ffffff"/>
+        <circle cx="-24" cy="-48" r="2" fill="#ffffff"/>
+      </g>
+      <!-- Wings right -->
+      <g class="wing-right">
+        <path d="M0,0 Q42,-38 36,-72 Q10,-68 0,-24" fill="#f97316" stroke="#0f172a" stroke-width="3"/>
+        <path d="M0,-12 Q38,-4 28,32 Q6,22 0,0" fill="#ea580c" stroke="#0f172a" stroke-width="3"/>
+        <circle cx="30" cy="-60" r="2.5" fill="#ffffff"/>
+        <circle cx="24" cy="-48" r="2" fill="#ffffff"/>
+      </g>
+      <!-- Body & Antennae -->
+      <g class="butterfly-body">
+        <ellipse cx="0" cy="-8" rx="4" ry="18" fill="#0f172a"/>
+        <path d="M-2,-24 Q-8,-40 -14,-46 M2,-24 Q8,-40 14,-46" stroke="#0f172a" stroke-width="1.5" fill="none"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Butterfly 2: Blue Morpho -->
+  <g class="butterfly-morpho-flight" filter="url(#dropShadow)">
+    <g class="butterfly-morpho">
+      <g class="wing-left">
+        <path d="M0,0 Q-38,-34 -32,-64 Q-8,-60 0,-20" fill="#0284c7" stroke="#0f172a" stroke-width="2.5"/>
+        <path d="M0,-10 Q-32,-4 -24,28 Q-4,18 0,0" fill="#0369a1" stroke="#0f172a" stroke-width="2.5"/>
+        <ellipse cx="-16" cy="-42" rx="10" ry="16" fill="#38bdf8" opacity="0.8"/>
+      </g>
+      <g class="wing-right">
+        <path d="M0,0 Q38,-34 32,-64 Q8,-60 0,-20" fill="#0284c7" stroke="#0f172a" stroke-width="2.5"/>
+        <path d="M0,-10 Q32,-4 24,28 Q4,18 0,0" fill="#0369a1" stroke="#0f172a" stroke-width="2.5"/>
+        <ellipse cx="16" cy="-42" rx="10" ry="16" fill="#38bdf8" opacity="0.8"/>
+      </g>
+      <g class="butterfly-body">
+        <ellipse cx="0" cy="-6" rx="3.5" ry="16" fill="#0f172a"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- FLÈ (Flores exuberantes e detalhadas) in foreground -->
+  <g transform="translate(0, 680)">
+    <!-- Red Hibiscus 1 -->
+    <g transform="translate(380, 40) scale(1.3)" filter="url(#dropShadow)">
+      <g class="flower-sway-1">
+        <circle cx="-16" cy="-10" r="18" fill="#e11d48"/>
+        <circle cx="16" cy="-10" r="18" fill="#e11d48"/>
+        <circle cx="-12" cy="14" r="18" fill="#be123c"/>
+        <circle cx="12" cy="14" r="18" fill="#be123c"/>
+        <circle cx="0" cy="-20" r="18" fill="#f43f5e"/>
+        <circle cx="0" cy="0" r="10" fill="#9f1239"/>
+        <!-- Golden stamen -->
+        <line x1="0" y1="0" x2="6" y2="-28" stroke="#facc15" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="6" cy="-28" r="4" fill="#ea580c"/>
+      </g>
+    </g>
+
+    <!-- Red Hibiscus 2 -->
+    <g transform="translate(680, 60) scale(1.1)" filter="url(#dropShadow)">
+      <g class="flower-sway-2">
+        <circle cx="-14" cy="-8" r="16" fill="#e11d48"/>
+        <circle cx="14" cy="-8" r="16" fill="#e11d48"/>
+        <circle cx="-10" cy="12" r="16" fill="#be123c"/>
+        <circle cx="10" cy="12" r="16" fill="#be123c"/>
+        <circle cx="0" cy="-16" r="16" fill="#f43f5e"/>
+        <circle cx="0" cy="0" r="8" fill="#9f1239"/>
+        <line x1="0" y1="0" x2="-4" y2="-24" stroke="#facc15" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- Daisies cluster -->
+    <g transform="translate(510, 60)">
+      <g class="flower-sway-daisies">
+        <circle cx="0" cy="0" r="10" fill="#eab308"/>
+        <ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(45 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(90 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(135 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(180 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(225 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(270 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(315 0 0)"/>
+        <circle cx="0" cy="0" r="9" fill="#f59e0b"/>
+      </g>
+    </g>
+
+    <g transform="translate(860, 40) scale(0.9)">
+      <circle cx="0" cy="0" r="10" fill="#eab308"/>
+      <ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(45 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(90 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(135 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(180 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(225 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(270 0 0)"/><ellipse cx="0" cy="-18" rx="5" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" transform="rotate(315 0 0)"/>
+      <circle cx="0" cy="0" r="9" fill="#f59e0b"/>
+    </g>
+
+    <!-- Bluebell flowers -->
+    <g transform="translate(1020, 50) scale(1.2)">
+      <path d="M0,30 Q-10,0 20,-20" stroke="#15803d" stroke-width="3" fill="none"/>
+      <circle cx="20" cy="-20" r="12" fill="#3b82f6"/>
+      <circle cx="10" cy="-5" r="10" fill="#60a5fa"/>
+    </g>
+  </g>
+</svg>

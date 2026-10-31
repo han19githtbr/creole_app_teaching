@@ -30,7 +30,7 @@ import { BookOpen, Calendar, CheckCircle2, Download, Film, Image as ImageIcon, L
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { identifyEntityType, detectActionFromCaption, ACTION_METAS } from "@/lib/storyLifeEngine";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
-import { getElementLabel } from "@/lib/imageBank";
+import { getElementLabel, getLanguageImageSrc } from "@/lib/imageBank";
 
 
 type Caption = { start: number; end: number; kreyol: string; portuguese: string };
@@ -335,7 +335,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
           </div>
         </div>
         <div className="overflow-hidden rounded-lg bg-[#1d3028] text-white">
-          {imageSrc ? <Image src={imageSrc} alt="Cena escolhida" width={900} height={600} unoptimized className="aspect-[3/2] w-full object-cover" /> : <div className="flex aspect-[3/2] flex-col items-center justify-center gap-2 text-white/70"><ImageIcon className="h-8 w-8" /><span className="text-xs">Escolha uma cena temática</span></div>}
+          {imageSrc ? <Image src={getLanguageImageSrc(imageSrc, language)} alt="Cena escolhida" width={900} height={600} unoptimized className="aspect-[3/2] w-full object-cover" /> : <div className="flex aspect-[3/2] flex-col items-center justify-center gap-2 text-white/70"><ImageIcon className="h-8 w-8" /><span className="text-xs">Escolha uma cena temática</span></div>}
           <div className="flex items-center justify-between px-3 py-2 text-xs"><span>{theme || "Cena da história"}</span><span>{audioDuration > 0 ? formatStoryTime(audioDuration) : "--:--"}</span></div>
         </div>
         <details className="sm:col-span-2">

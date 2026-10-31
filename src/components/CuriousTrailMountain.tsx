@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { TRAIL_LEVELS, type TrailLevelConfig, type TrailWeather } from "@/lib/curiousTrailData";
+import {
+  TRAIL_LEVELS,
+  TRAIL_ROAM_SPOTS,
+  ROAMING_ANIMAL_POOL,
+  type TrailAnimal,
+  type TrailWeather,
+} from "@/lib/curiousTrailData";
 import { CuriousTrailStudent } from "./CuriousTrailStudent";
 import { soundEffects } from "@/lib/soundEffects";
 import { Check, Lock, Sparkles, Flag, Volume2 } from "lucide-react";
@@ -20,6 +26,24 @@ export interface CuriousTrailMountainProps {
   onAnimalClick?: (animalId: string, quote: string) => void;
   themeColor?: string;
   className?: string;
+}
+
+interface Roamer {
+  uid: number;
+  animal: TrailAnimal;
+  spot: number; // índice em TRAIL_ROAM_SPOTS
+  facingLeft: boolean;
+  walking: boolean;
+  state: "idle" | "leaving" | "arriving";
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
 /**
@@ -48,12 +72,88 @@ export function CuriousTrailMountain({
   // Calcula a posição do aluno na estação atual
   const studentCoord = currentCfg.coord;
 
-  function handleAnimalTap(cfg: TrailLevelConfig) {
+  // ---------------- BICHOS PASSEANDO PELOS PONTOS DA ENCOSTA ----------------
+  const MAX_ROAMERS = 5;
+  const [roamers, setRoamers] = useState<Roamer[]>([]);
+  const roamersRef = useRef<Roamer[]>([]);
+  useEffect(() => {
+    roamersRef.current = roamers;
+  }, [roamers]);
+  const uidRef = useRef(0);
+
+  useEffect(() => {
+    // Estado inicial sorteado só no cliente (evita divergência de hidratação)
+    const initialAnimals = shuffle(ROAMING_ANIMAL_POOL).slice(0, MAX_ROAMERS);
+    const initialSpots = shuffle(TRAIL_ROAM_SPOTS.map((_, i) => i)).slice(0, MAX_ROAMERS);
+    setRoamers(
+      initialAnimals.map((animal, i) => ({
+        uid: uidRef.current++,
+        animal,
+        spot: initialSpots[i],
+        facingLeft: false,
+        walking: false,
+        state: "idle" as const,
+      }))
+    );
+
+    // Passeio: a cada poucos segundos um bicho caminha para outro ponto livre
+    const walkTimer = setInterval(() => {
+      const current = roamersRef.current;
+      if (current.length === 0) return;
+      const mover = current[Math.floor(Math.random() * current.length)];
+      const taken = new Set(current.map((r) => r.spot));
+      const free = TRAIL_ROAM_SPOTS.map((_, i) => i).filter((i) => !taken.has(i));
+      if (free.length === 0) return;
+      const target = free[Math.floor(Math.random() * free.length)];
+      const facingLeft = TRAIL_ROAM_SPOTS[target].x < TRAIL_ROAM_SPOTS[mover.spot].x;
+      setRoamers((prev) =>
+        prev.map((r) => (r.uid === mover.uid ? { ...r, spot: target, facingLeft, walking: true } : r))
+      );
+      setTimeout(() => {
+        setRoamers((prev) => prev.map((r) => (r.uid === mover.uid ? { ...r, walking: false } : r)));
+      }, 3600);
+    }, 2800);
+
+    // Troca: um bicho vai embora e outra espécie aparece no lugar
+    const swapTimer = setInterval(() => {
+      const current = roamersRef.current;
+      if (current.length === 0) return;
+      const leaving = current[Math.floor(Math.random() * current.length)];
+      const visibleIds = new Set(current.map((r) => r.animal.id));
+      const candidates = ROAMING_ANIMAL_POOL.filter((a) => !visibleIds.has(a.id));
+      if (candidates.length === 0) return;
+      const arriving = candidates[Math.floor(Math.random() * candidates.length)];
+      setRoamers((prev) => prev.map((r) => (r.uid === leaving.uid ? { ...r, state: "leaving" } : r)));
+      setTimeout(() => {
+        setRoamers((prev) =>
+          prev.map((r) =>
+            r.uid === leaving.uid
+              ? {
+                  uid: uidRef.current++,
+                  animal: arriving,
+                  spot: r.spot,
+                  facingLeft: r.facingLeft,
+                  walking: false,
+                  state: "arriving" as const,
+                }
+              : r
+          )
+        );
+      }, 900);
+    }, 7000);
+
+    return () => {
+      clearInterval(walkTimer);
+      clearInterval(swapTimer);
+    };
+  }, []);
+
+  function handleAnimalTap(animal: TrailAnimal) {
     soundEffects.playTap();
-    setLocalBubble({ id: cfg.animal.id, quote: cfg.animal.quote, name: cfg.animal.name });
-    onAnimalClick?.(cfg.animal.id, cfg.animal.quote);
+    setLocalBubble({ id: animal.id, quote: animal.quote, name: animal.name });
+    onAnimalClick?.(animal.id, animal.quote);
     setTimeout(() => {
-      setLocalBubble((prev) => (prev?.id === cfg.animal.id ? null : prev));
+      setLocalBubble((prev) => (prev?.id === animal.id ? null : prev));
     }, 4500);
   }
 
@@ -223,42 +323,47 @@ export function CuriousTrailMountain({
         />
       </svg>
 
-      {/* ---------------- ANIMAIS DA MONTANHA AO LONGO DO CAMINHO ---------------- */}
-      {TRAIL_LEVELS.map((cfg) => {
-        const isNearCurrent = cfg.level === currentLevel;
-        // Posição do bicho ligeiramente ao lado do waypoint
-        const leftPct = cfg.coord.x + (cfg.level % 2 === 0 ? 5 : -4);
-        const topPct = cfg.coord.y + 4;
-
+      {/* ---------------- BICHOS PASSEANDO PELA ENCOSTA (pontos marcados) ---------------- */}
+      {roamers.map((r) => {
+        const pos = TRAIL_ROAM_SPOTS[r.spot];
+        const showBubble = localBubble?.id === r.animal.id || activeAnimalGreeting === r.animal.id;
         return (
           <div
-            key={cfg.animal.id}
-            onClick={() => handleAnimalTap(cfg)}
+            key={r.uid}
+            onClick={() => handleAnimalTap(r.animal)}
             className={cn(
-              "absolute z-20 cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group transition-all duration-300",
-              isNearCurrent ? "scale-125" : "scale-100 hover:scale-110 opacity-90"
+              "absolute z-20 cursor-pointer -translate-x-1/2 -translate-y-1/2 group",
+              "transition-[left,top,opacity,transform] duration-[3500ms] ease-in-out",
+              r.state === "leaving" && "opacity-0 scale-50 !duration-700",
+              r.state === "arriving" && "animate-in fade-in zoom-in-50 duration-700"
             )}
-            style={{ left: `${leftPct}%`, top: `${topPct}%` }}
-            title={`${cfg.animal.name} (${cfg.animal.namePt}) - Clique para ouvir!`}
+            style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+            title={`${r.animal.name} (${r.animal.namePt}) - Clique para ouvir!`}
           >
-            {/* Ícone / Emoji do bicho com pulso suave */}
-            <div className="relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/90 dark:bg-slate-900/90 shadow-md border-2 border-amber-400 group-hover:border-amber-500 animate-[bounce_2.5s_ease-in-out_infinite]">
-              <span className="text-xl sm:text-2xl leading-none">{cfg.animal.emoji}</span>
-              {/* Notificação de áudio disponível */}
+            <div
+              className={cn(
+                "relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/90 dark:bg-slate-900/90 shadow-md border-2 border-amber-400 group-hover:border-amber-500 hover:scale-110 transition-transform",
+                r.walking ? "animate-[bounce_0.6s_ease-in-out_infinite]" : "animate-[bounce_2.5s_ease-in-out_infinite]"
+              )}
+            >
+              <span
+                className="text-xl sm:text-2xl leading-none inline-block"
+                style={{ transform: r.facingLeft ? "scaleX(-1)" : undefined }}
+              >
+                {r.animal.emoji}
+              </span>
               <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] text-white font-bold">
                 <Volume2 className="h-2.5 w-2.5" />
               </span>
             </div>
 
-            {/* Balão de fala do bicho quando clicado ou ativo */}
-            {(localBubble?.id === cfg.animal.id || activeAnimalGreeting === cfg.animal.id) && (
+            {showBubble && (
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 sm:w-56 p-2.5 bg-slate-900/95 text-white rounded-2xl shadow-xl text-xs z-30 border border-amber-400/60 pointer-events-auto animate-in fade-in zoom-in-95">
-                <p className="font-extrabold text-amber-400 text-[11px] flex items-center justify-between">
-                  <span>{cfg.animal.emoji} {cfg.animal.name}</span>
-                  <span className="text-[9px] text-slate-400">{cfg.altitude}m</span>
+                <p className="font-extrabold text-amber-400 text-[11px]">
+                  {r.animal.emoji} {r.animal.name}
                 </p>
                 <p className="mt-1 font-medium leading-snug italic text-slate-100">
-                  &ldquo;{cfg.animal.quote}&rdquo;
+                  &ldquo;{r.animal.quote}&rdquo;
                 </p>
                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
               </div>

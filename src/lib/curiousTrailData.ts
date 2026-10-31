@@ -31,6 +31,33 @@ export interface TrailLevelConfig {
   xpBase: number;
 }
 
+/**
+ * Pontos (em % do cenário) na encosta onde os bichos passeiam.
+ * Correspondem às marcações vermelhas no mapa da montanha.
+ */
+export const TRAIL_ROAM_SPOTS: { x: number; y: number }[] = [
+  { x: 58, y: 56 },
+  { x: 65, y: 66 },
+  { x: 73, y: 39 },
+  { x: 83, y: 62 },
+  { x: 90, y: 55 },
+  { x: 82, y: 84 },
+  { x: 68, y: 89 },
+  { x: 50, y: 82 },
+];
+
+/** Bichos extras que aparecem e somem da montanha (além dos 7 das estações). */
+export const EXTRA_TRAIL_ANIMALS: TrailAnimal[] = [
+  { id: "deer", name: "Le Cerf", namePt: "Cervo", emoji: "🦌", quote: "Je traverse la forêt en silence !", soundType: "rustle", badge: "Marcheur discret" },
+  { id: "fox", name: "Le Renard roux", namePt: "Raposa", emoji: "🦊", quote: "Je suis rusé comme un renard !", soundType: "rustle", badge: "Esprit malin" },
+  { id: "owl", name: "La Chouette", namePt: "Coruja", emoji: "🦉", quote: "Hou hou ! Je veille sur la montagne.", soundType: "chirp", badge: "Gardien du soir" },
+  { id: "hedgehog", name: "Le Hérisson", namePt: "Ouriço", emoji: "🦔", quote: "Doucement, doucement, j'avance !", soundType: "rustle", badge: "Petit explorateur" },
+  { id: "butterfly", name: "Le Papillon", namePt: "Borboleta", emoji: "🦋", quote: "Je vole de fleur en fleur !", soundType: "chirp", badge: "Ailes colorées" },
+  { id: "marmot", name: "La Marmotte", namePt: "Marmota", emoji: "🐹", quote: "Chut... je prépare mon terrier !", soundType: "rustle", badge: "Dormeur alpin" },
+  { id: "turtle", name: "La Tortue", namePt: "Tartaruga", emoji: "🐢", quote: "Lentement mais sûrement !", soundType: "bell", badge: "Patience d'or" },
+  { id: "bee", name: "L'Abeille", namePt: "Abelha", emoji: "🐝", quote: "Bzzz ! Je cueille le miel du matin.", soundType: "chirp", badge: "Travailleuse" },
+];
+
 export const TRAIL_LEVELS: TrailLevelConfig[] = [
   {
     level: 1,
@@ -685,3 +712,10 @@ export function saveTrailProgress(themeId: string, state: TrailProgressState): v
     // ignora restrição de quota
   }
 }
+
+
+/** Todos os bichos que podem passear pela montanha. */
+export const ROAMING_ANIMAL_POOL: TrailAnimal[] = [
+  ...TRAIL_LEVELS.map((l) => l.animal),
+  ...EXTRA_TRAIL_ANIMALS,
+];

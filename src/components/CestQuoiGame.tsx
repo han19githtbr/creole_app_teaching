@@ -9,6 +9,7 @@ import { Confetti } from "@/components/Confetti";
 import { CestQuoiStickman, type StickmanMood } from "@/components/CestQuoiStickman";
 import { CestQuoiHint } from "@/components/CestQuoiHint";
 import { CestQuoiArena } from "@/components/CestQuoiArena";
+import { CuriousTrailGame } from "@/components/CuriousTrailGame";
 import { cn } from "@/lib/utils";
 import { recordQuizWin, type Badge, type LevelInfo } from "@/lib/gamification";
 import { useGamification } from "@/hooks/useGamification";
@@ -304,7 +305,18 @@ const SPARKS = [
 ];
 
 // ===========================================================================
-export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; initialTheme?: string }) {
+export function CestQuoiGame({
+  items,
+  initialTheme,
+  initialModule,
+}: {
+  items: CestQuoiItem[];
+  initialTheme?: string;
+  initialModule?: string;
+}) {
+  const [gameModule, setGameModule] = useState<"classic" | "trail">(() =>
+    initialModule === "trilha" ? "trail" : "classic"
+  );
   const themes = useMemo(() => {
     const map = new Map<string, string>();
     items.forEach((i) => map.set(i.themeId, i.theme));
@@ -864,6 +876,16 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
   const levelsDone = LEVEL_ORDER.every((l) => progress.passed.includes(l));
   const nativeOpen = isUnlocked("native_word", progress);
 
+  if (gameModule === "trail") {
+    return (
+      <CuriousTrailGame
+        items={items}
+        initialTheme={initialTheme}
+        onSwitchToClassic={() => setGameModule("classic")}
+      />
+    );
+  }
+
   // ===================== INTRO =====================
   if (phase === "intro") {
     const selectedUnlocked = isUnlocked(level, progress);
@@ -880,6 +902,27 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
             <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text)]">
               <ArrowLeft className="h-4 w-4" /> Painel
             </Link>
+
+            {/* SELETOR DE MÓDULOS */}
+            <div className="flex items-center gap-1 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-1">
+              <button
+                type="button"
+                onClick={() => setGameModule("trail")}
+                className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors cursor-pointer"
+              >
+                🏔️ Trilha Curiosa
+                <span className="rounded-full bg-amber-500 text-white px-1.5 py-0.2 text-[9px] font-black uppercase">
+                  Novo
+                </span>
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 rounded-xl bg-blue-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm"
+              >
+                🎯 C&apos;est quoi ?
+              </button>
+            </div>
+
             <button type="button" onClick={toggleSound} className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-[var(--text-secondary)]" aria-label={muted ? "Ativar som" : "Silenciar"}>
               {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             </button>
@@ -924,6 +967,25 @@ export function CestQuoiGame({ items, initialTheme }: { items: CestQuoiItem[]; i
               A seta vermelha aponta para um objeto. Escolha a resposta certa em francês antes que o tempo acabe! Você tem{" "}
               <strong>mais uma tentativa</strong> se errar.
             </p>
+
+            {/* BANNER DO NOVO MÓDULO TRILHA DO ALUNO CURIOSO */}
+            <div
+              onClick={() => setGameModule("trail")}
+              className="mt-4 cursor-pointer rounded-2xl border-2 border-amber-500/50 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent p-3 text-left transition-all hover:scale-[1.02] shadow-sm flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl">🏔️</span>
+                <div>
+                  <p className="text-xs font-black text-amber-600 dark:text-amber-400">
+                    Novo: Trilha do Aluno Curioso
+                  </p>
+                  <p className="text-[11px] text-[var(--text-secondary)]">
+                    Escale a montanha em 7 níveis com chuva, neve e bandeira no topo!
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-amber-500 shrink-0 ml-2">Jogar →</span>
+            </div>
 
             <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Escolha o nível</p>
             <div className="mt-2 space-y-2.5 text-left">

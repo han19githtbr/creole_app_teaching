@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 export default async function ImageQuizPage({
   searchParams,
 }: {
-  searchParams: Promise<{ post?: string; image?: string; theme?: string }>;
+  searchParams: Promise<{ post?: string; image?: string; theme?: string; module?: string }>;
 }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
@@ -28,10 +28,14 @@ export default async function ImageQuizPage({
   // Painel em francês: jogo "C'est quoi ?" (objetos da pasta c-quoi + coleção por temas).
   // O desafio de uma postagem (?post=...) continua sendo o jogo de palavras da própria postagem.
   if (language === "francais" && !(await searchParams).post) {
-    const { theme } = await searchParams;
+    const { theme, module: initialModule } = await searchParams;
     return (
       <GameMonetizationWrapper>
-        <CestQuoiGame items={[...(cquoiItems as CestQuoiItem[]), ...(await listApprovedCquoiItems())]} initialTheme={theme} />
+        <CestQuoiGame
+          items={[...(cquoiItems as CestQuoiItem[]), ...(await listApprovedCquoiItems())]}
+          initialTheme={theme}
+          initialModule={initialModule}
+        />
       </GameMonetizationWrapper>
     );
   }

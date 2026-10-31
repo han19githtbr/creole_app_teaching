@@ -8,6 +8,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Stack](#stack)
 - [Histórias narradas com Elementos com Vida, Transcrição Automática e Publicação Social](#histórias-narradas)
 - [Jogo C'est quoi ?](#jogo-cest-quoi-)
+- [Trilha do Aluno Curioso (Subida da Montanha e Clima Dinâmico)](#trilha-do-aluno-curioso)
 - [Postagens em francês](#postagens-em-francês)
 - [Avatar falante e rede social no vídeo](#avatar-falante-e-rede-social-no-vídeo)
 - [Vídeos do jogo para redes sociais](#vídeos-do-jogo-para-redes-sociais)
@@ -390,6 +391,82 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 
 `POST /api/cquoi/arena` aceita as ações `heartbeat`, `leave`, `score`, `challenge` e `respond`; `GET /api/cquoi/arena?board=week|all|<nível>` devolve o painel. Todas exigem login. Não há variável de ambiente nova: o ranking usa o mesmo MongoDB do app.
 
+## Trilha do Aluno Curioso
+
+Novo módulo visual e dinâmico de gamificação em francês integrado à seção de jogos (`/dashboard/jogo?module=trilha`), simulando uma **expedição de subida de montanha**. O aluno sobe a montanha estação por estação, enfrentando mudanças de altitude e de clima, enquanto reconhece elementos ilustrados do tema escolhido.
+
+### Como funciona
+
+1. **Escolha do Tema**: O aluno escolhe entre os 15 temas da plataforma:
+   - 🍳 **Gastronomia** (`gastronomia`)
+   - 🌲 **Natureza** (`natureza`)
+   - 💻 **Tecnologia** (`tecnologia`)
+   - 📚 **Idiomas** (`idiomas`)
+   - 🎨 **Lazeres** (`lazeres`)
+   - 🎭 **Cultura** (`cultura`)
+   - ⛵ **Turismo** (`turismo`)
+   - 🌾 **Vida no interior** (`interior`)
+   - 🎵 **Música** (`musica`)
+   - 💃 **Dança** (`danca`)
+   - 📜 **História** (`historia`)
+   - 🎬 **Cinema** (`cinema`)
+   - 🗺️ **Geografia** (`geografia`)
+   - 🕊️ **Religião** (`religiao`)
+   - 🏛️ **Estoicismo** (`estoicismo`)
+
+2. **Os 7 Níveis da Montanha (Distribuição Progressiva de Elementos)**:
+   - **Nível 1 · Base da Montanha (450m)**: 1 elemento a reconhecer.
+   - **Nível 2 · Bosque dos Pinheiros (980m)**: 2 elementos a reconhecer.
+   - **Nível 3 · Mirante das Rochas (1520m)**: 3 elementos a reconhecer.
+   - **Nível 4 · Encosta Chuvosa (2100m)**: 4 elementos a reconhecer.
+   - **Nível 5 · Cascata da Neblina (2750m)**: 5 elementos a reconhecer.
+   - **Nível 6 · Planalto Glacial (3300m)**: 6 elementos a reconhecer.
+   - **Nível 7 · Cume da Vitória (3950m)**: 7 elementos a reconhecer.
+   Ao reconhecer com sucesso os 7 elementos do Nível 7, o aluno atinge o cume da montanha e **sobe e hasteia a bandeira da vitória**, com confetes, fanfarra e insígnia dourada!
+
+3. **Clima Dinâmico e Reações do Aluno**:
+   - **Níveis 1 a 3**: Céu aberto, sol radiante e brisa fresca de montanha. O aluno caminha animado com sua mochila e boina francesa.
+   - **Níveis 4 e 5**: O clima muda com frio e chuva! Nuvens escuras e gotas de chuva começam a cair; **o aluno abre o guarda-chuva** e caminha protegido pela chuva até o fim do Nível 5.
+   - **Níveis 6 e 7**: A chuva passa e **começa a nevar** no cume! O aluno guarda o guarda-chuva e veste **gorro de inverno e cachecol quente**, deixando pegadas na neve fresca enquanto sobe em direção ao pico.
+
+4. **Bichos no Caminho ("Animaux du Sentier")**:
+   Animais selvagens interativos aparecem nas estações da montanha:
+   - 🐿️ **L'Écureuil des bois** (Esquilo curioso nos galhos)
+   - 🐇 **Le Lapin blanc** (Coelho alpino entre as flores)
+   - 🐦 **L'Oiseau des cimes** (Pássaro cantor no poste de trilha)
+   - 🐸 **La Grenouille rieuse** (Sapinho na chuva avisando para abrir o guarda-chuva)
+   - 🐌 **L'Escargot voyageur** (Caracol na encosta molhada)
+   - 🐐 **Le Chamois agile** (Cabra-montesa / Íbex nas rochas nevadas)
+   - 🦅 **L'Aigle royal** (Águia dourada sobrevoando o cume da vitória)
+   Tocar em qualquer bicho faz o animal emitir uma saudação em francês com áudio e balão de fala.
+
+5. **Dificuldade, Temporizador e Bônus de Rapidez (XP)**:
+   - Fácil (15s por elemento · x1.0)
+   - Intermediário (10s por elemento · x1.5)
+   - Master (5s por elemento · x2.0)
+   - Nativo (4s por elemento · x2.5)
+   - **Bônus de Rapidez**: respostas rápidas concedem multiplicador de velocidade (+50% XP relâmpago se acertado nos primeiros 35% do tempo, +25% se em menos de 65%).
+
+6. **Pronúncia em Francês Nativo**:
+   Assim que o elemento é reconhecido na trilha, a Web Speech API reproduz imediatamente a pronúncia clara em francês (`speakWordFrench`), com botão para ouvir novamente a qualquer momento.
+
+7. **Vídeos para Redes Sociais (Stories, Reels e Feed)**:
+   Em **Admin → Vídeos do Jogo** (`/admin/jogo-videos`), uma nova aba **Trilha Curiosa** permite gerar vídeos demonstrativos em alta definição (1080×1920 para Stories/Reels, 1080×1350 para Feed vertical ou 1080×1080 quadrado) mostrando a subida da montanha, o clima, o animal, a resposta e o hasteamento da bandeira.
+
+### Arquivos do módulo
+
+| Arquivo | Função |
+| --- | --- |
+| `src/lib/curiousTrailData.ts` | Configuração dos 7 níveis, 15 temas, animais, coordenadas da montanha, clima e persistência |
+| `src/components/CuriousTrailStudent.tsx` | Personagem do aluno animado com mochila, guarda-chuva aberto na chuva, gorro na neve e bandeira no topo |
+| `src/components/CuriousTrailMountain.tsx` | Cenário visual da montanha com trilha sinuosa, estações 1-7, chuva/neve animadas e bichos |
+| `src/components/CuriousTrailGame.tsx` | Componente interativo completo da Trilha do Aluno Curioso, temporizadores, XP e áudio |
+| `src/components/CuriousTrailGame.css` | Animações CSS especializadas (chuva, neve, bandeira, passos e brilho) |
+| `src/lib/curiousTrailDemoVideo.ts` | Motor de renderização quadro a quadro de vídeos demonstrativos da trilha para Stories e Feed |
+| `src/components/TrailDemoStudio.tsx` | Estúdio administrativo para gerar e baixar vídeos da Trilha em MP4 |
+| `src/components/AdminJogoVideosTabs.tsx` | Abas no painel administrativo alternando entre vídeos do C'est quoi ? e da Trilha |
+| `src/app/dashboard/jogo/page.tsx` | Rota do jogo com alternador de módulos (Trilha Curiosa e C'est quoi ? Clássico) |
+
 ## Postagens em francês
 
 Com o painel em **Francês**, a aba de postagens agora entrega **todo o conteúdo em francês**. Antes, a legenda sugerida, os elementos da cena e o jogo de palavras continuavam em Kreyòl.
@@ -483,7 +560,10 @@ A **pré-visualização** ao lado toca o mesmo desenho que será exportado, com 
 
 ### Arquivos
 
-- `src/lib/gameDemoVideo.ts`: rodadas, linha do tempo, pontuação, desenho de cada quadro (função pura do tempo) e efeitos sonoros.
+- `src/lib/gameDemoVideo.ts`: rodadas, linha do tempo, pontuação, desenho de cada quadro (função pura do tempo) e efeitos sonoros do C'est quoi ?.
+- `src/lib/curiousTrailDemoVideo.ts`: renderização quadro a quadro da Trilha do Aluno Curioso (montanha, clima com chuva/neve, bicho, resposta e bandeira no topo).
+- `src/components/TrailDemoStudio.tsx`: tela do administrador para vídeos da Trilha Curiosa.
+- `src/components/AdminJogoVideosTabs.tsx`: seletor em abas entre vídeos do C'est quoi ? e da Trilha Curiosa.
 - `src/lib/gameDemoExport.ts`: exportação em MP4 (offline com WebCodecs; plano B com `MediaRecorder`).
 - `src/components/GameDemoStudio.tsx`: tela do administrador (perguntas, estilo, pré-visualização e download).
 - `src/app/admin/jogo-videos/page.tsx`: página e item **Vídeos do Jogo** no menu do admin.

@@ -1,7 +1,7 @@
 import cquoiItems from "@/lib/cquoiItems.json";
 import { listApprovedCquoiItems } from "@/lib/generatedImages";
 import type { CestQuoiItem } from "@/lib/cquoiContent";
-import { GameDemoStudio } from "@/components/GameDemoStudio";
+import { AdminJogoVideosTabs } from "@/components/AdminJogoVideosTabs";
 
 export const dynamic = "force-dynamic";
 
@@ -13,13 +13,13 @@ export default async function JogoVideosPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--text)]">Vídeos do Jogo</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">Vídeos do Jogo &amp; Trilha</h1>
         <p className="text-sm text-[var(--text-secondary)]">
-          Crie vídeos que mostram como o jogo &quot;C&apos;est quoi ?&quot; funciona, com as alternativas, erros e acertos, para postar nos
+          Crie vídeos demonstrativos do jogo &quot;C&apos;est quoi ?&quot; e do novo módulo &quot;Trilha do Aluno Curioso&quot; (com montanha, chuva, neve e bandeira no topo), para postar nos
           Stories, Reels e no feed do Instagram e do Facebook.
         </p>
       </div>
-      <GameDemoStudio items={items} />
+      <AdminJogoVideosTabs items={items} />
     </div>
   );
 }

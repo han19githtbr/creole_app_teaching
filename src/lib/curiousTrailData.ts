@@ -50,10 +50,8 @@ export const TRAIL_ROAM_SPOTS: { x: number; y: number }[] = [
 export const EXTRA_TRAIL_ANIMALS: TrailAnimal[] = [
   { id: "deer", name: "Le Cerf", namePt: "Cervo", emoji: "🦌", quote: "Je traverse la forêt en silence !", soundType: "rustle", badge: "Marcheur discret" },
   { id: "fox", name: "Le Renard roux", namePt: "Raposa", emoji: "🦊", quote: "Je suis rusé comme un renard !", soundType: "rustle", badge: "Esprit malin" },
-  { id: "owl", name: "La Chouette", namePt: "Coruja", emoji: "🦉", quote: "Hou hou ! Je veille sur la montagne.", soundType: "chirp", badge: "Gardien du soir" },
   { id: "hedgehog", name: "Le Hérisson", namePt: "Ouriço", emoji: "🦔", quote: "Doucement, doucement, j'avance !", soundType: "rustle", badge: "Petit explorateur" },
   { id: "butterfly", name: "Le Papillon", namePt: "Borboleta", emoji: "🦋", quote: "Je vole de fleur en fleur !", soundType: "chirp", badge: "Ailes colorées" },
-  { id: "marmot", name: "La Marmotte", namePt: "Marmota", emoji: "🐹", quote: "Chut... je prépare mon terrier !", soundType: "rustle", badge: "Dormeur alpin" },
   { id: "turtle", name: "La Tortue", namePt: "Tartaruga", emoji: "🐢", quote: "Lentement mais sûrement !", soundType: "bell", badge: "Patience d'or" },
   { id: "bee", name: "L'Abeille", namePt: "Abelha", emoji: "🐝", quote: "Bzzz ! Je cueille le miel du matin.", soundType: "chirp", badge: "Travailleuse" },
 ];

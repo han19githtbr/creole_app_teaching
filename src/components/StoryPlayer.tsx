@@ -28,7 +28,7 @@ import { analyzeSceneZones, lifeSvgDocument, type SceneZones } from "@/lib/story
 import { createSceneLife } from "@/lib/storySceneDirector";
 import { WATER, getSceneGrid } from "@/lib/storySceneMap";
 import { useAudioVoiceActivity, computeCaptionTyping } from "@/lib/audioVoiceActivity";
-import { buildSoundPlan, createLiveSoundscape, mixSoundPlanInto } from "@/lib/storySoundscape";
+import { buildSoundPlan, createLiveSoundscape, mixSoundPlanInto, type SoundEvent } from "@/lib/storySoundscape";
 
 
 export interface StoryPlayerData {
@@ -313,6 +313,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     [story.imageSrc, story.theme, story.title, sceneElements, sceneZones, isFr, lifeAnchors],
   );
   const lifeTick = Math.floor(currentTime * 30) / 30;
+  // enquanto o interior da casa cobre a cena (chuva), os rótulos da lição esmaecem para não apontarem para o nada
+  const lifeCoverNow = lifeScene.cover?.(lifeTick) ?? 0;
   // tamanho do texto dos nomes dos elementos animados: ~mesma altura aparente das pílulas dos rótulos, em qualquer tela
   const lifeLabelPx = Math.round(Math.max(22, Math.min(46, (pillFontPx * 1.3) / Math.max(0.2, Math.max(stageSize.w / 1200, stageSize.h / 800)))));
   const lifeMarkup = useMemo(() => {
@@ -341,8 +343,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         duration,
         hasWater: sceneHasWater,
         seed: `${story.imageSrc}|${story.title}`,
+        extra: (lifeScene.soundCues?.(duration) ?? []) as SoundEvent[],
       }),
-    [bankImage?.theme, story.theme, story.imageSrc, story.title, timeline, duration, sceneHasWater]
+    [bankImage?.theme, story.theme, story.imageSrc, story.title, timeline, duration, sceneHasWater, lifeScene]
   );
 
   // Toca os sons enquanto a narração toca (agendados com 1 s de antecedência, acompanhando o áudio).
@@ -611,7 +614,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       return { element, label, ax, ay, cx: ax, cy: ay - lift - size.height / 2, w: size.width * 1.06, h: size.height * 1.06 };
     });
     for (const item of items) {
-      const visual = elementVisual(item.element, seconds);
+      const visualRaw = elementVisual(item.element, seconds);
+      const coverNow = lifeScene.cover?.(seconds) ?? 0;
+      const visual = coverNow > 0 ? { ...visualRaw, opacity: visualRaw.opacity * (1 - coverNow) } : visualRaw;
       // Um rótulo por vez: os que ainda não entraram ou já saíram não são desenhados.
       if (visual.phase === "hidden" || visual.opacity <= 0.01) continue;
       // Fora da janela do vídeo (a câmera está em outro ponto da cena): não desenha.
@@ -1464,7 +1469,8 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             </span>
           </div>
           {timeline.map((element, index) => {
-            const visual = elementVisual(element, currentTime);
+            const visualRaw = elementVisual(element, currentTime);
+            const visual = lifeCoverNow > 0 ? { ...visualRaw, opacity: visualRaw.opacity * (1 - lifeCoverNow) } : visualRaw;
             const active = visual.phase === "active";
             const rawAnchors = sceneLayout?.anchors;
             const anchors = rawAnchors && rawAnchors.length > 0

@@ -763,6 +763,8 @@ const EXTRA_DETAIL_NAMES: Record<string, BankElement> = {
   areia: { kreyol: "sab", fr: "sable", pt: "areia" },
   piso: { kreyol: "plancher", fr: "sol", pt: "piso" },
   agua: { kreyol: "dlo", fr: "eau", pt: "água" },
+  janela: { kreyol: "fenèt", fr: "fenêtre", pt: "janela" },
+  lousa: { kreyol: "tablo", fr: "tableau noir", pt: "lousa/quadro-negro" },
 };
 
 /**

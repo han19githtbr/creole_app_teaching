@@ -34,6 +34,10 @@ export interface LifeInput {
 export interface LifeScene {
   actors: string[];
   render: (t: number, opts?: { labelPx?: number }) => string;
+  /** sons que acompanham as vinhetas (coruja, chuva, trovão...), para entrar no plano de sons da história */
+  soundCues?: (duration: number) => Array<{ t: number; kind: string; gain: number }>;
+  /** 0..1: quanto a cena de vida cobre a imagem da lição neste instante (ex.: interior da casa durante a chuva) */
+  cover?: (t: number) => number;
 }
 
 /** Cenas principais que JÁ trazem seus personagens animados dentro do próprio SVG (não duplicar). */
@@ -309,12 +313,12 @@ export function bird(t: number, o: { x: number; y: number; s?: number; ph?: numb
   const d = `M-18 ${f(-4 + k * 9)} Q-9 ${f(-9 + k * 8)} 0 0 Q9 ${f(-9 + k * 8)} 18 ${f(-4 + k * 9)}`;
   return G(o.x, o.y + sin(t * 1.3 + ph) * 4 - cos(t * 8.5 + ph) * 2.6 * flap, sin(t * 0.7 + ph) * 4 - flap * 3, (o.face ?? 1) * s, s, `<path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` + circ(0, 1, 2.6, c));
 }
-export function butterfly(t: number, o: { cx: number; cy: number; r?: number; ph?: number; color?: string }): string {
+export function butterfly(t: number, o: { cx: number; cy: number; r?: number; ph?: number; color?: string; s?: number }): string {
   const w = t * 0.6 + (o.ph ?? 0), R = o.r ?? 120;
   const x = o.cx + sin(w * 1.7) * R + sin(w * 4.3 + 2) * R * 0.14, y = o.cy + sin(w * 2.3 + 1) * 40 + sin(w * 5.9) * 9 - Math.abs(sin(t * 3.2)) * 5;
   const fl = 0.25 + 0.75 * Math.abs(sin(t * (12 + 4 * sin(t * 0.5)) + (o.ph ?? 0)));
   const c = o.color ?? "#f08a2b";
-  return G(x, y, sin(w * 1.7) * 14, 1, 1, `<ellipse cx="-5" cy="0" rx="${f(6 * fl)}" ry="7" fill="${c}"/><ellipse cx="5" cy="0" rx="${f(6 * fl)}" ry="7" fill="${c}"/>` + line(0, -4, 0, 5, 2, "#3a2414"));
+  return G(x, y, sin(w * 1.7) * 14, o.s ?? 1, o.s ?? 1, `<ellipse cx="-5" cy="0" rx="${f(6 * fl)}" ry="7" fill="${c}"/><ellipse cx="5" cy="0" rx="${f(6 * fl)}" ry="7" fill="${c}"/>` + line(0, -4, 0, 5, 2, "#3a2414"));
 }
 export function fish(t: number, o: { x: number; y: number; s?: number; face?: 1 | -1; ph?: number; color?: string; alpha?: number }): string {
   const s = o.s ?? 1, k = sin(t * 9 + (o.ph ?? 0)), c = o.color ?? "#f08a3c";

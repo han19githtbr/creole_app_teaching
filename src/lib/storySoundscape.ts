@@ -10,7 +10,8 @@ export type SoundKind =
   | "bird" | "gull" | "dove" | "wave" | "surf" | "wind" | "water" | "drum" | "plane" | "helicopter" | "boat"
   | "horn" | "bell" | "guitar" | "piano" | "flute" | "fire" | "chicken" | "goat" | "horse" | "duck"
   | "tractor" | "cannon" | "crowd" | "projector" | "shutter" | "popcorn" | "beep" | "typing" | "drone"
-  | "ping" | "balloon" | "bubbles" | "clink" | "page" | "creak" | "cricket" | "chime" | "step" | "bounce";
+  | "ping" | "balloon" | "bubbles" | "clink" | "page" | "creak" | "cricket" | "chime" | "step" | "bounce"
+  | "owl" | "rain" | "thunder" | "bat";
 
 export interface SoundEvent {
   /** Segundo da narração em que o som começa. */
@@ -113,6 +114,8 @@ export function buildSoundPlan(input: {
   duration: number;
   hasWater: boolean;
   seed: string;
+  /** Sons da camada de vida (coruja, chuva, trovão...), já com o segundo em que acontecem. */
+  extra?: SoundEvent[];
 }): SoundEvent[] {
   const { theme, elements, duration, hasWater, seed } = input;
   if (!(duration > 0)) return [];
@@ -140,6 +143,7 @@ export function buildSoundPlan(input: {
       events.push({ t, kind: "surf", gain: 0.26 });
     }
   }
+  for (const e of input.extra ?? []) events.push(e);
   return events.filter((event) => event.t >= 0 && event.t < duration).sort((a, b) => a.t - b.t);
 }
 
@@ -381,6 +385,20 @@ const SYNTH: Record<SoundKind, (ctx: Ctx, d: AudioNode, t: number, g: number) =>
   },
   bounce(ctx, d, t, g) {
     [0, 0.34, 0.6, 0.8].forEach((o, i) => tone(ctx, d, "sine", 240, 90, t + o, 0.14, g * 0.55 * (1 - i * 0.18), 0.004));
+  },
+  owl(ctx, d, t, g) {
+    // "uuu-u": duas notas graves e suaves
+    tone(ctx, d, "sine", 430, 360, t, 0.38, g * 0.5, 0.06);
+    tone(ctx, d, "sine", 340, 290, t + 0.55, 0.55, g * 0.5, 0.06);
+  },
+  rain(ctx, d, t, g) {
+    noiseBurst(ctx, d, t, 4.5, g * 0.42, "highpass", 2600, 2200, 0.7, 0.8, 2.2);
+  },
+  thunder(ctx, d, t, g) {
+    noiseBurst(ctx, d, t, 2.6, g * 0.9, "lowpass", 220, 55, 0.8, 0.05, 0.3);
+  },
+  bat(ctx, d, t, g) {
+    for (let i = 0; i < 3; i++) tone(ctx, d, "sine", 4200, 5600, t + i * 0.16, 0.07, g * 0.12, 0.005);
   },
 };
 

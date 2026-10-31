@@ -403,6 +403,7 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
         return next;
       });
 
+      const nextStreak = streak + 1;
       // Gamificação central
       const reward = recordQuizWin({
         language: "francais",
@@ -410,14 +411,15 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
         theme: currentItem.themeId,
         wordsCount: 1,
         attemptsLeft: attempt === 1 ? 3 : 2,
+        streak: nextStreak,
       });
 
-      if (reward.badges.length > 0 || reward.levelUp) {
+      if (reward.newBadges.length > 0 || reward.leveledUp) {
         setRewardSummary({
-          xp: reward.xpGained,
-          goud: reward.goudGained,
-          badges: reward.badges,
-          level: reward.levelUp,
+          xp: reward.gainedXp,
+          goud: reward.gainedGoud,
+          badges: reward.newBadges,
+          level: reward.leveledUp ? reward.newLevel : null,
         });
         setRewardModalOpen(true);
       }
@@ -451,17 +453,17 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
 
   return (
     <div className="cq2-bg min-h-[calc(100vh-4rem)] pb-12">
-      {confetti && <Confetti count={100} onComplete={() => setConfetti(false)} />}
+      <Confetti active={confetti} onComplete={() => setConfetti(false)} />
       <AchievementsModal language="francais" isOpen={achievementsOpen} onClose={() => setAchievementsOpen(false)} />
       {rewardSummary && (
         <RewardUnlockModal
           language="francais"
           isOpen={rewardModalOpen}
           onClose={() => setRewardModalOpen(false)}
+          badge={rewardSummary.level ? null : rewardSummary.badges[0] ?? null}
+          level={rewardSummary.level ?? null}
           xpGained={rewardSummary.xp}
           goudGained={rewardSummary.goud}
-          badges={rewardSummary.badges}
-          newLevel={rewardSummary.level}
         />
       )}
 

@@ -308,9 +308,9 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
               onChange={(e) => setSettings({ ...settings, platform: e.target.value as any })}
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2 text-xs font-bold"
             >
-              {SOCIAL_PLATFORMS.map((p) => (
+              {(Object.keys(SOCIAL_PLATFORMS) as (keyof typeof SOCIAL_PLATFORMS)[]).map((p) => (
                 <option key={p} value={p}>
-                  {p === "instagram" ? "Instagram" : p === "facebook" ? "Facebook" : "YouTube"}
+                  {SOCIAL_PLATFORMS[p].label}
                 </option>
               ))}
             </select>

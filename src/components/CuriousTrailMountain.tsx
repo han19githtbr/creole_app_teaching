@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { TRAIL_LEVELS, type TrailLevelConfig, type TrailWeather } from "@/lib/curiousTrailData";
+import { TRAIL_LEVELS, ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailWeather } from "@/lib/curiousTrailData";
 import { CuriousTrailStudent } from "./CuriousTrailStudent";
 import { soundEffects } from "@/lib/soundEffects";
-import { Check, Lock, Volume2 } from "lucide-react";
+import { createWildlife, type Wildlife } from "@/lib/trailWildlife";
+import { Check, Lock } from "lucide-react";
 
 export interface CuriousTrailMountainProps {
   currentLevel: number; // 1 a 7
@@ -55,17 +56,101 @@ export function CuriousTrailMountain({
     y: currentCfg.coord.y + ((nextCfg?.coord.y ?? currentCfg.coord.y) - currentCfg.coord.y) * progress,
   };
 
-  function handleAnimalTap(cfg: TrailLevelConfig) {
+  // ---------------- BICHOS VIVOS NA ENCOSTA (movimento natural, igual às cenas das histórias) ----------------
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const worldRef = useRef<Wildlife | null>(null);
+  const sizeRef = useRef({ W: 0, H: 0 });
+  const bubbleIdRef = useRef<string | null>(null);
+  const bubbleId = localBubble?.id ?? activeAnimalGreeting ?? null;
+  useEffect(() => {
+    bubbleIdRef.current = bubbleId;
+  }, [bubbleId]);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    const svg = svgRef.current;
+    if (!el || !svg) return;
+    const world = createWildlife();
+    worldRef.current = world;
+
+    const measure = () => {
+      const W = el.clientWidth, H = el.clientHeight;
+      sizeRef.current = { W, H };
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+
+    let raf = 0;
+    let last = performance.now();
+    const loop = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const { W, H } = sizeRef.current;
+      if (W > 0 && H > 0) {
+        world.step(dt, W, H);
+        svg.innerHTML = world.render(W, H);
+        const b = bubbleRef.current;
+        const id = bubbleIdRef.current;
+        if (b) {
+          const c = id ? world.find(id) : undefined;
+          if (c) {
+            const p = world.position(c, W, H);
+            const x = Math.min(Math.max(p.x, 110), W - 110);
+            b.style.transform = `translate(${x}px, ${Math.max(p.y, 70)}px) translate(-50%, -100%)`;
+            b.style.opacity = "1";
+          } else {
+            b.style.opacity = "0";
+          }
+        }
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      worldRef.current = null;
+    };
+  }, []);
+
+  function handleAnimalTap(animal: TrailAnimal) {
     soundEffects.playTap();
-    setLocalBubble({ id: cfg.animal.id, quote: cfg.animal.quote, name: cfg.animal.name });
-    onAnimalClick?.(cfg.animal.id, cfg.animal.quote);
+    setLocalBubble({ id: animal.id, quote: animal.quote, name: animal.name });
+    onAnimalClick?.(animal.id, animal.quote);
     setTimeout(() => {
-      setLocalBubble((prev) => (prev?.id === cfg.animal.id ? null : prev));
+      setLocalBubble((prev) => (prev?.id === animal.id ? null : prev));
     }, 4500);
   }
 
+  function pointerPos(e: React.PointerEvent | React.MouseEvent) {
+    const r = wrapRef.current!.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  function handleMapClick(e: React.MouseEvent<HTMLDivElement>) {
+    const world = worldRef.current;
+    if (!world || !wrapRef.current) return;
+    const { x, y } = pointerPos(e);
+    const c = world.hit(x, y, sizeRef.current.W, sizeRef.current.H);
+    if (c) {
+      world.poke(c);
+      handleAnimalTap(c.animal);
+    }
+  }
+  function handleMapMove(e: React.PointerEvent<HTMLDivElement>) {
+    const world = worldRef.current;
+    if (!world || !wrapRef.current) return;
+    const { x, y } = pointerPos(e);
+    e.currentTarget.style.cursor = world.hit(x, y, sizeRef.current.W, sizeRef.current.H) ? "pointer" : "default";
+  }
+  const bubbleAnimal = bubbleId ? ROAMING_ANIMAL_POOL.find((a) => a.id === bubbleId) : undefined;
+
   return (
     <div
+      ref={wrapRef}
       className={cn(
         "trail-mountain relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[580px] rounded-3xl overflow-hidden border-2 border-[var(--border)] shadow-xl select-none transition-colors duration-1000",
         weather === "sunny" && "bg-gradient-to-b from-sky-400 via-sky-200 to-amber-50",
@@ -261,51 +346,24 @@ export function CuriousTrailMountain({
         />
       </svg>
 
-      {/* ---------------- ANIMAIS DA MONTANHA AO LONGO DO CAMINHO ---------------- */}
-      {TRAIL_LEVELS.map((cfg) => {
-        const isNearCurrent = cfg.level === currentLevel;
-        // Posição do bicho ligeiramente ao lado do waypoint
-        const leftPct = cfg.coord.x + (cfg.level % 2 === 0 ? 5 : -4);
-        const topPct = cfg.coord.y + 4;
-
-        return (
-          <button
-            type="button"
-            key={cfg.animal.id}
-            onClick={() => handleAnimalTap(cfg)}
-            aria-label={`Ouvir ${cfg.animal.namePt}: ${cfg.animal.quote}`}
-            className={cn(
-              "trail-animal absolute z-20 cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300",
-              isNearCurrent ? "scale-125" : "scale-100 hover:scale-110 opacity-90"
-            )}
-            style={{ left: `${leftPct}%`, top: `${topPct}%` }}
-            title={`${cfg.animal.name} (${cfg.animal.namePt}) - Clique para ouvir!`}
-          >
-            {/* Ícone / Emoji do bicho com pulso suave */}
-            <div className="relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/90 dark:bg-slate-900/90 shadow-md border-2 border-amber-400 group-hover:border-amber-500 animate-[bounce_2.5s_ease-in-out_infinite]">
-              <span className="text-xl sm:text-2xl leading-none">{cfg.animal.emoji}</span>
-              {/* Notificação de áudio disponível */}
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] text-white font-bold">
-                <Volume2 className="h-2.5 w-2.5" />
-              </span>
-            </div>
-
-            {/* Balão de fala do bicho quando clicado ou ativo */}
-            {(localBubble?.id === cfg.animal.id || activeAnimalGreeting === cfg.animal.id) && (
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 sm:w-56 p-2.5 bg-slate-900/95 text-white rounded-2xl shadow-xl text-xs z-30 border border-amber-400/60 pointer-events-auto animate-in fade-in zoom-in-95">
-                <p className="font-extrabold text-amber-400 text-[11px] flex items-center justify-between">
-                  <span>{cfg.animal.emoji} {cfg.animal.name}</span>
-                  <span className="text-[9px] text-slate-400">{cfg.altitude}m</span>
-                </p>
-                <p className="mt-1 font-medium leading-snug italic text-slate-100">
-                  &ldquo;{cfg.animal.quote}&rdquo;
-                </p>
-                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
-              </div>
-            )}
-          </button>
-        );
-      })}
+      {/* ---------------- BICHOS VIVOS: desenhados quadro a quadro (SVG) ---------------- */}
+      <svg ref={svgRef} className="absolute inset-0 w-full h-full z-20 pointer-events-none" aria-hidden />
+      <div className="absolute inset-0 z-20" onClick={handleMapClick} onPointerMove={handleMapMove} />
+      <div
+        ref={bubbleRef}
+        className="absolute left-0 top-0 z-30 pointer-events-none transition-opacity duration-200"
+        style={{ opacity: 0 }}
+      >
+        {bubbleAnimal && (
+          <div className="w-48 sm:w-56 p-2.5 bg-slate-900/95 text-white rounded-2xl shadow-xl text-xs border border-amber-400/60 animate-in fade-in zoom-in-95 relative">
+            <p className="font-extrabold text-amber-400 text-[11px]">
+              {bubbleAnimal.emoji} {bubbleAnimal.name}
+            </p>
+            <p className="mt-1 font-medium leading-snug italic text-slate-100">&ldquo;{bubbleAnimal.quote}&rdquo;</p>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+          </div>
+        )}
+      </div>
 
       {/* ---------------- AS 7 ESTAÇÕES / WAYPOINTS ---------------- */}
       {TRAIL_LEVELS.map((cfg) => {

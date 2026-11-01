@@ -960,35 +960,60 @@ export function CestQuoiGame({
           </div>
           <AchievementsModal language="francais" isOpen={achievementsOpen} onClose={() => setAchievementsOpen(false)} />
 
-          <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 text-center shadow-lg">
-            <div className="cq2-scene-in mx-auto h-36 w-36"><CestQuoiStickman mood="think" /></div>
-            <h1 className="mt-1 text-3xl font-black tracking-tight text-[var(--text)]">C&apos;est quoi ? 🇫🇷</h1>
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              A seta vermelha aponta para um objeto. Escolha a resposta certa em francês antes que o tempo acabe! Você tem{" "}
-              <strong>mais uma tentativa</strong> se errar.
+          <div className="cq2-hero rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-5 pt-6 text-center shadow-xl sm:p-7">
+            <div className="cq2-hero-stage mx-auto">
+              <span className="cq2-hero-glow" aria-hidden />
+              <div className="cq2-scene-in relative z-[1] h-full w-full"><CestQuoiStickman mood="think" /></div>
+            </div>
+            <h1 className="mt-3 flex items-center justify-center gap-2.5 text-[2rem] font-black leading-none tracking-tight">
+              <span className="cq2-title-gradient">C&apos;est quoi ?</span>
+              <span className="cq2-fr-pill" aria-label="Francês">
+                <span className="cq2-fr-flag" aria-hidden />FR
+              </span>
+            </h1>
+            <p className="mx-auto mt-3 max-w-sm text-[13px] leading-relaxed text-[var(--text-secondary)]">
+              A seta vermelha aponta para um objeto. Escolha a resposta certa em francês antes que o tempo acabe!
             </p>
+            <ul className="mt-3 flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-bold text-[var(--text-secondary)]">
+              <li className="cq2-pill"><span className="text-red-500">➜</span> Siga a seta</li>
+              <li className="cq2-pill"><span>⏱️</span> Vença o tempo</li>
+              <li className="cq2-pill"><span>🔁</span> 2ª chance se errar</li>
+            </ul>
 
             {/* BANNER DO NOVO MÓDULO TRILHA DO ALUNO CURIOSO */}
             <div
               onClick={() => setGameModule("trail")}
-              className="mt-4 cursor-pointer rounded-2xl border-2 border-amber-500/50 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent p-3 text-left transition-all hover:scale-[1.02] shadow-sm flex items-center justify-between"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setGameModule("trail"); }}
+              className="cq2-trail-banner mt-5 flex cursor-pointer items-center gap-3 rounded-2xl p-3 text-left"
             >
-              <div className="flex items-center gap-2.5">
-                <span className="text-2xl">🏔️</span>
-                <div>
-                  <p className="text-xs font-black text-amber-600 dark:text-amber-400">
-                    Novo: Trilha do Aluno Curioso
-                  </p>
-                  <p className="text-[11px] text-[var(--text-secondary)]">
-                    Escale a montanha em 7 níveis com chuva, neve e bandeira no topo!
-                  </p>
-                </div>
+              <svg viewBox="0 0 64 48" className="h-12 w-16 shrink-0 rounded-xl" aria-hidden>
+                <defs>
+                  <linearGradient id="cqtb-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7dd3fc" /><stop offset="1" stopColor="#fde68a" /></linearGradient>
+                </defs>
+                <rect width="64" height="48" fill="url(#cqtb-sky)" />
+                <circle cx="52" cy="11" r="5" fill="#fbbf24" />
+                <path d="M-2 48 L20 14 L34 34 L44 22 L66 48Z" fill="#64748b" />
+                <path d="M20 14 L14.5 22.5 L20 20.5 L25 24Z" fill="#fff" />
+                <path d="M-2 48 Q18 34 34 38 T66 34 L66 48Z" fill="#16a34a" />
+                <path d="M8 46 Q22 40 30 40 T52 37" stroke="#fde68a" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeDasharray="3 3" />
+                <path d="M52 37 V27" stroke="#78350f" strokeWidth="1.2" /><path d="M52 27 h7 l-2 2.5 l2 2.5 h-7z" fill="#dc2626" />
+              </svg>
+              <div className="min-w-0 flex-1">
+                <p className="flex items-center gap-1.5 text-[13px] font-black text-amber-600 dark:text-amber-400">
+                  Trilha do Aluno Curioso
+                  <span className="rounded-full bg-amber-500 px-1.5 py-px text-[9px] font-black uppercase tracking-wide text-white">Novo</span>
+                </p>
+                <p className="mt-0.5 text-[11px] leading-snug text-[var(--text-secondary)]">
+                  Suba a montanha em 7 níveis, enfrente chuva e neve e hasteie a bandeira no topo!
+                </p>
               </div>
-              <span className="text-xs font-bold text-amber-500 shrink-0 ml-2">Jogar →</span>
+              <span className="shrink-0 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-black text-white shadow-sm">Jogar →</span>
             </div>
 
-            <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Escolha o nível</p>
-            <div className="mt-2 space-y-2.5 text-left">
+            <div className="cq2-divider mt-6"><span>Escolha o nível</span></div>
+            <div className="mt-3 space-y-2.5 text-left">
               {classic.map((lv) => {
                 const cfg = LEVELS[lv];
                 const unlocked = isUnlocked(lv, progress);
@@ -1002,7 +1027,7 @@ export function CestQuoiGame({
                     onClick={() => chooseLevel(lv)}
                     aria-disabled={!unlocked}
                     className={cn(
-                      "relative flex w-full cursor-pointer items-center gap-3 overflow-hidden rounded-2xl border-2 border-b-4 p-3 transition-all active:translate-y-[2px] active:border-b-2",
+                      "relative flex w-full cursor-pointer items-center gap-3 overflow-hidden rounded-2xl border-2 border-b-4 p-3 text-left transition-all active:translate-y-[2px] active:border-b-2",
                       unlocked ? "cq2-opt-hover bg-[var(--surface)] hover:bg-[var(--surface-2)]" : "cursor-not-allowed bg-[var(--surface-2)] opacity-70",
                       selected ? `border-transparent ring-2 ${cfg.ring} ring-offset-2 ring-offset-[var(--surface)]` : "border-[var(--border)]",
                       unlocked && !done && selected && "cq2-glow",
@@ -1017,7 +1042,10 @@ export function CestQuoiGame({
                         <span className="text-base font-extrabold text-[var(--text)]">{cfg.label}</span>
                         {done && <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">✔ Concluído</span>}
                       </span>
-                      <span className="block text-xs text-[var(--text-secondary)]">{cfg.desc} · pontos x{cfg.multiplier}</span>
+                      <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] font-semibold text-[var(--text-secondary)]">
+                        <span>⏱ {cfg.desc}</span>
+                        <span className="cq2-mult">pontos x{cfg.multiplier}</span>
+                      </span>
                       {unlocked ? (
                         best ? <span className="block text-[11px] font-semibold text-[var(--text-muted)]">Melhor pontuação: {best} pts</span> : null
                       ) : (

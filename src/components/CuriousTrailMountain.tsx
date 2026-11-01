@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { TRAIL_LEVELS, type TrailLevelConfig, type TrailWeather } from "@/lib/curiousTrailData";
 import { CuriousTrailStudent } from "./CuriousTrailStudent";
 import { soundEffects } from "@/lib/soundEffects";
-import { Check, Lock, Sparkles, Flag, Volume2 } from "lucide-react";
+import { Check, Lock, Volume2 } from "lucide-react";
 
 export interface CuriousTrailMountainProps {
   currentLevel: number; // 1 a 7
@@ -13,6 +13,7 @@ export interface CuriousTrailMountainProps {
   completedLevels: number[];
   onSelectLevel?: (level: number) => void;
   isMoving?: boolean;
+  climbProgress?: number;
   isCheering?: boolean;
   isRaisingFlag?: boolean;
   flagProgress?: number; // 0..100
@@ -33,6 +34,7 @@ export function CuriousTrailMountain({
   completedLevels,
   onSelectLevel,
   isMoving = false,
+  climbProgress = 0,
   isCheering = false,
   isRaisingFlag = false,
   flagProgress = 100,
@@ -46,7 +48,12 @@ export function CuriousTrailMountain({
   const [localBubble, setLocalBubble] = useState<{ id: string; quote: string; name: string } | null>(null);
 
   // Calcula a posição do aluno na estação atual
-  const studentCoord = currentCfg.coord;
+  const nextCfg = TRAIL_LEVELS.find((level) => level.level === currentLevel + 1);
+  const progress = Math.max(0, Math.min(1, climbProgress));
+  const studentCoord = {
+    x: currentCfg.coord.x + ((nextCfg?.coord.x ?? currentCfg.coord.x) - currentCfg.coord.x) * progress,
+    y: currentCfg.coord.y + ((nextCfg?.coord.y ?? currentCfg.coord.y) - currentCfg.coord.y) * progress,
+  };
 
   function handleAnimalTap(cfg: TrailLevelConfig) {
     soundEffects.playTap();
@@ -60,7 +67,7 @@ export function CuriousTrailMountain({
   return (
     <div
       className={cn(
-        "relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[580px] rounded-3xl overflow-hidden border-2 border-[var(--border)] shadow-xl select-none transition-colors duration-1000",
+        "trail-mountain relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[580px] rounded-3xl overflow-hidden border-2 border-[var(--border)] shadow-xl select-none transition-colors duration-1000",
         weather === "sunny" && "bg-gradient-to-b from-sky-400 via-sky-200 to-amber-50",
         weather === "rain" && "bg-gradient-to-b from-slate-700 via-slate-600 to-emerald-950/80",
         weather === "snow" && "bg-gradient-to-b from-slate-400 via-indigo-100 to-blue-50",
@@ -74,8 +81,8 @@ export function CuriousTrailMountain({
           <div className="absolute top-6 left-12 w-20 h-20 rounded-full bg-amber-300 blur-sm opacity-90 animate-pulse" />
           <div className="absolute top-8 left-14 w-16 h-16 rounded-full bg-amber-400 shadow-[0_0_40px_#f59e0b]" />
           {/* Nuvens brancas suaves */}
-          <div className="absolute top-8 right-20 w-44 h-14 bg-white/70 rounded-full blur-[2px] animate-[pulse_6s_ease-in-out_infinite]" />
-          <div className="absolute top-16 left-1/3 w-36 h-10 bg-white/60 rounded-full blur-[2px]" />
+          <div className="trail-cloud trail-cloud--first absolute top-8 right-20 h-14 w-44 rounded-full bg-white/70 blur-[2px]" />
+          <div className="trail-cloud trail-cloud--second absolute top-16 left-1/3 h-10 w-36 rounded-full bg-white/60 blur-[2px]" />
         </div>
       )}
 
@@ -84,7 +91,7 @@ export function CuriousTrailMountain({
           {/* Nuvens pesadas de chuva */}
           <div className="absolute -top-10 inset-x-0 h-36 bg-gradient-to-b from-slate-900/90 via-slate-800/80 to-transparent" />
           {/* Gotas de chuva animadas via SVG */}
-          <svg className="absolute inset-0 w-full h-full opacity-60">
+          <svg className="trail-rain-layer absolute inset-0 h-full w-full opacity-60">
             <pattern id="rainPattern" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(20)">
               <line x1="10" y1="0" x2="10" y2="25" stroke="#bae6fd" strokeWidth="1.5" strokeLinecap="round" />
               <line x1="30" y1="20" x2="30" y2="45" stroke="#7dd3fc" strokeWidth="1.2" strokeLinecap="round" />
@@ -102,7 +109,7 @@ export function CuriousTrailMountain({
           {/* Céu gelado de altitude */}
           <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-slate-600/50 via-indigo-900/30 to-transparent" />
           {/* Flocos de neve caindo */}
-          <svg className="absolute inset-0 w-full h-full opacity-80">
+          <svg className="trail-snow-layer absolute inset-0 h-full w-full opacity-80">
             <pattern id="snowPattern" width="80" height="80" patternUnits="userSpaceOnUse">
               <circle cx="20" cy="15" r="2.5" fill="#ffffff" />
               <circle cx="60" cy="25" r="3" fill="#ffffff" />
@@ -157,6 +164,8 @@ export function CuriousTrailMountain({
         {/* Neve nos picos distantes */}
         <polygon points="450,210 410,260 490,260" fill="#ffffff" opacity="0.9" />
         <polygon points="760,170 720,230 800,230" fill="#ffffff" opacity="0.9" />
+        <path d="M410 260 L450 210 L490 260 L470 250 L450 238 L430 253 Z" fill="#cbd5e1" opacity=".8" />
+        <path d="M720 230 L760 170 L800 230 L780 216 L760 200 L742 222 Z" fill="#cbd5e1" opacity=".8" />
 
         {/* 2. Cordilheira Média */}
         <path
@@ -169,6 +178,20 @@ export function CuriousTrailMountain({
         <path
           d="M0 600 L0 480 Q150 440 280 380 Q450 310 600 240 Q750 160 880 70 L980 90 L1000 130 L1000 600 Z"
           fill="url(#mainSlopeGrad)"
+        />
+        <path
+          d="M0 525 Q150 475 280 420 Q450 350 600 278 Q750 198 880 108"
+          fill="none"
+          stroke={weather === "snow" ? "#fff" : weather === "rain" ? "#86a99c" : "#86efac"}
+          strokeWidth="2"
+          opacity=".24"
+        />
+        <path
+          d="M80 590 Q260 510 390 450 T680 320 T940 150"
+          fill="none"
+          stroke={weather === "snow" ? "#64748b" : weather === "rain" ? "#052e24" : "#14532d"}
+          strokeWidth="3"
+          opacity=".18"
         />
 
         {/* Cume Nevado com Rochas (Estação 7) */}
@@ -195,8 +218,23 @@ export function CuriousTrailMountain({
             {/* Camadas da copa verde ou com neve */}
             <polygon points="0,-18 -16,0 -4,0 -20,18 20,18 4,0 16,0" fill={weather === "snow" ? "#475569" : "#14532d"} />
             {weather === "snow" && (
-              <polygon points="0,-18 -8,-7 8,-7" fill="#ffffff" />
+              <>
+                <polygon points="0,-18 -8,-7 8,-7" fill="#ffffff" />
+                <path d="M-13 5 Q0 0 13 5" fill="none" stroke="#fff" strokeWidth="2" opacity=".9" />
+              </>
             )}
+          </g>
+        ))}
+
+        {/* Afloramentos rochosos para dar escala à encosta */}
+        {[
+          { x: 360, y: 390, s: 1 },
+          { x: 540, y: 300, s: 0.75 },
+          { x: 790, y: 168, s: 0.85 },
+        ].map((rock) => (
+          <g key={`${rock.x}-${rock.y}`} transform={`translate(${rock.x}, ${rock.y}) scale(${rock.s})`} opacity={weather === "snow" ? 0.75 : 0.9}>
+            <path d="M-22 9 L-14 -4 L-5 -2 L4 -13 L15 -5 L23 9 Z" fill={weather === "snow" ? "#94a3b8" : "#64748b"} />
+            <path d="M-14 -4 L-5 -2 L4 -13 L8 -3 L1 1 L-7 0 Z" fill={weather === "snow" ? "#f8fafc" : "#cbd5e1"} opacity=".8" />
           </g>
         ))}
 
@@ -231,11 +269,13 @@ export function CuriousTrailMountain({
         const topPct = cfg.coord.y + 4;
 
         return (
-          <div
+          <button
+            type="button"
             key={cfg.animal.id}
             onClick={() => handleAnimalTap(cfg)}
+            aria-label={`Ouvir ${cfg.animal.namePt}: ${cfg.animal.quote}`}
             className={cn(
-              "absolute z-20 cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group transition-all duration-300",
+              "trail-animal absolute z-20 cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300",
               isNearCurrent ? "scale-125" : "scale-100 hover:scale-110 opacity-90"
             )}
             style={{ left: `${leftPct}%`, top: `${topPct}%` }}
@@ -263,7 +303,7 @@ export function CuriousTrailMountain({
                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
               </div>
             )}
-          </div>
+          </button>
         );
       })}
 
@@ -274,18 +314,22 @@ export function CuriousTrailMountain({
         const isDone = completedLevels.includes(cfg.level);
 
         return (
-          <div
+          <button
+            type="button"
             key={cfg.level}
             onClick={() => isUnlocked && onSelectLevel?.(cfg.level)}
+            disabled={!isUnlocked || !onSelectLevel}
+            aria-label={`Nível ${cfg.level}, ${cfg.name}, ${cfg.altitude} metros${isDone ? ", concluído" : isUnlocked ? ", desbloqueado" : ", bloqueado"}`}
+            aria-current={isCurrent ? "step" : undefined}
             className={cn(
-              "absolute z-20 -translate-x-1/2 -translate-y-1/2 transition-all duration-300",
+              "trail-waypoint absolute z-20 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300",
               isUnlocked ? "cursor-pointer" : "cursor-not-allowed opacity-60",
               isCurrent ? "scale-125 z-30" : "hover:scale-110"
             )}
             style={{ left: `${cfg.coord.x}%`, top: `${cfg.coord.y}%` }}
           >
             {/* Círculo do Waypoint */}
-            <div
+            <span
               className={cn(
                 "relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full font-black text-xs sm:text-sm shadow-lg transition-transform",
                 isCurrent
@@ -309,10 +353,10 @@ export function CuriousTrailMountain({
               {cfg.level === 7 && (
                 <span className="absolute -top-3 -right-2 text-base">🚩</span>
               )}
-            </div>
+            </span>
 
             {/* Etiqueta de Altitude e Nome */}
-            <div
+            <span
               className={cn(
                 "absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap shadow-sm border pointer-events-none transition-colors",
                 isCurrent
@@ -322,9 +366,9 @@ export function CuriousTrailMountain({
                   : "bg-slate-900/80 text-slate-100 border-slate-700"
               )}
             >
-              {cfg.name} · {cfg.altitude}m
-            </div>
-          </div>
+              N{cfg.level} · {cfg.altitude}m
+            </span>
+          </button>
         );
       })}
 
@@ -391,7 +435,7 @@ export function CuriousTrailMountain({
           </span>
           <div className="leading-tight">
             <span className="block text-xs font-black text-amber-400">
-              Nível {currentLevel} · {currentCfg.name}
+              <span style={{ color: themeColor }}>Nível {currentLevel}</span> · {currentCfg.name}
             </span>
             <span className="block text-[10px] text-slate-300 font-semibold">
               Altitude: {currentCfg.altitude}m · Clima:{" "}

@@ -1,7 +1,7 @@
 "use client";
 
 import "./CuriousTrailGame.css";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -723,10 +723,12 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
               unlockedLevel={trailProgress.unlockedLevel}
               completedLevels={trailProgress.completedLevels}
               isMoving={isMovingStudent}
+              climbProgress={levelItems.length > 1 ? elementIndex / levelItems.length : 0}
               isCheering={isCheering}
               isRaisingFlag={isRaisingFlag}
               flagProgress={flagProgress}
               activeAnimalGreeting={activeAnimalGreeting}
+              themeColor={selectedTheme.accentColor}
               onAnimalClick={(animalId, quote) => {
                 speakWordFrench(quote);
                 setActiveAnimalGreeting(animalId);
@@ -734,7 +736,7 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
             />
 
             {/* CARD PRINCIPAL DE IDENTIFICAÇÃO DO ELEMENTO */}
-            <div className="rounded-3xl border-2 border-[var(--border)] bg-[var(--surface)] p-4 sm:p-6 shadow-xl space-y-4">
+            <div className="trail-game-card rounded-3xl border-2 border-[var(--border)] bg-[var(--surface)] p-4 sm:p-6 shadow-xl space-y-4">
               {/* STATUS DO ELEMENTO / TEMPORIZADOR */}
               <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] pb-3">
                 <div className="flex items-center gap-2">
@@ -751,6 +753,22 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
                   </div>
                 </div>
 
+                <span className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[11px] font-black text-amber-600 dark:text-amber-300 sm:hidden">
+                  ✨ {score} pts
+                </span>
+
+                <div className="hidden items-center gap-2 sm:flex">
+                  <span className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-black text-amber-600 dark:text-amber-300">
+                    ✨ {score} pts
+                  </span>
+                  <span className={cn(
+                    "rounded-xl px-3 py-1 text-xs font-black",
+                    streak > 1 ? "bg-orange-500/15 text-orange-600 dark:text-orange-300" : "bg-[var(--surface-2)] text-[var(--text-muted)]"
+                  )}>
+                    🔥 {streak}
+                  </span>
+                </div>
+
                 {/* TEMPORIZADOR CIRCULAR */}
                 <div className="flex items-center gap-2">
                   {speedBonusText && (
@@ -760,23 +778,38 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
                   )}
                   <div
                     className={cn(
-                      "flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full font-black text-sm text-white shadow-md transition-colors",
-                      timeLeft <= 3000 ? "bg-red-600 animate-ping" : timeLeft <= 6000 ? "bg-amber-500" : "bg-blue-600"
+                      "trail-timer flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full font-black text-sm text-white shadow-md transition-colors",
+                      timeLeft <= 3000 ? "trail-timer--urgent bg-red-600" : timeLeft <= 6000 ? "bg-amber-500" : "bg-blue-600"
                     )}
+                    role="timer"
+                    aria-label={`${Math.ceil(timeLeft / 1000)} segundos restantes`}
                   >
                     {Math.ceil(timeLeft / 1000)}s
                   </div>
                 </div>
               </div>
 
+              <div className="trail-progress-track" role="progressbar" aria-label="Progresso do nível" aria-valuemin={0} aria-valuemax={levelItems.length} aria-valuenow={elementIndex}>
+                <span style={{ width: `${(elementIndex / levelItems.length) * 100}%` }} />
+              </div>
+
               {/* IMAGEM DO ELEMENTO NA CENA DA TRILHA */}
-              <div className="relative aspect-[16/10] sm:aspect-[16/9] max-h-[380px] w-full overflow-hidden rounded-2xl border-2 border-[var(--border)] bg-slate-950 shadow-inner">
+              <div className="trail-scene relative aspect-[16/10] sm:aspect-[16/9] max-h-[420px] w-full overflow-hidden rounded-2xl border-2 border-[var(--border)] bg-slate-950 shadow-inner">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
+                  key={currentItem.id}
                   src={currentItem.scene}
                   alt={currentItem.name}
-                  className="h-full w-full object-contain"
+                  className="trail-scene-image h-full w-full object-contain"
+                  draggable={false}
                 />
+                <div className="absolute left-3 top-3 flex max-w-[70%] items-center gap-2 rounded-full border border-white/25 bg-slate-950/75 px-3 py-1.5 text-xs font-extrabold text-white shadow-lg backdrop-blur-md">
+                  <span>{selectedTheme.emoji}</span>
+                  <span className="truncate">{selectedTheme.label}</span>
+                </div>
+                <span className="absolute right-3 top-3 rounded-full border border-white/25 bg-slate-950/75 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-white shadow-lg backdrop-blur-md">
+                  {currentLevelCfg.weather === "sunny" ? "☀️ Tempo aberto" : currentLevelCfg.weather === "rain" ? "🌧️ Chuva na trilha" : "❄️ Frio no cume"}
+                </span>
 
                 {/* Seta vermelha apontando o objeto exato da trilha */}
                 <svg
@@ -846,7 +879,7 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
                       onClick={() => handleSelectOption(opt)}
                       disabled={roundState !== "asking" || isWrong}
                       className={cn(
-                        "relative flex items-center gap-3 rounded-2xl border-2 p-3.5 text-left transition-all",
+                        "trail-answer relative flex items-center gap-3 rounded-2xl border-2 p-3.5 text-left transition-all",
                         isWrong
                           ? "border-red-300 bg-red-100/40 text-red-700 opacity-60 line-through cursor-not-allowed dark:bg-red-950/20"
                           : isCorrectChoice || isRevealed

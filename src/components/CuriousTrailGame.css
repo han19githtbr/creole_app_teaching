@@ -63,6 +63,31 @@
   }
 }
 
+@keyframes trailCloudDrift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(24px); }
+}
+
+@keyframes trailRainMove {
+  from { transform: translateY(-18px); }
+  to { transform: translateY(36px); }
+}
+
+@keyframes trailSnowMove {
+  from { transform: translate3d(-12px, -24px, 0); }
+  to { transform: translate3d(20px, 34px, 0); }
+}
+
+@keyframes trailTimerUrgent {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, .45); }
+  50% { box-shadow: 0 0 0 8px rgba(248, 113, 113, 0); }
+}
+
+@keyframes trailSceneArrival {
+  from { opacity: .55; transform: scale(1.035); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .trail-glow-amber {
   animation: trailPulseGlow 2s infinite ease-in-out;
 }
@@ -87,4 +112,126 @@
 
 .trail-card-hover:active {
   transform: translateY(-1px) scale(0.99);
+}
+
+.trail-mountain {
+  isolation: isolate;
+  background-image: radial-gradient(ellipse at 15% 92%, rgba(255, 255, 255, .26), transparent 44%);
+}
+
+.trail-mountain::after {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 22%;
+  background: linear-gradient(0deg, rgba(15, 23, 42, .16), transparent);
+  content: "";
+  pointer-events: none;
+}
+
+.trail-cloud--first {
+  animation: trailCloudDrift 12s ease-in-out infinite;
+}
+
+.trail-cloud--second {
+  animation: trailCloudDrift 16s ease-in-out infinite reverse;
+}
+
+.trail-rain-layer {
+  inset-block: -40px;
+  height: calc(100% + 80px);
+  animation: trailRainMove .65s linear infinite;
+}
+
+.trail-snow-layer {
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  animation: trailSnowMove 4s linear infinite;
+}
+
+.trail-animal {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.trail-waypoint {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.trail-game-card {
+  background-image: linear-gradient(145deg, rgba(255, 255, 255, .055), transparent 48%);
+}
+
+.trail-progress-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-2);
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, .14);
+}
+
+.trail-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #10b981, #84cc16, #f59e0b);
+  box-shadow: 0 0 12px rgba(16, 185, 129, .35);
+  transition: width .45s cubic-bezier(.2, .75, .25, 1);
+}
+
+.trail-scene {
+  isolation: isolate;
+  box-shadow: inset 0 0 50px rgba(2, 6, 23, .42);
+}
+
+.trail-scene::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.trail-scene-image {
+  animation: trailSceneArrival .45s ease-out both;
+}
+
+.trail-answer {
+  min-height: 60px;
+  box-shadow: 0 3px 0 rgba(15, 23, 42, .06);
+}
+
+.trail-answer:focus-visible {
+  outline: 3px solid #38bdf8;
+  outline-offset: 3px;
+}
+
+.trail-answer:disabled:not(.border-red-300):not(.border-emerald-500) {
+  cursor: default;
+}
+
+.trail-timer--urgent {
+  animation: trailTimerUrgent .8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trail-cloud--first,
+  .trail-cloud--second,
+  .trail-rain-layer,
+  .trail-snow-layer,
+  .trail-scene-image,
+  .trail-timer--urgent {
+    animation: none;
+  }
+
+  .trail-progress-track > span {
+    transition: none;
+  }
 }

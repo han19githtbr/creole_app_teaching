@@ -3,18 +3,16 @@
  * para Instagram (Stories, Reels e Feed) e Facebook.
  *
  * Renderiza quadro a quadro (função pura do tempo `t`) na resolução nativa (1080x1920,
- * 1080x1350 ou 1080x1080) com física de montanha, clima dinâmico (chuva com guarda-chuva,
- * neve), passos do aluno, animais na trilha, reconhecimento de elementos, pronúncia
- * nativa em francês e subida triunfante da bandeira no cume!
+ * 1080x1350 ou 1080x1080) com a sequência de jogo completa: o aluno caminha até cada objeto,
+ * observa a cena com a seta, escolhe entre alternativas, acerta e avança pela trilha.
+ * Também mostra o clima do nível e, no nível 7, a bandeira no cume.
  */
 import {
   DEMO_FORMATS,
   type DemoFormat,
-  type DemoFormatSpec,
   type DemoImages,
 } from "@/lib/gameDemoVideo";
-import { SOCIAL_PLATFORMS, type SocialPlatform } from "@/lib/socialLinks";
-import { drawSocialIcon } from "@/lib/talkingAvatar";
+import type { SocialPlatform } from "@/lib/socialLinks";
 import {
   TRAIL_LEVELS,
   TRAIL_THEMES,
@@ -54,6 +52,12 @@ export interface TrailDemoRound {
   options: string[];
   correctIndex: number;
   levelCfg: TrailLevelConfig;
+  start: number;
+  walkEnd: number;
+  correctAt: number;
+  end: number;
+  scoreBefore: number;
+  scoreAfter: number;
 }
 
 export interface TrailDemoPlan {
@@ -62,10 +66,7 @@ export interface TrailDemoPlan {
   rounds: TrailDemoRound[];
   levelCfg: TrailLevelConfig;
   introDur: number;
-  walkDur: number;
-  askDur: number;
-  correctTapTime: number;
-  revealHold: number;
+  countdownDur: number;
   flagDur: number;
   outroStart: number;
   outroDur: number;
@@ -80,28 +81,46 @@ export function buildTrailDemoPlan(
   const theme = TRAIL_THEMES.find((t) => t.id === settings.themeId) || TRAIL_THEMES[0];
   const levelCfg = TRAIL_LEVELS.find((l) => l.level === settings.level) || TRAIL_LEVELS[3];
 
-  // Filtra itens do tema
-  const pool = items.filter((i) => i.themeId === settings.themeId);
-  const picked = (pool.length > 0 ? pool : items).slice(0, 2);
+  const introDur = settings.showIntro ? 2.8 : 0;
+  const countdownDur = 2.4;
+  const themePool = items.filter((item) => item.themeId === settings.themeId);
+  const pool = themePool.length ? themePool : items;
+  const picked = shuffle(pool).slice(0, levelCfg.elementCount);
+  if (picked.length < levelCfg.elementCount) {
+    const remaining = items.filter((item) => !picked.some((selected) => selected.id === item.id));
+    picked.push(...shuffle(remaining).slice(0, levelCfg.elementCount - picked.length));
+  }
 
+  const walkDur = 1.1;
+  const answerDur = 2.6;
+  const revealDur = 1.5;
+  let cursor = introDur + countdownDur;
+  let score = 0;
   const rounds: TrailDemoRound[] = picked.map((item) => {
+    const start = cursor;
+    const walkEnd = start + walkDur;
+    const correctAt = walkEnd + answerDur;
+    const end = correctAt + revealDur;
     const opts = buildWordOptions(item, items, false);
+    const scoreBefore = score;
+    score += 100;
+    cursor = end;
     return {
       item,
       options: opts,
       correctIndex: opts.indexOf(item.fr),
       levelCfg,
+      start,
+      walkEnd,
+      correctAt,
+      end,
+      scoreBefore,
+      scoreAfter: score,
     };
   });
 
-  const introDur = settings.showIntro ? 2.8 : 0;
-  const walkDur = 2.2;
-  const askDur = 1.6;
-  const correctTapTime = walkDur + askDur + 1.8;
-  const revealHold = 2.4;
   const flagDur = settings.level === 7 ? 3.0 : 0;
-  const roundTotal = correctTapTime + revealHold;
-  const outroStart = introDur + roundTotal + flagDur;
+  const outroStart = cursor + flagDur;
   const outroDur = settings.showOutro ? 3.2 : 0;
   const total = outroStart + outroDur;
 
@@ -111,21 +130,27 @@ export function buildTrailDemoPlan(
     rounds,
     levelCfg,
     introDur,
-    walkDur,
-    askDur,
-    correctTapTime,
-    revealHold,
+    countdownDur,
     flagDur,
     outroStart,
     outroDur,
     total,
-    finalScore: 240,
+    finalScore: score,
   };
 }
 
 const FONT = '"Inter", "Segoe UI", -apple-system, sans-serif';
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 const OPTION_COLORS = ["#3b82f6", "#ec4899", "#f59e0b", "#10b981"];
+
+function shuffle<T>(values: T[]): T[] {
+  const shuffled = [...values];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 function clamp(v: number, min = 0, max = 1) {
   return Math.min(max, Math.max(min, v));
@@ -144,8 +169,9 @@ export function renderTrailDemoFrame(
   assets: { images: DemoImages }
 ) {
   const spec = DEMO_FORMATS[plan.settings.format];
-  const { theme, levelCfg, introDur, outroStart, outroDur } = plan;
-  const round = plan.rounds[0];
+  const { theme, levelCfg, introDur, countdownDur, outroStart } = plan;
+  const activeRoundIndex = plan.rounds.findIndex((entry) => t >= entry.start && t < entry.end);
+  const round = activeRoundIndex >= 0 ? plan.rounds[activeRoundIndex] : undefined;
 
   // 1. FUNDO CÉU DA MONTANHA CONFORME O CLIMA
   const isRain = levelCfg.weather === "rain";
@@ -266,10 +292,20 @@ export function renderTrailDemoFrame(
   ctx.restore();
 
   // 5. PERSONAGEM ALUNO CAMINHANDO / COM GUARDA-CHUVA
-  const isWalking = t >= introDur && t < introDur + plan.walkDur;
-  const walkFrac = clamp((t - introDur) / plan.walkDur, 0, 1);
-  const studentX = w * 0.18 + walkFrac * (w * 0.35);
-  const studentY = h * 0.76 - walkFrac * (h * 0.16);
+  const walkingRound = round;
+  const isWalking = Boolean(walkingRound && t < walkingRound.walkEnd);
+  const walkFrac = walkingRound
+    ? isWalking
+      ? clamp((t - walkingRound.start) / (walkingRound.walkEnd - walkingRound.start))
+      : 1
+    : t >= (plan.rounds.at(-1)?.end ?? introDur)
+      ? 1
+      : 0;
+  const trailProgress = plan.rounds.length
+    ? clamp(((activeRoundIndex >= 0 ? activeRoundIndex : plan.rounds.length - 1) + walkFrac) / plan.rounds.length)
+    : 0;
+  const studentX = w * 0.12 + trailProgress * (w * 0.72);
+  const studentY = h * 0.79 - trailProgress * (h * 0.43);
 
   ctx.save();
   ctx.translate(studentX, studentY);
@@ -341,7 +377,7 @@ export function renderTrailDemoFrame(
   }
 
   // BANDEIRA HASTEADA NO CUME (NÍVEL 7)
-  if (plan.settings.level === 7 && t >= introDur + plan.walkDur) {
+  if (plan.settings.level === 7 && t >= (plan.rounds.at(-1)?.end ?? outroStart)) {
     ctx.strokeStyle = "#d97706";
     ctx.lineWidth = 4;
     ctx.beginPath();
@@ -360,12 +396,12 @@ export function renderTrailDemoFrame(
   ctx.restore();
 
   // 6. CARD DO ELEMENTO A RECONHECER
-  if (round && t >= introDur + plan.walkDur && t < outroStart) {
-    const cardT = t - (introDur + plan.walkDur);
+  if (round && t >= round.walkEnd && t < outroStart) {
+    const cardT = t - round.walkEnd;
     const cardScale = easeOut(cardT / 0.4);
 
     const cardW = Math.min(w - 60, 920);
-    const cardH = 580;
+    const cardH = 610;
     const cardX = (w - cardW) / 2;
     const cardY = spec.safeTop + 60;
 
@@ -385,15 +421,23 @@ export function renderTrailDemoFrame(
 
     // Cabeçalho do Card
     ctx.fillStyle = "#f59e0b";
-    ctx.font = `bold 22px ${FONT}`;
+    ctx.font = `bold 28px ${FONT}`;
     ctx.fillText(`NÍVEL ${levelCfg.level} · ${levelCfg.name.toUpperCase()}`, cardX + 24, cardY + 40);
+    ctx.fillStyle = "#e2e8f0";
+    ctx.font = `bold 24px ${FONT}`;
+    ctx.fillText("O que a seta vermelha aponta?", cardX + 24, cardY + 70);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#cbd5e1";
+    ctx.font = `bold 18px ${FONT}`;
+    ctx.fillText(`${round.scoreBefore} PTS`, cardX + cardW - 82, cardY + 70);
+    ctx.textAlign = "left";
 
     // Imagem da Cena
     const imgObj = assets.images.get(round.item.scene);
     const imgW = cardW - 48;
-    const imgH = 260;
+    const imgH = 230;
     const imgX = cardX + 24;
-    const imgY = cardY + 60;
+    const imgY = cardY + 86;
 
     ctx.fillStyle = "#020617";
     ctx.beginPath();
@@ -405,20 +449,32 @@ export function renderTrailDemoFrame(
       ctx.beginPath();
       ctx.roundRect(imgX, imgY, imgW, imgH, 18);
       ctx.clip();
-      ctx.drawImage(imgObj, imgX, imgY, imgW, imgH);
+      const sourceW = imgObj.naturalWidth || round.item.w;
+      const sourceH = imgObj.naturalHeight || round.item.h;
+      const imageScale = Math.min(imgW / sourceW, imgH / sourceH);
+      const drawW = sourceW * imageScale;
+      const drawH = sourceH * imageScale;
+      const drawX = imgX + (imgW - drawW) / 2;
+      const drawY = imgY + (imgH - drawH) / 2;
+      ctx.drawImage(imgObj, drawX, drawY, drawW, drawH);
 
       // Seta Vermelha apontando para o objeto
-      const arrowX = imgX + (round.item.arrow.x / round.item.w) * imgW;
-      const arrowY = imgY + (round.item.arrow.y / round.item.h) * imgH;
+      const arrowX = drawX + (round.item.arrow.x / sourceW) * drawW;
+      const arrowY = drawY + (round.item.arrow.y / sourceH) * drawH;
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.9)";
+      ctx.lineWidth = 14;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(arrowX - 62, arrowY - 56);
+      ctx.lineTo(arrowX - 8, arrowY - 8);
+      ctx.stroke();
       ctx.fillStyle = "#ef4444";
       ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 5;
       ctx.beginPath();
-      ctx.moveTo(arrowX - 40, arrowY - 20);
-      ctx.lineTo(arrowX - 10, arrowY - 10);
-      ctx.lineTo(arrowX, arrowY);
-      ctx.lineTo(arrowX - 10, arrowY - 10);
-      ctx.lineTo(arrowX - 20, arrowY - 40);
+      ctx.moveTo(arrowX, arrowY);
+      ctx.lineTo(arrowX - 29, arrowY - 7);
+      ctx.lineTo(arrowX - 7, arrowY - 29);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
@@ -428,21 +484,22 @@ export function renderTrailDemoFrame(
     // Cronômetro Circular
     const timerX = cardX + cardW - 55;
     const timerY = cardY + 40;
-    ctx.fillStyle = "#2563eb";
+    const answerProgress = clamp((round.correctAt - t) / (round.correctAt - round.walkEnd));
+    const secondsLeft = Math.ceil(answerProgress * 3);
+    const isAnswered = t >= round.correctAt;
+    ctx.fillStyle = isAnswered ? "#059669" : secondsLeft === 1 ? "#dc2626" : "#2563eb";
     ctx.beginPath();
     ctx.arc(timerX, timerY, 20, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = "#ffffff";
-    ctx.font = `bold 16px ${FONT}`;
+    ctx.font = `bold 18px ${FONT}`;
     ctx.textAlign = "center";
-    ctx.fillText("⏱️", timerX, timerY + 5);
+    ctx.fillText(isAnswered ? "✓" : `${secondsLeft}s`, timerX, timerY + 5);
 
     // As 4 Alternativas (A, B, C, D)
-    const optStartY = imgY + imgH + 20;
-    const optH = 50;
+    const optStartY = imgY + imgH + 16;
+    const optH = 56;
     const optGap = 12;
-
-    const isAnswered = t >= introDur + plan.correctTapTime;
 
     round.options.slice(0, 4).forEach((opt, idx) => {
       const col = idx % 2;
@@ -467,16 +524,32 @@ export function renderTrailDemoFrame(
       ctx.roundRect(ox + 8, oy + 8, 34, 34, 8);
       ctx.fill();
       ctx.fillStyle = "#ffffff";
-      ctx.font = `bold 16px ${FONT}`;
+      ctx.font = `bold 22px ${FONT}`;
       ctx.textAlign = "center";
       ctx.fillText(OPTION_LETTERS[idx], ox + 25, oy + 30);
 
       // Texto da opção
       ctx.fillStyle = "#ffffff";
-      ctx.font = `bold 16px ${FONT}`;
+      ctx.font = `bold 23px ${FONT}`;
       ctx.textAlign = "left";
       ctx.fillText(opt, ox + 50, oy + 31);
     });
+
+    // Indicador explícito de avanço: a resposta certa faz o aluno subir para o próximo objeto.
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#cbd5e1";
+    ctx.font = `bold 20px ${FONT}`;
+    ctx.fillText(`OBJETO ${activeRoundIndex + 1} DE ${plan.rounds.length}`, imgX, cardY + cardH - 23);
+    ctx.textAlign = "right";
+    ctx.fillStyle = isAnswered ? "#34d399" : "#fbbf24";
+    ctx.fillText(isAnswered ? "ACERTOU! AVANÇANDO ↑" : "ESCOLHA A RESPOSTA", imgX + imgW, cardY + cardH - 23);
+
+    if (isAnswered) {
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#34d399";
+      ctx.font = `bold 22px ${FONT}`;
+      ctx.fillText(`${round.item.fr}  ·  ${round.scoreAfter} PTS`, w / 2, cardY + cardH - 55);
+    }
 
     ctx.restore();
   }
@@ -505,7 +578,32 @@ export function renderTrailDemoFrame(
 
     ctx.fillStyle = "#cbd5e1";
     ctx.font = `500 20px ${FONT}`;
-    ctx.fillText("7 Níveis · Chuva, Neve & Bandeira no Topo", w / 2, h * 0.61);
+    ctx.fillText(
+      `${levelCfg.elementCount} ${levelCfg.elementCount === 1 ? "objeto" : "objetos"} · Caminhe, acerte e avance`,
+      w / 2,
+      h * 0.61
+    );
+    ctx.restore();
+  }
+
+  // Contagem regressiva de início, igual à preparação antes da primeira rodada do jogo.
+  if (t >= introDur && t < introDur + countdownDur) {
+    const countdownProgress = (t - introDur) / countdownDur;
+    const count = Math.max(1, Math.ceil((1 - countdownProgress) * 3));
+    const pulse = 1 + (1 - ((t - introDur) % 0.8) / 0.8) * 0.12;
+    ctx.save();
+    ctx.fillStyle = "rgba(15, 23, 42, 0.38)";
+    ctx.fillRect(0, 0, w, h);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `900 ${Math.round(100 * pulse)}px ${FONT}`;
+    ctx.shadowColor = "#0f172a";
+    ctx.shadowBlur = 20;
+    ctx.fillText(String(count), w / 2, h * 0.5);
+    ctx.shadowBlur = 0;
+    ctx.font = `bold 28px ${FONT}`;
+    ctx.fillStyle = "#fbbf24";
+    ctx.fillText("PREPARE-SE PARA SUBIR!", w / 2, h * 0.56);
     ctx.restore();
   }
 

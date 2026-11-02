@@ -55,7 +55,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   // Carrega imagens usadas na trilha
   useEffect(() => {
     let cancelled = false;
-    const roundItems = plan.rounds.map((r) => r.item);
+    const roundItems = [...new Map(plan.rounds.map((round) => [round.item.scene, round.item])).values()];
     void loadDemoImages(roundItems).then((map) => {
       if (cancelled) return;
       setImages(map);
@@ -368,7 +368,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       <div className="lg:col-span-6 space-y-3">
         <div className="flex items-center justify-between px-1">
           <span className="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">
-            Pré-visualização do Vídeo ({spec.w}×{spec.h})
+            Prévia do nível {settings.level} · {plan.rounds.length} rodadas ({spec.w}×{spec.h})
           </span>
           <button
             type="button"
@@ -379,6 +379,9 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
             {playing ? "Pausar" : "Tocar"}
           </button>
         </div>
+        <p className="px-1 text-xs text-[var(--text-secondary)]">
+          A animação mostra cada rodada: o aluno caminha, identifica o objeto pela seta, escolhe a resposta e avança pela trilha.
+        </p>
 
         <div className="relative mx-auto max-h-[640px] max-w-sm overflow-hidden rounded-3xl border-2 border-[var(--border)] bg-slate-950 shadow-2xl">
           <canvas

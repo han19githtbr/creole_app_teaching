@@ -1,5 +1,76 @@
 /* Animações e Estilos Especializados para a Trilha do Aluno Curioso */
 
+/* Movimento de caminhada alpina realista do estudante (passadas, inclinação e peso) */
+@keyframes trailHikerLegSwing {
+  0% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+  100% {
+    transform: rotate(-18deg);
+  }
+}
+
+@keyframes trailHikerLegSwingAlt {
+  0% {
+    transform: rotate(18deg);
+  }
+  50% {
+    transform: rotate(-18deg);
+  }
+  100% {
+    transform: rotate(18deg);
+  }
+}
+
+@keyframes trailHikerPolePlant {
+  0% {
+    transform: rotate(14deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-12deg) translateY(-2px);
+  }
+  100% {
+    transform: rotate(14deg) translateY(0);
+  }
+}
+
+@keyframes trailHikerTorsoBob {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.4deg);
+  }
+  50% {
+    transform: translateY(1.5px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-1.5px) rotate(-0.4deg);
+  }
+}
+
+@keyframes trailBackpackSway {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-2deg) translateY(1.2px);
+  }
+}
+
+/* Brisa alpina suave nas copas dos pinheiros e folhagens */
+@keyframes trailPineBreeze {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(1.8deg) skewX(1deg);
+  }
+}
+
 /* Tremor rítmico e realista de frio intenso na neve alpina */
 @keyframes trailColdShiver {
   0%, 100% {

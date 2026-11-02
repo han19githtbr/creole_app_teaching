@@ -797,7 +797,7 @@ export function createWildlife(): Wildlife {
       dy = ty - curY;
     const dist = Math.hypot(dx, dy);
 
-    if (dist < 10) {
+    if (dist < 12) {
       if (c.state === "leaving") return;
       c.state = "idle";
       c.hasTarget = false;
@@ -806,28 +806,42 @@ export function createWildlife(): Wildlife {
       return;
     }
 
+    // Curva suave em direção ao alvo com aceleração orgânica
     const targetHeading = Math.atan2(dy, dx);
     c.heading += wrap(targetHeading - c.heading) * Math.min(1, c.spec.turn * dt);
-    const speed = c.spec.speed * (W / 1000);
-    c.v = approach(c.v, speed, 220 * dt);
-    c.cm += (c.v / speed) * dt;
+    
+    // Desaceleração suave ao se aproximar do ponto de parada
+    const distFactor = Math.min(1, dist / 40);
+    const baseSpeed = c.spec.speed * (W / 1000) * (0.35 + 0.65 * distFactor);
+
+    // Animais que pulam (coelho, esquilo, sapo): propulsão em saltos e pausas breves de apoio
+    let currentSpeed = baseSpeed;
+    if (c.spec.hop) {
+      const hopCycle = Math.max(0, sin(c.clk * c.spec.gait * 0.9 + c.ph));
+      currentSpeed = baseSpeed * (0.15 + 1.65 * (hopCycle ** 2));
+    }
+
+    c.v = approach(c.v, currentSpeed, 240 * dt);
+    c.cm += (c.v / (baseSpeed || 1)) * dt;
     c.x += (cos(c.heading) * c.v * dt) / W;
     c.y += (sin(c.heading) * c.v * dt) / H;
 
+    // Transição suave de orientação (não inverte bruscamente no zero)
     const faceDir = cos(c.heading) >= 0 ? 1 : -1;
-    c.face = approach(c.face, faceDir, 6 * dt);
+    c.face = approach(c.face, faceDir, 4.5 * dt);
   }
 
   function updateFlyer(c: Critter, dt: number, W: number, H: number) {
     c.clk += dt;
     if (c.animal.id === "eagle") {
-      c.orbit += dt * 0.35;
-      c.enter = approach(c.enter, 1, 0.25 * dt);
-      const cx = 0.68 + sin(c.orbit) * 0.22;
-      const cy = 0.24 + cos(c.orbit * 0.8) * 0.08;
+      // Águia real planando majestosa em correntes térmicas ascendentes
+      c.orbit += dt * 0.28;
+      c.enter = approach(c.enter, 1, 0.2 * dt);
+      const cx = 0.65 + sin(c.orbit) * 0.25;
+      const cy = 0.22 + cos(c.orbit * 0.75) * 0.09;
       c.x = cx;
       c.y = cy;
-      c.z = 90;
+      c.z = 85 + sin(c.orbit * 1.8) * 15;
       c.face = cos(c.orbit) > 0 ? 1 : -1;
       return;
     }
@@ -845,11 +859,11 @@ export function createWildlife(): Wildlife {
       const dx = tx - X,
         dy = ty - Y;
       const h = Math.atan2(dy, dx);
-      c.heading += wrap(h - c.heading) * Math.min(1, 3 * dt);
+      c.heading += wrap(h - c.heading) * Math.min(1, 2.5 * dt);
       const sp = c.spec.speed * S;
       X += cos(c.heading) * sp * dt;
       Y += sin(c.heading) * sp * dt;
-      c.z = approach(c.z, 70, 25 * dt);
+      c.z = approach(c.z, 75, 22 * dt);
       cx = cos(c.heading);
     } else if (c.landed) {
       c.v = 0;
@@ -888,25 +902,26 @@ export function createWildlife(): Wildlife {
         dy = ty - Y;
       const dist = Math.hypot(dx, dy);
 
-      if (c.spot >= 0 && dist < 12 * S) {
+      if (c.spot >= 0 && dist < 14 * S) {
         c.landed = true;
         c.z = 0;
-        c.timer = 2 + rnd() * 4;
+        c.timer = 2.5 + rnd() * 4;
       } else {
         const th = Math.atan2(dy, dx);
         c.heading += wrap(th - c.heading) * Math.min(1, c.spec.turn * dt);
-        const wander = sin(c.clk * 2.2 + c.ph) * 0.4;
+        // Ondulação suave do vento alpino
+        const wander = sin(c.clk * 1.8 + c.ph) * 0.28;
         const sp = c.spec.speed * S;
         cx = cos(c.heading + wander) * sp;
         cy = sin(c.heading + wander) * sp;
         X += cx * dt;
         Y += cy * dt;
-        const targetZ = c.spot >= 0 && dist < 120 * S ? 4 : 28 + sin(c.clk * 1.8 + c.ph) * 12;
-        c.z = approach(c.z, targetZ, 40 * dt);
+        const targetZ = c.spot >= 0 && dist < 120 * S ? 4 : 28 + sin(c.clk * 1.6 + c.ph) * 10;
+        c.z = approach(c.z, targetZ, 35 * dt);
       }
     }
 
-    if (!c.landed && Math.abs(cx) > 0.1) c.face = approach(c.face, Math.sign(cx), 8 * dt);
+    if (!c.landed && Math.abs(cx) > 0.1) c.face = approach(c.face, Math.sign(cx), 6 * dt);
     c.x = X / W;
     c.y = Y / H;
   }

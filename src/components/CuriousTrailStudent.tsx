@@ -14,6 +14,8 @@ export interface CuriousTrailStudentProps {
   size?: number;
   className?: string;
   flagProgress?: number; // 0..100 para animação de subida da bandeira
+  facing?: "left" | "right";
+  incline?: number; // ângulo de inclinação do terreno em graus (-15 a 15)
 }
 
 /**
@@ -36,6 +38,8 @@ export function CuriousTrailStudent({
   size = 84,
   className,
   flagProgress = 100,
+  facing = "right",
+  incline = 0,
 }: CuriousTrailStudentProps) {
   const w = size;
   const h = size * 1.18;
@@ -45,23 +49,29 @@ export function CuriousTrailStudent({
   const showSnowGear = hasSnowGear && isSnow;
   const isFlagAtTop = flagProgress >= 95;
 
+  // Inclinação orgânica ao subir a montanha (inclina tronco para a frente no sentido do passo)
+  const forwardLean = isWalking ? (facing === "left" ? -4 - Math.abs(incline) * 0.4 : 4 + Math.abs(incline) * 0.4) : 0;
+  const scaleX = facing === "left" ? -1 : 1;
+
   return (
     <div
       className={cn(
-        "relative inline-block select-none pointer-events-none transition-transform",
+        "relative inline-block select-none pointer-events-none transition-transform duration-300",
         isSnow && !isRaisingFlag && !isCheering && "trail-cold-shiver",
         isCheering && isFlagAtTop && "trail-victory-jump",
         className
       )}
-      style={{ width: w, height: h }}
+      style={{
+        width: w,
+        height: h,
+        transform: `scaleX(${scaleX}) rotate(${forwardLean}deg)`,
+        transformOrigin: "50% 90%",
+      }}
       aria-label="Aluno curioso explorando a montanha"
     >
       <svg
         viewBox="0 0 130 150"
-        className={cn(
-          "w-full h-full filter drop-shadow-md",
-          isWalking && "animate-[bounce_0.55s_ease-in-out_infinite]"
-        )}
+        className="w-full h-full filter drop-shadow-md overflow-visible"
       >
         <defs>
           {/* Sombreado da jaqueta alpina */}
@@ -152,7 +162,10 @@ export function CuriousTrailStudent({
         )}
 
         {/* ---------------- 2. MOCHILA TÉCNICA DE MONTANHA (Costas) ---------------- */}
-        <g transform="translate(30, 64)">
+        <g
+          transform="translate(30, 64)"
+          style={isWalking ? { animation: "trailBackpackSway 0.7s ease-in-out infinite", transformOrigin: "12px 10px" } : undefined}
+        >
           {/* Corpo volumoso da mochila */}
           <rect
             x="0"
@@ -180,9 +193,9 @@ export function CuriousTrailStudent({
           )}
         </g>
 
-        {/* ---------------- 3. PERNAS E BOTAS DE EXPEDIÇÃO COM GUETRAS ---------------- */}
+        {/* ---------------- 3. PERNAS E BOTAS DE EXPEDIÇÃO COM GUETRAS (Passada Realista) ---------------- */}
         {/* Perna Traseira (Esquerda) */}
-        <g className={isWalking ? "animate-[spin_1s_linear_infinite_alternate]" : ""}>
+        <g style={isWalking ? { animation: "trailHikerLegSwing 0.7s ease-in-out infinite", transformOrigin: "52px 98px" } : undefined}>
           {/* Calça impermeável reforçada */}
           <line
             x1="54"
@@ -211,7 +224,7 @@ export function CuriousTrailStudent({
         </g>
 
         {/* Perna Dianteira (Direita) */}
-        <g className={isWalking ? "animate-[spin_1s_linear_infinite_alternate-reverse]" : ""}>
+        <g style={isWalking ? { animation: "trailHikerLegSwingAlt 0.7s ease-in-out infinite", transformOrigin: "72px 98px" } : undefined}>
           <line
             x1="70"
             y1="98"
@@ -236,37 +249,39 @@ export function CuriousTrailStudent({
         </g>
 
         {/* ---------------- 4. TRONCO / ANORAK TÉRMICO E ZÍPER ---------------- */}
-        <rect
-          x="45"
-          y="62"
-          width="34"
-          height="40"
-          rx="11"
-          fill={isSnow ? "url(#studSnowAnorak)" : "url(#studJacketGrad)"}
-          stroke={isSnow ? "#075985" : "#1e40af"}
-          strokeWidth="2"
-        />
-        {/* Zíper frontal reforçado com puxador */}
-        <line x1="62" y1="62" x2="62" y2="100" stroke="#fcd34d" strokeWidth="2.2" strokeDasharray="3.5 2" />
-        <rect x="60.5" y="74" width="3" height="5" rx="1" fill="#fbbf24" />
-        {/* Bolsos peitorais com zíper */}
-        <line x1="49" y1="76" x2="57" y2="76" stroke="#93c5fd" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
-        <line x1="67" y1="76" x2="75" y2="76" stroke="#93c5fd" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
-        {/* Fita refletiva de segurança nos ombros */}
-        <line x1="48" y1="65" x2="55" y2="67" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" opacity="0.85" />
-        <line x1="69" y1="67" x2="76" y2="65" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" opacity="0.85" />
+        <g style={isWalking ? { animation: "trailHikerTorsoBob 0.35s ease-in-out infinite", transformOrigin: "62px 98px" } : undefined}>
+          <rect
+            x="45"
+            y="62"
+            width="34"
+            height="40"
+            rx="11"
+            fill={isSnow ? "url(#studSnowAnorak)" : "url(#studJacketGrad)"}
+            stroke={isSnow ? "#075985" : "#1e40af"}
+            strokeWidth="2"
+          />
+          {/* Zíper frontal reforçado com puxador */}
+          <line x1="62" y1="62" x2="62" y2="100" stroke="#fcd34d" strokeWidth="2.2" strokeDasharray="3.5 2" />
+          <rect x="60.5" y="74" width="3" height="5" rx="1" fill="#fbbf24" />
+          {/* Bolsos peitorais com zíper */}
+          <line x1="49" y1="76" x2="57" y2="76" stroke="#93c5fd" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+          <line x1="67" y1="76" x2="75" y2="76" stroke="#93c5fd" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+          {/* Fita refletiva de segurança nos ombros */}
+          <line x1="48" y1="65" x2="55" y2="67" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" opacity="0.85" />
+          <line x1="69" y1="67" x2="76" y2="65" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" opacity="0.85" />
 
-        {/* Neve acumulada nos ombros na tempestade de gelo */}
-        {isSnow && (
-          <g opacity="0.9">
-            <path d="M46 64 Q52 61 57 65" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" />
-            <path d="M67 65 Q72 61 77 64" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" />
-          </g>
-        )}
+          {/* Neve acumulada nos ombros na tempestade de gelo */}
+          {isSnow && (
+            <g opacity="0.9">
+              <path d="M46 64 Q52 61 57 65" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" />
+              <path d="M67 65 Q72 61 77 64" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" />
+            </g>
+          )}
+        </g>
 
-        {/* ---------------- 5. BRAÇO TRASEIRO E BASTÃO DE TRILHA ---------------- */}
+        {/* ---------------- 5. BRAÇO TRASEIRO E BASTÃO DE TRILHA (Caminhada Articulada) ---------------- */}
         {!isRaisingFlag && !isCheering && (
-          <g>
+          <g style={isWalking ? { animation: "trailHikerPolePlant 0.7s ease-in-out infinite", transformOrigin: "42px 76px" } : undefined}>
             {/* Bastão telescópico de caminhada com anel de neve */}
             <line x1="39" y1="78" x2="35" y2="136" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" />
             <circle cx="39" cy="78" r="3.5" fill="#1e293b" />

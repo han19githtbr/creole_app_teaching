@@ -340,26 +340,49 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
     setTrailProgress(newProgress);
 
     if (isLastLevel) {
-      // SUBIDA DA BANDEIRA NO CUME DA MONTANHA!
+      // SUBIDA DA BANDEIRA NO CUME DA MONTANHA AO VIVO!
       setIsRaisingFlag(true);
+      setIsCheering(false);
+      setFlagProgress(0);
+      setPhase("summit_victory");
       soundEffects.playVictoryFanfare();
       setConfetti(true);
 
-      // Animação de subida da bandeira de 0 a 100%
+      // Animação de subida suave e majestosa da bandeira ao vivo de 0 a 100%
       let prog = 0;
       const fInterval = setInterval(() => {
-        prog += 5;
-        setFlagProgress(prog);
+        prog += 2.5;
+        setFlagProgress(Math.min(100, prog));
         if (prog >= 100) {
           clearInterval(fInterval);
-          setPhase("summit_victory");
+          setIsCheering(true);
+          soundEffects.playSuccess();
         }
-      }, 60);
+      }, 50);
     } else {
       soundEffects.playLevelUp();
       setConfetti(true);
       setPhase("level_complete");
     }
+  }
+
+  function replayFlagHoist() {
+    setIsRaisingFlag(true);
+    setIsCheering(false);
+    setFlagProgress(0);
+    soundEffects.playVictoryFanfare();
+    setConfetti(true);
+
+    let prog = 0;
+    const fInterval = setInterval(() => {
+      prog += 2.5;
+      setFlagProgress(Math.min(100, prog));
+      if (prog >= 100) {
+        clearInterval(fInterval);
+        setIsCheering(true);
+        soundEffects.playSuccess();
+      }
+    }, 50);
   }
 
   // Resposta do usuário
@@ -908,103 +931,170 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
 
         {/* ---------------- 4. TELA DE NÍVEL CONCLUÍDO (PASSANDO PARA O PRÓXIMO) ---------------- */}
         {phase === "level_complete" && (
-          <div className="rounded-3xl border-2 border-emerald-500/50 bg-[var(--surface)] p-6 sm:p-8 text-center shadow-2xl space-y-5 animate-in zoom-in-95">
-            <span className="text-5xl block animate-bounce">🌲✨</span>
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-4 py-1 text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-              Nível {currentLevel} Conquistado!
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[var(--text)]">
-              {currentLevelCfg.name} Superada!
-            </h2>
-            <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-md mx-auto">
-              Você reconheceu todos os {currentLevelCfg.elementCount} elementos com sucesso! O caminho para o
-              <strong> Nível {currentLevel + 1}</strong> agora está aberto na montanha.
-            </p>
+          <div className="space-y-4">
+            <CuriousTrailMountain
+              currentLevel={currentLevel}
+              unlockedLevel={Math.min(7, currentLevel + 1)}
+              completedLevels={trailProgress.completedLevels}
+              isCheering={true}
+              themeColor={selectedTheme.accentColor}
+              activeAnimalGreeting={activeAnimalGreeting}
+              onAnimalClick={(animalId, quote) => {
+                speakWordFrench(quote);
+                setActiveAnimalGreeting(animalId);
+              }}
+            />
 
-            <div className="flex items-center justify-center gap-6 py-2">
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2">
-                <span className="block text-[10px] text-[var(--text-muted)] font-bold uppercase">XP Ganho</span>
-                <span className="text-lg font-black text-blue-500">+{levelXp} XP</span>
+            <div className="rounded-3xl border-2 border-emerald-500/50 bg-[var(--surface)] p-6 sm:p-8 text-center shadow-2xl space-y-5 animate-in zoom-in-95">
+              <span className="text-5xl block animate-bounce">🌲✨</span>
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-4 py-1 text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                Nível {currentLevel} Conquistado!
               </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2">
-                <span className="block text-[10px] text-[var(--text-muted)] font-bold uppercase">Pontuação</span>
-                <span className="text-lg font-black text-amber-500">+{score} pts</span>
-              </div>
-            </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-[var(--text)]">
+                {currentLevelCfg.name} Superada!
+              </h2>
+              <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-md mx-auto">
+                Você reconheceu todos os {currentLevelCfg.elementCount} elementos com sucesso! O caminho para o
+                <strong> Nível {currentLevel + 1}</strong> agora está aberto na montanha.
+              </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => startLevel(currentLevel + 1)}
-                className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-3 text-sm font-black text-white shadow-lg hover:scale-105 active:scale-95 transition-transform"
-              >
-                Subir para o Nível {currentLevel + 1} ({TRAIL_LEVELS[currentLevel]?.elementCount} elementos)
-                <ChevronRight className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setPhase("lobby")}
-                className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text)]"
-              >
-                Ver Mapa da Trilha
-              </button>
+              <div className="flex items-center justify-center gap-6 py-2">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2">
+                  <span className="block text-[10px] text-[var(--text-muted)] font-bold uppercase">XP Ganho</span>
+                  <span className="text-lg font-black text-blue-500">+{levelXp} XP</span>
+                </div>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2">
+                  <span className="block text-[10px] text-[var(--text-muted)] font-bold uppercase">Pontuação</span>
+                  <span className="text-lg font-black text-amber-500">+{score} pts</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => startLevel(currentLevel + 1)}
+                  className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-3 text-sm font-black text-white shadow-lg hover:scale-105 active:scale-95 transition-transform"
+                >
+                  Subir para o Nível {currentLevel + 1} ({TRAIL_LEVELS[currentLevel]?.elementCount} elementos)
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPhase("lobby")}
+                  className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text)]"
+                >
+                  Ver Mapa da Trilha
+                </button>
+              </div>
             </div>
           </div>
         )}
 
-        {/* ---------------- 5. GRANDE FINAL: CUME DA MONTANHA & BANDEIRA HASTEADA ---------------- */}
+        {/* ---------------- 5. GRANDE FINAL: CUME DA MONTANHA & BANDEIRA HASTEADA AO VIVO ---------------- */}
         {phase === "summit_victory" && (
-          <div className="rounded-3xl border-2 border-amber-500 bg-gradient-to-b from-amber-500/10 via-[var(--surface)] to-[var(--surface)] p-6 sm:p-10 text-center shadow-2xl space-y-6 animate-in zoom-in-95">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-400 bg-amber-400/20 px-4 py-1 text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-              🚩 Cume da Montanha Conquistado · Altitude 3950m
+          <div className="space-y-4">
+            {/* O CENÁRIO REALISTA DO CUME DA MONTANHA COM A SUBIDA DA BANDEIRA AO VIVO */}
+            <div className="relative overflow-hidden rounded-3xl border-2 border-amber-500 shadow-2xl">
+              <CuriousTrailMountain
+                currentLevel={7}
+                unlockedLevel={7}
+                completedLevels={trailProgress.completedLevels}
+                isRaisingFlag={isRaisingFlag}
+                flagProgress={flagProgress}
+                isCheering={isCheering}
+                themeColor={selectedTheme.accentColor}
+                activeAnimalGreeting={activeAnimalGreeting}
+                onAnimalClick={(animalId, quote) => {
+                  speakWordFrench(quote);
+                  setActiveAnimalGreeting(animalId);
+                }}
+              />
+
+              {/* BARRA DE STATUS AO VIVO DO HASTEAMENTO DA BANDEIRA */}
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between rounded-2xl bg-slate-950/85 backdrop-blur-md px-4 py-2.5 border border-amber-400/40 shadow-xl z-30">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-3 w-3 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  </span>
+                  <div>
+                    <span className="block text-xs font-black text-amber-300">
+                      {flagProgress < 100
+                        ? `Hasteando a Bandeira Francesa ao Vivo: ${Math.round(flagProgress)}%`
+                        : "Bandeira 100% Hasteada no Cume 3950m!"}
+                    </span>
+                    <span className="block text-[10px] text-slate-300">
+                      {flagProgress < 100
+                        ? "O aluno está puxando as adriças do mastro em tempo real..."
+                        : "Montanha conquistada com sucesso em clima de comemoração!"}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={replayFlagHoist}
+                  className="cursor-pointer inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 px-3 py-1.5 text-xs font-black text-white shadow-md active:scale-95 transition-transform"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Hastear Novamente
+                </button>
+              </div>
             </div>
 
-            <div className="text-6xl animate-pulse">🏔️🇫🇷🏆</div>
-
-            <h2 className="text-2xl sm:text-4xl font-black text-[var(--text)]">
-              Você Subiu a Bandeira no Topo!
-            </h2>
-
-            <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-lg mx-auto leading-relaxed">
-              Félicitations ! Você completou os <strong>7 níveis da Trilha do Aluno Curioso</strong> no tema{" "}
-              <strong>{selectedTheme.label}</strong>, enfrentou a chuva com guarda-chuva, a neve no topo e
-              hasteou a bandeira francesa da vitória no cume mais alto da montanha!
-            </p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl mx-auto py-2">
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
-                <span className="text-xs text-[var(--text-muted)] font-bold block">Níveis Vencidos</span>
-                <span className="text-xl font-black text-emerald-500 block">7 / 7</span>
+            {/* CARD DE CELEBRAÇÃO E ESTATÍSTICAS DA EXPEDIÇÃO */}
+            <div className="rounded-3xl border-2 border-amber-500 bg-gradient-to-b from-amber-500/10 via-[var(--surface)] to-[var(--surface)] p-6 sm:p-10 text-center shadow-2xl space-y-6 animate-in zoom-in-95">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-400 bg-amber-400/20 px-4 py-1 text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                🚩 Cume da Montanha Conquistado · Altitude 3950m
               </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
-                <span className="text-xs text-[var(--text-muted)] font-bold block">XP Total</span>
-                <span className="text-xl font-black text-blue-500 block">+{trailProgress.totalXp + levelXp}</span>
-              </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
-                <span className="text-xs text-[var(--text-muted)] font-bold block">Maior Sequência</span>
-                <span className="text-xl font-black text-orange-500 block">{bestStreak} 🔥</span>
-              </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
-                <span className="text-xs text-[var(--text-muted)] font-bold block">Insígnia</span>
-                <span className="text-xl font-black text-amber-500 block">👑 Alpinista</span>
-              </div>
-            </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setPhase("lobby")}
-                className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-7 py-3 text-sm font-black text-white shadow-xl hover:scale-105 active:scale-95 transition-transform"
-              >
-                <Sparkles className="h-4 w-4" /> Escolher Outro Tema
-              </button>
-              <button
-                type="button"
-                onClick={() => startLevel(1)}
-                className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text)]"
-              >
-                <RotateCcw className="h-4 w-4" /> Jogar Trilha Novamente
-              </button>
+              <div className="text-6xl animate-pulse">🏔️🇫🇷🏆</div>
+
+              <h2 className="text-2xl sm:text-4xl font-black text-[var(--text)]">
+                Você Subiu a Bandeira no Topo!
+              </h2>
+
+              <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-lg mx-auto leading-relaxed">
+                Félicitations ! Você completou os <strong>7 níveis da Trilha do Aluno Curioso</strong> no tema{" "}
+                <strong>{selectedTheme.label}</strong>, enfrentou a chuva com guarda-chuva, a neve no topo e
+                hasteou a bandeira francesa da vitória no cume mais alto da montanha!
+              </p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl mx-auto py-2">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
+                  <span className="text-xs text-[var(--text-muted)] font-bold block">Níveis Vencidos</span>
+                  <span className="text-xl font-black text-emerald-500 block">7 / 7</span>
+                </div>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
+                  <span className="text-xs text-[var(--text-muted)] font-bold block">XP Total</span>
+                  <span className="text-xl font-black text-blue-500 block">+{trailProgress.totalXp + levelXp}</span>
+                </div>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
+                  <span className="text-xs text-[var(--text-muted)] font-bold block">Maior Sequência</span>
+                  <span className="text-xl font-black text-orange-500 block">{bestStreak} 🔥</span>
+                </div>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
+                  <span className="text-xs text-[var(--text-muted)] font-bold block">Insígnia</span>
+                  <span className="text-xl font-black text-amber-500 block">👑 Alpinista</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setPhase("lobby")}
+                  className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-7 py-3 text-sm font-black text-white shadow-xl hover:scale-105 active:scale-95 transition-transform"
+                >
+                  <Sparkles className="h-4 w-4" /> Escolher Outro Tema
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startLevel(1)}
+                  className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text)]"
+                >
+                  <RotateCcw className="h-4 w-4" /> Jogar Trilha Novamente
+                </button>
+              </div>
             </div>
           </div>
         )}

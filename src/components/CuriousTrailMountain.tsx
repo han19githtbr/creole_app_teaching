@@ -25,9 +25,13 @@ export interface CuriousTrailMountainProps {
 }
 
 /**
- * Cenário visual da montanha com a trilha sinuosa, as 7 estações,
- * o aluno se movimentando, o clima dinâmico (sol, chuva com guarda-chuva, neve),
- * os bichos no caminho e a bandeira da vitória no cume.
+ * Cenário visual ultra-realista da montanha alpina com a trilha sinuosa:
+ * - Picos alpinos majestosos com luz e sombra facetadas, geleiras e neves eternas
+ * - Encostas geológicas com estrato rochoso, tálus de cascalho, cascata de degelo e prados floridos
+ * - Trilha alpina realista com ziguezagues, degraus de madeira rústicos, marcos de pedra (cairns)
+ * - Na neve: trilha com pegadas afundadas e estacas de balizamento de nevasca
+ * - Vida selvagem animada e realista passeando pela montanha
+ * - Aluno explorador reagindo ao clima, tremendo de frio na neve e levantando a bandeira ao vivo no cume
  */
 export function CuriousTrailMountain({
   currentLevel,
@@ -48,15 +52,17 @@ export function CuriousTrailMountain({
   const weather: TrailWeather = currentCfg.weather;
   const [localBubble, setLocalBubble] = useState<{ id: string; quote: string; name: string } | null>(null);
 
-  // Calcula a posição do aluno na estação atual
+  // Calcula a posição do aluno na estação atual ou subindo
   const nextCfg = TRAIL_LEVELS.find((level) => level.level === currentLevel + 1);
   const progress = Math.max(0, Math.min(1, climbProgress));
-  const studentCoord = {
-    x: currentCfg.coord.x + ((nextCfg?.coord.x ?? currentCfg.coord.x) - currentCfg.coord.x) * progress,
-    y: currentCfg.coord.y + ((nextCfg?.coord.y ?? currentCfg.coord.y) - currentCfg.coord.y) * progress,
-  };
+  const studentCoord = isRaisingFlag
+    ? { x: 86, y: 12 } // No cume ao lado do mastro durante o hasteamento
+    : {
+        x: currentCfg.coord.x + ((nextCfg?.coord.x ?? currentCfg.coord.x) - currentCfg.coord.x) * progress,
+        y: currentCfg.coord.y + ((nextCfg?.coord.y ?? currentCfg.coord.y) - currentCfg.coord.y) * progress,
+      };
 
-  // ---------------- BICHOS VIVOS NA ENCOSTA (movimento natural, igual às cenas das histórias) ----------------
+  // ---------------- BICHOS VIVOS NA ENCOSTA (movimento natural e realista) ----------------
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
@@ -64,6 +70,7 @@ export function CuriousTrailMountain({
   const sizeRef = useRef({ W: 0, H: 0 });
   const bubbleIdRef = useRef<string | null>(null);
   const bubbleId = localBubble?.id ?? activeAnimalGreeting ?? null;
+
   useEffect(() => {
     bubbleIdRef.current = bubbleId;
   }, [bubbleId]);
@@ -146,218 +153,447 @@ export function CuriousTrailMountain({
     const { x, y } = pointerPos(e);
     e.currentTarget.style.cursor = world.hit(x, y, sizeRef.current.W, sizeRef.current.H) ? "pointer" : "default";
   }
+
   const bubbleAnimal = bubbleId ? ROAMING_ANIMAL_POOL.find((a) => a.id === bubbleId) : undefined;
+  const isAllCompleted = completedLevels.includes(7);
 
   return (
     <div
       ref={wrapRef}
       className={cn(
-        "trail-mountain relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[580px] rounded-3xl overflow-hidden border-2 border-[var(--border)] shadow-xl select-none transition-colors duration-1000",
-        weather === "sunny" && "bg-gradient-to-b from-sky-400 via-sky-200 to-amber-50",
-        weather === "rain" && "bg-gradient-to-b from-slate-700 via-slate-600 to-emerald-950/80",
-        weather === "snow" && "bg-gradient-to-b from-slate-400 via-indigo-100 to-blue-50",
+        "trail-mountain relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[580px] rounded-3xl overflow-hidden border-2 border-[var(--border)] shadow-2xl select-none transition-colors duration-1000",
+        weather === "sunny" && "bg-gradient-to-b from-sky-400 via-sky-200 to-amber-50/30",
+        weather === "rain" && "bg-gradient-to-b from-slate-800 via-slate-700 to-emerald-950/80",
+        weather === "snow" && "bg-gradient-to-b from-slate-500 via-slate-300 to-indigo-100/50",
         className
       )}
     >
-      {/* ---------------- CÉU E CLIMA ANIMADO ---------------- */}
+      {/* ---------------- 1. CÉU ATMOSFÉRICO E EFEITOS DE CLIMA ---------------- */}
       {weather === "sunny" && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Sol radiante */}
-          <div className="absolute top-6 left-12 w-20 h-20 rounded-full bg-amber-300 blur-sm opacity-90 animate-pulse" />
-          <div className="absolute top-8 left-14 w-16 h-16 rounded-full bg-amber-400 shadow-[0_0_40px_#f59e0b]" />
-          {/* Nuvens brancas suaves */}
-          <div className="trail-cloud trail-cloud--first absolute top-8 right-20 h-14 w-44 rounded-full bg-white/70 blur-[2px]" />
-          <div className="trail-cloud trail-cloud--second absolute top-16 left-1/3 h-10 w-36 rounded-full bg-white/60 blur-[2px]" />
+          {/* Sol alpino radiante com auréola de calor */}
+          <div className="absolute top-5 left-10 w-24 h-24 rounded-full bg-amber-200/50 blur-xl pointer-events-none" />
+          <div className="absolute top-7 left-12 w-16 h-16 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 shadow-[0_0_50px_#f59e0b]" />
+          {/* Raios solares suaves iluminando a montanha */}
+          <div className="absolute -top-10 -left-10 w-80 h-80 bg-gradient-to-br from-amber-300/20 via-transparent to-transparent rotate-12 blur-lg pointer-events-none" />
+          {/* Nuvens brancas fofas e volumosas */}
+          <div className="trail-cloud--first absolute top-7 right-16 h-16 w-52 rounded-full bg-white/75 blur-[2px] shadow-sm" />
+          <div className="trail-cloud--second absolute top-14 left-1/3 h-12 w-40 rounded-full bg-white/65 blur-[2px]" />
         </div>
       )}
 
       {weather === "rain" && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-          {/* Nuvens pesadas de chuva */}
-          <div className="absolute -top-10 inset-x-0 h-36 bg-gradient-to-b from-slate-900/90 via-slate-800/80 to-transparent" />
-          {/* Gotas de chuva animadas via SVG */}
-          <svg className="trail-rain-layer absolute inset-0 h-full w-full opacity-60">
-            <pattern id="rainPattern" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(20)">
-              <line x1="10" y1="0" x2="10" y2="25" stroke="#bae6fd" strokeWidth="1.5" strokeLinecap="round" />
-              <line x1="30" y1="20" x2="30" y2="45" stroke="#7dd3fc" strokeWidth="1.2" strokeLinecap="round" />
-              <line x1="50" y1="40" x2="50" y2="60" stroke="#bae6fd" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Nuvens pesadas de chuva carregadas nos picos */}
+          <div className="absolute -top-12 inset-x-0 h-44 bg-gradient-to-b from-slate-950/95 via-slate-900/85 to-transparent" />
+          {/* Camada de chuva em perspectiva */}
+          <svg className="trail-rain-layer absolute inset-0 h-full w-full opacity-70">
+            <pattern id="rainPatternReal" width="70" height="70" patternUnits="userSpaceOnUse" patternTransform="rotate(22)">
+              <line x1="12" y1="0" x2="12" y2="30" stroke="#bae6fd" strokeWidth="1.6" strokeLinecap="round" />
+              <line x1="36" y1="20" x2="36" y2="52" stroke="#7dd3fc" strokeWidth="1.3" strokeLinecap="round" />
+              <line x1="58" y1="40" x2="58" y2="68" stroke="#bae6fd" strokeWidth="1.6" strokeLinecap="round" />
+              <circle cx="12" cy="30" r="1" fill="#e0f2fe" opacity="0.6" />
+              <circle cx="36" cy="52" r="1" fill="#e0f2fe" opacity="0.6" />
             </pattern>
-            <rect width="100%" height="100%" fill="url(#rainPattern)" />
+            <rect width="100%" height="100%" fill="url(#rainPatternReal)" />
           </svg>
-          {/* Névoa suave */}
-          <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-slate-900/40 to-transparent" />
+          {/* Névoa densa descendo pela encosta */}
+          <div className="trail-mist-layer absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-slate-950/50 via-slate-800/20 to-transparent" />
         </div>
       )}
 
       {weather === "snow" && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-          {/* Céu gelado de altitude */}
-          <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-slate-600/50 via-indigo-900/30 to-transparent" />
-          {/* Flocos de neve caindo */}
-          <svg className="trail-snow-layer absolute inset-0 h-full w-full opacity-80">
-            <pattern id="snowPattern" width="80" height="80" patternUnits="userSpaceOnUse">
-              <circle cx="20" cy="15" r="2.5" fill="#ffffff" />
-              <circle cx="60" cy="25" r="3" fill="#ffffff" />
-              <circle cx="35" cy="55" r="2" fill="#ffffff" />
-              <circle cx="70" cy="70" r="2.5" fill="#ffffff" />
-              <circle cx="10" cy="75" r="1.5" fill="#f8fafc" />
+          {/* Céu gélido de alta altitude */}
+          <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-b from-slate-700/60 via-indigo-950/30 to-transparent" />
+          {/* Nevasca alpina multicamadas com flocos de vários tamanhos e rajadas */}
+          <svg className="trail-snow-layer absolute inset-0 h-full w-full opacity-85">
+            <pattern id="snowPatternReal" width="100" height="100" patternUnits="userSpaceOnUse">
+              <circle cx="20" cy="15" r="3.2" fill="#ffffff" />
+              <circle cx="55" cy="22" r="2.2" fill="#f8fafc" />
+              <circle cx="85" cy="35" r="3.8" fill="#ffffff" />
+              <circle cx="38" cy="60" r="1.8" fill="#e2e8f0" />
+              <circle cx="72" cy="78" r="2.6" fill="#ffffff" />
+              <circle cx="15" cy="85" r="2.2" fill="#f1f5f9" />
+              {/* Cristais de gelo pontiagudos */}
+              <line x1="55" y1="20" x2="55" y2="24" stroke="#ffffff" strokeWidth="1" />
+              <line x1="53" y1="22" x2="57" y2="22" stroke="#ffffff" strokeWidth="1" />
             </pattern>
-            <rect width="100%" height="100%" fill="url(#snowPattern)" />
+            <rect width="100%" height="100%" fill="url(#snowPatternReal)" />
           </svg>
+          {/* Vento polar sutil no cume */}
+          <div className="absolute top-0 right-0 w-80 h-44 bg-gradient-to-bl from-white/20 via-transparent to-transparent pointer-events-none" />
         </div>
       )}
 
-      {/* ---------------- MONTANHAS DE FUNDO (PARALLAX SVG) ---------------- */}
+      {/* ---------------- 2. CENÁRIO DA MONTANHA HIPER-REALISTA (SVG) ---------------- */}
       <svg
         viewBox="0 0 1000 600"
         preserveAspectRatio="none"
         className="absolute inset-0 w-full h-full pointer-events-none"
       >
         <defs>
-          {/* Gradiente dos Picos Distantes */}
-          <linearGradient id="farPeaksGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={weather === "snow" ? "#e2e8f0" : weather === "rain" ? "#334155" : "#93c5fd"} />
-            <stop offset="100%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#1e293b" : "#bfdbfe"} />
+          {/* Gradientes dos Picos Mais Distantes */}
+          <linearGradient id="farPeaksLight" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={weather === "snow" ? "#f1f5f9" : weather === "rain" ? "#475569" : "#bae6fd"} />
+            <stop offset="100%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#1e293b" : "#7dd3fc"} />
           </linearGradient>
 
-          {/* Gradiente das Montanhas Médias */}
-          <linearGradient id="midMountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#1e293b" : "#4ade80"} />
-            <stop offset="100%" stopColor={weather === "snow" ? "#64748b" : weather === "rain" ? "#0f172a" : "#16a34a"} />
+          <linearGradient id="farPeaksShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#334155" : "#60a5fa"} />
+            <stop offset="100%" stopColor={weather === "snow" ? "#64748b" : weather === "rain" ? "#0f172a" : "#3b82f6"} />
           </linearGradient>
 
-          {/* Gradiente da Encosta Principal */}
-          <linearGradient id="mainSlopeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={weather === "snow" ? "#f1f5f9" : weather === "rain" ? "#14532d" : "#22c55e"} />
-            <stop offset="60%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#064e3b" : "#15803d"} />
-            <stop offset="100%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#022c22" : "#166534"} />
+          {/* Cordilheira Média Granítica */}
+          <linearGradient id="midRidgeLit" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#334155" : "#6ee7b7"} />
+            <stop offset="60%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#1e293b" : "#34d399"} />
+            <stop offset="100%" stopColor={weather === "snow" ? "#64748b" : weather === "rain" ? "#0f172a" : "#059669"} />
           </linearGradient>
 
-          {/* Cume da Vitória (Neve Eterna) */}
-          <linearGradient id="summitSnowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="midRidgeShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={weather === "snow" ? "#64748b" : weather === "rain" ? "#1e293b" : "#047857"} />
+            <stop offset="100%" stopColor={weather === "snow" ? "#475569" : weather === "rain" ? "#022c22" : "#064e3b"} />
+          </linearGradient>
+
+          {/* Encosta Principal da Trilha (Terra e Pastagens) */}
+          <linearGradient id="slopeGrassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={weather === "snow" ? "#e2e8f0" : weather === "rain" ? "#15803d" : "#22c55e"} />
+            <stop offset="45%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#166534" : "#16a34a"} />
+            <stop offset="85%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#14532d" : "#15803d"} />
+            <stop offset="100%" stopColor={weather === "snow" ? "#64748b" : weather === "rain" ? "#052e16" : "#166534"} />
+          </linearGradient>
+
+          {/* Rochas Graníticas e Tálus */}
+          <linearGradient id="graniteRockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={weather === "snow" ? "#f1f5f9" : "#94a3b8"} />
+            <stop offset="50%" stopColor={weather === "snow" ? "#94a3b8" : "#64748b"} />
+            <stop offset="100%" stopColor={weather === "snow" ? "#64748b" : "#475569"} />
+          </linearGradient>
+
+          {/* Geleira e Neve do Cume (Níveis 6 e 7) */}
+          <linearGradient id="realGlacierSnow" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="100%" stopColor="#e0f2fe" />
+            <stop offset="40%" stopColor="#f8fafc" />
+            <stop offset="80%" stopColor="#e0f2fe" />
+            <stop offset="100%" stopColor="#bae6fd" />
+          </linearGradient>
+
+          {/* Trilha de Terra Batida Natural */}
+          <linearGradient id="trailDirtGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={weather === "snow" ? "#ffffff" : weather === "rain" ? "#451a03" : "#fef08a"} />
+            <stop offset="50%" stopColor={weather === "snow" ? "#e2e8f0" : weather === "rain" ? "#78350f" : "#fde047"} />
+            <stop offset="100%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#291103" : "#ca8a04"} />
+          </linearGradient>
+
+          {/* Riacho alpino de degelo */}
+          <linearGradient id="alpineBrookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#e0f2fe" />
+            <stop offset="50%" stopColor="#38bdf8" />
+            <stop offset="100%" stopColor="#0284c7" />
           </linearGradient>
         </defs>
 
-        {/* 1. Picos Distantes de Fundo */}
-        <path
-          d="M0 450 L140 280 L280 430 L450 210 L620 400 L760 170 L910 320 L1000 240 L1000 600 L0 600 Z"
-          fill="url(#farPeaksGrad)"
-          opacity="0.75"
-        />
-        {/* Neve nos picos distantes */}
-        <polygon points="450,210 410,260 490,260" fill="#ffffff" opacity="0.9" />
-        <polygon points="760,170 720,230 800,230" fill="#ffffff" opacity="0.9" />
-        <path d="M410 260 L450 210 L490 260 L470 250 L450 238 L430 253 Z" fill="#cbd5e1" opacity=".8" />
-        <path d="M720 230 L760 170 L800 230 L780 216 L760 200 L742 222 Z" fill="#cbd5e1" opacity=".8" />
-
-        {/* 2. Cordilheira Média */}
-        <path
-          d="M0 480 L180 320 L360 460 L580 260 L780 420 L940 220 L1000 270 L1000 600 L0 600 Z"
-          fill="url(#midMountainGrad)"
+        {/* ---------------- 2.1 PICOS DISTANTES ESCULPIDOS COM FACETAS DE LUZ ---------------- */}
+        {/* Cordilheira de fundo: Face ensolarada (iluminada) */}
+        <polygon
+          points="0,480 120,290 240,430 380,210 520,380 680,160 810,320 920,210 1000,260 1000,600 0,600"
+          fill="url(#farPeaksLight)"
           opacity="0.85"
         />
+        {/* Cordilheira de fundo: Face sombreada (volume 3D das montanhas) */}
+        <polygon
+          points="120,290 240,430 180,440"
+          fill="url(#farPeaksShadow)"
+          opacity="0.75"
+        />
+        <polygon
+          points="380,210 520,380 430,390"
+          fill="url(#farPeaksShadow)"
+          opacity="0.7"
+        />
+        <polygon
+          points="680,160 810,320 730,330"
+          fill="url(#farPeaksShadow)"
+          opacity="0.7"
+        />
+        <polygon
+          points="920,210 1000,260 950,290"
+          fill="url(#farPeaksShadow)"
+          opacity="0.65"
+        />
 
-        {/* 3. Encosta Principal da Trilha (onde o aluno sobe) */}
+        {/* Neve eterna e geleiras nos cumes distantes mais altos */}
+        <polygon points="380,210 330,270 420,265" fill="#ffffff" opacity="0.95" />
+        <polygon points="380,210 395,255 420,265" fill="#cbd5e1" opacity="0.8" />
+        <polygon points="680,160 630,225 730,220" fill="#ffffff" opacity="0.95" />
+        <polygon points="680,160 700,215 730,220" fill="#cbd5e1" opacity="0.8" />
+        {/* Fendas glaciares sutis nos picos */}
+        <path d="M360 250 Q375 258 395 254" stroke="#93c5fd" strokeWidth="1.5" fill="none" opacity="0.6" />
+        <path d="M660 205 Q685 212 705 208" stroke="#93c5fd" strokeWidth="1.5" fill="none" opacity="0.6" />
+
+        {/* ---------------- 2.2 CORDILHEIRA MÉDIA GRANÍTICA ---------------- */}
         <path
-          d="M0 600 L0 480 Q150 440 280 380 Q450 310 600 240 Q750 160 880 70 L980 90 L1000 130 L1000 600 Z"
-          fill="url(#mainSlopeGrad)"
+          d="M0 500 L80 420 L190 310 L310 440 L450 260 L590 400 L740 220 L890 340 L1000 240 L1000 600 L0 600 Z"
+          fill="url(#midRidgeLit)"
+          opacity="0.9"
         />
+        {/* Faces de sombra da cordilheira média */}
+        <polygon points="190,310 310,440 230,450" fill="url(#midRidgeShadow)" opacity="0.85" />
+        <polygon points="450,260 590,400 490,420" fill="url(#midRidgeShadow)" opacity="0.85" />
+        <polygon points="740,220 890,340 790,360" fill="url(#midRidgeShadow)" opacity="0.85" />
+
+        {/* ---------------- 2.3 MACIÇO PRINCIPAL DA TRILHA (Curvas de Nível Geológicas) ---------------- */}
+        {/* Encosta Verde e Rochosa Principal */}
         <path
-          d="M0 525 Q150 475 280 420 Q450 350 600 278 Q750 198 880 108"
+          d="M0 600 L0 470 Q140 430 270 370 Q430 300 580 230 Q740 150 880 65 L980 85 L1000 120 L1000 600 Z"
+          fill="url(#slopeGrassGrad)"
+        />
+
+        {/* Degraus geológicos e estratos de rocha na encosta */}
+        <path
+          d="M0 520 Q140 470 270 415 Q430 345 580 270 Q740 190 880 98"
           fill="none"
-          stroke={weather === "snow" ? "#fff" : weather === "rain" ? "#86a99c" : "#86efac"}
-          strokeWidth="2"
-          opacity=".24"
+          stroke={weather === "snow" ? "#f1f5f9" : weather === "rain" ? "#86a99c" : "#86efac"}
+          strokeWidth="3.5"
+          opacity="0.32"
         />
         <path
-          d="M80 590 Q260 510 390 450 T680 320 T940 150"
+          d="M60 580 Q240 500 380 440 T670 310 T930 140"
           fill="none"
           stroke={weather === "snow" ? "#64748b" : weather === "rain" ? "#052e24" : "#14532d"}
-          strokeWidth="3"
-          opacity=".18"
+          strokeWidth="4"
+          opacity="0.25"
         />
 
-        {/* Cume Nevado com Rochas (Estação 7) */}
+        {/* RIACHO ALPINO DE DEGELO CASCATEANDO ENTRE AS ROCHAS */}
+        <g opacity="0.75">
+          <path
+            d="M580 240 Q550 310 520 370 Q490 440 450 510 Q420 560 400 600"
+            fill="none"
+            stroke="url(#alpineBrookGrad)"
+            strokeWidth="5"
+            strokeLinecap="round"
+          />
+          {/* Espuma branca das quedas d'água */}
+          <path
+            d="M580 240 Q550 310 520 370 Q490 440 450 510 Q420 560 400 600"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="2"
+            strokeDasharray="8 14"
+            strokeLinecap="round"
+            opacity="0.85"
+          />
+        </g>
+
+        {/* ---------------- 2.4 AFLORAMENTOS ROCHOSOS COM ESTRATOS E SOMBRAS ---------------- */}
+        {[
+          { x: 310, y: 410, s: 1.1 },
+          { x: 480, y: 320, s: 0.95 },
+          { x: 670, y: 220, s: 0.85 },
+          { x: 810, y: 150, s: 0.9 },
+        ].map((rock, i) => (
+          <g key={i} transform={`translate(${rock.x}, ${rock.y}) scale(${rock.s})`}>
+            {/* Bloco principal de granito */}
+            <path
+              d="M-28 12 L-18 -8 L-6 -5 L5 -18 L19 -7 L30 12 Z"
+              fill="url(#graniteRockGrad)"
+              stroke="#334155"
+              strokeWidth="1.2"
+            />
+            {/* Face iluminada no topo da rocha */}
+            <path
+              d="M-18 -8 L-6 -5 L5 -18 L11 -6 L2 -1 L-9 -3 Z"
+              fill={weather === "snow" ? "#ffffff" : "#cbd5e1"}
+              opacity="0.9"
+            />
+            {/* Fissuras e líquens na rocha */}
+            <line x1="-5" y1="-5" x2="2" y2="8" stroke="#1e293b" strokeWidth="1" opacity="0.6" />
+            <circle cx="8" cy="2" r="2.5" fill={weather === "snow" ? "#e2e8f0" : "#84cc16"} opacity="0.7" />
+          </g>
+        ))}
+
+        {/* ---------------- 2.5 CUME DA VITÓRIA (ZONA NIVAL - NÍVEL 7) ---------------- */}
+        {/* Manto de neve espesso do cume 3950m */}
         <path
-          d="M800 180 Q880 70 940 80 Q980 120 1000 160 L1000 280 L760 300 Z"
-          fill="url(#summitSnowGrad)"
+          d="M770 170 Q860 60 930 70 Q980 110 1000 150 L1000 270 L730 280 Z"
+          fill="url(#realGlacierSnow)"
           stroke="#94a3b8"
           strokeWidth="1.5"
         />
+        {/* Sombras azuis nas dobras de neve do cume */}
+        <path
+          d="M800 150 Q880 90 940 95"
+          fill="none"
+          stroke="#93c5fd"
+          strokeWidth="3.5"
+          opacity="0.65"
+        />
+        <path
+          d="M850 130 Q910 80 960 90"
+          fill="none"
+          stroke="#60a5fa"
+          strokeWidth="2.5"
+          opacity="0.5"
+        />
 
-        {/* Pinheiros ao longo da montanha */}
+        {/* ---------------- 2.6 PINHEIROS ALPINOS (Abetos com Galhos Escalonados) ---------------- */}
         {[
-          { x: 180, y: 440, s: 0.9 },
-          { x: 230, y: 460, s: 1.1 },
-          { x: 270, y: 410, s: 0.8 },
-          { x: 420, y: 340, s: 0.85 },
-          { x: 490, y: 370, s: 1.0 },
-          { x: 620, y: 270, s: 0.75 },
-          { x: 670, y: 290, s: 0.9 },
+          { x: 150, y: 460, s: 1.15 },
+          { x: 210, y: 485, s: 1.3 },
+          { x: 260, y: 430, s: 0.95 },
+          { x: 370, y: 370, s: 1.0 },
+          { x: 440, y: 350, s: 0.85 },
+          { x: 520, y: 290, s: 0.9 },
+          { x: 610, y: 260, s: 0.78 },
+          { x: 670, y: 275, s: 0.85 },
+          { x: 740, y: 195, s: 0.7 },
         ].map((tree, i) => (
           <g key={i} transform={`translate(${tree.x}, ${tree.y}) scale(${tree.s})`}>
-            {/* Tronco */}
-            <rect x="-3" y="15" width="6" height="12" fill="#78350f" />
-            {/* Camadas da copa verde ou com neve */}
-            <polygon points="0,-18 -16,0 -4,0 -20,18 20,18 4,0 16,0" fill={weather === "snow" ? "#475569" : "#14532d"} />
+            {/* Tronco de casca grossa */}
+            <rect x="-3.5" y="14" width="7" height="14" rx="1.5" fill="#451a03" stroke="#270e02" strokeWidth="0.8" />
+            {/* Camadas da copa com agulhas alpinas */}
+            <polygon
+              points="0,-22 -14,-7 -4,-7 -18,7 -4,7 -22,22 22,22 4,7 18,7 4,-7 14,-7"
+              fill={weather === "snow" ? "#334155" : weather === "rain" ? "#064e3b" : "#14532d"}
+              stroke="#0f172a"
+              strokeWidth="0.8"
+            />
+            {/* Neve fofa repousando nos galhos em clima nevado */}
             {weather === "snow" && (
-              <>
-                <polygon points="0,-18 -8,-7 8,-7" fill="#ffffff" />
-                <path d="M-13 5 Q0 0 13 5" fill="none" stroke="#fff" strokeWidth="2" opacity=".9" />
-              </>
+              <g fill="#ffffff" opacity="0.95">
+                <polygon points="0,-22 -7,-14 7,-14" />
+                <path d="M-12 -7 Q0 -11 12 -7 L8 -5 Q0 -8 -8 -5 Z" />
+                <path d="M-16 7 Q0 2 16 7 L12 9 Q0 5 -12 9 Z" />
+                <path d="M-20 22 Q0 16 20 22 L16 24 Q0 19 -16 24 Z" />
+              </g>
             )}
           </g>
         ))}
 
-        {/* Afloramentos rochosos para dar escala à encosta */}
+        {/* Flores silvestres nos prados baixos (Níveis 1 e 2) */}
+        {weather !== "snow" && (
+          <g opacity="0.85">
+            {/* Edelweiss e Gencianas azuis */}
+            {[
+              { x: 90, y: 530, c: "#ffffff" },
+              { x: 130, y: 550, c: "#3b82f6" },
+              { x: 170, y: 520, c: "#fbbf24" },
+              { x: 230, y: 470, c: "#ffffff" },
+              { x: 280, y: 440, c: "#3b82f6" },
+            ].map((fl, idx) => (
+              <circle key={idx} cx={fl.x} cy={fl.y} r="2.8" fill={fl.c} />
+            ))}
+          </g>
+        )}
+
+        {/* ---------------- 3. A TRILHA ALPINA REALISTA (Sentier de Randonnée) ---------------- */}
+        {/* Leito base escavado na montanha (borda externa de terra e cascalho) */}
+        <path
+          d="M 120 504 Q 190 460 260 420 T 440 348 T 320 264 T 560 204 T 740 132 T 880 60"
+          fill="none"
+          stroke={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#291103" : "#78350f"}
+          strokeWidth="18"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.75"
+        />
+
+        {/* Leito da trilha com terra batida ou neve compactada */}
+        <path
+          d="M 120 504 Q 190 460 260 420 T 440 348 T 320 264 T 560 204 T 740 132 T 880 60"
+          fill="none"
+          stroke="url(#trailDirtGrad)"
+          strokeWidth="12"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        {/* Pegadas nítidas ou pedras da trilha pontilhadas */}
+        <path
+          d="M 120 504 Q 190 460 260 420 T 440 348 T 320 264 T 560 204 T 740 132 T 880 60"
+          fill="none"
+          stroke={weather === "snow" ? "#64748b" : weather === "rain" ? "#3e1f06" : "#b45309"}
+          strokeWidth="2.8"
+          strokeDasharray="5 9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.85"
+        />
+
+        {/* Degraus de madeira rústicos de montanha nas subidas íngremes */}
         {[
-          { x: 360, y: 390, s: 1 },
-          { x: 540, y: 300, s: 0.75 },
-          { x: 790, y: 168, s: 0.85 },
-        ].map((rock) => (
-          <g key={`${rock.x}-${rock.y}`} transform={`translate(${rock.x}, ${rock.y}) scale(${rock.s})`} opacity={weather === "snow" ? 0.75 : 0.9}>
-            <path d="M-22 9 L-14 -4 L-5 -2 L4 -13 L15 -5 L23 9 Z" fill={weather === "snow" ? "#94a3b8" : "#64748b"} />
-            <path d="M-14 -4 L-5 -2 L4 -13 L8 -3 L1 1 L-7 0 Z" fill={weather === "snow" ? "#f8fafc" : "#cbd5e1"} opacity=".8" />
+          { x1: 200, y1: 450, x2: 215, y2: 442 },
+          { x1: 220, y1: 438, x2: 235, y2: 430 },
+          { x1: 390, y1: 310, x2: 405, y2: 300 },
+          { x1: 410, y1: 298, x2: 425, y2: 288 },
+          { x1: 640, y1: 172, x2: 655, y2: 165 },
+          { x1: 660, y1: 163, x2: 675, y2: 156 },
+        ].map((step, idx) => (
+          <line
+            key={idx}
+            x1={step.x1}
+            y1={step.y1}
+            x2={step.x2}
+            y2={step.y2}
+            stroke={weather === "snow" ? "#cbd5e1" : "#54280b"}
+            strokeWidth="3.2"
+            strokeLinecap="round"
+            opacity="0.9"
+          />
+        ))}
+
+        {/* MARCOS DE PEDRA EMPILHADA DOS ALPES (Cairns) */}
+        {[
+          { x: 275, y: 410, s: 0.9 },
+          { x: 575, y: 198, s: 0.8 },
+          { x: 755, y: 125, s: 0.85 },
+        ].map((cairn, idx) => (
+          <g key={idx} transform={`translate(${cairn.x}, ${cairn.y}) scale(${cairn.s})`}>
+            {/* Pedras empilhadas */}
+            <ellipse cx="0" cy="0" rx="9" ry="3.5" fill="#475569" stroke="#1e293b" strokeWidth="0.8" />
+            <ellipse cx="0.5" cy="-4" rx="7" ry="3" fill="#64748b" stroke="#1e293b" strokeWidth="0.8" />
+            <ellipse cx="-0.5" cy="-8" rx="5" ry="2.2" fill="#94a3b8" stroke="#1e293b" strokeWidth="0.8" />
+            <ellipse cx="0" cy="-11" rx="3" ry="1.8" fill="#cbd5e1" stroke="#1e293b" strokeWidth="0.8" />
+            {/* Marca de tinta vermelha/branca da trilha GR */}
+            <rect x="-2" y="-9" width="4" height="2" fill="#ef4444" />
           </g>
         ))}
 
-        {/* 4. A TRILHA SINUOSA (Caminho desenhado do Nível 1 ao Nível 7) */}
-        {/* Linha de terra da trilha */}
-        <path
-          d="M 120 504 Q 190 460 260 420 T 440 348 T 320 264 T 560 204 T 740 132 T 880 60"
-          fill="none"
-          stroke={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#582f0e" : "#fef08a"}
-          strokeWidth="14"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.9"
-        />
-        {/* Detalhes de pegadas / pedras na trilha */}
-        <path
-          d="M 120 504 Q 190 460 260 420 T 440 348 T 320 264 T 560 204 T 740 132 T 880 60"
-          fill="none"
-          stroke={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#3e1f06" : "#ca8a04"}
-          strokeWidth="3"
-          strokeDasharray="6 8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        {/* Estacas de balizamento vermelho de neve nos níveis 6 e 7 */}
+        {weather === "snow" && (
+          <g>
+            {[
+              { x: 710, y: 145 },
+              { x: 770, y: 115 },
+              { x: 840, y: 80 },
+            ].map((pole, idx) => (
+              <g key={idx} transform={`translate(${pole.x}, ${pole.y})`}>
+                <line x1="0" y1="0" x2="0" y2="-22" stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="0" y1="-14" x2="0" y2="-8" stroke="#ffffff" strokeWidth="2.5" />
+                <circle cx="0" cy="-22" r="2" fill="#fbbf24" />
+              </g>
+            ))}
+          </g>
+        )}
       </svg>
 
-      {/* ---------------- BICHOS VIVOS: desenhados quadro a quadro (SVG) ---------------- */}
+      {/* ---------------- 4. BICHOS VIVOS REALISTAS (SVG ANIMADO) ---------------- */}
       <svg ref={svgRef} className="absolute inset-0 w-full h-full z-20 pointer-events-none" aria-hidden />
       <div className="absolute inset-0 z-20" onClick={handleMapClick} onPointerMove={handleMapMove} />
+
+      {/* Balão de fala do bicho clicado */}
       <div
         ref={bubbleRef}
         className="absolute left-0 top-0 z-30 pointer-events-none transition-opacity duration-200"
         style={{ opacity: 0 }}
       >
         {bubbleAnimal && (
-          <div className="w-48 sm:w-56 p-2.5 bg-slate-900/95 text-white rounded-2xl shadow-xl text-xs border border-amber-400/60 animate-in fade-in zoom-in-95 relative">
-            <p className="font-extrabold text-amber-400 text-[11px]">
-              {bubbleAnimal.emoji} {bubbleAnimal.name}
+          <div className="w-48 sm:w-56 p-2.5 bg-slate-900/95 text-white rounded-2xl shadow-2xl text-xs border border-amber-400/70 animate-in fade-in zoom-in-95 relative">
+            <p className="font-extrabold text-amber-400 text-[11px] flex items-center gap-1.5">
+              <span>{bubbleAnimal.emoji}</span>
+              <span>{bubbleAnimal.name}</span>
             </p>
             <p className="mt-1 font-medium leading-snug italic text-slate-100">&ldquo;{bubbleAnimal.quote}&rdquo;</p>
             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
@@ -365,7 +601,7 @@ export function CuriousTrailMountain({
         )}
       </div>
 
-      {/* ---------------- AS 7 ESTAÇÕES / WAYPOINTS ---------------- */}
+      {/* ---------------- 5. AS 7 ESTAÇÕES / WAYPOINTS ---------------- */}
       {TRAIL_LEVELS.map((cfg) => {
         const isCurrent = cfg.level === currentLevel;
         const isUnlocked = cfg.level <= unlockedLevel;
@@ -389,14 +625,14 @@ export function CuriousTrailMountain({
             {/* Círculo do Waypoint */}
             <span
               className={cn(
-                "relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full font-black text-xs sm:text-sm shadow-lg transition-transform",
+                "relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full font-black text-xs sm:text-sm shadow-xl transition-transform border-2",
                 isCurrent
-                  ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white ring-4 ring-amber-300/80 animate-pulse"
+                  ? "bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 text-white border-white ring-4 ring-amber-300/80 animate-pulse"
                   : isDone
-                  ? "bg-emerald-500 text-white border-2 border-white"
+                  ? "bg-gradient-to-br from-emerald-500 to-green-600 text-white border-white"
                   : isUnlocked
-                  ? "bg-blue-600 text-white border-2 border-white"
-                  : "bg-slate-400 text-slate-200 border-2 border-slate-300"
+                  ? "bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-white"
+                  : "bg-slate-500 text-slate-200 border-slate-400"
               )}
             >
               {isDone ? (
@@ -407,21 +643,23 @@ export function CuriousTrailMountain({
                 <Lock className="h-3.5 w-3.5 text-white/80" />
               )}
 
-              {/* Distintivo de Nível 7 com Bandeira no Cume */}
+              {/* Distintivo de Nível 7 com Coroa de Cume */}
               {cfg.level === 7 && (
-                <span className="absolute -top-3 -right-2 text-base">🚩</span>
+                <span className="absolute -top-3.5 -right-2 text-sm sm:text-base animate-bounce">
+                  👑
+                </span>
               )}
             </span>
 
             {/* Etiqueta de Altitude e Nome */}
             <span
               className={cn(
-                "absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap shadow-sm border pointer-events-none transition-colors",
+                "absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap shadow-md border pointer-events-none transition-colors",
                 isCurrent
-                  ? "bg-amber-500 text-white border-amber-300"
+                  ? "bg-amber-500 text-white border-amber-300 font-black"
                   : isDone
-                  ? "bg-emerald-600/90 text-white border-emerald-400"
-                  : "bg-slate-900/80 text-slate-100 border-slate-700"
+                  ? "bg-emerald-600/95 text-white border-emerald-400"
+                  : "bg-slate-900/85 text-slate-100 border-slate-700"
               )}
             >
               N{cfg.level} · {cfg.altitude}m
@@ -430,7 +668,7 @@ export function CuriousTrailMountain({
         );
       })}
 
-      {/* ---------------- O ALUNO EM MOVIMENTO NA TRILHA ---------------- */}
+      {/* ---------------- 6. O ALUNO EXPLORADOR EM MOVIMENTO / HASTEANDO A BANDEIRA AO VIVO ---------------- */}
       <div
         className={cn(
           "absolute z-30 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-700 ease-out",
@@ -446,49 +684,50 @@ export function CuriousTrailMountain({
           hasUmbrella={currentCfg.hasUmbrella}
           hasSnowGear={currentCfg.hasSnowGear}
           isWalking={isMoving}
-          isCheering={isCheering}
-          isRaisingFlag={isRaisingFlag || (currentLevel === 7 && completedLevels.includes(7))}
+          isCheering={isCheering || (currentLevel === 7 && isAllCompleted)}
+          isRaisingFlag={isRaisingFlag || (currentLevel === 7 && isAllCompleted)}
           flagProgress={flagProgress}
-          size={78}
+          size={84}
         />
       </div>
 
-      {/* ---------------- BANDEIRA DA VITÓRIA NO CUME (NÍVEL 7) ---------------- */}
+      {/* ---------------- 7. BANDEIRA DA VITÓRIA NO CUME AO VIVO (3950m) ---------------- */}
       <div
-        className="absolute top-[8%] right-[8%] z-20 pointer-events-none flex flex-col items-center"
-        title="Cume da Vitória · Hasteie a bandeira ao passar no Nível 7!"
+        className="absolute top-[6%] right-[7%] z-20 pointer-events-none flex flex-col items-center"
+        title="Cume da Vitória · Hasteie a bandeira ao vivo ao concluir o Nível 7!"
       >
-        {/* Mastro fixo no topo */}
-        <div className="relative w-1.5 h-16 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 rounded-full shadow">
-          {/* Topo dourado */}
-          <div className="absolute -top-2 -left-1.5 w-4 h-4 rounded-full bg-amber-400 border border-amber-600 shadow-md" />
+        {/* Mastro fixo dourado no topo com roldana */}
+        <div className="relative w-2 h-20 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 rounded-full shadow-lg">
+          {/* Esfera dourada no topo */}
+          <div className="absolute -top-2.5 -left-1.5 w-5 h-5 rounded-full bg-gradient-to-br from-amber-200 via-amber-400 to-amber-600 border border-amber-700 shadow-md" />
 
-          {/* Bandeira hasteada quando o nível 7 for concluído */}
-          {(completedLevels.includes(7) || isRaisingFlag) && (
+          {/* Bandeira hasteada ao vivo quando concluído ou subindo */}
+          {(isAllCompleted || isRaisingFlag) && (
             <div
-              className="absolute left-1.5 top-0 flex w-12 h-8 rounded-sm overflow-hidden shadow-lg border border-slate-900/20 animate-[wiggle_2s_ease-in-out_infinite]"
+              className="absolute left-2 flex w-14 h-9 rounded-sm overflow-hidden shadow-2xl border border-slate-900/30 trail-flag-wiggle origin-left"
               style={{
-                transition: "top 1.2s ease-out",
-                top: `${100 - flagProgress}%`,
+                transition: "top 0.4s ease-out",
+                top: `${Math.max(0, 100 - flagProgress)}%`,
               }}
             >
-              {/* Faixas Tricolor Francesas */}
-              <div className="w-1/3 h-full bg-[#2563eb]" />
+              {/* Faixas Tricolor Francesas 🇫🇷 */}
+              <div className="w-1/3 h-full bg-[#1d4ed8]" />
               <div className="w-1/3 h-full bg-[#ffffff]" />
               <div className="w-1/3 h-full bg-[#dc2626]" />
             </div>
           )}
         </div>
-        <span className="mt-1 px-2 py-0.5 rounded-full bg-slate-900/90 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-400/50">
+
+        <span className="mt-1 px-2.5 py-0.5 rounded-full bg-slate-900/90 text-amber-300 text-[10px] sm:text-[11px] font-black uppercase tracking-wider border border-amber-400/60 shadow">
           🏔️ Cume 3950m
         </span>
       </div>
 
-      {/* ---------------- HUD INFORMATIVO SUPERIOR DA MONTANHA ---------------- */}
+      {/* ---------------- 8. HUD INFORMATIVO SUPERIOR DA MONTANHA ---------------- */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-20 pointer-events-none">
         {/* Indicador do Clima e Altitude Atual */}
-        <div className="flex items-center gap-2 rounded-2xl bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 text-white border border-white/20 shadow-lg">
-          <span className="text-lg">
+        <div className="flex items-center gap-2 rounded-2xl bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 text-white border border-white/20 shadow-xl">
+          <span className="text-xl">
             {weather === "sunny" ? "☀️" : weather === "rain" ? "🌧️" : "❄️"}
           </span>
           <div className="leading-tight">
@@ -500,18 +739,18 @@ export function CuriousTrailMountain({
               {weather === "sunny"
                 ? "Ensolarado"
                 : weather === "rain"
-                ? "Chuva (Guarda-chuva aberto!)"
-                : "Neve e Frio (Agasalho quente!)"}
+                ? "Chuva na trilha (Guarda-chuva aberto!)"
+                : "Neve alpina e Frio (Boneco agasalhado e tremendo de frio!)"}
             </span>
           </div>
         </div>
 
         {/* Quantidade de Elementos a Reconhecer neste Nível */}
-        <div className="rounded-2xl bg-slate-900/80 backdrop-blur-md px-3 py-1.5 text-white border border-white/20 shadow-lg text-right">
+        <div className="rounded-2xl bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 text-white border border-white/20 shadow-xl text-right">
           <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">
             Meta deste Nível
           </span>
-          <span className="block text-xs font-extrabold text-emerald-400">
+          <span className="block text-xs font-black text-emerald-400">
             {currentCfg.elementCount} {currentCfg.elementCount === 1 ? "Elemento" : "Elementos"}
           </span>
         </div>

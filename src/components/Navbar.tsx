@@ -32,7 +32,7 @@ export function Navbar() {
   const otherLanguage = language === "kreyol" ? "francais" : "kreyol";
   const otherMeta = LANGUAGE_META[otherLanguage];
   const navLabel = (href: string, label: string) =>
-    href === "/dashboard/jogo" && language === "francais" ? "C'est quoi ?" : label;
+    href === "/dashboard/jogo" && language === "francais" ? "Jogos" : label;
 
   const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname?.startsWith(href + "/"));
 

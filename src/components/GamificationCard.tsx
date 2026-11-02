@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Sparkles, Flame, Trophy, Coins, ArrowRight, Award } from "lucide-react";
+import { Sparkles, Flame, Trophy, Coins, ArrowRight, Award, Mountain } from "lucide-react";
 import { useGamification } from "@/hooks/useGamification";
 import { Card, CardContent } from "@/components/ui/card";
 import { AchievementsModal } from "@/components/AchievementsModal";
@@ -122,12 +122,52 @@ export function GamificationCard({ language }: { language: AppLanguage }) {
               >
                 <Trophy className="h-3.5 w-3.5 text-amber-500" /> Conquistas & Loja
               </button>
+            </div>
+          </div>
+
+          <div className="mt-4 border-t border-[var(--border)] pt-4">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+              Escolha um jogo
+            </p>
+            <div className={language === "francais" ? "grid gap-2 sm:grid-cols-2" : ""}>
               <Link
                 href="/dashboard/jogo"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent)] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-[var(--accent-hover)] transition-all cursor-pointer"
+                className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 transition-colors ${
+                  language === "francais"
+                    ? "border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10"
+                    : "border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-2)]"
+                }`}
               >
-                <Sparkles className="h-3.5 w-3.5" /> {LANGUAGE_META[language].gameTitle} <ArrowRight className="h-3 w-3" />
+                <Sparkles className="h-5 w-5 shrink-0 text-blue-500" />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-bold text-[var(--text)]">
+                    {language === "francais" ? "C'est quoi ?" : LANGUAGE_META[language].gameTitle}
+                  </span>
+                  <span className="block text-xs text-[var(--text-secondary)]">
+                    {language === "francais"
+                      ? "Adivinhe os objetos em francês"
+                      : "Pratique vocabulário com desafios de imagens"}
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
               </Link>
+              {language === "francais" && (
+                <Link
+                  href="/dashboard/jogo?module=trilha"
+                  className="flex items-center gap-3 rounded-xl border border-amber-500/35 bg-amber-500/5 px-3.5 py-3 transition-colors hover:bg-amber-500/10"
+                >
+                  <Mountain className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-bold text-[var(--text)]">
+                      Trilha do Aluno Curioso
+                    </span>
+                    <span className="block text-xs text-[var(--text-secondary)]">
+                      Suba a montanha em uma aventura própria
+                    </span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
+                </Link>
+              )}
             </div>
           </div>
         </CardContent>

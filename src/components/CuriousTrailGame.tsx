@@ -124,10 +124,9 @@ function speakWordFrench(text: string, onEnd?: () => void) {
 export interface CuriousTrailGameProps {
   items: CestQuoiItem[];
   initialTheme?: string;
-  onSwitchToClassic?: () => void;
 }
 
-export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: CuriousTrailGameProps) {
+export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps) {
   // Combina itens fornecidos com itens dedicados (incluindo idiomas)
   const allPool = useMemo(() => getAllTrailItems(items), [items]);
 
@@ -558,23 +557,6 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
           >
             <ArrowLeft className="h-4 w-4" /> Painel
           </Link>
-
-          <div className="flex items-center gap-1 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-1 shadow-inner">
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-1 text-xs font-extrabold text-white shadow-sm"
-            >
-              🏔️ Trilha Curiosa
-              <span className="rounded-full bg-white/20 px-1.5 py-0.2 text-[9px] font-black uppercase tracking-wider">Novo</span>
-            </button>
-            <button
-              type="button"
-              onClick={onSwitchToClassic}
-              className="inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors"
-            >
-              🎯 C&apos;est quoi ?
-            </button>
-          </div>
 
           <button
             type="button"

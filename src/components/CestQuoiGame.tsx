@@ -314,9 +314,7 @@ export function CestQuoiGame({
   initialTheme?: string;
   initialModule?: string;
 }) {
-  const [gameModule, setGameModule] = useState<"classic" | "trail">(() =>
-    initialModule === "trilha" ? "trail" : "classic"
-  );
+  const gameModule = initialModule === "trilha" ? "trail" : "classic";
   const themes = useMemo(() => {
     const map = new Map<string, string>();
     items.forEach((i) => map.set(i.themeId, i.theme));
@@ -881,7 +879,6 @@ export function CestQuoiGame({
       <CuriousTrailGame
         items={items}
         initialTheme={initialTheme}
-        onSwitchToClassic={() => setGameModule("classic")}
       />
     );
   }
@@ -902,26 +899,6 @@ export function CestQuoiGame({
             <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text)]">
               <ArrowLeft className="h-4 w-4" /> Painel
             </Link>
-
-            {/* SELETOR DE MÓDULOS */}
-            <div className="flex items-center gap-1 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-1">
-              <button
-                type="button"
-                onClick={() => setGameModule("trail")}
-                className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors cursor-pointer"
-              >
-                🏔️ Trilha Curiosa
-                <span className="rounded-full bg-amber-500 text-white px-1.5 py-0.2 text-[9px] font-black uppercase">
-                  Novo
-                </span>
-              </button>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 rounded-xl bg-blue-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm"
-              >
-                🎯 C&apos;est quoi ?
-              </button>
-            </div>
 
             <button type="button" onClick={toggleSound} className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-[var(--text-secondary)]" aria-label={muted ? "Ativar som" : "Silenciar"}>
               {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -979,38 +956,6 @@ export function CestQuoiGame({
               <li className="cq2-pill"><span>⏱️</span> Vença o tempo</li>
               <li className="cq2-pill"><span>🔁</span> 2ª chance se errar</li>
             </ul>
-
-            {/* BANNER DO NOVO MÓDULO TRILHA DO ALUNO CURIOSO */}
-            <div
-              onClick={() => setGameModule("trail")}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setGameModule("trail"); }}
-              className="cq2-trail-banner mt-5 flex cursor-pointer items-center gap-3 rounded-2xl p-3 text-left"
-            >
-              <svg viewBox="0 0 64 48" className="h-12 w-16 shrink-0 rounded-xl" aria-hidden>
-                <defs>
-                  <linearGradient id="cqtb-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7dd3fc" /><stop offset="1" stopColor="#fde68a" /></linearGradient>
-                </defs>
-                <rect width="64" height="48" fill="url(#cqtb-sky)" />
-                <circle cx="52" cy="11" r="5" fill="#fbbf24" />
-                <path d="M-2 48 L20 14 L34 34 L44 22 L66 48Z" fill="#64748b" />
-                <path d="M20 14 L14.5 22.5 L20 20.5 L25 24Z" fill="#fff" />
-                <path d="M-2 48 Q18 34 34 38 T66 34 L66 48Z" fill="#16a34a" />
-                <path d="M8 46 Q22 40 30 40 T52 37" stroke="#fde68a" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeDasharray="3 3" />
-                <path d="M52 37 V27" stroke="#78350f" strokeWidth="1.2" /><path d="M52 27 h7 l-2 2.5 l2 2.5 h-7z" fill="#dc2626" />
-              </svg>
-              <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-1.5 text-[13px] font-black text-amber-600 dark:text-amber-400">
-                  Trilha do Aluno Curioso
-                  <span className="rounded-full bg-amber-500 px-1.5 py-px text-[9px] font-black uppercase tracking-wide text-white">Novo</span>
-                </p>
-                <p className="mt-0.5 text-[11px] leading-snug text-[var(--text-secondary)]">
-                  Suba a montanha em 7 níveis, enfrente chuva e neve e hasteie a bandeira no topo!
-                </p>
-              </div>
-              <span className="shrink-0 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-black text-white shadow-sm">Jogar →</span>
-            </div>
 
             <div className="cq2-divider mt-6"><span>Escolha o nível</span></div>
             <div className="mt-3 space-y-2.5 text-left">

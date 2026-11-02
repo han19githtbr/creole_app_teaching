@@ -24,11 +24,12 @@
       /* Animações dos elementos vivos da oficina tecnológica (Teknoloji / Tecnologia) */
       .windmill-blades {
         animation: windmillSpin 14s linear infinite;
-        transform-origin: 0px -50px;
+        transform-box: fill-box;
+        transform-origin: center;
       }
       @keyframes windmillSpin {
-        0% { transform: translate(0px, -50px) rotate(0deg); }
-        100% { transform: translate(0px, -50px) rotate(360deg); }
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
 
       .drone-flight {
@@ -295,20 +296,22 @@
     <rect x="-6" y="-15" width="12" height="18" rx="6" fill="#2d3748"/>
     <rect x="-8" y="30" width="16" height="22" rx="8" fill="#2d3748"/>
     <!-- Windmill Blades / Rotor (Moulen van) -->
-    <g class="windmill-blades">
-      <circle cx="0" cy="0" r="10" fill="#3a2312"/>
-      <!-- Blade 1 -->
-      <line x1="0" y1="0" x2="0" y2="-95" stroke="#4a301a" stroke-width="5"/>
-      <rect x="3" y="-90" width="22" height="75" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
-      <!-- Blade 2 -->
-      <line x1="0" y1="0" x2="95" y2="0" stroke="#4a301a" stroke-width="5"/>
-      <rect x="15" y="3" width="75" height="22" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
-      <!-- Blade 3 -->
-      <line x1="0" y1="0" x2="0" y2="95" stroke="#4a301a" stroke-width="5"/>
-      <rect x="-25" y="15" width="22" height="75" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
-      <!-- Blade 4 -->
-      <line x1="0" y1="0" x2="-95" y2="0" stroke="#4a301a" stroke-width="5"/>
-      <rect x="-90" y="-25" width="75" height="22" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+    <g transform="translate(0, -80)">
+      <g class="windmill-blades">
+        <circle cx="0" cy="0" r="10" fill="#3a2312"/>
+        <!-- Blade 1 -->
+        <line x1="0" y1="0" x2="0" y2="-95" stroke="#4a301a" stroke-width="5"/>
+        <rect x="3" y="-90" width="22" height="75" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+        <!-- Blade 2 -->
+        <line x1="0" y1="0" x2="95" y2="0" stroke="#4a301a" stroke-width="5"/>
+        <rect x="15" y="3" width="75" height="22" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+        <!-- Blade 3 -->
+        <line x1="0" y1="0" x2="0" y2="95" stroke="#4a301a" stroke-width="5"/>
+        <rect x="-25" y="15" width="22" height="75" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+        <!-- Blade 4 -->
+        <line x1="0" y1="0" x2="-95" y2="0" stroke="#4a301a" stroke-width="5"/>
+        <rect x="-90" y="-25" width="75" height="22" fill="#f4ebd9" opacity="0.9" stroke="#5a3d24" stroke-width="1.5"/>
+      </g>
     </g>
   </g>
 

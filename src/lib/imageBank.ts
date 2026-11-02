@@ -762,9 +762,16 @@ const EXTRA_DETAIL_NAMES: Record<string, BankElement> = {
   grama: { kreyol: "zèb", fr: "herbe", pt: "grama" },
   areia: { kreyol: "sab", fr: "sable", pt: "areia" },
   piso: { kreyol: "plancher", fr: "sol", pt: "piso" },
+  mesa: { kreyol: "tab", fr: "table", pt: "mesa" },
   agua: { kreyol: "dlo", fr: "eau", pt: "água" },
   janela: { kreyol: "fenèt", fr: "fenêtre", pt: "janela" },
   lousa: { kreyol: "tablo", fr: "tableau noir", pt: "lousa/quadro-negro" },
+};
+
+// Em cenas de refeição, o ponto medido cai sobre a mesa, não no piso.
+const EXTRA_DETAIL_OVERRIDES: Record<string, Record<string, string>> = {
+  "gastronomia-11": { piso: "mesa" },
+  "gastronomia-15": { piso: "mesa" },
 };
 
 /**
@@ -791,7 +798,7 @@ function measuredStoryLayout(
   // Detalhes extras da cena (sol, nuvem, céu, chão...) até somar 8 rótulos.
   const extras = (measuredExtras as unknown as Record<string, [string, number, number][]>)[id] ?? [];
   for (const [key, x, y] of extras) {
-    const detail = EXTRA_DETAIL_NAMES[key];
+    const detail = EXTRA_DETAIL_NAMES[EXTRA_DETAIL_OVERRIDES[id]?.[key] ?? key];
     if (!detail || storyElements.length >= 8) continue;
     storyElements.push(detail);
     anchors.push({ left: Math.min(96, Math.max(4, x)), top: Math.min(90, Math.max(10, y)) });

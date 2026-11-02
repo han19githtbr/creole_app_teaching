@@ -199,6 +199,7 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
   const levelXpRef = useRef(0);
   const progressRef = useRef(trailProgress);
   const levelRef = useRef(1);
+  const advancedForRef = useRef(-1); // índice do objeto cujo avanço já foi feito (evita avanço duplo)
   indexRef.current = elementIndex;
   itemsRef.current = levelItems;
   progressRef.current = trailProgress;
@@ -229,7 +230,7 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
     setTimeLeft(diffCfg.seconds * 1000);
     setTimerRunning(true);
     setSpeedBonusText(null);
-  }, [currentItem, allPool, difficulty, diffCfg.seconds]);
+  }, [currentItem, elementIndex, allPool, difficulty, diffCfg.seconds]);
 
   // Cronômetro (corre na 1ª e na 2ª tentativa)
   useEffect(() => {
@@ -244,6 +245,18 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
       soundEffects.playClockTick(true);
     }
   }, [timeLeft, timerRunning, canAnswer]);
+
+  // Vigia: se, depois de acertar/revelar, a tela ficar parada, força o avanço (a trilha nunca trava)
+  useEffect(() => {
+    if (phase !== "playing" || climbDone) return;
+    if (roundState !== "correct" && roundState !== "reveal") return;
+    const idx = elementIndex;
+    const t = setTimeout(() => {
+      if (indexRef.current === idx) advanceElement();
+    }, 4500);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, roundState, elementIndex, climbDone]);
 
   // Tempo esgotado
   useEffect(() => {
@@ -260,8 +273,12 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
     } else {
       setTimerRunning(false);
       setRoundState("reveal");
-      if (currentItem) speakWordFrench(currentItem.speak);
       setTimeout(advanceElement, 3000);
+      try {
+        if (currentItem) speakWordFrench(currentItem.speak);
+      } catch {
+        /* sem áudio, sem problema */
+      }
     }
   }
 
@@ -275,6 +292,7 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
     itemsRef.current = itemsForThisLevel;
     setElementIndex(0);
     indexRef.current = 0;
+    advancedForRef.current = -1;
     setClimbDone(false);
     setIsCheering(false);
     setLevelXp(0);
@@ -301,6 +319,9 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
 
   // Próximo objeto (o aluno caminha pela trilha) ou fim do nível (sobe até a próxima estação)
   function advanceElement() {
+    // idempotente: o timer normal e o "vigia" podem chamar; só o primeiro vale
+    if (advancedForRef.current === indexRef.current) return;
+    advancedForRef.current = indexRef.current;
     const nextIdx = indexRef.current + 1;
     if (nextIdx < itemsRef.current.length) {
       setElementIndex(nextIdx);
@@ -368,7 +389,13 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
       // ACERTO!
       setTimerRunning(false);
       setRoundState("correct");
-      soundEffects.playSuccess();
+      // O avanço é agendado ANTES de qualquer outra coisa: som, pontos, recompensa ou fala não podem travar a trilha
+      setTimeout(advanceElement, 1700);
+      try {
+        soundEffects.playSuccess();
+      } catch {
+        /* sem áudio, sem problema */
+      }
 
       // Bônus de velocidade
       const totalMs = diffCfg.seconds * 1000;
@@ -398,30 +425,41 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
       const nextStreak = streak + 1;
       setStreak(nextStreak);
       if (nextStreak > bestStreak) setBestStreak(nextStreak);
-      if (nextStreak % 3 === 0) soundEffects.playStreak(nextStreak);
-
-      // Gamificação central
-      const reward = recordQuizWin({
-        language: "francais",
-        sceneId: currentItem.id,
-        theme: currentItem.themeId,
-        wordsCount: 1,
-        attemptsLeft: attemptRef.current === 1 ? 3 : 2,
-        streak: nextStreak,
-      });
-      if (reward.newBadges.length > 0 || reward.leveledUp) {
-        setRewardSummary({
-          xp: reward.gainedXp,
-          goud: reward.gainedGoud,
-          badges: reward.newBadges,
-          level: reward.leveledUp ? reward.newLevel : null,
-        });
-        setRewardModalOpen(true);
+      try {
+        if (nextStreak % 3 === 0) soundEffects.playStreak(nextStreak);
+      } catch {
+        /* sem áudio, sem problema */
       }
 
-      // Pronúncia francesa e o aluno segue caminhando até o próximo ponto
-      speakWordFrench(currentItem.speak);
-      setTimeout(advanceElement, 1700);
+      try {
+        // Gamificação central
+        const reward = recordQuizWin({
+          language: "francais",
+          sceneId: currentItem.id,
+          theme: currentItem.themeId,
+          wordsCount: 1,
+          attemptsLeft: attemptRef.current === 1 ? 3 : 2,
+          streak: nextStreak,
+        });
+        if (reward.newBadges.length > 0 || reward.leveledUp) {
+          setRewardSummary({
+            xp: reward.gainedXp,
+            goud: reward.gainedGoud,
+            badges: reward.newBadges,
+            level: reward.leveledUp ? reward.newLevel : null,
+          });
+          setRewardModalOpen(true);
+        }
+      } catch (err) {
+        console.warn("Falha ao registrar recompensa (a trilha continua):", err);
+      }
+
+      // Pronúncia francesa (o aluno já segue caminhando até o próximo ponto)
+      try {
+        speakWordFrench(currentItem.speak);
+      } catch {
+        /* sem áudio, sem problema */
+      }
     } else {
       // ERRO
       soundEffects.playError();
@@ -435,8 +473,12 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
       } else {
         setRoundState("reveal");
         setTimerRunning(false);
-        speakWordFrench(currentItem.speak);
         setTimeout(advanceElement, 3200);
+        try {
+          speakWordFrench(currentItem.speak);
+        } catch {
+          /* sem áudio, sem problema */
+        }
       }
     }
   }

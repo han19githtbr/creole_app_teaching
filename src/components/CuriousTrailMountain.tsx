@@ -69,26 +69,30 @@ function pxPerUnit(W: number) {
 }
 
 /** Recorte do objeto no cenário original, com a seta vermelha apontando para ele. */
-function ObjectLens({ item, px, ring }: { item: CestQuoiItem; px: number; ring?: string }) {
+function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean }) {
+  // full: mostra a cena inteira (o objeto nunca fica cortado); senão, miniatura circular recortada na seta
   const cw = Math.min(item.w, item.h) * 0.5;
-  const x0 = clampN(item.arrow.x - cw / 2, 0, item.w - cw);
-  const y0 = clampN(item.arrow.y - cw / 2, 0, item.h - cw);
+  const x0 = full ? 0 : clampN(item.arrow.x - cw / 2, 0, item.w - cw);
+  const y0 = full ? 0 : clampN(item.arrow.y - cw / 2, 0, item.h - cw);
+  const vw = full ? item.w : cw;
+  const vh = full ? item.h : cw;
+  const arrowScale = full ? 0.9 : 0.55;
   return (
     <svg
-      viewBox={`${x0} ${y0} ${cw} ${cw}`}
+      viewBox={`${x0} ${y0} ${vw} ${vh}`}
       width={px}
-      height={px}
-      className={cn("block rounded-full bg-white", ring)}
+      height={full ? Math.round((px * item.h) / item.w) : px}
+      className={cn("block bg-white", full ? "rounded-xl" : "rounded-full", ring)}
       aria-hidden
     >
       <image href={item.scene} x={0} y={0} width={item.w} height={item.h} preserveAspectRatio="none" />
       <g className="cq-sway">
-        <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(0.55)`}>
+        <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(${arrowScale})`}>
           <path
             d="M-90 -10 L-40 -10 L-45 -25 L0 0 L-45 25 L-40 10 L-90 10 Z"
             fill="#ef4444"
             stroke="#ffffff"
-            strokeWidth="7"
+            strokeWidth={full ? 5 : 7}
             strokeLinejoin="round"
           />
         </g>
@@ -164,6 +168,9 @@ export function CuriousTrailMountain({
     setPathInfo({ total: t, step, tbl });
   }, []);
   const total = pathInfo.total;
+  const cardPx = Math.round(clampN(stage.W * 0.36, 150, 250)); // cena do objeto atual
+  const curItem = elements?.[elementIndex];
+  const cardHeight = Math.round(cardPx * ((curItem?.h ?? 350) / (curItem?.w ?? 490))) + 70;
 
   const N = currentCfg.elementCount;
   const campStart = CAMP_FRACS[currentLevel - 1] * total;
@@ -177,11 +184,12 @@ export function CuriousTrailMountain({
   else if (levelFinished) targetLen = campEnd;
   else targetLen = elementIndex <= 0 ? campStart : elemLen(elementIndex - 1);
   const focusLen = hasCurrent ? elemLen(elementIndex) : null;
+  const focusBelow = focusLen != null && (pointPct(focusLen)?.y ?? 50) < 30;
 
   // espelhos para o laço de animação (evita recriar o requestAnimationFrame a cada render)
-  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0 });
+  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0 });
   useEffect(() => {
-    live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total };
+    live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total, cardH: focusLen != null && !focusBelow ? cardHeight : 0 };
   });
 
   function pointPct(len: number): { x: number; y: number } | null {
@@ -257,14 +265,21 @@ export function CuriousTrailMountain({
         // 2) câmera: acompanha o aluno e o próximo objeto
         const sx = (p.x / VB_W) * WW, sy = (p.y / VB_H) * WH;
         let fx = sx, fy = sy;
+        let qy = -1;
         if (L.focus != null) {
           const q = path.getPointAtLength(clampN(L.focus, 0, L.total));
           fx = sx + ((q.x / VB_W) * WW - sx) * 0.45;
           fy = sy + ((q.y / VB_H) * WH - sy) * 0.45;
+          qy = (q.y / VB_H) * WH;
         }
         const s = L.playing ? (pxPerUnit(W) * VB_W) / WW : 1;
         const dtx = L.playing ? clampN(W * 0.5 - fx * s, W - WW * s, 0) : (W - WW) / 2;
-        const dty = L.playing ? clampN(H * 0.38 - fy * s, H - WH * s - H * 0.5, 0) : (H - WH) / 2;
+        let dty = L.playing ? clampN(H * 0.38 - fy * s, H - WH * s - H * 0.5, 0) : (H - WH) / 2;
+        // garante espaço, acima do ponto do objeto, para o cartão com a cena inteira
+        if (L.playing && L.cardH > 0 && qy >= 0) {
+          const ey = dty + qy * s;
+          if (ey < L.cardH) dty = Math.min(0, dty + (L.cardH - ey));
+        }
         const k = 1 - Math.exp(-dt * 4.5);
         cam.s += (s - cam.s) * k;
         cam.tx += (dtx - cam.tx) * k;
@@ -335,7 +350,8 @@ export function CuriousTrailMountain({
   const bubbleAnimal = bubbleId ? ROAMING_ANIMAL_POOL.find((a) => a.id === bubbleId) : undefined;
 
   // ---------------- tamanhos que dependem da largura ----------------
-  const lensPx = Math.round(clampN(stage.W * 0.19, 76, 124));
+  const lensPx = Math.round(clampN(stage.W * 0.19, 76, 124)); // miniaturas
+
   const studentPx = Math.round(clampN(stage.W * 0.14, 54, 76));
   const inv = "var(--inv, 1)";
 
@@ -354,7 +370,7 @@ export function CuriousTrailMountain({
       {/* ================= MUNDO (sofre zoom/pan da câmera) ================= */}
       <div
         ref={worldRef}
-        className="absolute left-0 top-0 will-change-transform"
+        className="absolute left-0 top-0"
         style={{ transformOrigin: "0 0", width: stage.WW || "100%", height: stage.WH || "100%" }}
       >
         {/* Sol e nuvens */}
@@ -529,9 +545,9 @@ export function CuriousTrailMountain({
                 >
                   {below && <span className="h-0 w-0 border-x-[7px] border-b-[9px] border-x-transparent border-b-amber-400" />}
                   <div className="relative">
-                    <span className="absolute -inset-1.5 rounded-full bg-amber-400/50 blur-md animate-pulse" aria-hidden />
-                    <div className="relative rounded-full bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-[4px] shadow-2xl">
-                      <ObjectLens item={item} px={lensPx} ring="ring-2 ring-white" />
+                    <span className="absolute -inset-1.5 rounded-3xl bg-amber-400/50 blur-md animate-pulse" aria-hidden />
+                    <div className="relative rounded-2xl bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-[4px] shadow-2xl">
+                      <ObjectLens item={item} px={cardPx} full />
                     </div>
                     <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-900 text-[11px] font-black text-amber-300 shadow">
                       {i + 1}

@@ -24,9 +24,13 @@ import { TRAIL_LEVELS, TRAIL_THEMES } from "@/lib/curiousTrailData";
 import { SOCIAL_PLATFORMS, sanitizeSocialHandle } from "@/lib/socialLinks";
 import { Download, Loader2, Pause, Play, RotateCcw, Sparkles } from "lucide-react";
 
+const EMPTY_DEMO_IMAGES: DemoImages = new Map();
+
 export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   const [settings, setSettings] = useState<TrailDemoSettings>(DEFAULT_TRAIL_DEMO_SETTINGS);
-  const [images, setImages] = useState<DemoImages>(new Map());
+  const [imageResult, setImageResult] = useState<{ plan: TrailDemoPlan; images: DemoImages } | null>(null);
+  const [imageError, setImageError] = useState<{ plan: TrailDemoPlan; message: string } | null>(null);
+  const [imageLoadAttempt, setImageLoadAttempt] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [time, setTime] = useState(0);
   const [quality, setQuality] = useState<DemoQuality>("max");
@@ -51,19 +55,41 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
     () => buildTrailDemoPlan(items, cleanSettings),
     [items, cleanSettings]
   );
+  const images = imageResult?.plan === plan ? imageResult.images : EMPTY_DEMO_IMAGES;
+  const imagesError = imageError?.plan === plan ? imageError.message : null;
+  const imagesLoading = !imagesError && imageResult?.plan !== plan;
+  const allPlanImagesLoaded =
+    plan.rounds.length > 0 && plan.rounds.every((round) => images.has(round.item.scene));
 
   // Carrega imagens usadas na trilha
   useEffect(() => {
     let cancelled = false;
     const roundItems = [...new Map(plan.rounds.map((round) => [round.item.scene, round.item])).values()];
-    void loadDemoImages(roundItems).then((map) => {
-      if (cancelled) return;
-      setImages(map);
-    });
+    void loadDemoImages(roundItems)
+      .then((map) => {
+        if (cancelled) return;
+        const missing = roundItems.filter((item) => !map.has(item.scene));
+        if (missing.length) {
+          setImageError({
+            plan,
+            message: `Não foi possível carregar ${missing.length} imagem(ns) deste nível. Tente carregar novamente.`,
+          });
+          return;
+        }
+        setImageResult({ plan, images: map });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        console.error("Erro ao carregar imagens do vídeo da Trilha.", error);
+        setImageError({
+          plan,
+          message: "Não foi possível carregar as imagens do vídeo. Tente novamente.",
+        });
+      });
     return () => {
       cancelled = true;
     };
-  }, [plan]);
+  }, [plan, imageLoadAttempt]);
 
   const planRef = useRef(plan);
   const imagesRef = useRef(images);
@@ -124,6 +150,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
 
   // Exportação em MP4 para redes sociais
   async function handleExport() {
+    if (imagesLoading || imagesError || !allPlanImagesLoaded) return;
     setExporting(true);
     setProgress(0);
     setError(null);
@@ -175,7 +202,8 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       const blob = await finishPromise;
       const url = URL.createObjectURL(blob);
       const ext = mime.includes("mp4") ? "mp4" : "webm";
-      const name = `trilha-curiosa-${plan.theme.id}-nivel${plan.settings.level}.${ext}`;
+      const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+      const name = `trilha-curiosa-v2-${plan.theme.id}-nivel${plan.settings.level}-${stamp}.${ext}`;
 
       setResult({
         url,
@@ -331,7 +359,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           <Button
             type="button"
             onClick={handleExport}
-            disabled={exporting}
+            disabled={exporting || imagesLoading || Boolean(imagesError) || !allPlanImagesLoaded}
             className="w-full rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 py-3.5 text-sm font-black text-white shadow-lg hover:opacity-95"
           >
             {exporting ? (
@@ -339,11 +367,29 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Gerando Vídeo MP4 ({progress}%)...
               </>
             ) : (
-              <>
+              imagesLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando imagens...
+                </>
+              ) : (
+                <>
                 <Sparkles className="mr-2 h-4 w-4" /> Gerar Vídeo da Trilha (MP4)
-              </>
+                </>
+              )
             )}
           </Button>
+          {imagesError && (
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-center">
+              <p className="text-xs font-bold text-red-500">{imagesError}</p>
+              <button
+                type="button"
+                onClick={() => setImageLoadAttempt((attempt) => attempt + 1)}
+                className="text-xs font-bold text-[var(--accent)] underline"
+              >
+                Tentar novamente
+              </button>
+            </div>
+          )}
           {error && <p className="mt-2 text-xs text-red-500 font-bold text-center">{error}</p>}
         </div>
 
@@ -353,6 +399,16 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
             <p className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
               🎉 Vídeo gerado com sucesso! Pronto para postar no Instagram e Facebook.
             </p>
+            <video
+              key={result.url}
+              src={result.url}
+              controls
+              playsInline
+              className="mx-auto max-h-96 w-full rounded-xl bg-black"
+            >
+              Seu navegador não consegue reproduzir este vídeo.
+            </video>
+            <p className="break-all text-[10px] text-[var(--text-muted)]">{result.name}</p>
             <a
               href={result.url}
               download={result.name}

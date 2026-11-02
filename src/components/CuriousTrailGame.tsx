@@ -81,6 +81,27 @@ const DIFFICULTY_CONFIGS: Record<TrailDifficulty, DifficultyConfig> = {
   },
 };
 
+function preloadTrailScene(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    let settled = false;
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      if (error) reject(error);
+      else resolve();
+    };
+    const timeout = setTimeout(
+      () => finish(new Error(`Tempo esgotado ao carregar imagem da trilha: ${src}`)),
+      15000
+    );
+    image.onload = () => finish();
+    image.onerror = () => finish(new Error(`Falha ao carregar imagem da trilha: ${src}`));
+    image.src = src;
+  });
+}
+
 // Pronúncia francesa nativa com Web Speech API
 let cachedFrenchVoice: SpeechSynthesisVoice | null = null;
 function getFrenchVoice(): SpeechSynthesisVoice | null {
@@ -156,9 +177,12 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   const [rewardModalOpen, setRewardModalOpen] = useState(false);
 
   // Fases: o jogo todo (contagem, perguntas, nível concluído, vitória) acontece em cima do mapa
-  const [phase, setPhase] = useState<"lobby" | "countdown" | "playing" | "level_complete" | "summit_victory">("lobby");
+  const [phase, setPhase] = useState<"lobby" | "preparing" | "load_error" | "countdown" | "playing" | "level_complete" | "summit_victory">("lobby");
   const [difficulty, setDifficulty] = useState<TrailDifficulty>("intermediate");
   const diffCfg = DIFFICULTY_CONFIGS[difficulty];
+  const [preloadProgress, setPreloadProgress] = useState({ loaded: 0, total: 0 });
+  const loadRequestRef = useRef(0);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [currentLevel, setCurrentLevel] = useState<number>(1);
   const currentLevelCfg = useMemo(
@@ -212,24 +236,29 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   const [activeAnimalGreeting, setActiveAnimalGreeting] = useState<string | null>(null);
   const [muted, setMuted] = useState<boolean>(() => soundEffects.isMuted());
 
+  useEffect(() => {
+    return () => {
+      loadRequestRef.current += 1;
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, []);
+
   function toggleSound() {
     const next = !muted;
     setMuted(next);
     soundEffects.setMuted(next);
   }
 
-  // Prepara as alternativas para o objeto atual
-  useEffect(() => {
-    if (!currentItem) return;
+  function prepareRound(item: CestQuoiItem) {
     const isHard = difficulty === "master" || difficulty === "native";
-    setOptions(buildWordOptions(currentItem, allPool, isHard));
+    setOptions(buildWordOptions(item, allPool, isHard));
     setRoundState("asking");
     setWrongPicks([]);
     attemptRef.current = 1;
     setTimeLeft(diffCfg.seconds * 1000);
     setTimerRunning(true);
     setSpeedBonusText(null);
-  }, [currentItem, elementIndex, allPool, difficulty, diffCfg.seconds]);
+  }
 
   // Cronômetro (corre na 1ª e na 2ª tentativa)
   useEffect(() => {
@@ -282,11 +311,40 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   }
 
   // Iniciar um nível
-  function startLevel(lvl: number) {
+  async function startLevel(lvl: number) {
+    const requestId = ++loadRequestRef.current;
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+
     soundEffects.playRoundStart();
     setCurrentLevel(lvl);
     levelRef.current = lvl;
     const itemsForThisLevel = pickTrailElementsForLevel(lvl, selectedThemeId, allPool);
+    setTimerRunning(false);
+    const scenes = [...new Set(itemsForThisLevel.map((item) => item.scene))];
+    setPreloadProgress({ loaded: 0, total: scenes.length });
+    setPhase("preparing");
+
+    try {
+      await Promise.all(
+        scenes.map(async (scene) => {
+          await preloadTrailScene(scene);
+          if (loadRequestRef.current === requestId) {
+            setPreloadProgress((progress) => ({ ...progress, loaded: progress.loaded + 1 }));
+          }
+        })
+      );
+    } catch (error) {
+      if (loadRequestRef.current !== requestId) return;
+      console.error("Não foi possível preparar as imagens da Trilha do Aluno Curioso.", error);
+      loadRequestRef.current += 1;
+      setPhase("load_error");
+      return;
+    }
+
+    if (loadRequestRef.current !== requestId) return;
     setLevelItems(itemsForThisLevel);
     itemsRef.current = itemsForThisLevel;
     setElementIndex(0);
@@ -298,18 +356,24 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     levelXpRef.current = 0;
     setIsRaisingFlag(false);
     setFlagProgress(0);
-    setTimerRunning(false);
     setCountdownNum(3);
     setPhase("countdown");
 
     let count = 3;
-    const cInterval = setInterval(() => {
+    countdownRef.current = setInterval(() => {
       count--;
       if (count > 0) {
         soundEffects.playClockTick(false);
         setCountdownNum(count);
       } else {
-        clearInterval(cInterval);
+        if (countdownRef.current) clearInterval(countdownRef.current);
+        countdownRef.current = null;
+        const firstItem = itemsRef.current[0];
+        if (!firstItem) {
+          setPhase("load_error");
+          return;
+        }
+        prepareRound(firstItem);
         soundEffects.playWhoosh();
         setPhase("playing");
       }
@@ -323,6 +387,9 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     advancedForRef.current = indexRef.current;
     const nextIdx = indexRef.current + 1;
     if (nextIdx < itemsRef.current.length) {
+      const nextItem = itemsRef.current[nextIdx];
+      if (!nextItem) return;
+      prepareRound(nextItem);
       setElementIndex(nextIdx);
     } else {
       setTimerRunning(false);
@@ -485,7 +552,46 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   // ---------------- o que aparece SOBRE o mapa em cada fase ----------------
   const inLobby = phase === "lobby";
   let overlay: React.ReactNode = null;
-  if (phase === "countdown") {
+  if (phase === "preparing") {
+    overlay = (
+      <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-[2px]" role="status" aria-live="polite">
+        <div className="max-w-sm rounded-3xl border border-white/20 bg-slate-950/85 p-6 text-center text-white shadow-2xl">
+          <span className="mx-auto block h-9 w-9 animate-spin rounded-full border-4 border-white/25 border-t-amber-400" aria-hidden />
+          <h2 className="mt-4 text-lg font-black">Preparando as imagens da trilha...</h2>
+          <p className="mt-1 text-sm text-slate-300">
+            {preloadProgress.loaded} de {preloadProgress.total} imagens carregadas. O tempo só começa quando tudo estiver pronto.
+          </p>
+        </div>
+      </div>
+    );
+  } else if (phase === "load_error") {
+    overlay = (
+      <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-[2px]" role="alert">
+        <div className="max-w-sm rounded-3xl border border-red-300/40 bg-slate-950/90 p-6 text-center text-white shadow-2xl">
+          <h2 className="text-lg font-black">Não foi possível carregar as imagens</h2>
+          <p className="mt-2 text-sm text-slate-300">
+            Verifique sua conexão e tente novamente. O cronômetro não será iniciado enquanto as imagens não estiverem prontas.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => startLevel(currentLevel)}
+              className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-bold text-white hover:bg-amber-400"
+            >
+              Tentar novamente
+            </button>
+            <button
+              type="button"
+              onClick={() => setPhase("lobby")}
+              className="rounded-xl border border-white/20 px-4 py-2 text-sm font-bold text-white hover:bg-white/10"
+            >
+              Voltar ao mapa
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (phase === "countdown") {
     overlay = (
       <TrailCountdownOverlay
         num={countdownNum}
@@ -720,7 +826,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
           unlockedLevel={trailProgress.unlockedLevel}
           completedLevels={trailProgress.completedLevels}
           onSelectLevel={inLobby ? (lvl) => startLevel(lvl) : undefined}
-          elements={inLobby ? undefined : levelItems}
+          elements={inLobby || phase === "preparing" || phase === "load_error" ? undefined : levelItems}
           elementIndex={elementIndex}
           roundState={roundState}
           levelFinished={climbDone || phase === "level_complete" || phase === "summit_victory"}

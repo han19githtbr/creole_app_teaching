@@ -9,6 +9,7 @@ import { getQuizForImage, isValidImageQuiz } from "@/lib/imageQuiz";
 import Post from "@/models/Post";
 import { ImageQuizGame, type ImageQuizChallenge } from "@/components/ImageQuizGame";
 import { CestQuoiGame, type CestQuoiItem } from "@/components/CestQuoiGame";
+import { GamesPicker } from "@/components/GamesPicker";
 import { GameMonetizationWrapper } from "@/components/GameMonetizationWrapper";
 import { getAppLanguage } from "@/lib/language";
 import cquoiItems from "@/lib/cquoiItems.json";
@@ -25,10 +26,12 @@ export default async function ImageQuizPage({
 
   const language = await getAppLanguage();
 
-  // Painel em francês: jogo "C'est quoi ?" (objetos da pasta c-quoi + coleção por temas).
+  // No painel em francês, a aba Jogos oferece uma escolha entre os dois jogos.
   // O desafio de uma postagem (?post=...) continua sendo o jogo de palavras da própria postagem.
   if (language === "francais" && !(await searchParams).post) {
     const { theme, module: initialModule } = await searchParams;
+    if (!initialModule && !theme) return <GamesPicker />;
+
     return (
       <GameMonetizationWrapper>
         <CestQuoiGame

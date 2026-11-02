@@ -47,36 +47,36 @@ const DIFFICULTY_CONFIGS: Record<TrailDifficulty, DifficultyConfig> = {
     id: "easy",
     label: "Fácil",
     emoji: "🌱",
-    seconds: 15,
+    seconds: 20,
     multiplier: 1.0,
-    desc: "15s por elemento · Ideal para iniciantes",
+    desc: "20s por elemento · Ideal para iniciantes",
     color: "from-emerald-500 to-green-600",
   },
   intermediate: {
     id: "intermediate",
     label: "Intermediário",
     emoji: "⚡",
-    seconds: 10,
+    seconds: 15,
     multiplier: 1.5,
-    desc: "10s por elemento · Ritmo dinâmico",
+    desc: "15s por elemento · Ritmo dinâmico",
     color: "from-amber-500 to-orange-600",
   },
   master: {
     id: "master",
     label: "Master",
     emoji: "🔥",
-    seconds: 5,
+    seconds: 10,
     multiplier: 2.0,
-    desc: "5s por elemento · Desafio ágil",
+    desc: "10s por elemento · Desafio ágil",
     color: "from-rose-500 to-red-700",
   },
   native: {
     id: "native",
     label: "Nativo",
     emoji: "👑",
-    seconds: 4,
+    seconds: 6,
     multiplier: 2.5,
-    desc: "4s por elemento · Reflexo de nativo",
+    desc: "6s por elemento · Reflexo de nativo",
     color: "from-violet-600 to-indigo-700",
   },
 };
@@ -754,7 +754,7 @@ export function CuriousTrailGame({ items, initialTheme, onSwitchToClassic }: Cur
           themeColor={selectedTheme.accentColor}
           hudRight={
             phase === "playing" && currentItem ? (
-              <TrailPlayHud timeLeft={timeLeft} score={score} streak={streak} index={elementIndex} total={levelItems.length} />
+              <TrailPlayHud timeLeft={timeLeft} totalMs={diffCfg.seconds * 1000} score={score} streak={streak} index={elementIndex} total={levelItems.length} />
             ) : undefined
           }
         >

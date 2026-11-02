@@ -12,18 +12,22 @@ const OPTION_COLORS = ["#3b82f6", "#ec4899", "#f59e0b", "#10b981"];
 /** Cronômetro + pontos, no canto superior direito do mapa. */
 export function TrailPlayHud({
   timeLeft,
+  totalMs,
   score,
   streak,
   index,
   total,
 }: {
   timeLeft: number;
+  totalMs: number;
   score: number;
   streak: number;
   index: number;
   total: number;
 }) {
   const secs = Math.ceil(timeLeft / 1000);
+  const urgent = timeLeft <= Math.min(3000, totalMs * 0.4);
+  const warn = timeLeft <= totalMs * 0.5;
   return (
     <div className="pointer-events-none flex shrink-0 items-center gap-2 rounded-2xl border border-white/20 bg-slate-900/80 px-2.5 py-1.5 text-white shadow-lg backdrop-blur-md">
       <div className="text-right leading-tight">
@@ -35,7 +39,7 @@ export function TrailPlayHud({
       <div
         className={cn(
           "trail-timer flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-md transition-colors",
-          timeLeft <= 3000 ? "trail-timer--urgent bg-red-600" : timeLeft <= 6000 ? "bg-amber-500" : "bg-blue-600"
+          urgent ? "trail-timer--urgent bg-red-600" : warn ? "bg-amber-500" : "bg-blue-600"
         )}
         role="timer"
         aria-label={`${secs} segundos restantes`}
@@ -73,7 +77,7 @@ export function TrailAnswerDock({
       <div className="overflow-hidden rounded-2xl border border-white/20 bg-slate-950/78 shadow-2xl backdrop-blur-md">
         <div className="h-1 w-full bg-white/10" aria-hidden>
           <div
-            className={cn("h-full transition-[width] duration-100 ease-linear", timeLeft <= 3000 ? "bg-red-500" : timeLeft <= 6000 ? "bg-amber-400" : "bg-sky-400")}
+            className={cn("h-full transition-[width] duration-100 ease-linear", timeLeft <= Math.min(3000, totalMs * 0.4) ? "bg-red-500" : timeLeft <= totalMs * 0.5 ? "bg-amber-400" : "bg-sky-400")}
             style={{ width: `${pct}%` }}
           />
         </div>

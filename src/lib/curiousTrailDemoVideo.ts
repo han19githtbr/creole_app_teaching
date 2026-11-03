@@ -20,11 +20,22 @@ import {
   type TrailThemeOption,
 } from "@/lib/curiousTrailData";
 import { buildWordOptions, type CestQuoiItem } from "@/lib/cquoiContent";
+import { CURIOUS_TRAIL_PATH, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
+
+export type TrailDemoDifficulty = "easy" | "intermediate" | "master" | "native";
+
+const TRAIL_DEMO_DIFFICULTY: Record<TrailDemoDifficulty, { seconds: number; multiplier: number }> = {
+  easy: { seconds: 20, multiplier: 1 },
+  intermediate: { seconds: 15, multiplier: 1.5 },
+  master: { seconds: 10, multiplier: 2 },
+  native: { seconds: 6, multiplier: 2.5 },
+};
 
 export interface TrailDemoSettings {
   title: string;
   themeId: string;
   level: number; // 1 a 7
+  difficulty: TrailDemoDifficulty;
   format: DemoFormat;
   showIntro: boolean;
   showOutro: boolean;
@@ -38,6 +49,7 @@ export const DEFAULT_TRAIL_DEMO_SETTINGS: TrailDemoSettings = {
   title: "Trilha do Aluno Curioso 🇫🇷\nSuba a montanha e aprenda francês!",
   themeId: "gastronomia",
   level: 4, // Nível 4 demonstra a transição com chuva e guarda-chuva!
+  difficulty: "intermediate",
   format: "story",
   showIntro: true,
   showOutro: true,
@@ -53,11 +65,12 @@ export interface TrailDemoRound {
   correctIndex: number;
   levelCfg: TrailLevelConfig;
   start: number;
-  walkEnd: number;
   correctAt: number;
+  walkEnd: number;
   end: number;
   scoreBefore: number;
   scoreAfter: number;
+  xpAfter: number;
 }
 
 export interface TrailDemoPlan {
@@ -72,6 +85,7 @@ export interface TrailDemoPlan {
   outroDur: number;
   total: number;
   finalScore: number;
+  finalXp: number;
 }
 
 export function buildTrailDemoPlan(
@@ -91,19 +105,23 @@ export function buildTrailDemoPlan(
     picked.push(...shuffle(remaining).slice(0, levelCfg.elementCount - picked.length));
   }
 
-  const walkDur = 1.1;
   const answerDur = 2.6;
-  const revealDur = 1.5;
+  const walkDur = 1.7;
+  const difficulty = TRAIL_DEMO_DIFFICULTY[settings.difficulty];
   let cursor = introDur + countdownDur;
   let score = 0;
+  let xp = 0;
   const rounds: TrailDemoRound[] = picked.map((item) => {
     const start = cursor;
-    const walkEnd = start + walkDur;
-    const correctAt = walkEnd + answerDur;
-    const end = correctAt + revealDur;
+    const correctAt = start + answerDur;
+    const walkEnd = correctAt + walkDur;
+    const end = walkEnd;
     const opts = buildWordOptions(item, items, false);
     const scoreBefore = score;
-    score += 100;
+    const speedRatio = (difficulty.seconds - answerDur) / difficulty.seconds;
+    const speedMultiplier = speedRatio >= 0.65 ? 1.5 : speedRatio >= 0.35 ? 1.25 : 1.1;
+    score += Math.round(100 * difficulty.multiplier * speedMultiplier);
+    xp += Math.round((levelCfg.xpBase / levelCfg.elementCount) * difficulty.multiplier * speedMultiplier);
     cursor = end;
     return {
       item,
@@ -111,11 +129,12 @@ export function buildTrailDemoPlan(
       correctIndex: opts.indexOf(item.fr),
       levelCfg,
       start,
-      walkEnd,
       correctAt,
+      walkEnd,
       end,
       scoreBefore,
       scoreAfter: score,
+      xpAfter: xp,
     };
   });
 
@@ -136,12 +155,25 @@ export function buildTrailDemoPlan(
     outroDur,
     total,
     finalScore: score,
+    finalXp: xp,
   };
 }
 
 const FONT = '"Inter", "Segoe UI", -apple-system, sans-serif';
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 const OPTION_COLORS = ["#3b82f6", "#ec4899", "#f59e0b", "#10b981"];
+const TRAIL_LEVEL_WEIGHTS = TRAIL_LEVELS.map((level) => level.elementCount + 3);
+const TRAIL_WEIGHT_TOTAL = TRAIL_LEVEL_WEIGHTS.reduce((sum, weight) => sum + weight, 0);
+const TRAIL_LEVEL_FRACTIONS = [0];
+TRAIL_LEVEL_WEIGHTS.forEach((weight) => {
+  TRAIL_LEVEL_FRACTIONS.push(TRAIL_LEVEL_FRACTIONS[TRAIL_LEVEL_FRACTIONS.length - 1] + weight / TRAIL_WEIGHT_TOTAL);
+});
+let cachedTrailPath: Path2D | null = null;
+
+function getTrailPath() {
+  cachedTrailPath ??= new Path2D(CURIOUS_TRAIL_PATH);
+  return cachedTrailPath;
+}
 
 function shuffle<T>(values: T[]): T[] {
   const shuffled = [...values];
@@ -156,6 +188,14 @@ function clamp(v: number, min = 0, max = 1) {
   return Math.min(max, Math.max(min, v));
 }
 const easeOut = (t: number) => 1 - Math.pow(1 - clamp(t), 3);
+
+function fitCanvasText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
+  let fitted = text;
+  while (fitted.length > 1 && ctx.measureText(fitted).width > maxWidth) {
+    fitted = `${fitted.slice(0, -2)}…`;
+  }
+  return fitted;
+}
 
 /**
  * Renderiza um quadro do vídeo no canvas dado o tempo `t` em segundos.
@@ -172,6 +212,11 @@ export function renderTrailDemoFrame(
   const { theme, levelCfg, introDur, countdownDur, outroStart } = plan;
   const activeRoundIndex = plan.rounds.findIndex((entry) => t >= entry.start && t < entry.end);
   const round = activeRoundIndex >= 0 ? plan.rounds[activeRoundIndex] : undefined;
+  const levelIndex = plan.settings.level - 1;
+  const levelStart = TRAIL_LEVEL_FRACTIONS[levelIndex];
+  const levelEnd = TRAIL_LEVEL_FRACTIONS[levelIndex + 1];
+  const elementFraction = (index: number) =>
+    levelStart + ((levelEnd - levelStart) * (index + 1)) / (levelCfg.elementCount + 1);
 
   // 1. FUNDO CÉU E ATMOSFERA ALPINA CONFORME O CLIMA
   const isRain = levelCfg.weather === "rain";
@@ -436,71 +481,56 @@ export function renderTrailDemoFrame(
 
   // 3. A TRILHA REALISTA EM CURVA SINUOSA COM CAMADAS E DETALHES ALPINOS
   // Definição dos waypoints da trilha no formato proporcional ao jogo real
-  const trailPoints = [
-    { x: w * 0.12, y: h * 0.86 }, // N1 Base
-    { x: w * 0.26, y: h * 0.74 }, // N2 Bosque
-    { x: w * 0.44, y: h * 0.62 }, // N3 Mirante
-    { x: w * 0.33, y: h * 0.48 }, // N4 Encosta (curva fechada / switchback)
-    { x: w * 0.56, y: h * 0.38 }, // N5 Cascata
-    { x: w * 0.74, y: h * 0.26 }, // N6 Planalto
-    { x: w * 0.88, y: h * 0.13 }, // N7 Cume
-  ];
-
-  // Função para desenhar a curva contínua da trilha
+  const trailPoints = TRAIL_LEVELS.map((level) => ({
+    x: (level.coord.x / 100) * w,
+    y: (level.coord.y / 100) * h,
+  }));
+  const trailPath = getTrailPath();
   const traceTrailCurve = () => {
-    ctx.beginPath();
-    ctx.moveTo(trailPoints[0].x, trailPoints[0].y);
-    ctx.quadraticCurveTo(w * 0.19, h * 0.80, trailPoints[1].x, trailPoints[1].y);
-    ctx.quadraticCurveTo(w * 0.35, h * 0.68, trailPoints[2].x, trailPoints[2].y);
-    ctx.quadraticCurveTo(w * 0.40, h * 0.55, trailPoints[3].x, trailPoints[3].y);
-    ctx.quadraticCurveTo(w * 0.44, h * 0.42, trailPoints[4].x, trailPoints[4].y);
-    ctx.quadraticCurveTo(w * 0.65, h * 0.32, trailPoints[5].x, trailPoints[5].y);
-    ctx.quadraticCurveTo(w * 0.81, h * 0.19, trailPoints[6].x, trailPoints[6].y);
+    ctx.save();
+    ctx.scale(w / 1000, h / 600);
+    ctx.stroke(trailPath);
+    ctx.restore();
   };
 
   // 1ª camada: Sombra de escavação da trilha na encosta
   ctx.save();
-  ctx.translate(0, 5);
-  ctx.strokeStyle = "rgba(0, 0, 0, 0.28)";
-  ctx.lineWidth = 26;
+  ctx.translate(0, (5 * h) / 600);
+  ctx.strokeStyle = "rgba(45, 28, 12, 0.38)";
+  ctx.lineWidth = 23;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   traceTrailCurve();
-  ctx.stroke();
   ctx.restore();
 
   // 2ª camada: Base de terra compactada e cascalho largo
-  ctx.strokeStyle = isSnow ? "#cbd5e1" : isRain ? "#3e1f06" : "#a16207";
-  ctx.lineWidth = 20;
+  ctx.strokeStyle = isSnow ? "#cbd5e1" : isRain ? "#5b3920" : "#b7793b";
+  ctx.lineWidth = 17;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   traceTrailCurve();
-  ctx.stroke();
 
   // 3ª camada: Leito central de terra batida pelas passadas dos caminhantes
-  ctx.strokeStyle = isSnow ? "#94a3b8" : isRain ? "#291103" : "#78350f";
-  ctx.lineWidth = 11;
+  ctx.strokeStyle = isSnow ? "#94a3b8" : isRain ? "#3f2614" : "#8b5a2b";
+  ctx.lineWidth = 9;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   traceTrailCurve();
-  ctx.stroke();
 
   // 4ª camada: Textura de pedrinhas e pontilhados na trilha
   ctx.save();
-  ctx.setLineDash([6, 10]);
-  ctx.strokeStyle = isSnow ? "#ffffff" : isRain ? "#54280b" : "#fef08a";
-  ctx.lineWidth = 3.5;
+  ctx.setLineDash([1, 12]);
+  ctx.strokeStyle = isSnow ? "#f8fafc" : isRain ? "#a8794e" : "#e7c68b";
+  ctx.lineWidth = 2;
   ctx.lineCap = "round";
   traceTrailCurve();
-  ctx.stroke();
   ctx.restore();
 
   // Marcos de pedra (Cairns / Totens) com marcação alpina nas curvas
-  const cairnLocs = [
-    { x: w * 0.21, y: h * 0.79 },
-    { x: w * 0.39, y: h * 0.65 },
-    { x: w * 0.64, y: h * 0.34 },
-  ];
+  const cairnLocs = [0.2, 0.45, 0.72].map((fraction) => {
+    const point = getTrailPositionAtFraction(fraction);
+    return { x: (point.x / 1000) * w, y: (point.y / 600) * h };
+  });
   cairnLocs.forEach((cl) => {
     ctx.fillStyle = "#64748b";
     ctx.beginPath();
@@ -825,26 +855,26 @@ export function renderTrailDemoFrame(
 
   // 7. PERSONAGEM ALUNO EXPLORADOR CAMINHANDO PELA TRILHA REAL
   const walkingRound = round;
-  const isWalking = Boolean(walkingRound && t < walkingRound.walkEnd);
-  const walkFrac = walkingRound
-    ? isWalking
-      ? clamp((t - walkingRound.start) / (walkingRound.walkEnd - walkingRound.start))
-      : 1
-    : t >= (plan.rounds.at(-1)?.end ?? introDur)
-      ? 1
-      : 0;
-
-  // Determina o índice de segmento entre os marcos da trilha
-  const curLevelIdx = Math.max(0, Math.min(6, plan.settings.level - 1));
-  const startWaypoint = trailPoints[curLevelIdx];
-  const nextWaypoint = trailPoints[Math.min(6, curLevelIdx + 1)];
-
-  // Posição suave do aluno ao longo do trecho do nível
-  const studentX = startWaypoint.x + (nextWaypoint.x - startWaypoint.x) * walkFrac;
-  const studentY = startWaypoint.y + (nextWaypoint.y - startWaypoint.y) * walkFrac - 18;
-
-  // Sentido do movimento (se vira para a esquerda na curva fechada do Nível 4)
-  const isFacingLeft = nextWaypoint.x < startWaypoint.x;
+  const isWalking = Boolean(walkingRound && t >= walkingRound.correctAt && t < walkingRound.walkEnd);
+  let studentFraction = levelStart;
+  if (walkingRound) {
+    const roundStart = activeRoundIndex === 0 ? levelStart : elementFraction(activeRoundIndex - 1);
+    const roundEnd =
+      activeRoundIndex === plan.rounds.length - 1 ? levelEnd : elementFraction(activeRoundIndex);
+    const walkProgress = isWalking
+      ? easeOut((t - walkingRound.correctAt) / (walkingRound.walkEnd - walkingRound.correctAt))
+      : t >= walkingRound.walkEnd
+        ? 1
+        : 0;
+    studentFraction = roundStart + (roundEnd - roundStart) * walkProgress;
+  } else if (t >= (plan.rounds.at(-1)?.end ?? introDur)) {
+    studentFraction = levelEnd;
+  }
+  const studentPosition = getTrailPositionAtFraction(studentFraction);
+  const nextPosition = getTrailPositionAtFraction(Math.min(1, studentFraction + 0.002));
+  const studentX = (studentPosition.x / 1000) * w;
+  const studentY = (studentPosition.y / 600) * h - 18;
+  const isFacingLeft = nextPosition.x < studentPosition.x;
 
   ctx.save();
   ctx.translate(studentX, studentY);
@@ -1021,164 +1051,204 @@ export function renderTrailDemoFrame(
 
   ctx.restore();
 
-  // 6. CARD DO ELEMENTO A RECONHECER
-  if (round && t >= round.walkEnd && t < outroStart) {
-    const cardT = t - round.walkEnd;
-    const cardScale = easeOut(cardT / 0.4);
+  // HUD do mapa, imagem do objeto no caminho e alternativas fixas na base.
+  ctx.save();
+  ctx.fillStyle = "rgba(15, 23, 42, 0.84)";
+  ctx.beginPath();
+  ctx.roundRect(22, 24, Math.min(w * 0.62, 610), 76, 20);
+  ctx.fill();
+  ctx.fillStyle = "#fbbf24";
+  ctx.font = `bold ${Math.max(14, w * 0.018)}px ${FONT}`;
+  ctx.textAlign = "left";
+  ctx.fillText(
+    `${levelCfg.badgeEmoji} Nível ${levelCfg.level} · ${levelCfg.name}`,
+    42,
+    54
+  );
+  ctx.fillStyle = "#cbd5e1";
+  ctx.font = `600 ${Math.max(11, w * 0.012)}px ${FONT}`;
+  ctx.fillText(
+    `Altitude: ${levelCfg.altitude} m · ${
+      levelCfg.weather === "sunny" ? "Ensolarado" : levelCfg.weather === "rain" ? "Chuva · Guarda-chuva" : "Neve e frio"
+    }`,
+    42,
+    80
+  );
 
-    const cardW = Math.min(w - 60, 920);
-    const cardH = 610;
-    const cardX = (w - cardW) / 2;
-    const cardY = spec.safeTop + 60;
+  const score = round ? (t >= round.correctAt ? round.scoreAfter : round.scoreBefore) : plan.finalScore;
+  const difficulty = TRAIL_DEMO_DIFFICULTY[plan.settings.difficulty];
+  const secondsLeft = round
+    ? Math.ceil(Math.max(0, difficulty.seconds - (Math.min(t, round.correctAt) - round.start)))
+    : 0;
+  const hudW = Math.min(w * 0.3, 300);
+  const hudX = w - hudW - 22;
+  ctx.fillStyle = "rgba(15, 23, 42, 0.84)";
+  ctx.beginPath();
+  ctx.roundRect(hudX, 24, hudW, 76, 20);
+  ctx.fill();
+  ctx.textAlign = "right";
+  ctx.fillStyle = "#fcd34d";
+  ctx.font = `bold ${Math.max(13, w * 0.016)}px ${FONT}`;
+  ctx.fillText(`✨ ${score} pts`, hudX + hudW - 72, 53);
+  ctx.fillStyle = "#cbd5e1";
+  ctx.font = `600 ${Math.max(10, w * 0.011)}px ${FONT}`;
+  const streak = round
+    ? t >= round.correctAt
+      ? activeRoundIndex + 1
+      : activeRoundIndex
+    : plan.rounds.length;
+  ctx.fillText(`🔥 ${streak} · ${round ? activeRoundIndex + 1 : plan.rounds.length}/${plan.rounds.length}`, hudX + hudW - 72, 79);
+  ctx.fillStyle = secondsLeft <= 3 ? "#dc2626" : "#2563eb";
+  ctx.beginPath();
+  ctx.arc(hudX + hudW - 32, 62, 24, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `bold ${Math.max(11, w * 0.012)}px ${FONT}`;
+  ctx.textAlign = "center";
+  ctx.fillText(round ? `${secondsLeft}s` : "✓", hudX + hudW - 32, 67);
 
-    ctx.save();
-    ctx.translate(w / 2, cardY + cardH / 2);
-    ctx.scale(cardScale, cardScale);
-    ctx.translate(-w / 2, -(cardY + cardH / 2));
+  if (round && t >= round.start && t < round.walkEnd) {
+    const target = getTrailPositionAtFraction(elementFraction(activeRoundIndex));
+    const targetX = (target.x / 1000) * w;
+    const targetY = (target.y / 600) * h;
+    const imageW = Math.min(w * 0.38, 430);
+    const imageH = Math.min(imageW * (round.item.h / round.item.w), h * 0.24);
+    const dockTop = h * 0.73;
+    const imageX = clamp(targetX - imageW / 2, 20, w - imageW - 20);
+    const imageY = clamp(targetY - imageH - 30, spec.safeTop + 25, dockTop - imageH - 20);
+    const image = assets.images.get(round.item.scene);
 
-    // Fundo do Card Vidro Fosco Escuro
-    ctx.fillStyle = "rgba(15, 23, 42, 0.94)";
-    ctx.strokeStyle = "rgba(245, 158, 11, 0.7)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.roundRect(cardX, cardY, cardW, cardH, 28);
-    ctx.fill();
-    ctx.stroke();
-
-    // Cabeçalho do Card
     ctx.fillStyle = "#f59e0b";
-    ctx.font = `bold 28px ${FONT}`;
-    ctx.fillText(`NÍVEL ${levelCfg.level} · ${levelCfg.name.toUpperCase()}`, cardX + 24, cardY + 40);
-    ctx.fillStyle = "#e2e8f0";
-    ctx.font = `bold 24px ${FONT}`;
-    ctx.fillText("O que a seta vermelha aponta?", cardX + 24, cardY + 70);
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#cbd5e1";
-    ctx.font = `bold 18px ${FONT}`;
-    ctx.fillText(`${round.scoreBefore} PTS`, cardX + cardW - 82, cardY + 70);
-    ctx.textAlign = "left";
-
-    // Imagem da Cena
-    const imgObj = assets.images.get(round.item.scene);
-    const imgW = cardW - 48;
-    const imgH = 230;
-    const imgX = cardX + 24;
-    const imgY = cardY + 86;
-
-    ctx.fillStyle = "#020617";
     ctx.beginPath();
-    ctx.roundRect(imgX, imgY, imgW, imgH, 18);
+    ctx.roundRect(imageX - 5, imageY - 5, imageW + 10, imageH + 10, 18);
+    ctx.fill();
+    ctx.fillStyle = "#0f172a";
+    ctx.beginPath();
+    ctx.roundRect(imageX, imageY, imageW, imageH, 14);
     ctx.fill();
 
-    if (imgObj) {
+    if (image) {
       ctx.save();
       ctx.beginPath();
-      ctx.roundRect(imgX, imgY, imgW, imgH, 18);
+      ctx.roundRect(imageX, imageY, imageW, imageH, 14);
       ctx.clip();
-      const sourceW = imgObj.naturalWidth || round.item.w;
-      const sourceH = imgObj.naturalHeight || round.item.h;
-      const imageScale = Math.min(imgW / sourceW, imgH / sourceH);
+      const sourceW = image.naturalWidth || round.item.w;
+      const sourceH = image.naturalHeight || round.item.h;
+      const imageScale = Math.min(imageW / sourceW, imageH / sourceH);
       const drawW = sourceW * imageScale;
       const drawH = sourceH * imageScale;
-      const drawX = imgX + (imgW - drawW) / 2;
-      const drawY = imgY + (imgH - drawH) / 2;
-      ctx.drawImage(imgObj, drawX, drawY, drawW, drawH);
-
-      // Seta Vermelha apontando para o objeto
+      const drawX = imageX + (imageW - drawW) / 2;
+      const drawY = imageY + (imageH - drawH) / 2;
+      ctx.drawImage(image, drawX, drawY, drawW, drawH);
       const arrowX = drawX + (round.item.arrow.x / sourceW) * drawW;
       const arrowY = drawY + (round.item.arrow.y / sourceH) * drawH;
       ctx.strokeStyle = "rgba(15, 23, 42, 0.9)";
-      ctx.lineWidth = 14;
+      ctx.lineWidth = 9;
       ctx.lineCap = "round";
       ctx.beginPath();
-      ctx.moveTo(arrowX - 62, arrowY - 56);
-      ctx.lineTo(arrowX - 8, arrowY - 8);
+      ctx.moveTo(arrowX - 38, arrowY - 32);
+      ctx.lineTo(arrowX - 5, arrowY - 5);
       ctx.stroke();
       ctx.fillStyle = "#ef4444";
       ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(arrowX, arrowY);
-      ctx.lineTo(arrowX - 29, arrowY - 7);
-      ctx.lineTo(arrowX - 7, arrowY - 29);
+      ctx.lineTo(arrowX - 18, arrowY - 4);
+      ctx.lineTo(arrowX - 4, arrowY - 18);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
       ctx.restore();
     }
-
-    // Cronômetro Circular
-    const timerX = cardX + cardW - 55;
-    const timerY = cardY + 40;
-    const answerProgress = clamp((round.correctAt - t) / (round.correctAt - round.walkEnd));
-    const secondsLeft = Math.ceil(answerProgress * 3);
-    const isAnswered = t >= round.correctAt;
-    ctx.fillStyle = isAnswered ? "#059669" : secondsLeft === 1 ? "#dc2626" : "#2563eb";
-    ctx.beginPath();
-    ctx.arc(timerX, timerY, 20, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#ffffff";
-    ctx.font = `bold 18px ${FONT}`;
-    ctx.textAlign = "center";
-    ctx.fillText(isAnswered ? "✓" : `${secondsLeft}s`, timerX, timerY + 5);
-
-    // As 4 Alternativas (A, B, C, D)
-    const optStartY = imgY + imgH + 16;
-    const optH = 56;
-    const optGap = 12;
-
-    round.options.slice(0, 4).forEach((opt, idx) => {
-      const col = idx % 2;
-      const row = Math.floor(idx / 2);
-      const ow = (imgW - optGap) / 2;
-      const ox = imgX + col * (ow + optGap);
-      const oy = optStartY + row * (optH + optGap);
-
-      const isCorrect = idx === round.correctIndex;
-
-      ctx.fillStyle = isAnswered && isCorrect ? "#059669" : "rgba(30, 41, 59, 0.9)";
-      ctx.strokeStyle = isAnswered && isCorrect ? "#34d399" : "rgba(148, 163, 184, 0.4)";
-      ctx.lineWidth = 2;
+    if (t >= round.correctAt) {
+      const labelW = Math.min(imageW - 16, 200);
+      ctx.fillStyle = "rgba(5, 150, 105, 0.95)";
       ctx.beginPath();
-      ctx.roundRect(ox, oy, ow, optH, 14);
-      ctx.fill();
-      ctx.stroke();
-
-      // Letra A-D
-      ctx.fillStyle = OPTION_COLORS[idx];
-      ctx.beginPath();
-      ctx.roundRect(ox + 8, oy + 8, 34, 34, 8);
+      ctx.roundRect(imageX + 8, imageY + imageH - 42, labelW, 34, 17);
       ctx.fill();
       ctx.fillStyle = "#ffffff";
-      ctx.font = `bold 22px ${FONT}`;
+      ctx.font = `bold ${Math.max(12, w * 0.014)}px ${FONT}`;
       ctx.textAlign = "center";
-      ctx.fillText(OPTION_LETTERS[idx], ox + 25, oy + 30);
-
-      // Texto da opção
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `bold 23px ${FONT}`;
-      ctx.textAlign = "left";
-      ctx.fillText(opt, ox + 50, oy + 31);
-    });
-
-    // Indicador explícito de avanço: a resposta certa faz o aluno subir para o próximo objeto.
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#cbd5e1";
-    ctx.font = `bold 20px ${FONT}`;
-    ctx.fillText(`OBJETO ${activeRoundIndex + 1} DE ${plan.rounds.length}`, imgX, cardY + cardH - 23);
-    ctx.textAlign = "right";
-    ctx.fillStyle = isAnswered ? "#34d399" : "#fbbf24";
-    ctx.fillText(isAnswered ? "ACERTOU! AVANÇANDO ↑" : "ESCOLHA A RESPOSTA", imgX + imgW, cardY + cardH - 23);
-
-    if (isAnswered) {
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#34d399";
-      ctx.font = `bold 22px ${FONT}`;
-      ctx.fillText(`${round.item.fr}  ·  ${round.scoreAfter} PTS`, w / 2, cardY + cardH - 55);
+      ctx.textBaseline = "middle";
+      ctx.fillText(fitCanvasText(ctx, round.item.fr, labelW - 16), imageX + 8 + labelW / 2, imageY + imageH - 25);
+      ctx.textBaseline = "alphabetic";
     }
 
-    ctx.restore();
+    const dockHeight = h - dockTop;
+    ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(18, dockTop, w - 36, dockHeight - 18, 24);
+    ctx.fill();
+    ctx.stroke();
+
+    const progress = clamp((Math.min(t, round.correctAt) - round.start) / (round.correctAt - round.start));
+    ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
+    ctx.beginPath();
+    ctx.roundRect(20, dockTop, w - 40, 8, 4);
+    ctx.fill();
+    ctx.fillStyle = secondsLeft <= 3 ? "#ef4444" : "#38bdf8";
+    ctx.beginPath();
+    ctx.roundRect(20, dockTop, (w - 40) * (1 - progress), 8, 4);
+    ctx.fill();
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#e2e8f0";
+    ctx.font = `bold ${Math.max(13, w * 0.016)}px ${FONT}`;
+    ctx.fillText("Que objeto a seta vermelha aponta?", 38, dockTop + 44);
+    const options = round.options.slice(0, 4);
+    const gap = 12;
+    const left = 32;
+    const top = dockTop + 64;
+    const optionW = (w - left * 2 - gap) / 2;
+    const optionH = Math.max(50, Math.min(86, (dockHeight - 108) / 2 - gap / 2));
+    options.forEach((option, index) => {
+      const col = index % 2;
+      const row = Math.floor(index / 2);
+      const x = left + col * (optionW + gap);
+      const y = top + row * (optionH + gap);
+      const answered = t >= round.correctAt;
+      const correct = index === round.correctIndex;
+      ctx.fillStyle = answered && correct ? "rgba(16, 185, 129, 0.35)" : "rgba(255, 255, 255, 0.11)";
+      ctx.strokeStyle = answered && correct ? "#34d399" : "rgba(255, 255, 255, 0.2)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(x, y, optionW, optionH, 14);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = OPTION_COLORS[index];
+      ctx.beginPath();
+      ctx.roundRect(x + 10, y + (optionH - 34) / 2, 34, 34, 9);
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `bold 20px ${FONT}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(OPTION_LETTERS[index], x + 27, y + optionH / 2);
+      ctx.textAlign = "left";
+      ctx.font = `bold ${Math.max(12, Math.min(22, w * 0.021))}px ${FONT}`;
+      ctx.fillText(
+        fitCanvasText(ctx, option, optionW - 62),
+        x + 54,
+        y + optionH / 2
+      );
+      if (answered && correct) {
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#6ee7b7";
+        ctx.font = `bold ${Math.max(12, w * 0.014)}px ${FONT}`;
+        ctx.fillText("✓", x + optionW - 12, y + optionH / 2);
+      }
+    });
+    if (t >= round.correctAt) {
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#6ee7b7";
+      ctx.font = `bold ${Math.max(12, w * 0.015)}px ${FONT}`;
+      ctx.fillText(`Correto! +${round.scoreAfter - round.scoreBefore} pts`, w - 38, dockTop + 44);
+    }
   }
+  ctx.restore();
 
   // 7. ABERTURA (INTRO)
   if (plan.settings.showIntro && t < introDur) {
@@ -1245,22 +1315,35 @@ export function renderTrailDemoFrame(
     ctx.textAlign = "center";
     ctx.fillStyle = "#f59e0b";
     ctx.font = `900 64px sans-serif`;
-    ctx.fillText("🏔️ 🇫🇷 🏆", w / 2, h * 0.38);
+    const summitWon = plan.settings.level === 7;
+    ctx.fillText(summitWon ? "🏔️ 🇫🇷 🏆" : "🌲 🇫🇷 ⭐", w / 2, h * 0.38);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = `900 38px ${FONT}`;
-    ctx.fillText("Cume da Vitória Conquistado!", w / 2, h * 0.46);
+    ctx.font = `900 ${Math.min(38, w * 0.035)}px ${FONT}`;
+    ctx.fillText(
+      summitWon ? "Cume da Vitória conquistado!" : `Nível ${levelCfg.level} concluído!`,
+      w / 2,
+      h * 0.46
+    );
 
     ctx.fillStyle = "#10b981";
     ctx.font = `bold 28px ${FONT}`;
-    ctx.fillText("+240 XP · Bandeira Hasteada!", w / 2, h * 0.52);
+    ctx.fillText(`${plan.finalXp} XP · ${plan.finalScore} pts`, w / 2, h * 0.52);
+
+    ctx.fillStyle = "#fcd34d";
+    ctx.font = `bold 22px ${FONT}`;
+    ctx.fillText(
+      summitWon ? "Bandeira hasteada no topo!" : `Próximo: Nível ${levelCfg.level + 1}`,
+      w / 2,
+      h * 0.56
+    );
 
     ctx.fillStyle = "#93c5fd";
-    ctx.font = `bold 22px ${FONT}`;
-    ctx.fillText(plan.settings.cta, w / 2, h * 0.6);
+    ctx.font = `bold ${Math.min(22, w * 0.02)}px ${FONT}`;
+    ctx.fillText(fitCanvasText(ctx, plan.settings.cta, w - 80), w / 2, h * 0.62);
 
     // Cartão da Rede Social
-    const socW = 440;
+    const socW = Math.min(440, w - 64);
     const socH = 70;
     const socX = (w - socW) / 2;
     const socY = h * 0.66;

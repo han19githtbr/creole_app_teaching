@@ -7,6 +7,7 @@ import type { CestQuoiItem } from "@/lib/cquoiContent";
 import { CuriousTrailStudent } from "./CuriousTrailStudent";
 import { soundEffects } from "@/lib/soundEffects";
 import { createWildlife, type Wildlife } from "@/lib/trailWildlife";
+import { CURIOUS_TRAIL_PATH } from "@/lib/curiousTrailGeometry";
 import { Check, Lock, Volume2 } from "lucide-react";
 
 export type TrailRoundState = "asking" | "correct" | "retry" | "reveal";
@@ -39,7 +40,6 @@ export interface CuriousTrailMountainProps {
 }
 
 // ---------- Geometria da trilha (mesma curva de sempre, em um viewBox 1000x600) ----------
-const PATH_D = "M 120 504 Q 190 460 260 420 T 440 348 T 320 264 T 560 204 T 740 132 T 880 60";
 const VB_W = 1000;
 const VB_H = 600;
 /** Velocidade da caminhada em unidades do viewBox por segundo. */
@@ -576,49 +576,49 @@ export function CuriousTrailMountain({
           {/* 6. A TRILHA REALISTA (Corte na Encosta + Leito de Terra + Pedras de Borda + Marcação Alpina) */}
           {/* Sombra de escavação da encosta na borda da trilha */}
           <path
-            d={PATH_D}
+            d={CURIOUS_TRAIL_PATH}
             fill="none"
-            stroke="rgba(0, 0, 0, 0.28)"
-            strokeWidth="24"
+            stroke="rgba(45, 28, 12, 0.38)"
+            strokeWidth="23"
             strokeLinecap="round"
             strokeLinejoin="round"
-            transform="translate(0, 4)"
+            transform="translate(0, 5)"
           />
 
-          {/* Camada base de terra compactada e cascalho largo */}
+          {/* Terra batida integrada à encosta, com bordas de solo exposto */}
           <path
-            d={PATH_D}
+            d={CURIOUS_TRAIL_PATH}
             fill="none"
             stroke="url(#trailEarthGrad)"
-            strokeWidth="18"
+            strokeWidth="17"
             strokeLinecap="round"
             strokeLinejoin="round"
             opacity="0.96"
           />
 
-          {/* Centro da trilha: terra batida gasta pelas passadas dos caminhantes */}
+          {/* Faixa central de terra mais escura, como marcas de uso real */}
           <path
-            d={PATH_D}
+            d={CURIOUS_TRAIL_PATH}
             fill="none"
-            stroke={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#291103" : "#78350f"}
-            strokeWidth="10"
+            stroke={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#3f2614" : "#8b5a2b"}
+            strokeWidth="9"
             strokeLinecap="round"
             strokeLinejoin="round"
             opacity="0.8"
           />
 
-          {/* Textura de cascalho e pedrinhas no leito da trilha (SVG path interativo para física do passo) */}
+          {/* Pedras claras e pequenas marcas no leito de terra */}
           <path
-            ref={setPathEl}
-            d={PATH_D}
+            d={CURIOUS_TRAIL_PATH}
             fill="none"
-            stroke={weather === "snow" ? "#f1f5f9" : weather === "rain" ? "#54280b" : "#fef08a"}
-            strokeWidth="3.5"
-            strokeDasharray="5 9"
+            stroke={weather === "snow" ? "#f8fafc" : weather === "rain" ? "#a8794e" : "#e7c68b"}
+            strokeWidth="2"
+            strokeDasharray="1 12"
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity="0.85"
+            opacity="0.9"
           />
+          <path ref={setPathEl} d={CURIOUS_TRAIL_PATH} fill="none" stroke="transparent" strokeWidth="1" />
 
           {/* Contenção de encosta nas curvas fechadas (pranchas de madeira rústica e estacas) */}
           {[
@@ -844,7 +844,7 @@ export function CuriousTrailMountain({
               )}
             </div>
             <span className="mt-1 whitespace-nowrap px-2 py-0.5 rounded-full bg-slate-900/90 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-400/50">
-              ðŸ”ï¸ Cume
+              🏔️ Cume
             </span>
           </div>
         </div>
@@ -882,20 +882,20 @@ export function CuriousTrailMountain({
       {/* ================= HUD SUPERIOR ================= */}
       <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 z-20 pointer-events-none">
         <div className="flex items-center gap-2 rounded-2xl bg-slate-900/80 backdrop-blur-md px-3 py-1.5 text-white border border-white/20 shadow-lg min-w-0">
-          <span className="text-lg">{weather === "sunny" ? "â˜€ï¸" : weather === "rain" ? "ðŸŒ§ï¸" : "â„ï¸"}</span>
+          <span className="text-lg">{weather === "sunny" ? "☀️" : weather === "rain" ? "🌧️" : "❄️"}</span>
           <div className="leading-tight min-w-0">
             <span className="block text-xs font-black text-amber-400 truncate">
-              <span style={{ color: themeColor }}>NÃ­vel {currentLevel}</span> Â· {currentCfg.name}
+              <span style={{ color: themeColor }}>Nível {currentLevel}</span> · {currentCfg.name}
             </span>
             <span className={cn("block text-[10px] text-slate-300 font-semibold truncate", playing && "hidden sm:block")}>
-              Altitude: {currentCfg.altitude}m Â· {weather === "sunny" ? "Ensolarado" : weather === "rain" ? "Chuva (guarda-chuva aberto!)" : "Neve e frio"}
+              Altitude: {currentCfg.altitude} m · {weather === "sunny" ? "Ensolarado" : weather === "rain" ? "Chuva (guarda-chuva aberto!)" : "Neve e frio"}
             </span>
           </div>
         </div>
 
         {hudRight ?? (
           <div className="rounded-2xl bg-slate-900/80 backdrop-blur-md px-3 py-1.5 text-white border border-white/20 shadow-lg text-right shrink-0">
-            <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Meta deste NÃ­vel</span>
+            <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Meta deste nível</span>
             <span className="block text-xs font-extrabold text-emerald-400">
               {currentCfg.elementCount} {currentCfg.elementCount === 1 ? "Elemento" : "Elementos"}
             </span>

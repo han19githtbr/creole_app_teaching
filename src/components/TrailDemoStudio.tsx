@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CestQuoiItem } from "@/lib/cquoiContent";
@@ -14,15 +14,13 @@ import {
 import {
   DEMO_FORMATS,
   loadDemoImages,
-  synthDemoAudio,
   type DemoFormat,
   type DemoImages,
 } from "@/lib/gameDemoVideo";
-import { DEMO_QUALITY, exportDemoVideo, type DemoQuality, type ExportResult } from "@/lib/gameDemoExport";
-import { loadDemoPronunciations, DemoPreviewAudioPlayer } from "@/lib/gameDemoAudio";
+import type { ExportResult } from "@/lib/gameDemoExport";
 import { TRAIL_LEVELS, TRAIL_THEMES } from "@/lib/curiousTrailData";
-import { SOCIAL_PLATFORMS, sanitizeSocialHandle } from "@/lib/socialLinks";
-import { Download, Loader2, Pause, Play, RotateCcw, Sparkles } from "lucide-react";
+import { SOCIAL_PLATFORMS, sanitizeSocialHandle, type SocialPlatform } from "@/lib/socialLinks";
+import { Download, Loader2, Pause, Play, Sparkles } from "lucide-react";
 
 const EMPTY_DEMO_IMAGES: DemoImages = new Map();
 
@@ -33,7 +31,6 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   const [imageLoadAttempt, setImageLoadAttempt] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [time, setTime] = useState(0);
-  const [quality, setQuality] = useState<DemoQuality>("max");
   const [exporting, setExporting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -203,7 +200,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       const url = URL.createObjectURL(blob);
       const ext = mime.includes("mp4") ? "mp4" : "webm";
       const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
-      const name = `trilha-curiosa-v2-${plan.theme.id}-nivel${plan.settings.level}-${stamp}.${ext}`;
+      const name = `trilha-curiosa-v3-${plan.theme.id}-nivel${plan.settings.level}-${stamp}.${ext}`;
 
       setResult({
         url,
@@ -299,6 +296,33 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           </p>
         </div>
 
+        {/* DIFICULDADE */}
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-[var(--text-secondary)]">Dificuldade da partida</label>
+          <div className="grid grid-cols-4 gap-1.5">
+            {([
+              ["easy", "Fácil", "20s"],
+              ["intermediate", "Intermediário", "15s"],
+              ["master", "Master", "10s"],
+              ["native", "Nativo", "6s"],
+            ] as const).map(([difficulty, label, seconds]) => (
+              <button
+                key={difficulty}
+                type="button"
+                onClick={() => setSettings({ ...settings, difficulty })}
+                className={`rounded-xl border p-2 text-center text-xs font-bold transition-all ${
+                  settings.difficulty === difficulty
+                    ? "border-amber-500 bg-amber-500/20 text-amber-600 dark:text-amber-400"
+                    : "border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-secondary)] hover:text-[var(--text)]"
+                }`}
+              >
+                <span className="block">{label}</span>
+                <span className="block text-[10px] opacity-70">{seconds} por objeto</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* FORMATO (9:16 STORIES, 4:5 FEED, 1:1) */}
         <div className="space-y-1">
           <label className="text-xs font-bold text-[var(--text-secondary)]">Formato do Vídeo</label>
@@ -333,7 +357,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
             <label className="text-xs font-bold text-[var(--text-secondary)]">Rede Social</label>
             <select
               value={settings.platform}
-              onChange={(e) => setSettings({ ...settings, platform: e.target.value as any })}
+              onChange={(e) => setSettings({ ...settings, platform: e.target.value as SocialPlatform })}
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2 text-xs font-bold"
             >
               {(Object.keys(SOCIAL_PLATFORMS) as (keyof typeof SOCIAL_PLATFORMS)[]).map((p) => (
@@ -436,7 +460,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           </button>
         </div>
         <p className="px-1 text-xs text-[var(--text-secondary)]">
-          A animação mostra cada rodada: o aluno caminha, identifica o objeto pela seta, escolhe a resposta e avança pela trilha.
+          A prévia simula uma sequência de acertos: o aluno identifica o objeto, responde, recebe pontos e caminha pela mesma trilha do jogo. O cronômetro e a pontuação seguem a dificuldade escolhida.
         </p>
 
         <div className="relative mx-auto max-h-[640px] max-w-sm overflow-hidden rounded-3xl border-2 border-[var(--border)] bg-slate-950 shadow-2xl">

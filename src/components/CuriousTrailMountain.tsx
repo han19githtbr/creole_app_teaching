@@ -29,8 +29,6 @@ export interface CuriousTrailMountainProps {
   avalancheMode?: boolean;
   onAvalancheCaught?: () => void;
   isCheering?: boolean;
-  isRaisingFlag?: boolean;
-  flagProgress?: number; // 0..100
   activeAnimalGreeting?: string | null;
   onAnimalClick?: (animalId: string, quote: string) => void;
   onSpeak?: (text: string) => void;
@@ -126,8 +124,6 @@ export function CuriousTrailMountain({
   avalancheMode = false,
   onAvalancheCaught,
   isCheering = false,
-  isRaisingFlag = false,
-  flagProgress = 100,
   activeAnimalGreeting,
   onAnimalClick,
   onSpeak,
@@ -579,8 +575,7 @@ export function CuriousTrailMountain({
               weather={avalancheMode ? "snow" : weather}
               isWalking={walking}
               isCheering={isCheering}
-              isRaisingFlag={isRaisingFlag || (currentLevel === 7 && summitDone)}
-              flagProgress={flagProgress}
+              isRaisingFlag={false}
               size={studentPx}
               facing={studentFacing}
               incline={studentIncline}
@@ -588,30 +583,17 @@ export function CuriousTrailMountain({
           </div>
         </div>
 
-        {/* ---------- BANDEIRA DA VIT�ƒ�€œRIA NO CUME ---------- */}
+        {/* ---------- CABANA NO CUME: destino da trilha ---------- */}
         <div
-          className="absolute z-20 pointer-events-none"
+          className={cn("absolute z-20 pointer-events-none flex flex-col items-center transition-transform duration-700", summitDone && "scale-110")}
           style={{ left: `${summitPoint.x}%`, top: `${summitPoint.y}%`, transform: `translate(-50%, -100%) scale(${inv})`, transformOrigin: "50% 100%" }}
-          title="Cabana do topo · Hasteie a bandeira ao concluir o Nível 7!"
+          title="Cabana no topo da trilha"
         >
-          <div className="flex flex-col items-center">
-            <div className="relative w-1.5 h-16 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 rounded-full shadow">
-              <div className="absolute -top-2 -left-1.5 w-4 h-4 rounded-full bg-amber-400 border border-amber-600 shadow-md" />
-              {(summitDone || isRaisingFlag) && (
-                <div
-                  className="absolute left-1.5 top-0 flex w-12 h-8 rounded-sm overflow-hidden shadow-lg border border-slate-900/20 animate-[trailFlagWiggle_2.2s_ease-in-out_infinite]"
-                  style={{ transition: "top 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)", top: `${100 - flagProgress}%` }}
-                >
-                  <div className="w-1/3 h-full bg-[#2563eb]" />
-                  <div className="w-1/3 h-full bg-[#ffffff]" />
-                  <div className="w-1/3 h-full bg-[#dc2626]" />
-                </div>
-              )}
-            </div>
-            <span className="mt-1 whitespace-nowrap px-2 py-0.5 rounded-full bg-slate-900/90 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-400/50">
-              �Ÿ�� Cabana
-            </span>
+          <div className="relative flex h-14 w-16 items-end justify-center rounded-t-md border-2 border-amber-950/70 bg-amber-800 shadow-xl">
+            <span className="absolute -top-7 left-1/2 h-0 w-0 -translate-x-1/2 border-x-[34px] border-b-[30px] border-x-transparent border-b-rose-800 drop-shadow-md" />
+            <span className="relative mb-0.5 h-7 w-5 rounded-t-sm border border-amber-950 bg-amber-300 shadow-inner" />
           </div>
+          <span className="mt-1 whitespace-nowrap rounded-full border border-amber-300/70 bg-slate-900/90 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-200">Cabana</span>
         </div>
       </div>
 

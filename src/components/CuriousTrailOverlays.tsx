@@ -231,7 +231,7 @@ export function TrailLevelCompleteOverlay({
   );
 }
 
-/** Final: bandeira no cume. */
+/** Final: chegada feliz à cabana no cume. */
 export function TrailSummitOverlay({
   theme,
   totalXp,
@@ -252,7 +252,7 @@ export function TrailSummitOverlay({
           🏡 Cabana do topo conquistada · 3950m
         </span>
         <div className="mt-2 text-4xl">🏔️🏆</div>
-        <h2 className="mt-1 text-xl font-black">Você hasteou a bandeira!</h2>
+        <h2 className="mt-1 text-xl font-black">Você chegou à cabana!</h2>
         <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-slate-300">
           Félicitations ! Os 7 níveis do tema <strong className="text-white">{theme}</strong> estão completos.
         </p>

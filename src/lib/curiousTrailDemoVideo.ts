@@ -5,7 +5,7 @@
  * Renderiza quadro a quadro (função pura do tempo `t`) na resolução nativa (1080x1920,
  * 1080x1350 ou 1080x1080) com a sequência de jogo completa: o aluno caminha até cada objeto,
  * observa a cena com a seta, escolhe entre alternativas, acerta e avança pela trilha.
- * Também mostra o clima do nível e, no nível 7, a bandeira no cume.
+ * Também mostra o clima do nível e a chegada à cabana no nível 7.
  */
 import {
   DEMO_FORMATS,
@@ -82,7 +82,6 @@ export interface TrailDemoPlan {
   levelCfg: TrailLevelConfig;
   introDur: number;
   countdownDur: number;
-  flagDur: number;
   outroStart: number;
   outroDur: number;
   total: number;
@@ -140,8 +139,7 @@ export function buildTrailDemoPlan(
     };
   });
 
-  const flagDur = settings.level === 7 ? 3.0 : 0;
-  const outroStart = cursor + flagDur;
+  const outroStart = cursor;
   const outroDur = settings.showOutro ? 3.2 : 0;
   const total = outroStart + outroDur;
 
@@ -152,7 +150,6 @@ export function buildTrailDemoPlan(
     levelCfg,
     introDur,
     countdownDur,
-    flagDur,
     outroStart,
     outroDur,
     total,
@@ -609,41 +606,24 @@ export function renderTrailDemoFrame(
     ctx.restore();
   });
 
-  // 5. BANDEIRA NO CUME DA VIT�“RIA (Nível 7)
+  // 5. Cabana no destino da trilha
   const summitPosition = getTrailPositionAtFraction(1);
   const summitPt = { x: (summitPosition.x / 1000) * w, y: (summitPosition.y / 600) * h };
   ctx.save();
-  // Pedestal de pedra no cume
-  ctx.fillStyle = "#475569";
+  ctx.fillStyle = "#7c2d12";
   ctx.beginPath();
-  ctx.roundRect(summitPt.x - 12, summitPt.y - 4, 24, 8, 2);
+  ctx.moveTo(summitPt.x - 27, summitPt.y);
+  ctx.lineTo(summitPt.x, summitPt.y - 28);
+  ctx.lineTo(summitPt.x + 27, summitPt.y);
+  ctx.closePath();
   ctx.fill();
-
-  // Mastro dourado
-  ctx.strokeStyle = "#d97706";
-  ctx.lineWidth = 3.5;
-  ctx.beginPath();
-  ctx.moveTo(summitPt.x, summitPt.y - 4);
-  ctx.lineTo(summitPt.x, summitPt.y - 58);
-  ctx.stroke();
-
-  // Esfera no topo do mastro
-  ctx.fillStyle = "#fbbf24";
-  ctx.beginPath();
-  ctx.arc(summitPt.x, summitPt.y - 58, 4.5, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Se estiver no nível 7 no cume ou concluído, mostra a bandeira tremulando ao vento
-  const showSummitFlag = plan.settings.level === 7 && t >= (plan.rounds.at(-1)?.end ?? outroStart);
-  if (showSummitFlag) {
-    const flagWiggle = Math.sin(t * 8) * 3;
-    ctx.fillStyle = "#2563eb";
-    ctx.fillRect(summitPt.x + 2, summitPt.y - 56 + flagWiggle * 0.4, 12, 22);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(summitPt.x + 14, summitPt.y - 56 + flagWiggle * 0.7, 12, 22);
-    ctx.fillStyle = "#dc2626";
-    ctx.fillRect(summitPt.x + 26, summitPt.y - 56 + flagWiggle, 12, 22);
-  }
+  ctx.fillStyle = "#b45309";
+  ctx.fillRect(summitPt.x - 20, summitPt.y - 1, 40, 27);
+  ctx.fillStyle = "#451a03";
+  ctx.fillRect(summitPt.x - 5, summitPt.y + 8, 10, 18);
+  ctx.fillStyle = "#fef3c7";
+  ctx.fillRect(summitPt.x - 16, summitPt.y + 5, 8, 8);
+  ctx.fillRect(summitPt.x + 8, summitPt.y + 5, 8, 8);
   ctx.restore();
 
   // Efeitos Climáticos Animados (Chuva realista com ângulo de vento ou nevasca espiral)
@@ -1447,7 +1427,7 @@ export function renderTrailDemoFrame(
     ctx.fillStyle = "#fcd34d";
     ctx.font = `bold 22px ${FONT}`;
     ctx.fillText(
-      summitWon ? "Bandeira hasteada no topo!" : `Próximo: Nível ${levelCfg.level + 1}`,
+      summitWon ? "Você chegou feliz à cabana!" : `Próximo: Nível ${levelCfg.level + 1}`,
       w / 2,
       h * 0.56
     );

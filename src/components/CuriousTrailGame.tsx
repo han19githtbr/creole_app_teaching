@@ -245,8 +245,6 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
 
   // Animação do aluno e da montanha
   const [isCheering, setIsCheering] = useState<boolean>(false);
-  const [isRaisingFlag, setIsRaisingFlag] = useState<boolean>(false);
-  const [flagProgress, setFlagProgress] = useState<number>(0);
   const [confetti, setConfetti] = useState<boolean>(false);
   const [activeAnimalGreeting, setActiveAnimalGreeting] = useState<string | null>(null);
   const [muted, setMuted] = useState<boolean>(() => soundEffects.isMuted());
@@ -406,8 +404,6 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     setIsCheering(false);
     setLevelXp(0);
     levelXpRef.current = 0;
-    setIsRaisingFlag(false);
-    setFlagProgress(0);
     setCountdownNum(3);
     setPhase("countdown");
 
@@ -479,19 +475,10 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     setTrailProgress(newProgress);
 
     if (isLastLevel) {
-      // Bandeira sobe no cume da montanha
-      setIsRaisingFlag(true);
+      // A criança chega feliz à cabana no cume.
       soundEffects.playVictoryFanfare();
       setConfetti(true);
-      let prog = 0;
-      const fInterval = setInterval(() => {
-        prog += 5;
-        setFlagProgress(prog);
-        if (prog >= 100) {
-          clearInterval(fInterval);
-          setPhase("summit_victory");
-        }
-      }, 60);
+      window.setTimeout(() => setPhase("summit_victory"), 1800);
     } else {
       soundEffects.playLevelUp();
       setConfetti(true);
@@ -900,8 +887,6 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
           avalancheMode={difficulty === "avalanche" && phase === "playing"}
           onAvalancheCaught={handleAvalancheCaught}
           isCheering={isCheering}
-          isRaisingFlag={isRaisingFlag}
-          flagProgress={flagProgress}
           activeAnimalGreeting={activeAnimalGreeting}
           onAnimalClick={(animalId, quote) => {
             speakWordFrench(quote);

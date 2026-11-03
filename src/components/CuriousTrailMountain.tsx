@@ -175,7 +175,7 @@ export function CuriousTrailMountain({
   const total = pathInfo.total;
   const cardPx = Math.round(clampN(stage.W * 0.36, 150, 250)); // cena do objeto atual
   const curItem = elements?.[elementIndex];
-  const cardHeight = Math.round(cardPx * ((curItem?.h ?? 350) / (curItem?.w ?? 490))) + 70;
+  const cardHeight = cardPx + 70;
 
   const N = currentCfg.elementCount;
   const campStart = CAMP_FRACS[currentLevel - 1] * total;
@@ -379,8 +379,6 @@ export function CuriousTrailMountain({
   const bubbleAnimal = bubbleId ? ROAMING_ANIMAL_POOL.find((a) => a.id === bubbleId) : undefined;
 
   // ---------------- tamanhos que dependem da largura ----------------
-  const lensPx = Math.round(clampN(stage.W * 0.19, 76, 124)); // miniaturas
-
   const studentPx = Math.round(clampN(stage.W * 0.14, 54, 76));
   const inv = "var(--inv, 1)";
 
@@ -730,86 +728,52 @@ export function CuriousTrailMountain({
         })}
 
         {/* ---------- OBJETOS DO NÃVEL, NO PRÃ“PRIO MAPA ---------- */}
-        {playing &&
-          total > 0 &&
-          elements!.map((item, i) => {
-            const pos = pointPct(elemLen(i));
-            if (!pos) return null;
-            const done = levelFinished || i < elementIndex;
-            const current = !levelFinished && i === elementIndex;
-            const below = pos.y < 30; // perto do topo: o medalhÃ£o abre para baixo
-            const small = Math.round(lensPx * 0.38);
+        {playing && total > 0 && hasCurrent && curItem && (() => {
+          const pos = pointPct(elemLen(elementIndex));
+          if (!pos) return null;
+          const below = pos.y < 30;
+          const revealed = roundState === "correct" || roundState === "reveal";
 
-            if (current) {
-              const revealed = roundState === "correct" || roundState === "reveal";
-              return (
-                <div
-                  key={item.id}
-                  className="absolute z-40 flex flex-col items-center"
-                  style={{
-                    left: `${pos.x}%`,
-                    top: `${pos.y}%`,
-                    transform: below
-                      ? `translate(-50%, 0) translate(0, calc(10px * ${inv})) scale(${inv})`
-                      : `translate(-50%, -100%) translate(0, calc(-12px * ${inv})) scale(${inv})`,
-                    transformOrigin: below ? "50% 0%" : "50% 100%",
-                  }}
-                >
-                  {below && <span className="h-0 w-0 border-x-[7px] border-b-[9px] border-x-transparent border-b-amber-400" />}
-                  <div className="relative">
-                    <span className="absolute -inset-1.5 rounded-3xl bg-amber-400/50 blur-md animate-pulse" aria-hidden />
-                    <div className="relative rounded-2xl bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-[4px] shadow-2xl">
-                      <ObjectLens item={item} px={cardPx} full />
-                    </div>
-                    <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-900 text-[11px] font-black text-amber-300 shadow">
-                      {i + 1}
-                    </span>
-                  </div>
-                  {revealed && (
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); onSpeak?.(item.speak); }}
-                      className={cn(
-                        "mt-1.5 flex max-w-[220px] cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-black text-white shadow-lg animate-in zoom-in-95",
-                        roundState === "correct" ? "border-emerald-300 bg-emerald-600" : "border-amber-300 bg-amber-600"
-                      )}
-                    >
-                      <Volume2 className="h-3.5 w-3.5 shrink-0" />
-                      <span className="truncate">{item.fr}</span>
-                    </button>
-                  )}
-                  {!below && <span className="h-0 w-0 border-x-[7px] border-t-[9px] border-x-transparent border-t-amber-400" />}
+          return (
+            <div
+              key={curItem.id}
+              className="absolute z-40 flex flex-col items-center"
+              style={{
+                left: `${pos.x}%`,
+                top: `${pos.y}%`,
+                transform: below
+                  ? `translate(-50%, 0) translate(0, calc(10px * ${inv})) scale(${inv})`
+                  : `translate(-50%, -100%) translate(0, calc(-12px * ${inv})) scale(${inv})`,
+                transformOrigin: below ? "50% 0%" : "50% 100%",
+              }}
+            >
+              {below && <span className="h-0 w-0 border-x-[7px] border-b-[9px] border-x-transparent border-b-amber-400" />}
+              <div className="relative">
+                <span className="absolute -inset-1.5 rounded-3xl bg-amber-400/50 blur-md animate-pulse" aria-hidden />
+                <div className="relative rounded-full bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-[4px] shadow-2xl">
+                  <ObjectLens item={curItem} px={cardPx} />
                 </div>
-              );
-            }
-
-            return (
-              <div
-                key={item.id}
-                className="absolute z-30 pointer-events-none"
-                style={{
-                  left: `${pos.x}%`,
-                  top: `${pos.y}%`,
-                  transform: `translate(-50%, -50%) scale(${inv})`,
-                  transformOrigin: "50% 50%",
-                }}
-                title={done ? item.fr : undefined}
-              >
-                {done ? (
-                  <div className="relative rounded-full border-2 border-emerald-400 bg-white shadow-md">
-                    <ObjectLens item={item} px={small} />
-                    <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border border-white bg-emerald-500">
-                      <Check className="h-2.5 w-2.5 text-white stroke-[4]" />
-                    </span>
-                  </div>
-                ) : (
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-dashed border-white/80 bg-slate-900/45 text-[11px] font-black text-white/90 shadow">
-                    ?
-                  </span>
-                )}
+                <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-900 text-[11px] font-black text-amber-300 shadow">
+                  {elementIndex + 1}
+                </span>
               </div>
-            );
-          })}
+              {revealed && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onSpeak?.(curItem.speak); }}
+                  className={cn(
+                    "mt-1.5 flex max-w-[220px] cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-black text-white shadow-lg animate-in zoom-in-95",
+                    roundState === "correct" ? "border-emerald-300 bg-emerald-600" : "border-amber-300 bg-amber-600"
+                  )}
+                >
+                  <Volume2 className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">{curItem.fr}</span>
+                </button>
+              )}
+              {!below && <span className="h-0 w-0 border-x-[7px] border-t-[9px] border-x-transparent border-t-amber-400" />}
+            </div>
+          );
+        })()}
 
         {/* ---------- O ALUNO: caminha pela curva da trilha ---------- */}
         <div ref={studentRef} className="absolute z-[35] pointer-events-none" style={{ left: `${currentCfg.coord.x}%`, top: `${currentCfg.coord.y}%` }}>

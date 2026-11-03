@@ -2,6 +2,7 @@
 // para o módulo "Trilha do Aluno Curioso" (Sentier de l'Élève Curieux).
 import type { CestQuoiItem } from "@/lib/cquoiContent";
 import cquoiItemsRaw from "@/lib/cquoiItems.json";
+import { TRAIL_EXTRA_ITEMS } from "@/lib/curiousTrailExtraItems";
 
 export type TrailWeather = "sunny" | "rain" | "snow";
 
@@ -585,11 +586,27 @@ export const IDIOMAS_EXTRA_ITEMS: CestQuoiItem[] = [
 ];
 
 /**
+ * Normaliza o nome do elemento para comparação (sem acentos, minúsculo e sem espaços extras).
+ */
+export function normalizeElementName(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
+/**
  * Retorna todos os itens disponíveis para a trilha, mesclando
- * os itens do banco, os gerados aprovados e os extras de idiomas.
+ * os itens do banco, os gerados aprovados e os extras de idiomas e de todos os temas.
  */
 export function getAllTrailItems(extraItems: CestQuoiItem[] = []): CestQuoiItem[] {
-  const base = [...(cquoiItemsRaw as unknown as CestQuoiItem[]), ...IDIOMAS_EXTRA_ITEMS, ...extraItems];
+  const base = [
+    ...(cquoiItemsRaw as unknown as CestQuoiItem[]),
+    ...IDIOMAS_EXTRA_ITEMS,
+    ...TRAIL_EXTRA_ITEMS,
+    ...extraItems,
+  ];
   const unique = new Map<string, CestQuoiItem>();
   base.forEach((item) => {
     if (!unique.has(item.id)) unique.set(item.id, item);
@@ -618,43 +635,92 @@ export function shuffleArray<T>(list: T[]): T[] {
 }
 
 /**
- * Sorteia N elementos de um tema sem repetição imediata para uma fase da trilha.
- * Se o tema tiver menos elementos que o solicitado, completa com elementos de outros temas.
+ * Sorteia N elementos de um tema sem repetição para uma fase da trilha.
+ *
+ * Durante uma partida:
+ *  - Exclui rigorosamente todos os elementos já jogados nos níveis anteriores daquela partida
+ *    (tanto por ID quanto pelo nome do elemento em si, como "abelha" ou "árvore").
+ *  - Garante que NUNCA haja repetição do mesmo elemento dentro do mesmo nível.
+ *  - Se porventura uma partida extremamente longa esgotar todos os itens inéditos do tema,
+ *    reutiliza elementos mantendo a regra de nunca repetir no mesmo nível e dando preferência
+ *    aos que foram vistos há mais tempo.
  */
 export function pickTrailElementsForLevel(
   level: number,
   themeId: string,
   allItems: CestQuoiItem[],
-  excludeIds: Set<string> = new Set()
+  excludeIdsOrNames: Set<string> | string[] = new Set()
 ): CestQuoiItem[] {
   const cfg = TRAIL_LEVELS.find((l) => l.level === level) || TRAIL_LEVELS[0];
   const count = cfg.elementCount;
 
-  const themePool = getTrailItemsForTheme(themeId, allItems);
-  const availableInTheme = shuffleArray(themePool.filter((i) => !excludeIds.has(i.id)));
-
-  const picked: CestQuoiItem[] = [];
-
-  for (const item of availableInTheme) {
-    if (picked.length >= count) break;
-    picked.push(item);
-  }
-
-  // Se faltar itens no tema (ex: nível 7 pedindo 7 itens mas o pool filtrado esgotou),
-  // reutiliza itens do tema ou busca nos outros temas
-  if (picked.length < count) {
-    const extraTheme = shuffleArray(themePool.filter((i) => !picked.some((p) => p.id === i.id)));
-    for (const item of extraTheme) {
-      if (picked.length >= count) break;
-      picked.push(item);
+  // Monta conjunto de exclusão normalizado
+  const excludedSet = new Set<string>();
+  const excludeEntries = excludeIdsOrNames instanceof Set ? Array.from(excludeIdsOrNames) : excludeIdsOrNames;
+  for (const entry of excludeEntries) {
+    if (typeof entry === "string" && entry.trim()) {
+      const clean = entry.toLowerCase().trim();
+      excludedSet.add(clean);
+      excludedSet.add(normalizeElementName(clean));
     }
   }
 
+  const isExcluded = (item: CestQuoiItem): boolean => {
+    if (excludedSet.has(item.id.toLowerCase().trim())) return true;
+    if (excludedSet.has(item.name.toLowerCase().trim())) return true;
+    if (excludedSet.has(normalizeElementName(item.name))) return true;
+    if (excludedSet.has(item.fr.toLowerCase().trim())) return true;
+    if (excludedSet.has(normalizeElementName(item.fr))) return true;
+    return false;
+  };
+
+  const themePool = getTrailItemsForTheme(themeId, allItems);
+
+  // Itens inéditos do tema na partida atual
+  const availableInTheme = shuffleArray(themePool.filter((i) => !isExcluded(i)));
+
+  const picked: CestQuoiItem[] = [];
+  const pickedNames = new Set<string>();
+
+  const canPick = (item: CestQuoiItem): boolean => {
+    const norm = normalizeElementName(item.name);
+    if (picked.some((p) => p.id === item.id)) return false;
+    if (pickedNames.has(norm)) return false;
+    return true;
+  };
+
+  // 1ª prioridade: elementos do próprio tema nunca jogados na partida
+  for (const item of availableInTheme) {
+    if (picked.length >= count) break;
+    if (canPick(item)) {
+      picked.push(item);
+      pickedNames.add(normalizeElementName(item.name));
+    }
+  }
+
+  // 2ª prioridade: se faltarem itens inéditos no tema (em maratonas longas),
+  // reutiliza elementos do próprio tema, garantindo não repetir no mesmo nível
   if (picked.length < count) {
-    const outsidePool = shuffleArray(allItems.filter((i) => !picked.some((p) => p.id === i.id)));
+    const recycledTheme = themePool.filter((i) => canPick(i));
+    const shuffledRecycled = shuffleArray(recycledTheme);
+    for (const item of shuffledRecycled) {
+      if (picked.length >= count) break;
+      if (canPick(item)) {
+        picked.push(item);
+        pickedNames.add(normalizeElementName(item.name));
+      }
+    }
+  }
+
+  // 3ª prioridade: segurança caso o tema total tenha menos itens que o count
+  if (picked.length < count) {
+    const outsidePool = shuffleArray(allItems.filter((i) => canPick(i)));
     for (const item of outsidePool) {
       if (picked.length >= count) break;
-      picked.push(item);
+      if (canPick(item)) {
+        picked.push(item);
+        pickedNames.add(normalizeElementName(item.name));
+      }
     }
   }
 

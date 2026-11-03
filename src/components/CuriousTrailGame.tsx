@@ -214,6 +214,12 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   const [bestStreak, setBestStreak] = useState<number>(0);
   const [speedBonusText, setSpeedBonusText] = useState<string | null>(null);
 
+  // Histórico de elementos sorteados por nível na partida atual por tema
+  // para garantir que nenhum elemento se repita entre níveis durante a escalada
+  const [matchHistoryByTheme, setMatchHistoryByTheme] = useState<Record<string, Record<number, CestQuoiItem[]>>>({});
+  const matchHistoryRef = useRef<Record<string, Record<number, CestQuoiItem[]>>>({});
+  matchHistoryRef.current = matchHistoryByTheme;
+
   // Espelhos em ref: os setTimeout abaixo disparam depois do render que os criou
   const attemptRef = useRef(1);
   const indexRef = useRef(0);
@@ -311,7 +317,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   }
 
   // Iniciar um nível
-  async function startLevel(lvl: number) {
+  async function startLevel(lvl: number, resetMatch = false) {
     const requestId = ++loadRequestRef.current;
     if (countdownRef.current) {
       clearInterval(countdownRef.current);
@@ -321,7 +327,37 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     soundEffects.playRoundStart();
     setCurrentLevel(lvl);
     levelRef.current = lvl;
-    const itemsForThisLevel = pickTrailElementsForLevel(lvl, selectedThemeId, allPool);
+
+    // Se estiver no nível 1 e for uma nova escalada (ou pedido de reset), reinicia o histórico da partida para este tema
+    if (resetMatch || (lvl === 1 && !matchHistoryRef.current[selectedThemeId]?.[1])) {
+      matchHistoryRef.current[selectedThemeId] = {};
+    }
+
+    // Coleta todos os elementos já vistos nos outros níveis desta mesma partida para não repetir
+    const currentThemeHistory = matchHistoryRef.current[selectedThemeId] || {};
+    const excludeKeys = new Set<string>();
+    for (let prevLevel = 1; prevLevel <= 7; prevLevel++) {
+      if (prevLevel === lvl) continue; // não exclui do próprio nível se for um retry
+      const pastItems = currentThemeHistory[prevLevel] || [];
+      for (const it of pastItems) {
+        excludeKeys.add(it.id);
+        excludeKeys.add(it.name);
+        excludeKeys.add(it.fr);
+      }
+    }
+
+    const itemsForThisLevel = pickTrailElementsForLevel(lvl, selectedThemeId, allPool, excludeKeys);
+
+    // Salva no histórico da partida atual para que os próximos níveis não repitam esses elementos
+    const updatedHistory = {
+      ...currentThemeHistory,
+      [lvl]: itemsForThisLevel,
+    };
+    matchHistoryRef.current[selectedThemeId] = updatedHistory;
+    setMatchHistoryByTheme((prev) => ({
+      ...prev,
+      [selectedThemeId]: updatedHistory,
+    }));
     setTimerRunning(false);
     const scenes = [...new Set(itemsForThisLevel.map((item) => item.scene))];
     setPreloadProgress({ loaded: 0, total: scenes.length });
@@ -633,7 +669,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
         totalXp={trailProgress.totalXp}
         bestStreak={bestStreak}
         onOtherTheme={() => setPhase("lobby")}
-        onReplay={() => startLevel(1)}
+        onReplay={() => startLevel(1, true)}
       />
     );
   }

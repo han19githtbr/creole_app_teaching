@@ -142,6 +142,7 @@ export function CuriousTrailMountain({
   const svgRef = useRef<SVGSVGElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const worldWildRef = useRef<Wildlife | null>(null);
+  const wildlifeWeatherRef = useRef(weather);
   const sizeRef = useRef({ W: 0, H: 0, WW: 0, WH: 0 });
   const camRef = useRef({ tx: 0, ty: 0, s: 1 });
   const walkRef = useRef<number>(Number.NaN);
@@ -217,7 +218,7 @@ export function CuriousTrailMountain({
     const stageEl = stageRef.current;
     const svg = svgRef.current;
     if (!stageEl || !svg) return;
-    const wild = createWildlife();
+    const wild = createWildlife(wildlifeWeatherRef.current);
     worldWildRef.current = wild;
 
     // O "mundo" mantÃ©m a proporÃ§Ã£o do desenho (1000x600) e COBRE o palco, como object-fit: cover.
@@ -338,6 +339,11 @@ export function CuriousTrailMountain({
       worldWildRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    wildlifeWeatherRef.current = weather;
+    worldWildRef.current?.setWeather(weather);
+  }, [weather]);
 
   function handleAnimalTap(animal: TrailAnimal) {
     soundEffects.playTap();

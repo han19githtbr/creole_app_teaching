@@ -16,7 +16,7 @@
  *  - Ouriço, Tartaruga, Pássaro Cantor, Borboleta Apolo dos Alpes e Abelha Silvestre.
  */
 import { G, ell, circ, line, limb, f, sin, cos, clamp, PI } from "@/lib/storySceneLife";
-import { TRAIL_ROAM_SPOTS, ROAMING_ANIMAL_POOL, type TrailAnimal } from "@/lib/curiousTrailData";
+import { TRAIL_ROAM_SPOTS, ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailWeather } from "@/lib/curiousTrailData";
 
 type Kind = "walk" | "fly";
 interface Spec {
@@ -46,6 +46,51 @@ const SPECIES: Record<string, Spec> = {
 };
 const FALLBACK: Spec = SPECIES.rabbit;
 const specOf = (id: string): Spec => SPECIES[id] ?? FALLBACK;
+
+const WEATHER_ANIMAL_IDS: Record<TrailWeather, readonly string[]> = {
+  sunny: ["squirrel", "rabbit", "bird", "deer", "fox", "chamois", "eagle", "butterfly", "bee"],
+  rain: ["frog", "snail", "bird", "deer", "fox", "squirrel", "rabbit"],
+  snow: ["chamois", "eagle", "fox", "rabbit", "deer", "squirrel", "bird"],
+};
+
+const WEATHER_HIGHLIGHTS: Record<TrailWeather, readonly string[]> = {
+  sunny: ["butterfly", "bee"],
+  rain: ["frog", "snail"],
+  snow: ["chamois", "fox"],
+};
+
+function weatherAdjustedSpec(id: string, weather: TrailWeather): Spec {
+  const spec = specOf(id);
+  let speedFactor = 1;
+  let restFactor = 1;
+
+  if (weather === "rain") {
+    if (id === "frog" || id === "snail") {
+      speedFactor = id === "frog" ? 1.1 : 1;
+      restFactor = 0.8;
+    } else {
+      speedFactor = 0.65;
+      restFactor = 1.5;
+    }
+  } else if (weather === "snow") {
+    if (id === "chamois" || id === "fox") {
+      speedFactor = 0.9;
+      restFactor = 1.1;
+    } else if (id === "rabbit") {
+      speedFactor = 0.8;
+      restFactor = 1.25;
+    } else {
+      speedFactor = 0.7;
+      restFactor = 1.4;
+    }
+  }
+
+  return {
+    ...spec,
+    speed: spec.speed * speedFactor,
+    idle: [spec.idle[0] * restFactor, spec.idle[1] * restFactor],
+  };
+}
 
 export interface Critter {
   uid: number;
@@ -637,21 +682,23 @@ export interface Wildlife {
   poke: (c: Critter) => void;
   find: (animalId: string) => Critter | undefined;
   position: (c: Critter, W: number, H: number) => { x: number; y: number };
+  setWeather: (weather: TrailWeather) => void;
 }
 
 const TARGET_COUNT = 6;
 const REGION = { x0: 0.42, x1: 0.97, y0: 0.36, y1: 0.92 };
 
-export function createWildlife(): Wildlife {
+export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife {
   const critters: Critter[] = [];
   const pending: { delay: number; kind?: Kind }[] = [];
+  let weather = initialWeather;
   let uid = 0,
     swapTimer = 9;
 
   const mk = (animal: TrailAnimal): Critter => ({
     uid: uid++,
     animal,
-    spec: specOf(animal.id),
+    spec: weatherAdjustedSpec(animal.id, weather),
     x: 0.5,
     y: 0.7,
     z: 0,
@@ -688,10 +735,16 @@ export function createWildlife(): Wildlife {
     y: REGION.y0 + rnd() * (REGION.y1 - REGION.y0),
   });
 
-  function spawn(kind?: Kind, initial = false) {
+  function weatherPool() {
+    const allowed = new Set(WEATHER_ANIMAL_IDS[weather]);
+    return ROAMING_ANIMAL_POOL.filter((animal) => allowed.has(animal.id));
+  }
+
+  function spawn(kind?: Kind, initial = false, preferredId?: string) {
     const visible = new Set(critters.map((c) => c.animal.id));
-    let cand = ROAMING_ANIMAL_POOL.filter((a) => !visible.has(a.id) && (!kind || specOf(a.id).kind === kind));
-    if (cand.length === 0) cand = ROAMING_ANIMAL_POOL.filter((a) => !visible.has(a.id));
+    const pool = weatherPool();
+    let cand = pool.filter((a) => !visible.has(a.id) && (!kind || specOf(a.id).kind === kind) && (!preferredId || a.id === preferredId));
+    if (cand.length === 0 && !preferredId) cand = pool.filter((a) => !visible.has(a.id));
     if (cand.length === 0) return;
     const c = mk(cand[Math.floor(rnd() * cand.length)]);
     if (c.spec.kind === "walk") {
@@ -749,7 +802,24 @@ export function createWildlife(): Wildlife {
     critters.push(c);
   }
 
-  for (let i = 0; i < TARGET_COUNT; i++) spawn(undefined, true);
+  function populate() {
+    for (const id of WEATHER_HIGHLIGHTS[weather]) spawn(undefined, true, id);
+    while (critters.length < TARGET_COUNT) spawn(undefined, true);
+  }
+
+  populate();
+
+  function setWeather(nextWeather: TrailWeather) {
+    if (weather === nextWeather) return;
+    weather = nextWeather;
+    pending.length = 0;
+    const allowed = new Set(WEATHER_ANIMAL_IDS[weather]);
+    for (let i = critters.length - 1; i >= 0; i--) {
+      if (!allowed.has(critters[i].animal.id)) critters.splice(i, 1);
+      else critters[i].spec = weatherAdjustedSpec(critters[i].animal.id, weather);
+    }
+    populate();
+  }
 
   function sendAway(c: Critter) {
     c.state = "leaving";
@@ -1061,5 +1131,5 @@ export function createWildlife(): Wildlife {
     return { x: c.x * W, y: c.y * H - yOff };
   }
 
-  return { critters, step, render, hit, poke, find, position };
+  return { critters, step, render, hit, poke, find, position, setWeather };
 }

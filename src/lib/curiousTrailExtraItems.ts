@@ -5723,10 +5723,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "gastronomia-trail-02-spoon",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des cuillères en bois",
-    "article": "Des",
-    "name": "cuillères en bois",
-    "speak": "des cuillères en bois",
+    "fr": "Une cuillère en bois",
+    "article": "Une",
+    "name": "cuillère en bois",
+    "speak": "une cuillère en bois",
     "scene": "/ghibli/gastronomia-02.svg",
     "w": 1200,
     "h": 800,
@@ -5737,7 +5737,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: colher de pau.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des cuillères en bois dans cette scène."
+      "f": "On voit une cuillère en bois dans cette scène."
     }
   },
   {
@@ -6059,10 +6059,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "gastronomia-trail-06-juice",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des carafes de jus",
-    "article": "Des",
-    "name": "carafes de jus",
-    "speak": "des carafes de jus",
+    "fr": "Un verre de jus",
+    "article": "Un",
+    "name": "verre de jus",
+    "speak": "un verre de jus",
     "scene": "/ghibli/gastronomia-06.svg",
     "w": 1200,
     "h": 800,
@@ -6071,9 +6071,9 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
       "y": 558
     },
     "hint": {
-      "d": "Elemento do tema Gastronomia: jarra de suco.",
+      "d": "Elemento do tema Gastronomia: copo de suco.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des carafes de jus dans cette scène."
+      "f": "On voit un verre de jus dans cette scène."
     }
   },
   {

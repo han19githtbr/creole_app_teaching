@@ -407,7 +407,7 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "chokola": "chocolat chaud",
   "labouyi": "bouillie",
   "akra": "beignets d'akra",
-  "ji": "carafe de jus",
+  "ji": "verre de jus",
   "planch": "planche à découper",
   "kiyè bwa": "cuillère en bois",
   "liv ouvè": "livre ouvert",

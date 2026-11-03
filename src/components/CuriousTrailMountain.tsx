@@ -173,9 +173,13 @@ export function CuriousTrailMountain({
     setPathInfo({ total: t, step, tbl });
   }, []);
   const total = pathInfo.total;
-  const cardPx = Math.round(clampN(stage.W * 0.36, 150, 250)); // cena do objeto atual
   const curItem = elements?.[elementIndex];
-  const cardHeight = cardPx + 70;
+  const maxCardHeight = clampN(stage.H * 0.48, 120, 310);
+  const itemAspect = curItem && curItem.h > 0 ? curItem.w / curItem.h : 1;
+  const cardPx = Math.round(Math.min(clampN(stage.W * 0.36, 150, 250), maxCardHeight * itemAspect));
+  const cardHeight = curItem
+    ? Math.round((cardPx * curItem.h) / curItem.w) + 70
+    : 70;
 
   const N = currentCfg.elementCount;
   const campStart = CAMP_FRACS[currentLevel - 1] * total;
@@ -750,8 +754,8 @@ export function CuriousTrailMountain({
               {below && <span className="h-0 w-0 border-x-[7px] border-b-[9px] border-x-transparent border-b-amber-400" />}
               <div className="relative">
                 <span className="absolute -inset-1.5 rounded-3xl bg-amber-400/50 blur-md animate-pulse" aria-hidden />
-                <div className="relative rounded-full bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-[4px] shadow-2xl">
-                  <ObjectLens item={curItem} px={cardPx} />
+                <div className="relative rounded-2xl bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-[4px] shadow-2xl">
+                  <ObjectLens item={curItem} px={cardPx} full />
                 </div>
                 <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-900 text-[11px] font-black text-amber-300 shadow">
                   {elementIndex + 1}

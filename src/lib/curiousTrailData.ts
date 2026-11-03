@@ -162,7 +162,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     animal: {
       id: "snail",
       name: "L'Escargot voyageur",
-      namePt: "Caracol e Raposa",
+      namePt: "Caracol viajante",
       emoji: "🐌",
       quote: "La pluie persiste ! Garde ton parapluie bien haut !",
       soundType: "rustle",
@@ -185,7 +185,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     animal: {
       id: "chamois",
       name: "Le Chamois agile",
-      namePt: "Cabra-montesa / Íbex",
+      namePt: "Camurça-dos-alpes",
       emoji: "🐐",
       quote: "Regarde, la neige tombe ! Mets ton bonnet et ton écharpe !",
       soundType: "bell",

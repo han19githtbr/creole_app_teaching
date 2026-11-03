@@ -27,7 +27,7 @@
       "charger": "estasyon chaje",
       "printer3d": "enprimant 3D",
       "bulb": "ampoul",
-      "telescope": "telesko",
+      "telescope": "teleskòp",
       "keyboard": "klavye",
       "battery": "batri",
       "evcar": "machin elektrik",
@@ -529,7 +529,7 @@
       "dansè",
       "manje",
       "rad",
-      "parapli"
+      "parasòl"
     ],
     "labels": {
       "drum": "tanbou",
@@ -541,7 +541,7 @@
       "dancer": "dansè",
       "food": "manje",
       "clothing": "rad",
-      "parasol": "parapli",
+      "parasol": "parasòl",
       "vaksin": "vaksin",
       "kon": "kòn",
       "banye": "banyè",
@@ -830,7 +830,7 @@
       "tower": "tou",
       "binoculars": "jumèl",
       "photocam": "aparèy foto",
-      "passport": "pasp",
+      "passport": "paspò",
       "tent": "tant",
       "compass": "bousòl",
       "beachchair": "chèz plaj"
@@ -2330,7 +2330,7 @@
       "headphones": "ekouteur",
       "light": "limyè",
       "bass": "kontrebas",
-      "score": "pàtisyon",
+      "score": "patisyon",
       "synth": "sentetizè",
       "clarinet": "klarinèt",
       "gramophone": "gramofòn",
@@ -2562,7 +2562,7 @@
       "pyebwa",
       "dra",
       "boul",
-      "balanse",
+      "balanswa",
       "piknik",
       "kanna",
       "flè",

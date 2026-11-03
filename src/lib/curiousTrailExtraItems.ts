@@ -25,7 +25,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: trompete de bambu.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une trompette de bambou dans la scène de cultura."
+      "f": "On voit une trompette de bambou dans cette scène."
     }
   },
   {
@@ -46,17 +46,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: corneta de metal.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un cor de cuivre dans la scène de cultura."
+      "f": "On voit un cor de cuivre dans cette scène."
     }
   },
   {
     "id": "cultura-trail-02-banye",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un bannière",
-    "article": "Un",
+    "fr": "Une bannière",
+    "article": "Une",
     "name": "bannière",
-    "speak": "un bannière",
+    "speak": "une bannière",
     "scene": "/ghibli/cultura-02.svg",
     "w": 1200,
     "h": 800,
@@ -67,7 +67,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: estandarte.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bannière dans la scène de cultura."
+      "f": "On voit une bannière dans cette scène."
     }
   },
   {
@@ -88,17 +88,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: maracá.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des maracas dans la scène de cultura."
+      "f": "On voit des maracas dans cette scène."
     }
   },
   {
     "id": "cultura-trail-03-twal",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un rouleaux de tissu",
-    "article": "Un",
+    "fr": "Des rouleaux de tissu",
+    "article": "Des",
     "name": "rouleaux de tissu",
-    "speak": "un rouleaux de tissu",
+    "speak": "des rouleaux de tissu",
     "scene": "/ghibli/cultura-03.svg",
     "w": 1200,
     "h": 800,
@@ -109,7 +109,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: rolos de tecido.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un rouleaux de tissu dans la scène de cultura."
+      "f": "On voit des rouleaux de tissu dans cette scène."
     }
   },
   {
@@ -130,17 +130,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: xale.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un châle dans la scène de cultura."
+      "f": "On voit un châle dans cette scène."
     }
   },
   {
     "id": "cultura-trail-03-foula",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des foulard madras",
+    "fr": "Des foulards madras",
     "article": "Des",
-    "name": "foulard madras",
-    "speak": "des foulard madras",
+    "name": "foulards madras",
+    "speak": "des foulards madras",
     "scene": "/ghibli/cultura-03.svg",
     "w": 1200,
     "h": 800,
@@ -151,7 +151,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: lenço madras.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des foulard madras dans la scène de cultura."
+      "f": "On voit des foulards madras dans cette scène."
     }
   },
   {
@@ -172,7 +172,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: bolsa de palha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un sac en paille dans la scène de cultura."
+      "f": "On voit un sac en paille dans cette scène."
     }
   },
   {
@@ -193,7 +193,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: pintura.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une peinture dans la scène de cultura."
+      "f": "On voit une peinture dans cette scène."
     }
   },
   {
@@ -214,7 +214,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: pintor.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un artiste peintre dans la scène de cultura."
+      "f": "On voit un artiste peintre dans cette scène."
     }
   },
   {
@@ -235,17 +235,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: escultura de metal.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une sculpture en métal dans la scène de cultura."
+      "f": "On voit une sculpture en métal dans cette scène."
     }
   },
   {
     "id": "cultura-trail-04-kolye",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des collier de perles",
+    "fr": "Des colliers de perles",
     "article": "Des",
-    "name": "collier de perles",
-    "speak": "des collier de perles",
+    "name": "colliers de perles",
+    "speak": "des colliers de perles",
     "scene": "/ghibli/cultura-04.svg",
     "w": 1200,
     "h": 800,
@@ -256,17 +256,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: colar de contas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des collier de perles dans la scène de cultura."
+      "f": "On voit des colliers de perles dans cette scène."
     }
   },
   {
     "id": "cultura-trail-05-motye",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des mortier en bois",
+    "fr": "Des mortiers en bois",
     "article": "Des",
-    "name": "mortier en bois",
-    "speak": "des mortier en bois",
+    "name": "mortiers en bois",
+    "speak": "des mortiers en bois",
     "scene": "/ghibli/cultura-05.svg",
     "w": 1200,
     "h": 800,
@@ -277,17 +277,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: pilão de madeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des mortier en bois dans la scène de cultura."
+      "f": "On voit des mortiers en bois dans cette scène."
     }
   },
   {
     "id": "cultura-trail-05-kannari",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un jarre en terre cuite",
-    "article": "Un",
+    "fr": "Une jarre en terre cuite",
+    "article": "Une",
     "name": "jarre en terre cuite",
-    "speak": "un jarre en terre cuite",
+    "speak": "une jarre en terre cuite",
     "scene": "/ghibli/cultura-05.svg",
     "w": 1200,
     "h": 800,
@@ -298,17 +298,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: pote de barro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un jarre en terre cuite dans la scène de cultura."
+      "f": "On voit une jarre en terre cuite dans cette scène."
     }
   },
   {
     "id": "cultura-trail-05-kalbas",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un calebasse",
-    "article": "Un",
+    "fr": "Une calebasse",
+    "article": "Une",
     "name": "calebasse",
-    "speak": "un calebasse",
+    "speak": "une calebasse",
     "scene": "/ghibli/cultura-05.svg",
     "w": 1200,
     "h": 800,
@@ -319,7 +319,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: cabaça.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un calebasse dans la scène de cultura."
+      "f": "On voit une calebasse dans cette scène."
     }
   },
   {
@@ -340,17 +340,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: cesta de vime.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un panier dans la scène de cultura."
+      "f": "On voit un panier dans cette scène."
     }
   },
   {
     "id": "cultura-trail-06-konte",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un conteuse",
-    "article": "Un",
+    "fr": "Une conteuse",
+    "article": "Une",
     "name": "conteuse",
-    "speak": "un conteuse",
+    "speak": "une conteuse",
     "scene": "/ghibli/cultura-06.svg",
     "w": 1200,
     "h": 800,
@@ -361,7 +361,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: contadora de histórias.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un conteuse dans la scène de cultura."
+      "f": "On voit une conteuse dans cette scène."
     }
   },
   {
@@ -382,7 +382,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: fogueira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un feu de camp dans la scène de cultura."
+      "f": "On voit un feu de camp dans cette scène."
     }
   },
   {
@@ -403,7 +403,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: cadeira de palha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une chaise dans la scène de cultura."
+      "f": "On voit une chaise dans cette scène."
     }
   },
   {
@@ -424,7 +424,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: criança.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un enfant dans la scène de cultura."
+      "f": "On voit un enfant dans cette scène."
     }
   },
   {
@@ -445,7 +445,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: tap-tap.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tap-tap dans la scène de cultura."
+      "f": "On voit un tap-tap dans cette scène."
     }
   },
   {
@@ -466,7 +466,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: burro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un âne dans la scène de cultura."
+      "f": "On voit un âne dans cette scène."
     }
   },
   {
@@ -487,7 +487,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: senhor idoso com bengala.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un vieil homme à la canne dans la scène de cultura."
+      "f": "On voit un vieil homme à la canne dans cette scène."
     }
   },
   {
@@ -508,7 +508,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: coreto.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un kiosque à musique dans la scène de cultura."
+      "f": "On voit un kiosque à musique dans cette scène."
     }
   },
   {
@@ -529,17 +529,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: fonte.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une fontaine dans la scène de cultura."
+      "f": "On voit une fontaine dans cette scène."
     }
   },
   {
     "id": "cultura-trail-08-balkon",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Une maison à balcon",
+    "fr": "Une maison avec balcon",
     "article": "Une",
-    "name": "maison à balcon",
-    "speak": "une maison à balcon",
+    "name": "maison avec balcon",
+    "speak": "une maison avec balcon",
     "scene": "/ghibli/cultura-08.svg",
     "w": 1200,
     "h": 800,
@@ -550,17 +550,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: casa com varanda.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une maison à balcon dans la scène de cultura."
+      "f": "On voit une maison avec balcon dans cette scène."
     }
   },
   {
     "id": "cultura-trail-09-teyat",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des théâtre de marionnettes",
+    "fr": "Des théâtres de marionnettes",
     "article": "Des",
-    "name": "théâtre de marionnettes",
-    "speak": "des théâtre de marionnettes",
+    "name": "théâtres de marionnettes",
+    "speak": "des théâtres de marionnettes",
     "scene": "/ghibli/cultura-09.svg",
     "w": 1200,
     "h": 800,
@@ -571,7 +571,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: teatro de fantoches.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des théâtre de marionnettes dans la scène de cultura."
+      "f": "On voit des théâtres de marionnettes dans cette scène."
     }
   },
   {
@@ -592,17 +592,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: fantasia de carnaval.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un costume de carnaval dans la scène de cultura."
+      "f": "On voit un costume de carnaval dans cette scène."
     }
   },
   {
     "id": "cultura-trail-09-plim",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des panache de plumes",
+    "fr": "Des panaches de plumes",
     "article": "Des",
-    "name": "panache de plumes",
-    "speak": "des panache de plumes",
+    "name": "panaches de plumes",
+    "speak": "des panaches de plumes",
     "scene": "/ghibli/cultura-09.svg",
     "w": 1200,
     "h": 800,
@@ -613,17 +613,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: penacho de plumas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des panache de plumes dans la scène de cultura."
+      "f": "On voit des panaches de plumes dans cette scène."
     }
   },
   {
     "id": "cultura-trail-10-fo",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un forge avec enclume",
-    "article": "Un",
-    "name": "forge avec enclume",
-    "speak": "un forge avec enclume",
+    "fr": "Une forge avec une enclume",
+    "article": "Une",
+    "name": "forge avec une enclume",
+    "speak": "une forge avec une enclume",
     "scene": "/ghibli/cultura-10.svg",
     "w": 1200,
     "h": 800,
@@ -634,17 +634,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: forja com bigorna.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un forge avec enclume dans la scène de cultura."
+      "f": "On voit une forge avec une enclume dans cette scène."
     }
   },
   {
     "id": "cultura-trail-10-kay pay",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un case de paille",
-    "article": "Un",
-    "name": "case de paille",
-    "speak": "un case de paille",
+    "fr": "Une case en paille",
+    "article": "Une",
+    "name": "case en paille",
+    "speak": "une case en paille",
     "scene": "/ghibli/cultura-10.svg",
     "w": 1200,
     "h": 800,
@@ -655,17 +655,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: casa de palha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un case de paille dans la scène de cultura."
+      "f": "On voit une case en paille dans cette scène."
     }
   },
   {
     "id": "cultura-trail-11-kann",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un canne à sucre",
-    "article": "Un",
+    "fr": "Une canne à sucre",
+    "article": "Une",
     "name": "canne à sucre",
-    "speak": "un canne à sucre",
+    "speak": "une canne à sucre",
     "scene": "/ghibli/cultura-11.svg",
     "w": 1200,
     "h": 800,
@@ -676,7 +676,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: cana-de-açúcar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un canne à sucre dans la scène de cultura."
+      "f": "On voit une canne à sucre dans cette scène."
     }
   },
   {
@@ -697,7 +697,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: saco de café.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un sac de café dans la scène de cultura."
+      "f": "On voit un sac de café dans cette scène."
     }
   },
   {
@@ -718,17 +718,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: leque.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un éventail dans la scène de cultura."
+      "f": "On voit un éventail dans cette scène."
     }
   },
   {
     "id": "cultura-trail-12-kanot",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Un pirogue",
-    "article": "Un",
+    "fr": "Une pirogue",
+    "article": "Une",
     "name": "pirogue",
-    "speak": "un pirogue",
+    "speak": "une pirogue",
     "scene": "/ghibli/cultura-12.svg",
     "w": 1200,
     "h": 800,
@@ -739,7 +739,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: canoa de madeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un pirogue dans la scène de cultura."
+      "f": "On voit une pirogue dans cette scène."
     }
   },
   {
@@ -760,7 +760,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: caranguejo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un crabe dans la scène de natureza."
+      "f": "On voit un crabe dans cette scène."
     }
   },
   {
@@ -781,7 +781,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: estrela-do-mar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une étoile de mer dans la scène de natureza."
+      "f": "On voit une étoile de mer dans cette scène."
     }
   },
   {
@@ -802,7 +802,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: concha do mar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un coquillage dans la scène de natureza."
+      "f": "On voit un coquillage dans cette scène."
     }
   },
   {
@@ -823,7 +823,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: pelicano.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un pélican dans la scène de natureza."
+      "f": "On voit un pélican dans cette scène."
     }
   },
   {
@@ -844,7 +844,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: golfinho.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un dauphin dans la scène de natureza."
+      "f": "On voit un dauphin dans cette scène."
     }
   },
   {
@@ -865,7 +865,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: baleia.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une baleine dans la scène de natureza."
+      "f": "On voit une baleine dans cette scène."
     }
   },
   {
@@ -886,7 +886,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: ilhota.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un îlot dans la scène de natureza."
+      "f": "On voit un îlot dans cette scène."
     }
   },
   {
@@ -907,7 +907,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: coral.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un corail dans la scène de natureza."
+      "f": "On voit un corail dans cette scène."
     }
   },
   {
@@ -928,7 +928,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: peixes.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des poissons dans la scène de natureza."
+      "f": "On voit des poissons dans cette scène."
     }
   },
   {
@@ -949,7 +949,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: mangue.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un palétuvier dans la scène de natureza."
+      "f": "On voit un palétuvier dans cette scène."
     }
   },
   {
@@ -970,7 +970,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: flamingo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un flamant rose dans la scène de natureza."
+      "f": "On voit un flamant rose dans cette scène."
     }
   },
   {
@@ -991,7 +991,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: lagoa.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un étang dans la scène de natureza."
+      "f": "On voit un étang dans cette scène."
     }
   },
   {
@@ -1012,7 +1012,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: nenúfares.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des nénuphars dans la scène de natureza."
+      "f": "On voit des nénuphars dans cette scène."
     }
   },
   {
@@ -1033,7 +1033,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: gavião.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un faucon dans la scène de natureza."
+      "f": "On voit un faucon dans cette scène."
     }
   },
   {
@@ -1054,7 +1054,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: rochas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des rochers dans la scène de natureza."
+      "f": "On voit des rochers dans cette scène."
     }
   },
   {
@@ -1075,17 +1075,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: coruja.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une chouette dans la scène de natureza."
+      "f": "On voit une chouette dans cette scène."
     }
   },
   {
     "id": "natureza-trail-09-fey",
     "themeId": "natureza",
     "theme": "Natureza",
-    "fr": "Des grandes feuilles",
+    "fr": "Des feuilles larges",
     "article": "Des",
-    "name": "grandes feuilles",
-    "speak": "des grandes feuilles",
+    "name": "feuilles larges",
+    "speak": "des feuilles larges",
     "scene": "/ghibli/natureza-09.svg",
     "w": 1200,
     "h": 800,
@@ -1096,7 +1096,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: folhas grandes.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des grandes feuilles dans la scène de natureza."
+      "f": "On voit des feuilles larges dans cette scène."
     }
   },
   {
@@ -1117,7 +1117,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: beija-flor.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un colibri dans la scène de natureza."
+      "f": "On voit un colibri dans cette scène."
     }
   },
   {
@@ -1138,7 +1138,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: sapo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un crapaud dans la scène de natureza."
+      "f": "On voit un crapaud dans cette scène."
     }
   },
   {
@@ -1159,7 +1159,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: coelho.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un lapin dans la scène de natureza."
+      "f": "On voit un lapin dans cette scène."
     }
   },
   {
@@ -1180,7 +1180,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: veado.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un cerf dans la scène de natureza."
+      "f": "On voit un cerf dans cette scène."
     }
   },
   {
@@ -1201,7 +1201,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: girassóis.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des tournesols dans la scène de natureza."
+      "f": "On voit des tournesols dans cette scène."
     }
   },
   {
@@ -1222,7 +1222,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: duna de areia.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une dune de sable dans la scène de natureza."
+      "f": "On voit une dune de sable dans cette scène."
     }
   },
   {
@@ -1243,7 +1243,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: caverna.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une grotte dans la scène de natureza."
+      "f": "On voit une grotte dans cette scène."
     }
   },
   {
@@ -1264,7 +1264,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: lagartixa.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un lézard dans la scène de natureza."
+      "f": "On voit un lézard dans cette scène."
     }
   },
   {
@@ -1285,7 +1285,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: vulcão.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un volcan dans la scène de natureza."
+      "f": "On voit un volcan dans cette scène."
     }
   },
   {
@@ -1306,7 +1306,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: cogumelos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des champignons dans la scène de natureza."
+      "f": "On voit des champignons dans cette scène."
     }
   },
   {
@@ -1327,7 +1327,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: esquilo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un écureuil dans la scène de natureza."
+      "f": "On voit un écureuil dans cette scène."
     }
   },
   {
@@ -1348,7 +1348,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: ninho.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un nid dans la scène de natureza."
+      "f": "On voit un nid dans cette scène."
     }
   },
   {
@@ -1369,7 +1369,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: pinheiro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un pin dans la scène de natureza."
+      "f": "On voit un pin dans cette scène."
     }
   },
   {
@@ -1390,7 +1390,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: penhasco.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une falaise dans la scène de natureza."
+      "f": "On voit une falaise dans cette scène."
     }
   },
   {
@@ -1411,7 +1411,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: vaga-lumes.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des lucioles dans la scène de natureza."
+      "f": "On voit des lucioles dans cette scène."
     }
   },
   {
@@ -1432,7 +1432,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: lírios brancos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des lys blancs dans la scène de natureza."
+      "f": "On voit des lys blancs dans cette scène."
     }
   },
   {
@@ -1453,7 +1453,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: bambuzal.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des bambous dans la scène de natureza."
+      "f": "On voit des bambous dans cette scène."
     }
   },
   {
@@ -1474,17 +1474,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: bananeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bananier dans la scène de natureza."
+      "f": "On voit un bananier dans cette scène."
     }
   },
   {
     "id": "natureza-trail-18-foje",
     "themeId": "natureza",
     "theme": "Natureza",
-    "fr": "Un fougère",
-    "article": "Un",
+    "fr": "Une fougère",
+    "article": "Une",
     "name": "fougère",
-    "speak": "un fougère",
+    "speak": "une fougère",
     "scene": "/ghibli/natureza-18.svg",
     "w": 1200,
     "h": 800,
@@ -1495,7 +1495,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Natureza: samambaia.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un fougère dans la scène de natureza."
+      "f": "On voit un fougère dans cette scène."
     }
   },
   {
@@ -1516,7 +1516,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: tela.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un écran dans la scène de tecnologia."
+      "f": "On voit un écran dans cette scène."
     }
   },
   {
@@ -1537,17 +1537,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: microscópio.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un microscope dans la scène de tecnologia."
+      "f": "On voit un microscope dans cette scène."
     }
   },
   {
     "id": "tecnologia-trail-02-charger",
     "themeId": "tecnologia",
     "theme": "Tecnologia",
-    "fr": "Un borne de recharge",
-    "article": "Un",
+    "fr": "Une borne de recharge",
+    "article": "Une",
     "name": "borne de recharge",
-    "speak": "un borne de recharge",
+    "speak": "une borne de recharge",
     "scene": "/ghibli/tecnologia-02.svg",
     "w": 1200,
     "h": 800,
@@ -1558,17 +1558,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: carregador de carro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un borne de recharge dans la scène de tecnologia."
+      "f": "On voit une borne de recharge dans cette scène."
     }
   },
   {
     "id": "tecnologia-trail-03-printer3d",
     "themeId": "tecnologia",
     "theme": "Tecnologia",
-    "fr": "Un imprimante 3d",
-    "article": "Un",
-    "name": "imprimante 3d",
-    "speak": "un imprimante 3d",
+    "fr": "Une imprimante 3D",
+    "article": "Une",
+    "name": "imprimante 3D",
+    "speak": "une imprimante 3d",
     "scene": "/ghibli/tecnologia-03.svg",
     "w": 1200,
     "h": 800,
@@ -1579,7 +1579,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: impressora 3D.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un imprimante 3d dans la scène de tecnologia."
+      "f": "On voit une imprimante 3D dans cette scène."
     }
   },
   {
@@ -1600,17 +1600,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: servidor.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un serveur dans la scène de tecnologia."
+      "f": "On voit un serveur dans cette scène."
     }
   },
   {
     "id": "tecnologia-trail-04-radio",
     "themeId": "tecnologia",
     "theme": "Tecnologia",
-    "fr": "Un radio",
-    "article": "Un",
+    "fr": "Une radio",
+    "article": "Une",
     "name": "radio",
-    "speak": "un radio",
+    "speak": "une radio",
     "scene": "/ghibli/tecnologia-04.svg",
     "w": 1200,
     "h": 800,
@@ -1621,7 +1621,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: rádio.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un radio dans la scène de tecnologia."
+      "f": "On voit une radio dans cette scène."
     }
   },
   {
@@ -1642,7 +1642,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: computador.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un ordinateur dans la scène de tecnologia."
+      "f": "On voit un ordinateur dans cette scène."
     }
   },
   {
@@ -1663,7 +1663,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: braço robótico.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bras robotisé dans la scène de tecnologia."
+      "f": "On voit un bras robotisé dans cette scène."
     }
   },
   {
@@ -1684,7 +1684,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: telescópio.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un télescope dans la scène de tecnologia."
+      "f": "On voit un télescope dans cette scène."
     }
   },
   {
@@ -1705,7 +1705,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: telefone.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un téléphone dans la scène de tecnologia."
+      "f": "On voit un téléphone dans cette scène."
     }
   },
   {
@@ -1726,7 +1726,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: painel solar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un panneau solaire dans la scène de tecnologia."
+      "f": "On voit un panneau solaire dans cette scène."
     }
   },
   {
@@ -1747,17 +1747,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: bateria.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une batterie dans la scène de tecnologia."
+      "f": "On voit une batterie dans cette scène."
     }
   },
   {
     "id": "tecnologia-trail-06-turbine",
     "themeId": "tecnologia",
     "theme": "Tecnologia",
-    "fr": "Un éolienne",
-    "article": "Un",
+    "fr": "Une éolienne",
+    "article": "Une",
     "name": "éolienne",
-    "speak": "un éolienne",
+    "speak": "une éolienne",
     "scene": "/ghibli/tecnologia-06.svg",
     "w": 1200,
     "h": 800,
@@ -1768,7 +1768,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: turbina eólica.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un éolienne dans la scène de tecnologia."
+      "f": "On voit une éolienne dans cette scène."
     }
   },
   {
@@ -1789,7 +1789,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: óculos de realidade virtual.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un casque de réalité virtuelle dans la scène de tecnologia."
+      "f": "On voit un casque de réalité virtuelle dans cette scène."
     }
   },
   {
@@ -1810,17 +1810,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: câmera.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une caméra dans la scène de tecnologia."
+      "f": "On voit une caméra dans cette scène."
     }
   },
   {
     "id": "tecnologia-trail-08-antenna",
     "themeId": "tecnologia",
     "theme": "Tecnologia",
-    "fr": "Des antenne relais",
+    "fr": "Des antennes-relais",
     "article": "Des",
-    "name": "antenne relais",
-    "speak": "des antenne relais",
+    "name": "antennes-relais",
+    "speak": "des antennes-relais",
     "scene": "/ghibli/tecnologia-08.svg",
     "w": 1200,
     "h": 800,
@@ -1831,7 +1831,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: torre de antena.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des antenne relais dans la scène de tecnologia."
+      "f": "On voit des antennes-relais dans cette scène."
     }
   },
   {
@@ -1852,7 +1852,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: carro elétrico.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une voiture électrique dans la scène de tecnologia."
+      "f": "On voit une voiture électrique dans cette scène."
     }
   },
   {
@@ -1873,7 +1873,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: ônibus de turismo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bus touristique dans la scène de turismo."
+      "f": "On voit un bus touristique dans cette scène."
     }
   },
   {
@@ -1894,7 +1894,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: placa de direção.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un panneau directionnel dans la scène de turismo."
+      "f": "On voit un panneau directionnel dans cette scène."
     }
   },
   {
@@ -1915,7 +1915,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: trem.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un train dans la scène de turismo."
+      "f": "On voit un train dans cette scène."
     }
   },
   {
@@ -1936,7 +1936,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: teleférico.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un téléphérique dans la scène de turismo."
+      "f": "On voit un téléphérique dans cette scène."
     }
   },
   {
@@ -1957,7 +1957,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: guia turístico.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un guide touristique dans la scène de turismo."
+      "f": "On voit un guide touristique dans cette scène."
     }
   },
   {
@@ -1978,7 +1978,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: scooter.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un scooter dans la scène de turismo."
+      "f": "On voit un scooter dans cette scène."
     }
   },
   {
@@ -1999,7 +1999,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: mapa.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une carte dans la scène de turismo."
+      "f": "On voit une carte dans cette scène."
     }
   },
   {
@@ -2020,17 +2020,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: barco.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bateau dans la scène de turismo."
+      "f": "On voit un bateau dans cette scène."
     }
   },
   {
     "id": "turismo-trail-04-parasol",
     "themeId": "turismo",
     "theme": "Turismo",
-    "fr": "Une parasol de plage",
-    "article": "Une",
+    "fr": "Un parasol de plage",
+    "article": "Un",
     "name": "parasol de plage",
-    "speak": "une parasol de plage",
+    "speak": "un parasol de plage",
     "scene": "/ghibli/turismo-04.svg",
     "w": 1200,
     "h": 800,
@@ -2041,7 +2041,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: guarda-sol de praia.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une parasol de plage dans la scène de turismo."
+      "f": "On voit un parasol de plage dans cette scène."
     }
   },
   {
@@ -2062,17 +2062,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: bilhete de viagem.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un billet de voyage dans la scène de turismo."
+      "f": "On voit un billet de voyage dans cette scène."
     }
   },
   {
     "id": "turismo-trail-05-balloon",
     "themeId": "turismo",
     "theme": "Turismo",
-    "fr": "Un montgolfière",
-    "article": "Un",
+    "fr": "Une montgolfière",
+    "article": "Une",
     "name": "montgolfière",
-    "speak": "un montgolfière",
+    "speak": "une montgolfière",
     "scene": "/ghibli/turismo-05.svg",
     "w": 1200,
     "h": 800,
@@ -2083,17 +2083,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: balão de ar quente.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un montgolfière dans la scène de turismo."
+      "f": "On voit une montgolfière dans cette scène."
     }
   },
   {
     "id": "turismo-trail-05-coconut",
     "themeId": "turismo",
     "theme": "Turismo",
-    "fr": "Un noix de coco",
-    "article": "Un",
+    "fr": "Une noix de coco",
+    "article": "Une",
     "name": "noix de coco",
-    "speak": "un noix de coco",
+    "speak": "une noix de coco",
     "scene": "/ghibli/turismo-05.svg",
     "w": 1200,
     "h": 800,
@@ -2104,17 +2104,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: coco com canudo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un noix de coco dans la scène de turismo."
+      "f": "On voit une noix de coco dans cette scène."
     }
   },
   {
     "id": "turismo-trail-06-tower",
     "themeId": "turismo",
     "theme": "Turismo",
-    "fr": "Un tour panoramique",
-    "article": "Un",
+    "fr": "Une tour panoramique",
+    "article": "Une",
     "name": "tour panoramique",
-    "speak": "un tour panoramique",
+    "speak": "une tour panoramique",
     "scene": "/ghibli/turismo-06.svg",
     "w": 1200,
     "h": 800,
@@ -2125,7 +2125,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: torre de observação.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tour panoramique dans la scène de turismo."
+      "f": "On voit une tour panoramique dans cette scène."
     }
   },
   {
@@ -2146,7 +2146,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: binóculos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des jumelles dans la scène de turismo."
+      "f": "On voit des jumelles dans cette scène."
     }
   },
   {
@@ -2167,7 +2167,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: barraca de camping.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une tente de camping dans la scène de turismo."
+      "f": "On voit une tente de camping dans cette scène."
     }
   },
   {
@@ -2188,7 +2188,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: hotel.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un hôtel dans la scène de turismo."
+      "f": "On voit un hôtel dans cette scène."
     }
   },
   {
@@ -2209,7 +2209,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: bússola.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une boussole dans la scène de turismo."
+      "f": "On voit une boussole dans cette scène."
     }
   },
   {
@@ -2230,17 +2230,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Turismo: cadeira de praia.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une chaise de plage dans la scène de turismo."
+      "f": "On voit une chaise de plage dans cette scène."
     }
   },
   {
     "id": "interior-trail-02-hoe",
     "themeId": "interior",
     "theme": "Vida no interior",
-    "fr": "Un houe",
-    "article": "Un",
+    "fr": "Une houe",
+    "article": "Une",
     "name": "houe",
-    "speak": "un houe",
+    "speak": "une houe",
     "scene": "/ghibli/interior-02.svg",
     "w": 1200,
     "h": 800,
@@ -2251,7 +2251,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: enxada.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un houe dans la scène de vida no interior."
+      "f": "On voit une houe dans cette scène."
     }
   },
   {
@@ -2272,7 +2272,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: ovelha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un mouton dans la scène de vida no interior."
+      "f": "On voit un mouton dans cette scène."
     }
   },
   {
@@ -2293,17 +2293,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: sacos de grãos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des sacs de grains dans la scène de vida no interior."
+      "f": "On voit des sacs de grains dans cette scène."
     }
   },
   {
     "id": "interior-trail-02-fence",
     "themeId": "interior",
     "theme": "Vida no interior",
-    "fr": "Des clôture en bois",
-    "article": "Des",
+    "fr": "Une clôture en bois",
+    "article": "Une",
     "name": "clôture en bois",
-    "speak": "des clôture en bois",
+    "speak": "une clôture en bois",
     "scene": "/ghibli/interior-02.svg",
     "w": 1200,
     "h": 800,
@@ -2314,7 +2314,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: cerca de madeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des clôture en bois dans la scène de vida no interior."
+      "f": "On voit une clôture en bois dans cette scène."
     }
   },
   {
@@ -2335,7 +2335,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: porco.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un cochon dans la scène de vida no interior."
+      "f": "On voit un cochon dans cette scène."
     }
   },
   {
@@ -2356,7 +2356,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: galo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un coq dans la scène de vida no interior."
+      "f": "On voit un coq dans cette scène."
     }
   },
   {
@@ -2377,7 +2377,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: mangueira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un manguier dans la scène de vida no interior."
+      "f": "On voit un manguier dans cette scène."
     }
   },
   {
@@ -2398,7 +2398,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: cesta de ovos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des panier d'œufs dans la scène de vida no interior."
+      "f": "On voit des panier d'œufs dans cette scène."
     }
   },
   {
@@ -2419,7 +2419,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: casa de fazenda.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une maison de ferme dans la scène de vida no interior."
+      "f": "On voit une maison de ferme dans cette scène."
     }
   },
   {
@@ -2440,17 +2440,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: horta.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un potager dans la scène de vida no interior."
+      "f": "On voit un potager dans cette scène."
     }
   },
   {
     "id": "interior-trail-05-wheat",
     "themeId": "interior",
     "theme": "Vida no interior",
-    "fr": "Un blé",
-    "article": "Un",
+    "fr": "Du blé",
+    "article": "Du",
     "name": "blé",
-    "speak": "un blé",
+    "speak": "du blé",
     "scene": "/ghibli/interior-05.svg",
     "w": 1200,
     "h": 800,
@@ -2461,7 +2461,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: trigo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un blé dans la scène de vida no interior."
+      "f": "On voit du blé dans cette scène."
     }
   },
   {
@@ -2482,7 +2482,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: cabra.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une chèvre dans la scène de vida no interior."
+      "f": "On voit une chèvre dans cette scène."
     }
   },
   {
@@ -2503,7 +2503,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: moinho de vento.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un moulin à vent dans la scène de vida no interior."
+      "f": "On voit un moulin à vent dans cette scène."
     }
   },
   {
@@ -2524,7 +2524,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: colmeia.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une ruche dans la scène de vida no interior."
+      "f": "On voit une ruche dans cette scène."
     }
   },
   {
@@ -2545,7 +2545,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: cavalo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un cheval dans la scène de vida no interior."
+      "f": "On voit un cheval dans cette scène."
     }
   },
   {
@@ -2566,7 +2566,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: carroça.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une charrette dans la scène de vida no interior."
+      "f": "On voit une charrette dans cette scène."
     }
   },
   {
@@ -2587,7 +2587,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: flauta.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une flûte dans la scène de dança."
+      "f": "On voit une flûte dans cette scène."
     }
   },
   {
@@ -2608,7 +2608,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: trompete.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une trompette dans la scène de dança."
+      "f": "On voit une trompette dans cette scène."
     }
   },
   {
@@ -2629,7 +2629,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: barra de balé.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une barre de danse dans la scène de dança."
+      "f": "On voit une barre de danse dans cette scène."
     }
   },
   {
@@ -2650,7 +2650,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: palco.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une scène dans la scène de dança."
+      "f": "On voit une scène dans cette scène."
     }
   },
   {
@@ -2671,7 +2671,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: tambor.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tambour dans la scène de dança."
+      "f": "On voit un tambour dans cette scène."
     }
   },
   {
@@ -2692,7 +2692,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: violino.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un violon dans la scène de dança."
+      "f": "On voit un violon dans cette scène."
     }
   },
   {
@@ -2713,7 +2713,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: lanterna.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une lanterne dans la scène de dança."
+      "f": "On voit une lanterne dans cette scène."
     }
   },
   {
@@ -2734,7 +2734,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: tapete de dança.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tapis de danse dans la scène de dança."
+      "f": "On voit un tapis de danse dans cette scène."
     }
   },
   {
@@ -2755,7 +2755,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: dançarino.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un danseur dans la scène de dança."
+      "f": "On voit un danseur dans cette scène."
     }
   },
   {
@@ -2776,17 +2776,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: vestido de flamenco.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une robe de flamenco dans la scène de dança."
+      "f": "On voit une robe de flamenco dans cette scène."
     }
   },
   {
     "id": "danca-trail-05-flowercrown",
     "themeId": "danca",
     "theme": "Dança",
-    "fr": "Des couronne de fleurs",
-    "article": "Des",
+    "fr": "Une couronne de fleurs",
+    "article": "Une",
     "name": "couronne de fleurs",
-    "speak": "des couronne de fleurs",
+    "speak": "une couronne de fleurs",
     "scene": "/ghibli/danca-05.svg",
     "w": 1200,
     "h": 800,
@@ -2797,7 +2797,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: coroa de flores.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des couronne de fleurs dans la scène de dança."
+      "f": "On voit une couronne de fleurs dans cette scène."
     }
   },
   {
@@ -2818,17 +2818,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: holofote.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un projecteur dans la scène de dança."
+      "f": "On voit un projecteur dans cette scène."
     }
   },
   {
     "id": "danca-trail-05-skirt",
     "themeId": "danca",
     "theme": "Dança",
-    "fr": "Un jupe ample",
-    "article": "Un",
+    "fr": "Une jupe ample",
+    "article": "Une",
     "name": "jupe ample",
-    "speak": "un jupe ample",
+    "speak": "une jupe ample",
     "scene": "/ghibli/danca-05.svg",
     "w": 1200,
     "h": 800,
@@ -2839,17 +2839,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: saia rodada.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un jupe ample dans la scène de dança."
+      "f": "On voit une jupe ample dans cette scène."
     }
   },
   {
     "id": "danca-trail-05-ballerina",
     "themeId": "danca",
     "theme": "Dança",
-    "fr": "Un ballerine",
-    "article": "Un",
+    "fr": "Une ballerine",
+    "article": "Une",
     "name": "ballerine",
-    "speak": "un ballerine",
+    "speak": "une ballerine",
     "scene": "/ghibli/danca-05.svg",
     "w": 1200,
     "h": 800,
@@ -2860,7 +2860,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: bailarina de balé.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un ballerine dans la scène de dança."
+      "f": "On voit une ballerine dans cette scène."
     }
   },
   {
@@ -2881,17 +2881,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: fita de ginástica.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un ruban de gymnastique dans la scène de dança."
+      "f": "On voit un ruban de gymnastique dans cette scène."
     }
   },
   {
     "id": "danca-trail-06-dancerF",
     "themeId": "danca",
     "theme": "Dança",
-    "fr": "Un danseuse",
-    "article": "Un",
+    "fr": "Une danseuse",
+    "article": "Une",
     "name": "danseuse",
-    "speak": "un danseuse",
+    "speak": "une danseuse",
     "scene": "/ghibli/danca-06.svg",
     "w": 1200,
     "h": 800,
@@ -2902,7 +2902,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: dançarina.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un danseuse dans la scène de dança."
+      "f": "On voit une danseuse dans cette scène."
     }
   },
   {
@@ -2923,7 +2923,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: espelho de ensaio.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un miroir de répétition dans la scène de dança."
+      "f": "On voit un miroir de répétition dans cette scène."
     }
   },
   {
@@ -2944,7 +2944,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: maracá.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des maracas dans la scène de dança."
+      "f": "On voit des maracas dans cette scène."
     }
   },
   {
@@ -2965,7 +2965,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: violão.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une guitare dans la scène de dança."
+      "f": "On voit une guitare dans cette scène."
     }
   },
   {
@@ -2986,7 +2986,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: fantasia de carnaval.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un costume de carnaval dans la scène de dança."
+      "f": "On voit un costume de carnaval dans cette scène."
     }
   },
   {
@@ -3007,17 +3007,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: acordeão.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un accordéon dans la scène de dança."
+      "f": "On voit un accordéon dans cette scène."
     }
   },
   {
     "id": "danca-trail-09-plim",
     "themeId": "danca",
     "theme": "Dança",
-    "fr": "Des panache de plumes",
+    "fr": "Des panaches de plumes",
     "article": "Des",
-    "name": "panache de plumes",
-    "speak": "des panache de plumes",
+    "name": "panaches de plumes",
+    "speak": "des panaches de plumes",
     "scene": "/ghibli/danca-09.svg",
     "w": 1200,
     "h": 800,
@@ -3028,7 +3028,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: penacho de plumas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des panache de plumes dans la scène de dança."
+      "f": "On voit des panaches de plumes dans cette scène."
     }
   },
   {
@@ -3049,7 +3049,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: termômetro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un thermomètre dans la scène de geografia."
+      "f": "On voit un thermomètre dans cette scène."
     }
   },
   {
@@ -3070,7 +3070,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: cânion.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un canyon dans la scène de geografia."
+      "f": "On voit un canyon dans cette scène."
     }
   },
   {
@@ -3091,7 +3091,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: nuvem de chuva.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un nuage de pluie dans la scène de geografia."
+      "f": "On voit un nuage de pluie dans cette scène."
     }
   },
   {
@@ -3112,17 +3112,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: continente.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un continent dans la scène de geografia."
+      "f": "On voit un continent dans cette scène."
     }
   },
   {
     "id": "geografia-trail-03-city",
     "themeId": "geografia",
     "theme": "Geografia",
-    "fr": "Un ville",
-    "article": "Un",
+    "fr": "Une ville",
+    "article": "Une",
     "name": "ville",
-    "speak": "un ville",
+    "speak": "une ville",
     "scene": "/ghibli/geografia-03.svg",
     "w": 1200,
     "h": 800,
@@ -3133,7 +3133,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: cidade.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un ville dans la scène de geografia."
+      "f": "On voit une ville dans cette scène."
     }
   },
   {
@@ -3154,7 +3154,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: duna de areia.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une dune de sable dans la scène de geografia."
+      "f": "On voit une dune de sable dans cette scène."
     }
   },
   {
@@ -3175,7 +3175,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: palmeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un palmier dans la scène de geografia."
+      "f": "On voit un palmier dans cette scène."
     }
   },
   {
@@ -3196,7 +3196,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: montanha com neve.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une montagne enneigée dans la scène de geografia."
+      "f": "On voit une montagne enneigée dans cette scène."
     }
   },
   {
@@ -3217,7 +3217,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: raio de tempestade.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un éclair dans la scène de geografia."
+      "f": "On voit un éclair dans cette scène."
     }
   },
   {
@@ -3238,7 +3238,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: mapa-múndi.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un planisphère dans la scène de geografia."
+      "f": "On voit un planisphère dans cette scène."
     }
   },
   {
@@ -3259,17 +3259,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: planalto.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un plateau dans la scène de geografia."
+      "f": "On voit un plateau dans cette scène."
     }
   },
   {
     "id": "geografia-trail-06-tornado",
     "themeId": "geografia",
     "theme": "Geografia",
-    "fr": "Un tornade",
-    "article": "Un",
+    "fr": "Une tornade",
+    "article": "Une",
     "name": "tornade",
-    "speak": "un tornade",
+    "speak": "une tornade",
     "scene": "/ghibli/geografia-06.svg",
     "w": 1200,
     "h": 800,
@@ -3280,7 +3280,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: tornado.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tornade dans la scène de geografia."
+      "f": "On voit une tornade dans cette scène."
     }
   },
   {
@@ -3301,7 +3301,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: arco-íris.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un arc-en-ciel dans la scène de geografia."
+      "f": "On voit un arc-en-ciel dans cette scène."
     }
   },
   {
@@ -3322,7 +3322,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: geleira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un glacier dans la scène de geografia."
+      "f": "On voit un glacier dans cette scène."
     }
   },
   {
@@ -3343,7 +3343,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: cacto.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des cactus dans la scène de geografia."
+      "f": "On voit des cactus dans cette scène."
     }
   },
   {
@@ -3364,7 +3364,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: altímetro de montanha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un altimètre dans la scène de geografia."
+      "f": "On voit un altimètre dans cette scène."
     }
   },
   {
@@ -3385,7 +3385,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: sextante de navegação.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un sextant de marin dans la scène de geografia."
+      "f": "On voit un sextant de marin dans cette scène."
     }
   },
   {
@@ -3406,17 +3406,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: mapa em relevo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une carte en relief dans la scène de geografia."
+      "f": "On voit une carte en relief dans cette scène."
     }
   },
   {
     "id": "historia-trail-02-wall",
     "themeId": "historia",
     "theme": "História",
-    "fr": "Un muraille",
-    "article": "Un",
+    "fr": "Une muraille",
+    "article": "Une",
     "name": "muraille",
-    "speak": "un muraille",
+    "speak": "une muraille",
     "scene": "/ghibli/historia-02.svg",
     "w": 1200,
     "h": 800,
@@ -3427,7 +3427,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: muralha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un muraille dans la scène de história."
+      "f": "On voit une muraille dans cette scène."
     }
   },
   {
@@ -3448,7 +3448,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: velas acesas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des bougies dans la scène de história."
+      "f": "On voit des bougies dans cette scène."
     }
   },
   {
@@ -3469,17 +3469,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: coluna grega.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une colonne grecque dans la scène de história."
+      "f": "On voit une colonne grecque dans cette scène."
     }
   },
   {
     "id": "historia-trail-03-oillamp",
     "themeId": "historia",
     "theme": "História",
-    "fr": "Un lampe à huile",
-    "article": "Un",
+    "fr": "Une lampe à huile",
+    "article": "Une",
     "name": "lampe à huile",
-    "speak": "un lampe à huile",
+    "speak": "une lampe à huile",
     "scene": "/ghibli/historia-03.svg",
     "w": 1200,
     "h": 800,
@@ -3490,17 +3490,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: lamparina a óleo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un lampe à huile dans la scène de história."
+      "f": "On voit une lampe à huile dans cette scène."
     }
   },
   {
     "id": "historia-trail-04-caravel",
     "themeId": "historia",
     "theme": "História",
-    "fr": "Un caravelle",
-    "article": "Un",
+    "fr": "Une caravelle",
+    "article": "Une",
     "name": "caravelle",
-    "speak": "un caravelle",
+    "speak": "une caravelle",
     "scene": "/ghibli/historia-04.svg",
     "w": 1200,
     "h": 800,
@@ -3511,17 +3511,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: caravela.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un caravelle dans la scène de história."
+      "f": "On voit une caravelle dans cette scène."
     }
   },
   {
     "id": "historia-trail-04-anchor",
     "themeId": "historia",
     "theme": "História",
-    "fr": "Un ancre",
-    "article": "Un",
+    "fr": "Une ancre",
+    "article": "Une",
     "name": "ancre",
-    "speak": "un ancre",
+    "speak": "une ancre",
     "scene": "/ghibli/historia-04.svg",
     "w": 1200,
     "h": 800,
@@ -3532,7 +3532,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: âncora.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un ancre dans la scène de história."
+      "f": "On voit une ancre dans cette scène."
     }
   },
   {
@@ -3553,17 +3553,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: sino.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une cloche dans la scène de história."
+      "f": "On voit une cloche dans cette scène."
     }
   },
   {
     "id": "historia-trail-04-quill",
     "themeId": "historia",
     "theme": "História",
-    "fr": "Une plume et encrier",
+    "fr": "Une plume et un encrier",
     "article": "Une",
-    "name": "plume et encrier",
-    "speak": "une plume et encrier",
+    "name": "plume et un encrier",
+    "speak": "une plume et un encrier",
     "scene": "/ghibli/historia-04.svg",
     "w": 1200,
     "h": 800,
@@ -3574,7 +3574,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: pena e tinteiro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une plume et encrier dans la scène de história."
+      "f": "On voit une plume et un encrier dans cette scène."
     }
   },
   {
@@ -3595,7 +3595,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: mapa antigo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une carte ancienne dans la scène de história."
+      "f": "On voit une carte ancienne dans cette scène."
     }
   },
   {
@@ -3616,17 +3616,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: torre de castelo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tour de château dans la scène de história."
+      "f": "On voit un tour de château dans cette scène."
     }
   },
   {
     "id": "historia-trail-06-fort",
     "themeId": "historia",
     "theme": "História",
-    "fr": "Un forteresse",
-    "article": "Un",
+    "fr": "Une forteresse",
+    "article": "Une",
     "name": "forteresse",
-    "speak": "un forteresse",
+    "speak": "une forteresse",
     "scene": "/ghibli/historia-06.svg",
     "w": 1200,
     "h": 800,
@@ -3637,7 +3637,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: fortaleza.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un forteresse dans la scène de história."
+      "f": "On voit une forteresse dans cette scène."
     }
   },
   {
@@ -3658,7 +3658,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: elmo de cavaleiro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un heaume dans la scène de história."
+      "f": "On voit un heaume dans cette scène."
     }
   },
   {
@@ -3679,7 +3679,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: baú de tesouro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un coffre au trésor dans la scène de história."
+      "f": "On voit un coffre au trésor dans cette scène."
     }
   },
   {
@@ -3700,17 +3700,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: lança.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une lance dans la scène de história."
+      "f": "On voit une lance dans cette scène."
     }
   },
   {
     "id": "historia-trail-extra-relique",
     "themeId": "historia",
     "theme": "História",
-    "fr": "Un relique ancienne",
-    "article": "Un",
+    "fr": "Une relique ancienne",
+    "article": "Une",
     "name": "relique ancienne",
-    "speak": "un relique ancienne",
+    "speak": "une relique ancienne",
     "scene": "/ghibli/historia-02.svg",
     "w": 1200,
     "h": 800,
@@ -3721,7 +3721,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: relíquia histórica.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un relique ancienne dans la scène de história."
+      "f": "On voit une relique ancienne dans cette scène."
     }
   },
   {
@@ -3742,7 +3742,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: brasão medieval.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un blason médiéval dans la scène de história."
+      "f": "On voit un blason médiéval dans cette scène."
     }
   },
   {
@@ -3763,17 +3763,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: pergaminho do rei.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un parchemin royal dans la scène de história."
+      "f": "On voit un parchemin royal dans cette scène."
     }
   },
   {
     "id": "historia-trail-extra-arbalete",
     "themeId": "historia",
     "theme": "História",
-    "fr": "Un arbalète",
-    "article": "Un",
+    "fr": "Une arbalète",
+    "article": "Une",
     "name": "arbalète",
-    "speak": "un arbalète",
+    "speak": "une arbalète",
     "scene": "/ghibli/historia-05.svg",
     "w": 1200,
     "h": 800,
@@ -3784,17 +3784,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema História: besta medieval.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un arbalète dans la scène de história."
+      "f": "On voit une arbalète dans cette scène."
     }
   },
   {
     "id": "musica-trail-02-bass",
     "themeId": "musica",
     "theme": "Música",
-    "fr": "Un contrebasse",
-    "article": "Un",
+    "fr": "Une contrebasse",
+    "article": "Une",
     "name": "contrebasse",
-    "speak": "un contrebasse",
+    "speak": "une contrebasse",
     "scene": "/ghibli/musica-02.svg",
     "w": 1200,
     "h": 800,
@@ -3805,17 +3805,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: contrabaixo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un contrebasse dans la scène de música."
+      "f": "On voit une contrebasse dans cette scène."
     }
   },
   {
     "id": "musica-trail-02-score",
     "themeId": "musica",
     "theme": "Música",
-    "fr": "Un partition",
-    "article": "Un",
+    "fr": "Une partition",
+    "article": "Une",
     "name": "partition",
-    "speak": "un partition",
+    "speak": "une partition",
     "scene": "/ghibli/musica-02.svg",
     "w": 1200,
     "h": 800,
@@ -3826,7 +3826,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: partitura.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un partition dans la scène de música."
+      "f": "On voit une partition dans cette scène."
     }
   },
   {
@@ -3847,7 +3847,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: sintetizador.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un synthétiseur dans la scène de música."
+      "f": "On voit un synthétiseur dans cette scène."
     }
   },
   {
@@ -3868,7 +3868,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: clarinete.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une clarinette dans la scène de música."
+      "f": "On voit une clarinette dans cette scène."
     }
   },
   {
@@ -3889,7 +3889,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: gramofone.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un gramophone dans la scène de música."
+      "f": "On voit un gramophone dans cette scène."
     }
   },
   {
@@ -3910,7 +3910,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: caixa de música.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une boîte à musique dans la scène de música."
+      "f": "On voit une boîte à musique dans cette scène."
     }
   },
   {
@@ -3931,7 +3931,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: pandeiro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tambourin dans la scène de música."
+      "f": "On voit un tambourin dans cette scène."
     }
   },
   {
@@ -3952,7 +3952,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: djembê.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un djembé dans la scène de música."
+      "f": "On voit un djembé dans cette scène."
     }
   },
   {
@@ -3973,7 +3973,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: disco de vinil.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un disque vinyle dans la scène de música."
+      "f": "On voit un disque vinyle dans cette scène."
     }
   },
   {
@@ -3994,7 +3994,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: maestro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un chef d'orchestre dans la scène de música."
+      "f": "On voit un chef d'orchestre dans cette scène."
     }
   },
   {
@@ -4015,7 +4015,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: amplificador.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un amplificateur dans la scène de música."
+      "f": "On voit un amplificateur dans cette scène."
     }
   },
   {
@@ -4036,7 +4036,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: trombone.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un trombone dans la scène de música."
+      "f": "On voit un trombone dans cette scène."
     }
   },
   {
@@ -4057,7 +4057,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: harpa.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une harpe dans la scène de música."
+      "f": "On voit une harpe dans cette scène."
     }
   },
   {
@@ -4078,17 +4078,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: acordeão.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un accordéon dans la scène de música."
+      "f": "On voit un accordéon dans cette scène."
     }
   },
   {
     "id": "musica-trail-08-singer",
     "themeId": "musica",
     "theme": "Música",
-    "fr": "Un chanteuse",
-    "article": "Un",
+    "fr": "Une chanteuse",
+    "article": "Une",
     "name": "chanteuse",
-    "speak": "un chanteuse",
+    "speak": "une chanteuse",
     "scene": "/ghibli/musica-08.svg",
     "w": 1200,
     "h": 800,
@@ -4099,7 +4099,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: cantora.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un chanteuse dans la scène de música."
+      "f": "On voit une chanteuse dans cette scène."
     }
   },
   {
@@ -4120,7 +4120,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: partitura musical.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un partition de musique dans la scène de música."
+      "f": "On voit un partition de musique dans cette scène."
     }
   },
   {
@@ -4141,7 +4141,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: diapasão de afinação.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un diapason dans la scène de música."
+      "f": "On voit un diapason dans cette scène."
     }
   },
   {
@@ -4162,7 +4162,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Música: estante de partitura.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un pupitre à musique dans la scène de música."
+      "f": "On voit un pupitre à musique dans cette scène."
     }
   },
   {
@@ -4183,7 +4183,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: ingresso de cinema.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un billet de cinéma dans la scène de cinema."
+      "f": "On voit un billet de cinéma dans cette scène."
     }
   },
   {
@@ -4204,17 +4204,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: refrigerante.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une boisson gazeuse dans la scène de cinema."
+      "f": "On voit une boisson gazeuse dans cette scène."
     }
   },
   {
     "id": "cinema-trail-03-mask",
     "themeId": "cinema",
     "theme": "Cinema",
-    "fr": "Un masques de théâtre",
-    "article": "Un",
+    "fr": "Des masques de théâtre",
+    "article": "Des",
     "name": "masques de théâtre",
-    "speak": "un masques de théâtre",
+    "speak": "des masques de théâtre",
     "scene": "/ghibli/cinema-03.svg",
     "w": 1200,
     "h": 800,
@@ -4225,17 +4225,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: máscaras de teatro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un masques de théâtre dans la scène de cinema."
+      "f": "On voit des masques de théâtre dans cette scène."
     }
   },
   {
     "id": "cinema-trail-03-boom",
     "themeId": "cinema",
     "theme": "Cinema",
-    "fr": "Une perche micro",
+    "fr": "Une perche à microphone",
     "article": "Une",
-    "name": "perche micro",
-    "speak": "une perche micro",
+    "name": "perche à microphone",
+    "speak": "une perche à microphone",
     "scene": "/ghibli/cinema-03.svg",
     "w": 1200,
     "h": 800,
@@ -4246,7 +4246,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: microfone de girafa.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une perche micro dans la scène de cinema."
+      "f": "On voit une perche à microphone dans cette scène."
     }
   },
   {
@@ -4267,7 +4267,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: grua de câmera.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une grue de caméra dans la scène de cinema."
+      "f": "On voit une grue de caméra dans cette scène."
     }
   },
   {
@@ -4288,7 +4288,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: luz de estúdio.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une lumière de studio dans la scène de cinema."
+      "f": "On voit une lumière de studio dans cette scène."
     }
   },
   {
@@ -4309,7 +4309,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: tira de filme.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une pellicule dans la scène de cinema."
+      "f": "On voit une pellicule dans cette scène."
     }
   },
   {
@@ -4330,7 +4330,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: troféu dourado.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un trophée doré dans la scène de cinema."
+      "f": "On voit un trophée doré dans cette scène."
     }
   },
   {
@@ -4351,7 +4351,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: câmera de cinema.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une caméra de cinéma dans la scène de cinema."
+      "f": "On voit une caméra de cinéma dans cette scène."
     }
   },
   {
@@ -4372,7 +4372,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: cadeira de diretor.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une chaise de réalisateur dans la scène de cinema."
+      "f": "On voit une chaise de réalisateur dans cette scène."
     }
   },
   {
@@ -4393,7 +4393,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: tela verde.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un écran vert dans la scène de cinema."
+      "f": "On voit un écran vert dans cette scène."
     }
   },
   {
@@ -4414,7 +4414,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: refletor de cinema.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un projecteur de studio dans la scène de cinema."
+      "f": "On voit un projecteur de studio dans cette scène."
     }
   },
   {
@@ -4435,7 +4435,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: microfone de estúdio.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un micro de plateau dans la scène de cinema."
+      "f": "On voit un micro de plateau dans cette scène."
     }
   },
   {
@@ -4456,7 +4456,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: troféu de cinema.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un trophée de festival dans la scène de cinema."
+      "f": "On voit un trophée de festival dans cette scène."
     }
   },
   {
@@ -4477,7 +4477,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: figurino de ator.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un costume d'acteur dans la scène de cinema."
+      "f": "On voit un costume d'acteur dans cette scène."
     }
   },
   {
@@ -4498,7 +4498,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: roteiro de filme.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un scénario de tournage dans la scène de cinema."
+      "f": "On voit un scénario de tournage dans cette scène."
     }
   },
   {
@@ -4519,7 +4519,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: rolo de filme antigo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une bobine argentique dans la scène de cinema."
+      "f": "On voit une bobine argentique dans cette scène."
     }
   },
   {
@@ -4540,17 +4540,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: poltrona vermelha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un fauteuil rouge dans la scène de cinema."
+      "f": "On voit un fauteuil rouge dans cette scène."
     }
   },
   {
     "id": "cinema-trail-extra-clap",
     "themeId": "cinema",
     "theme": "Cinema",
-    "fr": "Des clapboard en bois",
-    "article": "Des",
-    "name": "clapboard en bois",
-    "speak": "des clapboard en bois",
+    "fr": "Un clap de cinéma",
+    "article": "Un",
+    "name": "clap de cinéma",
+    "speak": "un clap de cinéma",
     "scene": "/ghibli/cinema-09.svg",
     "w": 1200,
     "h": 800,
@@ -4561,7 +4561,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cinema: claquete de madeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des clapboard en bois dans la scène de cinema."
+      "f": "On voit un clap de cinéma dans cette scène."
     }
   },
   {
@@ -4582,17 +4582,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: bola de futebol.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un ballon de foot dans la scène de lazeres."
+      "f": "On voit un ballon de foot dans cette scène."
     }
   },
   {
     "id": "lazeres-trail-02-cards",
     "themeId": "lazeres",
     "theme": "Lazeres",
-    "fr": "Des jeu de cartes",
-    "article": "Des",
+    "fr": "Un jeu de cartes",
+    "article": "Un",
     "name": "jeu de cartes",
-    "speak": "des jeu de cartes",
+    "speak": "un jeu de cartes",
     "scene": "/ghibli/lazeres-02.svg",
     "w": 1200,
     "h": 800,
@@ -4603,7 +4603,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: baralho.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des jeu de cartes dans la scène de lazeres."
+      "f": "On voit un jeu de cartes dans cette scène."
     }
   },
   {
@@ -4624,7 +4624,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: rede de vôlei.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un filet de volley dans la scène de lazeres."
+      "f": "On voit un filet de volley dans cette scène."
     }
   },
   {
@@ -4645,7 +4645,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: cesta de piquenique.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un panier de pique-nique dans la scène de lazeres."
+      "f": "On voit un panier de pique-nique dans cette scène."
     }
   },
   {
@@ -4666,7 +4666,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: mesa de pingue-pongue.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une table de ping-pong dans la scène de lazeres."
+      "f": "On voit une table de ping-pong dans cette scène."
     }
   },
   {
@@ -4687,7 +4687,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: caiaque.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un kayak dans la scène de lazeres."
+      "f": "On voit un kayak dans cette scène."
     }
   },
   {
@@ -4708,7 +4708,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: corda de pular.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une corde à sauter dans la scène de lazeres."
+      "f": "On voit une corde à sauter dans cette scène."
     }
   },
   {
@@ -4729,7 +4729,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: dominó.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des dominos dans la scène de lazeres."
+      "f": "On voit des dominos dans cette scène."
     }
   },
   {
@@ -4750,7 +4750,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: piscina.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une piscine dans la scène de lazeres."
+      "f": "On voit une piscine dans cette scène."
     }
   },
   {
@@ -4771,7 +4771,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: escorregador.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un toboggan dans la scène de lazeres."
+      "f": "On voit un toboggan dans cette scène."
     }
   },
   {
@@ -4792,7 +4792,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: churrasqueira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un barbecue dans la scène de lazeres."
+      "f": "On voit un barbecue dans cette scène."
     }
   },
   {
@@ -4813,7 +4813,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: balanço.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une balançoire dans la scène de lazeres."
+      "f": "On voit une balançoire dans cette scène."
     }
   },
   {
@@ -4834,7 +4834,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: cesta de basquete.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un panier de basket dans la scène de lazeres."
+      "f": "On voit un panier de basket dans cette scène."
     }
   },
   {
@@ -4855,17 +4855,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: peteca de badminton.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un volant de badminton dans la scène de lazeres."
+      "f": "On voit un volant de badminton dans cette scène."
     }
   },
   {
     "id": "lazeres-trail-extra-fleche",
     "themeId": "lazeres",
     "theme": "Lazeres",
-    "fr": "Des jeu de fléchettes",
-    "article": "Des",
+    "fr": "Un jeu de fléchettes",
+    "article": "Un",
     "name": "jeu de fléchettes",
-    "speak": "des jeu de fléchettes",
+    "speak": "un jeu de fléchettes",
     "scene": "/ghibli/lazeres-03.svg",
     "w": 1200,
     "h": 800,
@@ -4876,7 +4876,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: alvo de dardos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des jeu de fléchettes dans la scène de lazeres."
+      "f": "On voit un jeu de fléchettes dans cette scène."
     }
   },
   {
@@ -4897,7 +4897,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: patinete.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une trottinette dans la scène de lazeres."
+      "f": "On voit une trottinette dans cette scène."
     }
   },
   {
@@ -4918,7 +4918,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: frisbee.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un disque volant dans la scène de lazeres."
+      "f": "On voit un disque volant dans cette scène."
     }
   },
   {
@@ -4939,7 +4939,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: castelo de areia.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un château de sable dans la scène de lazeres."
+      "f": "On voit un château de sable dans cette scène."
     }
   },
   {
@@ -4960,17 +4960,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Lazeres: bote inflável.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un canot gonflable dans la scène de lazeres."
+      "f": "On voit un canot gonflable dans cette scène."
     }
   },
   {
     "id": "estoicismo-trail-02-bench",
     "themeId": "estoicismo",
     "theme": "Estoicismo",
-    "fr": "Une banc de pierre",
-    "article": "Une",
+    "fr": "Un banc de pierre",
+    "article": "Un",
     "name": "banc de pierre",
-    "speak": "une banc de pierre",
+    "speak": "un banc de pierre",
     "scene": "/ghibli/estoicismo-02.svg",
     "w": 1200,
     "h": 800,
@@ -4981,7 +4981,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: banco de pedra.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une banc de pierre dans la scène de estoicismo."
+      "f": "On voit un banc de pierre dans cette scène."
     }
   },
   {
@@ -5002,17 +5002,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: chave antiga.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une clé ancienne dans la scène de estoicismo."
+      "f": "On voit une clé ancienne dans cette scène."
     }
   },
   {
     "id": "estoicismo-trail-02-torch",
     "themeId": "estoicismo",
     "theme": "Estoicismo",
-    "fr": "Un torche",
-    "article": "Un",
+    "fr": "Une torche",
+    "article": "Une",
     "name": "torche",
-    "speak": "un torche",
+    "speak": "une torche",
     "scene": "/ghibli/estoicismo-02.svg",
     "w": 1200,
     "h": 800,
@@ -5023,7 +5023,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: tocha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un torche dans la scène de estoicismo."
+      "f": "On voit une torche dans cette scène."
     }
   },
   {
@@ -5044,7 +5044,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: livros antigos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des livres anciens dans la scène de estoicismo."
+      "f": "On voit des livres anciens dans cette scène."
     }
   },
   {
@@ -5065,7 +5065,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: busto de filósofo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un buste de philosophe dans la scène de estoicismo."
+      "f": "On voit un buste de philosophe dans cette scène."
     }
   },
   {
@@ -5086,7 +5086,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: pergaminho.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un parchemin dans la scène de estoicismo."
+      "f": "On voit un parchemin dans cette scène."
     }
   },
   {
@@ -5107,17 +5107,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: balança da justiça.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une balance de la justice dans la scène de estoicismo."
+      "f": "On voit une balance de la justice dans cette scène."
     }
   },
   {
     "id": "estoicismo-trail-03-sandal",
     "themeId": "estoicismo",
     "theme": "Estoicismo",
-    "fr": "Un sandales en cuir",
-    "article": "Un",
+    "fr": "Des sandales en cuir",
+    "article": "Des",
     "name": "sandales en cuir",
-    "speak": "un sandales en cuir",
+    "speak": "des sandales en cuir",
     "scene": "/ghibli/estoicismo-03.svg",
     "w": 1200,
     "h": 800,
@@ -5128,17 +5128,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: sandálias de couro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un sandales en cuir dans la scène de estoicismo."
+      "f": "On voit des sandales en cuir dans cette scène."
     }
   },
   {
     "id": "estoicismo-trail-04-balanced",
     "themeId": "estoicismo",
     "theme": "Estoicismo",
-    "fr": "Des cairn de pierres",
+    "fr": "Des cairns de pierres",
     "article": "Des",
-    "name": "cairn de pierres",
-    "speak": "des cairn de pierres",
+    "name": "cairns de pierres",
+    "speak": "des cairns de pierres",
     "scene": "/ghibli/estoicismo-04.svg",
     "w": 1200,
     "h": 800,
@@ -5149,7 +5149,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: pedras empilhadas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des cairn de pierres dans la scène de estoicismo."
+      "f": "On voit des cairns de pierres dans cette scène."
     }
   },
   {
@@ -5170,7 +5170,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: espelho de mão.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un miroir à main dans la scène de estoicismo."
+      "f": "On voit un miroir à main dans cette scène."
     }
   },
   {
@@ -5191,7 +5191,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: estátua de mármore.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une statue de marbre dans la scène de estoicismo."
+      "f": "On voit une statue de marbre dans cette scène."
     }
   },
   {
@@ -5212,7 +5212,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: templo grego.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un temple grec dans la scène de estoicismo."
+      "f": "On voit un temple grec dans cette scène."
     }
   },
   {
@@ -5233,7 +5233,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: coluna grega.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une colonne grecque dans la scène de estoicismo."
+      "f": "On voit une colonne grecque dans cette scène."
     }
   },
   {
@@ -5254,7 +5254,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: fonte.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une fontaine dans la scène de estoicismo."
+      "f": "On voit une fontaine dans cette scène."
     }
   },
   {
@@ -5275,7 +5275,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: portão de ferro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un portail en fer dans la scène de estoicismo."
+      "f": "On voit un portail en fer dans cette scène."
     }
   },
   {
@@ -5296,7 +5296,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: coruja.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une chouette dans la scène de estoicismo."
+      "f": "On voit une chouette dans cette scène."
     }
   },
   {
@@ -5317,7 +5317,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: oliveira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un olivier dans la scène de estoicismo."
+      "f": "On voit un olivier dans cette scène."
     }
   },
   {
@@ -5338,7 +5338,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: estátua de anjo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une statue d'ange dans la scène de religião."
+      "f": "On voit une statue d'ange dans cette scène."
     }
   },
   {
@@ -5359,7 +5359,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: órgão de igreja.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un orgue dans la scène de religião."
+      "f": "On voit un orgue dans cette scène."
     }
   },
   {
@@ -5380,7 +5380,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: sino de igreja.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une cloche d'église dans la scène de religião."
+      "f": "On voit une cloche d'église dans cette scène."
     }
   },
   {
@@ -5401,17 +5401,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: altar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un autel dans la scène de religião."
+      "f": "On voit un autel dans cette scène."
     }
   },
   {
     "id": "religiao-trail-03-candle",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Un bougies de prière",
-    "article": "Un",
+    "fr": "Des bougies de prière",
+    "article": "Des",
     "name": "bougies de prière",
-    "speak": "un bougies de prière",
+    "speak": "des bougies de prière",
     "scene": "/ghibli/religiao-03.svg",
     "w": 1200,
     "h": 800,
@@ -5422,17 +5422,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: velas de oração.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bougies de prière dans la scène de religião."
+      "f": "On voit des bougies de prière dans cette scène."
     }
   },
   {
     "id": "religiao-trail-04-bread",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Un pain et vin",
-    "article": "Un",
-    "name": "pain et vin",
-    "speak": "un pain et vin",
+    "fr": "Du pain et du vin",
+    "article": "Du",
+    "name": "pain et du vin",
+    "speak": "du pain et du vin",
     "scene": "/ghibli/religiao-04.svg",
     "w": 1200,
     "h": 800,
@@ -5443,7 +5443,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: pão e vinho.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un pain et vin dans la scène de religião."
+      "f": "On voit du pain et du vin dans cette scène."
     }
   },
   {
@@ -5464,17 +5464,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: cruzeiro de caminho.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un calvaire dans la scène de religião."
+      "f": "On voit un calvaire dans cette scène."
     }
   },
   {
     "id": "religiao-trail-05-palm",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Un rameaux de palmier",
-    "article": "Un",
+    "fr": "Des rameaux de palmier",
+    "article": "Des",
     "name": "rameaux de palmier",
-    "speak": "un rameaux de palmier",
+    "speak": "des rameaux de palmier",
     "scene": "/ghibli/religiao-05.svg",
     "w": 1200,
     "h": 800,
@@ -5485,7 +5485,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: ramos de palmeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un rameaux de palmier dans la scène de religião."
+      "f": "On voit des rameaux de palmier dans cette scène."
     }
   },
   {
@@ -5506,17 +5506,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: candelabro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un candélabre dans la scène de religião."
+      "f": "On voit un candélabre dans cette scène."
     }
   },
   {
     "id": "religiao-trail-05-font",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Un fonts baptismaux",
-    "article": "Un",
+    "fr": "Des fonts baptismaux",
+    "article": "Des",
     "name": "fonts baptismaux",
-    "speak": "un fonts baptismaux",
+    "speak": "des fonts baptismaux",
     "scene": "/ghibli/religiao-05.svg",
     "w": 1200,
     "h": 800,
@@ -5527,17 +5527,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: pia batismal.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un fonts baptismaux dans la scène de religião."
+      "f": "On voit des fonts baptismaux dans cette scène."
     }
   },
   {
     "id": "religiao-trail-05-hymnal",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Des livre de cantiques",
+    "fr": "Des livres de cantiques",
     "article": "Des",
-    "name": "livre de cantiques",
-    "speak": "des livre de cantiques",
+    "name": "livres de cantiques",
+    "speak": "des livres de cantiques",
     "scene": "/ghibli/religiao-05.svg",
     "w": 1200,
     "h": 800,
@@ -5548,7 +5548,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: livro de cânticos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des livre de cantiques dans la scène de religião."
+      "f": "On voit des livres de cantiques dans cette scène."
     }
   },
   {
@@ -5569,7 +5569,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: portal de igreja.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un portail d'église dans la scène de religião."
+      "f": "On voit un portail d'église dans cette scène."
     }
   },
   {
@@ -5590,17 +5590,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: campanário.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un clocher dans la scène de religião."
+      "f": "On voit un clocher dans cette scène."
     }
   },
   {
     "id": "religiao-trail-07-banner",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Un bannière de procession",
-    "article": "Un",
+    "fr": "Une bannière de procession",
+    "article": "Une",
     "name": "bannière de procession",
-    "speak": "un bannière de procession",
+    "speak": "une bannière de procession",
     "scene": "/ghibli/religiao-07.svg",
     "w": 1200,
     "h": 800,
@@ -5611,17 +5611,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: estandarte de procissão.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bannière de procession dans la scène de religião."
+      "f": "On voit une bannière de procession dans cette scène."
     }
   },
   {
     "id": "religiao-trail-08-chapel",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Un chapelle",
-    "article": "Un",
+    "fr": "Une chapelle",
+    "article": "Une",
     "name": "chapelle",
-    "speak": "un chapelle",
+    "speak": "une chapelle",
     "scene": "/ghibli/religiao-08.svg",
     "w": 1200,
     "h": 800,
@@ -5632,7 +5632,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: capela.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un chapelle dans la scène de religião."
+      "f": "On voit une chapelle dans cette scène."
     }
   },
   {
@@ -5653,7 +5653,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: incensário.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un encensoir dans la scène de religião."
+      "f": "On voit un encensoir dans cette scène."
     }
   },
   {
@@ -5674,17 +5674,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: cálice sagrado.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un calice sacré dans la scène de religião."
+      "f": "On voit un calice sacré dans cette scène."
     }
   },
   {
     "id": "religiao-trail-extra-chapelet",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Des chapelet de perles",
+    "fr": "Des chapelets de perles",
     "article": "Des",
-    "name": "chapelet de perles",
-    "speak": "des chapelet de perles",
+    "name": "chapelets de perles",
+    "speak": "des chapelets de perles",
     "scene": "/ghibli/religiao-04.svg",
     "w": 1200,
     "h": 800,
@@ -5695,7 +5695,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: terço de oração.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des chapelet de perles dans la scène de religião."
+      "f": "On voit des chapelets de perles dans cette scène."
     }
   },
   {
@@ -5716,17 +5716,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: vitral de templo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un vitrail coloré dans la scène de religião."
+      "f": "On voit un vitrail coloré dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-02-spoon",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des cuillère en bois",
+    "fr": "Des cuillères en bois",
     "article": "Des",
-    "name": "cuillère en bois",
-    "speak": "des cuillère en bois",
+    "name": "cuillères en bois",
+    "speak": "des cuillères en bois",
     "scene": "/ghibli/gastronomia-02.svg",
     "w": 1200,
     "h": 800,
@@ -5737,7 +5737,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: colher de pau.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des cuillère en bois dans la scène de gastronomia."
+      "f": "On voit des cuillères en bois dans cette scène."
     }
   },
   {
@@ -5758,7 +5758,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: ovos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des œufs dans la scène de gastronomia."
+      "f": "On voit des œufs dans cette scène."
     }
   },
   {
@@ -5779,7 +5779,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: garrafa de leite.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une bouteille de lait dans la scène de gastronomia."
+      "f": "On voit une bouteille de lait dans cette scène."
     }
   },
   {
@@ -5800,17 +5800,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: abacaxi.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un ananas dans la scène de gastronomia."
+      "f": "On voit un ananas dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-03-porridge",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Un bouillie",
-    "article": "Un",
+    "fr": "Une bouillie",
+    "article": "Une",
     "name": "bouillie",
-    "speak": "un bouillie",
+    "speak": "une bouillie",
     "scene": "/ghibli/gastronomia-03.svg",
     "w": 1200,
     "h": 800,
@@ -5821,7 +5821,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: mingau.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bouillie dans la scène de gastronomia."
+      "f": "On voit une bouillie dans cette scène."
     }
   },
   {
@@ -5842,7 +5842,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: panela de ferro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une marmite dans la scène de gastronomia."
+      "f": "On voit une marmite dans cette scène."
     }
   },
   {
@@ -5863,17 +5863,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: prato servido.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une assiette garnie dans la scène de gastronomia."
+      "f": "On voit une assiette garnie dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-04-rice",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des riz aux haricots",
-    "article": "Des",
+    "fr": "Du riz aux haricots",
+    "article": "Du",
     "name": "riz aux haricots",
-    "speak": "des riz aux haricots",
+    "speak": "du riz aux haricots",
     "scene": "/ghibli/gastronomia-04.svg",
     "w": 1200,
     "h": 800,
@@ -5884,7 +5884,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: arroz com feijão.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des riz aux haricots dans la scène de gastronomia."
+      "f": "On voit du riz aux haricots dans cette scène."
     }
   },
   {
@@ -5905,17 +5905,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: mangas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des mangues dans la scène de gastronomia."
+      "f": "On voit des mangues dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-04-plantain",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des bananes plantain frites",
+    "fr": "Des bananes plantains frites",
     "article": "Des",
-    "name": "bananes plantain frites",
-    "speak": "des bananes plantain frites",
+    "name": "bananes plantains frites",
+    "speak": "des bananes plantains frites",
     "scene": "/ghibli/gastronomia-04.svg",
     "w": 1200,
     "h": 800,
@@ -5926,17 +5926,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: banana-da-terra frita.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des bananes plantain frites dans la scène de gastronomia."
+      "f": "On voit des bananes plantains frites dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-04-akra",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Un beignets d'akra",
-    "article": "Un",
+    "fr": "Des beignets d'akra",
+    "article": "Des",
     "name": "beignets d'akra",
-    "speak": "un beignets d'akra",
+    "speak": "des beignets d'akra",
     "scene": "/ghibli/gastronomia-04.svg",
     "w": 1200,
     "h": 800,
@@ -5947,7 +5947,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: bolinhos fritos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un beignets d'akra dans la scène de gastronomia."
+      "f": "On voit des beignets d'akra dans cette scène."
     }
   },
   {
@@ -5968,7 +5968,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: conserva de repolho picante.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un pikliz dans la scène de gastronomia."
+      "f": "On voit un pikliz dans cette scène."
     }
   },
   {
@@ -5989,7 +5989,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: fogareiro a carvão.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un réchaud à charbon dans la scène de gastronomia."
+      "f": "On voit un réchaud à charbon dans cette scène."
     }
   },
   {
@@ -6010,17 +6010,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: xícara de café.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une tasse de café dans la scène de gastronomia."
+      "f": "On voit une tasse de café dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-05-banana",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des régime de bananes",
-    "article": "Des",
+    "fr": "Un régime de bananes",
+    "article": "Un",
     "name": "régime de bananes",
-    "speak": "des régime de bananes",
+    "speak": "un régime de bananes",
     "scene": "/ghibli/gastronomia-05.svg",
     "w": 1200,
     "h": 800,
@@ -6031,17 +6031,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: cacho de bananas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des régime de bananes dans la scène de gastronomia."
+      "f": "On voit un régime de bananes dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-06-veggies",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des panier de légumes",
-    "article": "Des",
+    "fr": "Un panier de légumes",
+    "article": "Un",
     "name": "panier de légumes",
-    "speak": "des panier de légumes",
+    "speak": "un panier de légumes",
     "scene": "/ghibli/gastronomia-06.svg",
     "w": 1200,
     "h": 800,
@@ -6052,17 +6052,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: cesta de legumes.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des panier de légumes dans la scène de gastronomia."
+      "f": "On voit un panier de légumes dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-06-juice",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des carafe de jus",
+    "fr": "Des carafes de jus",
     "article": "Des",
-    "name": "carafe de jus",
-    "speak": "des carafe de jus",
+    "name": "carafes de jus",
+    "speak": "des carafes de jus",
     "scene": "/ghibli/gastronomia-06.svg",
     "w": 1200,
     "h": 800,
@@ -6073,17 +6073,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: jarra de suco.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des carafe de jus dans la scène de gastronomia."
+      "f": "On voit des carafes de jus dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-06-cutlery",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Une couteau et fourchette",
-    "article": "Une",
-    "name": "couteau et fourchette",
-    "speak": "une couteau et fourchette",
+    "fr": "Un couteau et une fourchette",
+    "article": "Un",
+    "name": "couteau et une fourchette",
+    "speak": "un couteau et une fourchette",
     "scene": "/ghibli/gastronomia-06.svg",
     "w": 1200,
     "h": 800,
@@ -6094,7 +6094,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: faca e garfo.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une couteau et fourchette dans la scène de gastronomia."
+      "f": "On voit un couteau et une fourchette dans cette scène."
     }
   },
   {
@@ -6115,17 +6115,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: chocolate quente.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un chocolat chaud dans la scène de gastronomia."
+      "f": "On voit un chocolat chaud dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-07-calabash",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Un calebasse",
-    "article": "Un",
+    "fr": "Une calebasse",
+    "article": "Une",
     "name": "calebasse",
-    "speak": "un calebasse",
+    "speak": "une calebasse",
     "scene": "/ghibli/gastronomia-07.svg",
     "w": 1200,
     "h": 800,
@@ -6136,17 +6136,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: cabaça.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un calebasse dans la scène de gastronomia."
+      "f": "On voit une calebasse dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-07-soup",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Un soupe giraumon",
-    "article": "Un",
-    "name": "soupe giraumon",
-    "speak": "un soupe giraumon",
+    "fr": "Une soupe au giraumon",
+    "article": "Une",
+    "name": "soupe au giraumon",
+    "speak": "une soupe au giraumon",
     "scene": "/ghibli/gastronomia-07.svg",
     "w": 1200,
     "h": 800,
@@ -6157,7 +6157,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: sopa de abóbora.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un soupe giraumon dans la scène de gastronomia."
+      "f": "On voit une soupe au giraumon dans cette scène."
     }
   },
   {
@@ -6178,17 +6178,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: carne de porco frita.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un griot de porc dans la scène de gastronomia."
+      "f": "On voit un griot de porc dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-07-mortar",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des mortier en bois",
+    "fr": "Des mortiers en bois",
     "article": "Des",
-    "name": "mortier en bois",
-    "speak": "des mortier en bois",
+    "name": "mortiers en bois",
+    "speak": "des mortiers en bois",
     "scene": "/ghibli/gastronomia-07.svg",
     "w": 1200,
     "h": 800,
@@ -6199,17 +6199,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: pilão de madeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des mortier en bois dans la scène de gastronomia."
+      "f": "On voit des mortiers en bois dans cette scène."
     }
   },
   {
     "id": "gastronomia-trail-08-bread",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des pain frais",
-    "article": "Des",
+    "fr": "Du pain frais",
+    "article": "Du",
     "name": "pain frais",
-    "speak": "des pain frais",
+    "speak": "du pain frais",
     "scene": "/ghibli/gastronomia-08.svg",
     "w": 1200,
     "h": 800,
@@ -6220,17 +6220,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: pão fresco.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des pain frais dans la scène de gastronomia."
+      "f": "On voit du pain frais dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-02-eraser",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un gomme",
-    "article": "Un",
+    "fr": "Une gomme",
+    "article": "Une",
     "name": "gomme",
-    "speak": "un gomme",
+    "speak": "une gomme",
     "scene": "/ghibli/idiomas-02.svg",
     "w": 1200,
     "h": 800,
@@ -6241,17 +6241,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: borracha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un gomme dans la scène de idiomas."
+      "f": "On voit une gomme dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-02-envelope",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un lettre sous enveloppe",
-    "article": "Un",
-    "name": "lettre sous enveloppe",
-    "speak": "un lettre sous enveloppe",
+    "fr": "Une lettre dans une enveloppe",
+    "article": "Une",
+    "name": "lettre dans une enveloppe",
+    "speak": "une lettre dans une enveloppe",
     "scene": "/ghibli/idiomas-02.svg",
     "w": 1200,
     "h": 800,
@@ -6262,7 +6262,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: carta em envelope.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un lettre sous enveloppe dans la scène de idiomas."
+      "f": "On voit une lettre dans une enveloppe dans cette scène."
     }
   },
   {
@@ -6283,17 +6283,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: carteira escolar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un pupitre dans la scène de idiomas."
+      "f": "On voit un pupitre dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-02-ruler",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un règle",
-    "article": "Un",
+    "fr": "Une règle",
+    "article": "Une",
     "name": "règle",
-    "speak": "un règle",
+    "speak": "une règle",
     "scene": "/ghibli/idiomas-02.svg",
     "w": 1200,
     "h": 800,
@@ -6304,17 +6304,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: régua.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un règle dans la scène de idiomas."
+      "f": "On voit une règle dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-03-flashcards",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un cartes de vocabulaire",
-    "article": "Un",
+    "fr": "Des cartes de vocabulaire",
+    "article": "Des",
     "name": "cartes de vocabulaire",
-    "speak": "un cartes de vocabulaire",
+    "speak": "des cartes de vocabulaire",
     "scene": "/ghibli/idiomas-03.svg",
     "w": 1200,
     "h": 800,
@@ -6325,17 +6325,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: cartões de vocabulário.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un cartes de vocabulaire dans la scène de idiomas."
+      "f": "On voit des cartes de vocabulaire dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-03-blocks",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un cubes de l'alphabet",
-    "article": "Un",
+    "fr": "Des cubes de l'alphabet",
+    "article": "Des",
     "name": "cubes de l'alphabet",
-    "speak": "un cubes de l'alphabet",
+    "speak": "des cubes de l'alphabet",
     "scene": "/ghibli/idiomas-03.svg",
     "w": 1200,
     "h": 800,
@@ -6346,7 +6346,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: cubos do alfabeto.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un cubes de l'alphabet dans la scène de idiomas."
+      "f": "On voit des cubes de l'alphabet dans cette scène."
     }
   },
   {
@@ -6367,7 +6367,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: livro aberto.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un livre ouvert dans la scène de idiomas."
+      "f": "On voit un livre ouvert dans cette scène."
     }
   },
   {
@@ -6388,17 +6388,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: dicionário.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un dictionnaire dans la scène de idiomas."
+      "f": "On voit un dictionnaire dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-04-quill",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Une plume et encrier",
+    "fr": "Une plume et un encrier",
     "article": "Une",
-    "name": "plume et encrier",
-    "speak": "une plume et encrier",
+    "name": "plume et un encrier",
+    "speak": "une plume et un encrier",
     "scene": "/ghibli/idiomas-04.svg",
     "w": 1200,
     "h": 800,
@@ -6409,7 +6409,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: pena e tinteiro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une plume et encrier dans la scène de idiomas."
+      "f": "On voit une plume et un encrier dans cette scène."
     }
   },
   {
@@ -6430,17 +6430,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: globo terrestre.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un globe terrestre dans la scène de idiomas."
+      "f": "On voit un globe terrestre dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-04-lamp",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un lampe de bureau",
-    "article": "Un",
+    "fr": "Une lampe de bureau",
+    "article": "Une",
     "name": "lampe de bureau",
-    "speak": "un lampe de bureau",
+    "speak": "une lampe de bureau",
     "scene": "/ghibli/idiomas-04.svg",
     "w": 1200,
     "h": 800,
@@ -6451,7 +6451,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: luminária de mesa.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un lampe de bureau dans la scène de idiomas."
+      "f": "On voit une lampe de bureau dans cette scène."
     }
   },
   {
@@ -6472,17 +6472,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: caderno.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un cahier dans la scène de idiomas."
+      "f": "On voit un cahier dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-05-bookshelf",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Des étagère de livres",
+    "fr": "Des étagères de livres",
     "article": "Des",
-    "name": "étagère de livres",
-    "speak": "des étagère de livres",
+    "name": "étagères de livres",
+    "speak": "des étagères de livres",
     "scene": "/ghibli/idiomas-05.svg",
     "w": 1200,
     "h": 800,
@@ -6493,7 +6493,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: estante de livros.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des étagère de livres dans la scène de idiomas."
+      "f": "On voit des étagères de livres dans cette scène."
     }
   },
   {
@@ -6514,17 +6514,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: fones de ouvido.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un casque audio dans la scène de idiomas."
+      "f": "On voit un casque audio dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-05-tablet",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un tablette",
-    "article": "Un",
+    "fr": "Une tablette",
+    "article": "Une",
     "name": "tablette",
-    "speak": "un tablette",
+    "speak": "une tablette",
     "scene": "/ghibli/idiomas-05.svg",
     "w": 1200,
     "h": 800,
@@ -6535,7 +6535,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: tablet.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tablette dans la scène de idiomas."
+      "f": "On voit une tablette dans cette scène."
     }
   },
   {
@@ -6556,7 +6556,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: mochila escolar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un cartable dans la scène de idiomas."
+      "f": "On voit un cartable dans cette scène."
     }
   },
   {
@@ -6577,17 +6577,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: cartaz do alfabeto.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une affiche de l'alphabet dans la scène de idiomas."
+      "f": "On voit une affiche de l'alphabet dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-06-bubble",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un bulles de dialogue",
-    "article": "Un",
+    "fr": "Des bulles de dialogue",
+    "article": "Des",
     "name": "bulles de dialogue",
-    "speak": "un bulles de dialogue",
+    "speak": "des bulles de dialogue",
     "scene": "/ghibli/idiomas-06.svg",
     "w": 1200,
     "h": 800,
@@ -6598,17 +6598,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: balões de fala.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un bulles de dialogue dans la scène de idiomas."
+      "f": "On voit des bulles de dialogue dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-06-flags",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un drapeaux",
-    "article": "Un",
+    "fr": "Des drapeaux",
+    "article": "Des",
     "name": "drapeaux",
-    "speak": "un drapeaux",
+    "speak": "des drapeaux",
     "scene": "/ghibli/idiomas-06.svg",
     "w": 1200,
     "h": 800,
@@ -6619,7 +6619,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: bandeiras de países.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un drapeaux dans la scène de idiomas."
+      "f": "On voit des drapeaux dans cette scène."
     }
   },
   {
@@ -6640,7 +6640,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: relógio de parede.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une horloge murale dans la scène de idiomas."
+      "f": "On voit une horloge murale dans cette scène."
     }
   },
   {
@@ -6661,7 +6661,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: quadro-negro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un tableau noir dans la scène de idiomas."
+      "f": "On voit un tableau noir dans cette scène."
     }
   },
   {
@@ -6682,7 +6682,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: microfone.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un microphone dans la scène de idiomas."
+      "f": "On voit un microphone dans cette scène."
     }
   },
   {
@@ -6703,17 +6703,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: lápis.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un crayon dans la scène de idiomas."
+      "f": "On voit un crayon dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-extra-stylo",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Une stylo plume",
-    "article": "Une",
-    "name": "stylo plume",
-    "speak": "une stylo plume",
+    "fr": "Un stylo-plume",
+    "article": "Un",
+    "name": "stylo-plume",
+    "speak": "un stylo-plume",
     "scene": "/ghibli/idiomas-02.svg",
     "w": 1200,
     "h": 800,
@@ -6724,17 +6724,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: caneta-tinteiro.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est une stylo plume dans la scène de idiomas."
+      "f": "On voit un stylo-plume dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-extra-loupe",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un loupe de lecture",
-    "article": "Un",
+    "fr": "Une loupe de lecture",
+    "article": "Une",
     "name": "loupe de lecture",
-    "speak": "un loupe de lecture",
+    "speak": "une loupe de lecture",
     "scene": "/ghibli/idiomas-03.svg",
     "w": 1200,
     "h": 800,
@@ -6745,17 +6745,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: lupa de leitura.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un loupe de lecture dans la scène de idiomas."
+      "f": "On voit une loupe de lecture dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-extra-trousse",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un trousse d'école",
-    "article": "Un",
+    "fr": "Une trousse d'école",
+    "article": "Une",
     "name": "trousse d'école",
-    "speak": "un trousse d'école",
+    "speak": "une trousse d'école",
     "scene": "/ghibli/idiomas-04.svg",
     "w": 1200,
     "h": 800,
@@ -6766,17 +6766,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: estojo escolar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un trousse d'école dans la scène de idiomas."
+      "f": "On voit une trousse d'école dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-extra-gomme",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un gomme à effacer",
-    "article": "Un",
+    "fr": "Une gomme à effacer",
+    "article": "Une",
     "name": "gomme à effacer",
-    "speak": "un gomme à effacer",
+    "speak": "une gomme à effacer",
     "scene": "/ghibli/idiomas-05.svg",
     "w": 1200,
     "h": 800,
@@ -6787,17 +6787,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: borracha.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un gomme à effacer dans la scène de idiomas."
+      "f": "On voit une gomme à effacer dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-extra-regle",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Un règle graduée",
-    "article": "Un",
+    "fr": "Une règle graduée",
+    "article": "Une",
     "name": "règle graduée",
-    "speak": "un règle graduée",
+    "speak": "une règle graduée",
     "scene": "/ghibli/idiomas-06.svg",
     "w": 1200,
     "h": 800,
@@ -6808,7 +6808,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: régua escolar.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un règle graduée dans la scène de idiomas."
+      "f": "On voit une règle graduée dans cette scène."
     }
   },
   {
@@ -6829,7 +6829,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: marcador de página.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un marque-page dans la scène de idiomas."
+      "f": "On voit un marque-page dans cette scène."
     }
   },
   {
@@ -6850,17 +6850,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: marca-texto.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un surligneur jaune dans la scène de idiomas."
+      "f": "On voit un surligneur jaune dans cette scène."
     }
   },
   {
     "id": "idiomas-trail-extra-carnet",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Des carnet de notes",
+    "fr": "Des carnets de notes",
     "article": "Des",
-    "name": "carnet de notes",
-    "speak": "des carnet de notes",
+    "name": "carnets de notes",
+    "speak": "des carnets de notes",
     "scene": "/ghibli/idiomas-09.svg",
     "w": 1200,
     "h": 800,
@@ -6871,7 +6871,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: bloco de notas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est des carnet de notes dans la scène de idiomas."
+      "f": "On voit des carnets de notes dans cette scène."
     }
   },
   {
@@ -6892,7 +6892,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: apontador.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un taille-crayon dans la scène de idiomas."
+      "f": "On voit un taille-crayon dans cette scène."
     }
   },
   {
@@ -6913,7 +6913,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: globo iluminado.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "C'est un globe lumineux dans la scène de idiomas."
+      "f": "On voit un globe lumineux dans cette scène."
     }
   }
 ];

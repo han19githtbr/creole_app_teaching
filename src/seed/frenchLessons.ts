@@ -3,13 +3,13 @@ import type { SeedLesson } from "./lessons";
 
 export const frenchSeedLessons: SeedLesson[] = [
   {
-    title: "Introduction au Français FLE : Cadre et Objectifs",
+    title: "Introduction au français langue étrangère (FLE) : cadre et objectifs",
     slug: "fr-01-introduction-et-objectifs",
     sectionNumber: 101,
     category: "Gramática" as LessonCategory,
     order: 101,
     language: "francais",
-    content: `# Introduction au Français FLE : Cadre et Objectifs
+    content: `    # Introduction au français langue étrangère (FLE) : cadre et objectifs
 
 Bienvenue dans le cursus complet de langue française ! Ce cours a été élaboré pour les apprenants et enseignants désireux d'atteindre une maîtrise authentique, fluide et professionnelle du français (niveaux B2, C1 et C2).
 
@@ -18,14 +18,14 @@ Bienvenue dans le cursus complet de langue française ! Ce cours a été élabor
 ### Pourquoi ce manuel et cette plateforme ?
 Le passage d'un niveau intermédiaire à un niveau avancé exige de dépasser la simple traduction mot à mot. En français, la précision lexicale, la maîtrise des modes verbaux (notamment le subjonctif) et l'élégance du registre soutenu sont indispensables dans un contexte universitaire ou professionnel international.
 
-> **Objectif clé :** Éviter les pièges récurrents des hispanophones et lusophones (faux amis, prépositions, accords complexes) et consolider les compétences requises pour les certifications officielles (**DELF B2, DALF C1/C2, TCF, TEF**).
+> **Objectif clé :** Éviter les pièges récurrents des apprenants lusophones (faux amis, prépositions, accords complexes) et consolider les compétences requises pour les certifications officielles (**DELF B2, DALF C1/C2, TCF, TEF**).
 
 ---
 
 ### Structure du parcours
 1. **Grammaire et structure :** Le subjonctif, la concordance des temps, les pronoms relatifs complexes (*auquel*, *duquel*), le passif et les inversions.
 2. **Orthographe et accords :** Accords du participe passé avec *avoir* et les verbes pronominaux.
-3. **Vocabulaire et registre soutenu :** Lexique de l'argumentation, faux amis critiques, homophones complets et tournures administratives.
+3. **Vocabulaire et registre soutenu :** Lexique de l'argumentation, faux amis fréquents, homophones et tournures administratives.
 4. **Pratique interactive & Jeux :** Jeux d'identification d'objets du quotidien (**C'est quoi ?**), entraînements d'écoute et exercices d'application.`,
   },
   {
@@ -55,7 +55,7 @@ Le subjonctif s'emploie principalement dans les propositions subordonnées intro
 > ⚠️ **Piège classique :**
 > - *Je pense que tu **as** raison.* (Certitude → Indicatif)
 > - *Je **ne** pense **pas** que tu **aies** raison.* (Doute/négation → Subjonctif)
-> - *Espérer que* est TOUJOURS suivi de l'indicatif : *J'espère qu'il **viendra**.* (Jamais le subjonctif !)
+> - Dans une phrase affirmative, *espérer que* est généralement suivi de l'indicatif : *J'espère qu'il **viendra**.* À la forme négative ou interrogative, le subjonctif peut apparaître selon le sens (*Je n'espère pas qu'il vienne*).
 
 ---
 
@@ -112,7 +112,7 @@ Le conditionnel exprime le potentiel, l'atténuation de politesse ou l'irréel :
     language: "francais",
     content: `# Orthographe et Accords : Les Pièges du Participe Passé
 
-L'accord du participe passé constitue l'un des exercices les plus sélectifs en rédaction formelle.
+L'accord du participe passé est l'un des points les plus difficiles de la rédaction formelle.
 
 ---
 
@@ -143,15 +143,15 @@ Le participe passé ne s'accorde **JAMAIS** avec le sujet. Il s'accorde uniqueme
 - **Adverbe :** invariable (*Elle est tout heureuse*), sauf devant un adjectif féminin commençant par une consonne ou un h aspiré (*Elle est **toute** contente*, *Elles sont **toutes** honteuses*).`,
   },
   {
-    title: "Les Faux Amis Fréquents (Français / Portugais / Anglais)",
+    title: "Les faux amis fréquents (français / portugais)",
     slug: "fr-05-faux-amis-frequents",
     sectionNumber: 105,
     category: "Vocabulário" as LessonCategory,
     order: 105,
     language: "francais",
-    content: `# Les Faux Amis Fréquents (Français / Portugais / Anglais)
+    content: `    # Les faux amis fréquents (français / portugais)
 
-Pour les locuteurs lusophones et hispanophones, certains mots français ont une forme trompeuse qui induit de graves contresens.
+Pour les lusophones, certains mots français ont une forme trompeuse qui peut induire en erreur.
 
 ---
 
@@ -159,10 +159,9 @@ Pour les locuteurs lusophones et hispanophones, certains mots français ont une 
 
 | Mot français | Faux ami en portugais | Vrai sens en français | Équivalent portugais correct |
 | :--- | :--- | :--- | :--- |
-| **Actuellement** | "Atualmente" (parfois pris pour "na verdade") | En ce moment, à l'heure actuelle | Atualmente |
 | **Attendre** | "Atender" | Rester dans l'attente de qqn/qqch | Esperar |
 | **Assister à** | "Assistir" (dans le sens soigner/aider) | Être spectateur ou présent | Presenciar / Ver |
-| **Blesser** | "Benzer" ou "Beijar" | Faire une blessure physique ou morale | Ferir / Magoar |
+| **Blesser** | "Benzer" | Faire une blessure physique ou morale | Ferir / Magoar |
 | **Entendre** | "Entender" | Percevoir un son par l'ouïe / vouloir dire | Ouvir / Escutar |
 | **Journée** | "Jornada de trabalho" | Période du jour du lever au coucher | Dia (duração) |
 | **Prétendre** | "Pretender" (avoir l'intention) | Affirmer quelque chose avec insistance | Afirmar / Sustentar |
@@ -208,7 +207,7 @@ La maîtrise des prépositions régies par les verbes est une marque déterminan
 ---
 
 ### 3. Changement de sens selon la préposition
-- **Manquer à qqn :** *Tu me manques.* (Tu fazes falta para mim).
+- **Manquer à qqn :** *Tu me manques.* (Sinto sua falta).
 - **Manquer de qqch :** *La soupe manque de sel.* (Falta sal na sopa).
 - **Penser à :** Avoir à l'esprit (*Je pense à mon avenir.*)
 - **Penser de :** Avoir une opinion (*Que pensez-vous de ce film ?*)`,
@@ -230,10 +229,10 @@ Le registre soutenu est indispensable pour la correspondance formelle, les prés
 
 | Verbe courant | Équivalent soutenu / précis | Exemple d'emploi |
 | :--- | :--- | :--- |
-| Faire un rapport | **Rédiger** un rapport | *Nous avons rédigé le compte-rendu annuel.* |
+| Faire un rapport | **Rédiger** un rapport | *Nous avons rédigé le compte rendu annuel.* |
 | Faire une erreur | **Commettre** une bévue / une méprise | *L'équipe a commis une méprise regrettable.* |
 | Avoir un problème | **Rencontrer** une difficulté / un écueil | *Le projet rencontre des écueils imprévus.* |
-| Donner son accord | **Entériner** une décision / **Octroyer** | *Le conseil d'administration a entériné la motion.* |
+| Donner son accord | **Approuver** / **entériner** une décision | *Le conseil d'administration a approuvé la motion.* |
 | Dire que | **Stipuler** / **Faire observer que** | *Le contrat stipule expressément ces clauses.* |
 | Aider | **Prêter main-forte** / **Contribuer à** | *L'expert a contribué à l'optimisation des coûts.* |
 
@@ -351,7 +350,7 @@ Même des apprenants de niveau C1 commettent régulièrement ces erreurs par cal
     language: "francais",
     content: `# Compréhension Écrite : Stratégies de Lecture Efficace
 
-En examen (DELF B2 / DALF C1) ou en lecture de presse spécialisée (Le Monde, Les Échos, Courrier International), la gestion du temps et la saisie de l'implicite sont décisives.
+En examen (DELF B2 / DALF C1) ou en lecture de presse spécialisée (Le Monde, Les Échos, Courrier International), la gestion du temps et le repérage de l'implicite sont décisifs.
 
 ---
 
@@ -452,7 +451,7 @@ Guide pratique pour aborder avec sérénité et méthode les 4 épreuves clés d
 | **Production écrite** | 1 h (lettre formelle ou essai argumenté) | 2 h 30 (synthèse de documents + essai argumenté) | Clarté de la pensée, fluidité et vocabulaire soutenu |
 | **Production orale** | ~20 min (monologue suivi d'un débat) | ~30 min (exposé structuré à partir d'un dossier + entretien) | Capacité de conviction et nuance dans l'argumentation |
 
-> 🎯 **Conseil pour l'oral :** Ne cherchez pas à parler à toute vitesse. Privilégiez l'articulation, le placement des pauses, les connecteurs logiques (*En premier lieu, toutefois, par conséquent*) et maintenez un contact visuel engagé avec les examinateurs.`,
+> 🎯 **Conseil pour l'oral :** Ne cherchez pas à parler à toute vitesse. Privilégiez l'articulation, le placement des pauses, les connecteurs logiques (*En premier lieu, toutefois, par conséquent*) et maintenez un contact visuel avec les examinateurs.`,
   },
   {
     title: "Exercices de Consolidation et Corrigés Détaillés",
@@ -478,7 +477,7 @@ Choisissez la forme correcte pour chaque phrase :
 > 1. **vienne** (*douter que* exprime le doute → subjonctif).
 > 2. **est** (*il est évident que* exprime une certitude → indicatif).
 > 3. **ait** (*bien que* requiert systématiquement le subjonctif).
-> 4. **passerez** (*espérer que* s'emploie toujours à l'indicatif futur ou présent).
+> 4. **passerez** (*espérer que* est généralement suivi de l'indicatif dans une phrase affirmative).
 
 ---
 
@@ -557,7 +556,7 @@ L'immersion quotidienne dans des contenus authentiques francophones est le levie
 
 ### 2. Presse et revues de référence
 - **Le Monde :** Journalisme d'analyse et de référence, indispensable pour le vocabulaire sociopolitique.
-- **Courrier International :** Articles traduits de la presse mondiale en français d'un registre remarquable.
+- **Courrier International :** Articles de la presse internationale, traduits dans un français soigné.
 - **Philosophie Magazine :** Textes réflexifs et conceptuels parfaits pour préparer les épreuves du DALF C1/C2.
 
 ---
@@ -631,13 +630,13 @@ Utilisez cet index pour retrouver en quelques secondes la leçon qui traite d'un
 > Bonne chance dans votre parcours professionnel et pédagogique international !`,
   },
   {
-    title: "Le Français Insolite et Divertissant (Chapitre Bonus)",
+    title: "Le français insolite et divertissant (chapitre bonus)",
     slug: "fr-20-le-francais-insolite-et-divertissant",
     sectionNumber: 120,
     category: "Cultura" as LessonCategory,
     order: 120,
     language: "francais",
-    content: `# Le Français Insolite et Divertissant
+    content: `    # Le français insolite et divertissant
 
 Ce chapitre bonus s'éloigne volontairement du format grammatical classique : anecdotes, records, devinettes et formats prêts à publier pour donner à voir un français vivant, surprenant et un peu joueur.
 
@@ -672,8 +671,8 @@ Ce chapitre bonus s'éloigne volontairement du format grammatical classique : an
 
 ### 3. Le français en chiffres et records
 
-- **Mot le plus long d'usage courant :** « anticonstitutionnellement » (25 lettres).
-- **Phrase la plus courte de la littérature classique :** « Va ! » — réplique de Chimène dans *Le Cid* de Corneille (1637).
+- **Mot long souvent cité :** « anticonstitutionnellement » (25 lettres).
+- **Réplique célèbre du *Cid* :** « Va, je ne te hais point ! » — Chimène, dans la pièce de Corneille (1637).
 - **Académie française :** fondée en 1635 par le cardinal de Richelieu pour codifier et protéger la langue.
 - **Diffusion internationale :** le français est langue officielle d'une trentaine d'États, sur cinq continents.
 - **Un mot, deux sens opposés :** « hôte » désigne à la fois celui qui reçoit et celui qui est reçu.
@@ -689,8 +688,8 @@ Ce chapitre bonus s'éloigne volontairement du format grammatical classique : an
 | Le français est parlé sur les cinq continents. | Vrai |
 | Toutes les lettres muettes du français sont totalement inutiles. | Faux — elles conservent souvent une trace de l'origine du mot ou permettent une liaison |
 | « Courriel » est le terme recommandé par l'Académie française à la place d'« email ». | Vrai |
-| Le mot « orange » n'a aucune rime parfaite en français. | Vrai |
-| Toutes les expressions contenant un animal appartiennent au registre familier. | Faux — « avoir le bras long » ou « poser un lapin » sont d'usage courant |
+| Le mot « orange » n'a aucune rime parfaite en français. | Faux — il rime avec « mange » et « range ». |
+| Toutes les expressions contenant un animal appartiennent au registre familier. | Faux — le registre dépend de l'expression, pas de l'animal qu'elle contient. |
 
 ---
 
@@ -702,9 +701,9 @@ Ce chapitre bonus s'éloigne volontairement du format grammatical classique : an
 - Si six scies scient six cyprès, six cent six scies scient six cent six cyprès.
 
 **Devinettes lexicales**
-1. *Je commence comme « chat », je finis comme « eau », et je suis un logement fortifié.* → **Château**
-2. *On me trouve entre le vin et le verre : je suis un homophone du chiffre 100.* → **Sang / Cent / Sent**
-3. *Retirez ma première lettre, je reste identique à l'oral : je suis un piège classique.* → **Les homophones** (ex. : « ces » / « ses »)
+1. *Je commence comme « chat », je finis comme « eau », et je désigne une grande demeure, parfois fortifiée.* → **Château**
+2. *Je circule dans les veines et je sonne comme le nombre 100 : qui suis-je ?* → **Sang** (homophone de « cent » et « sent »)
+3. *À l'oral, je sonne comme « ses », mais je sers à désigner plusieurs choses : qui suis-je ?* → **Ces**
 
 ---
 

@@ -68,15 +68,17 @@ function pxPerUnit(W: number) {
   return 1.7;
 }
 
-/** Recorte do objeto no cenÃ¡rio original, com a seta vermelha apontando para ele. */
+/** Exibe a ilustração isolada do objeto durante a pergunta. */
 function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean }) {
-  // full: mostra a cena inteira (o objeto nunca fica cortado); senÃ£o, miniatura circular recortada na seta
+  // A miniatura circular ainda usa a cena; a pergunta mostra a ilustração isolada.
   const cw = Math.min(item.w, item.h) * 0.5;
   const x0 = full ? 0 : clampN(item.arrow.x - cw / 2, 0, item.w - cw);
   const y0 = full ? 0 : clampN(item.arrow.y - cw / 2, 0, item.h - cw);
   const vw = full ? item.w : cw;
   const vh = full ? item.h : cw;
-  const arrowScale = full ? 0.9 : 0.55;
+  const arrowScale = 0.55;
+  const isolatedSource = /^[a-z0-9-]+$/.test(item.id) ? `/ghibli/trail-objects/${item.id}.svg` : null;
+  const source = full && item.scene.startsWith("/ghibli/") && isolatedSource ? isolatedSource : item.scene;
   return (
     <svg
       viewBox={`${x0} ${y0} ${vw} ${vh}`}
@@ -85,18 +87,20 @@ function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: 
       className={cn("block bg-white", full ? "rounded-xl" : "rounded-full", ring)}
       aria-hidden
     >
-      <image href={item.scene} x={0} y={0} width={item.w} height={item.h} preserveAspectRatio="none" />
-      <g className="cq-sway">
-        <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(${arrowScale})`}>
-          <path
-            d="M-90 -10 L-40 -10 L-45 -25 L0 0 L-45 25 L-40 10 L-90 10 Z"
-            fill="#ef4444"
-            stroke="#ffffff"
-            strokeWidth={full ? 5 : 7}
-            strokeLinejoin="round"
-          />
+      <image href={source} x={0} y={0} width={item.w} height={item.h} preserveAspectRatio={full ? "xMidYMid meet" : "none"} />
+      {!full && (
+        <g className="cq-sway">
+          <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(${arrowScale})`}>
+            <path
+              d="M-90 -10 L-40 -10 L-45 -25 L0 0 L-45 25 L-40 10 L-90 10 Z"
+              fill="#ef4444"
+              stroke="#ffffff"
+              strokeWidth={7}
+              strokeLinejoin="round"
+            />
+          </g>
         </g>
-      </g>
+      )}
     </svg>
   );
 }
@@ -105,7 +109,7 @@ function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: 
  * CenÃ¡rio vivo da Trilha Curiosa: montanha, trilha sinuosa, 7 acampamentos, clima, bichos e o aluno.
  *
  * No modo jogo toda a dinÃ¢mica acontece aqui dentro: a cÃ¢mera acompanha o aluno, os objetos do tema
- * aparecem como medalhÃµes na trilha (com a seta vermelha), e a cada acerto o aluno CAMINHA pela curva
+ * aparecem como medalhões com a ilustração isolada, e a cada acerto o aluno CAMINHA pela curva
  * do caminho atÃ© o prÃ³ximo ponto. As alternativas e o cronÃ´metro sÃ£o desenhados por cima, como `children`.
  */
 export function CuriousTrailMountain({

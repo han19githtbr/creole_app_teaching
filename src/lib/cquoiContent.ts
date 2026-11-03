@@ -21,6 +21,7 @@ export interface CestQuoiItem {
   name: string;
   speak: string;
   scene: string;
+  answer?: string;
   w: number;
   h: number;
   arrow: { x: number; y: number };
@@ -37,10 +38,18 @@ export interface ResolvedHint extends CquoiHint {
 
 export function getHint(item: CestQuoiItem): ResolvedHint {
   const own = item.hint ?? HINTS[item.id];
-  if (own?.d && own.u) return { ...own, generic: false };
+  if (own?.d && own.u) {
+    return {
+      ...own,
+      u: item.scene.startsWith("/ghibli/")
+        ? "Observe os detalhes do objeto apresentado."
+        : own.u,
+      generic: false,
+    };
+  }
   return {
-    d: `Este objeto faz parte do tema ${item.theme}. Observe a forma, as cores e o lugar onde ele aparece na cena: a seta vermelha mostra exatamente qual é.`,
-    u: "Pense em como as pessoas usam esse objeto no dia a dia e em que situação ele costuma aparecer.",
+    d: `Este objeto faz parte do tema ${item.theme}. Observe sua forma, suas cores e seus detalhes.`,
+    u: "Pense em como as pessoas usam esse objeto no dia a dia.",
     generic: true,
   };
 }
@@ -52,7 +61,8 @@ export function hasPhrase(item: CestQuoiItem): boolean {
 }
 
 export function phraseOf(item: CestQuoiItem): string {
-  return (item.hint ?? HINTS[item.id])?.f ?? "";
+  const phrase = (item.hint ?? HINTS[item.id])?.f ?? "";
+  return item.scene.startsWith("/ghibli/") ? phrase.replace(/\bdans cette scène\b/i, "ici") : phrase;
 }
 
 /** "Un ordinateur portable" → "o••••••••• p••••••••" (nome sem artigo, só a 1ª letra de cada palavra). */

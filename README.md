@@ -393,6 +393,12 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 
 ## Trilha do Aluno Curioso
 
+
+### Cenário da trilha e vida na mata
+
+- O cenário é uma única ilustração alta (`public/trilha-completa.jpg`, viewBox 1000×2200): a trilha sobe em zigue-zague do pé da montanha até a casinha do topo (ponto de chegada, nível 7). O caminho do aluno está em `src/lib/curiousTrailGeometry.ts` e acompanha o desenho.
+- Os animais passeiam pela mata, fora da trilha, em pontos definidos em `TRAIL_ROAM_SPOTS` (`src/lib/curiousTrailData.ts`). A vida selvagem acontece em uma faixa em volta do aluno (`setFocus` em `src/lib/trailWildlife.ts`), então sempre há bichos à vista conforme ele sobe.
+- Animais terrestres (esquilo, coelho, cervo, raposa, camurça etc.) andam entre pontos próximos da mata; pássaros em bando cruzam o ar sobre a mata, a águia plana em círculos acima do aluno, e borboletas e abelhas ficam nas clareiras floridas.
 Novo módulo visual e dinâmico de gamificação em francês integrado à seção de jogos (`/dashboard/jogo?module=trilha`), simulando uma **expedição de subida de montanha**. O aluno sobe a montanha estação por estação, enfrentando mudanças de altitude e de clima, enquanto reconhece elementos ilustrados do tema escolhido.
 
 ### Como funciona

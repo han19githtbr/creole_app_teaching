@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Motor de geração de vídeos demonstrativos da "Trilha do Aluno Curioso"
  * para Instagram (Stories, Reels e Feed) e Facebook.
  *
@@ -48,7 +48,7 @@ export interface TrailDemoSettings {
 }
 
 export const DEFAULT_TRAIL_DEMO_SETTINGS: TrailDemoSettings = {
-  title: "Trilha do Aluno Curioso 🇫🇷\nSuba a montanha e aprenda francês!",
+  title: "Trilha do Aluno Curioso �Ÿ‡��Ÿ‡�\nSuba a montanha e aprenda francês!",
   themeId: "gastronomia",
   level: 4, // Nível 4 demonstra a transição com chuva e guarda-chuva!
   difficulty: "intermediate",
@@ -194,7 +194,7 @@ const easeOut = (t: number) => 1 - Math.pow(1 - clamp(t), 3);
 function fitCanvasText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
   let fitted = text;
   while (fitted.length > 1 && ctx.measureText(fitted).width > maxWidth) {
-    fitted = `${fitted.slice(0, -2)}…`;
+    fitted = `${fitted.slice(0, -2)}�€�`;
   }
   return fitted;
 }
@@ -220,7 +220,7 @@ export function renderTrailDemoFrame(
   const elementFraction = (index: number) =>
     levelStart + ((levelEnd - levelStart) * (index + 1)) / (levelCfg.elementCount + 1);
 
-  // 1. FUNDO CÉU E ATMOSFERA ALPINA CONFORME O CLIMA
+  // 1. FUNDO C�‰U E ATMOSFERA ALPINA CONFORME O CLIMA
   const isRain = levelCfg.weather === "rain" && plan.settings.difficulty !== "avalanche";
   const isSnow = levelCfg.weather === "snow" || plan.settings.difficulty === "avalanche";
 
@@ -246,11 +246,12 @@ export function renderTrailDemoFrame(
   const trailBackdrop = assets.images.get("/trilha.jfif");
   if (trailBackdrop?.complete && trailBackdrop.naturalWidth > 0) {
     ctx.save();
-    ctx.globalAlpha = 0.5;
+    ctx.globalAlpha = 1;
     ctx.drawImage(trailBackdrop, 0, 0, w, h);
     ctx.restore();
   }
 
+  if (!trailBackdrop?.complete || trailBackdrop.naturalWidth === 0) {
   // Sol radiante com corona alpina ou camadas de nuvens densas
   if (!isRain && !isSnow) {
     ctx.save();
@@ -285,7 +286,7 @@ export function renderTrailDemoFrame(
     ctx.restore();
   }
 
-  // 2. MACIÇO ALPINO REALISTA (Picos Nevados Distantes, Paredões de Granito e Encosta)
+  // 2. MACI�‡O ALPINO REALISTA (Picos Nevados Distantes, Paredões de Granito e Encosta)
   ctx.save();
 
   // Maciço de picos distantes (Picos pontiagudos com luz e sombra geológica)
@@ -488,6 +489,8 @@ export function renderTrailDemoFrame(
     ctx.fill();
   });
 
+  }
+
   // 3. A TRILHA REALISTA EM CURVA SINUOSA COM CAMADAS E DETALHES ALPINOS
   // Definição dos waypoints da trilha no formato proporcional ao jogo real
   const trailPoints = TRAIL_LEVELS.map((_, index) => {
@@ -558,7 +561,7 @@ export function renderTrailDemoFrame(
     ctx.fillRect(cl.x - 2, cl.y, 4, 1.5);
   });
 
-  // 4. AS 7 ESTAÇÕES / WAYPOINTS DA TRILHA (N1 a N7 com altitudes)
+  // 4. AS 7 ESTA�‡�•ES / WAYPOINTS DA TRILHA (N1 a N7 com altitudes)
   trailPoints.forEach((pt, idx) => {
     const lvl = idx + 1;
     const isDone = lvl < plan.settings.level;
@@ -593,7 +596,7 @@ export function renderTrailDemoFrame(
     ctx.font = `bold 12px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(isDone ? "✓" : `N${lvl}`, pt.x, pt.y - 7);
+    ctx.fillText(isDone ? "�œ“" : `N${lvl}`, pt.x, pt.y - 7);
 
     // Plaquinha de altitude do marco
     ctx.fillStyle = isCur ? "#f59e0b" : "rgba(15, 23, 42, 0.85)";
@@ -606,7 +609,7 @@ export function renderTrailDemoFrame(
     ctx.restore();
   });
 
-  // 5. BANDEIRA NO CUME DA VITÓRIA (Nível 7)
+  // 5. BANDEIRA NO CUME DA VIT�“RIA (Nível 7)
   const summitPosition = getTrailPositionAtFraction(1);
   const summitPt = { x: (summitPosition.x / 1000) * w, y: (summitPosition.y / 600) * h };
   ctx.save();
@@ -652,7 +655,7 @@ export function renderTrailDemoFrame(
     for (let rx = -50; rx < w + 50; rx += 40) {
       for (let ry = -40; ry < h; ry += 65) {
         const y = (ry + rainOffset) % h;
-        const x = rx + (y * 0.35); // Ângulo realista do vento alpino
+        const x = rx + (y * 0.35); // �‚ngulo realista do vento alpino
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(x - 12, y + 26);
@@ -1198,7 +1201,7 @@ export function renderTrailDemoFrame(
   ctx.textAlign = "right";
   ctx.fillStyle = "#fcd34d";
   ctx.font = `bold ${Math.max(13, w * 0.016)}px ${FONT}`;
-  ctx.fillText(`✨ ${score} pts`, hudX + hudW - 72, 53);
+  ctx.fillText(`�œ� ${score} pts`, hudX + hudW - 72, 53);
   ctx.fillStyle = "#cbd5e1";
   ctx.font = `600 ${Math.max(10, w * 0.011)}px ${FONT}`;
   const streak = round
@@ -1206,7 +1209,7 @@ export function renderTrailDemoFrame(
       ? activeRoundIndex + 1
       : activeRoundIndex
     : plan.rounds.length;
-  ctx.fillText(`🔥 ${streak} · ${round ? activeRoundIndex + 1 : plan.rounds.length}/${plan.rounds.length}`, hudX + hudW - 72, 79);
+  ctx.fillText(`�Ÿ”� ${streak} · ${round ? activeRoundIndex + 1 : plan.rounds.length}/${plan.rounds.length}`, hudX + hudW - 72, 79);
   ctx.fillStyle = plan.settings.difficulty === "avalanche" ? "#0369a1" : secondsLeft <= 3 ? "#dc2626" : "#2563eb";
   ctx.beginPath();
   ctx.arc(hudX + hudW - 32, 62, 24, 0, Math.PI * 2);
@@ -1214,7 +1217,7 @@ export function renderTrailDemoFrame(
   ctx.fillStyle = "#ffffff";
   ctx.font = `bold ${Math.max(11, w * 0.012)}px ${FONT}`;
   ctx.textAlign = "center";
-  ctx.fillText(plan.settings.difficulty === "avalanche" ? "❄" : round ? `${secondsLeft}s` : "✓", hudX + hudW - 32, 67);
+  ctx.fillText(plan.settings.difficulty === "avalanche" ? "�„" : round ? `${secondsLeft}s` : "�œ“", hudX + hudW - 32, 67);
 
   if (round && t >= round.start && t < round.walkEnd) {
     const target = getTrailPositionAtFraction(elementFraction(activeRoundIndex));
@@ -1349,7 +1352,7 @@ export function renderTrailDemoFrame(
         ctx.textAlign = "right";
         ctx.fillStyle = "#6ee7b7";
         ctx.font = `bold ${Math.max(12, w * 0.014)}px ${FONT}`;
-        ctx.fillText("✓", x + optionW - 12, y + optionH / 2);
+        ctx.fillText("�œ“", x + optionW - 12, y + optionH / 2);
       }
     });
     if (t >= round.correctAt) {
@@ -1373,7 +1376,7 @@ export function renderTrailDemoFrame(
     ctx.textAlign = "center";
     ctx.fillStyle = "#f59e0b";
     ctx.font = `900 32px ${FONT}`;
-    ctx.fillText("🏔️ TRILHA DO ALUNO CURIOSO", w / 2, h * 0.4);
+    ctx.fillText("�Ÿ�”️ TRILHA DO ALUNO CURIOSO", w / 2, h * 0.4);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = `bold 42px ${FONT}`;
@@ -1427,7 +1430,7 @@ export function renderTrailDemoFrame(
     ctx.fillStyle = "#f59e0b";
     ctx.font = `900 64px sans-serif`;
     const summitWon = plan.settings.level === 7;
-    ctx.fillText(summitWon ? "🏔️ 🇫🇷 🏆" : "🌲 🇫🇷 ⭐", w / 2, h * 0.38);
+    ctx.fillText(summitWon ? "�Ÿ�”️ �Ÿ‡��Ÿ‡� �Ÿ�†" : "�ŸŒ� �Ÿ‡��Ÿ‡� ⭐", w / 2, h * 0.38);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = `900 ${Math.min(38, w * 0.035)}px ${FONT}`;

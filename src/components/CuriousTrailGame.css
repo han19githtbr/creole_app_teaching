@@ -1,4 +1,4 @@
-/* Animações e Estilos Especializados para a Trilha do Aluno Curioso */
+﻿/* Animações e Estilos Especializados para a Trilha do Aluno Curioso */
 
 /* Movimento de caminhada alpina realista do estudante (passadas, inclinação e peso) */
 @keyframes trailHikerLegSwing {
@@ -281,8 +281,8 @@
   right: 0;
   bottom: 0;
   left: 0;
-  height: 25%;
-  background: linear-gradient(0deg, rgba(15, 23, 42, .22), transparent);
+  height: 10%;
+  background: linear-gradient(0deg, rgba(15, 23, 42, .08), transparent);
   content: "";
   pointer-events: none;
 }

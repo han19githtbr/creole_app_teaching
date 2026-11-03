@@ -683,12 +683,14 @@ export interface Wildlife {
   find: (animalId: string) => Critter | undefined;
   position: (c: Critter, W: number, H: number) => { x: number; y: number };
   setWeather: (weather: TrailWeather) => void;
+  /** Posição (0..1) do aluno no cenário: a vida selvagem acontece em volta dele, na mata. */
+  setFocus: (x: number, y: number) => void;
 }
 
-const TARGET_COUNT = 6;
-const GROUND_REGION = { x0: 0.04, x1: 0.78, y0: 0.28, y1: 0.78 };
-const BIRD_SKY_REGION = { x0: 0.8, x1: 0.97, y0: 0.1, y1: 0.34 };
-const FLOWER_REGION = { x0: 0.04, x1: 0.9, y0: 0.24, y1: 0.78 };
+const TARGET_COUNT = 8;
+/** O cenário é uma trilha alta (1000x2200): só há vida em uma faixa vertical em torno do aluno. */
+const WINDOW_HALF = 0.14;
+const FAR_LIMIT = WINDOW_HALF + 0.08;
 
 function habitatFor(animalId: string): TrailHabitat {
   return animalId === "squirrel" || animalId === "bird" ? "tree" : "grass";
@@ -700,6 +702,8 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
   let weather = initialWeather;
   let uid = 0,
     swapTimer = 9;
+  let focusX = 0.5,
+    focusY = 0.9;
 
   const mk = (animal: TrailAnimal): Critter => ({
     uid: uid++,
@@ -731,21 +735,30 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     color: COLORS[uid % COLORS.length],
   });
 
+  const inWindow = (i: number) => Math.abs(TRAIL_ROAM_SPOTS[i].y / 100 - focusY) <= WINDOW_HALF;
   const freeSpots = (animalId?: string) => TRAIL_ROAM_SPOTS
     .map((_, i) => i)
+    .filter(inWindow)
     .filter((i) => !critters.some((c) => c.spot === i))
     .filter((i) => !animalId || TRAIL_ROAM_SPOTS[i].habitat === habitatFor(animalId));
-  const pickFree = (animalId?: string): number => {
+  /** Escolhe um ponto livre da mata; com `from`, prefere os mais próximos (o bicho passeia, não teleporta). */
+  const pickFree = (animalId?: string, from?: { x: number; y: number }): number => {
     let fr = freeSpots(animalId);
     if (fr.length === 0 && animalId && animalId !== "squirrel") fr = freeSpots();
-    return fr.length ? fr[Math.floor(rnd() * fr.length)] : -1;
+    if (fr.length === 0) return -1;
+    if (from) {
+      const dist = (i: number) => Math.hypot((TRAIL_ROAM_SPOTS[i].x / 100 - from.x) * 1000, (TRAIL_ROAM_SPOTS[i].y / 100 - from.y) * 2200);
+      const sorted = fr.filter((i) => dist(i) > 40).sort((a, b) => dist(a) - dist(b));
+      if (sorted.length) return sorted[Math.floor(rnd() * Math.min(5, sorted.length))];
+    }
+    return fr[Math.floor(rnd() * fr.length)];
   };
+  /** Pássaros cruzam o ar sobre a mata inteira; borboletas e abelhas ficam nas clareiras floridas. */
   const randRegion = (animalId?: string) => {
-    const region = animalId === "bird" ? BIRD_SKY_REGION : animalId === "butterfly" || animalId === "bee" ? FLOWER_REGION : GROUND_REGION;
-    return {
-      x: region.x0 + rnd() * (region.x1 - region.x0),
-      y: region.y0 + rnd() * (region.y1 - region.y0),
-    };
+    if (animalId === "bird") return { x: 0.05 + rnd() * 0.9, y: clamp(focusY + (rnd() - 0.6) * 0.14, 0.02, 0.97) };
+    const near = freeSpots();
+    const sp = near.length ? TRAIL_ROAM_SPOTS[near[Math.floor(rnd() * near.length)]] : { x: focusX * 100, y: focusY * 100 };
+    return { x: clamp(sp.x / 100 + (rnd() - 0.5) * 0.04, 0.03, 0.97), y: clamp(sp.y / 100 + (rnd() - 0.5) * 0.02, 0.02, 0.98) };
   };
 
   function weatherPool() {
@@ -771,8 +784,8 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
         c.timer = rnd() * 3;
         c.state = "idle";
       } else {
-        c.x = clamp(P.x / 100 + (rnd() - 0.5) * 0.16, 0.03, 0.98);
-        c.y = 1.08;
+        c.x = rnd() > 0.5 ? -0.05 : 1.05; // entra pela lateral da mata, andando até o ponto escolhido
+        c.y = P.y / 100;
         c.state = "move";
         c.hasTarget = true;
         c.tx = P.x / 100;
@@ -833,16 +846,25 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     populate();
   }
 
+  function setFocus(x: number, y: number) {
+    const jumped = Math.abs(y - focusY) > WINDOW_HALF * 0.9;
+    focusX = x;
+    focusY = y;
+    if (jumped) {
+      critters.length = 0;
+      pending.length = 0;
+      populate();
+    }
+  }
+
   function sendAway(c: Critter) {
     c.state = "leaving";
     c.spot = -1;
     c.hasTarget = true;
     c.landed = false;
     if (c.spec.kind === "walk") {
-      const goBottom = c.y > 0.65;
-      c.tx = c.x + (rnd() - 0.5) * 0.4;
-      c.ty = goBottom ? 1.15 : c.y + 0.1;
-      if (!goBottom) c.tx = 1.15;
+      c.tx = c.x < 0.5 ? -0.15 : 1.15; // some mata adentro, pela lateral
+      c.ty = c.y + (rnd() - 0.5) * 0.03;
     } else {
       const left = c.x < 0.5;
       c.tx = left ? -0.15 : 1.15;
@@ -857,7 +879,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
       c.v = approach(c.v, 0, 180 * dt);
       c.timer -= dt;
       if (c.timer <= 0) {
-        const sp = pickFree(c.animal.id);
+        const sp = pickFree(c.animal.id, c);
         if (sp >= 0) {
           c.spot = sp;
           c.tx = TRAIL_ROAM_SPOTS[sp].x / 100;
@@ -919,8 +941,8 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
       // Águia real planando majestosa em correntes térmicas ascendentes
       c.orbit += dt * 0.28;
       c.enter = approach(c.enter, 1, 0.2 * dt);
-      const cx = 0.65 + sin(c.orbit) * 0.25;
-      const cy = 0.22 + cos(c.orbit * 0.75) * 0.09;
+      const cx = 0.5 + sin(c.orbit) * 0.34;
+      const cy = clamp(focusY - 0.05 + cos(c.orbit * 0.75) * 0.05, 0.02, 0.97);
       c.x = cx;
       c.y = cy;
       c.z = 85 + sin(c.orbit * 1.8) * 15;
@@ -1019,6 +1041,10 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     }
     for (let i = critters.length - 1; i >= 0; i--) {
       const c = critters[i];
+      if (c.age > 2 && c.animal.id !== "eagle" && Math.abs(c.y - focusY) > FAR_LIMIT) {
+        critters.splice(i, 1); // ficou longe do aluno: fora da tela, sai de cena
+        continue;
+      }
       if (c.state === "leaving" && (c.x < -0.12 || c.x > 1.12 || c.y > 1.12 || c.y < -0.12)) critters.splice(i, 1);
     }
     swapTimer -= dt;
@@ -1168,5 +1194,5 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     return { x: c.x * W, y: c.y * H - yOff };
   }
 
-  return { critters, step, render, hit, poke, find, position, setWeather };
+  return { critters, step, render, hit, poke, find, position, setWeather, setFocus };
 }

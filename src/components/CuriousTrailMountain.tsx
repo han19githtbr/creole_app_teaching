@@ -41,7 +41,7 @@ export interface CuriousTrailMountainProps {
 
 // ---------- Geometria da trilha (mesma curva de sempre, em um viewBox 1000x600) ----------
 const VB_W = 1000;
-const VB_H = 600;
+const VB_H = 2200;
 /** Velocidade da caminhada em unidades do viewBox por segundo. */
 const WALK_SPEED = 70;
 
@@ -320,6 +320,7 @@ export function CuriousTrailMountain({
 
         // 2) c�ƒ¢mera: acompanha o aluno e o pr�ƒ³ximo objeto
         const sx = (p.x / VB_W) * WW, sy = (p.y / VB_H) * WH;
+        wild.setFocus(p.x / VB_W, p.y / VB_H);
         let fx = sx, fy = sy;
         let qy = -1;
         if (L.focus != null) {
@@ -330,7 +331,7 @@ export function CuriousTrailMountain({
         }
         const s = L.playing ? (pxPerUnit(W) * VB_W) / WW : 1;
         const dtx = L.playing ? clampN(W * 0.5 - fx * s, W - WW * s, 0) : (W - WW) / 2;
-        let dty = L.playing ? clampN(H * 0.38 - fy * s, H - WH * s - H * 0.5, 0) : (H - WH) / 2;
+        let dty = L.playing ? clampN(H * 0.38 - fy * s, H - WH * s - H * 0.5, 0) : clampN(H * 0.5 - fy * s, H - WH * s, 0);
         // garante espa�ƒ§o, acima do ponto do objeto, para o cart�ƒ£o com a cena inteira
         if (L.playing && L.cardH > 0 && qy >= 0) {
           const ey = dty + qy * s;
@@ -431,18 +432,16 @@ export function CuriousTrailMountain({
         style={{ transformOrigin: "0 0", width: stage.WW || "100%", height: stage.WH || "100%" }}
       >
         <div
-          className="absolute inset-0 pointer-events-none bg-cover bg-center"
-          style={{ backgroundImage: "url('/trilha.jfif')", filter: weather === "rain" ? "brightness(.82) saturate(.82)" : weather === "snow" ? "brightness(1.08) saturate(.7)" : undefined }}
+          className="absolute inset-0 pointer-events-none"
+          style={{ backgroundImage: "url('/trilha-completa.jpg')", backgroundSize: "100% 100%", backgroundRepeat: "no-repeat", filter: weather === "rain" ? "brightness(.82) saturate(.82)" : weather === "snow" ? "brightness(1.08) saturate(.7)" : undefined }}
           aria-hidden
         />
         {/* A ilustra��o enviada � o cen�rio completo; este SVG cont�m s� o caminho usado pelo jogo. */}
-        <svg viewBox="0 0 1000 600" preserveAspectRatio="none" className="absolute inset-0 z-[2] h-full w-full pointer-events-none overflow-visible" aria-hidden>
-          <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="rgba(71, 45, 24, .24)" strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" />
-          <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="rgba(226, 180, 112, .2)" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 z-[2] h-full w-full pointer-events-none overflow-visible" aria-hidden>
           <path ref={setPathEl} d={CURIOUS_TRAIL_PATH} fill="none" stroke="transparent" strokeWidth="1" />
         </svg>
         {avalancheMode && total > 0 && (
-          <svg viewBox="0 0 1000 600" preserveAspectRatio="none" className="absolute inset-0 z-[15] h-full w-full overflow-visible pointer-events-none" aria-hidden>
+          <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 z-[15] h-full w-full overflow-visible pointer-events-none" aria-hidden>
             <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#dbeafe" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} className="trail-avalanche-shadow" />
             <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#f8fafc" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} className="trail-avalanche-flow" />
             <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#bae6fd" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} opacity=".9" />

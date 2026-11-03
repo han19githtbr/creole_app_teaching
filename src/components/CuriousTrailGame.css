@@ -381,6 +381,20 @@
   animation: trailTimerUrgent .8s ease-in-out infinite;
 }
 
+.trail-avalanche-shadow {
+  filter: drop-shadow(0 5px 8px rgba(30, 64, 175, .45));
+}
+
+.trail-avalanche-flow {
+  filter: drop-shadow(0 0 8px rgba(224, 242, 254, .95));
+  animation: trailAvalanchePulse 1.3s ease-in-out infinite;
+}
+
+@keyframes trailAvalanchePulse {
+  0%, 100% { opacity: .82; }
+  50% { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .trail-cloud--first,
   .trail-cloud--second,
@@ -392,6 +406,10 @@
   .trail-breath-vapor,
   .trail-victory-jump,
   .trail-timer--urgent {
+    animation: none;
+  }
+
+  .trail-avalanche-flow {
     animation: none;
   }
 

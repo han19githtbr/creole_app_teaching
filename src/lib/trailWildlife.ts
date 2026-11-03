@@ -49,8 +49,8 @@ const specOf = (id: string): Spec => SPECIES[id] ?? FALLBACK;
 
 const WEATHER_ANIMAL_IDS: Record<TrailWeather, readonly string[]> = {
   sunny: ["squirrel", "rabbit", "bird", "deer", "fox", "chamois", "eagle", "butterfly", "bee"],
-  rain: ["frog", "snail", "bird", "deer", "fox", "squirrel", "rabbit"],
-  snow: ["chamois", "eagle", "fox", "rabbit", "deer", "squirrel", "bird"],
+  rain: ["frog", "snail", "bird"],
+  snow: ["chamois", "eagle", "fox", "rabbit"],
 };
 
 const WEATHER_HIGHLIGHTS: Record<TrailWeather, readonly string[]> = {
@@ -804,7 +804,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
 
   function populate() {
     for (const id of WEATHER_HIGHLIGHTS[weather]) spawn(undefined, true, id);
-    while (critters.length < TARGET_COUNT) spawn(undefined, true);
+    while (critters.length < Math.min(TARGET_COUNT, weatherPool().length)) spawn(undefined, true);
   }
 
   populate();
@@ -1115,6 +1115,11 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
 
   function poke(c: Critter) {
     c.react = 0.7;
+    // Espécies ariscas evitam contato; anfíbios e pequenos voadores reagem com saltos ou voo.
+    if (["deer", "fox", "rabbit", "squirrel", "chamois", "eagle", "bee"].includes(c.animal.id)) {
+      sendAway(c);
+      return;
+    }
     if (c.landed) {
       c.landed = false;
       c.timer = 0;

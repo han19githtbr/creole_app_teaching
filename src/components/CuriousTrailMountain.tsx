@@ -26,6 +26,8 @@ export interface CuriousTrailMountainProps {
   roundState?: TrailRoundState;
   /** true depois do Ãºltimo objeto do nÃ­vel: o aluno segue atÃ© a prÃ³xima estaÃ§Ã£o. */
   levelFinished?: boolean;
+  avalancheMode?: boolean;
+  onAvalancheCaught?: () => void;
   isCheering?: boolean;
   isRaisingFlag?: boolean;
   flagProgress?: number; // 0..100
@@ -121,6 +123,8 @@ export function CuriousTrailMountain({
   elementIndex = 0,
   roundState = "asking",
   levelFinished = false,
+  avalancheMode = false,
+  onAvalancheCaught,
   isCheering = false,
   isRaisingFlag = false,
   flagProgress = 100,
@@ -133,7 +137,7 @@ export function CuriousTrailMountain({
   children,
 }: CuriousTrailMountainProps) {
   const currentCfg = TRAIL_LEVELS.find((l) => l.level === currentLevel) || TRAIL_LEVELS[0];
-  const weather: TrailWeather = currentCfg.weather;
+  const weather: TrailWeather = avalancheMode ? "snow" : currentCfg.weather;
   const playing = !!elements;
   const summitDone = completedLevels.includes(7);
   const [localBubble, setLocalBubble] = useState<{ id: string; quote: string; name: string } | null>(null);
@@ -153,6 +157,10 @@ export function CuriousTrailMountain({
   const movingRef = useRef(false);
   const [stage, setStage] = useState({ W: 0, H: 0, WW: 0, WH: 0 });
   const [walking, setWalking] = useState(false);
+  const [avalancheLen, setAvalancheLen] = useState(0);
+  const avalancheRef = useRef({ len: 0, start: 0, caught: false, tick: 0 });
+  const avalancheCaughtCallbackRef = useRef(onAvalancheCaught);
+  useEffect(() => { avalancheCaughtCallbackRef.current = onAvalancheCaught; }, [onAvalancheCaught]);
   const [studentFacing, setStudentFacing] = useState<"left" | "right">("right");
   const [studentIncline, setStudentIncline] = useState<number>(0);
   const facingRef = useRef<"left" | "right">("right");
@@ -200,10 +208,16 @@ export function CuriousTrailMountain({
   const focusBelow = focusLen != null && (pointPct(focusLen)?.y ?? 50) < 30;
 
   // espelhos para o laÃ§o de animaÃ§Ã£o (evita recriar o requestAnimationFrame a cada render)
-  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0 });
+  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0, avalancheMode: false });
   useEffect(() => {
-    live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total, cardH: focusLen != null && !focusBelow ? cardHeight : 0 };
+    live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total, cardH: focusLen != null && !focusBelow ? cardHeight : 0, avalancheMode };
   });
+
+  useEffect(() => {
+    const start = CAMP_FRACS[currentLevel - 1] * total;
+    avalancheRef.current = { len: start - 115, start, caught: false, tick: 0 };
+    setAvalancheLen(start - 115);
+  }, [currentLevel, elements, total]);
 
   function pointPct(len: number): { x: number; y: number } | null {
     const { tbl, step } = pathInfo;
@@ -270,6 +284,19 @@ export function CuriousTrailMountain({
           }
         }
         walkRef.current = w;
+        if (L.avalancheMode && !avalancheRef.current.caught) {
+          const hazard = avalancheRef.current;
+          hazard.len = Math.min(L.total, hazard.len + dt * 4.2);
+          hazard.tick += dt;
+          if (w - hazard.len <= 42 && hazard.len >= hazard.start) {
+            hazard.caught = true;
+            avalancheCaughtCallbackRef.current?.();
+          }
+          if (hazard.tick >= 0.12) {
+            hazard.tick = 0;
+            setAvalancheLen(hazard.len);
+          }
+        }
         const moving = Math.abs(L.target - w) > 0.5;
         if (moving !== movingRef.current) {
           movingRef.current = moving;
@@ -408,6 +435,11 @@ export function CuriousTrailMountain({
         className="absolute left-0 top-0"
         style={{ transformOrigin: "0 0", width: stage.WW || "100%", height: stage.WH || "100%" }}
       >
+        <div
+          className={cn("absolute inset-0 pointer-events-none bg-cover bg-center", weather === "rain" && "brightness-75 saturate-75", weather === "snow" && "brightness-110 saturate-50")}
+          style={{ backgroundImage: "url('/trilha.jfif')" }}
+          aria-hidden
+        />
         {/* Sol e nuvens */}
         {weather === "sunny" && (
           <div className="absolute inset-0 pointer-events-none">
@@ -421,7 +453,7 @@ export function CuriousTrailMountain({
         {weather === "snow" && <div className="absolute top-0 inset-x-0 h-28 pointer-events-none bg-gradient-to-b from-slate-600/50 via-indigo-900/30 to-transparent" />}
 
         {/* Montanhas, encosta e trilha realista com profundidade geológica alpina */}
-        <svg viewBox="0 0 1000 600" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
+        <svg viewBox="0 0 1000 600" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none overflow-visible opacity-60">
           <defs>
             {/* Maciço distante com perspectiva atmosférica */}
             <linearGradient id="farPeaksGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -666,6 +698,14 @@ export function CuriousTrailMountain({
           ))}
         </svg>
 
+        {avalancheMode && total > 0 && (
+          <svg viewBox="0 0 1000 600" preserveAspectRatio="none" className="absolute inset-0 z-[15] h-full w-full overflow-visible pointer-events-none" aria-hidden>
+            <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#dbeafe" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} className="trail-avalanche-shadow" />
+            <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#f8fafc" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} className="trail-avalanche-flow" />
+            <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#bae6fd" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} opacity=".9" />
+          </svg>
+        )}
+
         {/* Bichos vivos */}
         <svg ref={svgRef} className="absolute inset-0 w-full h-full z-20 pointer-events-none" aria-hidden />
         <div className="absolute inset-0 z-20" onClick={handleMapClick} onPointerMove={handleMapMove} />
@@ -787,9 +827,9 @@ export function CuriousTrailMountain({
         <div ref={studentRef} className="absolute z-[35] pointer-events-none" style={{ left: `${currentCfg.coord.x}%`, top: `${currentCfg.coord.y}%` }}>
           <div style={{ transform: `translate(-50%, -88%) scale(${inv})`, transformOrigin: "50% 88%" }}>
             <CuriousTrailStudent
-              weather={weather}
               hasUmbrella={currentCfg.hasUmbrella}
-              hasSnowGear={currentCfg.hasSnowGear}
+              hasSnowGear={currentCfg.hasSnowGear || avalancheMode}
+              weather={avalancheMode ? "snow" : weather}
               isWalking={walking}
               isCheering={isCheering}
               isRaisingFlag={isRaisingFlag || (currentLevel === 7 && summitDone)}

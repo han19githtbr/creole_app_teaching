@@ -17,6 +17,7 @@ export function TrailPlayHud({
   streak,
   index,
   total,
+  avalanche = false,
 }: {
   timeLeft: number;
   totalMs: number;
@@ -24,6 +25,7 @@ export function TrailPlayHud({
   streak: number;
   index: number;
   total: number;
+  avalanche?: boolean;
 }) {
   const secs = Math.ceil(timeLeft / 1000);
   const urgent = timeLeft <= Math.min(3000, totalMs * 0.4);
@@ -36,7 +38,11 @@ export function TrailPlayHud({
           🔥 {streak} · {Math.min(index + 1, total)}/{total}
         </span>
       </div>
-      <div
+      {avalanche ? (
+        <div className="flex h-10 items-center gap-1.5 rounded-full bg-sky-700 px-3 text-xs font-black text-white shadow-md" aria-label="Avalanche avançando">
+          <span aria-hidden>🌨️</span><span>Avalanche</span>
+        </div>
+      ) : <div
         className={cn(
           "trail-timer flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-md transition-colors",
           urgent ? "trail-timer--urgent bg-red-600" : warn ? "bg-amber-500" : "bg-blue-600"
@@ -45,7 +51,7 @@ export function TrailPlayHud({
         aria-label={`${secs} segundos restantes`}
       >
         {secs}s
-      </div>
+      </div>}
     </div>
   );
 }
@@ -60,6 +66,7 @@ export function TrailAnswerDock({
   totalMs,
   bonusText,
   onPick,
+  timed = true,
 }: {
   options: string[];
   correct: string;
@@ -69,22 +76,23 @@ export function TrailAnswerDock({
   totalMs: number;
   bonusText: string | null;
   onPick: (opt: string) => void;
+  timed?: boolean;
 }) {
   const canAnswer = roundState === "asking" || roundState === "retry";
   const pct = Math.max(0, Math.min(100, (timeLeft / totalMs) * 100));
   return (
     <div className="pointer-events-auto absolute inset-x-0 bottom-0 p-2 sm:p-3">
       <div className="overflow-hidden rounded-2xl border border-white/20 bg-slate-950/78 shadow-2xl backdrop-blur-md">
-        <div className="h-1 w-full bg-white/10" aria-hidden>
+        {timed && <div className="h-1 w-full bg-white/10" aria-hidden>
           <div
             className={cn("h-full transition-[width] duration-100 ease-linear", timeLeft <= Math.min(3000, totalMs * 0.4) ? "bg-red-500" : timeLeft <= totalMs * 0.5 ? "bg-amber-400" : "bg-sky-400")}
             style={{ width: `${pct}%` }}
           />
-        </div>
+        </div>}
         <div className="px-2.5 pb-2.5 pt-1.5 sm:px-3">
           <p className="mb-1.5 flex items-center justify-between gap-2 text-[11px] font-bold text-slate-200">
             <span className="truncate">
-              {roundState === "retry" ? (
+              {!timed ? <span className="text-sky-200">🌨️ Responda com atenção e continue subindo!</span> : roundState === "retry" ? (
                 <span className="text-amber-300">Quase! Você tem mais uma chance 👀</span>
               ) : (
                 <>Que objeto a <span className="text-red-400">seta vermelha</span> aponta?</>

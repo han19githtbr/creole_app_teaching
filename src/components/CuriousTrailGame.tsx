@@ -30,7 +30,7 @@ import {
   TrailSummitOverlay,
 } from "./CuriousTrailOverlays";
 
-export type TrailDifficulty = "easy" | "intermediate" | "master" | "native";
+export type TrailDifficulty = "easy" | "intermediate" | "master" | "native" | "avalanche";
 
 interface DifficultyConfig {
   id: TrailDifficulty;
@@ -78,6 +78,15 @@ const DIFFICULTY_CONFIGS: Record<TrailDifficulty, DifficultyConfig> = {
     multiplier: 2.5,
     desc: "6s por elemento · Reflexo de nativo",
     color: "from-violet-600 to-indigo-700",
+  },
+  avalanche: {
+    id: "avalanche",
+    label: "Avalanche",
+    emoji: "🌨️",
+    seconds: 0,
+    multiplier: 3.0,
+    desc: "A neve avança pela trilha atrás de você",
+    color: "from-sky-500 to-blue-800",
   },
 };
 
@@ -177,7 +186,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   const [rewardModalOpen, setRewardModalOpen] = useState(false);
 
   // Fases: o jogo todo (contagem, perguntas, nível concluído, vitória) acontece em cima do mapa
-  const [phase, setPhase] = useState<"lobby" | "preparing" | "load_error" | "countdown" | "playing" | "level_complete" | "summit_victory">("lobby");
+  const [phase, setPhase] = useState<"lobby" | "preparing" | "load_error" | "countdown" | "playing" | "level_complete" | "summit_victory" | "avalanche_caught">("lobby");
   const [difficulty, setDifficulty] = useState<TrailDifficulty>("intermediate");
   const diffCfg = DIFFICULTY_CONFIGS[difficulty];
   const [preloadProgress, setPreloadProgress] = useState({ loaded: 0, total: 0 });
@@ -262,7 +271,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     setWrongPicks([]);
     attemptRef.current = 1;
     setTimeLeft(diffCfg.seconds * 1000);
-    setTimerRunning(true);
+    setTimerRunning(difficulty !== "avalanche");
     setSpeedBonusText(null);
   }
 
@@ -314,6 +323,13 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
         /* sem áudio, sem problema */
       }
     }
+  }
+
+  function handleAvalancheCaught() {
+    if (phase !== "playing" || difficulty !== "avalanche") return;
+    setTimerRunning(false);
+    soundEffects.playTimeUp();
+    setPhase("avalanche_caught");
   }
 
   // Iniciar um nível
@@ -500,8 +516,8 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
       }
 
       // Bônus de velocidade
-      const totalMs = diffCfg.seconds * 1000;
-      const speedRatio = timeLeft / totalMs;
+      const totalMs = Math.max(1, diffCfg.seconds * 1000);
+      const speedRatio = difficulty === "avalanche" ? 0 : timeLeft / totalMs;
       let speedMultiplier = 1.0;
       let bonusLabel = "";
       if (speedRatio >= 0.65) {
@@ -645,9 +661,10 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
         roundState={roundState}
         wrongPicks={wrongPicks}
         timeLeft={timeLeft}
-        totalMs={roundState === "retry" ? Math.max(4000, Math.round((diffCfg.seconds * 1000) / 2)) : diffCfg.seconds * 1000}
+        totalMs={difficulty === "avalanche" ? 1 : roundState === "retry" ? Math.max(4000, Math.round((diffCfg.seconds * 1000) / 2)) : diffCfg.seconds * 1000}
         bonusText={speedBonusText}
         onPick={handleSelectOption}
+        timed={difficulty !== "avalanche"}
       />
     );
   } else if (phase === "level_complete") {
@@ -671,6 +688,20 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
         onOtherTheme={() => setPhase("lobby")}
         onReplay={() => startLevel(1, true)}
       />
+    );
+  } else if (phase === "avalanche_caught") {
+    overlay = (
+      <div className="pointer-events-auto absolute inset-0 flex items-center justify-center bg-slate-950/65 p-4 backdrop-blur-sm" role="alertdialog" aria-modal="true">
+        <div className="max-w-sm rounded-3xl border border-sky-200/30 bg-slate-950/90 p-6 text-center text-white shadow-2xl">
+          <span className="text-5xl" aria-hidden>🌨️</span>
+          <h2 className="mt-2 text-xl font-black">A avalanche alcançou você!</h2>
+          <p className="mt-2 text-sm text-slate-300">Respire, observe os objetos e tente novamente. A neve avança devagar pela trilha.</p>
+          <div className="mt-5 flex justify-center gap-2">
+            <button type="button" onClick={() => startLevel(currentLevel)} className="rounded-xl bg-sky-500 px-4 py-2 text-sm font-bold text-white hover:bg-sky-400">Tentar novamente</button>
+            <button type="button" onClick={() => setPhase("lobby")} className="rounded-xl border border-white/20 px-4 py-2 text-sm font-bold text-white hover:bg-white/10">Voltar ao mapa</button>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -762,14 +793,14 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
               </div>
               <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-[var(--text)]">Trilha do Aluno Curioso</h1>
               <p className="mt-2 text-xs sm:text-sm text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
-                Tudo acontece no mapa: o aluno sobe a trilha, os objetos do tema aparecem pelo caminho e, a cada acerto,
-                ele avança. Enfrente a <strong>chuva</strong>, a <strong>neve no cume</strong> e <strong>hasteie a bandeira</strong> no Nível 7!
+                Explore uma paisagem ilustrada, encontre os objetos no caminho e observe os animais de cada clima.
+                Depois do modo Nativo, encare a avalanche que segue seus passos até o cume!
               </p>
 
               {/* DIFICULDADE */}
               <div className="mt-5 max-w-lg mx-auto">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Ritmo e Dificuldade da Escalada</p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                   {(Object.keys(DIFFICULTY_CONFIGS) as TrailDifficulty[]).map((dKey) => {
                     const cfg = DIFFICULTY_CONFIGS[dKey];
                     const isSel = difficulty === dKey;
@@ -791,7 +822,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
                         <span className="text-xl block">{cfg.emoji}</span>
                         <span className="text-xs font-extrabold text-[var(--text)] block">{cfg.label}</span>
                         <span className="text-[10px] text-[var(--text-muted)] font-semibold block">
-                          {cfg.seconds}s · x{cfg.multiplier}
+                          {dKey === "avalanche" ? "Desafio extra" : `${cfg.seconds}s · x${cfg.multiplier}`}
                         </span>
                       </button>
                     );
@@ -866,6 +897,8 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
           elementIndex={elementIndex}
           roundState={roundState}
           levelFinished={climbDone || phase === "level_complete" || phase === "summit_victory"}
+          avalancheMode={difficulty === "avalanche" && phase === "playing"}
+          onAvalancheCaught={handleAvalancheCaught}
           isCheering={isCheering}
           isRaisingFlag={isRaisingFlag}
           flagProgress={flagProgress}
@@ -878,7 +911,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
           themeColor={selectedTheme.accentColor}
           hudRight={
             phase === "playing" && currentItem ? (
-              <TrailPlayHud timeLeft={timeLeft} totalMs={diffCfg.seconds * 1000} score={score} streak={streak} index={elementIndex} total={levelItems.length} />
+              <TrailPlayHud timeLeft={timeLeft} totalMs={Math.max(1, diffCfg.seconds * 1000)} score={score} streak={streak} index={elementIndex} total={levelItems.length} avalanche={difficulty === "avalanche"} />
             ) : undefined
           }
         >

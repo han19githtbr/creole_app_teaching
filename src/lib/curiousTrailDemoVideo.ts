@@ -16,19 +16,21 @@ import type { SocialPlatform } from "@/lib/socialLinks";
 import {
   TRAIL_LEVELS,
   TRAIL_THEMES,
+  ROAMING_ANIMAL_POOL,
   type TrailLevelConfig,
   type TrailThemeOption,
 } from "@/lib/curiousTrailData";
 import { buildWordOptions, type CestQuoiItem } from "@/lib/cquoiContent";
 import { CURIOUS_TRAIL_PATH, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
 
-export type TrailDemoDifficulty = "easy" | "intermediate" | "master" | "native";
+export type TrailDemoDifficulty = "easy" | "intermediate" | "master" | "native" | "avalanche";
 
 const TRAIL_DEMO_DIFFICULTY: Record<TrailDemoDifficulty, { seconds: number; multiplier: number }> = {
   easy: { seconds: 20, multiplier: 1 },
   intermediate: { seconds: 15, multiplier: 1.5 },
   master: { seconds: 10, multiplier: 2 },
   native: { seconds: 6, multiplier: 2.5 },
+  avalanche: { seconds: 0, multiplier: 3 },
 };
 
 export interface TrailDemoSettings {
@@ -105,7 +107,7 @@ export function buildTrailDemoPlan(
     picked.push(...shuffle(remaining).slice(0, levelCfg.elementCount - picked.length));
   }
 
-  const answerDur = 2.6;
+  const answerDur = settings.difficulty === "avalanche" ? 4.8 : 2.6;
   const walkDur = 1.7;
   const difficulty = TRAIL_DEMO_DIFFICULTY[settings.difficulty];
   let cursor = introDur + countdownDur;
@@ -118,7 +120,7 @@ export function buildTrailDemoPlan(
     const end = walkEnd;
     const opts = buildWordOptions(item, items, false);
     const scoreBefore = score;
-    const speedRatio = (difficulty.seconds - answerDur) / difficulty.seconds;
+    const speedRatio = settings.difficulty === "avalanche" ? 0 : (difficulty.seconds - answerDur) / difficulty.seconds;
     const speedMultiplier = speedRatio >= 0.65 ? 1.5 : speedRatio >= 0.35 ? 1.25 : 1.1;
     score += Math.round(100 * difficulty.multiplier * speedMultiplier);
     xp += Math.round((levelCfg.xpBase / levelCfg.elementCount) * difficulty.multiplier * speedMultiplier);
@@ -219,8 +221,8 @@ export function renderTrailDemoFrame(
     levelStart + ((levelEnd - levelStart) * (index + 1)) / (levelCfg.elementCount + 1);
 
   // 1. FUNDO CÉU E ATMOSFERA ALPINA CONFORME O CLIMA
-  const isRain = levelCfg.weather === "rain";
-  const isSnow = levelCfg.weather === "snow";
+  const isRain = levelCfg.weather === "rain" && plan.settings.difficulty !== "avalanche";
+  const isSnow = levelCfg.weather === "snow" || plan.settings.difficulty === "avalanche";
 
   const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
   if (isRain) {
@@ -241,6 +243,13 @@ export function renderTrailDemoFrame(
   }
   ctx.fillStyle = skyGrad;
   ctx.fillRect(0, 0, w, h);
+  const trailBackdrop = assets.images.get("/trilha.jfif");
+  if (trailBackdrop?.complete && trailBackdrop.naturalWidth > 0) {
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.drawImage(trailBackdrop, 0, 0, w, h);
+    ctx.restore();
+  }
 
   // Sol radiante com corona alpina ou camadas de nuvens densas
   if (!isRain && !isSnow) {
@@ -672,9 +681,17 @@ export function renderTrailDemoFrame(
   const animalX = w * 0.28;
   const animalY = h * 0.72;
   const breath = Math.sin(t * 3.5) * 2.5;
+  const snowAnimalIds = ["chamois", "fox", "eagle", "rabbit"];
+  const animal = plan.settings.difficulty === "avalanche"
+    ? ROAMING_ANIMAL_POOL.find((candidate) => candidate.id === snowAnimalIds[plan.settings.level % snowAnimalIds.length]) ?? levelCfg.animal
+    : levelCfg.animal;
+  const animalId = animal.id;
+  const hops = ["squirrel", "rabbit", "frog"].includes(animalId);
+  const animalStep = Math.sin(t * (hops ? 4.2 : 2.1));
 
   ctx.save();
-  ctx.translate(animalX, animalY);
+  ctx.translate(animalX + (animalId === "eagle" ? animalStep * 8 : 0), animalY + (hops ? Math.max(0, animalStep) * -7 : animalStep * 1.5));
+  if (["deer", "fox", "chamois"].includes(animalId)) ctx.rotate(animalStep * 0.035);
 
   // Sombra natural do animal no solo
   ctx.fillStyle = "rgba(0, 0, 0, 0.24)";
@@ -683,7 +700,6 @@ export function renderTrailDemoFrame(
   ctx.fill();
 
   // Desenho fidedigno de cada animal da montanha
-  const animalId = levelCfg.animal.id;
   if (animalId === "chamois") {
     // Camurça dos Alpes (Chifres em gancho, máscara facial e corpo atlético)
     ctx.fillStyle = "#78350f";
@@ -850,7 +866,7 @@ export function renderTrailDemoFrame(
   ctx.font = `bold 12px ${FONT}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(`${levelCfg.animal.emoji} ${levelCfg.animal.name}`, 0, 35);
+  ctx.fillText(`${animal.emoji} ${animal.name}`, 0, 35);
   ctx.restore();
 
   // 7. PERSONAGEM ALUNO EXPLORADOR CAMINHANDO PELA TRILHA REAL
@@ -1051,6 +1067,38 @@ export function renderTrailDemoFrame(
 
   ctx.restore();
 
+  if (plan.settings.difficulty === "avalanche" && t >= introDur + countdownDur && t < outroStart) {
+    const elapsed = t - introDur - countdownDur;
+    const hazardFraction = clamp(levelStart - 0.11 + elapsed * 0.0036, 0, Math.max(0, studentFraction - 0.035));
+    const snowPath = new Path2D();
+    const steps = Math.max(2, Math.ceil(hazardFraction * 180));
+    for (let i = 0; i <= steps; i++) {
+      const point = getTrailPositionAtFraction((hazardFraction * i) / steps);
+      const x = (point.x / 1000) * w;
+      const y = (point.y / 600) * h;
+      if (i === 0) snowPath.moveTo(x, y);
+      else snowPath.lineTo(x, y);
+    }
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "rgba(96, 165, 250, .72)";
+    ctx.lineWidth = Math.max(22, w * 0.022);
+    ctx.stroke(snowPath);
+    ctx.strokeStyle = "rgba(248, 250, 252, .96)";
+    ctx.lineWidth = Math.max(15, w * 0.015);
+    ctx.stroke(snowPath);
+    const front = getTrailPositionAtFraction(hazardFraction);
+    for (let flake = 0; flake < 9; flake++) {
+      const phase = t * 4 + flake * 2.4;
+      ctx.fillStyle = `rgba(255,255,255,${0.45 + (Math.sin(phase) + 1) * 0.2})`;
+      ctx.beginPath();
+      ctx.arc((front.x / 1000) * w + Math.sin(phase) * 18, (front.y / 600) * h + Math.cos(phase * 1.3) * 12, 3 + (flake % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
   // HUD do mapa, imagem do objeto no caminho e alternativas fixas na base.
   ctx.save();
   ctx.fillStyle = "rgba(15, 23, 42, 0.84)";
@@ -1069,7 +1117,7 @@ export function renderTrailDemoFrame(
   ctx.font = `600 ${Math.max(11, w * 0.012)}px ${FONT}`;
   ctx.fillText(
     `Altitude: ${levelCfg.altitude} m · ${
-      levelCfg.weather === "sunny" ? "Ensolarado" : levelCfg.weather === "rain" ? "Chuva · Guarda-chuva" : "Neve e frio"
+      plan.settings.difficulty === "avalanche" ? "Avalanche · Neve e frio" : levelCfg.weather === "sunny" ? "Ensolarado" : levelCfg.weather === "rain" ? "Chuva · Guarda-chuva" : "Neve e frio"
     }`,
     42,
     80
@@ -1098,14 +1146,14 @@ export function renderTrailDemoFrame(
       : activeRoundIndex
     : plan.rounds.length;
   ctx.fillText(`🔥 ${streak} · ${round ? activeRoundIndex + 1 : plan.rounds.length}/${plan.rounds.length}`, hudX + hudW - 72, 79);
-  ctx.fillStyle = secondsLeft <= 3 ? "#dc2626" : "#2563eb";
+  ctx.fillStyle = plan.settings.difficulty === "avalanche" ? "#0369a1" : secondsLeft <= 3 ? "#dc2626" : "#2563eb";
   ctx.beginPath();
   ctx.arc(hudX + hudW - 32, 62, 24, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = "#ffffff";
   ctx.font = `bold ${Math.max(11, w * 0.012)}px ${FONT}`;
   ctx.textAlign = "center";
-  ctx.fillText(round ? `${secondsLeft}s` : "✓", hudX + hudW - 32, 67);
+  ctx.fillText(plan.settings.difficulty === "avalanche" ? "❄" : round ? `${secondsLeft}s` : "✓", hudX + hudW - 32, 67);
 
   if (round && t >= round.start && t < round.walkEnd) {
     const target = getTrailPositionAtFraction(elementFraction(activeRoundIndex));
@@ -1185,6 +1233,7 @@ export function renderTrailDemoFrame(
     ctx.stroke();
 
     const progress = clamp((Math.min(t, round.correctAt) - round.start) / (round.correctAt - round.start));
+    if (plan.settings.difficulty !== "avalanche") {
     ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
     ctx.beginPath();
     ctx.roundRect(20, dockTop, w - 40, 8, 4);
@@ -1193,11 +1242,12 @@ export function renderTrailDemoFrame(
     ctx.beginPath();
     ctx.roundRect(20, dockTop, (w - 40) * (1 - progress), 8, 4);
     ctx.fill();
+    }
 
     ctx.textAlign = "left";
     ctx.fillStyle = "#e2e8f0";
     ctx.font = `bold ${Math.max(13, w * 0.016)}px ${FONT}`;
-    ctx.fillText("Que objeto a seta vermelha aponta?", 38, dockTop + 44);
+    ctx.fillText(plan.settings.difficulty === "avalanche" ? "A neve avança! Que objeto a seta aponta?" : "Que objeto a seta vermelha aponta?", 38, dockTop + 44);
     const options = round.options.slice(0, 4);
     const gap = 12;
     const left = 32;

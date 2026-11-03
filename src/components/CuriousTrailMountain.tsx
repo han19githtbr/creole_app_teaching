@@ -206,6 +206,7 @@ export function CuriousTrailMountain({
   else targetLen = elementIndex <= 0 ? campStart : elemLen(elementIndex - 1);
   const focusLen = hasCurrent ? elemLen(elementIndex) : null;
   const focusBelow = focusLen != null && (pointPct(focusLen)?.y ?? 50) < 30;
+  const summitPoint = pointPct(total) ?? currentCfg.coord;
 
   // espelhos para o laÃ§o de animaÃ§Ã£o (evita recriar o requestAnimationFrame a cada render)
   const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0, avalancheMode: false });
@@ -844,8 +845,8 @@ export function CuriousTrailMountain({
         {/* ---------- BANDEIRA DA VITÃ“RIA NO CUME ---------- */}
         <div
           className="absolute z-20 pointer-events-none"
-          style={{ right: "3%", top: "3%", transform: `scale(${inv})`, transformOrigin: "100% 0%" }}
-          title="Cume da Vitória · Hasteie a bandeira ao passar no Nível 7!"
+          style={{ left: `${summitPoint.x}%`, top: `${summitPoint.y}%`, transform: `translate(-50%, -100%) scale(${inv})`, transformOrigin: "50% 100%" }}
+          title="Cabana do topo · Hasteie a bandeira ao concluir o Nível 7!"
         >
           <div className="flex flex-col items-center">
             <div className="relative w-1.5 h-16 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 rounded-full shadow">
@@ -862,7 +863,7 @@ export function CuriousTrailMountain({
               )}
             </div>
             <span className="mt-1 whitespace-nowrap px-2 py-0.5 rounded-full bg-slate-900/90 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-400/50">
-              🏔️ Cume
+              🏡 Cabana
             </span>
           </div>
         </div>

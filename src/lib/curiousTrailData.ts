@@ -34,17 +34,21 @@ export interface TrailLevelConfig {
 
 /**
  * Pontos (em % do cenário) na encosta onde os bichos passeiam.
- * Correspondem às marcações vermelhas no mapa da montanha.
+ * Correspondem aos pontos verdes da ilustração, com habitats próprios.
  */
-export const TRAIL_ROAM_SPOTS: { x: number; y: number }[] = [
-  { x: 58, y: 56 },
-  { x: 65, y: 66 },
-  { x: 73, y: 39 },
-  { x: 83, y: 62 },
-  { x: 90, y: 55 },
-  { x: 82, y: 84 },
-  { x: 68, y: 89 },
-  { x: 50, y: 82 },
+export type TrailHabitat = "tree" | "grass";
+export const TRAIL_ROAM_SPOTS: { x: number; y: number; habitat: TrailHabitat }[] = [
+  { x: 8, y: 9, habitat: "tree" },
+  { x: 15, y: 12, habitat: "tree" },
+  { x: 18, y: 7, habitat: "tree" },
+  { x: 23, y: 48, habitat: "grass" },
+  { x: 34, y: 30, habitat: "grass" },
+  { x: 46, y: 30, habitat: "grass" },
+  { x: 62, y: 30, habitat: "grass" },
+  { x: 73, y: 40, habitat: "tree" },
+  { x: 69, y: 45, habitat: "grass" },
+  { x: 58, y: 42, habitat: "grass" },
+  { x: 62, y: 52, habitat: "grass" },
 ];
 
 /** Bichos extras que aparecem e somem da montanha (além dos 7 das estações). */
@@ -76,7 +80,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
       soundType: "rustle",
       badge: "Observateur agile",
     },
-    coord: { x: 12, y: 84 },
+    coord: { x: 32.5, y: 98.7 },
     description: "Início da expedição. Reconheça 1 elemento no prado verde para liberar o caminho.",
     badgeEmoji: "🌱",
     xpBase: 50,
@@ -99,7 +103,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
       soundType: "rustle",
       badge: "Pied léger",
     },
-    coord: { x: 26, y: 70 },
+    coord: { x: 32.5, y: 90 },
     description: "Bosque acolhedor com brisa fresca. Identifique 2 elementos para prosseguir.",
     badgeEmoji: "🌲",
     xpBase: 100,
@@ -122,7 +126,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
       soundType: "chirp",
       badge: "Chant d'altitude",
     },
-    coord: { x: 44, y: 58 },
+    coord: { x: 32.8, y: 71.5 },
     description: "Encosta rochosa com vista panorâmica. Reconheça 3 elementos para subir mais alto.",
     badgeEmoji: "🪨",
     xpBase: 160,
@@ -145,7 +149,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
       soundType: "croak",
       badge: "Goutte d'argent",
     },
-    coord: { x: 32, y: 44 },
+    coord: { x: 38.5, y: 60.7 },
     description: "As nuvens fecham e a chuva começa! Abra seu guarda-chuva e reconheça 4 elementos.",
     badgeEmoji: "🌧️",
     xpBase: 240,
@@ -168,7 +172,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
       soundType: "rustle",
       badge: "Courage sous l'orage",
     },
-    coord: { x: 56, y: 34 },
+    coord: { x: 42, y: 58.7 },
     description: "Chuva intensa e neblina. Avance com seu guarda-chuva e decifre 5 elementos.",
     badgeEmoji: "⛈️",
     xpBase: 330,
@@ -191,7 +195,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
       soundType: "bell",
       badge: "Pas de givre",
     },
-    coord: { x: 74, y: 22 },
+    coord: { x: 51.5, y: 56.7 },
     description: "A chuva passou e a neve começou a cair! Agasalhe-se e identifique 6 elementos.",
     badgeEmoji: "❄️",
     xpBase: 440,
@@ -214,7 +218,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
       soundType: "chirp",
       badge: "Conquérant du ciel",
     },
-    coord: { x: 88, y: 10 },
+    coord: { x: 58.9, y: 46.5 },
     description: "O topo nevado do mundo! Reconheça os 7 elementos e hasteie a bandeira da vitória!",
     badgeEmoji: "🏔️",
     xpBase: 600,

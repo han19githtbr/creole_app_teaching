@@ -11,12 +11,14 @@ interface TrailCurve {
 }
 
 const TRAIL_CURVES: TrailCurve[] = [
-  { start: { x: 120, y: 504 }, control1: { x: 160, y: 476 }, control2: { x: 210, y: 446 }, end: { x: 260, y: 420 } },
-  { start: { x: 260, y: 420 }, control1: { x: 330, y: 390 }, control2: { x: 390, y: 358 }, end: { x: 440, y: 348 } },
-  { start: { x: 440, y: 348 }, control1: { x: 390, y: 330 }, control2: { x: 345, y: 300 }, end: { x: 320, y: 264 } },
-  { start: { x: 320, y: 264 }, control1: { x: 390, y: 225 }, control2: { x: 475, y: 212 }, end: { x: 560, y: 204 } },
-  { start: { x: 560, y: 204 }, control1: { x: 630, y: 190 }, control2: { x: 690, y: 150 }, end: { x: 740, y: 132 } },
-  { start: { x: 740, y: 132 }, control1: { x: 790, y: 115 }, control2: { x: 840, y: 70 }, end: { x: 880, y: 60 } },
+  // Caminho verde da ilustração: entra pelo pé da encosta e serpenteia até a cabana.
+  { start: { x: 325, y: 592 }, control1: { x: 325, y: 535 }, control2: { x: 318, y: 485 }, end: { x: 324, y: 456 } },
+  { start: { x: 324, y: 456 }, control1: { x: 327, y: 414 }, control2: { x: 337, y: 393 }, end: { x: 358, y: 373 } },
+  { start: { x: 358, y: 373 }, control1: { x: 397, y: 345 }, control2: { x: 449, y: 347 }, end: { x: 493, y: 345 } },
+  { start: { x: 493, y: 345 }, control1: { x: 535, y: 343 }, control2: { x: 568, y: 330 }, end: { x: 589, y: 309 } },
+  { start: { x: 589, y: 309 }, control1: { x: 611, y: 286 }, control2: { x: 590, y: 270 }, end: { x: 558, y: 265 } },
+  { start: { x: 558, y: 265 }, control1: { x: 535, y: 260 }, control2: { x: 520, y: 251 }, end: { x: 535, y: 240 } },
+  { start: { x: 535, y: 240 }, control1: { x: 552, y: 226 }, control2: { x: 579, y: 225 }, end: { x: 604, y: 222 } },
 ];
 
 export const CURIOUS_TRAIL_PATH = TRAIL_CURVES
@@ -51,10 +53,10 @@ const CURVE_LENGTHS = TRAIL_CURVES.map((curve) => {
   return length;
 });
 
-const TOTAL_TRAIL_LENGTH = CURVE_LENGTHS.reduce((sum, length) => sum + length, 0);
+export const CURIOUS_TRAIL_LENGTH = CURVE_LENGTHS.reduce((sum, length) => sum + length, 0);
 
 export function getTrailPositionAtFraction(fraction: number): TrailPoint {
-  let remaining = Math.max(0, Math.min(1, fraction)) * TOTAL_TRAIL_LENGTH;
+  let remaining = Math.max(0, Math.min(1, fraction)) * CURIOUS_TRAIL_LENGTH;
   const curveIndex = CURVE_LENGTHS.findIndex((length) => {
     if (remaining <= length) return true;
     remaining -= length;

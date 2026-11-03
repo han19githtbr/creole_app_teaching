@@ -16,7 +16,7 @@
  *  - Ouriço, Tartaruga, Pássaro Cantor, Borboleta Apolo dos Alpes e Abelha Silvestre.
  */
 import { G, ell, circ, line, limb, f, sin, cos, clamp, PI } from "@/lib/storySceneLife";
-import { TRAIL_ROAM_SPOTS, ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailWeather } from "@/lib/curiousTrailData";
+import { TRAIL_ROAM_SPOTS, ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailHabitat, type TrailWeather } from "@/lib/curiousTrailData";
 
 type Kind = "walk" | "fly";
 interface Spec {
@@ -686,7 +686,13 @@ export interface Wildlife {
 }
 
 const TARGET_COUNT = 6;
-const REGION = { x0: 0.42, x1: 0.97, y0: 0.36, y1: 0.92 };
+const GROUND_REGION = { x0: 0.04, x1: 0.78, y0: 0.28, y1: 0.78 };
+const BIRD_SKY_REGION = { x0: 0.8, x1: 0.97, y0: 0.1, y1: 0.34 };
+const FLOWER_REGION = { x0: 0.04, x1: 0.9, y0: 0.24, y1: 0.78 };
+
+function habitatFor(animalId: string): TrailHabitat {
+  return animalId === "squirrel" || animalId === "bird" ? "tree" : "grass";
+}
 
 export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife {
   const critters: Critter[] = [];
@@ -725,15 +731,22 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     color: COLORS[uid % COLORS.length],
   });
 
-  const freeSpots = () => TRAIL_ROAM_SPOTS.map((_, i) => i).filter((i) => !critters.some((c) => c.spot === i));
-  const pickFree = (): number => {
-    const fr = freeSpots();
+  const freeSpots = (animalId?: string) => TRAIL_ROAM_SPOTS
+    .map((_, i) => i)
+    .filter((i) => !critters.some((c) => c.spot === i))
+    .filter((i) => !animalId || TRAIL_ROAM_SPOTS[i].habitat === habitatFor(animalId));
+  const pickFree = (animalId?: string): number => {
+    let fr = freeSpots(animalId);
+    if (fr.length === 0 && animalId && animalId !== "squirrel") fr = freeSpots();
     return fr.length ? fr[Math.floor(rnd() * fr.length)] : -1;
   };
-  const randRegion = () => ({
-    x: REGION.x0 + rnd() * (REGION.x1 - REGION.x0),
-    y: REGION.y0 + rnd() * (REGION.y1 - REGION.y0),
-  });
+  const randRegion = (animalId?: string) => {
+    const region = animalId === "bird" ? BIRD_SKY_REGION : animalId === "butterfly" || animalId === "bee" ? FLOWER_REGION : GROUND_REGION;
+    return {
+      x: region.x0 + rnd() * (region.x1 - region.x0),
+      y: region.y0 + rnd() * (region.y1 - region.y0),
+    };
+  };
 
   function weatherPool() {
     const allowed = new Set(WEATHER_ANIMAL_IDS[weather]);
@@ -748,7 +761,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     if (cand.length === 0) return;
     const c = mk(cand[Math.floor(rnd() * cand.length)]);
     if (c.spec.kind === "walk") {
-      const sp = pickFree();
+      const sp = pickFree(c.animal.id);
       if (sp < 0) return;
       c.spot = sp;
       const P = TRAIL_ROAM_SPOTS[sp];
@@ -758,9 +771,8 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
         c.timer = rnd() * 3;
         c.state = "idle";
       } else {
-        const fromBottom = P.y > 60;
-        c.x = fromBottom ? clamp(P.x / 100 + (rnd() - 0.5) * 0.2, 0.05, 1) : 1.08;
-        c.y = fromBottom ? 1.08 : P.y / 100;
+        c.x = clamp(P.x / 100 + (rnd() - 0.5) * 0.16, 0.03, 0.98);
+        c.y = 1.08;
         c.state = "move";
         c.hasTarget = true;
         c.tx = P.x / 100;
@@ -770,13 +782,13 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     } else if (c.animal.id === "eagle") {
       c.enter = initial ? 1 : 0;
     } else {
-      const R = randRegion();
+      const R = randRegion(c.animal.id);
       if (initial) {
         c.x = R.x;
         c.y = R.y;
         c.z = 30;
         if (c.animal.id === "bird") {
-          const sp = pickFree();
+          const sp = pickFree(c.animal.id);
           if (sp >= 0) {
             c.spot = sp;
             c.x = TRAIL_ROAM_SPOTS[sp].x / 100;
@@ -790,7 +802,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
       } else {
         const left = rnd() > 0.5;
         c.x = left ? -0.08 : 1.08;
-        c.y = REGION.y0 + rnd() * 0.4;
+        c.y = R.y;
         c.z = 40;
         c.state = "move";
         c.hasTarget = true;
@@ -845,7 +857,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
       c.v = approach(c.v, 0, 180 * dt);
       c.timer -= dt;
       if (c.timer <= 0) {
-        const sp = pickFree();
+        const sp = pickFree(c.animal.id);
         if (sp >= 0) {
           c.spot = sp;
           c.tx = TRAIL_ROAM_SPOTS[sp].x / 100;
@@ -942,7 +954,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
       if (c.timer <= 0) {
         c.landed = false;
         c.spot = -1;
-        const R = randRegion();
+        const R = randRegion(c.animal.id);
         c.tx = R.x;
         c.ty = R.y;
         c.timer = 4 + rnd() * 5;
@@ -951,7 +963,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
       c.timer -= dt;
       if (c.timer <= 0) {
         if (c.animal.id === "bird" && rnd() < 0.45) {
-          const sp = pickFree();
+          const sp = pickFree(c.animal.id);
           if (sp >= 0) {
             c.spot = sp;
             c.tx = TRAIL_ROAM_SPOTS[sp].x / 100;
@@ -959,7 +971,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
             c.timer = 8;
           }
         } else {
-          const R = randRegion();
+          const R = randRegion(c.animal.id);
           c.tx = R.x;
           c.ty = R.y;
           c.timer = 3 + rnd() * 4;
@@ -1085,6 +1097,15 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
         const sh = clamp(1 - alt / (140 * S), 0.25, 1);
         out += ell(X, Y + 1, 9 * s * sh, 2.4 * s * sh, `rgba(0,0,0,${f(0.2 * sh)})`);
 
+        if (id === "bird") {
+          for (let member = 0; member < 3; member++) {
+            const offset = member - 1;
+            const flock = songbird({ ...d, ph: d.ph + member * 1.7, flying }, c.color);
+            out += G(X + offset * 18 * s, Y - alt * S + Math.sin(c.clk * 2 + member) * 4 * s - Math.abs(offset) * 4 * s, 0, c.face, 0.8, flock);
+          }
+          continue;
+        }
+
         switch (id) {
           case "butterfly":
             inner = flutter({ ...d, landed: !flying }, c.color);
@@ -1116,6 +1137,17 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
   function poke(c: Critter) {
     c.react = 0.7;
     // Espécies ariscas evitam contato; anfíbios e pequenos voadores reagem com saltos ou voo.
+    if (c.animal.id === "squirrel") {
+      const branch = pickFree("squirrel");
+      if (branch >= 0) {
+        c.spot = branch;
+        c.tx = TRAIL_ROAM_SPOTS[branch].x / 100;
+        c.ty = TRAIL_ROAM_SPOTS[branch].y / 100;
+        c.state = "move";
+        c.hasTarget = true;
+        return;
+      }
+    }
     if (["deer", "fox", "rabbit", "squirrel", "chamois", "eagle", "bee"].includes(c.animal.id)) {
       sendAway(c);
       return;

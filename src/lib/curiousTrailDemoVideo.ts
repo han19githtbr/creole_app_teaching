@@ -21,7 +21,7 @@ import {
   type TrailThemeOption,
 } from "@/lib/curiousTrailData";
 import { buildWordOptions, type CestQuoiItem } from "@/lib/cquoiContent";
-import { CURIOUS_TRAIL_PATH, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
+import { CURIOUS_TRAIL_LENGTH, CURIOUS_TRAIL_PATH, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
 
 export type TrailDemoDifficulty = "easy" | "intermediate" | "master" | "native" | "avalanche";
 
@@ -490,10 +490,10 @@ export function renderTrailDemoFrame(
 
   // 3. A TRILHA REALISTA EM CURVA SINUOSA COM CAMADAS E DETALHES ALPINOS
   // Definição dos waypoints da trilha no formato proporcional ao jogo real
-  const trailPoints = TRAIL_LEVELS.map((level) => ({
-    x: (level.coord.x / 100) * w,
-    y: (level.coord.y / 100) * h,
-  }));
+  const trailPoints = TRAIL_LEVELS.map((_, index) => {
+    const point = getTrailPositionAtFraction(TRAIL_LEVEL_FRACTIONS[index]);
+    return { x: (point.x / 1000) * w, y: (point.y / 600) * h };
+  });
   const trailPath = getTrailPath();
   const traceTrailCurve = () => {
     ctx.save();
@@ -607,7 +607,8 @@ export function renderTrailDemoFrame(
   });
 
   // 5. BANDEIRA NO CUME DA VITÓRIA (Nível 7)
-  const summitPt = trailPoints[6];
+  const summitPosition = getTrailPositionAtFraction(1);
+  const summitPt = { x: (summitPosition.x / 1000) * w, y: (summitPosition.y / 600) * h };
   ctx.save();
   // Pedestal de pedra no cume
   ctx.fillStyle = "#475569";
@@ -678,26 +679,33 @@ export function renderTrailDemoFrame(
 
   // 6. ANIMAL DA MONTANHA ILUSTRADO COM ANATOMIA REALISTA
   // Posicionado na encosta natural de cada nível, com movimento e respiração
-  const animalX = w * 0.28;
-  const animalY = h * 0.72;
   const breath = Math.sin(t * 3.5) * 2.5;
   const snowAnimalIds = ["chamois", "fox", "eagle", "rabbit"];
   const animal = plan.settings.difficulty === "avalanche"
     ? ROAMING_ANIMAL_POOL.find((candidate) => candidate.id === snowAnimalIds[plan.settings.level % snowAnimalIds.length]) ?? levelCfg.animal
     : levelCfg.animal;
   const animalId = animal.id;
+  const habitatPosition = animalId === "squirrel" ? { x: 0.16, y: 0.14 }
+    : animalId === "bird" || animalId === "eagle" ? { x: 0.87, y: 0.2 }
+      : animalId === "bee" || animalId === "butterfly" ? { x: 0.72, y: 0.42 }
+        : animalId === "frog" || animalId === "snail" ? { x: 0.58, y: 0.48 }
+          : { x: 0.7, y: 0.43 };
+  const animalX = w * habitatPosition.x;
+  const animalY = h * habitatPosition.y;
   const hops = ["squirrel", "rabbit", "frog"].includes(animalId);
   const animalStep = Math.sin(t * (hops ? 4.2 : 2.1));
 
   ctx.save();
-  ctx.translate(animalX + (animalId === "eagle" ? animalStep * 8 : 0), animalY + (hops ? Math.max(0, animalStep) * -7 : animalStep * 1.5));
+  ctx.translate(animalX + (animalId === "eagle" ? animalStep * 8 : animalId === "snail" ? Math.sin(t * 0.3) * 3 : 0), animalY + (hops ? Math.max(0, animalStep) * -7 : animalStep * 1.5));
   if (["deer", "fox", "chamois"].includes(animalId)) ctx.rotate(animalStep * 0.035);
 
   // Sombra natural do animal no solo
-  ctx.fillStyle = "rgba(0, 0, 0, 0.24)";
-  ctx.beginPath();
-  ctx.ellipse(0, 16, 26, 7, 0, 0, Math.PI * 2);
-  ctx.fill();
+  if (!["bird", "eagle", "bee", "butterfly"].includes(animalId)) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.24)";
+    ctx.beginPath();
+    ctx.ellipse(0, 16, 26, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   // Desenho fidedigno de cada animal da montanha
   if (animalId === "chamois") {
@@ -835,6 +843,59 @@ export function renderTrailDemoFrame(
     ctx.lineTo(20, -4);
     ctx.lineTo(14, -2);
     ctx.closePath();
+    ctx.fill();
+  } else if (animalId === "bird") {
+    for (let bird = 0; bird < 3; bird++) {
+      const offset = bird - 1;
+      const wingBeat = Math.sin(t * 10 + bird * 1.8) * 5;
+      ctx.save();
+      ctx.translate(offset * 24, Math.abs(offset) * 8 + Math.sin(t * 3 + bird) * 3);
+      ctx.fillStyle = bird === 1 ? "#334155" : "#475569";
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 8, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(-2, 0);
+      ctx.quadraticCurveTo(-9, -wingBeat, -16, -7);
+      ctx.quadraticCurveTo(-10, 2, -2, 2);
+      ctx.moveTo(2, 0);
+      ctx.quadraticCurveTo(9, -wingBeat, 16, -7);
+      ctx.quadraticCurveTo(10, 2, 2, 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  } else if (animalId === "snail") {
+    ctx.fillStyle = "#84a36a";
+    ctx.beginPath();
+    ctx.ellipse(0, 4, 19, 7, 0, Math.PI, Math.PI * 2);
+    ctx.lineTo(17, 8);
+    ctx.lineTo(-18, 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#a16207";
+    ctx.beginPath();
+    ctx.arc(-2, -5, 12, Math.PI, Math.PI * 2);
+    ctx.lineTo(10, 4);
+    ctx.lineTo(-14, 4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "#713f12";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(-2, -5, 6, 0, Math.PI * 1.7);
+    ctx.stroke();
+    ctx.strokeStyle = "#365314";
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(12, 2);
+    ctx.lineTo(15, -7);
+    ctx.moveTo(17, 2);
+    ctx.lineTo(19, -6);
+    ctx.stroke();
+    ctx.fillStyle = "#18181b";
+    ctx.beginPath();
+    ctx.arc(15, -8, 1.3, 0, Math.PI * 2);
+    ctx.arc(19, -7, 1.3, 0, Math.PI * 2);
     ctx.fill();
   } else {
     // Esquilo dos Bosques com cauda felpuda em curva de S
@@ -1069,7 +1130,7 @@ export function renderTrailDemoFrame(
 
   if (plan.settings.difficulty === "avalanche" && t >= introDur + countdownDur && t < outroStart) {
     const elapsed = t - introDur - countdownDur;
-    const hazardFraction = clamp(levelStart - 0.11 + elapsed * 0.0036, 0, Math.max(0, studentFraction - 0.035));
+    const hazardFraction = clamp(levelStart - 115 / CURIOUS_TRAIL_LENGTH + elapsed * (4.2 / CURIOUS_TRAIL_LENGTH), 0, Math.max(0, studentFraction - 42 / CURIOUS_TRAIL_LENGTH));
     const snowPath = new Path2D();
     const steps = Math.max(2, Math.ceil(hazardFraction * 180));
     for (let i = 0; i <= steps; i++) {

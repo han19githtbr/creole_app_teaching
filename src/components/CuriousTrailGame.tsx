@@ -794,7 +794,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
               <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-[var(--text)]">Trilha do Aluno Curioso</h1>
               <p className="mt-2 text-xs sm:text-sm text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
                 Explore uma paisagem ilustrada, encontre os objetos no caminho e observe os animais de cada clima.
-                Depois do modo Nativo, encare a avalanche que segue seus passos até o cume!
+                Depois do modo Nativo, encare a avalanche que segue seus passos até a cabana no topo!
               </p>
 
               {/* DIFICULDADE */}

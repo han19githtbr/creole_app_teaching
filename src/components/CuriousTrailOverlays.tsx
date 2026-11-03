@@ -249,7 +249,7 @@ export function TrailSummitOverlay({
     <div className="absolute inset-0 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-[2px]">
       <div className="pointer-events-auto w-full max-w-sm rounded-3xl border-2 border-amber-400 bg-slate-950/88 p-5 text-center text-white shadow-2xl animate-in zoom-in-95">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400 bg-amber-400/20 px-3 py-0.5 text-[11px] font-black uppercase tracking-wider text-amber-300">
-          🚩 Cume conquistado · 3950m
+          🏡 Cabana do topo conquistada · 3950m
         </span>
         <div className="mt-2 text-4xl">🏔️🏆</div>
         <h2 className="mt-1 text-xl font-black">Você hasteou a bandeira!</h2>

@@ -137,10 +137,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "cultura-trail-03-foula",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des foulards madras",
-    "article": "Des",
-    "name": "foulards madras",
-    "speak": "des foulards madras",
+    "fr": "Un foulard madras",
+    "article": "Un",
+    "name": "foulard madras",
+    "speak": "un foulard madras",
     "scene": "/ghibli/cultura-03.svg",
     "w": 1200,
     "h": 800,
@@ -151,7 +151,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: lenço madras.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des foulards madras dans cette scène."
+      "f": "On voit un foulard madras dans cette scène."
     }
   },
   {
@@ -242,10 +242,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "cultura-trail-04-kolye",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des colliers de perles",
-    "article": "Des",
-    "name": "colliers de perles",
-    "speak": "des colliers de perles",
+    "fr": "Un collier de perles",
+    "article": "Un",
+    "name": "collier de perles",
+    "speak": "un collier de perles",
     "scene": "/ghibli/cultura-04.svg",
     "w": 1200,
     "h": 800,
@@ -256,17 +256,17 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: colar de contas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des colliers de perles dans cette scène."
+      "f": "On voit un collier de perles dans cette scène."
     }
   },
   {
     "id": "cultura-trail-05-motye",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des mortiers en bois",
-    "article": "Des",
-    "name": "mortiers en bois",
-    "speak": "des mortiers en bois",
+    "fr": "Un mortier en bois",
+    "article": "Un",
+    "name": "mortier en bois",
+    "speak": "un mortier en bois",
     "scene": "/ghibli/cultura-05.svg",
     "w": 1200,
     "h": 800,
@@ -277,7 +277,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: pilão de madeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des mortiers en bois dans cette scène."
+      "f": "On voit un mortier en bois dans cette scène."
     }
   },
   {
@@ -557,10 +557,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "cultura-trail-09-teyat",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des théâtres de marionnettes",
-    "article": "Des",
-    "name": "théâtres de marionnettes",
-    "speak": "des théâtres de marionnettes",
+    "fr": "Un théâtre de marionnettes",
+    "article": "Un",
+    "name": "théâtre de marionnettes",
+    "speak": "un théâtre de marionnettes",
     "scene": "/ghibli/cultura-09.svg",
     "w": 1200,
     "h": 800,
@@ -571,7 +571,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: teatro de fantoches.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des théâtres de marionnettes dans cette scène."
+      "f": "On voit un théâtre de marionnettes dans cette scène."
     }
   },
   {
@@ -599,10 +599,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "cultura-trail-09-plim",
     "themeId": "cultura",
     "theme": "Cultura",
-    "fr": "Des panaches de plumes",
-    "article": "Des",
-    "name": "panaches de plumes",
-    "speak": "des panaches de plumes",
+    "fr": "Un panache de plumes",
+    "article": "Un",
+    "name": "panache de plumes",
+    "speak": "un panache de plumes",
     "scene": "/ghibli/cultura-09.svg",
     "w": 1200,
     "h": 800,
@@ -613,7 +613,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Cultura: penacho de plumas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des panaches de plumes dans cette scène."
+      "f": "On voit un panache de plumes dans cette scène."
     }
   },
   {
@@ -1817,10 +1817,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "tecnologia-trail-08-antenna",
     "themeId": "tecnologia",
     "theme": "Tecnologia",
-    "fr": "Des antennes-relais",
-    "article": "Des",
-    "name": "antennes-relais",
-    "speak": "des antennes-relais",
+    "fr": "Une antenne-relais",
+    "article": "Une",
+    "name": "antenne-relais",
+    "speak": "une antenne-relais",
     "scene": "/ghibli/tecnologia-08.svg",
     "w": 1200,
     "h": 800,
@@ -1831,7 +1831,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Tecnologia: torre de antena.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des antennes-relais dans cette scène."
+      "f": "On voit une antenne-relais dans cette scène."
     }
   },
   {
@@ -2384,10 +2384,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "interior-trail-04-eggs",
     "themeId": "interior",
     "theme": "Vida no interior",
-    "fr": "Des panier d'œufs",
-    "article": "Des",
+    "fr": "Un panier d'œufs",
+    "article": "Un",
     "name": "panier d'œufs",
-    "speak": "des panier d'œufs",
+    "speak": "un panier d'œufs",
     "scene": "/ghibli/interior-04.svg",
     "w": 1200,
     "h": 800,
@@ -2398,7 +2398,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Vida no interior: cesta de ovos.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des panier d'œufs dans cette scène."
+      "f": "On voit un panier d'œufs dans cette scène."
     }
   },
   {
@@ -3014,10 +3014,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "danca-trail-09-plim",
     "themeId": "danca",
     "theme": "Dança",
-    "fr": "Des panaches de plumes",
-    "article": "Des",
-    "name": "panaches de plumes",
-    "speak": "des panaches de plumes",
+    "fr": "Un panache de plumes",
+    "article": "Un",
+    "name": "panache de plumes",
+    "speak": "un panache de plumes",
     "scene": "/ghibli/danca-09.svg",
     "w": 1200,
     "h": 800,
@@ -3028,7 +3028,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Dança: penacho de plumas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des panaches de plumes dans cette scène."
+      "f": "On voit un panache de plumes dans cette scène."
     }
   },
   {
@@ -3329,10 +3329,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "geografia-trail-08-cactus",
     "themeId": "geografia",
     "theme": "Geografia",
-    "fr": "Des cactus",
-    "article": "Des",
+    "fr": "Un cactus",
+    "article": "Un",
     "name": "cactus",
-    "speak": "des cactus",
+    "speak": "un cactus",
     "scene": "/ghibli/geografia-08.svg",
     "w": 1200,
     "h": 800,
@@ -3343,7 +3343,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Geografia: cacto.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des cactus dans cette scène."
+      "f": "On voit un cactus dans cette scène."
     }
   },
   {
@@ -5135,10 +5135,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "estoicismo-trail-04-balanced",
     "themeId": "estoicismo",
     "theme": "Estoicismo",
-    "fr": "Des cairns de pierres",
-    "article": "Des",
-    "name": "cairns de pierres",
-    "speak": "des cairns de pierres",
+    "fr": "Un cairn de pierres",
+    "article": "Un",
+    "name": "cairn de pierres",
+    "speak": "un cairn de pierres",
     "scene": "/ghibli/estoicismo-04.svg",
     "w": 1200,
     "h": 800,
@@ -5149,7 +5149,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Estoicismo: pedras empilhadas.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des cairns de pierres dans cette scène."
+      "f": "On voit un cairn de pierres dans cette scène."
     }
   },
   {
@@ -5513,10 +5513,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "religiao-trail-05-font",
     "themeId": "religiao",
     "theme": "Religião",
-    "fr": "Des fonts baptismaux",
-    "article": "Des",
-    "name": "fonts baptismaux",
-    "speak": "des fonts baptismaux",
+    "fr": "Une cuve baptismale",
+    "article": "Une",
+    "name": "cuve baptismale",
+    "speak": "une cuve baptismale",
     "scene": "/ghibli/religiao-05.svg",
     "w": 1200,
     "h": 800,
@@ -5527,7 +5527,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Religião: pia batismal.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des fonts baptismaux dans cette scène."
+      "f": "On voit une cuve baptismale dans cette scène."
     }
   },
   {
@@ -6185,10 +6185,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "gastronomia-trail-07-mortar",
     "themeId": "gastronomia",
     "theme": "Gastronomia",
-    "fr": "Des mortiers en bois",
-    "article": "Des",
-    "name": "mortiers en bois",
-    "speak": "des mortiers en bois",
+    "fr": "Un mortier en bois",
+    "article": "Un",
+    "name": "mortier en bois",
+    "speak": "un mortier en bois",
     "scene": "/ghibli/gastronomia-07.svg",
     "w": 1200,
     "h": 800,
@@ -6199,7 +6199,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Gastronomia: pilão de madeira.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des mortiers en bois dans cette scène."
+      "f": "On voit un mortier en bois dans cette scène."
     }
   },
   {
@@ -6479,10 +6479,10 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "id": "idiomas-trail-05-bookshelf",
     "themeId": "idiomas",
     "theme": "Idiomas",
-    "fr": "Des étagères de livres",
-    "article": "Des",
-    "name": "étagères de livres",
-    "speak": "des étagères de livres",
+    "fr": "Une étagère à livres",
+    "article": "Une",
+    "name": "étagère à livres",
+    "speak": "une étagère à livres",
     "scene": "/ghibli/idiomas-05.svg",
     "w": 1200,
     "h": 800,
@@ -6493,7 +6493,7 @@ export const TRAIL_EXTRA_ITEMS: CestQuoiItem[] = [
     "hint": {
       "d": "Elemento do tema Idiomas: estante de livros.",
       "u": "Observe a cena com atenção no ponto indicado pela seta vermelha.",
-      "f": "On voit des étagères de livres dans cette scène."
+      "f": "On voit une étagère à livres dans cette scène."
     }
   },
   {

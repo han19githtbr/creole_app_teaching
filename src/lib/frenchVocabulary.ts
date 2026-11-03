@@ -386,7 +386,7 @@ export const KREYOL_TO_FR: Record<string, string> = {
   "kantik": "livre de cantiques",
   "branch palmis": "rameaux de palmier",
   "pen ak diven": "pain et vin",
-  "basen batèm": "fonts baptismaux",
+  "basen batèm": "cuve baptismale",
   "lakwa chemen": "calvaire",
   "klòchè": "clocher",
   "pòtay legliz": "portail d'église",

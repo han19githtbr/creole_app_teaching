@@ -99,16 +99,16 @@ export function TrailAnswerDock({
   return (
     <div className="pointer-events-auto absolute inset-x-0 bottom-0 p-2 sm:p-3">
       <div className="overflow-hidden rounded-2xl border border-white/20 bg-slate-950/78 shadow-2xl backdrop-blur-md">
-        <div className="h-1 w-full bg-white/10" aria-hidden>
+        {timed && <div className="h-1 w-full bg-white/10" aria-hidden>
           <div
             className={cn("h-full transition-[width] duration-200 ease-linear", barColor)}
             style={{ width: `${pct}%` }}
           />
-        </div>
+        </div>}
         <div className="px-2.5 pb-2.5 pt-1.5 sm:px-3">
           <p className="mb-1.5 flex items-center justify-between gap-2 text-[11px] font-bold text-slate-200">
             <span className="truncate">
-              {roundState === "retry" ? (
+              {!timed ? <span className="text-sky-200">🌨️ Responda com atenção e continue subindo!</span> : roundState === "retry" ? (
                 <span className="text-amber-300">Quase! Você tem mais uma chance 👀</span>
               ) : (
                 <>Que objeto a <span className="text-red-400">seta vermelha</span> aponta?</>
@@ -247,7 +247,7 @@ export function TrailLevelCompleteOverlay({
   );
 }
 
-/** Final: bandeira no cume. */
+/** Final: chegada feliz à cabana no cume. */
 export function TrailSummitOverlay({
   theme,
   totalXp,
@@ -265,10 +265,10 @@ export function TrailSummitOverlay({
     <div className="absolute inset-0 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-[2px]">
       <div className="pointer-events-auto w-full max-w-sm rounded-3xl border-2 border-amber-400 bg-slate-950/88 p-5 text-center text-white shadow-2xl animate-in zoom-in-95">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400 bg-amber-400/20 px-3 py-0.5 text-[11px] font-black uppercase tracking-wider text-amber-300">
-          🚩 Cume conquistado · 3950m
+          🏡 Cabana do topo conquistada · 3950m
         </span>
         <div className="mt-2 text-4xl">🏔️🏆</div>
-        <h2 className="mt-1 text-xl font-black">Você hasteou a bandeira!</h2>
+        <h2 className="mt-1 text-xl font-black">Você chegou à cabana!</h2>
         <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-slate-300">
           Félicitations ! Os 7 níveis do tema <strong className="text-white">{theme}</strong> estão completos.
         </p>

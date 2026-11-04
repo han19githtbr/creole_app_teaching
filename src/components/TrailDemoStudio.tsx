@@ -64,7 +64,11 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
     let cancelled = false;
     const roundItems = [...new Map(plan.rounds.map((round) => [round.item.scene, round.item])).values()];
     void loadDemoImages(roundItems)
-      .then((map) => {
+      .then(async (map) => {
+        const backdrop = new Image();
+        backdrop.src = "/trilha.jfif";
+        await backdrop.decode();
+        map.set("/trilha.jfif", backdrop);
         if (cancelled) return;
         const missing = roundItems.filter((item) => !map.has(item.scene));
         if (missing.length) {
@@ -318,7 +322,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           <label className="text-xs font-bold text-[var(--text-secondary)]">
             Nível da Montanha a Demonstrar
           </label>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
             {TRAIL_LEVELS.map((lvl) => (
               <button
                 key={lvl.level}

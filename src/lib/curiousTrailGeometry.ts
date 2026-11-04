@@ -77,7 +77,7 @@ const TOTAL_TRAIL_LENGTH = CURVE_LENGTHS.reduce((sum, length) => sum + length, 0
 export const CURIOUS_TRAIL_LENGTH = TOTAL_TRAIL_LENGTH;
 
 export function getTrailPositionAtFraction(fraction: number): TrailPoint {
-  let remaining = Math.max(0, Math.min(1, fraction)) * TOTAL_TRAIL_LENGTH;
+  let remaining = Math.max(0, Math.min(1, fraction)) * CURIOUS_TRAIL_LENGTH;
   const curveIndex = CURVE_LENGTHS.findIndex((length) => {
     if (remaining <= length) return true;
     remaining -= length;

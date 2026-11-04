@@ -632,6 +632,8 @@ export interface Wildlife {
   find: (animalId: string) => Critter | undefined;
   position: (c: Critter, W: number, H: number) => { x: number; y: number };
   setWeather: (weather: TrailWeather) => void;
+  /** Posição (0..1) do aluno no cenário: a vida selvagem acontece em volta dele, na mata. */
+  setFocus: (x: number, y: number) => void;
 }
 
 /** Clareiras ao lado do caminho (frações do mundo) onde os bichos passeiam. */
@@ -735,7 +737,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny", seed?: nu
       c.state = "idle";
       c.timer = initial ? rnd() * 3 : 0.2;
     } else {
-      const R = randRegion();
+      const R = randRegion(c.animal.id);
       if (initial) {
         c.x = R.x;
         c.y = R.y;
@@ -1256,5 +1258,5 @@ export function createWildlife(initialWeather: TrailWeather = "sunny", seed?: nu
     return { x: c.x * W, y: c.y * H - (c.spec.kind === "fly" ? c.z * S : c.spec.h * 0.8 * S) };
   };
 
-  return { critters, step, render, hit, poke, find, position, setWeather };
+  return { critters, step, render, hit, poke, find, position, setWeather, setFocus };
 }

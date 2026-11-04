@@ -1,19 +1,17 @@
 /**
- * Vida selvagem ultra-realista da Trilha Curiosa.
+ * Vida selvagem tropical da Trilha do Aluno Curioso.
  *
- * Animais com anatomia fidedigna, sombreamento volumétrico, pelagens e plumagens detalhadas,
- * proporções naturais e movimentos orgânicos próprios de cada espécie alpina:
+ * Animais com anatomia fiel à fauna brasileira, plumagens vibrantes e
+ * movimentos orgânicos característicos de cada espécie tropical:
  *
- *  - Chamois (Camurça dos Alpes): chifres em gancho característicos, máscara facial preta e branca,
- *    peito musculoso, patas ágeis sobre as rochas e respiração de vapor na neve.
- *  - Águia Real (L'Aigle royal): grande envergadura, asas com pontas recortadas em penas digitadas,
- *    nuca dourada, bico adunco âmbar e voo planado majestoso.
- *  - Cervo Nobre (Le Cerf): galhada ramificada imponente, postura nobre e pastagem elegante.
- *  - Raposa Vermelha (Le Renard roux): focinho fino, orelhas alertas com verso preto, cauda espessa com ponta branca.
- *  - Esquilo dos Bosques (L'Écureuil): cauda felpuda em curva S, orelhas com tufos de pelo alpino e patinhas atentas.
- *  - Lebre/Coelho Alpino: orelhas longas com pontas pretas, pelagem fofa e pulos ágeis.
- *  - Sapo da Chuva: pele brilhante verde-oliva com manchas, olho dourado e saco vocal inflando ritmadamente.
- *  - Ouriço, Tartaruga, Pássaro Cantor, Borboleta Apolo dos Alpes e Abelha Silvestre.
+ *  - Tucano (Ramphastos toco): bico imenso laranja-amarelo, corpo preto com peito branco.
+ *  - Arara Vermelha (Ara macao): plumagem vermelha, azul e amarela, longa cauda pontiaguda.
+ *  - Águia (Harpia harpyja): grande envergadura, planada majestosa em correntes quentes.
+ *  - Cervo / Veado-mateiro (Mazama americana): pelagem marrom-avermelhada, sem galhada.
+ *  - Macaco-prego (Sapajus apella): corpo castanho, face clara, cauda preênsil enrolada.
+ *  - Coelho (Sylvilagus brasiliensis): pelagem marrom-acinzentada, orelhas médias.
+ *  - Esquilo (Sciurus aestuans): esquilo tropical cinza-pardo, cauda felpuda.
+ *  - Pássaro Azul / Cotinga (Cotinga cayana): azul elétrico vibrante, pequeno e vivaz.
  */
 import { G, ell, circ, line, limb, f, sin, cos, clamp, PI } from "@/lib/storySceneLife";
 import { TRAIL_ROAM_SPOTS, ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailHabitat, type TrailWeather } from "@/lib/curiousTrailData";
@@ -30,33 +28,28 @@ interface Spec {
 }
 
 const SPECIES: Record<string, Spec> = {
-  squirrel: { kind: "walk", scale: 1.05, speed: 78, gait: 10, hop: true, turn: 6, idle: [1.2, 3] },
-  rabbit: { kind: "walk", scale: 1.1, speed: 65, gait: 9, hop: true, turn: 5, idle: [2, 4] },
-  frog: { kind: "walk", scale: 1.15, speed: 46, gait: 6, hop: true, turn: 5, idle: [2, 4] },
-  snail: { kind: "walk", scale: 1.0, speed: 6, gait: 2, turn: 2, idle: [3, 5] },
-  chamois: { kind: "walk", scale: 1.1, speed: 42, gait: 7, turn: 3, idle: [3, 5] },
-  deer: { kind: "walk", scale: 0.9, speed: 38, gait: 5, turn: 2.5, idle: [3, 5] },
-  fox: { kind: "walk", scale: 0.92, speed: 68, gait: 10, turn: 4, idle: [2, 3] },
-  hedgehog: { kind: "walk", scale: 1.1, speed: 22, gait: 9, turn: 3, idle: [2, 4] },
-  turtle: { kind: "walk", scale: 1.1, speed: 12, gait: 4, turn: 2, idle: [3, 5] },
-  bird: { kind: "fly", scale: 1.5, speed: 90, gait: 16, turn: 5, idle: [3, 4] },
-  eagle: { kind: "fly", scale: 1.25, speed: 65, gait: 1.8, turn: 1, idle: [0, 0] },
-  butterfly: { kind: "fly", scale: 1.7, speed: 42, gait: 12, turn: 3.5, idle: [2, 3] },
-  bee: { kind: "fly", scale: 1.5, speed: 75, gait: 40, turn: 7, idle: [0.8, 1.2] },
+  esquilo:       { kind: "walk", scale: 1.05, speed: 78, gait: 10, hop: true,  turn: 6,   idle: [1.2, 3] },
+  coelho:        { kind: "walk", scale: 1.1,  speed: 60, gait: 9,  hop: true,  turn: 5,   idle: [2, 4]   },
+  cervo:         { kind: "walk", scale: 0.9,  speed: 38, gait: 5,               turn: 2.5, idle: [4, 6]   },
+  macaco:        { kind: "walk", scale: 1.0,  speed: 55, gait: 8,  hop: true,  turn: 4,   idle: [2, 4]   },
+  tucano:        { kind: "walk", scale: 1.2,  speed: 35, gait: 6,  hop: true,  turn: 3,   idle: [3, 5]   },
+  aguia:         { kind: "fly",  scale: 1.25, speed: 65, gait: 1.8,            turn: 1,   idle: [0, 0]   },
+  araraVermelha: { kind: "fly",  scale: 1.4,  speed: 75, gait: 7,              turn: 2.5, idle: [2, 4]   },
+  passaroAzul:   { kind: "fly",  scale: 1.1,  speed: 80, gait: 14,             turn: 4,   idle: [1.5, 3] },
 };
-const FALLBACK: Spec = SPECIES.rabbit;
+const FALLBACK: Spec = SPECIES.coelho;
 const specOf = (id: string): Spec => SPECIES[id] ?? FALLBACK;
 
 const WEATHER_ANIMAL_IDS: Record<TrailWeather, readonly string[]> = {
-  sunny: ["squirrel", "rabbit", "bird", "deer", "fox", "chamois", "eagle", "butterfly", "bee"],
-  rain: ["frog", "snail", "bird"],
-  snow: ["chamois", "eagle", "fox", "rabbit"],
+  sunny: ["cervo", "coelho", "esquilo", "tucano", "araraVermelha", "passaroAzul"],
+  rain:  ["macaco", "tucano", "passaroAzul", "coelho"],
+  snow:  ["aguia", "cervo", "coelho"],
 };
 
 const WEATHER_HIGHLIGHTS: Record<TrailWeather, readonly string[]> = {
-  sunny: ["butterfly", "bee"],
-  rain: ["frog", "snail"],
-  snow: ["chamois", "fox"],
+  sunny: ["tucano", "araraVermelha"],
+  rain:  ["macaco"],
+  snow:  ["aguia"],
 };
 
 function weatherAdjustedSpec(id: string, weather: TrailWeather): Spec {
@@ -65,18 +58,18 @@ function weatherAdjustedSpec(id: string, weather: TrailWeather): Spec {
   let restFactor = 1;
 
   if (weather === "rain") {
-    if (id === "frog" || id === "snail") {
-      speedFactor = id === "frog" ? 1.1 : 1;
-      restFactor = 0.8;
+    if (id === "macaco" || id === "tucano") {
+      speedFactor = 0.85;
+      restFactor = 1.2;
     } else {
       speedFactor = 0.65;
       restFactor = 1.5;
     }
   } else if (weather === "snow") {
-    if (id === "chamois" || id === "fox") {
+    if (id === "aguia") {
       speedFactor = 0.9;
       restFactor = 1.1;
-    } else if (id === "rabbit") {
+    } else if (id === "cervo") {
       speedFactor = 0.8;
       restFactor = 1.25;
     } else {
@@ -134,125 +127,68 @@ const wrap = (a: number) => {
 type D = { s: number; m: number; a: number; moving: boolean; ph: number };
 
 /* ==================================================================
-   DESENHOS REALISTAS DOS ANIMAIS ALPINOS (SVG detalhado)
+   DESENHOS REALISTAS DOS ANIMAIS TROPICAIS (SVG detalhado)
    ================================================================== */
 
-/** ESQUILO DOS BOSQUES (Sciurus vulgaris alpinus) */
-function squirrel(o: D): string {
-  const w = o.m * 10 + o.ph;
-  const k = o.moving ? sin(w) : 0;
-  const tailSway = sin(o.a * 3.2 + o.ph) * 9 + (o.moving ? sin(w) * 11 : 0);
-  const breath = sin(o.a * 2.5 + o.ph) * 0.8;
+/** TUCANO (Ramphastos toco) — Pássaro icônico do Brasil */
+function tucano(o: D): string {
+  const w = o.m * 6 + o.ph;
+  const hop = o.moving ? Math.abs(sin(w)) * 12 : 0;
+  const headBob = o.moving ? sin(w) * 5 : sin(o.a * 1.8 + o.ph) * 2;
+  const breath = sin(o.a * 2.2 + o.ph) * 0.7;
 
-  // Cauda volumosa e felpuda em curva de S com camadas de pelo
-  const tail = `
-    <g transform="rotate(${f(tailSway)} -14 -16)">
-      <path d="M-10 -12 C-26 -18 -36 -38 -24 -52 C-14 -64 -2 -60 -4 -48 C-6 -38 -18 -28 -10 -12 Z" fill="#b45309" stroke="#78350f" stroke-width="1.2" />
-      <path d="M-12 -16 C-24 -24 -32 -40 -22 -50 C-14 -58 -6 -56 -8 -46 C-10 -38 -18 -30 -12 -16 Z" fill="#d97706" opacity="0.85" />
-      <path d="M-14 -22 C-22 -28 -28 -40 -20 -46" stroke="#fef3c7" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round" />
-    </g>
+  // Pernas finas com garras de tucano
+  const legL = line(-6, -6, -6, 0, 2.5, "#451a03");
+  const legR = line(4, -6, 4, 0, 2.5, "#451a03");
+  const clawL = `<path d="M-9,0 L-6,0 M-6,0 L-4,2 M-6,0 L-7,2" stroke="#451a03" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+  const clawR = `<path d="M1,0 L4,0 M4,0 L6,2 M4,0 L3,2" stroke="#451a03" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+
+  // Cauda curta vermelha
+  const tail = `<path d="M-18 -10 L-28 -8 L-26 -4 L-16 -6 Z" fill="#dc2626" stroke="#991b1b" stroke-width="0.8"/>`;
+
+  // Corpo preto
+  const body = `<ellipse cx="0" cy="${f(-13 + breath)}" rx="20" ry="12" fill="#1a1a1a" stroke="#000" stroke-width="1"/>`;
+
+  // Peito e garganta brancos
+  const chest = `<ellipse cx="8" cy="${f(-10 + breath)}" rx="14" ry="9" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.8"/>`;
+
+  // Cabeça preta com anel vermelho ao redor do olho
+  const head = `<circle cx="20" cy="${f(-22 + headBob + breath)}" r="9" fill="#1a1a1a" stroke="#000" stroke-width="0.8"/>`;
+
+  // Anel vermelho ao redor do olho
+  const eyeRing = `<circle cx="23" cy="${f(-25 + headBob + breath)}" r="3.8" fill="#dc2626"/>`;
+
+  // Olho amarelo com pupila preta
+  const eye = `<circle cx="23" cy="${f(-25 + headBob + breath)}" r="2.6" fill="#facc15"/>` +
+              `<circle cx="23" cy="${f(-25 + headBob + breath)}" r="1.4" fill="#18181b"/>` +
+              `<circle cx="23.6" cy="${f(-25.6 + headBob + breath)}" r="0.6" fill="#ffffff"/>`;
+
+  // Bico imenso curvo laranja/amarelo — a característica do tucano
+  const beak = `
+    <path d="M20 ${f(-22 + headBob + breath)} Q32 ${f(-28 + headBob + breath)} 42 ${f(-24 + headBob + breath)} Q44 ${f(-18 + headBob + breath)} 36 ${f(-16 + headBob + breath)} Q28 ${f(-14 + headBob + breath)} 20 ${f(-18 + headBob + breath)} Z"
+      fill="#f97316" stroke="#c2410c" stroke-width="1"/>
+    <path d="M20 ${f(-22 + headBob + breath)} Q32 ${f(-28 + headBob + breath)} 42 ${f(-24 + headBob + breath)} Q32 ${f(-22 + headBob + breath)} 20 ${f(-18 + headBob + breath)} Z"
+      fill="#fbbf24" opacity="0.7"/>
   `;
 
-  // Pernas com garras
-  const backLeg = limb(-8, -8, 11, k * 0.8, 4.2, "#92400e");
-  const frontLeg = limb(9, -8, 10, -k * 0.8, 3.8, "#92400e");
-
-  // Corpo com barriga bege clara
-  const body = `
+  const bodyStr = `
     ${tail}
-    ${backLeg}
-    ${frontLeg}
-    <ellipse cx="0" cy="${f(-15 + breath)}" rx="15" ry="9.5" fill="#b45309" stroke="#78350f" stroke-width="1" />
-    <ellipse cx="5" cy="${f(-12 + breath)}" rx="8.5" ry="5.5" fill="#fef3c7" />
-    <!-- Cabeça com orelhas pontiagudas e tufos alpinos -->
-    <circle cx="15" cy="${f(-22 + breath)}" r="7" fill="#b45309" stroke="#78350f" stroke-width="1" />
-    <ellipse cx="18" cy="${f(-19 + breath)}" rx="4.5" ry="3.5" fill="#fde68a" />
-    <!-- Focinho e nariz -->
-    <circle cx="21.5" cy="${f(-20 + breath)}" r="1.3" fill="#18181b" />
-    <!-- Olho preto brilhante com ponto de luz -->
-    <circle cx="17" cy="${f(-24 + breath)}" r="1.8" fill="#18181b" />
-    <circle cx="17.6" cy="${f(-24.6 + breath)}" r="0.6" fill="#ffffff" />
-    <!-- Orelhas com tufos de pelo -->
-    <polygon points="12,-28 14,-36 17,-28" fill="#92400e" stroke="#78350f" stroke-width="0.8" />
-    <line x1="14" y1="-36" x2="14" y2="-40" stroke="#78350f" stroke-width="1.2" stroke-linecap="round" />
-    <polygon points="17,-27 19,-35 21,-27" fill="#b45309" />
-    <!-- Patinhas dianteiras segurando semente -->
-    <circle cx="17" cy="${f(-13 + breath)}" r="2.2" fill="#92400e" />
-    <circle cx="19" cy="${f(-14 + breath)}" r="2.2" fill="#78350f" />
-    <!-- Noz de pinheiro -->
-    <ellipse cx="18.5" cy="${f(-13.5 + breath)}" rx="2" ry="3" fill="#451a03" />
-  `;
-
-  return G(0, -Math.abs(k) * 10 * o.s, 0, o.s, o.s, body) + ell(0, 1, 16 * o.s, 4 * o.s, "rgba(0,0,0,.22)");
-}
-
-/** CAMURÇA DOS ALPES (Rupicapra rupicapra / Chamois) */
-function chamois(o: D): string {
-  const w = o.m * 7 + o.ph;
-  const k = o.moving ? sin(w) : 0;
-  const neckAlert = o.moving ? 0 : sin(o.a * 1.5 + o.ph) * 4;
-
-  // Pernas fortes com cascos fendidos
-  const legs = [
-    [-18, k],
-    [-10, -k],
-    [12, -k],
-    [20, k],
-  ]
-    .map(([lx, a], i) => {
-      const col = i % 2 === 0 ? "#78350f" : "#54280b";
-      return (
-        limb(lx, -28, 29, (a as number) * 0.65, 4.5, col) +
-        `<rect x="${f(lx - 2)}" y="-2" width="4.5" height="3.5" rx="1" fill="#18181b" />`
-      );
-    })
-    .join("");
-
-  // Cabeça e chifres em gancho característicos da camurça
-  const head = `
-    <g transform="rotate(${f(neckAlert)} 20 -48)">
-      <!-- Pescoço atlético -->
-      <line x1="16" y1="-42" x2="30" y2="-62" stroke="#78350f" stroke-width="11" stroke-linecap="round" />
-      <line x1="20" y1="-44" x2="32" y2="-62" stroke="#d97706" stroke-width="6" stroke-linecap="round" opacity="0.6" />
-      <!-- Cabeça com máscara facial preta e branca -->
-      <ellipse cx="36" cy="-65" rx="10" ry="6.5" fill="#fef3c7" transform="rotate(-18 36 -65)" stroke="#78350f" stroke-width="1" />
-      <!-- Faixa escura da máscara facial característica do Chamois -->
-      <path d="M28 -68 L42 -62" stroke="#291103" stroke-width="3.5" stroke-linecap="round" />
-      <!-- Focinho e narinas -->
-      <ellipse cx="44" cy="-62" rx="3.2" ry="2.4" fill="#291103" />
-      <!-- Olho escuro alerta -->
-      <circle cx="37" cy="-67" r="1.8" fill="#18181b" />
-      <circle cx="37.5" cy="-67.5" r="0.6" fill="#ffffff" />
-      <!-- Chifres pretos recurvados em gancho no topo -->
-      <path d="M30 -70 Q28 -86 35 -87 Q38 -87 37 -82" stroke="#18181b" stroke-width="2.6" fill="none" stroke-linecap="round" />
-      <path d="M34 -71 Q32 -85 39 -85 Q42 -85 41 -80" stroke="#291103" stroke-width="2.4" fill="none" stroke-linecap="round" />
-      <!-- Orelha alerta -->
-      <polygon points="27,-70 23,-78 29,-74" fill="#78350f" stroke="#291103" stroke-width="0.8" />
-      <!-- Vapor da respiração no ar frio -->
-      <circle cx="48" cy="-60" r="2.5" fill="#ffffff" opacity="0.6" />
-      <circle cx="53" cy="-58" r="3.5" fill="#f1f5f9" opacity="0.4" />
-    </g>
-  `;
-
-  // Corpo musculoso castanho com dorso sombreado
-  const body = `
-    ${legs}
-    <ellipse cx="0" cy="-39" rx="26" ry="12" fill="#78350f" stroke="#451a03" strokeWidth="1.2" />
-    <path d="M-22 -44 Q0 -48 22 -42" stroke="#451a03" stroke-width="4" fill="none" opacity="0.75" />
-    <ellipse cx="-4" cy="-41" rx="16" ry="7" fill="#92400e" />
+    ${legL}${legR}${clawL}${clawR}
+    ${body}
+    ${chest}
     ${head}
-    <!-- Cauda curta preta -->
-    <ellipse cx="-25" cy="-43" rx="4.5" ry="3" fill="#18181b" transform="rotate(25 -25 -43)" />
+    ${eyeRing}
+    ${beak}
+    ${eye}
   `;
 
-  return G(0, -Math.abs(k) * 2.2, 0, o.s, o.s, body) + ell(0, 1, 28 * o.s, 5 * o.s, "rgba(0,0,0,.22)");
+  return G(0, -hop, 0, o.s, o.s, bodyStr) + ell(0, 1, 18 * o.s, 4 * o.s, "rgba(0,0,0,.2)");
 }
 
-/** ÁGUIA REAL (Aquila chrysaetos) */
-function eagle(o: D): string {
+/** ÁGUIA (Harpia harpyja) — Harpia real, planada majestosa */
+function aguia(o: D): string {
   const k = sin(o.a * 1.8 + o.ph) * 0.35 + sin(o.a * 0.6) * 0.12;
 
-  // Asas majestosas com penas primárias abertas e digitadas
   const wing = (dir: number, c: string, stroke: string) => `
     <path
       d="M-6 -2
@@ -268,406 +204,327 @@ function eagle(o: D): string {
 
   const body = `
     ${wing(-1, "#54280b", "#3b1a06")}
-    <!-- Cauda em leque com faixas brancas e ponta escura -->
-    <path d="M-16 0 L-36 ${f(-4 + k * 2)} L-38 6 L-16 5 Z" fill="#291103" />
-    <path d="M-20 0 L-30 ${f(-3 + k * 2)} L-31 4 L-20 3 Z" fill="#fef3c7" opacity="0.8" />
-    <!-- Corpo forte castanho-escuro -->
-    <ellipse cx="0" cy="0" rx="20" ry="6.5" fill="#451a03" stroke="#291103" stroke-width="1" />
-    <!-- Cabeça com plumagem dourada na nuca -->
-    <circle cx="20" cy="-1.5" r="6" fill="#78350f" />
-    <path d="M15 -5 Q21 -7 25 -3" stroke="#f59e0b" stroke-width="3" fill="none" />
+    <!-- Cauda em leque com faixas claras -->
+    <path d="M-16 0 L-36 ${f(-4 + k * 2)} L-38 6 L-16 5 Z" fill="#291103"/>
+    <path d="M-20 0 L-30 ${f(-3 + k * 2)} L-31 4 L-20 3 Z" fill="#fef3c7" opacity="0.8"/>
+    <!-- Corpo castanho-escuro -->
+    <ellipse cx="0" cy="0" rx="20" ry="6.5" fill="#451a03" stroke="#291103" stroke-width="1"/>
+    <!-- Cabeça com topete cinza característico da harpia -->
+    <circle cx="20" cy="-1.5" r="6" fill="#78350f"/>
+    <path d="M15 -5 Q21 -8 25 -3" stroke="#94a3b8" stroke-width="2.5" fill="none"/>
     <!-- Bico amarelo adunco forte -->
-    <path d="M24 -2 L33 0 L25 4 Z" fill="#f59e0b" stroke="#b45309" stroke-width="0.8" />
-    <path d="M30 0 Q33 2 32 4" stroke="#78350f" stroke-width="1" fill="none" />
-    <!-- Olho amarelo penetrante com pupila preta -->
-    <circle cx="22" cy="-2.5" r="1.6" fill="#facc15" />
-    <circle cx="22" cy="-2.5" r="0.9" fill="#18181b" />
-    <!-- Garras amarelas curvas recolhidas -->
-    <path d="M2 5 L4 9 M6 5 L8 9" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round" />
+    <path d="M24 -2 L33 0 L25 4 Z" fill="#f59e0b" stroke="#b45309" stroke-width="0.8"/>
+    <path d="M30 0 Q33 2 32 4" stroke="#78350f" stroke-width="1" fill="none"/>
+    <!-- Olho amarelo penetrante -->
+    <circle cx="22" cy="-2.5" r="1.6" fill="#facc15"/>
+    <circle cx="22" cy="-2.5" r="0.9" fill="#18181b"/>
+    <!-- Garras amarelas -->
+    <path d="M2 5 L4 9 M6 5 L8 9" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round"/>
     ${wing(1, "#3b1a06", "#1c0d03")}
   `;
 
   return G(0, 0, 0, o.s, o.s, body);
 }
 
-/** CERVO NOBRE (Cervus elaphus) */
-function realDeer(o: D): string {
+/** CERVO / VEADO-MATEIRO (Mazama americana) — Sem galhada, pelagem marrom-avermelhada */
+function realCervo(o: D): string {
   const w = o.m * 5 + o.ph;
   const k = o.moving ? sin(w) : 0;
   const graze = o.moving ? 0 : (sin(o.a * 0.9 + o.ph) + 1) / 2;
 
-  // Pernas longas e elegantes
-  const legs = [-22, -14, 16, 24]
+  const legs = [-20, -12, 14, 22]
     .map((lx, i) => {
       const col = i % 2 === 0 ? "#92400e" : "#78350f";
-      return limb(lx, -36, 38, sin(w * 0.5 + i) * 0.05 + k * 0.4, 4.8, col);
+      return limb(lx, -34, 36, sin(w * 0.5 + i) * 0.05 + k * 0.4, 4.5, col);
     })
     .join("");
 
-  // Cabeça e galhada ramificada
   const head = `
-    <g transform="rotate(${f(-6 + graze * 46)} 26 -54)">
-      <!-- Pescoço gracioso -->
-      <line x1="24" y1="-52" x2="42" y2="-82" stroke="#b45309" stroke-width="10" stroke-linecap="round" />
-      <ellipse cx="48" cy="-86" rx="12" ry="7.5" fill="#b45309" transform="rotate(-20 48 -86)" stroke="#78350f" stroke-width="1" />
-      <!-- Olho grande e meigo com brilho -->
-      <circle cx="51" cy="-88" r="2.2" fill="#18181b" />
-      <circle cx="51.7" cy="-88.6" r="0.7" fill="#ffffff" />
-      <!-- Focinho com boca e narinas -->
-      <ellipse cx="58" cy="-83" rx="3.5" ry="2.6" fill="#291103" />
-      <!-- Orelha elegante -->
-      <ellipse cx="43" cy="-94" rx="3" ry="6" fill="#92400e" transform="rotate(-30 43 -94)" />
-      <!-- Galhada ramificada imponente de cervo real -->
-      <path
-        d="M44 -92 L42 -110 M42 -104 L34 -112 M42 -98 L48 -112 M44 -90 L52 -110 M52 -104 L58 -112 M52 -98 L48 -108"
-        stroke="#54280b"
-        stroke-width="2.6"
-        fill="none"
-        stroke-linecap="round"
-      />
+    <g transform="rotate(${f(-6 + graze * 42)} 24 -50)">
+      <!-- Pescoço gracioso marrom-avermelhado -->
+      <line x1="22" y1="a-48" x2="38" y2="-76" stroke="#b45309" stroke-width="9" stroke-linecap="round"/>
+      <line x1="22" y1="-48" x2="38" y2="-76" stroke="#b45309" stroke-width="9" stroke-linecap="round"/>
+      <ellipse cx="44" cy="-80" rx="11" ry="7" fill="#b45309" transform="rotate(-18 44 -80)" stroke="#78350f" stroke-width="1"/>
+      <!-- Olho grande e meigo -->
+      <circle cx="47" cy="-82" r="2" fill="#18181b"/>
+      <circle cx="47.6" cy="-82.6" r="0.7" fill="#ffffff"/>
+      <!-- Focinho com narinas -->
+      <ellipse cx="53" cy="-77" rx="3.2" ry="2.4" fill="#291103"/>
+      <!-- Orelha alerta tropical -->
+      <ellipse cx="40" cy="-88" rx="2.8" ry="5.5" fill="#92400e" transform="rotate(-25 40 -88)"/>
+      <ellipse cx="40" cy="-88" rx="1.5" ry="3.5" fill="#fde68a" opacity="0.7" transform="rotate(-25 40 -88)"/>
+      <!-- Sem galhada — veado fêmea brasileiro -->
     </g>
   `;
 
-  // Corpo avermelhado com peito bege
+  // Manchas juvenis sutis
   const body = `
     ${legs}
-    <ellipse cx="0" cy="-48" rx="33" ry="15" fill="#b45309" stroke="#78350f" stroke-width="1.2" />
-    <ellipse cx="8" cy="-43" rx="20" ry="10" fill="#d97706" opacity="0.8" />
-    <ellipse cx="-20" cy="-48" rx="8" ry="6" fill="#fef3c7" opacity="0.85" />
-    <!-- Pintas brancas sutis na pelagem de verão -->
-    <circle cx="-8" cy="-52" r="1.8" fill="#fef3c7" opacity="0.6" />
-    <circle cx="4" cy="-46" r="1.8" fill="#fef3c7" opacity="0.6" />
-    <circle cx="16" cy="-48" r="1.8" fill="#fef3c7" opacity="0.6" />
+    <ellipse cx="0" cy="-45" rx="30" ry="14" fill="#b45309" stroke="#78350f" stroke-width="1.2"/>
+    <ellipse cx="6" cy="-40" rx="18" ry="9" fill="#d97706" opacity="0.75"/>
+    <!-- Manchas brancas sutis -->
+    <circle cx="-6" cy="-49" r="1.6" fill="#fef3c7" opacity="0.55"/>
+    <circle cx="4" cy="-43" r="1.6" fill="#fef3c7" opacity="0.55"/>
+    <circle cx="14" cy="-46" r="1.5" fill="#fef3c7" opacity="0.55"/>
     ${head}
     <!-- Cauda curta com mancha bege -->
-    <ellipse cx="-33" cy="-54" rx="5.5" ry="3.5" fill="#fef3c7" transform="rotate(-30 -33 -54)" stroke="#b45309" stroke-width="1" />
+    <ellipse cx="-30" cy="-51" rx="5" ry="3" fill="#fef3c7" transform="rotate(-28 -30 -51)" stroke="#b45309" stroke-width="0.8"/>
   `;
 
-  return G(0, -Math.abs(k) * 1.5, 0, o.s, o.s, body) + ell(0, 1, 36 * o.s, 6 * o.s, "rgba(0,0,0,.22)");
+  return G(0, -Math.abs(k) * 1.5, 0, o.s, o.s, body) + ell(0, 1, 34 * o.s, 6 * o.s, "rgba(0,0,0,.22)");
 }
 
-/** RAPOSA VERMELHA (Vulpes vulpes) */
-function realFox(o: D): string {
+/** MACACO-PREGO (Sapajus apella) — Corpo castanho, face clara, cauda preênsil */
+function macaco(o: D): string {
+  const w = o.m * 8 + o.ph;
+  const k = o.moving ? sin(w) : 0;
+  const groom = !o.moving ? Math.max(0, sin(o.a * 1.8 + o.ph)) : 0; // animação de cuidado
+
+  // Cauda preênsil enrolada característica
+  const tail = `
+    <path d="M-14 -16 C-26 -10 -34 -2 -30 10 C-26 20 -18 20 -18 12 C-18 6 -24 6 -22 2"
+      stroke="#78350f" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <path d="M-14 -16 C-26 -10 -34 -2 -30 10 C-26 20 -18 20 -18 12 C-18 6 -24 6 -22 2"
+      stroke="#92400e" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+  `;
+
+  // Braços longos — primata
+  const armL = limb(-12, -20, 18, -k * 0.9 - groom * 0.8, 4, "#78350f");
+  const armR = limb(10, -20, 18, k * 0.9 + groom * 0.6, 4, "#78350f");
+
+  // Pernas curtas
+  const legL = limb(-8, -10, 14, k * 0.6, 4.5, "#78350f");
+  const legR = limb(6, -10, 14, -k * 0.6, 4.5, "#78350f");
+
+  const body = `
+    ${tail}
+    ${legL}${legR}
+    <!-- Corpo castanho robusto -->
+    <ellipse cx="0" cy="-18" rx="16" ry="12" fill="#78350f" stroke="#451a03" stroke-width="1"/>
+    <!-- Peito mais claro -->
+    <ellipse cx="4" cy="-14" rx="10" ry="7.5" fill="#92400e" opacity="0.8"/>
+    ${armL}${armR}
+    <!-- Cabeça com face creme característica do macaco-prego -->
+    <circle cx="12" cy="-30" r="10" fill="#78350f" stroke="#451a03" stroke-width="1"/>
+    <!-- Calota escura (capuz) -->
+    <ellipse cx="10" cy="-37" rx="8.5" ry="5.5" fill="#451a03"/>
+    <!-- Face creme -->
+    <ellipse cx="14" cy="-28" rx="6.5" ry="6" fill="#fef3c7"/>
+    <!-- Olhos -->
+    <circle cx="12" cy="-31" r="1.8" fill="#18181b"/>
+    <circle cx="12.5" cy="-31.5" r="0.6" fill="#ffffff"/>
+    <!-- Nariz e boca -->
+    <ellipse cx="16" cy="-27" rx="2.5" ry="1.8" fill="#78350f"/>
+    <path d="M13 -24 Q16 -22 19 -24" stroke="#451a03" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  `;
+
+  return G(0, -Math.abs(k) * 6 * o.s, 0, o.s, o.s, body) + ell(0, 1, 18 * o.s, 4 * o.s, "rgba(0,0,0,.22)");
+}
+
+/** ESQUILO TROPICAL (Sciurus aestuans) — Esquilo cinza-pardo com cauda felpuda */
+function realEsquilo(o: D): string {
   const w = o.m * 10 + o.ph;
   const k = o.moving ? sin(w) : 0;
+  const tailSway = sin(o.a * 3.2 + o.ph) * 9 + (o.moving ? sin(w) * 11 : 0);
+  const breath = sin(o.a * 2.5 + o.ph) * 0.8;
 
-  // Pernas com meias pretas na parte inferior
-  const legs = [
-    [-17, k],
-    [-9, -k],
-    [13, -k],
-    [21, k],
-  ]
-    .map(([lx, a]) => {
-      return (
-        limb(lx, -17, 18, (a as number) * 0.8, 5, "#c2410c") +
-        limb(lx + sin((a as number) * 0.8) * 10, -17 + cos((a as number) * 0.8) * 10, 8, (a as number) * 0.8, 4.5, "#18181b")
-      );
-    })
-    .join("");
-
-  // Cauda espessa com ponta branca ondulando ao correr
+  // Cauda volumosa tropical — cinza-parda
   const tail = `
-    <g transform="rotate(${f(sin(w * 0.85) * 14)} -28 -28)">
-      <path d="M-26 -26 C-42 -32 -54 -24 -48 -16 C-42 -10 -30 -16 -24 -24 Z" fill="#ea580c" />
-      <ellipse cx="-44" cy="-28" rx="18" ry="7.5" fill="#ea580c" transform="rotate(-15 -44 -28)" stroke="#9a3412" stroke-width="1" />
-      <!-- Ponta da cauda branca como algodão -->
-      <ellipse cx="-58" cy="-32" rx="7" ry="5.5" fill="#ffffff" stroke="#e2e8f0" stroke-width="0.8" />
+    <g transform="rotate(${f(tailSway)} -14 -16)">
+      <path d="M-10 -12 C-26 -18 -36 -38 -24 -52 C-14 -64 -2 -60 -4 -48 C-6 -38 -18 -28 -10 -12 Z" fill="#78716c" stroke="#57534e" stroke-width="1.2"/>
+      <path d="M-12 -16 C-24 -24 -32 -40 -22 -50 C-14 -58 -6 -56 -8 -46 C-10 -38 -18 -30 -12 -16 Z" fill="#a8a29e" opacity="0.75"/>
+      <path d="M-14 -22 C-22 -28 -28 -40 -20 -46" stroke="#fafaf9" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
     </g>
   `;
 
-  // Cabeça triangular, focinho fino e bochechas brancas
-  const head = `
-    <ellipse cx="32" cy="-35" rx="12" ry="9.5" fill="#ea580c" stroke="#9a3412" stroke-width="1" />
-    <!-- Bochechas brancas volumosas -->
-    <ellipse cx="28" cy="-31" rx="8" ry="6" fill="#ffffff" />
-    <!-- Focinho afilado com nariz preto -->
-    <polygon points="38,-36 54,-32 38,-28" fill="#f97316" stroke="#c2410c" stroke-width="0.8" />
-    <circle cx="53" cy="-32" r="1.8" fill="#18181b" />
-    <!-- Olho amendoado oblíquo com pupila fina -->
-    <path d="M34 -37 Q37 -40 40 -37 Q37 -34 34 -37 Z" fill="#fef08a" stroke="#18181b" stroke-width="1" />
-    <circle cx="37" cy="-37" r="1.2" fill="#18181b" />
-    <!-- Orelhas pontiagudas com costas pretas e interior branco -->
-    <polygon points="26,-42 28,-56 36,-44" fill="#18181b" />
-    <polygon points="28,-44 30,-53 35,-45" fill="#ffffff" />
-    <polygon points="34,-43 40,-55 43,-42" fill="#18181b" />
-    <polygon points="36,-44 40,-52 42,-44" fill="#ffffff" />
-  `;
+  const backLeg = limb(-8, -8, 11, k * 0.8, 4.2, "#57534e");
+  const frontLeg = limb(9, -8, 10, -k * 0.8, 3.8, "#57534e");
 
   const body = `
-    ${legs}
-    <ellipse cx="0" cy="-28" rx="28" ry="12" fill="#ea580c" stroke="#9a3412" stroke-width="1.2" />
-    <!-- Peito e garganta brancos -->
-    <ellipse cx="16" cy="-25" rx="15" ry="8" fill="#ffffff" />
-    ${head}
     ${tail}
+    ${backLeg}
+    ${frontLeg}
+    <ellipse cx="0" cy="${f(-15 + breath)}" rx="15" ry="9.5" fill="#78716c" stroke="#57534e" stroke-width="1"/>
+    <!-- Barriga mais clara -->
+    <ellipse cx="5" cy="${f(-12 + breath)}" rx="8.5" ry="5.5" fill="#d6d3d1"/>
+    <!-- Cabeça -->
+    <circle cx="15" cy="${f(-22 + breath)}" r="7" fill="#78716c" stroke="#57534e" stroke-width="1"/>
+    <ellipse cx="18" cy="${f(-19 + breath)}" rx="4.5" ry="3.5" fill="#e7e5e4"/>
+    <!-- Nariz -->
+    <circle cx="21.5" cy="${f(-20 + breath)}" r="1.3" fill="#18181b"/>
+    <!-- Olho preto brilhante -->
+    <circle cx="17" cy="${f(-24 + breath)}" r="1.8" fill="#18181b"/>
+    <circle cx="17.6" cy="${f(-24.6 + breath)}" r="0.6" fill="#ffffff"/>
+    <!-- Orelhas pequenas sem tufos (tropical) -->
+    <polygon points="12,-28 14,-35 17,-28" fill="#57534e"/>
+    <polygon points="17,-27 19,-34 21,-27" fill="#78716c"/>
+    <!-- Patinhas -->
+    <circle cx="17" cy="${f(-13 + breath)}" r="2.2" fill="#57534e"/>
+    <circle cx="19" cy="${f(-14 + breath)}" r="2.2" fill="#44403c"/>
   `;
 
-  return G(0, -Math.abs(k) * 3.5, 0, o.s, o.s, body) + ell(0, 1, 32 * o.s, 5.5 * o.s, "rgba(0,0,0,.22)");
+  return G(0, -Math.abs(k) * 10 * o.s, 0, o.s, o.s, body) + ell(0, 1, 16 * o.s, 4 * o.s, "rgba(0,0,0,.22)");
 }
 
-/** COELHO / LEBRE ALPINA (Lepus timidus) */
-function realRabbit(o: D): string {
+/** COELHO TROPICAL (Sylvilagus brasiliensis) — Pelagem marrom-acinzentada */
+function realCoelho(o: D): string {
   const w = o.m * 9 + o.ph;
   const hop = o.moving ? Math.abs(sin(w)) * 18 : 0;
   const breath = sin(o.a * 3 + o.ph) * 0.6;
 
-  // Orelhas longas com pontas pretas (típica lebre da neve)
+  // Orelhas médias (menores que o coelho europeu)
   const ears = `
     <g transform="rotate(${f(-8 + sin(w * 1.5) * 6)} 14 -28)">
-      <ellipse cx="14" cy="-35" rx="3.2" ry="11" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
-      <ellipse cx="14" cy="-34" rx="1.8" ry="8" fill="#fbcfe8" opacity="0.6" />
-      <!-- Ponta preta característica da lebre alpina -->
-      <polygon points="12,-44 14,-46 16,-44" fill="#18181b" />
+      <ellipse cx="14" cy="-34" rx="3.2" ry="10" fill="#a3a3a3" stroke="#737373" stroke-width="1"/>
+      <ellipse cx="14" cy="-33" rx="1.8" ry="7" fill="#fbcfe8" opacity="0.6"/>
     </g>
     <g transform="rotate(${f(10 + sin(w * 1.5) * 6)} 20 -28)">
-      <ellipse cx="20" cy="-34" rx="3" ry="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
-      <ellipse cx="20" cy="-33" rx="1.6" ry="7" fill="#fbcfe8" opacity="0.6" />
-      <polygon points="18,-42 20,-44 22,-42" fill="#18181b" />
+      <ellipse cx="20" cy="-33" rx="3" ry="9" fill="#a3a3a3" stroke="#737373" stroke-width="1"/>
+      <ellipse cx="20" cy="-32" rx="1.6" ry="6.5" fill="#fbcfe8" opacity="0.6"/>
     </g>
   `;
 
   const body = `
-    <!-- Corpo volumoso fofo -->
-    <ellipse cx="0" cy="${f(-15 + breath)}" rx="17" ry="11" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2" />
-    <!-- Cabeça com focinho trêmulo -->
-    <circle cx="16" cy="${f(-22 + breath)}" r="8.5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+    <!-- Corpo fofo marrom-acinzentado -->
+    <ellipse cx="0" cy="${f(-15 + breath)}" rx="17" ry="11" fill="#a3a3a3" stroke="#737373" stroke-width="1.2"/>
+    <!-- Cabeça -->
+    <circle cx="16" cy="${f(-22 + breath)}" r="8.5" fill="#a3a3a3" stroke="#737373" stroke-width="1"/>
     <!-- Bochecha e focinho -->
-    <ellipse cx="21" cy="${f(-20 + breath)}" rx="3.5" ry="3" fill="#fef2f2" />
-    <circle cx="23.5" cy="${f(-21 + breath)}" r="1.3" fill="#f43f5e" />
-    <!-- Olho rosado brilhante de coelho alpino -->
-    <circle cx="17.5" cy="${f(-24 + breath)}" r="2" fill="#991b1b" />
-    <circle cx="18" cy="${f(-24.5 + breath)}" r="0.7" fill="#ffffff" />
+    <ellipse cx="21" cy="${f(-20 + breath)}" rx="3.5" ry="3" fill="#d4d4d4"/>
+    <circle cx="23.5" cy="${f(-21 + breath)}" r="1.3" fill="#f43f5e"/>
+    <!-- Olho escuro de coelho -->
+    <circle cx="17.5" cy="${f(-24 + breath)}" r="2" fill="#18181b"/>
+    <circle cx="18" cy="${f(-24.5 + breath)}" r="0.7" fill="#ffffff"/>
     ${ears}
-    <!-- Rabo felpudo de pompom -->
-    <circle cx="-16" cy="${f(-17 + breath)}" r="5.5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
-    <!-- Patas traseiras musculosas de salto -->
-    <ellipse cx="-8" cy="-5" rx="8" ry="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
-    <ellipse cx="10" cy="-4" rx="6" ry="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+    <!-- Rabo felpudo branco -->
+    <circle cx="-16" cy="${f(-17 + breath)}" r="5.5" fill="#f5f5f5" stroke="#e5e5e5" stroke-width="1"/>
+    <!-- Patas traseiras musculosas -->
+    <ellipse cx="-8" cy="-5" rx="8" ry="4" fill="#d4d4d4" stroke="#a3a3a3" stroke-width="1"/>
+    <ellipse cx="10" cy="-4" rx="6" ry="3" fill="#d4d4d4" stroke="#a3a3a3" stroke-width="1"/>
   `;
 
   return G(0, -hop, 0, o.s, o.s, body) + ell(0, 1, 18 * o.s, 4.5 * o.s, "rgba(0,0,0,.22)");
 }
 
-/** SAPO DA CHUVA (Rana temporaria alpina) */
-function frog(o: D): string {
-  const w = o.m * 6 + o.ph;
-  const j = o.moving ? Math.abs(sin(w)) : 0;
-  // Saco vocal inflando e desinflando ao coaxar na chuva
-  const croak = (sin(o.a * 4 + o.ph) + 1) / 2;
-
-  const body = `
-    <!-- Pernas traseiras dobradas em Z com membranas -->
-    <path d="M-10 -4 Q${f(-22 - j * 5)} ${f(-4 - j * 7)} ${f(-16 - j * 9)} 2 L-5 3 Z" fill="#15803d" stroke="#14532d" stroke-width="1" />
-    <!-- Corpo verde-oliva brilhante com manchas escuras -->
-    <ellipse cx="0" cy="-9" rx="14" ry="${f(9 - j * 1.5)}" fill="#16a34a" stroke="#15803d" stroke-width="1.2" />
-    <circle cx="-3" cy="-11" r="2.2" fill="#14532d" opacity="0.6" />
-    <circle cx="4" cy="-12" r="2" fill="#14532d" opacity="0.6" />
-    <!-- Barriga amarelada -->
-    <ellipse cx="3" cy="-6" rx="10" ry="4.5" fill="#fef08a" opacity="0.9" />
-    <!-- Cabeça com boca larga -->
-    <ellipse cx="12" cy="-13" rx="9" ry="7" fill="#22c55e" stroke="#15803d" stroke-width="1" />
-    <!-- Saco vocal inflando sob o queixo -->
-    <ellipse cx="17" cy="-9" rx="${f(3.5 + croak * 3.5)}" ry="${f(2.5 + croak * 3)}" fill="#fef9c3" opacity="0.85" />
-    <line x1="13" y1="-11" x2="22" y2="-11" stroke="#14532d" stroke-width="1.4" stroke-linecap="round" />
-    <!-- Olhos saltados dourados com pupila horizontal -->
-    <circle cx="12" cy="-19" r="4" fill="#facc15" stroke="#ca8a04" stroke-width="1" />
-    <ellipse cx="12" cy="-19" rx="2.5" ry="1.2" fill="#18181b" />
-    <circle cx="17" cy="-18" r="3.5" fill="#facc15" stroke="#ca8a04" stroke-width="1" />
-    <ellipse cx="17" cy="-18" rx="2.2" ry="1.1" fill="#18181b" />
-  `;
-
-  return G(0, -j * 17 * o.s, j * -10, o.s, o.s, body) + ell(0, 1, 15 * o.s * (1 - j * 0.25), 3.5 * o.s, "rgba(0,0,0,.2)");
-}
-
-/** CARACOL DA CHUVA (Helix pomatia) */
-function snail(o: D): string {
-  const st = o.moving ? sin(o.a * 2.2) * 2.5 : 0;
-  const eye = sin(o.a * 1.5 + o.ph) * 2;
-
-  const body = `
-    <!-- Corpo rastejante com pé musculoso -->
-    <path
-      d="M-20 0 Q-15 -7 ${f(0 + st)} -6 Q${f(15 + st)} -8 ${f(22 + st)} -6 Q${f(26 + st)} -2 ${f(22 + st)} 0 Z"
-      fill="#d4d4d8"
-      stroke="#a1a1aa"
-      stroke-width="1"
-    />
-    <!-- Tentáculos ópticos com olhos na ponta -->
-    <line x1="${f(20 + st)}" y1="-7" x2="${f(22 + st + eye)}" y2="-18" stroke="#a1a1aa" stroke-width="1.8" stroke-linecap="round" />
-    <line x1="${f(23 + st)}" y1="-6" x2="${f(27 + st + eye)}" y2="-15" stroke="#a1a1aa" stroke-width="1.8" stroke-linecap="round" />
-    <circle cx="${f(22 + st + eye)}" cy="-19" r="1.8" fill="#18181b" />
-    <circle cx="${f(27 + st + eye)}" cy="-16" r="1.8" fill="#18181b" />
-    <!-- Concha espiral detalhada com estrias de crescimento -->
-    <circle cx="-3" cy="-16" r="13" fill="#b45309" stroke="#78350f" stroke-width="1.5" />
-    <circle cx="-3" cy="-16" r="9.5" fill="#d97706" stroke="#92400e" stroke-width="1" />
-    <circle cx="-3" cy="-16" r="6" fill="#f59e0b" stroke="#b45309" stroke-width="1" />
-    <circle cx="-3" cy="-16" r="3" fill="#fef3c7" />
-  `;
-
-  return G(0, 0, 0, o.s, o.s, body) + ell(0, 1, 22 * o.s, 3 * o.s, "rgba(0,0,0,.18)");
-}
-
-/** OURIÇO (Erinaceus europaeus) */
-function hedgehog(o: D): string {
-  const w = o.m * 9 + o.ph;
-  const k = o.moving ? sin(w) : 0;
-
-  // Espinhos com pontas afiadas graduadas
-  let spikes = "";
-  for (let i = 0; i < 15; i++) {
-    const a = PI * (0.92 + (i / 14) * 1.08);
-    const x1 = cos(a) * 13 - 2;
-    const y1 = -10 + sin(a) * 9;
-    const x2 = cos(a) * 22 - 3;
-    const y2 = -10 + sin(a) * 17;
-    spikes += line(x1, y1, x2, y2, 2.5, i % 2 ? "#451a03" : "#78350f");
-    spikes += line(x2 - cos(a) * 3, y2 - sin(a) * 3, x2, y2, 1.8, "#fef3c7");
-  }
-
-  const body = `
-    ${limb(-7, -4, 6, k * 0.7, 3.5, "#d97706")}
-    ${limb(9, -4, 6, -k * 0.7, 3.5, "#d97706")}
-    ${spikes}
-    <ellipse cx="0" cy="-10" rx="15" ry="10" fill="#78350f" stroke="#451a03" stroke-width="1" />
-    <!-- Focinho pontiagudo bege -->
-    <ellipse cx="15" cy="-8" rx="9" ry="6" fill="#fef3c7" stroke="#d97706" stroke-width="1" />
-    <circle cx="23" cy="-8" r="2" fill="#18181b" />
-    <!-- Olho preto brilhante -->
-    <circle cx="17" cy="-11" r="1.6" fill="#18181b" />
-    <circle cx="17.5" cy="-11.5" r="0.6" fill="#ffffff" />
-  `;
-
-  return G(0, -Math.abs(k) * 1, 0, o.s, o.s, body) + ell(0, 1, 18 * o.s, 3.5 * o.s, "rgba(0,0,0,.2)");
-}
-
-/** TARTARUGA (Testudo hermanni) */
-function turtle(o: D): string {
-  const w = o.m * 4 + o.ph;
-  const k = o.moving ? sin(w) : 0;
-  const neck = sin(o.a * 1.6 + o.ph) * 1.8;
-
-  const body = `
-    <!-- Patas escamosas com unhas -->
-    <ellipse cx="${f(-15 + k * 2)}" cy="-3" rx="5" ry="3.5" fill="#65a30d" stroke="#4d7c0f" stroke-width="0.8" />
-    <ellipse cx="${f(11 - k * 2)}" cy="-3" rx="5" ry="3.5" fill="#65a30d" stroke="#4d7c0f" stroke-width="0.8" />
-    <!-- Cauda curta -->
-    <polygon points="-18,-8 -26,-6 -18,-4" fill="#65a30d" />
-    <!-- Carapaça convexa com placas hexagonais -->
-    <ellipse cx="0" cy="-12" rx="19" ry="11" fill="#4d7c0f" stroke="#365314" stroke-width="1.5" />
-    <ellipse cx="0" cy="-13" rx="13" ry="7.5" fill="#84cc16" opacity="0.85" />
-    <!-- Linhas das placas da carapaça -->
-    <line x1="-5" y1="-19" x2="-5" y2="-7" stroke="#365314" stroke-width="1.5" />
-    <line x1="5" y1="-19" x2="5" y2="-7" stroke="#365314" stroke-width="1.5" />
-    <line x1="-12" y1="-13" x2="12" y2="-13" stroke="#365314" stroke-width="1.5" />
-    <!-- Cabeça com bico córneo e olho -->
-    <ellipse cx="${f(22 + neck)}" cy="-10" rx="7" ry="5" fill="#65a30d" stroke="#4d7c0f" stroke-width="1" />
-    <circle cx="${f(25 + neck)}" cy="-11.5" r="1.4" fill="#18181b" />
-    <circle cx="${f(25.4 + neck)}" cy="-11.9" r="0.5" fill="#ffffff" />
-  `;
-
-  return G(0, 0, 0, o.s, o.s, body) + ell(0, 1, 21 * o.s, 3.5 * o.s, "rgba(0,0,0,.18)");
-}
-
-/** PÁSSARO CANTOR ALPINO (Monticola / Melro das rochas) */
-function songbird(o: D & { flying: boolean }, col: string): string {
+/** ARARA VERMELHA (Ara macao) — Plumagem vermelha, azul e amarela, longa cauda */
+function araraVermelha(o: D & { flying: boolean }, _col: string): string {
   if (o.flying) {
-    const w = o.a * 16 + o.ph;
-    const k = sin(w);
-    const wing = (dir: number, c: string) => `
+    const w = o.a * 7 + o.ph;
+    const k = sin(w) * 0.8;
+
+    // Asas grandes com batidas dramáticas
+    const wingUp = (dir: number) => `
       <path
-        d="M-2 -1 Q-8 ${f(dir * (-16 - k * 9))} 8 ${f(dir * (-14 - k * 9) - 1)} Q4 -6 -2 -1 Z"
-        fill="${c}"
-        stroke="#1e293b"
-        stroke-width="0.8"
+        d="M-4 -1
+           Q-20 ${f(dir * (-22 + k * 32))} -48 ${f(dir * (-12 + k * 36))}
+           Q-46 ${f(dir * (-5 + k * 26))} -38 ${f(dir * (0 + k * 20))}
+           Q-24 ${f(dir * (2 + k * 12))} -4 6 Z"
+        fill="#dc2626"
+        stroke="#991b1b"
+        stroke-width="1"
       />
     `;
-    return (
-      G(
-        0,
-        0,
-        0,
-        o.s,
-        o.s,
-        wing(1, "#dc2626") +
-          `<path d="M-10 1 L-22 ${f(3 + k * 2)} L-10 5 Z" fill="#991b1b" />` +
-          ell(0, 0, 10, 6, col) +
-          ell(4, 2, 6, 3.5, "#fef3c7") +
-          circ(10, -2, 4.5, col) +
-          `<path d="M14 -2 L21 -1 L14 0 Z" fill="#f59e0b" />` +
-          circ(11, -3, 1.2, "#18181b") +
-          wing(-1, "#b91c1c")
-      )
+    // Faixas azul e amarela nas asas
+    const wingDetail = (dir: number) => `
+      <path
+        d="M-16 ${f(dir * (-14 + k * 22))} Q-32 ${f(dir * (-16 + k * 26))} -44 ${f(dir * (-10 + k * 28))}"
+        stroke="#3b82f6" stroke-width="4" fill="none" stroke-linecap="round"
+      />
+      <path
+        d="M-20 ${f(dir * (-10 + k * 18))} Q-34 ${f(dir * (-12 + k * 22))} -44 ${f(dir * (-6 + k * 24))}"
+        stroke="#fbbf24" stroke-width="3.5" fill="none" stroke-linecap="round"
+      />
+    `;
+
+    return G(0, 0, 0, o.s, o.s,
+      wingUp(1) + wingDetail(1) +
+      `<path d="M-20 0 L-42 ${f(4 + k * 3)} L-20 7 Z" fill="#b91c1c"/>` +
+      ell(0, 0, 11, 6, "#dc2626") +
+      ell(4, 2, 7, 4, "#fef3c7") +
+      circ(11, -2, 5, "#dc2626") +
+      `<path d="M15 -2 L24 -1 L15 1 Z" fill="#18181b"/>` +
+      circ(12, -3, 1.5, "#18181b") +
+      wingUp(-1) + wingDetail(-1)
     );
   }
 
+  // Pousada: arara com longa cauda pendente
+  const peck = Math.max(0, sin(o.a * 2.2 + o.ph)) ** 2;
+  const bob = Math.max(0, sin(o.a * 4.5 + o.ph)) ** 4 * 4;
+
+  const body = `
+    ${line(-2, -8, -2, 0, 2.5, "#7f1d1d")}
+    ${line(4, -8, 4, 0, 2.5, "#7f1d1d")}
+    <!-- Cauda longa da arara pendente -->
+    <path d="M-10 -11 L-30 -5 L-28 -1 L-8 -7 Z" fill="#b91c1c" stroke="#991b1b" stroke-width="0.8"/>
+    <path d="M-14 -10 L-38 -2 L-36 2 L-10 -6 Z" fill="#dc2626" stroke="#b91c1c" stroke-width="0.8"/>
+    <!-- Faixas azul e amarela na asa dobrada -->
+    <path d="M-6 -16 L-22 -12 L-20 -8 L-4 -12 Z" fill="#3b82f6" opacity="0.9"/>
+    <path d="M-6 -12 L-18 -9 L-17 -6 L-5 -8 Z" fill="#fbbf24" opacity="0.9"/>
+    <!-- Corpo vermelho -->
+    <ellipse cx="0" cy="-15" rx="12" ry="9" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
+    <ellipse cx="4" cy="-12" rx="8" ry="5" fill="#fef3c7" opacity="0.9"/>
+    <g transform="rotate(${f(peck * 35)} 8 -20)">
+      <circle cx="10" cy="-23" r="7" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
+      <!-- Rosto branco característico da arara -->
+      <ellipse cx="12" cy="-22" rx="4.5" ry="4" fill="#fef9f0"/>
+      <!-- Bico curvo robusto -->
+      <path d="M15 -23 L24 -20 L14 -17 Z" fill="#18181b" stroke="#000" stroke-width="0.8"/>
+      <path d="M15 -20 Q20 -19 22 -20" stroke="#333" stroke-width="1" fill="none"/>
+      <circle cx="11" cy="-24" r="1.4" fill="#18181b"/>
+      <circle cx="11.5" cy="-24.5" r="0.5" fill="#ffffff"/>
+    </g>
+  `;
+
+  return G(0, -bob, 0, o.s, o.s, body) + ell(0, 1, 11 * o.s, 3 * o.s, "rgba(0,0,0,.2)");
+}
+
+/** PÁSSARO AZUL / COTINGA (Cotinga cayana) — Azul elétrico, pequeno e vivaz */
+function passaroAzul(o: D & { flying: boolean }, _col: string): string {
+  if (o.flying) {
+    const w = o.a * 14 + o.ph;
+    const k = sin(w);
+
+    const wing = (dir: number) => `
+      <path
+        d="M-2 -1 Q-9 ${f(dir * (-18 - k * 10))} 8 ${f(dir * (-16 - k * 10) - 1)} Q4 -6 -2 -1 Z"
+        fill="#2563eb"
+        stroke="#1d4ed8"
+        stroke-width="0.8"
+      />
+    `;
+
+    return G(0, 0, 0, o.s, o.s,
+      wing(1) +
+      `<path d="M-9 1 L-20 ${f(3 + k * 2)} L-9 5 Z" fill="#1d4ed8"/>` +
+      ell(0, 0, 9, 5.5, "#3b82f6") +
+      circ(9, -2, 4, "#2563eb") +
+      `<path d="M13 -2 L19 -1 L13 0 Z" fill="#1e3a5f"/>` +
+      circ(10, -3, 1.1, "#18181b") +
+      wing(-1)
+    );
+  }
+
+  // Pousado: exibindo plumagem azul
   const peck = Math.max(0, sin(o.a * 2.6 + o.ph)) ** 3;
   const hop = Math.max(0, sin(o.a * 5 + o.ph)) ** 6 * 3;
 
   const body = `
-    ${line(-2, -8, -2, 0, 1.8, "#54280b")}
-    ${line(4, -8, 4, 0, 1.8, "#54280b")}
-    <path d="M-9 -12 L-22 -8 L-10 -8 Z" fill="#991b1b" stroke="#7f1d1d" stroke-width="0.8" />
-    <ellipse cx="0" cy="-13" rx="11" ry="8" fill="${col}" stroke="#1e293b" stroke-width="1" />
-    <ellipse cx="4" cy="-10" rx="7" ry="4.5" fill="#fef3c7" />
+    ${line(-2, -8, -2, 0, 1.8, "#1d4ed8")}
+    ${line(4, -8, 4, 0, 1.8, "#1d4ed8")}
+    <path d="M-9 -12 L-20 -8 L-9 -8 Z" fill="#1d4ed8" stroke="#1e40af" stroke-width="0.8"/>
+    <ellipse cx="0" cy="-13" rx="10" ry="7.5" fill="#3b82f6" stroke="#2563eb" stroke-width="1"/>
+    <!-- Barriga mais clara — cor púrpura do cotinga macho -->
+    <ellipse cx="3" cy="-10" rx="6" ry="4" fill="#6366f1" opacity="0.8"/>
     <g transform="rotate(${f(peck * 40)} 7 -17)">
-      <circle cx="10" cy="-20" r="5.8" fill="${col}" stroke="#1e293b" stroke-width="1" />
-      <path d="M15 -20 L22 -19 L15 -18 Z" fill="#f59e0b" stroke="#b45309" stroke-width="0.8" />
-      <circle cx="11.5" cy="-21.5" r="1.3" fill="#18181b" />
-      <circle cx="12" cy="-22" r="0.5" fill="#ffffff" />
+      <circle cx="10" cy="-20" r="5.5" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/>
+      <path d="M15 -20 L21 -19 L15 -18 Z" fill="#374151"/>
+      <circle cx="11.5" cy="-21.5" r="1.2" fill="#18181b"/>
+      <circle cx="12" cy="-22" r="0.5" fill="#ffffff"/>
     </g>
   `;
 
-  return G(0, -hop, 0, o.s, o.s, body) + ell(0, 1, 10 * o.s, 3 * o.s, "rgba(0,0,0,.2)");
-}
-
-/** BORBOLETA APOLO DOS ALPES (Parnassius apollo) */
-function flutter(o: D & { landed: boolean }, col: string): string {
-  const fl = o.landed
-    ? 0.35 + 0.65 * Math.abs(sin(o.a * 2.2 + o.ph))
-    : 0.2 + 0.8 * Math.abs(sin(o.a * (12 + 4 * sin(o.a * 0.5)) + o.ph));
-
-  const body = `
-    <!-- Asas brancas translúcidas da borboleta alpina Apolo -->
-    <ellipse cx="${f(-6 * fl)}" cy="-4" rx="${f(7.5 * fl)}" ry="9" fill="#f8fafc" stroke="#334155" stroke-width="1" />
-    <ellipse cx="${f(6 * fl)}" cy="-4" rx="${f(7.5 * fl)}" ry="9" fill="#f8fafc" stroke="#334155" stroke-width="1" />
-    <!-- Ocelos vermelhos característicos da Parnassius Apollo -->
-    <circle cx="${f(-6 * fl)}" cy="-4" r="${f(2.4 * fl)}" fill="#dc2626" stroke="#18181b" stroke-width="0.8" />
-    <circle cx="${f(-6 * fl)}" cy="-4" r="${f(0.8 * fl)}" fill="#ffffff" />
-    <circle cx="${f(6 * fl)}" cy="-4" r="${f(2.4 * fl)}" fill="#dc2626" stroke="#18181b" stroke-width="0.8" />
-    <circle cx="${f(6 * fl)}" cy="-4" r="${f(0.8 * fl)}" fill="#ffffff" />
-    <!-- Asas inferiores menores -->
-    <ellipse cx="${f(-4.5 * fl)}" cy="6" rx="${f(5.5 * fl)}" ry="6.5" fill="#f1f5f9" opacity="0.9" stroke="#475569" stroke-width="0.8" />
-    <ellipse cx="${f(4.5 * fl)}" cy="6" rx="${f(5.5 * fl)}" ry="6.5" fill="#f1f5f9" opacity="0.9" stroke="#475569" stroke-width="0.8" />
-    <!-- Corpo e antenas -->
-    <ellipse cx="0" cy="0" rx="1.8" ry="7.5" fill="#1e293b" />
-    <line x1="0" y1="-7" x2="-3.5" y2="-13" stroke="#1e293b" stroke-width="1.2" stroke-linecap="round" />
-    <line x1="0" y1="-7" x2="3.5" y2="-13" stroke="#1e293b" stroke-width="1.2" stroke-linecap="round" />
-  `;
-
-  return G(0, 0, 0, o.s, o.s, body);
-}
-
-/** ABELHA SILVESTRE (Apis mellifera) */
-function bee(o: D): string {
-  const wf = 0.35 + 0.65 * Math.abs(sin(o.a * 60 + o.ph));
-
-  const body = `
-    <!-- Asas transparentes vibrando em alta frequência -->
-    <ellipse cx="-2.5" cy="-7" rx="5" ry="${f(8.5 * wf)}" fill="rgba(224,242,254,0.75)" stroke="rgba(56,189,248,0.5)" stroke-width="0.8" transform="rotate(-24 -2.5 -7)" />
-    <ellipse cx="2.5" cy="-7" rx="5" ry="${f(8.5 * wf)}" fill="rgba(224,242,254,0.6)" stroke="rgba(56,189,248,0.5)" stroke-width="0.8" transform="rotate(-8 2.5 -7)" />
-    <!-- Abdômen aveludado listrado preto e amarelo-ouro -->
-    <ellipse cx="0" cy="0" rx="9" ry="6" fill="#f59e0b" stroke="#78350f" stroke-width="1" />
-    <line x1="-3" y1="-5.5" x2="-3" y2="5.5" stroke="#18181b" stroke-width="2.5" />
-    <line x1="3" y1="-5.5" x2="3" y2="5.5" stroke="#18181b" stroke-width="2.5" />
-    <!-- Ferrão -->
-    <polygon points="-9,0 -13,0.5 -9,1 Z" fill="#18181b" />
-    <!-- Cabeça com olhos compostos -->
-    <circle cx="9" cy="-0.5" r="4.2" fill="#18181b" />
-    <circle cx="10.5" cy="-1.5" r="1.1" fill="#fef08a" />
-  `;
-
-  return G(0, 0, 0, o.s, o.s, body);
+  return G(0, -hop, 0, o.s, o.s, body) + ell(0, 1, 9 * o.s, 3 * o.s, "rgba(0,0,0,.2)");
 }
 
 /* ==================================================================
@@ -693,7 +550,7 @@ const WINDOW_HALF = 0.14;
 const FAR_LIMIT = WINDOW_HALF + 0.08;
 
 function habitatFor(animalId: string): TrailHabitat {
-  return animalId === "squirrel" || animalId === "bird" ? "tree" : "grass";
+  return animalId === "esquilo" || animalId === "tucano" || animalId === "passaroAzul" || animalId === "araraVermelha" ? "tree" : "grass";
 }
 
 export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife {
@@ -744,7 +601,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
   /** Escolhe um ponto livre da mata; com `from`, prefere os mais próximos (o bicho passeia, não teleporta). */
   const pickFree = (animalId?: string, from?: { x: number; y: number }): number => {
     let fr = freeSpots(animalId);
-    if (fr.length === 0 && animalId && animalId !== "squirrel") fr = freeSpots();
+    if (fr.length === 0 && animalId && animalId !== "esquilo") fr = freeSpots();
     if (fr.length === 0) return -1;
     if (from) {
       const dist = (i: number) => Math.hypot((TRAIL_ROAM_SPOTS[i].x / 100 - from.x) * 1000, (TRAIL_ROAM_SPOTS[i].y / 100 - from.y) * 2200);
@@ -753,9 +610,9 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     }
     return fr[Math.floor(rnd() * fr.length)];
   };
-  /** Pássaros cruzam o ar sobre a mata inteira; borboletas e abelhas ficam nas clareiras floridas. */
+  /** Pássaros cruzam o ar sobre a mata inteira; a águia plana em amplos círculos. */
   const randRegion = (animalId?: string) => {
-    if (animalId === "bird") return { x: 0.05 + rnd() * 0.9, y: clamp(focusY + (rnd() - 0.6) * 0.14, 0.02, 0.97) };
+    if (animalId === "aguia") return { x: 0.05 + rnd() * 0.9, y: clamp(focusY + (rnd() - 0.6) * 0.14, 0.02, 0.97) };
     const near = freeSpots();
     const sp = near.length ? TRAIL_ROAM_SPOTS[near[Math.floor(rnd() * near.length)]] : { x: focusX * 100, y: focusY * 100 };
     return { x: clamp(sp.x / 100 + (rnd() - 0.5) * 0.04, 0.03, 0.97), y: clamp(sp.y / 100 + (rnd() - 0.5) * 0.02, 0.02, 0.98) };
@@ -784,7 +641,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
         c.timer = rnd() * 3;
         c.state = "idle";
       } else {
-        c.x = rnd() > 0.5 ? -0.05 : 1.05; // entra pela lateral da mata, andando até o ponto escolhido
+        c.x = rnd() > 0.5 ? -0.05 : 1.05;
         c.y = P.y / 100;
         c.state = "move";
         c.hasTarget = true;
@@ -792,7 +649,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
         c.ty = P.y / 100;
         c.heading = Math.atan2(c.ty - c.y, c.tx - c.x);
       }
-    } else if (c.animal.id === "eagle") {
+    } else if (c.animal.id === "aguia") {
       c.enter = initial ? 1 : 0;
     } else {
       const R = randRegion(c.animal.id);
@@ -800,7 +657,8 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
         c.x = R.x;
         c.y = R.y;
         c.z = 30;
-        if (c.animal.id === "bird") {
+        // Tucano e araraVermelha podem pousar em galhos
+        if (c.animal.id === "tucano" || c.animal.id === "araraVermelha") {
           const sp = pickFree(c.animal.id);
           if (sp >= 0) {
             c.spot = sp;
@@ -863,7 +721,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     c.hasTarget = true;
     c.landed = false;
     if (c.spec.kind === "walk") {
-      c.tx = c.x < 0.5 ? -0.15 : 1.15; // some mata adentro, pela lateral
+      c.tx = c.x < 0.5 ? -0.15 : 1.15;
       c.ty = c.y + (rnd() - 0.5) * 0.03;
     } else {
       const left = c.x < 0.5;
@@ -910,15 +768,12 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
       return;
     }
 
-    // Curva suave em direção ao alvo com aceleração orgânica
     const targetHeading = Math.atan2(dy, dx);
     c.heading += wrap(targetHeading - c.heading) * Math.min(1, c.spec.turn * dt);
-    
-    // Desaceleração suave ao se aproximar do ponto de parada
+
     const distFactor = Math.min(1, dist / 40);
     const baseSpeed = c.spec.speed * (W / 1000) * (0.35 + 0.65 * distFactor);
 
-    // Animais que pulam (coelho, esquilo, sapo): propulsão em saltos e pausas breves de apoio
     let currentSpeed = baseSpeed;
     if (c.spec.hop) {
       const hopCycle = Math.max(0, sin(c.clk * c.spec.gait * 0.9 + c.ph));
@@ -930,15 +785,14 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     c.x += (cos(c.heading) * c.v * dt) / W;
     c.y += (sin(c.heading) * c.v * dt) / H;
 
-    // Transição suave de orientação (não inverte bruscamente no zero)
     const faceDir = cos(c.heading) >= 0 ? 1 : -1;
     c.face = approach(c.face, faceDir, 4.5 * dt);
   }
 
   function updateFlyer(c: Critter, dt: number, W: number, H: number) {
     c.clk += dt;
-    if (c.animal.id === "eagle") {
-      // Águia real planando majestosa em correntes térmicas ascendentes
+    if (c.animal.id === "aguia") {
+      // Águia planando majestosa em correntes térmicas
       c.orbit += dt * 0.28;
       c.enter = approach(c.enter, 1, 0.2 * dt);
       const cx = 0.5 + sin(c.orbit) * 0.34;
@@ -984,7 +838,9 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     } else {
       c.timer -= dt;
       if (c.timer <= 0) {
-        if (c.animal.id === "bird" && rnd() < 0.45) {
+        // Tucano e araraVermelha pousam com mais frequência
+        const landChance = (c.animal.id === "tucano" || c.animal.id === "araraVermelha") ? 0.5 : 0.3;
+        if (rnd() < landChance) {
           const sp = pickFree(c.animal.id);
           if (sp >= 0) {
             c.spot = sp;
@@ -1013,7 +869,6 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
       } else {
         const th = Math.atan2(dy, dx);
         c.heading += wrap(th - c.heading) * Math.min(1, c.spec.turn * dt);
-        // Ondulação suave do vento alpino
         const wander = sin(c.clk * 1.8 + c.ph) * 0.28;
         const sp = c.spec.speed * S;
         cx = cos(c.heading + wander) * sp;
@@ -1041,8 +896,8 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     }
     for (let i = critters.length - 1; i >= 0; i--) {
       const c = critters[i];
-      if (c.age > 2 && c.animal.id !== "eagle" && Math.abs(c.y - focusY) > FAR_LIMIT) {
-        critters.splice(i, 1); // ficou longe do aluno: fora da tela, sai de cena
+      if (c.age > 2 && c.animal.id !== "aguia" && Math.abs(c.y - focusY) > FAR_LIMIT) {
+        critters.splice(i, 1);
         continue;
       }
       if (c.state === "leaving" && (c.x < -0.12 || c.x > 1.12 || c.y > 1.12 || c.y < -0.12)) critters.splice(i, 1);
@@ -1085,62 +940,39 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
 
       if (c.spec.kind === "walk") {
         switch (id) {
-          case "squirrel":
-            inner = squirrel(d);
+          case "esquilo":
+            inner = realEsquilo(d);
             break;
-          case "frog":
-            inner = frog(d);
+          case "coelho":
+            inner = realCoelho(d);
             break;
-          case "snail":
-            inner = snail(d);
+          case "macaco":
+            inner = macaco(d);
             break;
-          case "chamois":
-            inner = chamois(d);
+          case "cervo":
+            inner = realCervo(d);
             break;
-          case "hedgehog":
-            inner = hedgehog(d);
-            break;
-          case "turtle":
-            inner = turtle(d);
-            break;
-          case "deer":
-            inner = realDeer(d);
-            break;
-          case "fox":
-            inner = realFox(d);
+          case "tucano":
+            inner = tucano(d);
             break;
           default:
-            inner = realRabbit(d);
+            inner = realCoelho(d);
         }
         out += G(X, Y - ro, 0, c.face, br, inner);
       } else {
         const flying = !c.landed;
         const alt = c.z;
-        if (id === "eagle") {
-          out += G(X, Y, c.face * 0 + 0, c.face, 1, G(0, 0, clamp(sin(c.orbit) * 6, -8, 8), 1, 1, eagle(d)));
+        if (id === "aguia") {
+          out += G(X, Y, c.face * 0 + 0, c.face, 1, G(0, 0, clamp(sin(c.orbit) * 6, -8, 8), 1, 1, aguia(d)));
           continue;
         }
         const sh = clamp(1 - alt / (140 * S), 0.25, 1);
         out += ell(X, Y + 1, 9 * s * sh, 2.4 * s * sh, `rgba(0,0,0,${f(0.2 * sh)})`);
 
-        if (id === "bird") {
-          for (let member = 0; member < 3; member++) {
-            const offset = member - 1;
-            const flock = songbird({ ...d, ph: d.ph + member * 1.7, flying }, c.color);
-            out += G(X + offset * 18 * s, Y - alt * S + Math.sin(c.clk * 2 + member) * 4 * s - Math.abs(offset) * 4 * s, 0, c.face, 0.8, flock);
-          }
-          continue;
-        }
-
-        switch (id) {
-          case "butterfly":
-            inner = flutter({ ...d, landed: !flying }, c.color);
-            break;
-          case "bee":
-            inner = bee(d);
-            break;
-          default:
-            inner = songbird({ ...d, flying }, c.color);
+        if (id === "araraVermelha") {
+          inner = araraVermelha({ ...d, flying }, c.color);
+        } else {
+          inner = passaroAzul({ ...d, flying }, c.color);
         }
         out += G(X, Y - alt * S - ro, 0, c.face, 1, inner);
       }
@@ -1162,9 +994,8 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
 
   function poke(c: Critter) {
     c.react = 0.7;
-    // Espécies ariscas evitam contato; anfíbios e pequenos voadores reagem com saltos ou voo.
-    if (c.animal.id === "squirrel") {
-      const branch = pickFree("squirrel");
+    if (c.animal.id === "esquilo") {
+      const branch = pickFree("esquilo");
       if (branch >= 0) {
         c.spot = branch;
         c.tx = TRAIL_ROAM_SPOTS[branch].x / 100;
@@ -1174,7 +1005,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
         return;
       }
     }
-    if (["deer", "fox", "rabbit", "squirrel", "chamois", "eagle", "bee"].includes(c.animal.id)) {
+    if (["cervo", "coelho", "esquilo", "aguia"].includes(c.animal.id)) {
       sendAway(c);
       return;
     }

@@ -1,8 +1,7 @@
 /**
  * Fauna da Trilha do Aluno Curioso (mata).
  *
- * Os bichos que circulam pela mata são os da ilustração: veado (com filhote pintado), raposa,
- * coelho, esquilo, ouriço, capivara, macaco, tucano, arara, passarinho azul e águia.
+ * Os bichos que circulam pela mata usam os recortes transparentes da nova folha ilustrada.
  *
  * COMPORTAMENTO natural por espécie (cada uma tem um "temperamento"):
  *  - amigáveis  (esquilo, passarinho, tucano, arara): aproximam-se curiosos do aluno e ficam por perto
@@ -61,29 +60,51 @@ const SPECIES: Record<string, Spec> = {
   toucan: { kind: "fly", scale: 1.7, speed: 70, gait: 12, turn: 4, idle: [3, 4], temper: "friendly", sense: 240, flee: 1, K: 1, stride: 0, h: 30 },
   macaw: { kind: "fly", scale: 1.8, speed: 78, gait: 13, turn: 4, idle: [3, 4], temper: "friendly", sense: 240, flee: 1, K: 1, stride: 0, h: 34 },
   eagle: { kind: "fly", scale: 1.3, speed: 65, gait: 1.8, turn: 1, idle: [0, 0], temper: "aggressive", sense: 420, flee: 1, K: 1, stride: 0, h: 20 },
+  skunk: { kind: "walk", scale: 1.08, speed: 34, gait: 5, turn: 3, idle: [3, 5], temper: "defensive", sense: 150, flee: 1.5, K: 5, stride: 38, h: 82 },
+  woodpecker: { kind: "fly", scale: 1.3, speed: 78, gait: 13, turn: 4, idle: [2, 4], temper: "friendly", sense: 220, flee: 1, K: 1, stride: 0, h: 92 },
+  boar: { kind: "walk", scale: 1.12, speed: 46, gait: 5, turn: 3, idle: [2, 4], temper: "wary", sense: 190, flee: 1.8, K: 5, stride: 60, h: 86 },
+  jaguar: { kind: "walk", scale: 1.12, speed: 58, gait: 7, turn: 3.5, idle: [3, 5], temper: "aggressive", sense: 250, flee: 1.4, K: 7, stride: 55, h: 100 },
+  owl: { kind: "fly", scale: 1.2, speed: 52, gait: 8, turn: 2.8, idle: [3, 5], temper: "friendly", sense: 210, flee: 1, K: 1, stride: 0, h: 96 },
+  anteater: { kind: "walk", scale: 1.15, speed: 27, gait: 4, turn: 2.5, idle: [4, 7], temper: "peaceful", sense: 0, flee: 1, K: 4, stride: 34, h: 82 },
+  armadillo: { kind: "walk", scale: 1.05, speed: 26, gait: 5, turn: 2.5, idle: [3, 5], temper: "defensive", sense: 130, flee: 1.1, K: 5, stride: 28, h: 83 },
+  caiman: { kind: "walk", scale: 1.15, speed: 23, gait: 3, turn: 2, idle: [4, 7], temper: "wary", sense: 190, flee: 1.2, K: 3, stride: 44, h: 70 },
+  sloth: { kind: "walk", scale: 1.05, speed: 12, gait: 2, turn: 1.5, idle: [6, 9], temper: "peaceful", sense: 0, flee: 1, K: 2, stride: 24, h: 94 },
+  otter: { kind: "walk", scale: 1.05, speed: 50, gait: 7, turn: 4, idle: [2, 4], temper: "friendly", sense: 180, flee: 1.7, K: 7, stride: 45, h: 82 },
+  coati: { kind: "walk", scale: 1.02, speed: 55, gait: 8, turn: 4, idle: [2, 3], temper: "friendly", sense: 190, flee: 1.8, K: 8, stride: 40, h: 82 },
+  "maned-wolf": { kind: "walk", scale: 1.1, speed: 42, gait: 5, turn: 2.8, idle: [3, 5], temper: "wary", sense: 210, flee: 2, K: 5, stride: 58, h: 120 },
+  pacu: { kind: "walk", scale: 0.94, speed: 20, gait: 3, turn: 2, idle: [4, 7], temper: "peaceful", sense: 0, flee: 1, K: 3, stride: 24, h: 75 },
+  tortoise: { kind: "walk", scale: 1.04, speed: 12, gait: 2, turn: 1.8, idle: [5, 8], temper: "defensive", sense: 100, flee: 1, K: 2, stride: 20, h: 70 },
+  frog: { kind: "walk", scale: 0.9, speed: 42, gait: 10, hop: true, turn: 5, idle: [1.5, 3], temper: "skittish", sense: 130, flee: 2.2, K: 10, stride: 0, h: 65 },
+  agouti: { kind: "walk", scale: 0.98, speed: 62, gait: 9, hop: true, turn: 4.5, idle: [2, 4], temper: "skittish", sense: 150, flee: 2.1, K: 9, stride: 0, h: 77 },
 };
 const FALLBACK: Spec = SPECIES.rabbit;
 const specOf = (id: string): Spec => SPECIES[id] ?? FALLBACK;
 
-/** Bichos de cada clima: os mais adaptados (sol: todos; chuva: gostam de umidade; neve: gostam do frio). */
+const ILLUSTRATED_SPECIES = new Set([
+  "squirrel", "deer", "hedgehog", "skunk", "woodpecker", "boar", "jaguar", "owl",
+  "anteater", "armadillo", "caiman", "sloth", "toucan", "otter", "coati",
+  "maned-wolf", "pacu", "tortoise", "frog", "agouti",
+]);
+
+/** Fauna compatível com cada clima; a neve mantém espécies adaptadas ao frio. */
 const WEATHER_ANIMAL_IDS: Record<TrailWeather, readonly string[]> = {
-  sunny: ["squirrel", "rabbit", "deer", "fox", "hedgehog", "monkey", "bird", "toucan", "macaw", "eagle"],
-  rain: ["capybara", "toucan", "macaw", "hedgehog", "deer", "bird"],
-  snow: ["arcticfox", "snowhare", "deer", "fox", "eagle"],
+  sunny: ["squirrel", "deer", "hedgehog", "woodpecker", "boar", "jaguar", "anteater", "sloth", "toucan", "coati", "maned-wolf", "agouti"],
+  rain: ["skunk", "woodpecker", "owl", "caiman", "toucan", "otter", "coati", "pacu", "tortoise", "frog"],
+  snow: ["deer", "hedgehog", "skunk", "owl", "boar", "woodpecker"],
 };
 const WEATHER_HIGHLIGHTS: Record<TrailWeather, readonly string[]> = {
   sunny: ["squirrel", "deer"],
-  rain: ["capybara", "toucan"],
-  snow: ["snowhare", "arcticfox"],
+  rain: ["otter", "frog"],
+  snow: ["deer", "owl"],
 };
-const WEATHER_TARGET: Record<TrailWeather, number> = { sunny: 7, rain: 5, snow: 5 };
+const WEATHER_TARGET: Record<TrailWeather, number> = { sunny: 8, rain: 7, snow: 5 };
 
 function weatherAdjustedSpec(id: string, weather: TrailWeather): Spec {
   const spec = specOf(id);
   let speedFactor = 1;
   let restFactor = 1;
   if (weather === "rain") {
-    if (id === "capybara" || id === "toucan" || id === "macaw" || id === "hedgehog") {
+    if (["skunk", "woodpecker", "caiman", "toucan", "otter", "pacu", "frog"].includes(id)) {
       speedFactor = 1.1; // adoram a chuva: mais ativos
       restFactor = 0.8;
     } else {
@@ -91,7 +112,7 @@ function weatherAdjustedSpec(id: string, weather: TrailWeather): Spec {
       restFactor = 1.4;
     }
   } else if (weather === "snow") {
-    if (id === "arcticfox" || id === "snowhare" || id === "fox" || id === "eagle") {
+    if (id === "deer" || id === "hedgehog" || id === "owl" || id === "skunk" || id === "boar") {
       speedFactor = 1.05;
       restFactor = 0.9;
     } else {
@@ -154,6 +175,13 @@ function recolor(svg: string, map: Record<string, string>): string {
 }
 
 type D = { s: number; m: number; a: number; moving: boolean; ph: number; mood?: Mood };
+
+function illustratedAnimal(id: string, d: D): string {
+  const bob = d.moving ? Math.abs(sin(d.m * 2.4 + d.ph)) * 3.5 : sin(d.a * 2.1 + d.ph) * 1.2;
+  const sway = d.moving ? sin(d.m * 1.7 + d.ph) * 2.5 : 0;
+  const image = `<image href="/trilha/animals/${id}.webp" x="-60" y="-116" width="120" height="116" preserveAspectRatio="xMidYMax meet"/>`;
+  return G(0, -bob, sway, 1, 1, image);
+}
 
 /** ESQUILO DOS BOSQUES (Sciurus vulgaris alpinus) */
 function squirrel(o: D): string {
@@ -728,7 +756,12 @@ export function createWildlife(initialWeather: TrailWeather = "sunny", seed?: nu
     if (cand.length === 0 && !preferredId) cand = pool.filter((a) => !visible.has(a.id));
     if (cand.length === 0) return;
     const c = mk(cand[Math.floor(rnd() * cand.length)]);
-    if (c.spec.kind === "walk") {
+    if (c.animal.id === "pacu" && c.state !== "leaving") {
+      c.x = 0.55 + (rnd() - 0.5) * 0.035;
+      c.y = 0.65 + (rnd() - 0.5) * 0.01;
+      c.state = "idle";
+      c.timer = 8;
+    } else if (c.spec.kind === "walk") {
       const sp = initial ? pickSpot(0, NEAR) : pickSpot(0.09, 0.16);
       if (sp < 0) return;
       c.spot = sp;
@@ -922,6 +955,12 @@ export function createWildlife(initialWeather: TrailWeather = "sunny", seed?: nu
     const sy = stu.y * H;
     const ds = Math.hypot(sx - c.x * W, sy - c.y * H);
     if (c.state !== "leaving") react(c, ds, sx, sy, W, H, S);
+    if (c.animal.id === "pacu") {
+      c.x = 0.55 + sin(c.clk * 0.55 + c.ph) * 0.018;
+      c.y = 0.65 + sin(c.clk * 0.9 + c.ph) * 0.004;
+      c.face = cos(c.clk * 0.55 + c.ph) >= 0 ? 1 : -1;
+      return;
+    }
 
     if (c.state === "idle") {
       c.v = approach(c.v, 0, 220 * dt);
@@ -1181,6 +1220,21 @@ export function createWildlife(initialWeather: TrailWeather = "sunny", seed?: nu
       const ro = c.react > 0 ? sin((c.react / 0.7) * PI) * 14 * S : 0;
       const br = 1 + sin(c.clk * 2.2 + c.ph) * 0.012;
       const icon = moodIcon(c.mood, c.clk, S * 1.1);
+      if (ILLUSTRATED_SPECIES.has(id)) {
+        if (c.spec.kind === "walk") {
+          const lean = (c.mood === "flee" || c.mood === "lunge" ? 8 : c.mood === "stalk" ? 5 : c.mood === "alert" ? -3 : 0) * c.face;
+          const lift = c.mood === "flee" && (id === "deer" || id === "agouti") ? Math.abs(sin(c.clk * 7)) * 12 * S : 0;
+          out += G(X, Y - ro - lift, lean, c.face, br, illustratedAnimal(id, d));
+          if (icon) out += G(X, Y - ro - lift - (c.spec.h * s + 14 * S), 0, 1, 1, icon);
+        } else {
+          const alt = c.z;
+          const sh = clamp(1 - alt / (140 * S), 0.25, 1);
+          out += ell(X, Y + 1, 9 * s * sh, 2.4 * s * sh, `rgba(0,0,0,${f(0.2 * sh)})`);
+          out += G(X, Y - alt * S - ro, c.dive * 12, c.face, br, illustratedAnimal(id, d));
+          if (icon) out += G(X, Y - alt * S - (c.spec.h * s + 12 * S), 0, 1, 1, icon);
+        }
+        continue;
+      }
       if (c.spec.kind === "walk") {
         const lean = (c.mood === "flee" || c.mood === "lunge" ? 8 : c.mood === "stalk" ? 5 : c.mood === "alert" ? -3 : 0) * c.face;
         const lift = c.mood === "flee" && id === "deer" ? Math.abs(sin(c.clk * 7)) * 12 * S : 0;

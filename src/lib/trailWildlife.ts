@@ -737,7 +737,7 @@ export function createWildlife(initialWeather: TrailWeather = "sunny", seed?: nu
       c.state = "idle";
       c.timer = initial ? rnd() * 3 : 0.2;
     } else {
-      const R = randRegion(c.animal.id);
+      const R = randRegion();
       if (initial) {
         c.x = R.x;
         c.y = R.y;
@@ -776,6 +776,10 @@ export function createWildlife(initialWeather: TrailWeather = "sunny", seed?: nu
       else critters[i].spec = weatherAdjustedSpec(critters[i].animal.id, weather);
     }
     if (populated) populate();
+  }
+
+  function setFocus(x: number, y: number) {
+    stu = { x, y };
   }
 
   /* ---------- ações de movimento ---------- */

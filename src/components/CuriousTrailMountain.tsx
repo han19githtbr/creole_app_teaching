@@ -164,7 +164,7 @@ export function CuriousTrailMountain({
   const [stage, setStage] = useState({ W: 0, H: 0, WW: 0, WH: 0 });
   const [walking, setWalking] = useState(false);
   const [avalancheLen, setAvalancheLen] = useState(0);
-  const avalancheRef = useRef({ len: 0, start: 0, caught: false, tick: 0 });
+  const avalancheChaseRef = useRef({ len: 0, start: 0, caught: false, tick: 0 });
   const avalancheCaughtCallbackRef = useRef(onAvalancheCaught);
   useEffect(() => { avalancheCaughtCallbackRef.current = onAvalancheCaught; }, [onAvalancheCaught]);
   const [studentFacing, setStudentFacing] = useState<"left" | "right">("right");
@@ -212,7 +212,7 @@ export function CuriousTrailMountain({
   const focusBelow = focusLen != null && ((pointPct(focusLen)?.y ?? 50) / 100) * VB_H < 320;
 
   // espelhos para o laço de animação (evita recriar o requestAnimationFrame a cada render)
-  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0 });
+  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0, avalancheMode: false });
   useEffect(() => {
     live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total, cardH: focusLen != null && !focusBelow ? cardHeight : 0, avalancheMode };
   });
@@ -223,7 +223,7 @@ export function CuriousTrailMountain({
 
   useEffect(() => {
     const start = CAMP_FRACS[currentLevel - 1] * total;
-    avalancheRef.current = { len: start - 115, start, caught: false, tick: 0 };
+    avalancheChaseRef.current = { len: start - 115, start, caught: false, tick: 0 };
     setAvalancheLen(start - 115);
   }, [currentLevel, elements, total]);
 
@@ -294,8 +294,8 @@ export function CuriousTrailMountain({
           }
         }
         walkRef.current = w;
-        if (L.avalancheMode && !avalancheRef.current.caught) {
-          const hazard = avalancheRef.current;
+        if (L.avalancheMode && !avalancheChaseRef.current.caught) {
+          const hazard = avalancheChaseRef.current;
           hazard.len = Math.min(L.total, hazard.len + dt * 4.2);
           hazard.tick += dt;
           if (w - hazard.len <= 42 && hazard.len >= hazard.start) {

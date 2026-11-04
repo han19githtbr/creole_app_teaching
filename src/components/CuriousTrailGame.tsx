@@ -806,20 +806,6 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
         onReplay={() => startLevel(1, true)}
       />
     );
-  } else if (phase === "avalanche_caught") {
-    overlay = (
-      <div className="pointer-events-auto absolute inset-0 flex items-center justify-center bg-slate-950/65 p-4 backdrop-blur-sm" role="alertdialog" aria-modal="true">
-        <div className="max-w-sm rounded-3xl border border-sky-200/30 bg-slate-950/90 p-6 text-center text-white shadow-2xl">
-          <span className="text-5xl" aria-hidden>🌨️</span>
-          <h2 className="mt-2 text-xl font-black">A avalanche alcançou você!</h2>
-          <p className="mt-2 text-sm text-slate-300">Respire, observe os objetos e tente novamente. A neve avança devagar pela trilha.</p>
-          <div className="mt-5 flex justify-center gap-2">
-            <button type="button" onClick={() => startLevel(currentLevel)} className="rounded-xl bg-sky-500 px-4 py-2 text-sm font-bold text-white hover:bg-sky-400">Tentar novamente</button>
-            <button type="button" onClick={() => setPhase("lobby")} className="rounded-xl border border-white/20 px-4 py-2 text-sm font-bold text-white hover:bg-white/10">Voltar ao mapa</button>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   return (

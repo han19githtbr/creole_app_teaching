@@ -25,6 +25,7 @@ import {
 import { buildWordOptions, type CestQuoiItem } from "@/lib/cquoiContent";
 import {
   CURIOUS_TRAIL_PATH,
+  CURIOUS_TRAIL_LENGTH,
   CAMP_FRACS,
   MARKER_FRACS,
   WORLD_W,

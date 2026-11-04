@@ -78,6 +78,7 @@ export function TrailAnswerDock({
   bonusText,
   onPick,
   avalancheDanger,
+  timed = true,
 }: {
   options: string[];
   correct: string;
@@ -89,6 +90,7 @@ export function TrailAnswerDock({
   onPick: (opt: string) => void;
   /** Modo avalanche (0..1): a barra mostra a distância da avalanche em vez do tempo. */
   avalancheDanger?: number;
+  timed?: boolean;
 }) {
   const canAnswer = roundState === "asking" || roundState === "retry";
   const isAv = avalancheDanger != null;

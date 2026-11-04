@@ -505,6 +505,28 @@ export function CuriousTrailMountain({
                 : "linear-gradient(180deg, rgba(214,228,255,0.5) 0%, rgba(232,241,255,0.34) 60%, rgba(255,255,255,0.28) 100%)",
           }}
         />
+        <svg
+          viewBox={`0 0 ${VB_W} ${VB_H}`}
+          preserveAspectRatio="none"
+          className="trail-water-life absolute inset-0 z-[4] h-full w-full pointer-events-none"
+          aria-hidden
+        >
+          <g className="trail-water-ripple">
+            <ellipse cx="482" cy="597" rx="19" ry="5" />
+          </g>
+          <g className="trail-water-ripple trail-water-ripple--late">
+            <ellipse cx="482" cy="597" rx="12" ry="3" />
+          </g>
+          <g className="trail-water-ripple trail-water-ripple--wide">
+            <ellipse cx="813" cy="1574" rx="22" ry="6" />
+          </g>
+          <g className="trail-water-ripple trail-water-ripple--late">
+            <ellipse cx="813" cy="1574" rx="13" ry="3.5" />
+          </g>
+          <g className="trail-water-ripple trail-water-ripple--wide">
+            <ellipse cx="328" cy="2114" rx="18" ry="5" />
+          </g>
+        </svg>
         {/* Trilha coberta de neve / molhada (o desenho da trilha é o mesmo caminho do jogo) */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full pointer-events-none overflow-visible">
           {weather === "snow" && (
@@ -534,7 +556,7 @@ export function CuriousTrailMountain({
         >
           {bubbleAnimal && (
             <div className="w-48 sm:w-56 p-2.5 bg-slate-900/95 text-white rounded-2xl shadow-xl text-xs border border-amber-400/60 animate-in fade-in zoom-in-95 relative">
-              <p className="font-extrabold text-amber-400 text-[11px]">{bubbleAnimal.emoji} {bubbleAnimal.name}</p>
+              <p className="font-extrabold text-amber-400 text-[11px]">{bubbleAnimal.emoji} {bubbleAnimal.namePt}</p>
               <p className="mt-1 font-medium leading-snug italic text-slate-100">&ldquo;{bubbleAnimal.quote}&rdquo;</p>
               <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
             </div>

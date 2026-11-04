@@ -17,7 +17,7 @@ export function TrailPlayHud({
   streak,
   index,
   total,
-  avalanche = false,
+  avalanche,
 }: {
   timeLeft: number;
   totalMs: number;
@@ -25,7 +25,8 @@ export function TrailPlayHud({
   streak: number;
   index: number;
   total: number;
-  avalanche?: boolean;
+  /** Modo avalanche: no lugar do cronômetro aparece o medidor de perigo. */
+  avalanche?: { danger: number; alert: "calm" | "warn" | "danger"; meters: number };
 }) {
   const secs = Math.ceil(timeLeft / 1000);
   const urgent = timeLeft <= Math.min(3000, totalMs * 0.4);
@@ -39,10 +40,19 @@ export function TrailPlayHud({
         </span>
       </div>
       {avalanche ? (
-        <div className="flex h-10 items-center gap-1.5 rounded-full bg-sky-700 px-3 text-xs font-black text-white shadow-md" aria-label="Avalanche avançando">
-          <span aria-hidden>🌨️</span><span>Avalanche</span>
+        <div
+          className={cn(
+            "flex h-11 min-w-[3.25rem] flex-col items-center justify-center rounded-2xl px-1.5 text-white shadow-md transition-colors",
+            avalanche.alert === "danger" ? "trail-timer--urgent bg-red-600" : avalanche.alert === "warn" ? "bg-amber-500" : "bg-sky-600"
+          )}
+          role="status"
+          aria-label={`Avalanche a ${avalanche.meters} metros`}
+        >
+          <span className="text-base leading-none">🏔️</span>
+          <span className="text-[10px] font-black leading-tight">{avalanche.meters}m</span>
         </div>
-      ) : <div
+      ) : (
+      <div
         className={cn(
           "trail-timer flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-md transition-colors",
           urgent ? "trail-timer--urgent bg-red-600" : warn ? "bg-amber-500" : "bg-blue-600"
@@ -51,7 +61,8 @@ export function TrailPlayHud({
         aria-label={`${secs} segundos restantes`}
       >
         {secs}s
-      </div>}
+      </div>
+      )}
     </div>
   );
 }
@@ -66,7 +77,7 @@ export function TrailAnswerDock({
   totalMs,
   bonusText,
   onPick,
-  timed = true,
+  avalancheDanger,
 }: {
   options: string[];
   correct: string;
@@ -76,16 +87,21 @@ export function TrailAnswerDock({
   totalMs: number;
   bonusText: string | null;
   onPick: (opt: string) => void;
-  timed?: boolean;
+  /** Modo avalanche (0..1): a barra mostra a distância da avalanche em vez do tempo. */
+  avalancheDanger?: number;
 }) {
   const canAnswer = roundState === "asking" || roundState === "retry";
-  const pct = Math.max(0, Math.min(100, (timeLeft / totalMs) * 100));
+  const isAv = avalancheDanger != null;
+  const pct = isAv ? Math.max(4, Math.min(100, avalancheDanger * 100)) : Math.max(0, Math.min(100, (timeLeft / totalMs) * 100));
+  const barColor = isAv
+    ? avalancheDanger > 0.7 ? "bg-red-500" : avalancheDanger > 0.4 ? "bg-amber-400" : "bg-sky-400"
+    : timeLeft <= Math.min(3000, totalMs * 0.4) ? "bg-red-500" : timeLeft <= totalMs * 0.5 ? "bg-amber-400" : "bg-sky-400";
   return (
     <div className="pointer-events-auto absolute inset-x-0 bottom-0 p-2 sm:p-3">
       <div className="overflow-hidden rounded-2xl border border-white/20 bg-slate-950/78 shadow-2xl backdrop-blur-md">
         {timed && <div className="h-1 w-full bg-white/10" aria-hidden>
           <div
-            className={cn("h-full transition-[width] duration-100 ease-linear", timeLeft <= Math.min(3000, totalMs * 0.4) ? "bg-red-500" : timeLeft <= totalMs * 0.5 ? "bg-amber-400" : "bg-sky-400")}
+            className={cn("h-full transition-[width] duration-200 ease-linear", barColor)}
             style={{ width: `${pct}%` }}
           />
         </div>}
@@ -284,6 +300,39 @@ export function TrailSummitOverlay({
             className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-bold text-slate-100 hover:bg-white/20"
           >
             <RotateCcw className="h-4 w-4" /> Jogar de novo
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** A avalanche alcançou o aluno: tentar de novo ou voltar ao mapa. */
+export function TrailAvalancheCaughtOverlay({
+  level,
+  name,
+  onRetry,
+  onMap,
+}: {
+  level: number;
+  name: string;
+  onRetry: () => void;
+  onMap: () => void;
+}) {
+  return (
+    <div className="pointer-events-auto absolute inset-0 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-[2px]" role="alertdialog" aria-live="assertive">
+      <div className="w-full max-w-sm rounded-3xl border border-sky-200/40 bg-gradient-to-b from-slate-900/95 to-slate-950/95 p-5 text-center text-white shadow-2xl">
+        <div className="text-5xl" aria-hidden>🏔️💨</div>
+        <h2 className="mt-2 text-xl font-black text-sky-200">A avalanche te alcançou!</h2>
+        <p className="mt-1 text-sm text-slate-300">
+          Nível {level} · {name}. Responda mais rápido para manter a neve longe: cada acerto empurra a avalanche para trás.
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <button type="button" onClick={onRetry} className="cursor-pointer rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 px-3 py-2.5 text-sm font-black shadow-lg active:scale-95">
+            <RotateCcw className="mr-1 inline h-4 w-4" /> Tentar de novo
+          </button>
+          <button type="button" onClick={onMap} className="cursor-pointer rounded-2xl border border-white/25 bg-white/10 px-3 py-2.5 text-sm font-black active:scale-95">
+            Voltar ao mapa
           </button>
         </div>
       </div>

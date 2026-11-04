@@ -5,7 +5,9 @@
  * Renderiza quadro a quadro (função pura do tempo `t`) na resolução nativa (1080x1920,
  * 1080x1350 ou 1080x1080) com a sequência de jogo completa: o aluno caminha até cada objeto,
  * observa a cena com a seta, escolhe entre alternativas, acerta e avança pela trilha.
- * Também mostra o clima do nível e a chegada à cabana no nível 7.
+ * Usa a MESMA arte da mata, a mesma câmera, o mesmo clima, os mesmos bichos (motor de fauna do jogo)
+ * e a mesma avalanche do jogo, então o vídeo reflete a dinâmica real. No nível 7 o aluno entra
+ * feliz na casinha do cume.
  */
 import {
   DEMO_FORMATS,
@@ -21,7 +23,28 @@ import {
   type TrailThemeOption,
 } from "@/lib/curiousTrailData";
 import { buildWordOptions, type CestQuoiItem } from "@/lib/cquoiContent";
-import { CURIOUS_TRAIL_LENGTH, CURIOUS_TRAIL_PATH, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
+import {
+  CURIOUS_TRAIL_PATH,
+  CAMP_FRACS,
+  MARKER_FRACS,
+  WORLD_W,
+  WORLD_H,
+  HUT_DOOR,
+  HUT_POSITION,
+  getTrailPositionAtFraction,
+} from "@/lib/curiousTrailGeometry";
+import {
+  makeAvalancheTrack,
+  initAvalanche,
+  stepAvalanche,
+  studentFractionAt,
+  applyAnswerToAvalanche,
+  clampAvalancheGap,
+  avalancheDanger,
+  avalancheAlert,
+  avalancheDistanceMeters,
+  type AvalancheLevel,
+} from "@/lib/trailAvalanche";
 
 export type TrailDemoDifficulty = "easy" | "intermediate" | "master" | "native" | "avalanche";
 
@@ -30,7 +53,7 @@ const TRAIL_DEMO_DIFFICULTY: Record<TrailDemoDifficulty, { seconds: number; mult
   intermediate: { seconds: 15, multiplier: 1.5 },
   master: { seconds: 10, multiplier: 2 },
   native: { seconds: 6, multiplier: 2.5 },
-  avalanche: { seconds: 0, multiplier: 3 },
+  avalanche: { seconds: 12, multiplier: 3 },
 };
 
 export interface TrailDemoSettings {
@@ -75,6 +98,17 @@ export interface TrailDemoRound {
   xpAfter: number;
 }
 
+export interface TrailDemoAvalanche {
+  dt: number;
+  active: boolean[];
+  front: number[];
+  danger: number[];
+  meters: number[];
+  alert: AvalancheLevel[];
+  /** O vídeo é uma demonstração: o tempo da avalanche corre mais rápido que no jogo (mesma física). */
+  timeScale: number;
+}
+
 export interface TrailDemoPlan {
   settings: TrailDemoSettings;
   theme: TrailThemeOption;
@@ -82,6 +116,10 @@ export interface TrailDemoPlan {
   levelCfg: TrailLevelConfig;
   introDur: number;
   countdownDur: number;
+  /** duração da cena final em que o aluno entra feliz na casinha (nível 7) */
+  houseDur: number;
+  /** linha do tempo da avalanche (modo avalanche), amostrada a 30 quadros/s */
+  avalanche: TrailDemoAvalanche | null;
   outroStart: number;
   outroDur: number;
   total: number;
@@ -106,40 +144,53 @@ export function buildTrailDemoPlan(
     picked.push(...shuffle(remaining).slice(0, levelCfg.elementCount - picked.length));
   }
 
-  const answerDur = settings.difficulty === "avalanche" ? 4.8 : 2.6;
   const walkDur = 1.7;
   const difficulty = TRAIL_DEMO_DIFFICULTY[settings.difficulty];
-  let cursor = introDur + countdownDur;
-  let score = 0;
-  let xp = 0;
-  const rounds: TrailDemoRound[] = picked.map((item) => {
-    const start = cursor;
-    const correctAt = start + answerDur;
-    const walkEnd = correctAt + walkDur;
-    const end = walkEnd;
-    const opts = buildWordOptions(item, items, false);
-    const scoreBefore = score;
-    const speedRatio = settings.difficulty === "avalanche" ? 0 : (difficulty.seconds - answerDur) / difficulty.seconds;
-    const speedMultiplier = speedRatio >= 0.65 ? 1.5 : speedRatio >= 0.35 ? 1.25 : 1.1;
-    score += Math.round(100 * difficulty.multiplier * speedMultiplier);
-    xp += Math.round((levelCfg.xpBase / levelCfg.elementCount) * difficulty.multiplier * speedMultiplier);
-    cursor = end;
-    return {
-      item,
-      options: opts,
-      correctIndex: opts.indexOf(item.fr),
-      levelCfg,
-      start,
-      correctAt,
-      walkEnd,
-      end,
-      scoreBefore,
-      scoreAfter: score,
-      xpAfter: xp,
-    };
-  });
+  const isAvalanche = settings.difficulty === "avalanche";
+  const startAt = introDur + countdownDur;
 
-  const outroStart = cursor;
+  const buildRounds = (answerDur: number): TrailDemoRound[] => {
+    let cursor = startAt;
+    let score = 0;
+    let xp = 0;
+    return picked.map((item) => {
+      const start = cursor;
+      const correctAt = start + answerDur;
+      const walkEnd = correctAt + walkDur;
+      const end = walkEnd;
+      const opts = buildWordOptions(item, items, isAvalanche);
+      const scoreBefore = score;
+      const speedRatio = (difficulty.seconds - answerDur) / difficulty.seconds;
+      const speedMultiplier = speedRatio >= 0.65 ? 1.5 : speedRatio >= 0.35 ? 1.25 : 1.1;
+      score += Math.round(100 * difficulty.multiplier * speedMultiplier);
+      xp += Math.round((levelCfg.xpBase / levelCfg.elementCount) * difficulty.multiplier * speedMultiplier);
+      cursor = end;
+      return { item, options: opts, correctIndex: opts.indexOf(item.fr), levelCfg, start, correctAt, walkEnd, end, scoreBefore, scoreAfter: score, xpAfter: xp };
+    });
+  };
+
+  let rounds: TrailDemoRound[];
+  let avalanche: TrailDemoAvalanche | null = null;
+  if (!isAvalanche) {
+    rounds = buildRounds(2.6);
+  } else {
+    // Hesitação da demonstração: começa em 6,4 s por objeto e diminui até a avalanche nunca alcançar o aluno
+    let think = 6.4;
+    rounds = buildRounds(think);
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const sim = simulateAvalancheTimeline(rounds, levelCfg, settings.level, startAt);
+      avalanche = sim.timeline;
+      if (sim.minGapElements >= 0.6) break;
+      think = Math.max(3, think - 0.6);
+      rounds = buildRounds(think);
+    }
+  }
+  const score = rounds.at(-1)?.scoreAfter ?? 0;
+  const xp = rounds.at(-1)?.xpAfter ?? 0;
+  const cursor = rounds.at(-1)?.end ?? startAt;
+
+  const houseDur = settings.level === 7 ? 3.0 : 0;
+  const outroStart = cursor + houseDur;
   const outroDur = settings.showOutro ? 3.2 : 0;
   const total = outroStart + outroDur;
 
@@ -150,6 +201,8 @@ export function buildTrailDemoPlan(
     levelCfg,
     introDur,
     countdownDur,
+    houseDur,
+    avalanche,
     outroStart,
     outroDur,
     total,
@@ -158,15 +211,126 @@ export function buildTrailDemoPlan(
   };
 }
 
+
+/* ------------------------------------------------------------------ avalanche, aluno e câmera (compartilhados) */
+
+const AV_DT = 1 / 30;
+const AVALANCHE_DEMO_TIME_SCALE = 3;
+
+/**
+ * Simula a avalanche com a MESMA física do jogo (trailAvalanche.ts) ao longo das rodadas do vídeo:
+ * corre enquanto o aluno "pensa", desacelera na comemoração e recua a cada acerto.
+ */
+function simulateAvalancheTimeline(
+  rounds: TrailDemoRound[],
+  levelCfg: TrailLevelConfig,
+  level: number,
+  startAt: number
+): { timeline: TrailDemoAvalanche; minGapElements: number } {
+  const track = makeAvalancheTrack(CAMP_FRACS[level - 1], CAMP_FRACS[level], levelCfg.elementCount, level);
+  const st = initAvalanche(track);
+  const endT = rounds.at(-1)?.end ?? startAt;
+  const total = endT + 6;
+  const timeline: TrailDemoAvalanche = { dt: AV_DT, active: [], front: [], danger: [], meters: [], alert: [], timeScale: AVALANCHE_DEMO_TIME_SCALE };
+  const recoiled = new Set<number>();
+  let minGap = Infinity;
+  for (let i = 0; i * AV_DT <= total; i++) {
+    const tt = i * AV_DT;
+    const ri = rounds.findIndex((r) => tt >= r.start && tt < r.end);
+    const index = ri >= 0 ? ri : tt >= endT ? rounds.length : 0;
+    if (tt >= startAt && tt < endT && ri >= 0) {
+      const r = rounds[ri];
+      if (tt >= r.correctAt && !recoiled.has(ri)) {
+        recoiled.add(ri);
+        applyAnswerToAvalanche(st, track, "first");
+        clampAvalancheGap(st, track, studentFractionAt(track, ri, false));
+      }
+      const sf = studentFractionAt(track, ri, false);
+      stepAvalanche(st, AV_DT * AVALANCHE_DEMO_TIME_SCALE, track, sf, tt >= r.correctAt);
+      minGap = Math.min(minGap, (sf - st.front) / track.spacing);
+    }
+    const sfNow = studentFractionAt(track, Math.min(index, rounds.length - 1), tt >= endT);
+    timeline.active.push(tt < endT);
+    timeline.front.push(st.front);
+    timeline.danger.push(avalancheDanger(st, track, sfNow));
+    timeline.meters.push(avalancheDistanceMeters(st, sfNow));
+    timeline.alert.push(avalancheAlert(st, track, sfNow));
+  }
+  return { timeline, minGapElements: st.caught ? 0 : minGap };
+}
+
+export function trailAvalancheAt(plan: TrailDemoPlan, t: number) {
+  const av = plan.avalanche;
+  if (!av) return null;
+  const f = Math.max(0, t) / av.dt;
+  const i = Math.min(av.front.length - 2, Math.floor(f));
+  const k = Math.min(1, f - i);
+  if (i < 0) return null;
+  const lerp = (arr: number[]) => arr[i] + (arr[i + 1] - arr[i]) * k;
+  return { active: av.active[i], front: lerp(av.front), danger: lerp(av.danger), meters: Math.round(lerp(av.meters)), alert: av.alert[i] };
+}
+
+/** Fração da trilha em que o aluno está (visual) no instante `t`. */
+export function trailStudentFraction(plan: TrailDemoPlan, t: number): number {
+  const levelIndex = plan.settings.level - 1;
+  const levelStart = TRAIL_LEVEL_FRACTIONS[levelIndex];
+  const levelEnd = TRAIL_LEVEL_FRACTIONS[levelIndex + 1];
+  const n = plan.levelCfg.elementCount;
+  const elementFraction = (index: number) => levelStart + ((levelEnd - levelStart) * (index + 1)) / (n + 1);
+  const ri = plan.rounds.findIndex((entry) => t >= entry.start && t < entry.end);
+  if (ri >= 0) {
+    const r = plan.rounds[ri];
+    const from = ri === 0 ? levelStart : elementFraction(ri - 1);
+    const to = ri === plan.rounds.length - 1 ? levelEnd : elementFraction(ri);
+    const walking = t >= r.correctAt;
+    const p = walking ? easeOut((t - r.correctAt) / (r.walkEnd - r.correctAt)) : 0;
+    return from + (to - from) * p;
+  }
+  if (t >= (plan.rounds.at(-1)?.end ?? plan.introDur)) return levelEnd;
+  return levelStart;
+}
+
+export interface TrailCamera {
+  s: number;
+  tx: number;
+  ty: number;
+}
+
+const VIDEO_ZOOM = 1.55;
+
+function cameraTarget(plan: TrailDemoPlan, t: number) {
+  const f = trailStudentFraction(plan, t);
+  const p = getTrailPositionAtFraction(f);
+  const ri = plan.rounds.findIndex((entry) => t >= entry.start && t < entry.end);
+  if (ri >= 0) {
+    const levelStart = TRAIL_LEVEL_FRACTIONS[plan.settings.level - 1];
+    const levelEnd = TRAIL_LEVEL_FRACTIONS[plan.settings.level];
+    const q = getTrailPositionAtFraction(levelStart + ((levelEnd - levelStart) * (ri + 1)) / (plan.levelCfg.elementCount + 1));
+    return { x: p.x + (q.x - p.x) * 0.45, y: p.y + (q.y - p.y) * 0.45 };
+  }
+  return p;
+}
+
+/** Câmera do vídeo: a mesma lógica do jogo (mundo cobrindo a largura, zoom, segue o aluno e o próximo objeto). */
+export function computeTrailCamera(plan: TrailDemoPlan, t: number, w: number, h: number): TrailCamera {
+  const s = Math.max(w / WORLD_W, h / WORLD_H) * VIDEO_ZOOM;
+  let fx = 0;
+  let fy = 0;
+  const SAMPLES = 5;
+  for (let i = 0; i < SAMPLES; i++) {
+    const c = cameraTarget(plan, Math.max(0, t - i * 0.12));
+    fx += c.x / SAMPLES;
+    fy += c.y / SAMPLES;
+  }
+  const tx = clamp(w * 0.5 - fx * s, w - WORLD_W * s, 0);
+  const ty = clamp(h * 0.45 - fy * s, h - WORLD_H * s, 0);
+  return { s, tx, ty };
+}
+
 const FONT = '"Inter", "Segoe UI", -apple-system, sans-serif';
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 const OPTION_COLORS = ["#3b82f6", "#ec4899", "#f59e0b", "#10b981"];
-const TRAIL_LEVEL_WEIGHTS = TRAIL_LEVELS.map((level) => level.elementCount + 3);
-const TRAIL_WEIGHT_TOTAL = TRAIL_LEVEL_WEIGHTS.reduce((sum, weight) => sum + weight, 0);
-const TRAIL_LEVEL_FRACTIONS = [0];
-TRAIL_LEVEL_WEIGHTS.forEach((weight) => {
-  TRAIL_LEVEL_FRACTIONS.push(TRAIL_LEVEL_FRACTIONS[TRAIL_LEVEL_FRACTIONS.length - 1] + weight / TRAIL_WEIGHT_TOTAL);
-});
+const TRAIL_LEVEL_FRACTIONS = CAMP_FRACS;
 let cachedTrailPath: Path2D | null = null;
 
 function getTrailPath() {
@@ -205,7 +369,7 @@ export function renderTrailDemoFrame(
   h: number,
   t: number,
   plan: TrailDemoPlan,
-  assets: { images: DemoImages }
+  assets: { images: DemoImages; scene?: CanvasImageSource | null; dyn?: CanvasImageSource | null }
 ) {
   const spec = DEMO_FORMATS[plan.settings.format];
   const { theme, levelCfg, introDur, countdownDur, outroStart } = plan;
@@ -217,425 +381,159 @@ export function renderTrailDemoFrame(
   const elementFraction = (index: number) =>
     levelStart + ((levelEnd - levelStart) * (index + 1)) / (levelCfg.elementCount + 1);
 
-  // 1. FUNDO C�‰U E ATMOSFERA ALPINA CONFORME O CLIMA
-  const isRain = levelCfg.weather === "rain" && plan.settings.difficulty !== "avalanche";
-  const isSnow = levelCfg.weather === "snow" || plan.settings.difficulty === "avalanche";
+  // 1. O MUNDO: a mesma arte da mata do jogo, com a mesma câmera, clima, trilha e marcadores
+  const isRain = levelCfg.weather === "rain";
+  const isSnow = levelCfg.weather === "snow";
+  const cam = computeTrailCamera(plan, t, w, h);
+  const toScreen = (p: { x: number; y: number }) => ({ x: p.x * cam.s + cam.tx, y: p.y * cam.s + cam.ty });
+  const kPx = w / 1080; // tamanhos de interface pensados para 1080 px de largura
 
-  const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
-  if (isRain) {
-    skyGrad.addColorStop(0, "#0f172a");
-    skyGrad.addColorStop(0.4, "#1e293b");
-    skyGrad.addColorStop(0.75, "#334155");
-    skyGrad.addColorStop(1, "#064e3b");
-  } else if (isSnow) {
-    skyGrad.addColorStop(0, "#334155");
-    skyGrad.addColorStop(0.35, "#64748b");
-    skyGrad.addColorStop(0.7, "#cbd5e1");
-    skyGrad.addColorStop(1, "#f1f5f9");
-  } else {
-    skyGrad.addColorStop(0, "#0284c7");
-    skyGrad.addColorStop(0.3, "#38bdf8");
-    skyGrad.addColorStop(0.65, "#bae6fd");
-    skyGrad.addColorStop(1, "#fef3c7");
-  }
-  ctx.fillStyle = skyGrad;
+  ctx.save();
+  ctx.fillStyle = "#052e16";
   ctx.fillRect(0, 0, w, h);
-  const trailBackdrop = assets.images.get("/trilha.jfif");
-  if (trailBackdrop?.complete && trailBackdrop.naturalWidth > 0) {
-    ctx.save();
-    ctx.globalAlpha = 1;
-    ctx.drawImage(trailBackdrop, 0, 0, w, h);
-    ctx.restore();
-  }
+  ctx.translate(cam.tx, cam.ty);
+  ctx.scale(cam.s, cam.s);
 
-  if (!trailBackdrop?.complete || trailBackdrop.naturalWidth === 0) {
-  // Sol radiante com corona alpina ou camadas de nuvens densas
-  if (!isRain && !isSnow) {
-    ctx.save();
-    // Brilho difuso do sol alpino
-    const sunGlow = ctx.createRadialGradient(w * 0.18, h * 0.12, 10, w * 0.18, h * 0.12, 130);
-    sunGlow.addColorStop(0, "rgba(254, 240, 138, 0.95)");
-    sunGlow.addColorStop(0.4, "rgba(251, 191, 36, 0.45)");
-    sunGlow.addColorStop(1, "rgba(245, 158, 11, 0)");
-    ctx.fillStyle = sunGlow;
-    ctx.beginPath();
-    ctx.arc(w * 0.18, h * 0.12, 130, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Núcleo do sol
-    ctx.beginPath();
-    ctx.arc(w * 0.18, h * 0.12, 34, 0, Math.PI * 2);
-    ctx.fillStyle = "#ffffff";
-    ctx.shadowColor = "#f59e0b";
-    ctx.shadowBlur = 24;
-    ctx.fill();
-    ctx.restore();
-
-    // Nuvens cúmulus alpinas flutuando suavemente
-    ctx.save();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.72)";
-    const cloud1X = ((t * 18 + w * 0.6) % (w + 240)) - 120;
-    ctx.beginPath();
-    ctx.ellipse(cloud1X, h * 0.14, 90, 26, 0, 0, Math.PI * 2);
-    ctx.ellipse(cloud1X + 40, h * 0.13, 60, 32, 0, 0, Math.PI * 2);
-    ctx.ellipse(cloud1X - 35, h * 0.15, 55, 22, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // 2. MACI�‡O ALPINO REALISTA (Picos Nevados Distantes, Paredões de Granito e Encosta)
-  ctx.save();
-
-  // Maciço de picos distantes (Picos pontiagudos com luz e sombra geológica)
-  const farGrad = ctx.createLinearGradient(0, h * 0.2, 0, h * 0.7);
-  if (isSnow) {
-    farGrad.addColorStop(0, "#e2e8f0");
-    farGrad.addColorStop(0.6, "#94a3b8");
-    farGrad.addColorStop(1, "#64748b");
-  } else if (isRain) {
-    farGrad.addColorStop(0, "#334155");
-    farGrad.addColorStop(0.6, "#1e293b");
-    farGrad.addColorStop(1, "#0f172a");
+  if (assets.scene) {
+    ctx.drawImage(assets.scene, 0, 0, WORLD_W, WORLD_H);
   } else {
-    farGrad.addColorStop(0, "#93c5fd");
-    farGrad.addColorStop(0.5, "#60a5fa");
-    farGrad.addColorStop(1, "#2563eb");
+    const fallback = ctx.createLinearGradient(0, 0, 0, WORLD_H);
+    fallback.addColorStop(0, "#38bdf8");
+    fallback.addColorStop(0.12, "#65a30d");
+    fallback.addColorStop(1, "#14532d");
+    ctx.fillStyle = fallback;
+    ctx.fillRect(0, 0, WORLD_W, WORLD_H);
   }
 
-  ctx.fillStyle = farGrad;
-  ctx.beginPath();
-  ctx.moveTo(0, h * 0.55);
-  ctx.lineTo(w * 0.12, h * 0.38);
-  ctx.lineTo(w * 0.28, h * 0.46);
-  ctx.lineTo(w * 0.42, h * 0.32);
-  ctx.lineTo(w * 0.58, h * 0.44);
-  ctx.lineTo(w * 0.72, h * 0.24);
-  ctx.lineTo(w * 0.86, h * 0.36);
-  ctx.lineTo(w, h * 0.28);
-  ctx.lineTo(w, h);
-  ctx.lineTo(0, h);
-  ctx.closePath();
-  ctx.fill();
-
-  // Calotas de gelo e cristas brancas nos picos do fundo
-  ctx.fillStyle = isSnow ? "#ffffff" : "rgba(255, 255, 255, 0.9)";
-  ctx.beginPath();
-  // Pico 1
-  ctx.moveTo(w * 0.42, h * 0.32);
-  ctx.lineTo(w * 0.38, h * 0.36);
-  ctx.lineTo(w * 0.46, h * 0.36);
-  ctx.closePath();
-  // Pico 2 (O mais alto no fundo)
-  ctx.moveTo(w * 0.72, h * 0.24);
-  ctx.lineTo(w * 0.67, h * 0.30);
-  ctx.lineTo(w * 0.77, h * 0.30);
-  ctx.closePath();
-  ctx.fill();
-
-  // Crista rochosa média (Falésias e gargantas com cascatas de água do degelo)
-  const midGrad = ctx.createLinearGradient(0, h * 0.35, 0, h * 0.8);
-  if (isSnow) {
-    midGrad.addColorStop(0, "#94a3b8");
-    midGrad.addColorStop(1, "#475569");
-  } else if (isRain) {
-    midGrad.addColorStop(0, "#1e293b");
-    midGrad.addColorStop(1, "#064e3b");
-  } else {
-    midGrad.addColorStop(0, "#16a34a");
-    midGrad.addColorStop(0.5, "#15803d");
-    midGrad.addColorStop(1, "#14532d");
-  }
-  ctx.fillStyle = midGrad;
-  ctx.beginPath();
-  ctx.moveTo(0, h * 0.65);
-  ctx.lineTo(w * 0.2, h * 0.52);
-  ctx.lineTo(w * 0.45, h * 0.42);
-  ctx.lineTo(w * 0.7, h * 0.32);
-  ctx.lineTo(w * 0.9, h * 0.22);
-  ctx.lineTo(w, h * 0.24);
-  ctx.lineTo(w, h);
-  ctx.lineTo(0, h);
-  ctx.closePath();
-  ctx.fill();
-
-  // Cascata de montanha prateada descendo da geleira
-  ctx.strokeStyle = "rgba(224, 242, 254, 0.8)";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(w * 0.52, h * 0.43);
-  ctx.quadraticCurveTo(w * 0.51, h * 0.48, w * 0.53, h * 0.54);
-  ctx.stroke();
-
-  // Encosta Principal com Pastagens e Dobras de Relevo
-  const slopeGrad = ctx.createLinearGradient(0, h * 0.35, 0, h);
-  if (isSnow) {
-    slopeGrad.addColorStop(0, "#f8fafc");
-    slopeGrad.addColorStop(0.4, "#e2e8f0");
-    slopeGrad.addColorStop(0.8, "#cbd5e1");
-    slopeGrad.addColorStop(1, "#94a3b8");
-  } else if (isRain) {
-    slopeGrad.addColorStop(0, "#166534");
-    slopeGrad.addColorStop(0.5, "#14532d");
-    slopeGrad.addColorStop(1, "#022c22");
-  } else {
-    slopeGrad.addColorStop(0, "#22c55e");
-    slopeGrad.addColorStop(0.45, "#16a34a");
-    slopeGrad.addColorStop(0.8, "#15803d");
-    slopeGrad.addColorStop(1, "#14532d");
-  }
-  ctx.fillStyle = slopeGrad;
-  ctx.beginPath();
-  ctx.moveTo(0, h * 0.92);
-  ctx.quadraticCurveTo(w * 0.25, h * 0.82, w * 0.48, h * 0.68);
-  ctx.quadraticCurveTo(w * 0.72, h * 0.52, w * 0.88, h * 0.32);
-  ctx.lineTo(w, h * 0.34);
-  ctx.lineTo(w, h);
-  ctx.lineTo(0, h);
-  ctx.closePath();
-  ctx.fill();
-
-  // Campo de neve eterno no cume da vitória
-  ctx.fillStyle = isSnow ? "#ffffff" : "rgba(255, 255, 255, 0.95)";
-  ctx.beginPath();
-  ctx.moveTo(w * 0.82, h * 0.24);
-  ctx.quadraticCurveTo(w * 0.9, h * 0.16, w * 0.98, h * 0.18);
-  ctx.lineTo(w, h * 0.34);
-  ctx.lineTo(w * 0.82, h * 0.34);
-  ctx.closePath();
-  ctx.fill();
-
-  // Pinheiros e coníferas alpinas espalhadas pelas encostas
-  const treePositions = [
-    { x: 0.16, y: 0.82, s: 0.85 },
-    { x: 0.22, y: 0.74, s: 0.95 },
-    { x: 0.38, y: 0.62, s: 0.8 },
-    { x: 0.48, y: 0.54, s: 0.75 },
-    { x: 0.62, y: 0.44, s: 0.7 },
-    { x: 0.76, y: 0.34, s: 0.65 },
-  ];
-  treePositions.forEach((tp) => {
-    const tx = tp.x * w;
-    const ty = tp.y * h;
-    const ts = tp.s * (w / 1000);
-
-    // Sombra
-    ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
-    ctx.beginPath();
-    ctx.ellipse(tx, ty + 12 * ts, 14 * ts, 5 * ts, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Tronco
-    ctx.fillStyle = "#451a03";
-    ctx.fillRect(tx - 3 * ts, ty + 4 * ts, 6 * ts, 10 * ts);
-
-    // Folhagem em camadas
-    ctx.fillStyle = isSnow ? "#334155" : "#14532d";
-    ctx.beginPath();
-    ctx.moveTo(tx, ty - 24 * ts);
-    ctx.lineTo(tx - 16 * ts, ty);
-    ctx.lineTo(tx + 16 * ts, ty);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(tx, ty - 14 * ts);
-    ctx.lineTo(tx - 20 * ts, ty + 10 * ts);
-    ctx.lineTo(tx + 20 * ts, ty + 10 * ts);
-    ctx.closePath();
-    ctx.fill();
-
-    // Neve nos ramos
-    if (isSnow) {
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.moveTo(tx, ty - 24 * ts);
-      ctx.lineTo(tx - 9 * ts, ty - 12 * ts);
-      ctx.lineTo(tx + 9 * ts, ty - 12 * ts);
-      ctx.closePath();
-      ctx.fill();
+  // clima aplicado sobre a arte (a mesma receita do jogo: dessaturar + névoa/geada)
+  if (isRain || isSnow) {
+    ctx.save();
+    ctx.globalCompositeOperation = "saturation";
+    ctx.globalAlpha = isRain ? 0.32 : 0.72;
+    ctx.fillStyle = "hsl(0, 0%, 50%)";
+    ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+    ctx.restore();
+    const tint = ctx.createLinearGradient(0, 0, 0, WORLD_H);
+    if (isRain) {
+      tint.addColorStop(0, "rgba(30, 48, 66, 0.52)");
+      tint.addColorStop(0.55, "rgba(55, 78, 92, 0.3)");
+      tint.addColorStop(1, "rgba(30, 50, 60, 0.34)");
+    } else {
+      tint.addColorStop(0, "rgba(214, 228, 255, 0.5)");
+      tint.addColorStop(0.6, "rgba(232, 241, 255, 0.34)");
+      tint.addColorStop(1, "rgba(255, 255, 255, 0.28)");
     }
-  });
-
-  // Rochas de granito alpino ao longo da montanha
-  const rockPositions = [
-    { x: 0.34, y: 0.68, s: 1.1 },
-    { x: 0.52, y: 0.49, s: 0.9 },
-    { x: 0.71, y: 0.38, s: 0.8 },
-  ];
-  rockPositions.forEach((rp) => {
-    const rx = rp.x * w;
-    const ry = rp.y * h;
-    const rs = rp.s * (w / 1000);
-    ctx.fillStyle = isSnow ? "#64748b" : "#475569";
-    ctx.beginPath();
-    ctx.moveTo(rx - 20 * rs, ry + 6 * rs);
-    ctx.lineTo(rx - 12 * rs, ry - 10 * rs);
-    ctx.lineTo(rx + 4 * rs, ry - 14 * rs);
-    ctx.lineTo(rx + 18 * rs, ry - 4 * rs);
-    ctx.lineTo(rx + 22 * rs, ry + 6 * rs);
-    ctx.closePath();
-    ctx.fill();
-    // Face iluminada da rocha
-    ctx.fillStyle = isSnow ? "#f8fafc" : "#94a3b8";
-    ctx.beginPath();
-    ctx.moveTo(rx - 12 * rs, ry - 10 * rs);
-    ctx.lineTo(rx + 4 * rs, ry - 14 * rs);
-    ctx.lineTo(rx + 8 * rs, ry - 4 * rs);
-    ctx.lineTo(rx - 4 * rs, ry - 3 * rs);
-    ctx.closePath();
-    ctx.fill();
-  });
-
+    ctx.fillStyle = tint;
+    ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+    const trail = getTrailPath();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    if (isSnow) {
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = 46;
+      ctx.stroke(trail);
+      ctx.strokeStyle = "rgba(234, 242, 255, 0.7)";
+      ctx.lineWidth = 30;
+      ctx.setLineDash([60, 70]);
+      ctx.stroke(trail);
+      ctx.setLineDash([]);
+    } else {
+      ctx.strokeStyle = "rgba(127, 167, 196, 0.45)";
+      ctx.lineWidth = 26;
+      ctx.setLineDash([22, 120]);
+      ctx.stroke(trail);
+      ctx.setLineDash([]);
+    }
   }
 
-  // 3. A TRILHA REALISTA EM CURVA SINUOSA COM CAMADAS E DETALHES ALPINOS
-  // Definição dos waypoints da trilha no formato proporcional ao jogo real
-  const trailPoints = TRAIL_LEVELS.map((_, index) => {
-    const point = getTrailPositionAtFraction(TRAIL_LEVEL_FRACTIONS[index]);
-    return { x: (point.x / 1000) * w, y: (point.y / 600) * h };
-  });
-  const trailPath = getTrailPath();
-  const traceTrailCurve = () => {
-    ctx.save();
-    ctx.scale(w / 1000, h / 600);
-    ctx.stroke(trailPath);
-    ctx.restore();
-  };
-
-  // 1ª camada: Sombra de escavação da trilha na encosta
+  // casinha do cume: rótulo e brilho da porta (acende quando o aluno chega)
+  const lastEnd = plan.rounds.at(-1)?.end ?? Infinity;
+  const houseT = clamp((t - lastEnd) / 0.8);
+  const glow = plan.settings.level === 7 ? houseT : 0;
+  if (glow > 0) {
+    const g = ctx.createRadialGradient(HUT_DOOR.x, HUT_DOOR.y, 2, HUT_DOOR.x, HUT_DOOR.y, 60);
+    g.addColorStop(0, `rgba(255, 226, 140, ${0.95 * glow})`);
+    g.addColorStop(0.4, `rgba(255, 200, 90, ${0.5 * glow})`);
+    g.addColorStop(1, "rgba(255, 200, 90, 0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(HUT_DOOR.x, HUT_DOOR.y, 60, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.save();
-  ctx.translate(0, (5 * h) / 600);
-  ctx.strokeStyle = "rgba(45, 28, 12, 0.38)";
-  ctx.lineWidth = 23;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  traceTrailCurve();
+  ctx.translate(HUT_POSITION.x, HUT_POSITION.y - 24);
+  ctx.scale(kPx / cam.s, kPx / cam.s);
+  ctx.font = `bold 15px ${FONT}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const hutLabel = "🏠 Casinha do Cume";
+  const hutW = ctx.measureText(hutLabel).width + 22;
+  ctx.fillStyle = "rgba(20, 25, 61, 0.92)";
+  ctx.strokeStyle = "rgba(252, 211, 77, 0.8)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(-hutW / 2, -24, hutW, 24, 12);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#fcd34d";
+  ctx.fillText(hutLabel, 0, -12);
   ctx.restore();
 
-  // 2ª camada: Base de terra compactada e cascalho largo
-  ctx.strokeStyle = isSnow ? "#cbd5e1" : isRain ? "#5b3920" : "#b7793b";
-  ctx.lineWidth = 17;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  traceTrailCurve();
-
-  // 3ª camada: Leito central de terra batida pelas passadas dos caminhantes
-  ctx.strokeStyle = isSnow ? "#94a3b8" : isRain ? "#3f2614" : "#8b5a2b";
-  ctx.lineWidth = 9;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  traceTrailCurve();
-
-  // 4ª camada: Textura de pedrinhas e pontilhados na trilha
-  ctx.save();
-  ctx.setLineDash([1, 12]);
-  ctx.strokeStyle = isSnow ? "#f8fafc" : isRain ? "#a8794e" : "#e7c68b";
-  ctx.lineWidth = 2;
-  ctx.lineCap = "round";
-  traceTrailCurve();
-  ctx.restore();
-
-  // Marcos de pedra (Cairns / Totens) com marcação alpina nas curvas
-  const cairnLocs = [0.2, 0.45, 0.72].map((fraction) => {
-    const point = getTrailPositionAtFraction(fraction);
-    return { x: (point.x / 1000) * w, y: (point.y / 600) * h };
-  });
-  cairnLocs.forEach((cl) => {
-    ctx.fillStyle = "#64748b";
-    ctx.beginPath();
-    ctx.ellipse(cl.x, cl.y, 9, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#94a3b8";
-    ctx.beginPath();
-    ctx.ellipse(cl.x, cl.y - 4, 7, 3, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Marcação alpina (Branco / Vermelho / Branco)
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(cl.x - 2, cl.y - 3, 4, 1.5);
-    ctx.fillStyle = "#dc2626";
-    ctx.fillRect(cl.x - 2, cl.y - 1.5, 4, 1.5);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(cl.x - 2, cl.y, 4, 1.5);
-  });
-
-  // 4. AS 7 ESTA�‡�•ES / WAYPOINTS DA TRILHA (N1 a N7 com altitudes)
-  trailPoints.forEach((pt, idx) => {
+  // as 7 estações (N1 a N7), no mesmo estilo dos marcadores do jogo
+  TRAIL_LEVELS.forEach((cfg, idx) => {
     const lvl = idx + 1;
+    const pt = getTrailPositionAtFraction(MARKER_FRACS[idx]);
     const isDone = lvl < plan.settings.level;
     const isCur = lvl === plan.settings.level;
     const isUnl = lvl <= plan.settings.level;
-
-    // Estaca de madeira do marco
-    ctx.fillStyle = "#451a03";
-    ctx.fillRect(pt.x - 2, pt.y - 2, 4, 14);
-
-    // Círculo do marco
     ctx.save();
+    ctx.translate(pt.x, pt.y);
+    ctx.scale(kPx / cam.s, kPx / cam.s);
     if (isCur) {
-      // Pulso dourado de estação ativa
-      const beaconPulse = Math.sin(t * 6) * 4;
       ctx.fillStyle = "rgba(245, 158, 11, 0.4)";
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y - 8, 18 + beaconPulse, 0, Math.PI * 2);
+      ctx.arc(0, 0, 25 + Math.sin(t * 6) * 3, 0, Math.PI * 2);
       ctx.fill();
     }
-
-    ctx.fillStyle = isCur ? "#f59e0b" : isDone ? "#10b981" : isUnl ? "#2563eb" : "#64748b";
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 2.5;
+    ctx.fillStyle = isCur ? "#f59e0b" : isDone ? "#059669" : isUnl ? "#fbbf24" : "#64748b";
+    ctx.strokeStyle = isCur ? "#fde68a" : "#ffffff";
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(pt.x, pt.y - 8, 13, 0, Math.PI * 2);
+    ctx.arc(0, 0, 18, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
-
-    // Texto do nível dentro do marco
-    ctx.fillStyle = "#ffffff";
-    ctx.font = `bold 12px ${FONT}`;
+    ctx.fillStyle = isUnl && !isCur && !isDone ? "#0f172a" : "#ffffff";
+    ctx.font = `900 17px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(isDone ? "�œ“" : `N${lvl}`, pt.x, pt.y - 7);
-
-    // Plaquinha de altitude do marco
-    ctx.fillStyle = isCur ? "#f59e0b" : "rgba(15, 23, 42, 0.85)";
+    ctx.fillText(isDone ? "✓" : String(lvl), 0, 1);
+    const label = `${cfg.name} · ${cfg.altitude.toLocaleString("pt-BR")}m`;
+    ctx.font = `800 14px ${FONT}`;
+    const lw = ctx.measureText(label).width + 22;
+    ctx.fillStyle = isCur ? "#ea580c" : isDone ? "rgba(4, 120, 87, 0.95)" : "rgba(20, 25, 61, 0.92)";
     ctx.beginPath();
-    ctx.roundRect(pt.x - 24, pt.y + 11, 48, 16, 6);
+    ctx.roundRect(24, -12, lw, 24, 12);
     ctx.fill();
     ctx.fillStyle = "#ffffff";
-    ctx.font = `bold 10px ${FONT}`;
-    ctx.fillText(`${TRAIL_LEVELS[idx].altitude}m`, pt.x, pt.y + 19);
+    ctx.textAlign = "left";
+    ctx.fillText(label, 35, 1);
     ctx.restore();
   });
-
-  // 5. Cabana no destino da trilha
-  const summitPosition = getTrailPositionAtFraction(1);
-  const summitPt = { x: (summitPosition.x / 1000) * w, y: (summitPosition.y / 600) * h };
-  ctx.save();
-  ctx.fillStyle = "#7c2d12";
-  ctx.beginPath();
-  ctx.moveTo(summitPt.x - 27, summitPt.y);
-  ctx.lineTo(summitPt.x, summitPt.y - 28);
-  ctx.lineTo(summitPt.x + 27, summitPt.y);
-  ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = "#b45309";
-  ctx.fillRect(summitPt.x - 20, summitPt.y - 1, 40, 27);
-  ctx.fillStyle = "#451a03";
-  ctx.fillRect(summitPt.x - 5, summitPt.y + 8, 10, 18);
-  ctx.fillStyle = "#fef3c7";
-  ctx.fillRect(summitPt.x - 16, summitPt.y + 5, 8, 8);
-  ctx.fillRect(summitPt.x + 8, summitPt.y + 5, 8, 8);
   ctx.restore();
 
-  // Efeitos Climáticos Animados (Chuva realista com ângulo de vento ou nevasca espiral)
+  // 2. BICHOS DA MATA + AVALANCHE (camada dinâmica gerada pelo mesmo motor do jogo)
+  if (assets.dyn) ctx.drawImage(assets.dyn, 0, 0, w, h);
+
+  // 3. CLIMA ANIMADO (chuva / neve caindo na tela)
   if (isRain) {
     ctx.save();
-    ctx.strokeStyle = "rgba(186, 230, 253, 0.65)";
+    ctx.strokeStyle = "rgba(186, 230, 253, 0.6)";
     ctx.lineWidth = 2.2;
     const rainOffset = (t * 900) % 140;
     for (let rx = -50; rx < w + 50; rx += 40) {
       for (let ry = -40; ry < h; ry += 65) {
         const y = (ry + rainOffset) % h;
-        const x = rx + (y * 0.35); // �‚ngulo realista do vento alpino
+        const x = rx + y * 0.35;
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(x - 12, y + 26);
@@ -658,286 +556,37 @@ export function renderTrailDemoFrame(
     }
     ctx.restore();
   }
-  ctx.restore();
 
-  // 6. ANIMAL DA MONTANHA ILUSTRADO COM ANATOMIA REALISTA
-  // Posicionado na encosta natural de cada nível, com movimento e respiração
-  const breath = Math.sin(t * 3.5) * 2.5;
-  const snowAnimalIds = ["chamois", "fox", "eagle", "rabbit"];
-  const animal = plan.settings.difficulty === "avalanche"
-    ? ROAMING_ANIMAL_POOL.find((candidate) => candidate.id === snowAnimalIds[plan.settings.level % snowAnimalIds.length]) ?? levelCfg.animal
-    : levelCfg.animal;
-  const animalId = animal.id;
-  const habitatPosition = animalId === "squirrel" ? { x: 0.16, y: 0.14 }
-    : animalId === "bird" || animalId === "eagle" ? { x: 0.87, y: 0.2 }
-      : animalId === "bee" || animalId === "butterfly" ? { x: 0.72, y: 0.42 }
-        : animalId === "frog" || animalId === "snail" ? { x: 0.58, y: 0.48 }
-          : { x: 0.7, y: 0.43 };
-  const animalX = w * habitatPosition.x;
-  const animalY = h * habitatPosition.y;
-  const hops = ["squirrel", "rabbit", "frog"].includes(animalId);
-  const animalStep = Math.sin(t * (hops ? 4.2 : 2.1));
-
-  ctx.save();
-  ctx.translate(animalX + (animalId === "eagle" ? animalStep * 8 : animalId === "snail" ? Math.sin(t * 0.3) * 3 : 0), animalY + (hops ? Math.max(0, animalStep) * -7 : animalStep * 1.5));
-  if (["deer", "fox", "chamois"].includes(animalId)) ctx.rotate(animalStep * 0.035);
-
-  // Sombra natural do animal no solo
-  if (!["bird", "eagle", "bee", "butterfly"].includes(animalId)) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.24)";
-    ctx.beginPath();
-    ctx.ellipse(0, 16, 26, 7, 0, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // Desenho fidedigno de cada animal da montanha
-  if (animalId === "chamois") {
-    // Camurça dos Alpes (Chifres em gancho, máscara facial e corpo atlético)
-    ctx.fillStyle = "#78350f";
-    // Pernas
-    ctx.fillRect(-14, 0, 4, 18);
-    ctx.fillRect(8, 0, 4, 18);
-    // Corpo
-    ctx.beginPath();
-    ctx.ellipse(0, -2, 18, 10, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Pescoço e Cabeça
-    ctx.beginPath();
-    ctx.ellipse(14, -14, 7, 10, 0.3, 0, Math.PI * 2);
-    ctx.fill();
-    // Máscara facial clara com listra preta
-    ctx.fillStyle = "#fef3c7";
-    ctx.beginPath();
-    ctx.ellipse(16, -15, 5, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#18181b";
-    ctx.fillRect(13, -16, 8, 2);
-    // Chifres em gancho característicos da camurça
-    ctx.strokeStyle = "#18181b";
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(12, -22);
-    ctx.lineTo(11, -34);
-    ctx.quadraticCurveTo(14, -36, 17, -32);
-    ctx.stroke();
-  } else if (animalId === "deer") {
-    // Cervo Nobre com galhada ramificada
-    ctx.fillStyle = "#b45309";
-    ctx.fillRect(-16, 0, 4, 20);
-    ctx.fillRect(10, 0, 4, 20);
-    ctx.beginPath();
-    ctx.ellipse(0, -4, 22, 11, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(18, -18, 8, 12, 0.3, 0, Math.PI * 2);
-    ctx.fill();
-    // Galhada
-    ctx.strokeStyle = "#451a03";
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(16, -26);
-    ctx.lineTo(14, -42);
-    ctx.moveTo(14, -36);
-    ctx.lineTo(8, -42);
-    ctx.moveTo(14, -32);
-    ctx.lineTo(20, -40);
-    ctx.stroke();
-  } else if (animalId === "fox") {
-    // Raposa Vermelha com cauda espessa de ponta branca
-    ctx.fillStyle = "#ea580c";
-    ctx.fillRect(-12, 0, 4, 15);
-    ctx.fillRect(8, 0, 4, 15);
-    ctx.beginPath();
-    ctx.ellipse(0, -2, 18, 9, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Peito branco
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.ellipse(10, 0, 8, 6, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Cabeça afilada
-    ctx.fillStyle = "#ea580c";
-    ctx.beginPath();
-    ctx.ellipse(16, -10, 8, 6, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Cauda longa com ponta branca
-    ctx.beginPath();
-    ctx.ellipse(-22, -6, 12, 6, -0.4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.arc(-30, -10, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (animalId === "rabbit") {
-    // Coelho Branco da Neve
-    ctx.fillStyle = "#f8fafc";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 16, 11, 0, 0, Math.PI * 2);
-    ctx.arc(14, -8, 9, 0, Math.PI * 2);
-    ctx.fill();
-    // Orelhas longas com pontas pretas
-    ctx.beginPath();
-    ctx.ellipse(12, -22, 3.5, 11, -0.15, 0, Math.PI * 2);
-    ctx.ellipse(18, -21, 3.5, 10, 0.15, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#18181b";
-    ctx.beginPath();
-    ctx.arc(11.5, -31, 2.5, 0, Math.PI * 2);
-    ctx.arc(18.5, -29, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (animalId === "frog") {
-    // Sapinho da Chuva com saco vocal
-    ctx.fillStyle = "#16a34a";
-    ctx.beginPath();
-    ctx.ellipse(0, 2, 14, 9, 0, 0, Math.PI * 2);
-    ctx.arc(10, -3, 8, 0, Math.PI * 2);
-    ctx.fill();
-    // Olhos dourados saltados
-    ctx.fillStyle = "#facc15";
-    ctx.beginPath();
-    ctx.arc(10, -9, 3.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#18181b";
-    ctx.beginPath();
-    ctx.arc(10, -9, 1.8, 0, Math.PI * 2);
-    ctx.fill();
-    // Saco vocal inflando com respiração
-    ctx.fillStyle = "rgba(254, 240, 138, 0.85)";
-    ctx.beginPath();
-    ctx.arc(14, 0, 4 + breath * 0.6, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (animalId === "eagle") {
-    // Águia Real planando com envergadura recortada
-    ctx.fillStyle = "#451a03";
-    ctx.beginPath();
-    ctx.ellipse(0, -6, 16, 7, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Asas abertas
-    ctx.beginPath();
-    ctx.moveTo(0, -6);
-    ctx.lineTo(-28, -26);
-    ctx.lineTo(28, -26);
-    ctx.closePath();
-    ctx.fill();
-    // Bico amarelo adunco
-    ctx.fillStyle = "#f59e0b";
-    ctx.beginPath();
-    ctx.moveTo(14, -6);
-    ctx.lineTo(20, -4);
-    ctx.lineTo(14, -2);
-    ctx.closePath();
-    ctx.fill();
-  } else if (animalId === "bird") {
-    for (let bird = 0; bird < 3; bird++) {
-      const offset = bird - 1;
-      const wingBeat = Math.sin(t * 10 + bird * 1.8) * 5;
-      ctx.save();
-      ctx.translate(offset * 24, Math.abs(offset) * 8 + Math.sin(t * 3 + bird) * 3);
-      ctx.fillStyle = bird === 1 ? "#334155" : "#475569";
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 8, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(-2, 0);
-      ctx.quadraticCurveTo(-9, -wingBeat, -16, -7);
-      ctx.quadraticCurveTo(-10, 2, -2, 2);
-      ctx.moveTo(2, 0);
-      ctx.quadraticCurveTo(9, -wingBeat, 16, -7);
-      ctx.quadraticCurveTo(10, 2, 2, 2);
-      ctx.fill();
-      ctx.restore();
+  // 4. AVISO DA AVALANCHE: bordas geladas pulsando conforme o perigo
+  const avNow = trailAvalancheAt(plan, t);
+  if (avNow && avNow.active) {
+    const a = Math.min(0.85, avNow.danger * avNow.danger * 0.9);
+    if (a > 0.02) {
+      const vg = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75);
+      vg.addColorStop(0, "rgba(255, 255, 255, 0)");
+      vg.addColorStop(1, `rgba(190, 215, 255, ${a * 0.75})`);
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, w, h);
     }
-  } else if (animalId === "snail") {
-    ctx.fillStyle = "#84a36a";
-    ctx.beginPath();
-    ctx.ellipse(0, 4, 19, 7, 0, Math.PI, Math.PI * 2);
-    ctx.lineTo(17, 8);
-    ctx.lineTo(-18, 8);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = "#a16207";
-    ctx.beginPath();
-    ctx.arc(-2, -5, 12, Math.PI, Math.PI * 2);
-    ctx.lineTo(10, 4);
-    ctx.lineTo(-14, 4);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = "#713f12";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(-2, -5, 6, 0, Math.PI * 1.7);
-    ctx.stroke();
-    ctx.strokeStyle = "#365314";
-    ctx.lineWidth = 1.8;
-    ctx.beginPath();
-    ctx.moveTo(12, 2);
-    ctx.lineTo(15, -7);
-    ctx.moveTo(17, 2);
-    ctx.lineTo(19, -6);
-    ctx.stroke();
-    ctx.fillStyle = "#18181b";
-    ctx.beginPath();
-    ctx.arc(15, -8, 1.3, 0, Math.PI * 2);
-    ctx.arc(19, -7, 1.3, 0, Math.PI * 2);
-    ctx.fill();
-  } else {
-    // Esquilo dos Bosques com cauda felpuda em curva de S
-    ctx.fillStyle = "#b45309";
-    ctx.beginPath();
-    ctx.ellipse(0, 2, 14, 9, 0, 0, Math.PI * 2);
-    ctx.arc(11, -5, 7, 0, Math.PI * 2);
-    ctx.fill();
-    // Cauda felpuda em S
-    ctx.strokeStyle = "#b45309";
-    ctx.lineWidth = 11;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(-8, 4);
-    ctx.quadraticCurveTo(-22, -4, -18, -22);
-    ctx.stroke();
   }
-
-  // Cartão com Nome do Animal e Frase Alpina
-  ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
-  ctx.strokeStyle = "rgba(245, 158, 11, 0.6)";
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(-55, 22, 110, 26, 8);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.fillStyle = "#fbbf24";
-  ctx.font = `bold 12px ${FONT}`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(`${animal.emoji} ${animal.name}`, 0, 35);
-  ctx.restore();
 
   // 7. PERSONAGEM ALUNO EXPLORADOR CAMINHANDO PELA TRILHA REAL
-  const walkingRound = round;
-  const isWalking = Boolean(walkingRound && t >= walkingRound.correctAt && t < walkingRound.walkEnd);
-  let studentFraction = levelStart;
-  if (walkingRound) {
-    const roundStart = activeRoundIndex === 0 ? levelStart : elementFraction(activeRoundIndex - 1);
-    const roundEnd =
-      activeRoundIndex === plan.rounds.length - 1 ? levelEnd : elementFraction(activeRoundIndex);
-    const walkProgress = isWalking
-      ? easeOut((t - walkingRound.correctAt) / (walkingRound.walkEnd - walkingRound.correctAt))
-      : t >= walkingRound.walkEnd
-        ? 1
-        : 0;
-    studentFraction = roundStart + (roundEnd - roundStart) * walkProgress;
-  } else if (t >= (plan.rounds.at(-1)?.end ?? introDur)) {
-    studentFraction = levelEnd;
-  }
+  const isWalking = Boolean(round && t >= round.correctAt && t < round.walkEnd);
+  const studentFraction = trailStudentFraction(plan, t);
   const studentPosition = getTrailPositionAtFraction(studentFraction);
   const nextPosition = getTrailPositionAtFraction(Math.min(1, studentFraction + 0.002));
-  const studentX = (studentPosition.x / 1000) * w;
-  const studentY = (studentPosition.y / 600) * h - 18;
+  const studentScreen = toScreen(studentPosition);
+  const studentX = studentScreen.x;
+  const studentY = studentScreen.y - 18 * kPx;
   const isFacingLeft = nextPosition.x < studentPosition.x;
+  // nível 7: depois da última pergunta o aluno entra feliz na casinha (encolhe e some na porta)
+  const houseP = plan.settings.level === 7 ? clamp((t - (plan.rounds.at(-1)?.end ?? Infinity) - 0.6) / 1.8) : 0;
+  const hopHappy = plan.settings.level === 7 && t >= (plan.rounds.at(-1)?.end ?? Infinity) && houseP < 1 ? Math.abs(Math.sin(t * 9)) * 10 : 0;
 
   ctx.save();
-  ctx.translate(studentX, studentY);
+  ctx.translate(studentX, studentY - hopHappy * kPx);
+  ctx.scale(1.25 * kPx * (1 - houseP * 0.55), 1.25 * kPx * (1 - houseP * 0.55));
+  ctx.globalAlpha = 1 - clamp((houseP - 0.55) / 0.45);
   if (isFacingLeft) ctx.scale(-1, 1);
 
   // Bobbing rítmico do passo de montanha
@@ -1189,20 +838,34 @@ export function renderTrailDemoFrame(
       ? activeRoundIndex + 1
       : activeRoundIndex
     : plan.rounds.length;
-  ctx.fillText(`�Ÿ”� ${streak} · ${round ? activeRoundIndex + 1 : plan.rounds.length}/${plan.rounds.length}`, hudX + hudW - 72, 79);
-  ctx.fillStyle = plan.settings.difficulty === "avalanche" ? "#0369a1" : secondsLeft <= 3 ? "#dc2626" : "#2563eb";
-  ctx.beginPath();
-  ctx.arc(hudX + hudW - 32, 62, 24, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `bold ${Math.max(11, w * 0.012)}px ${FONT}`;
-  ctx.textAlign = "center";
-  ctx.fillText(plan.settings.difficulty === "avalanche" ? "�„" : round ? `${secondsLeft}s` : "�œ“", hudX + hudW - 32, 67);
+  ctx.fillText(`🔥 ${streak} · ${round ? activeRoundIndex + 1 : plan.rounds.length}/${plan.rounds.length}`, hudX + hudW - 72, 79);
+  if (avNow) {
+    // modo avalanche: no lugar do cronômetro aparece o medidor de perigo (distância da avalanche)
+    ctx.fillStyle = avNow.alert === "danger" ? "#dc2626" : avNow.alert === "warn" ? "#f59e0b" : "#0284c7";
+    ctx.beginPath();
+    ctx.roundRect(hudX + hudW - 66, 36, 54, 52, 16);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.font = `bold ${Math.max(16, w * 0.018)}px ${FONT}`;
+    ctx.fillText("🏔️", hudX + hudW - 39, 58);
+    ctx.font = `bold ${Math.max(11, w * 0.012)}px ${FONT}`;
+    ctx.fillText(`${avNow.meters}m`, hudX + hudW - 39, 79);
+  } else {
+    ctx.fillStyle = secondsLeft <= 3 ? "#dc2626" : "#2563eb";
+    ctx.beginPath();
+    ctx.arc(hudX + hudW - 32, 62, 24, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${Math.max(11, w * 0.012)}px ${FONT}`;
+    ctx.textAlign = "center";
+    ctx.fillText(round ? `${secondsLeft}s` : "✓", hudX + hudW - 32, 67);
+  }
 
   if (round && t >= round.start && t < round.walkEnd) {
-    const target = getTrailPositionAtFraction(elementFraction(activeRoundIndex));
-    const targetX = (target.x / 1000) * w;
-    const targetY = (target.y / 600) * h;
+    const target = toScreen(getTrailPositionAtFraction(elementFraction(activeRoundIndex)));
+    const targetX = target.x;
+    const targetY = target.y;
     const imageW = Math.min(w * 0.38, 430);
     const imageH = Math.min(imageW * (round.item.h / round.item.w), h * 0.24);
     const dockTop = h * 0.73;
@@ -1282,16 +945,18 @@ export function renderTrailDemoFrame(
     ctx.beginPath();
     ctx.roundRect(20, dockTop, w - 40, 8, 4);
     ctx.fill();
-    ctx.fillStyle = secondsLeft <= 3 ? "#ef4444" : "#38bdf8";
+    // sem cronômetro no modo avalanche: a barra mostra o quanto a avalanche está perto
+    const barFill = avNow ? Math.max(0.04, avNow.danger) : 1 - progress;
+    ctx.fillStyle = avNow ? (avNow.danger > 0.7 ? "#ef4444" : avNow.danger > 0.4 ? "#fbbf24" : "#38bdf8") : secondsLeft <= 3 ? "#ef4444" : "#38bdf8";
     ctx.beginPath();
-    ctx.roundRect(20, dockTop, (w - 40) * (1 - progress), 8, 4);
+    ctx.roundRect(20, dockTop, (w - 40) * barFill, 8, 4);
     ctx.fill();
     }
 
     ctx.textAlign = "left";
     ctx.fillStyle = "#e2e8f0";
     ctx.font = `bold ${Math.max(13, w * 0.016)}px ${FONT}`;
-    ctx.fillText(plan.settings.difficulty === "avalanche" ? "A neve avança! Que objeto a seta aponta?" : "Que objeto a seta vermelha aponta?", 38, dockTop + 44);
+    ctx.fillText(avNow && avNow.alert === "danger" ? "🏔️ A avalanche está perto! Que objeto é esse?" : "Que objeto a seta vermelha aponta?", 38, dockTop + 44);
     const options = round.options.slice(0, 4);
     const gap = 12;
     const left = 32;

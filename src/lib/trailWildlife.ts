@@ -1,22 +1,31 @@
 /**
- * Vida selvagem tropical da Trilha do Aluno Curioso.
+ * Fauna da Trilha do Aluno Curioso (mata).
  *
- * Animais com anatomia fiel à fauna brasileira, plumagens vibrantes e
- * movimentos orgânicos característicos de cada espécie tropical:
+ * Os bichos que circulam pela mata são os da ilustração: veado (com filhote pintado), raposa,
+ * coelho, esquilo, ouriço, capivara, macaco, tucano, arara, passarinho azul e águia.
  *
- *  - Tucano (Ramphastos toco): bico imenso laranja-amarelo, corpo preto com peito branco.
- *  - Arara Vermelha (Ara macao): plumagem vermelha, azul e amarela, longa cauda pontiaguda.
- *  - Águia (Harpia harpyja): grande envergadura, planada majestosa em correntes quentes.
- *  - Cervo / Veado-mateiro (Mazama americana): pelagem marrom-avermelhada, sem galhada.
- *  - Macaco-prego (Sapajus apella): corpo castanho, face clara, cauda preênsil enrolada.
- *  - Coelho (Sylvilagus brasiliensis): pelagem marrom-acinzentada, orelhas médias.
- *  - Esquilo (Sciurus aestuans): esquilo tropical cinza-pardo, cauda felpuda.
- *  - Pássaro Azul / Cotinga (Cotinga cayana): azul elétrico vibrante, pequeno e vivaz.
+ * COMPORTAMENTO natural por espécie (cada uma tem um "temperamento"):
+ *  - amigáveis  (esquilo, passarinho, tucano, arara): aproximam-se curiosos do aluno e ficam por perto
+ *  - assustadiços (coelho/lebre): congelam e disparam em zigue-zague quando o aluno chega perto
+ *  - cautelosos (veado, raposa): erguem a cabeça, observam e se afastam com elegância/pulos
+ *  - defensivos (ouriço): enrola-se numa bola de espinhos
+ *  - pacíficos  (capivara): ignoram o aluno, andam devagar e adoram a chuva
+ *  - agressivos (macaco territorial, águia): macaco faz ameaça e investida de mentirinha; a águia
+ *    faz voos rasantes. Nada machuca o aluno: é só comportamento e expressão.
+ *
+ * CLIMA: cada tempo traz os bichos mais adaptados (sol: todos; chuva: capivara, tucano, arara, ouriço...;
+ * neve: raposa-do-ártico, lebre-da-neve, veado, raposa, águia).
+ *
+ * O mundo é retrato (1000 x ~2200): os bichos nascem/são reciclados perto do aluno.
  */
 import { G, ell, circ, line, limb, f, sin, cos, clamp, PI } from "@/lib/storySceneLife";
-import { TRAIL_ROAM_SPOTS, ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailHabitat, type TrailWeather } from "@/lib/curiousTrailData";
+import { ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailWeather } from "@/lib/curiousTrailData";
+import { WORLD_H, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
 
 type Kind = "walk" | "fly";
+type Temper = "friendly" | "skittish" | "wary" | "defensive" | "aggressive" | "peaceful";
+export type Mood = "calm" | "alert" | "flee" | "curious" | "happy" | "curl" | "stalk" | "threat" | "lunge" | "retreat" | "dive";
+
 interface Spec {
   kind: Kind;
   scale: number;
@@ -25,64 +34,72 @@ interface Spec {
   hop?: boolean;
   turn: number;
   idle: [number, number];
+  temper: Temper;
+  /** distância (unidades do mundo) em que reage ao aluno */
+  sense: number;
+  /** multiplicador de velocidade ao fugir */
+  flee: number;
+  /** constante de fase usada pelo desenho (w = m * K) */
+  K: number;
+  /** distância (unidades) percorrida por ciclo de passada (0 = não usa) */
+  stride: number;
+  /** altura do desenho (para posicionar o ícone de humor) */
+  h: number;
 }
 
 const SPECIES: Record<string, Spec> = {
-  esquilo:       { kind: "walk", scale: 1.05, speed: 78, gait: 10, hop: true,  turn: 6,   idle: [1.2, 3] },
-  coelho:        { kind: "walk", scale: 1.1,  speed: 60, gait: 9,  hop: true,  turn: 5,   idle: [2, 4]   },
-  cervo:         { kind: "walk", scale: 0.9,  speed: 38, gait: 5,               turn: 2.5, idle: [4, 6]   },
-  macaco:        { kind: "walk", scale: 1.0,  speed: 55, gait: 8,  hop: true,  turn: 4,   idle: [2, 4]   },
-  tucano:        { kind: "walk", scale: 1.2,  speed: 35, gait: 6,  hop: true,  turn: 3,   idle: [3, 5]   },
-  aguia:         { kind: "fly",  scale: 1.25, speed: 65, gait: 1.8,            turn: 1,   idle: [0, 0]   },
-  araraVermelha: { kind: "fly",  scale: 1.4,  speed: 75, gait: 7,              turn: 2.5, idle: [2, 4]   },
-  passaroAzul:   { kind: "fly",  scale: 1.1,  speed: 80, gait: 14,             turn: 4,   idle: [1.5, 3] },
+  squirrel: { kind: "walk", scale: 1.05, speed: 78, gait: 10, hop: true, turn: 6, idle: [1.2, 3], temper: "friendly", sense: 130, flee: 2.0, K: 10, stride: 0, h: 46 },
+  rabbit: { kind: "walk", scale: 1.1, speed: 65, gait: 9, hop: true, turn: 5, idle: [2, 4], temper: "skittish", sense: 170, flee: 2.6, K: 9, stride: 0, h: 50 },
+  snowhare: { kind: "walk", scale: 1.1, speed: 70, gait: 9, hop: true, turn: 5, idle: [2, 4], temper: "skittish", sense: 180, flee: 2.7, K: 9, stride: 0, h: 50 },
+  deer: { kind: "walk", scale: 0.9, speed: 38, gait: 5, turn: 2.5, idle: [3, 5], temper: "wary", sense: 230, flee: 2.5, K: 5, stride: 72, h: 112 },
+  fox: { kind: "walk", scale: 0.92, speed: 68, gait: 10, turn: 4, idle: [2, 3], temper: "wary", sense: 190, flee: 2.3, K: 10, stride: 46, h: 52 },
+  arcticfox: { kind: "walk", scale: 0.92, speed: 66, gait: 10, turn: 4, idle: [2, 3], temper: "wary", sense: 190, flee: 2.3, K: 10, stride: 46, h: 52 },
+  hedgehog: { kind: "walk", scale: 1.1, speed: 22, gait: 9, turn: 3, idle: [2, 4], temper: "defensive", sense: 130, flee: 1, K: 9, stride: 20, h: 30 },
+  capybara: { kind: "walk", scale: 1.0, speed: 24, gait: 6, turn: 2.5, idle: [4, 7], temper: "peaceful", sense: 0, flee: 1.6, K: 6, stride: 34, h: 44 },
+  monkey: { kind: "walk", scale: 1.0, speed: 72, gait: 8, turn: 5, idle: [1, 2.5], temper: "aggressive", sense: 250, flee: 1.6, K: 8, stride: 36, h: 62 },
+  bird: { kind: "fly", scale: 1.5, speed: 90, gait: 16, turn: 5, idle: [3, 4], temper: "friendly", sense: 230, flee: 1, K: 1, stride: 0, h: 22 },
+  toucan: { kind: "fly", scale: 1.7, speed: 70, gait: 12, turn: 4, idle: [3, 4], temper: "friendly", sense: 240, flee: 1, K: 1, stride: 0, h: 30 },
+  macaw: { kind: "fly", scale: 1.8, speed: 78, gait: 13, turn: 4, idle: [3, 4], temper: "friendly", sense: 240, flee: 1, K: 1, stride: 0, h: 34 },
+  eagle: { kind: "fly", scale: 1.3, speed: 65, gait: 1.8, turn: 1, idle: [0, 0], temper: "aggressive", sense: 420, flee: 1, K: 1, stride: 0, h: 20 },
 };
-const FALLBACK: Spec = SPECIES.coelho;
+const FALLBACK: Spec = SPECIES.rabbit;
 const specOf = (id: string): Spec => SPECIES[id] ?? FALLBACK;
 
+/** Bichos de cada clima: os mais adaptados (sol: todos; chuva: gostam de umidade; neve: gostam do frio). */
 const WEATHER_ANIMAL_IDS: Record<TrailWeather, readonly string[]> = {
-  sunny: ["cervo", "coelho", "esquilo", "tucano", "araraVermelha", "passaroAzul"],
-  rain:  ["macaco", "tucano", "passaroAzul", "coelho"],
-  snow:  ["aguia", "cervo", "coelho"],
+  sunny: ["squirrel", "rabbit", "deer", "fox", "hedgehog", "monkey", "bird", "toucan", "macaw", "eagle"],
+  rain: ["capybara", "toucan", "macaw", "hedgehog", "deer", "bird"],
+  snow: ["arcticfox", "snowhare", "deer", "fox", "eagle"],
 };
-
 const WEATHER_HIGHLIGHTS: Record<TrailWeather, readonly string[]> = {
-  sunny: ["tucano", "araraVermelha"],
-  rain:  ["macaco"],
-  snow:  ["aguia"],
+  sunny: ["squirrel", "deer"],
+  rain: ["capybara", "toucan"],
+  snow: ["snowhare", "arcticfox"],
 };
+const WEATHER_TARGET: Record<TrailWeather, number> = { sunny: 7, rain: 5, snow: 5 };
 
 function weatherAdjustedSpec(id: string, weather: TrailWeather): Spec {
   const spec = specOf(id);
   let speedFactor = 1;
   let restFactor = 1;
-
   if (weather === "rain") {
-    if (id === "macaco" || id === "tucano") {
-      speedFactor = 0.85;
-      restFactor = 1.2;
-    } else {
-      speedFactor = 0.65;
-      restFactor = 1.5;
-    }
-  } else if (weather === "snow") {
-    if (id === "aguia") {
-      speedFactor = 0.9;
-      restFactor = 1.1;
-    } else if (id === "cervo") {
-      speedFactor = 0.8;
-      restFactor = 1.25;
+    if (id === "capybara" || id === "toucan" || id === "macaw" || id === "hedgehog") {
+      speedFactor = 1.1; // adoram a chuva: mais ativos
+      restFactor = 0.8;
     } else {
       speedFactor = 0.7;
       restFactor = 1.4;
     }
+  } else if (weather === "snow") {
+    if (id === "arcticfox" || id === "snowhare" || id === "fox" || id === "eagle") {
+      speedFactor = 1.05;
+      restFactor = 0.9;
+    } else {
+      speedFactor = 0.75;
+      restFactor = 1.35;
+    }
   }
-
-  return {
-    ...spec,
-    speed: spec.speed * speedFactor,
-    idle: [spec.idle[0] * restFactor, spec.idle[1] * restFactor],
-  };
+  return { ...spec, speed: spec.speed * speedFactor, idle: [spec.idle[0] * restFactor, spec.idle[1] * restFactor] };
 }
 
 export interface Critter {
@@ -97,6 +114,11 @@ export interface Critter {
   v: number;
   vz: number;
   state: "idle" | "move" | "leaving";
+  mood: Mood;
+  moodT: number;
+  cool: number;
+  hp: number;
+  dive: number;
   hasTarget: boolean;
   tx: number;
   ty: number;
@@ -106,89 +128,88 @@ export interface Critter {
   ph: number;
   spot: number;
   landed: boolean;
-  pause: number;
   react: number;
   age: number;
   orbit: number;
-  enter: number;
-  cxOff: number;
-  color: string;
 }
 
-const COLORS = ["#f08a2b", "#4aa8e8", "#e86aa6", "#f2d33a", "#9b6be0"];
-const rnd = Math.random;
 const approach = (v: number, to: number, d: number) => (v < to ? Math.min(to, v + d) : Math.max(to, v - d));
 const wrap = (a: number) => {
   while (a > PI) a -= 2 * PI;
   while (a < -PI) a += 2 * PI;
   return a;
 };
-
-type D = { s: number; m: number; a: number; moving: boolean; ph: number };
-
-/* ==================================================================
-   DESENHOS REALISTAS DOS ANIMAIS TROPICAIS (SVG detalhado)
-   ================================================================== */
-
-/** TUCANO (Ramphastos toco) — Pássaro icônico do Brasil */
-function tucano(o: D): string {
-  const w = o.m * 6 + o.ph;
-  const hop = o.moving ? Math.abs(sin(w)) * 12 : 0;
-  const headBob = o.moving ? sin(w) * 5 : sin(o.a * 1.8 + o.ph) * 2;
-  const breath = sin(o.a * 2.2 + o.ph) * 0.7;
-
-  // Pernas finas com garras de tucano
-  const legL = line(-6, -6, -6, 0, 2.5, "#451a03");
-  const legR = line(4, -6, 4, 0, 2.5, "#451a03");
-  const clawL = `<path d="M-9,0 L-6,0 M-6,0 L-4,2 M-6,0 L-7,2" stroke="#451a03" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
-  const clawR = `<path d="M1,0 L4,0 M4,0 L6,2 M4,0 L3,2" stroke="#451a03" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
-
-  // Cauda curta vermelha
-  const tail = `<path d="M-18 -10 L-28 -8 L-26 -4 L-16 -6 Z" fill="#dc2626" stroke="#991b1b" stroke-width="0.8"/>`;
-
-  // Corpo preto
-  const body = `<ellipse cx="0" cy="${f(-13 + breath)}" rx="20" ry="12" fill="#1a1a1a" stroke="#000" stroke-width="1"/>`;
-
-  // Peito e garganta brancos
-  const chest = `<ellipse cx="8" cy="${f(-10 + breath)}" rx="14" ry="9" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.8"/>`;
-
-  // Cabeça preta com anel vermelho ao redor do olho
-  const head = `<circle cx="20" cy="${f(-22 + headBob + breath)}" r="9" fill="#1a1a1a" stroke="#000" stroke-width="0.8"/>`;
-
-  // Anel vermelho ao redor do olho
-  const eyeRing = `<circle cx="23" cy="${f(-25 + headBob + breath)}" r="3.8" fill="#dc2626"/>`;
-
-  // Olho amarelo com pupila preta
-  const eye = `<circle cx="23" cy="${f(-25 + headBob + breath)}" r="2.6" fill="#facc15"/>` +
-              `<circle cx="23" cy="${f(-25 + headBob + breath)}" r="1.4" fill="#18181b"/>` +
-              `<circle cx="23.6" cy="${f(-25.6 + headBob + breath)}" r="0.6" fill="#ffffff"/>`;
-
-  // Bico imenso curvo laranja/amarelo — a característica do tucano
-  const beak = `
-    <path d="M20 ${f(-22 + headBob + breath)} Q32 ${f(-28 + headBob + breath)} 42 ${f(-24 + headBob + breath)} Q44 ${f(-18 + headBob + breath)} 36 ${f(-16 + headBob + breath)} Q28 ${f(-14 + headBob + breath)} 20 ${f(-18 + headBob + breath)} Z"
-      fill="#f97316" stroke="#c2410c" stroke-width="1"/>
-    <path d="M20 ${f(-22 + headBob + breath)} Q32 ${f(-28 + headBob + breath)} 42 ${f(-24 + headBob + breath)} Q32 ${f(-22 + headBob + breath)} 20 ${f(-18 + headBob + breath)} Z"
-      fill="#fbbf24" opacity="0.7"/>
-  `;
-
-  const bodyStr = `
-    ${tail}
-    ${legL}${legR}${clawL}${clawR}
-    ${body}
-    ${chest}
-    ${head}
-    ${eyeRing}
-    ${beak}
-    ${eye}
-  `;
-
-  return G(0, -hop, 0, o.s, o.s, bodyStr) + ell(0, 1, 18 * o.s, 4 * o.s, "rgba(0,0,0,.2)");
+function mulberry32(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+/** Troca cores hexadecimais de um desenho (variações de espécie: raposa-do-ártico, coelho marrom...). */
+function recolor(svg: string, map: Record<string, string>): string {
+  return svg.replace(/#[0-9a-fA-F]{6}/g, (m) => map[m.toLowerCase()] ?? m);
 }
 
-/** ÁGUIA (Harpia harpyja) — Harpia real, planada majestosa */
-function aguia(o: D): string {
+type D = { s: number; m: number; a: number; moving: boolean; ph: number; mood?: Mood };
+
+/** ESQUILO DOS BOSQUES (Sciurus vulgaris alpinus) */
+function squirrel(o: D): string {
+  const w = o.m * 10 + o.ph;
+  const k = o.moving ? sin(w) : 0;
+  const tailSway = sin(o.a * 3.2 + o.ph) * 9 + (o.moving ? sin(w) * 11 : 0);
+  const breath = sin(o.a * 2.5 + o.ph) * 0.8;
+
+  // Cauda volumosa e felpuda em curva de S com camadas de pelo
+  const tail = `
+    <g transform="rotate(${f(tailSway)} -14 -16)">
+      <path d="M-10 -12 C-26 -18 -36 -38 -24 -52 C-14 -64 -2 -60 -4 -48 C-6 -38 -18 -28 -10 -12 Z" fill="#b45309" stroke="#78350f" stroke-width="1.2" />
+      <path d="M-12 -16 C-24 -24 -32 -40 -22 -50 C-14 -58 -6 -56 -8 -46 C-10 -38 -18 -30 -12 -16 Z" fill="#d97706" opacity="0.85" />
+      <path d="M-14 -22 C-22 -28 -28 -40 -20 -46" stroke="#fef3c7" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round" />
+    </g>
+  `;
+
+  // Pernas com garras
+  const backLeg = limb(-8, -8, 11, k * 0.8, 4.2, "#92400e");
+  const frontLeg = limb(9, -8, 10, -k * 0.8, 3.8, "#92400e");
+
+  // Corpo com barriga bege clara
+  const body = `
+    ${tail}
+    ${backLeg}
+    ${frontLeg}
+    <ellipse cx="0" cy="${f(-15 + breath)}" rx="15" ry="9.5" fill="#b45309" stroke="#78350f" stroke-width="1" />
+    <ellipse cx="5" cy="${f(-12 + breath)}" rx="8.5" ry="5.5" fill="#fef3c7" />
+    <!-- Cabeça com orelhas pontiagudas e tufos alpinos -->
+    <circle cx="15" cy="${f(-22 + breath)}" r="7" fill="#b45309" stroke="#78350f" stroke-width="1" />
+    <ellipse cx="18" cy="${f(-19 + breath)}" rx="4.5" ry="3.5" fill="#fde68a" />
+    <!-- Focinho e nariz -->
+    <circle cx="21.5" cy="${f(-20 + breath)}" r="1.3" fill="#18181b" />
+    <!-- Olho preto brilhante com ponto de luz -->
+    <circle cx="17" cy="${f(-24 + breath)}" r="1.8" fill="#18181b" />
+    <circle cx="17.6" cy="${f(-24.6 + breath)}" r="0.6" fill="#ffffff" />
+    <!-- Orelhas com tufos de pelo -->
+    <polygon points="12,-28 14,-36 17,-28" fill="#92400e" stroke="#78350f" stroke-width="0.8" />
+    <line x1="14" y1="-36" x2="14" y2="-40" stroke="#78350f" stroke-width="1.2" stroke-linecap="round" />
+    <polygon points="17,-27 19,-35 21,-27" fill="#b45309" />
+    <!-- Patinhas dianteiras segurando semente -->
+    <circle cx="17" cy="${f(-13 + breath)}" r="2.2" fill="#92400e" />
+    <circle cx="19" cy="${f(-14 + breath)}" r="2.2" fill="#78350f" />
+    <!-- Noz de pinheiro -->
+    <ellipse cx="18.5" cy="${f(-13.5 + breath)}" rx="2" ry="3" fill="#451a03" />
+  `;
+
+  return G(0, -Math.abs(k) * 10 * o.s, 0, o.s, o.s, body) + ell(0, 1, 16 * o.s, 4 * o.s, "rgba(0,0,0,.22)");
+}
+
+
+/** ÁGUIA REAL (Aquila chrysaetos) */
+function eagle(o: D): string {
   const k = sin(o.a * 1.8 + o.ph) * 0.35 + sin(o.a * 0.6) * 0.12;
 
+  // Asas majestosas com penas primárias abertas e digitadas
   const wing = (dir: number, c: string, stroke: string) => `
     <path
       d="M-6 -2
@@ -204,336 +225,407 @@ function aguia(o: D): string {
 
   const body = `
     ${wing(-1, "#54280b", "#3b1a06")}
-    <!-- Cauda em leque com faixas claras -->
-    <path d="M-16 0 L-36 ${f(-4 + k * 2)} L-38 6 L-16 5 Z" fill="#291103"/>
-    <path d="M-20 0 L-30 ${f(-3 + k * 2)} L-31 4 L-20 3 Z" fill="#fef3c7" opacity="0.8"/>
-    <!-- Corpo castanho-escuro -->
-    <ellipse cx="0" cy="0" rx="20" ry="6.5" fill="#451a03" stroke="#291103" stroke-width="1"/>
-    <!-- Cabeça com topete cinza característico da harpia -->
-    <circle cx="20" cy="-1.5" r="6" fill="#78350f"/>
-    <path d="M15 -5 Q21 -8 25 -3" stroke="#94a3b8" stroke-width="2.5" fill="none"/>
+    <!-- Cauda em leque com faixas brancas e ponta escura -->
+    <path d="M-16 0 L-36 ${f(-4 + k * 2)} L-38 6 L-16 5 Z" fill="#291103" />
+    <path d="M-20 0 L-30 ${f(-3 + k * 2)} L-31 4 L-20 3 Z" fill="#fef3c7" opacity="0.8" />
+    <!-- Corpo forte castanho-escuro -->
+    <ellipse cx="0" cy="0" rx="20" ry="6.5" fill="#451a03" stroke="#291103" stroke-width="1" />
+    <!-- Cabeça com plumagem dourada na nuca -->
+    <circle cx="20" cy="-1.5" r="6" fill="#78350f" />
+    <path d="M15 -5 Q21 -7 25 -3" stroke="#f59e0b" stroke-width="3" fill="none" />
     <!-- Bico amarelo adunco forte -->
-    <path d="M24 -2 L33 0 L25 4 Z" fill="#f59e0b" stroke="#b45309" stroke-width="0.8"/>
-    <path d="M30 0 Q33 2 32 4" stroke="#78350f" stroke-width="1" fill="none"/>
-    <!-- Olho amarelo penetrante -->
-    <circle cx="22" cy="-2.5" r="1.6" fill="#facc15"/>
-    <circle cx="22" cy="-2.5" r="0.9" fill="#18181b"/>
-    <!-- Garras amarelas -->
-    <path d="M2 5 L4 9 M6 5 L8 9" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M24 -2 L33 0 L25 4 Z" fill="#f59e0b" stroke="#b45309" stroke-width="0.8" />
+    <path d="M30 0 Q33 2 32 4" stroke="#78350f" stroke-width="1" fill="none" />
+    <!-- Olho amarelo penetrante com pupila preta -->
+    <circle cx="22" cy="-2.5" r="1.6" fill="#facc15" />
+    <circle cx="22" cy="-2.5" r="0.9" fill="#18181b" />
+    <!-- Garras amarelas curvas recolhidas -->
+    <path d="M2 5 L4 9 M6 5 L8 9" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round" />
     ${wing(1, "#3b1a06", "#1c0d03")}
   `;
 
   return G(0, 0, 0, o.s, o.s, body);
 }
 
-/** CERVO / VEADO-MATEIRO (Mazama americana) — Sem galhada, pelagem marrom-avermelhada */
-function realCervo(o: D): string {
+
+/** CERVO NOBRE (Cervus elaphus) */
+function realDeer(o: D): string {
   const w = o.m * 5 + o.ph;
   const k = o.moving ? sin(w) : 0;
   const graze = o.moving ? 0 : (sin(o.a * 0.9 + o.ph) + 1) / 2;
 
-  const legs = [-20, -12, 14, 22]
+  // Pernas longas e elegantes
+  const legs = [-22, -14, 16, 24]
     .map((lx, i) => {
       const col = i % 2 === 0 ? "#92400e" : "#78350f";
-      return limb(lx, -34, 36, sin(w * 0.5 + i) * 0.05 + k * 0.4, 4.5, col);
+      return limb(lx, -36, 38, sin(w * 0.5 + i) * 0.05 + k * 0.4, 4.8, col);
     })
     .join("");
 
+  // Cabeça e galhada ramificada
   const head = `
-    <g transform="rotate(${f(-6 + graze * 42)} 24 -50)">
-      <!-- Pescoço gracioso marrom-avermelhado -->
-      <line x1="22" y1="a-48" x2="38" y2="-76" stroke="#b45309" stroke-width="9" stroke-linecap="round"/>
-      <line x1="22" y1="-48" x2="38" y2="-76" stroke="#b45309" stroke-width="9" stroke-linecap="round"/>
-      <ellipse cx="44" cy="-80" rx="11" ry="7" fill="#b45309" transform="rotate(-18 44 -80)" stroke="#78350f" stroke-width="1"/>
-      <!-- Olho grande e meigo -->
-      <circle cx="47" cy="-82" r="2" fill="#18181b"/>
-      <circle cx="47.6" cy="-82.6" r="0.7" fill="#ffffff"/>
-      <!-- Focinho com narinas -->
-      <ellipse cx="53" cy="-77" rx="3.2" ry="2.4" fill="#291103"/>
-      <!-- Orelha alerta tropical -->
-      <ellipse cx="40" cy="-88" rx="2.8" ry="5.5" fill="#92400e" transform="rotate(-25 40 -88)"/>
-      <ellipse cx="40" cy="-88" rx="1.5" ry="3.5" fill="#fde68a" opacity="0.7" transform="rotate(-25 40 -88)"/>
-      <!-- Sem galhada — veado fêmea brasileiro -->
+    <g transform="rotate(${f(-6 + graze * 46)} 26 -54)">
+      <!-- Pescoço gracioso -->
+      <line x1="24" y1="-52" x2="42" y2="-82" stroke="#b45309" stroke-width="10" stroke-linecap="round" />
+      <ellipse cx="48" cy="-86" rx="12" ry="7.5" fill="#b45309" transform="rotate(-20 48 -86)" stroke="#78350f" stroke-width="1" />
+      <!-- Olho grande e meigo com brilho -->
+      <circle cx="51" cy="-88" r="2.2" fill="#18181b" />
+      <circle cx="51.7" cy="-88.6" r="0.7" fill="#ffffff" />
+      <!-- Focinho com boca e narinas -->
+      <ellipse cx="58" cy="-83" rx="3.5" ry="2.6" fill="#291103" />
+      <!-- Orelha elegante -->
+      <ellipse cx="43" cy="-94" rx="3" ry="6" fill="#92400e" transform="rotate(-30 43 -94)" />
+      <!-- Galhada ramificada imponente de cervo real -->
+      <path
+        d="M44 -92 L42 -110 M42 -104 L34 -112 M42 -98 L48 -112 M44 -90 L52 -110 M52 -104 L58 -112 M52 -98 L48 -108"
+        stroke="#54280b"
+        stroke-width="2.6"
+        fill="none"
+        stroke-linecap="round"
+      />
     </g>
   `;
 
-  // Manchas juvenis sutis
+  // Corpo avermelhado com peito bege
   const body = `
     ${legs}
-    <ellipse cx="0" cy="-45" rx="30" ry="14" fill="#b45309" stroke="#78350f" stroke-width="1.2"/>
-    <ellipse cx="6" cy="-40" rx="18" ry="9" fill="#d97706" opacity="0.75"/>
-    <!-- Manchas brancas sutis -->
-    <circle cx="-6" cy="-49" r="1.6" fill="#fef3c7" opacity="0.55"/>
-    <circle cx="4" cy="-43" r="1.6" fill="#fef3c7" opacity="0.55"/>
-    <circle cx="14" cy="-46" r="1.5" fill="#fef3c7" opacity="0.55"/>
+    <ellipse cx="0" cy="-48" rx="33" ry="15" fill="#b45309" stroke="#78350f" stroke-width="1.2" />
+    <ellipse cx="8" cy="-43" rx="20" ry="10" fill="#d97706" opacity="0.8" />
+    <ellipse cx="-20" cy="-48" rx="8" ry="6" fill="#fef3c7" opacity="0.85" />
+    <!-- Pintas brancas sutis na pelagem de verão -->
+    <circle cx="-8" cy="-52" r="1.8" fill="#fef3c7" opacity="0.6" />
+    <circle cx="4" cy="-46" r="1.8" fill="#fef3c7" opacity="0.6" />
+    <circle cx="16" cy="-48" r="1.8" fill="#fef3c7" opacity="0.6" />
     ${head}
     <!-- Cauda curta com mancha bege -->
-    <ellipse cx="-30" cy="-51" rx="5" ry="3" fill="#fef3c7" transform="rotate(-28 -30 -51)" stroke="#b45309" stroke-width="0.8"/>
+    <ellipse cx="-33" cy="-54" rx="5.5" ry="3.5" fill="#fef3c7" transform="rotate(-30 -33 -54)" stroke="#b45309" stroke-width="1" />
   `;
 
-  return G(0, -Math.abs(k) * 1.5, 0, o.s, o.s, body) + ell(0, 1, 34 * o.s, 6 * o.s, "rgba(0,0,0,.22)");
+  return G(0, -Math.abs(k) * 1.5, 0, o.s, o.s, body) + ell(0, 1, 36 * o.s, 6 * o.s, "rgba(0,0,0,.22)");
 }
 
-/** MACACO-PREGO (Sapajus apella) — Corpo castanho, face clara, cauda preênsil */
-function macaco(o: D): string {
-  const w = o.m * 8 + o.ph;
-  const k = o.moving ? sin(w) : 0;
-  const groom = !o.moving ? Math.max(0, sin(o.a * 1.8 + o.ph)) : 0; // animação de cuidado
 
-  // Cauda preênsil enrolada característica
-  const tail = `
-    <path d="M-14 -16 C-26 -10 -34 -2 -30 10 C-26 20 -18 20 -18 12 C-18 6 -24 6 -22 2"
-      stroke="#78350f" stroke-width="5.5" fill="none" stroke-linecap="round"/>
-    <path d="M-14 -16 C-26 -10 -34 -2 -30 10 C-26 20 -18 20 -18 12 C-18 6 -24 6 -22 2"
-      stroke="#92400e" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
-  `;
-
-  // Braços longos — primata
-  const armL = limb(-12, -20, 18, -k * 0.9 - groom * 0.8, 4, "#78350f");
-  const armR = limb(10, -20, 18, k * 0.9 + groom * 0.6, 4, "#78350f");
-
-  // Pernas curtas
-  const legL = limb(-8, -10, 14, k * 0.6, 4.5, "#78350f");
-  const legR = limb(6, -10, 14, -k * 0.6, 4.5, "#78350f");
-
-  const body = `
-    ${tail}
-    ${legL}${legR}
-    <!-- Corpo castanho robusto -->
-    <ellipse cx="0" cy="-18" rx="16" ry="12" fill="#78350f" stroke="#451a03" stroke-width="1"/>
-    <!-- Peito mais claro -->
-    <ellipse cx="4" cy="-14" rx="10" ry="7.5" fill="#92400e" opacity="0.8"/>
-    ${armL}${armR}
-    <!-- Cabeça com face creme característica do macaco-prego -->
-    <circle cx="12" cy="-30" r="10" fill="#78350f" stroke="#451a03" stroke-width="1"/>
-    <!-- Calota escura (capuz) -->
-    <ellipse cx="10" cy="-37" rx="8.5" ry="5.5" fill="#451a03"/>
-    <!-- Face creme -->
-    <ellipse cx="14" cy="-28" rx="6.5" ry="6" fill="#fef3c7"/>
-    <!-- Olhos -->
-    <circle cx="12" cy="-31" r="1.8" fill="#18181b"/>
-    <circle cx="12.5" cy="-31.5" r="0.6" fill="#ffffff"/>
-    <!-- Nariz e boca -->
-    <ellipse cx="16" cy="-27" rx="2.5" ry="1.8" fill="#78350f"/>
-    <path d="M13 -24 Q16 -22 19 -24" stroke="#451a03" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-  `;
-
-  return G(0, -Math.abs(k) * 6 * o.s, 0, o.s, o.s, body) + ell(0, 1, 18 * o.s, 4 * o.s, "rgba(0,0,0,.22)");
-}
-
-/** ESQUILO TROPICAL (Sciurus aestuans) — Esquilo cinza-pardo com cauda felpuda */
-function realEsquilo(o: D): string {
+/** RAPOSA VERMELHA (Vulpes vulpes) */
+function realFox(o: D): string {
   const w = o.m * 10 + o.ph;
   const k = o.moving ? sin(w) : 0;
-  const tailSway = sin(o.a * 3.2 + o.ph) * 9 + (o.moving ? sin(w) * 11 : 0);
-  const breath = sin(o.a * 2.5 + o.ph) * 0.8;
 
-  // Cauda volumosa tropical — cinza-parda
+  // Pernas com meias pretas na parte inferior
+  const legs = [
+    [-17, k],
+    [-9, -k],
+    [13, -k],
+    [21, k],
+  ]
+    .map(([lx, a]) => {
+      return (
+        limb(lx, -17, 18, (a as number) * 0.8, 5, "#c2410c") +
+        limb(lx + sin((a as number) * 0.8) * 10, -17 + cos((a as number) * 0.8) * 10, 8, (a as number) * 0.8, 4.5, "#18181b")
+      );
+    })
+    .join("");
+
+  // Cauda espessa com ponta branca ondulando ao correr
   const tail = `
-    <g transform="rotate(${f(tailSway)} -14 -16)">
-      <path d="M-10 -12 C-26 -18 -36 -38 -24 -52 C-14 -64 -2 -60 -4 -48 C-6 -38 -18 -28 -10 -12 Z" fill="#78716c" stroke="#57534e" stroke-width="1.2"/>
-      <path d="M-12 -16 C-24 -24 -32 -40 -22 -50 C-14 -58 -6 -56 -8 -46 C-10 -38 -18 -30 -12 -16 Z" fill="#a8a29e" opacity="0.75"/>
-      <path d="M-14 -22 C-22 -28 -28 -40 -20 -46" stroke="#fafaf9" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <g transform="rotate(${f(sin(w * 0.85) * 14)} -28 -28)">
+      <path d="M-26 -26 C-42 -32 -54 -24 -48 -16 C-42 -10 -30 -16 -24 -24 Z" fill="#ea580c" />
+      <ellipse cx="-44" cy="-28" rx="18" ry="7.5" fill="#ea580c" transform="rotate(-15 -44 -28)" stroke="#9a3412" stroke-width="1" />
+      <!-- Ponta da cauda branca como algodão -->
+      <ellipse cx="-58" cy="-32" rx="7" ry="5.5" fill="#ffffff" stroke="#e2e8f0" stroke-width="0.8" />
     </g>
   `;
 
-  const backLeg = limb(-8, -8, 11, k * 0.8, 4.2, "#57534e");
-  const frontLeg = limb(9, -8, 10, -k * 0.8, 3.8, "#57534e");
-
-  const body = `
-    ${tail}
-    ${backLeg}
-    ${frontLeg}
-    <ellipse cx="0" cy="${f(-15 + breath)}" rx="15" ry="9.5" fill="#78716c" stroke="#57534e" stroke-width="1"/>
-    <!-- Barriga mais clara -->
-    <ellipse cx="5" cy="${f(-12 + breath)}" rx="8.5" ry="5.5" fill="#d6d3d1"/>
-    <!-- Cabeça -->
-    <circle cx="15" cy="${f(-22 + breath)}" r="7" fill="#78716c" stroke="#57534e" stroke-width="1"/>
-    <ellipse cx="18" cy="${f(-19 + breath)}" rx="4.5" ry="3.5" fill="#e7e5e4"/>
-    <!-- Nariz -->
-    <circle cx="21.5" cy="${f(-20 + breath)}" r="1.3" fill="#18181b"/>
-    <!-- Olho preto brilhante -->
-    <circle cx="17" cy="${f(-24 + breath)}" r="1.8" fill="#18181b"/>
-    <circle cx="17.6" cy="${f(-24.6 + breath)}" r="0.6" fill="#ffffff"/>
-    <!-- Orelhas pequenas sem tufos (tropical) -->
-    <polygon points="12,-28 14,-35 17,-28" fill="#57534e"/>
-    <polygon points="17,-27 19,-34 21,-27" fill="#78716c"/>
-    <!-- Patinhas -->
-    <circle cx="17" cy="${f(-13 + breath)}" r="2.2" fill="#57534e"/>
-    <circle cx="19" cy="${f(-14 + breath)}" r="2.2" fill="#44403c"/>
+  // Cabeça triangular, focinho fino e bochechas brancas
+  const head = `
+    <ellipse cx="32" cy="-35" rx="12" ry="9.5" fill="#ea580c" stroke="#9a3412" stroke-width="1" />
+    <!-- Bochechas brancas volumosas -->
+    <ellipse cx="28" cy="-31" rx="8" ry="6" fill="#ffffff" />
+    <!-- Focinho afilado com nariz preto -->
+    <polygon points="38,-36 54,-32 38,-28" fill="#f97316" stroke="#c2410c" stroke-width="0.8" />
+    <circle cx="53" cy="-32" r="1.8" fill="#18181b" />
+    <!-- Olho amendoado oblíquo com pupila fina -->
+    <path d="M34 -37 Q37 -40 40 -37 Q37 -34 34 -37 Z" fill="#fef08a" stroke="#18181b" stroke-width="1" />
+    <circle cx="37" cy="-37" r="1.2" fill="#18181b" />
+    <!-- Orelhas pontiagudas com costas pretas e interior branco -->
+    <polygon points="26,-42 28,-56 36,-44" fill="#18181b" />
+    <polygon points="28,-44 30,-53 35,-45" fill="#ffffff" />
+    <polygon points="34,-43 40,-55 43,-42" fill="#18181b" />
+    <polygon points="36,-44 40,-52 42,-44" fill="#ffffff" />
   `;
 
-  return G(0, -Math.abs(k) * 10 * o.s, 0, o.s, o.s, body) + ell(0, 1, 16 * o.s, 4 * o.s, "rgba(0,0,0,.22)");
+  const body = `
+    ${legs}
+    <ellipse cx="0" cy="-28" rx="28" ry="12" fill="#ea580c" stroke="#9a3412" stroke-width="1.2" />
+    <!-- Peito e garganta brancos -->
+    <ellipse cx="16" cy="-25" rx="15" ry="8" fill="#ffffff" />
+    ${head}
+    ${tail}
+  `;
+
+  return G(0, -Math.abs(k) * 3.5, 0, o.s, o.s, body) + ell(0, 1, 32 * o.s, 5.5 * o.s, "rgba(0,0,0,.22)");
 }
 
-/** COELHO TROPICAL (Sylvilagus brasiliensis) — Pelagem marrom-acinzentada */
-function realCoelho(o: D): string {
+
+/** COELHO / LEBRE ALPINA (Lepus timidus) */
+function realRabbit(o: D): string {
   const w = o.m * 9 + o.ph;
   const hop = o.moving ? Math.abs(sin(w)) * 18 : 0;
   const breath = sin(o.a * 3 + o.ph) * 0.6;
 
-  // Orelhas médias (menores que o coelho europeu)
+  // Orelhas longas com pontas pretas (típica lebre da neve)
   const ears = `
     <g transform="rotate(${f(-8 + sin(w * 1.5) * 6)} 14 -28)">
-      <ellipse cx="14" cy="-34" rx="3.2" ry="10" fill="#a3a3a3" stroke="#737373" stroke-width="1"/>
-      <ellipse cx="14" cy="-33" rx="1.8" ry="7" fill="#fbcfe8" opacity="0.6"/>
+      <ellipse cx="14" cy="-35" rx="3.2" ry="11" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+      <ellipse cx="14" cy="-34" rx="1.8" ry="8" fill="#fbcfe8" opacity="0.6" />
+      <!-- Ponta preta característica da lebre alpina -->
+      <polygon points="12,-44 14,-46 16,-44" fill="#18181b" />
     </g>
     <g transform="rotate(${f(10 + sin(w * 1.5) * 6)} 20 -28)">
-      <ellipse cx="20" cy="-33" rx="3" ry="9" fill="#a3a3a3" stroke="#737373" stroke-width="1"/>
-      <ellipse cx="20" cy="-32" rx="1.6" ry="6.5" fill="#fbcfe8" opacity="0.6"/>
+      <ellipse cx="20" cy="-34" rx="3" ry="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+      <ellipse cx="20" cy="-33" rx="1.6" ry="7" fill="#fbcfe8" opacity="0.6" />
+      <polygon points="18,-42 20,-44 22,-42" fill="#18181b" />
     </g>
   `;
 
   const body = `
-    <!-- Corpo fofo marrom-acinzentado -->
-    <ellipse cx="0" cy="${f(-15 + breath)}" rx="17" ry="11" fill="#a3a3a3" stroke="#737373" stroke-width="1.2"/>
-    <!-- Cabeça -->
-    <circle cx="16" cy="${f(-22 + breath)}" r="8.5" fill="#a3a3a3" stroke="#737373" stroke-width="1"/>
+    <!-- Corpo volumoso fofo -->
+    <ellipse cx="0" cy="${f(-15 + breath)}" rx="17" ry="11" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2" />
+    <!-- Cabeça com focinho trêmulo -->
+    <circle cx="16" cy="${f(-22 + breath)}" r="8.5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
     <!-- Bochecha e focinho -->
-    <ellipse cx="21" cy="${f(-20 + breath)}" rx="3.5" ry="3" fill="#d4d4d4"/>
-    <circle cx="23.5" cy="${f(-21 + breath)}" r="1.3" fill="#f43f5e"/>
-    <!-- Olho escuro de coelho -->
-    <circle cx="17.5" cy="${f(-24 + breath)}" r="2" fill="#18181b"/>
-    <circle cx="18" cy="${f(-24.5 + breath)}" r="0.7" fill="#ffffff"/>
+    <ellipse cx="21" cy="${f(-20 + breath)}" rx="3.5" ry="3" fill="#fef2f2" />
+    <circle cx="23.5" cy="${f(-21 + breath)}" r="1.3" fill="#f43f5e" />
+    <!-- Olho rosado brilhante de coelho alpino -->
+    <circle cx="17.5" cy="${f(-24 + breath)}" r="2" fill="#991b1b" />
+    <circle cx="18" cy="${f(-24.5 + breath)}" r="0.7" fill="#ffffff" />
     ${ears}
-    <!-- Rabo felpudo branco -->
-    <circle cx="-16" cy="${f(-17 + breath)}" r="5.5" fill="#f5f5f5" stroke="#e5e5e5" stroke-width="1"/>
-    <!-- Patas traseiras musculosas -->
-    <ellipse cx="-8" cy="-5" rx="8" ry="4" fill="#d4d4d4" stroke="#a3a3a3" stroke-width="1"/>
-    <ellipse cx="10" cy="-4" rx="6" ry="3" fill="#d4d4d4" stroke="#a3a3a3" stroke-width="1"/>
+    <!-- Rabo felpudo de pompom -->
+    <circle cx="-16" cy="${f(-17 + breath)}" r="5.5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+    <!-- Patas traseiras musculosas de salto -->
+    <ellipse cx="-8" cy="-5" rx="8" ry="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+    <ellipse cx="10" cy="-4" rx="6" ry="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
   `;
 
   return G(0, -hop, 0, o.s, o.s, body) + ell(0, 1, 18 * o.s, 4.5 * o.s, "rgba(0,0,0,.22)");
 }
 
-/** ARARA VERMELHA (Ara macao) — Plumagem vermelha, azul e amarela, longa cauda */
-function araraVermelha(o: D & { flying: boolean }, _col: string): string {
-  if (o.flying) {
-    const w = o.a * 7 + o.ph;
-    const k = sin(w) * 0.8;
 
-    // Asas grandes com batidas dramáticas
-    const wingUp = (dir: number) => `
-      <path
-        d="M-4 -1
-           Q-20 ${f(dir * (-22 + k * 32))} -48 ${f(dir * (-12 + k * 36))}
-           Q-46 ${f(dir * (-5 + k * 26))} -38 ${f(dir * (0 + k * 20))}
-           Q-24 ${f(dir * (2 + k * 12))} -4 6 Z"
-        fill="#dc2626"
-        stroke="#991b1b"
-        stroke-width="1"
-      />
-    `;
-    // Faixas azul e amarela nas asas
-    const wingDetail = (dir: number) => `
-      <path
-        d="M-16 ${f(dir * (-14 + k * 22))} Q-32 ${f(dir * (-16 + k * 26))} -44 ${f(dir * (-10 + k * 28))}"
-        stroke="#3b82f6" stroke-width="4" fill="none" stroke-linecap="round"
-      />
-      <path
-        d="M-20 ${f(dir * (-10 + k * 18))} Q-34 ${f(dir * (-12 + k * 22))} -44 ${f(dir * (-6 + k * 24))}"
-        stroke="#fbbf24" stroke-width="3.5" fill="none" stroke-linecap="round"
-      />
-    `;
+/** OURIÇO (Erinaceus europaeus) */
+function hedgehog(o: D): string {
+  const w = o.m * 9 + o.ph;
+  const k = o.moving ? sin(w) : 0;
 
-    return G(0, 0, 0, o.s, o.s,
-      wingUp(1) + wingDetail(1) +
-      `<path d="M-20 0 L-42 ${f(4 + k * 3)} L-20 7 Z" fill="#b91c1c"/>` +
-      ell(0, 0, 11, 6, "#dc2626") +
-      ell(4, 2, 7, 4, "#fef3c7") +
-      circ(11, -2, 5, "#dc2626") +
-      `<path d="M15 -2 L24 -1 L15 1 Z" fill="#18181b"/>` +
-      circ(12, -3, 1.5, "#18181b") +
-      wingUp(-1) + wingDetail(-1)
-    );
+  // Espinhos com pontas afiadas graduadas
+  let spikes = "";
+  for (let i = 0; i < 15; i++) {
+    const a = PI * (0.92 + (i / 14) * 1.08);
+    const x1 = cos(a) * 13 - 2;
+    const y1 = -10 + sin(a) * 9;
+    const x2 = cos(a) * 22 - 3;
+    const y2 = -10 + sin(a) * 17;
+    spikes += line(x1, y1, x2, y2, 2.5, i % 2 ? "#451a03" : "#78350f");
+    spikes += line(x2 - cos(a) * 3, y2 - sin(a) * 3, x2, y2, 1.8, "#fef3c7");
   }
 
-  // Pousada: arara com longa cauda pendente
-  const peck = Math.max(0, sin(o.a * 2.2 + o.ph)) ** 2;
-  const bob = Math.max(0, sin(o.a * 4.5 + o.ph)) ** 4 * 4;
-
   const body = `
-    ${line(-2, -8, -2, 0, 2.5, "#7f1d1d")}
-    ${line(4, -8, 4, 0, 2.5, "#7f1d1d")}
-    <!-- Cauda longa da arara pendente -->
-    <path d="M-10 -11 L-30 -5 L-28 -1 L-8 -7 Z" fill="#b91c1c" stroke="#991b1b" stroke-width="0.8"/>
-    <path d="M-14 -10 L-38 -2 L-36 2 L-10 -6 Z" fill="#dc2626" stroke="#b91c1c" stroke-width="0.8"/>
-    <!-- Faixas azul e amarela na asa dobrada -->
-    <path d="M-6 -16 L-22 -12 L-20 -8 L-4 -12 Z" fill="#3b82f6" opacity="0.9"/>
-    <path d="M-6 -12 L-18 -9 L-17 -6 L-5 -8 Z" fill="#fbbf24" opacity="0.9"/>
-    <!-- Corpo vermelho -->
-    <ellipse cx="0" cy="-15" rx="12" ry="9" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
-    <ellipse cx="4" cy="-12" rx="8" ry="5" fill="#fef3c7" opacity="0.9"/>
-    <g transform="rotate(${f(peck * 35)} 8 -20)">
-      <circle cx="10" cy="-23" r="7" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
-      <!-- Rosto branco característico da arara -->
-      <ellipse cx="12" cy="-22" rx="4.5" ry="4" fill="#fef9f0"/>
-      <!-- Bico curvo robusto -->
-      <path d="M15 -23 L24 -20 L14 -17 Z" fill="#18181b" stroke="#000" stroke-width="0.8"/>
-      <path d="M15 -20 Q20 -19 22 -20" stroke="#333" stroke-width="1" fill="none"/>
-      <circle cx="11" cy="-24" r="1.4" fill="#18181b"/>
-      <circle cx="11.5" cy="-24.5" r="0.5" fill="#ffffff"/>
-    </g>
+    ${limb(-7, -4, 6, k * 0.7, 3.5, "#d97706")}
+    ${limb(9, -4, 6, -k * 0.7, 3.5, "#d97706")}
+    ${spikes}
+    <ellipse cx="0" cy="-10" rx="15" ry="10" fill="#78350f" stroke="#451a03" stroke-width="1" />
+    <!-- Focinho pontiagudo bege -->
+    <ellipse cx="15" cy="-8" rx="9" ry="6" fill="#fef3c7" stroke="#d97706" stroke-width="1" />
+    <circle cx="23" cy="-8" r="2" fill="#18181b" />
+    <!-- Olho preto brilhante -->
+    <circle cx="17" cy="-11" r="1.6" fill="#18181b" />
+    <circle cx="17.5" cy="-11.5" r="0.6" fill="#ffffff" />
   `;
 
-  return G(0, -bob, 0, o.s, o.s, body) + ell(0, 1, 11 * o.s, 3 * o.s, "rgba(0,0,0,.2)");
+  return G(0, -Math.abs(k) * 1, 0, o.s, o.s, body) + ell(0, 1, 18 * o.s, 3.5 * o.s, "rgba(0,0,0,.2)");
 }
 
-/** PÁSSARO AZUL / COTINGA (Cotinga cayana) — Azul elétrico, pequeno e vivaz */
-function passaroAzul(o: D & { flying: boolean }, _col: string): string {
-  if (o.flying) {
-    const w = o.a * 14 + o.ph;
-    const k = sin(w);
 
-    const wing = (dir: number) => `
+/** PÁSSARO CANTOR ALPINO (Monticola / Melro das rochas) */
+function songbird(o: D & { flying: boolean }, col: string): string {
+  if (o.flying) {
+    const w = o.a * 16 + o.ph;
+    const k = sin(w);
+    const wing = (dir: number, c: string) => `
       <path
-        d="M-2 -1 Q-9 ${f(dir * (-18 - k * 10))} 8 ${f(dir * (-16 - k * 10) - 1)} Q4 -6 -2 -1 Z"
-        fill="#2563eb"
-        stroke="#1d4ed8"
+        d="M-2 -1 Q-8 ${f(dir * (-16 - k * 9))} 8 ${f(dir * (-14 - k * 9) - 1)} Q4 -6 -2 -1 Z"
+        fill="${c}"
+        stroke="#1e293b"
         stroke-width="0.8"
       />
     `;
-
-    return G(0, 0, 0, o.s, o.s,
-      wing(1) +
-      `<path d="M-9 1 L-20 ${f(3 + k * 2)} L-9 5 Z" fill="#1d4ed8"/>` +
-      ell(0, 0, 9, 5.5, "#3b82f6") +
-      circ(9, -2, 4, "#2563eb") +
-      `<path d="M13 -2 L19 -1 L13 0 Z" fill="#1e3a5f"/>` +
-      circ(10, -3, 1.1, "#18181b") +
-      wing(-1)
+    return (
+      G(
+        0,
+        0,
+        0,
+        o.s,
+        o.s,
+        wing(1, "#dc2626") +
+          `<path d="M-10 1 L-22 ${f(3 + k * 2)} L-10 5 Z" fill="#991b1b" />` +
+          ell(0, 0, 10, 6, col) +
+          ell(4, 2, 6, 3.5, "#fef3c7") +
+          circ(10, -2, 4.5, col) +
+          `<path d="M14 -2 L21 -1 L14 0 Z" fill="#f59e0b" />` +
+          circ(11, -3, 1.2, "#18181b") +
+          wing(-1, "#b91c1c")
+      )
     );
   }
 
-  // Pousado: exibindo plumagem azul
   const peck = Math.max(0, sin(o.a * 2.6 + o.ph)) ** 3;
   const hop = Math.max(0, sin(o.a * 5 + o.ph)) ** 6 * 3;
 
   const body = `
-    ${line(-2, -8, -2, 0, 1.8, "#1d4ed8")}
-    ${line(4, -8, 4, 0, 1.8, "#1d4ed8")}
-    <path d="M-9 -12 L-20 -8 L-9 -8 Z" fill="#1d4ed8" stroke="#1e40af" stroke-width="0.8"/>
-    <ellipse cx="0" cy="-13" rx="10" ry="7.5" fill="#3b82f6" stroke="#2563eb" stroke-width="1"/>
-    <!-- Barriga mais clara — cor púrpura do cotinga macho -->
-    <ellipse cx="3" cy="-10" rx="6" ry="4" fill="#6366f1" opacity="0.8"/>
+    ${line(-2, -8, -2, 0, 1.8, "#54280b")}
+    ${line(4, -8, 4, 0, 1.8, "#54280b")}
+    <path d="M-9 -12 L-22 -8 L-10 -8 Z" fill="#991b1b" stroke="#7f1d1d" stroke-width="0.8" />
+    <ellipse cx="0" cy="-13" rx="11" ry="8" fill="${col}" stroke="#1e293b" stroke-width="1" />
+    <ellipse cx="4" cy="-10" rx="7" ry="4.5" fill="#fef3c7" />
     <g transform="rotate(${f(peck * 40)} 7 -17)">
-      <circle cx="10" cy="-20" r="5.5" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/>
-      <path d="M15 -20 L21 -19 L15 -18 Z" fill="#374151"/>
-      <circle cx="11.5" cy="-21.5" r="1.2" fill="#18181b"/>
-      <circle cx="12" cy="-22" r="0.5" fill="#ffffff"/>
+      <circle cx="10" cy="-20" r="5.8" fill="${col}" stroke="#1e293b" stroke-width="1" />
+      <path d="M15 -20 L22 -19 L15 -18 Z" fill="#f59e0b" stroke="#b45309" stroke-width="0.8" />
+      <circle cx="11.5" cy="-21.5" r="1.3" fill="#18181b" />
+      <circle cx="12" cy="-22" r="0.5" fill="#ffffff" />
     </g>
   `;
 
-  return G(0, -hop, 0, o.s, o.s, body) + ell(0, 1, 9 * o.s, 3 * o.s, "rgba(0,0,0,.2)");
+  return G(0, -hop, 0, o.s, o.s, body) + ell(0, 1, 10 * o.s, 3 * o.s, "rgba(0,0,0,.2)");
+}
+
+
+/* ==================================================================
+   NOVOS DESENHOS (capivara, macaco, tucano, arara, ouriço enrolado, ícones de humor)
+   ================================================================== */
+
+/** CAPIVARA (Hydrochoerus hydrochaeris): corpo de barril, focinho quadrado, anda devagar, adora chuva. */
+function capybara(o: D): string {
+  const w = o.m * 6 + o.ph;
+  const k = o.moving ? sin(w) : 0;
+  const breath = sin(o.a * 2 + o.ph) * 0.7;
+  const earTw = sin(o.a * 3 + o.ph) * 8;
+  const legs = [
+    [-15, k],
+    [-8, -k],
+    [12, -k],
+    [19, k],
+  ]
+    .map(([lx, a], i) => limb(lx as number, -12, 13, (a as number) * 0.6, 6, i % 2 ? "#7a512c" : "#8f6035") + `<ellipse cx="${f((lx as number) + sin((a as number) * 0.6) * 13)}" cy="-0.5" rx="3.6" ry="2" fill="#4a2f17"/>`)
+    .join("");
+  const body = `
+    ${legs}
+    <ellipse cx="-2" cy="${f(-24 + breath)}" rx="27" ry="14" fill="#a8743f" stroke="#5b3a1e" stroke-width="1.6"/>
+    <ellipse cx="0" cy="${f(-19 + breath)}" rx="20" ry="8" fill="#c89358" opacity="0.8"/>
+    <path d="M-22 -30 Q0 -39 20 -31" stroke="#6b4423" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <ellipse cx="25" cy="${f(-27 + breath)}" rx="13" ry="11.5" fill="#b27a44" stroke="#5b3a1e" stroke-width="1.6"/>
+    <rect x="31" y="${f(-30 + breath)}" width="11" height="13" rx="5" fill="#9a6838" stroke="#5b3a1e" stroke-width="1.4"/>
+    <ellipse cx="39" cy="${f(-28 + breath)}" rx="1.7" ry="2.4" fill="#2b1a0d"/>
+    <circle cx="27" cy="${f(-33 + breath)}" r="2" fill="#18181b"/><circle cx="27.7" cy="${f(-33.7 + breath)}" r="0.7" fill="#fff"/>
+    <ellipse cx="17" cy="${f(-38 + breath)}" rx="3.3" ry="2.4" fill="#8f6035" stroke="#5b3a1e" stroke-width="1.1" transform="rotate(${f(earTw - 20)} 17 ${f(-38 + breath)})"/>
+    <path d="M36 -23 q4 4 0 8" stroke="#5b3a1e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  `;
+  return G(0, 0, 0, o.s, o.s, body) + ell(0, 1, 30 * o.s, 4.5 * o.s, "rgba(0,0,0,.22)");
+}
+
+/** MACACO (sagui-prego): corpo pequeno, cauda longa enrolada, rosto claro; anda a 4 patas e "balança". */
+function monkey(o: D & { mood?: Mood }): string {
+  const w = o.m * 8 + o.ph;
+  const k = o.moving ? sin(w) : 0;
+  const threat = o.mood === "threat" || o.mood === "lunge";
+  const sway = sin(o.a * 3 + o.ph);
+  const tail = `<path d="M-14 -22 C-34 -22 -38 -46 -22 -50 C-12 -52 -10 -42 -17 -40" stroke="#5a3b22" stroke-width="5" fill="none" stroke-linecap="round" transform="rotate(${f(sway * 6 + k * 6)} -14 -22)"/>
+    <path d="M-14 -22 C-34 -22 -38 -46 -22 -50 C-12 -52 -10 -42 -17 -40" stroke="#7a5230" stroke-width="2" fill="none" stroke-linecap="round" transform="rotate(${f(sway * 6 + k * 6)} -14 -22)"/>`;
+  const legs = [
+    [-9, k],
+    [-3, -k],
+    [9, -k],
+    [15, k],
+  ]
+    .map(([lx, a]) => limb(lx as number, -15, 16, (a as number) * 0.9, 4.4, "#6b4527") + circ((lx as number) + sin((a as number) * 0.9) * 16, -15 + cos((a as number) * 0.9) * 16, 2.3, "#3d2714"))
+    .join("");
+  const headTilt = threat ? 10 : sin(o.a * 1.7 + o.ph) * 3;
+  const body = `
+    ${tail}${legs}
+    <ellipse cx="0" cy="-26" rx="16" ry="10" fill="#7a5230" stroke="#3d2714" stroke-width="1.3"/>
+    <ellipse cx="2" cy="-23" rx="10" ry="6" fill="#b08a5e" opacity="0.8"/>
+    <g transform="rotate(${f(headTilt)} 17 -34)">
+      <circle cx="19" cy="-36" r="9.5" fill="#7a5230" stroke="#3d2714" stroke-width="1.3"/>
+      <ellipse cx="22" cy="-34" rx="6.4" ry="5.6" fill="#e8c9a0" stroke="#3d2714" stroke-width="0.9"/>
+      <circle cx="14" cy="-41" r="4" fill="#e8c9a0" stroke="#3d2714" stroke-width="0.9"/>
+      <circle cx="24" cy="-41" r="3.6" fill="#e8c9a0" stroke="#3d2714" stroke-width="0.9"/>
+      <circle cx="21" cy="-37" r="1.5" fill="#18181b"/><circle cx="26" cy="-36.5" r="1.4" fill="#18181b"/>
+      ${threat ? `<path d="M19 -31 q4 3 8 0 M20 -30 l1 3 M23 -30 l1 3 M26 -30 l1 3" stroke="#fff" stroke-width="1.2" fill="#7f1d1d"/><path d="M18 -40 l5 2 M27 -40 l-4 2" stroke="#18181b" stroke-width="1.6"/>` : `<path d="M21 -31.5 q3 2 6 0" stroke="#3d2714" stroke-width="1.2" fill="none" stroke-linecap="round"/>`}
+    </g>
+  `;
+  return G(0, -Math.abs(k) * 2, 0, o.s, o.s, body) + ell(0, 1, 22 * o.s, 4 * o.s, "rgba(0,0,0,.22)");
+}
+
+/** TUCANO: corpo preto, peito branco e bico enorme laranja-amarelo. */
+function toucan(o: D & { flying: boolean }): string {
+  const k = sin(o.a * 12 + o.ph);
+  const bill = `<path d="M9 -3 C20 -9 34 -5 38 2 C30 6 18 5 9 3 Z" fill="#fb923c" stroke="#7c2d12" stroke-width="1"/>
+    <path d="M9 -2 C20 -7 33 -4 37 1.5 C30 -1 18 -1 9 -1 Z" fill="#fde047"/>
+    <path d="M30 -4 C34 -3 37 0 38 2 C35 4 31 4 29 2 Z" fill="#18181b"/>`;
+  if (o.flying) {
+    const wing = (dir: number, c: string) => `<path d="M-2 -1 Q-10 ${f(dir * (-18 - k * 10))} 9 ${f(dir * (-15 - k * 10) - 1)} Q4 -6 -2 -1 Z" fill="${c}" stroke="#0f0f14" stroke-width="0.9"/>`;
+    return G(0, 0, 0, o.s, o.s, wing(1, "#1f2937") + `<path d="M-10 1 L-24 ${f(3 + k * 2)} L-10 5 Z" fill="#111827"/>` + ell(0, 0, 11, 6.5, "#111827") + ell(5, 2, 6, 4, "#ffffff") + circ(10, -2, 5, "#111827") + circ(11.5, -3.5, 2.2, "#38bdf8") + circ(12, -3.5, 1, "#0f172a") + bill + wing(-1, "#374151"));
+  }
+  return G(0, 0, 0, o.s, o.s, `<path d="M-8 -6 L-20 6 L-6 3 Z" fill="#111827"/>` + ell(0, -12, 9, 13, "#111827") + ell(4, -9, 5, 8, "#ffffff") + ell(0, -2, 3, 1.5, "#ef4444") + circ(6, -22, 6, "#111827") + circ(8, -23, 2.4, "#38bdf8") + circ(8.4, -23, 1, "#0f172a") + G(10, -20, 0, 1, 1, bill) + `<line x1="-2" y1="-1" x2="-2" y2="3" stroke="#475569" stroke-width="2"/><line x1="3" y1="-1" x2="3" y2="3" stroke="#475569" stroke-width="2"/>`);
+}
+
+/** ARARA-VERMELHA: corpo escarlate, asas azuis e amarelas, cauda longa. */
+function macaw(o: D & { flying: boolean }): string {
+  const k = sin(o.a * 11 + o.ph);
+  const head = (x: number, y: number) =>
+    circ(x, y, 6.2, "#dc2626") + `<path d="M${x + 3} ${y - 1} q7 -1 6 6 q-2 -2 -5 0 Z" fill="#f5f5f4" stroke="#44403c" stroke-width="0.9"/>` + circ(x + 2, y - 1.5, 2, "#fff") + circ(x + 2.5, y - 1.5, 1, "#0f0f14");
+  if (o.flying) {
+    const wing = (dir: number, c: string, c2: string) => `<path d="M-2 -1 Q-12 ${f(dir * (-18 - k * 10))} 10 ${f(dir * (-15 - k * 10) - 1)} Q4 -6 -2 -1 Z" fill="${c}" stroke="#450a0a" stroke-width="0.9"/><path d="M0 ${f(dir * (-6 - k * 4))} Q-4 ${f(dir * (-12 - k * 6))} 6 ${f(dir * (-11 - k * 6))}" stroke="${c2}" stroke-width="3" fill="none"/>`;
+    return G(0, 0, 0, o.s, o.s, wing(1, "#2563eb", "#facc15") + `<path d="M-10 1 L-34 ${f(5 + k * 2)} L-10 6 Z" fill="#b91c1c" stroke="#450a0a" stroke-width="0.8"/><path d="M-12 3 L-30 ${f(5 + k * 2)}" stroke="#2563eb" stroke-width="2"/>` + ell(0, 0, 11, 6.5, "#dc2626") + head(10, -2) + wing(-1, "#3b82f6", "#fde047"));
+  }
+  return G(0, 0, 0, o.s, o.s, `<path d="M-6 -4 L-26 12 L-10 6 Z" fill="#b91c1c" stroke="#450a0a" stroke-width="0.8"/>` + ell(0, -12, 8.5, 13, "#dc2626") + `<path d="M-3 -16 Q-12 -8 -4 2 Q2 -6 -3 -16 Z" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.8"/>` + `<path d="M-6 -10 q-3 4 0 8" stroke="#facc15" stroke-width="2.2" fill="none"/>` + head(5, -24) + `<line x1="-2" y1="-1" x2="-2" y2="3" stroke="#57534e" stroke-width="2"/><line x1="3" y1="-1" x2="3" y2="3" stroke="#57534e" stroke-width="2"/>`);
+}
+
+/** OURIÇO ENROLADO (reação defensiva). */
+function hedgehogBall(o: D): string {
+  let spikes = "";
+  for (let i = 0; i < 26; i++) {
+    const a = (i / 26) * PI * 2;
+    const r0 = 11;
+    const r1 = 17 + (i % 3);
+    spikes += `<line x1="${f(cos(a) * r0)}" y1="${f(-13 + sin(a) * r0)}" x2="${f(cos(a) * r1)}" y2="${f(-13 + sin(a) * r1)}" stroke="${i % 2 ? "#3f2a1a" : "#7c5a3a"}" stroke-width="2.4" stroke-linecap="round"/>`;
+  }
+  const tremble = sin(o.a * 30) * 0.6;
+  return G(tremble, 0, 0, o.s, o.s, `${spikes}<circle cx="0" cy="-13" r="12" fill="#5b3f27" stroke="#2b1a0d" stroke-width="1.2"/><circle cx="0" cy="-13" r="6" fill="#8a6a45" opacity="0.7"/><circle cx="-3" cy="-15" r="1.2" fill="#18181b"/>`) + ell(0, 1, 18 * o.s, 3.5 * o.s, "rgba(0,0,0,.22)");
+}
+
+/** Ícone de humor sobre a cabeça (coração, alerta, raiva). Origem = ponto acima da cabeça. */
+function moodIcon(mood: Mood, t: number, S: number): string {
+  const bob = sin(t * 6) * 1.5;
+  if (mood === "happy" || mood === "curious")
+    return G(0, bob, 0, S, S, `<path d="M0 6 C-12 -3 -7 -12 0 -6 C7 -12 12 -3 0 6 Z" fill="#ef4444" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>`);
+  if (mood === "alert" || mood === "flee")
+    return G(0, bob, 0, S, S, `<rect x="-3" y="-14" width="6" height="11" rx="3" fill="#f59e0b" stroke="#fff" stroke-width="1.8"/><circle cx="0" cy="2" r="3.1" fill="#f59e0b" stroke="#fff" stroke-width="1.8"/>`);
+  if (mood === "threat" || mood === "lunge" || mood === "stalk" || mood === "dive")
+    return G(0, bob, 0, S, S, `<g stroke="#dc2626" stroke-width="3" fill="none" stroke-linecap="round"><path d="M-9 -4 q5 -2 5 -9"/><path d="M9 -4 q-5 -2 -5 -9"/><path d="M-9 4 q5 2 5 9"/><path d="M9 4 q-5 2 -5 9"/></g>`);
+  return "";
 }
 
 /* ==================================================================
    MUNDO E COMPORTAMENTO DA FAUNA
    ================================================================== */
 
+export interface WildStudent {
+  /** posição do aluno em frações do mundo (0..1) */
+  x: number;
+  y: number;
+}
+
 export interface Wildlife {
   critters: Critter[];
-  step: (dt: number, W: number, H: number) => void;
+  step: (dt: number, W: number, H: number, student?: WildStudent | null) => void;
   render: (W: number, H: number) => string;
   hit: (px: number, py: number, W: number, H: number) => Critter | null;
   poke: (c: Critter) => void;
@@ -544,23 +636,41 @@ export interface Wildlife {
   setFocus: (x: number, y: number) => void;
 }
 
-const TARGET_COUNT = 8;
-/** O cenário é uma trilha alta (1000x2200): só há vida em uma faixa vertical em torno do aluno. */
-const WINDOW_HALF = 0.14;
-const FAR_LIMIT = WINDOW_HALF + 0.08;
+/** Clareiras ao lado do caminho (frações do mundo) onde os bichos passeiam. */
+const ROAM_SPOTS: { x: number; y: number }[] = (() => {
+  const out: { x: number; y: number }[] = [];
+  for (let i = 0; i <= 32; i++) {
+    const fr = 0.02 + (i / 32) * 0.95;
+    const a = getTrailPositionAtFraction(Math.max(0, fr - 0.004));
+    const b = getTrailPositionAtFraction(Math.min(1, fr + 0.004));
+    const p = getTrailPositionAtFraction(fr);
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len;
+    const ny = dx / len;
+    for (const side of [-1, 1]) {
+      const off = 95 + ((i + (side > 0 ? 1 : 0)) % 3) * 35;
+      const x = clamp((p.x + nx * off * side) / 1000, 0.07, 0.93);
+      const y = clamp((p.y + ny * off * side) / WORLD_H, 0.02, 0.985);
+      out.push({ x, y });
+    }
+  }
+  return out;
+})();
 
-function habitatFor(animalId: string): TrailHabitat {
-  return animalId === "esquilo" || animalId === "tucano" || animalId === "passaroAzul" || animalId === "araraVermelha" ? "tree" : "grass";
-}
+const NEAR = 0.13; // janela vertical (fração do mundo) em volta do aluno onde os bichos vivem
+const FAR = 0.24; // além disso o bicho é reciclado
 
-export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife {
+export function createWildlife(initialWeather: TrailWeather = "sunny", seed?: number): Wildlife {
+  const rnd = seed === undefined ? Math.random : mulberry32(seed);
   const critters: Critter[] = [];
-  const pending: { delay: number; kind?: Kind }[] = [];
+  const pending: { delay: number; kind?: Kind; id?: string }[] = [];
   let weather = initialWeather;
-  let uid = 0,
-    swapTimer = 9;
-  let focusX = 0.5,
-    focusY = 0.9;
+  let uid = 0;
+  let swapTimer = 10;
+  let populated = false;
+  let stu: WildStudent = { x: 0.5, y: 0.95 };
 
   const mk = (animal: TrailAnimal): Critter => ({
     uid: uid++,
@@ -574,6 +684,11 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     v: 0,
     vz: 0,
     state: "idle",
+    mood: "calm",
+    moodT: 0,
+    cool: rnd() * 4,
+    hp: rnd() * 6,
+    dive: 0,
     hasTarget: false,
     tx: 0,
     ty: 0,
@@ -583,45 +698,28 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     ph: rnd() * 6.28,
     spot: -1,
     landed: false,
-    pause: 3,
     react: 0,
     age: 0,
     orbit: rnd() * 6.28,
-    enter: 0,
-    cxOff: 0,
-    color: COLORS[uid % COLORS.length],
   });
 
-  const inWindow = (i: number) => Math.abs(TRAIL_ROAM_SPOTS[i].y / 100 - focusY) <= WINDOW_HALF;
-  const freeSpots = (animalId?: string) => TRAIL_ROAM_SPOTS
-    .map((_, i) => i)
-    .filter(inWindow)
-    .filter((i) => !critters.some((c) => c.spot === i))
-    .filter((i) => !animalId || TRAIL_ROAM_SPOTS[i].habitat === habitatFor(animalId));
-  /** Escolhe um ponto livre da mata; com `from`, prefere os mais próximos (o bicho passeia, não teleporta). */
-  const pickFree = (animalId?: string, from?: { x: number; y: number }): number => {
-    let fr = freeSpots(animalId);
-    if (fr.length === 0 && animalId && animalId !== "esquilo") fr = freeSpots();
-    if (fr.length === 0) return -1;
-    if (from) {
-      const dist = (i: number) => Math.hypot((TRAIL_ROAM_SPOTS[i].x / 100 - from.x) * 1000, (TRAIL_ROAM_SPOTS[i].y / 100 - from.y) * 2200);
-      const sorted = fr.filter((i) => dist(i) > 40).sort((a, b) => dist(a) - dist(b));
-      if (sorted.length) return sorted[Math.floor(rnd() * Math.min(5, sorted.length))];
-    }
-    return fr[Math.floor(rnd() * fr.length)];
+  const spotFree = (i: number) => !critters.some((c) => c.spot === i);
+  const pickSpot = (minDy: number, maxDy: number): number => {
+    const ok: number[] = [];
+    ROAM_SPOTS.forEach((s, i) => {
+      const dy = Math.abs(s.y - stu.y);
+      if (dy >= minDy && dy <= maxDy && spotFree(i)) ok.push(i);
+    });
+    return ok.length ? ok[Math.floor(rnd() * ok.length)] : -1;
   };
-  /** Pássaros cruzam o ar sobre a mata inteira; a águia plana em amplos círculos. */
-  const randRegion = (animalId?: string) => {
-    if (animalId === "aguia") return { x: 0.05 + rnd() * 0.9, y: clamp(focusY + (rnd() - 0.6) * 0.14, 0.02, 0.97) };
-    const near = freeSpots();
-    const sp = near.length ? TRAIL_ROAM_SPOTS[near[Math.floor(rnd() * near.length)]] : { x: focusX * 100, y: focusY * 100 };
-    return { x: clamp(sp.x / 100 + (rnd() - 0.5) * 0.04, 0.03, 0.97), y: clamp(sp.y / 100 + (rnd() - 0.5) * 0.02, 0.02, 0.98) };
-  };
-
-  function weatherPool() {
+  const randRegion = () => ({
+    x: 0.1 + rnd() * 0.8,
+    y: clamp(stu.y - 0.15 + rnd() * 0.2, 0.03, 0.98),
+  });
+  const weatherPool = () => {
     const allowed = new Set(WEATHER_ANIMAL_IDS[weather]);
-    return ROAMING_ANIMAL_POOL.filter((animal) => allowed.has(animal.id));
-  }
+    return ROAMING_ANIMAL_POOL.filter((a) => allowed.has(a.id));
+  };
 
   function spawn(kind?: Kind, initial = false, preferredId?: string) {
     const visible = new Set(critters.map((c) => c.animal.id));
@@ -631,45 +729,19 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     if (cand.length === 0) return;
     const c = mk(cand[Math.floor(rnd() * cand.length)]);
     if (c.spec.kind === "walk") {
-      const sp = pickFree(c.animal.id);
+      const sp = initial ? pickSpot(0, NEAR) : pickSpot(0.09, 0.16);
       if (sp < 0) return;
       c.spot = sp;
-      const P = TRAIL_ROAM_SPOTS[sp];
-      if (initial) {
-        c.x = P.x / 100;
-        c.y = P.y / 100;
-        c.timer = rnd() * 3;
-        c.state = "idle";
-      } else {
-        c.x = rnd() > 0.5 ? -0.05 : 1.05;
-        c.y = P.y / 100;
-        c.state = "move";
-        c.hasTarget = true;
-        c.tx = P.x / 100;
-        c.ty = P.y / 100;
-        c.heading = Math.atan2(c.ty - c.y, c.tx - c.x);
-      }
-    } else if (c.animal.id === "aguia") {
-      c.enter = initial ? 1 : 0;
+      c.x = ROAM_SPOTS[sp].x;
+      c.y = ROAM_SPOTS[sp].y;
+      c.state = "idle";
+      c.timer = initial ? rnd() * 3 : 0.2;
     } else {
       const R = randRegion(c.animal.id);
       if (initial) {
         c.x = R.x;
         c.y = R.y;
         c.z = 30;
-        // Tucano e araraVermelha podem pousar em galhos
-        if (c.animal.id === "tucano" || c.animal.id === "araraVermelha") {
-          const sp = pickFree(c.animal.id);
-          if (sp >= 0) {
-            c.spot = sp;
-            c.x = TRAIL_ROAM_SPOTS[sp].x / 100;
-            c.y = TRAIL_ROAM_SPOTS[sp].y / 100;
-            c.z = 0;
-            c.landed = true;
-            c.state = "idle";
-            c.timer = 2 + rnd() * 3;
-          }
-        }
       } else {
         const left = rnd() > 0.5;
         c.x = left ? -0.08 : 1.08;
@@ -687,207 +759,344 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
 
   function populate() {
     for (const id of WEATHER_HIGHLIGHTS[weather]) spawn(undefined, true, id);
-    while (critters.length < Math.min(TARGET_COUNT, weatherPool().length)) spawn(undefined, true);
+    while (critters.length < WEATHER_TARGET[weather]) {
+      const before = critters.length;
+      spawn(undefined, true);
+      if (critters.length === before) break;
+    }
   }
 
-  populate();
-
-  function setWeather(nextWeather: TrailWeather) {
-    if (weather === nextWeather) return;
-    weather = nextWeather;
+  function setWeather(next: TrailWeather) {
+    if (weather === next) return;
+    weather = next;
     pending.length = 0;
     const allowed = new Set(WEATHER_ANIMAL_IDS[weather]);
     for (let i = critters.length - 1; i >= 0; i--) {
       if (!allowed.has(critters[i].animal.id)) critters.splice(i, 1);
       else critters[i].spec = weatherAdjustedSpec(critters[i].animal.id, weather);
     }
-    populate();
+    if (populated) populate();
   }
 
-  function setFocus(x: number, y: number) {
-    const jumped = Math.abs(y - focusY) > WINDOW_HALF * 0.9;
-    focusX = x;
-    focusY = y;
-    if (jumped) {
-      critters.length = 0;
-      pending.length = 0;
-      populate();
-    }
+  /* ---------- ações de movimento ---------- */
+  const clampT = (c: Critter) => {
+    c.tx = clamp(c.tx, 0.04, 0.96);
+    c.ty = clamp(c.ty, Math.max(0.02, stu.y - 0.2), Math.min(0.99, stu.y + 0.2));
+  };
+  function stop(c: Critter, t = 0.6) {
+    c.state = "idle";
+    c.hasTarget = false;
+    c.v = 0;
+    c.timer = t;
   }
-
-  function sendAway(c: Critter) {
-    c.state = "leaving";
-    c.spot = -1;
+  function goToward(c: Critter, tx: number, ty: number) {
+    c.tx = tx;
+    c.ty = ty;
+    clampT(c);
+    c.state = "move";
     c.hasTarget = true;
-    c.landed = false;
-    if (c.spec.kind === "walk") {
-      c.tx = c.x < 0.5 ? -0.15 : 1.15;
-      c.ty = c.y + (rnd() - 0.5) * 0.03;
-    } else {
-      const left = c.x < 0.5;
-      c.tx = left ? -0.15 : 1.15;
-      c.ty = c.y + (rnd() - 0.5) * 0.3;
-      c.vz = 20;
+    c.spot = -1;
+  }
+  function goAway(c: Critter, sx: number, sy: number, W: number, H: number, dist: number) {
+    const ax = c.x * W - sx;
+    const ay = c.y * H - sy;
+    const len = Math.hypot(ax, ay) || 1;
+    goToward(c, c.x + (ax / len) * dist, c.y + ((ay / len) * dist * W) / H);
+  }
+  function startFlee(c: Critter, sx: number, sy: number, W: number, H: number, dist: number, dur: number) {
+    c.mood = "flee";
+    c.moodT = dur;
+    goAway(c, sx, sy, W, H, dist);
+  }
+
+  /** Reação do bicho ao aluno, de acordo com o temperamento. */
+  function react(c: Critter, ds: number, sx: number, sy: number, W: number, H: number, S: number) {
+    const sp = c.spec;
+    const R = sp.sense * S;
+
+    // expirações gerais de humor
+    if (c.mood === "flee" && (c.moodT <= 0 || c.state === "idle")) {
+      if (sp.temper === "skittish" || sp.temper === "wary") {
+        c.mood = "alert";
+        c.moodT = 1.1;
+        stop(c, 1.1);
+      } else {
+        c.mood = "calm";
+        c.cool = Math.max(c.cool, 6);
+      }
+    }
+    if ((c.mood === "happy" || c.mood === "alert" || c.mood === "retreat") && c.moodT <= 0) {
+      if (c.mood === "happy") c.cool = 14;
+      c.mood = "calm";
+    }
+
+    switch (sp.temper) {
+      case "skittish":
+        if (c.mood !== "flee" && c.mood !== "alert" && ds < R) startFlee(c, sx, sy, W, H, 0.3, 1.5 + rnd() * 0.8);
+        break;
+      case "wary":
+        if (c.mood === "calm" && ds < R) {
+          c.mood = "alert";
+          c.moodT = 1.0;
+          stop(c, 1.0);
+        } else if (c.mood === "alert" && c.moodT <= 0.02 && ds < R * 0.85) {
+          startFlee(c, sx, sy, W, H, 0.26, 1.7);
+        }
+        break;
+      case "friendly":
+        if (c.mood === "calm" && c.cool <= 0 && ds < R * 2.6 && ds > R * 0.75) {
+          const ax = c.x * W - sx;
+          const ay = c.y * H - sy;
+          const len = Math.hypot(ax, ay) || 1;
+          c.mood = "curious";
+          c.moodT = 5;
+          goToward(c, (sx + (ax / len) * R * 0.7) / W, (sy + (ay / len) * R * 0.7) / H);
+        } else if (c.mood === "curious") {
+          if (ds < R * 0.85) {
+            c.mood = "happy";
+            c.moodT = 3.4;
+            stop(c, 3.4);
+          } else if (c.moodT <= 0 || c.state === "idle") {
+            c.mood = "calm";
+            c.cool = 6;
+          }
+        }
+        if (ds < R * 0.3 && c.mood !== "flee") startFlee(c, sx, sy, W, H, 0.12, 0.9);
+        break;
+      case "defensive":
+        if (ds < R) {
+          c.mood = "curl";
+          c.moodT = 2.2;
+          stop(c, 2.2);
+        } else if (c.mood === "curl" && c.moodT <= 0) c.mood = "calm";
+        break;
+      case "aggressive":
+        if (c.mood === "calm" && c.cool <= 0 && ds < R) {
+          c.mood = "stalk";
+          c.moodT = 7;
+        }
+        if (c.mood === "stalk") {
+          goToward(c, sx / W, sy / H);
+          if (ds < R * 0.42) {
+            c.mood = "threat";
+            c.moodT = 1.4;
+            stop(c, 1.4);
+          } else if (c.moodT <= 0 || ds > R * 1.4) {
+            c.mood = "calm";
+            c.cool = 7;
+          }
+        } else if (c.mood === "threat") {
+          stop(c, 0.3);
+          if (c.moodT <= 0) {
+            c.mood = "lunge";
+            c.moodT = 0.55;
+          }
+        } else if (c.mood === "lunge") {
+          goToward(c, sx / W, sy / H);
+          if (c.moodT <= 0 || ds < R * 0.2) {
+            c.mood = "retreat";
+            c.moodT = 3.5;
+            c.cool = 14;
+            goAway(c, sx, sy, W, H, 0.2);
+          }
+        }
+        break;
+      default:
+        break;
     }
   }
+
+  const MOOD_SPEED: Partial<Record<Mood, number>> = { stalk: 0.6, lunge: 3.4, retreat: 1.5, curious: 1.15 };
 
   function updateWalker(c: Critter, dt: number, W: number, H: number) {
     c.clk += dt;
+    const S = W / 1000;
+    const sp = c.spec;
+    c.moodT = Math.max(0, c.moodT - dt);
+    c.cool = Math.max(0, c.cool - dt);
+    const sx = stu.x * W;
+    const sy = stu.y * H;
+    const ds = Math.hypot(sx - c.x * W, sy - c.y * H);
+    if (c.state !== "leaving") react(c, ds, sx, sy, W, H, S);
+
     if (c.state === "idle") {
-      c.v = approach(c.v, 0, 180 * dt);
+      c.v = approach(c.v, 0, 220 * dt);
+      if (c.mood === "alert" || c.mood === "threat" || c.mood === "curl" || c.mood === "happy" || c.mood === "curious") {
+        c.face = approach(c.face, sx >= c.x * W ? 1 : -1, 6 * dt);
+      }
       c.timer -= dt;
-      if (c.timer <= 0) {
-        const sp = pickFree(c.animal.id, c);
-        if (sp >= 0) {
-          c.spot = sp;
-          c.tx = TRAIL_ROAM_SPOTS[sp].x / 100;
-          c.ty = TRAIL_ROAM_SPOTS[sp].y / 100;
-          c.hasTarget = true;
-          c.state = "move";
-        } else {
-          c.timer = 1.5 + rnd() * 2;
-        }
+      if (c.timer <= 0 && c.mood !== "curl" && c.mood !== "threat" && c.mood !== "happy") {
+        const sp2 = pickSpot(0, NEAR);
+        if (sp2 >= 0) {
+          c.spot = sp2;
+          goToward(c, ROAM_SPOTS[sp2].x, ROAM_SPOTS[sp2].y);
+        } else c.timer = 1.5 + rnd() * 2;
       }
       return;
     }
 
-    const tx = c.tx * W,
-      ty = c.ty * H;
-    const curX = c.x * W,
-      curY = c.y * H;
-    const dx = tx - curX,
-      dy = ty - curY;
+    const dx = c.tx * W - c.x * W;
+    const dy = c.ty * H - c.y * H;
     const dist = Math.hypot(dx, dy);
-
-    if (dist < 12) {
+    if (dist < 12 * S + 2) {
       if (c.state === "leaving") return;
-      c.state = "idle";
-      c.hasTarget = false;
-      c.timer = c.spec.idle[0] + rnd() * c.spec.idle[1];
-      c.v = 0;
+      if (c.mood === "stalk") {
+        c.mood = "threat";
+        c.moodT = 1.4;
+        stop(c, 1.4);
+        return;
+      }
+      stop(c, sp.idle[0] + rnd() * sp.idle[1]);
       return;
     }
 
+    const mult = c.mood === "flee" ? sp.flee : MOOD_SPEED[c.mood] ?? 1;
+    const fast = mult > 1.4;
     const targetHeading = Math.atan2(dy, dx);
-    c.heading += wrap(targetHeading - c.heading) * Math.min(1, c.spec.turn * dt);
+    c.heading += wrap(targetHeading - c.heading) * Math.min(1, sp.turn * (fast ? 1.6 : 1) * dt);
+    // zigue-zague de quem foge (coelho/esquilo)
+    if (c.mood === "flee" && sp.hop) c.heading += sin(c.clk * 9 + c.ph) * 0.05;
 
-    const distFactor = Math.min(1, dist / 40);
-    const baseSpeed = c.spec.speed * (W / 1000) * (0.35 + 0.65 * distFactor);
-
-    let currentSpeed = baseSpeed;
-    if (c.spec.hop) {
-      const hopCycle = Math.max(0, sin(c.clk * c.spec.gait * 0.9 + c.ph));
-      currentSpeed = baseSpeed * (0.15 + 1.65 * (hopCycle ** 2));
+    const distFactor = fast ? 1 : Math.min(1, dist / (40 * S));
+    const baseSpeed = sp.speed * S * mult * (0.35 + 0.65 * distFactor);
+    let speed = baseSpeed;
+    if (sp.hop) {
+      c.hp += dt * sp.gait * 0.9 * (fast ? 1.3 : 1);
+      const cyc = Math.max(0, sin(c.hp + c.ph));
+      speed = baseSpeed * (0.1 + 1.7 * cyc * cyc);
+      c.cm = c.hp / sp.K;
     }
-
-    c.v = approach(c.v, currentSpeed, 240 * dt);
-    c.cm += (c.v / (baseSpeed || 1)) * dt;
+    c.v = approach(c.v, speed, 260 * dt);
+    if (!sp.hop) {
+      // cadência da passada acompanha a distância percorrida (sem "patinar")
+      c.cm += sp.stride > 0 ? (((c.v * dt) / S / sp.stride) * 2 * PI) / sp.K : c.v * dt * 0.05;
+    }
     c.x += (cos(c.heading) * c.v * dt) / W;
     c.y += (sin(c.heading) * c.v * dt) / H;
-
-    const faceDir = cos(c.heading) >= 0 ? 1 : -1;
-    c.face = approach(c.face, faceDir, 4.5 * dt);
+    c.face = approach(c.face, cos(c.heading) >= 0 ? 1 : -1, 4.5 * dt);
   }
 
   function updateFlyer(c: Critter, dt: number, W: number, H: number) {
     c.clk += dt;
-    if (c.animal.id === "aguia") {
-      // Águia planando majestosa em correntes térmicas
-      c.orbit += dt * 0.28;
-      c.enter = approach(c.enter, 1, 0.2 * dt);
-      const cx = 0.5 + sin(c.orbit) * 0.34;
-      const cy = clamp(focusY - 0.05 + cos(c.orbit * 0.75) * 0.05, 0.02, 0.97);
-      c.x = cx;
-      c.y = cy;
-      c.z = 85 + sin(c.orbit * 1.8) * 15;
-      c.face = cos(c.orbit) > 0 ? 1 : -1;
+    const S = W / 1000;
+    const sp = c.spec;
+    c.moodT = Math.max(0, c.moodT - dt);
+    c.cool = Math.max(0, c.cool - dt);
+    const sx = stu.x * W;
+    const sy = stu.y * H;
+
+    if (c.animal.id === "eagle") {
+      // águia: plana em círculos acima do aluno e, de vez em quando, faz um voo rasante curioso/agressivo
+      c.orbit += dt * 0.3;
+      const ox = 0.55 + sin(c.orbit) * 0.28;
+      const oy = clamp(stu.y - 0.13 + cos(c.orbit * 0.75) * 0.04, 0.03, 0.97);
+      const ds = Math.hypot(sx - ox * W, sy - oy * H);
+      if (c.mood === "calm" && c.cool <= 0 && ds < sp.sense * S * 1.6) {
+        c.mood = "dive";
+        c.moodT = 3.4;
+        c.cool = 20;
+      }
+      if (c.mood === "dive") {
+        const u = 1 - c.moodT / 3.4;
+        c.dive = sin(clamp(u, 0, 1) * PI);
+        const side = sx > ox * W ? -1 : 1;
+        const px = (sx + side * 150 * S) / W;
+        const py = (sy - 60 * S) / H;
+        c.x = ox + (px - ox) * c.dive;
+        c.y = oy + (py - oy) * c.dive;
+        c.face = px > ox ? 1 : -1;
+        if (c.moodT <= 0) {
+          c.mood = "calm";
+          c.dive = 0;
+        }
+      } else {
+        c.x = ox;
+        c.y = oy;
+        c.face = cos(c.orbit) > 0 ? 1 : -1;
+      }
+      c.z = 85 + sin(c.orbit * 1.8) * 15 - c.dive * 55;
       return;
     }
 
-    let X = c.x * W,
-      Y = c.y * H;
-    const S = W / 1000;
-    let cx = 0,
-      cy = 0;
+    let X = c.x * W;
+    let Y = c.y * H;
+    let cx = 0;
+    const ds = Math.hypot(sx - X, sy - Y);
+
+    // amigáveis: vêm ver o aluno e pousam por perto
+    if (c.state !== "leaving" && sp.temper === "friendly") {
+      if (c.mood === "calm" && c.cool <= 0 && ds < sp.sense * S * 2.4 && ds > sp.sense * S * 0.5) {
+        const side = rnd() > 0.5 ? 1 : -1;
+        c.tx = clamp((sx + side * 70 * S) / W, 0.05, 0.95);
+        c.ty = clamp((sy + 6 * S) / H, 0.02, 0.99);
+        c.mood = "curious";
+        c.moodT = 9;
+        c.landed = false;
+        c.timer = 9;
+      }
+      if (c.mood === "curious") {
+        const dd = Math.hypot(c.tx * W - X, c.ty * H - Y);
+        if (dd < 16 * S) {
+          c.mood = "happy";
+          c.moodT = 4.2;
+          c.landed = true;
+        } else if (c.moodT <= 0) {
+          c.mood = "calm";
+          c.cool = 10;
+        }
+      }
+      if (c.mood === "happy" && c.moodT <= 0) {
+        c.mood = "calm";
+        c.cool = 14;
+        c.landed = false;
+        c.timer = 0;
+      }
+    }
 
     if (c.state === "leaving") {
       c.landed = false;
-      const tx = c.tx * W,
-        ty = c.ty * H;
-      const dx = tx - X,
-        dy = ty - Y;
-      const h = Math.atan2(dy, dx);
-      c.heading += wrap(h - c.heading) * Math.min(1, 2.5 * dt);
-      const sp = c.spec.speed * S;
-      X += cos(c.heading) * sp * dt;
-      Y += sin(c.heading) * sp * dt;
+      const dx = c.tx * W - X;
+      const dy = c.ty * H - Y;
+      c.heading += wrap(Math.atan2(dy, dx) - c.heading) * Math.min(1, 2.5 * dt);
+      X += cos(c.heading) * sp.speed * S * dt;
+      Y += sin(c.heading) * sp.speed * S * dt;
       c.z = approach(c.z, 75, 22 * dt);
       cx = cos(c.heading);
     } else if (c.landed) {
       c.v = 0;
-      c.z = 0;
-      c.timer -= dt;
-      if (c.timer <= 0) {
-        c.landed = false;
-        c.spot = -1;
-        const R = randRegion(c.animal.id);
-        c.tx = R.x;
-        c.ty = R.y;
-        c.timer = 4 + rnd() * 5;
-      }
+      c.z = approach(c.z, 0, 90 * dt);
+      c.face = approach(c.face, sx >= X ? 1 : -1, 5 * dt);
     } else {
       c.timer -= dt;
-      if (c.timer <= 0) {
-        // Tucano e araraVermelha pousam com mais frequência
-        const landChance = (c.animal.id === "tucano" || c.animal.id === "araraVermelha") ? 0.5 : 0.3;
-        if (rnd() < landChance) {
-          const sp = pickFree(c.animal.id);
-          if (sp >= 0) {
-            c.spot = sp;
-            c.tx = TRAIL_ROAM_SPOTS[sp].x / 100;
-            c.ty = TRAIL_ROAM_SPOTS[sp].y / 100;
-            c.timer = 8;
-          }
-        } else {
-          const R = randRegion(c.animal.id);
-          c.tx = R.x;
-          c.ty = R.y;
-          c.timer = 3 + rnd() * 4;
-        }
+      if (c.timer <= 0 && c.mood !== "curious") {
+        const R = randRegion();
+        c.tx = R.x;
+        c.ty = R.y;
+        c.timer = 3 + rnd() * 4;
       }
-
-      const tx = c.tx * W,
-        ty = c.ty * H;
-      const dx = tx - X,
-        dy = ty - Y;
-      const dist = Math.hypot(dx, dy);
-
-      if (c.spot >= 0 && dist < 14 * S) {
-        c.landed = true;
-        c.z = 0;
-        c.timer = 2.5 + rnd() * 4;
-      } else {
-        const th = Math.atan2(dy, dx);
-        c.heading += wrap(th - c.heading) * Math.min(1, c.spec.turn * dt);
-        const wander = sin(c.clk * 1.8 + c.ph) * 0.28;
-        const sp = c.spec.speed * S;
-        cx = cos(c.heading + wander) * sp;
-        cy = sin(c.heading + wander) * sp;
-        X += cx * dt;
-        Y += cy * dt;
-        const targetZ = c.spot >= 0 && dist < 120 * S ? 4 : 28 + sin(c.clk * 1.6 + c.ph) * 10;
-        c.z = approach(c.z, targetZ, 35 * dt);
-      }
+      const dx = c.tx * W - X;
+      const dy = c.ty * H - Y;
+      c.heading += wrap(Math.atan2(dy, dx) - c.heading) * Math.min(1, sp.turn * dt);
+      const wander = sin(c.clk * 1.8 + c.ph) * 0.28;
+      const spd = sp.speed * S * (c.mood === "curious" ? 1.25 : 1);
+      cx = cos(c.heading + wander) * spd;
+      X += cx * dt;
+      Y += sin(c.heading + wander) * spd * dt;
+      c.z = approach(c.z, c.mood === "curious" ? 14 : 28 + sin(c.clk * 1.6 + c.ph) * 10, 35 * dt);
     }
-
     if (!c.landed && Math.abs(cx) > 0.1) c.face = approach(c.face, Math.sign(cx), 6 * dt);
     c.x = X / W;
     c.y = Y / H;
   }
 
-  function step(dt: number, W: number, H: number) {
+  function step(dt: number, W: number, H: number, student?: WildStudent | null) {
     if (!(W > 0 && H > 0)) return;
     dt = Math.min(dt, 0.05);
+    if (student) stu = student;
+    if (!populated) {
+      populated = true;
+      populate();
+    }
     for (const c of critters) {
       c.age += dt;
       if (c.react > 0) c.react = Math.max(0, c.react - dt);
@@ -896,30 +1105,61 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     }
     for (let i = critters.length - 1; i >= 0; i--) {
       const c = critters[i];
-      if (c.age > 2 && c.animal.id !== "aguia" && Math.abs(c.y - focusY) > FAR_LIMIT) {
+      const gone = c.state === "leaving" && (c.x < -0.12 || c.x > 1.12);
+      const far = Math.abs(c.y - stu.y) > FAR;
+      if (gone || far) {
         critters.splice(i, 1);
-        continue;
+        if (far) pending.push({ delay: 0.4 + rnd() });
       }
-      if (c.state === "leaving" && (c.x < -0.12 || c.x > 1.12 || c.y > 1.12 || c.y < -0.12)) critters.splice(i, 1);
     }
     swapTimer -= dt;
     if (swapTimer <= 0) {
-      swapTimer = 8 + rnd() * 6;
-      const ok = critters.filter((c) => c.state !== "leaving" && c.age > 6);
-      if (ok.length >= TARGET_COUNT - 1) {
+      swapTimer = 9 + rnd() * 6;
+      const ok = critters.filter((c) => c.state !== "leaving" && c.age > 8 && c.mood === "calm");
+      if (ok.length >= WEATHER_TARGET[weather] - 1) {
         const v = ok[Math.floor(rnd() * ok.length)];
-        sendAway(v);
+        v.state = "leaving";
+        v.spot = -1;
+        v.hasTarget = true;
+        v.landed = false;
+        v.tx = v.x < 0.5 ? -0.15 : 1.15;
+        v.ty = v.y + (v.spec.kind === "walk" ? 0 : (rnd() - 0.5) * 0.1);
         pending.push({ delay: 1.5 + rnd() * 2, kind: rnd() < 0.6 ? v.spec.kind : undefined });
       }
     }
     for (let i = pending.length - 1; i >= 0; i--) {
       pending[i].delay -= dt;
       if (pending[i].delay <= 0) {
-        spawn(pending[i].kind);
+        spawn(pending[i].kind, false, pending[i].id);
         pending.splice(i, 1);
       }
     }
-    if (critters.filter((c) => c.state !== "leaving").length + pending.length < TARGET_COUNT) pending.push({ delay: 1 });
+    if (critters.filter((c) => c.state !== "leaving").length + pending.length < WEATHER_TARGET[weather]) pending.push({ delay: 1.2 });
+  }
+
+  function drawWalker(c: Critter, d: D, id: string): string {
+    switch (id) {
+      case "squirrel":
+        return squirrel(d);
+      case "rabbit":
+        return recolor(realRabbit(d), { "#f8fafc": "#a97c50", "#cbd5e1": "#6b4a2b", "#f1f5f9": "#bf9466", "#ffffff": "#f1dfc4", "#e2e8f0": "#d4b48a", "#fef2f2": "#e8c9a0", "#fbcfe8": "#d9a98a" });
+      case "snowhare":
+        return realRabbit(d);
+      case "deer":
+        return realDeer(d);
+      case "fox":
+        return realFox(d);
+      case "arcticfox":
+        return recolor(realFox(d), { "#ea580c": "#eef3f9", "#c2410c": "#bcc8da", "#9a3412": "#8d9bb5", "#f97316": "#ffffff" });
+      case "hedgehog":
+        return c.mood === "curl" ? hedgehogBall(d) : hedgehog(d);
+      case "capybara":
+        return capybara(d);
+      case "monkey":
+        return monkey(d);
+      default:
+        return realRabbit(d);
+    }
   }
 
   function render(W: number, H: number): string {
@@ -927,54 +1167,38 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     const order = [...critters].sort((a, b) => a.y - b.y);
     let out = "";
     for (const c of order) {
-      const depth = 0.75 + 0.5 * clamp(c.y, 0, 1.1);
-      const s = S * c.spec.scale * depth;
-      const X = c.x * W,
-        Y = c.y * H,
-        id = c.animal.id;
+      const depth = 0.78 + 0.45 * clamp(c.y, 0, 1.1);
+      const s = S * c.spec.scale * depth * 0.95;
+      const X = c.x * W;
+      const Y = c.y * H;
+      const id = c.animal.id;
       const moving = c.state !== "idle" && c.v > 1;
-      const d: D = { s, m: c.cm, a: c.clk, moving, ph: c.ph };
+      const d: D = { s, m: c.cm, a: c.clk, moving, ph: c.ph, mood: c.mood };
       const ro = c.react > 0 ? sin((c.react / 0.7) * PI) * 14 * S : 0;
       const br = 1 + sin(c.clk * 2.2 + c.ph) * 0.012;
-      let inner = "";
-
+      const icon = moodIcon(c.mood, c.clk, S * 1.1);
       if (c.spec.kind === "walk") {
-        switch (id) {
-          case "esquilo":
-            inner = realEsquilo(d);
-            break;
-          case "coelho":
-            inner = realCoelho(d);
-            break;
-          case "macaco":
-            inner = macaco(d);
-            break;
-          case "cervo":
-            inner = realCervo(d);
-            break;
-          case "tucano":
-            inner = tucano(d);
-            break;
-          default:
-            inner = realCoelho(d);
-        }
-        out += G(X, Y - ro, 0, c.face, br, inner);
+        const lean = (c.mood === "flee" || c.mood === "lunge" ? 8 : c.mood === "stalk" ? 5 : c.mood === "alert" ? -3 : 0) * c.face;
+        const lift = c.mood === "flee" && id === "deer" ? Math.abs(sin(c.clk * 7)) * 12 * S : 0;
+        out += G(X, Y - ro - lift, lean, c.face, br, drawWalker(c, d, id));
+        if (icon) out += G(X, Y - ro - lift - (c.spec.h * s + 14 * S), 0, 1, 1, icon);
       } else {
         const flying = !c.landed;
-        const alt = c.z;
-        if (id === "aguia") {
-          out += G(X, Y, c.face * 0 + 0, c.face, 1, G(0, 0, clamp(sin(c.orbit) * 6, -8, 8), 1, 1, aguia(d)));
+        if (id === "eagle") {
+          out += G(X, Y, 0, c.face, 1, G(0, 0, clamp(sin(c.orbit) * 6, -8, 8) + c.dive * 14, 1, 1, eagle(d)));
+          if (icon) out += G(X, Y - 40 * S, 0, 1, 1, icon);
           continue;
         }
+        const alt = c.z;
         const sh = clamp(1 - alt / (140 * S), 0.25, 1);
         out += ell(X, Y + 1, 9 * s * sh, 2.4 * s * sh, `rgba(0,0,0,${f(0.2 * sh)})`);
-
-        if (id === "araraVermelha") {
-          inner = araraVermelha({ ...d, flying }, c.color);
-        } else {
-          inner = passaroAzul({ ...d, flying }, c.color);
-        }
+        let inner: string;
+        if (id === "toucan") inner = toucan({ ...d, flying });
+        else if (id === "macaw") inner = macaw({ ...d, flying });
+        else
+          inner = recolor(songbird({ ...d, flying }, "#3b82f6"), { "#dc2626": "#2563eb", "#991b1b": "#1e3a8a", "#b91c1c": "#1d4ed8" });
         out += G(X, Y - alt * S - ro, 0, c.face, 1, inner);
+        if (icon) out += G(X, Y - alt * S - (c.spec.h * s + 12 * S), 0, 1, 1, icon);
       }
     }
     return out;
@@ -984,30 +1208,43 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     const S = W / 1000;
     for (let i = critters.length - 1; i >= 0; i--) {
       const c = critters[i];
-      const cx = c.x * W,
-        cy = c.y * H - (c.spec.kind === "fly" ? c.z * S : 0);
-      const rad = 28 * S * c.spec.scale;
-      if (Math.hypot(px - cx, py - cy) <= rad) return c;
+      const cx = c.x * W;
+      const cy = c.y * H - (c.spec.kind === "fly" ? c.z * S : 0) - (c.spec.kind === "walk" ? c.spec.h * 0.3 * S : 0);
+      if (Math.hypot(px - cx, py - cy) <= 44 * S * c.spec.scale) return c;
     }
     return null;
   }
 
+  /** Toque no bicho: cada espécie reage do seu jeito. */
   function poke(c: Critter) {
     c.react = 0.7;
-    if (c.animal.id === "esquilo") {
-      const branch = pickFree("esquilo");
-      if (branch >= 0) {
-        c.spot = branch;
-        c.tx = TRAIL_ROAM_SPOTS[branch].x / 100;
-        c.ty = TRAIL_ROAM_SPOTS[branch].y / 100;
-        c.state = "move";
-        c.hasTarget = true;
-        return;
-      }
-    }
-    if (["cervo", "coelho", "esquilo", "aguia"].includes(c.animal.id)) {
-      sendAway(c);
-      return;
+    switch (c.spec.temper) {
+      case "friendly":
+      case "peaceful":
+        c.mood = "happy";
+        c.moodT = 2.6;
+        if (c.spec.kind === "walk") stop(c, 2.6);
+        break;
+      case "skittish":
+        c.mood = "flee";
+        c.moodT = 1.6;
+        goToward(c, c.x + (rnd() - 0.5) * 0.3, c.y + (rnd() - 0.5) * 0.1);
+        break;
+      case "wary":
+        c.mood = "alert";
+        c.moodT = 1.2;
+        stop(c, 1.2);
+        break;
+      case "defensive":
+        c.mood = "curl";
+        c.moodT = 2.4;
+        stop(c, 2.4);
+        break;
+      case "aggressive":
+        c.mood = c.spec.kind === "walk" ? "threat" : "calm";
+        c.moodT = 1.2;
+        if (c.spec.kind === "walk") stop(c, 1.2);
+        break;
     }
     if (c.landed) {
       c.landed = false;
@@ -1015,15 +1252,11 @@ export function createWildlife(initialWeather: TrailWeather = "sunny"): Wildlife
     }
   }
 
-  function find(animalId: string): Critter | undefined {
-    return critters.find((c) => c.animal.id === animalId && c.state !== "leaving");
-  }
-
-  function position(c: Critter, W: number, H: number): { x: number; y: number } {
+  const find = (animalId: string) => critters.find((c) => c.animal.id === animalId && c.state !== "leaving");
+  const position = (c: Critter, W: number, H: number) => {
     const S = W / 1000;
-    const yOff = c.spec.kind === "fly" ? c.z * S : 0;
-    return { x: c.x * W, y: c.y * H - yOff };
-  }
+    return { x: c.x * W, y: c.y * H - (c.spec.kind === "fly" ? c.z * S : c.spec.h * 0.8 * S) };
+  };
 
   return { critters, step, render, hit, poke, find, position, setWeather, setFocus };
 }

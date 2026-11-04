@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Motor de geração de vídeos demonstrativos da "Trilha do Aluno Curioso"
  * para Instagram (Stories, Reels e Feed) e Facebook.
  *
@@ -18,7 +18,6 @@ import type { SocialPlatform } from "@/lib/socialLinks";
 import {
   TRAIL_LEVELS,
   TRAIL_THEMES,
-  ROAMING_ANIMAL_POOL,
   type TrailLevelConfig,
   type TrailThemeOption,
 } from "@/lib/curiousTrailData";
@@ -71,7 +70,7 @@ export interface TrailDemoSettings {
 }
 
 export const DEFAULT_TRAIL_DEMO_SETTINGS: TrailDemoSettings = {
-  title: "Trilha do Aluno Curioso �Ÿ‡��Ÿ‡�\nSuba a montanha e aprenda francês!",
+  title: "Trilha do Aluno Curioso 🇫🇷\nSuba a montanha e aprenda francês!",
   themeId: "gastronomia",
   level: 4, // Nível 4 demonstra a transição com chuva e guarda-chuva!
   difficulty: "intermediate",
@@ -355,7 +354,7 @@ const easeOut = (t: number) => 1 - Math.pow(1 - clamp(t), 3);
 function fitCanvasText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
   let fitted = text;
   while (fitted.length > 1 && ctx.measureText(fitted).width > maxWidth) {
-    fitted = `${fitted.slice(0, -2)}�€�`;
+    fitted = `${fitted.slice(0, -2)}…`;
   }
   return fitted;
 }
@@ -760,38 +759,6 @@ export function renderTrailDemoFrame(
 
   ctx.restore();
 
-  if (plan.settings.difficulty === "avalanche" && t >= introDur + countdownDur && t < outroStart) {
-    const elapsed = t - introDur - countdownDur;
-    const hazardFraction = clamp(levelStart - 115 / CURIOUS_TRAIL_LENGTH + elapsed * (4.2 / CURIOUS_TRAIL_LENGTH), 0, Math.max(0, studentFraction - 42 / CURIOUS_TRAIL_LENGTH));
-    const snowPath = new Path2D();
-    const steps = Math.max(2, Math.ceil(hazardFraction * 180));
-    for (let i = 0; i <= steps; i++) {
-      const point = getTrailPositionAtFraction((hazardFraction * i) / steps);
-      const x = (point.x / 1000) * w;
-      const y = (point.y / 600) * h;
-      if (i === 0) snowPath.moveTo(x, y);
-      else snowPath.lineTo(x, y);
-    }
-    ctx.save();
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "rgba(96, 165, 250, .72)";
-    ctx.lineWidth = Math.max(22, w * 0.022);
-    ctx.stroke(snowPath);
-    ctx.strokeStyle = "rgba(248, 250, 252, .96)";
-    ctx.lineWidth = Math.max(15, w * 0.015);
-    ctx.stroke(snowPath);
-    const front = getTrailPositionAtFraction(hazardFraction);
-    for (let flake = 0; flake < 9; flake++) {
-      const phase = t * 4 + flake * 2.4;
-      ctx.fillStyle = `rgba(255,255,255,${0.45 + (Math.sin(phase) + 1) * 0.2})`;
-      ctx.beginPath();
-      ctx.arc((front.x / 1000) * w + Math.sin(phase) * 18, (front.y / 600) * h + Math.cos(phase * 1.3) * 12, 3 + (flake % 3), 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.restore();
-  }
-
   // HUD do mapa, imagem do objeto no caminho e alternativas fixas na base.
   ctx.save();
   ctx.fillStyle = "rgba(15, 23, 42, 0.84)";
@@ -810,7 +777,7 @@ export function renderTrailDemoFrame(
   ctx.font = `600 ${Math.max(11, w * 0.012)}px ${FONT}`;
   ctx.fillText(
     `Altitude: ${levelCfg.altitude} m · ${
-      plan.settings.difficulty === "avalanche" ? "Avalanche · Neve e frio" : levelCfg.weather === "sunny" ? "Ensolarado" : levelCfg.weather === "rain" ? "Chuva · Guarda-chuva" : "Neve e frio"
+      levelCfg.weather === "sunny" ? "Ensolarado" : levelCfg.weather === "rain" ? "Chuva · Guarda-chuva" : "Neve e frio"
     }`,
     42,
     80
@@ -830,7 +797,7 @@ export function renderTrailDemoFrame(
   ctx.textAlign = "right";
   ctx.fillStyle = "#fcd34d";
   ctx.font = `bold ${Math.max(13, w * 0.016)}px ${FONT}`;
-  ctx.fillText(`�œ� ${score} pts`, hudX + hudW - 72, 53);
+  ctx.fillText(`✨ ${score} pts`, hudX + hudW - 72, 53);
   ctx.fillStyle = "#cbd5e1";
   ctx.font = `600 ${Math.max(10, w * 0.011)}px ${FONT}`;
   const streak = round
@@ -940,7 +907,6 @@ export function renderTrailDemoFrame(
     ctx.stroke();
 
     const progress = clamp((Math.min(t, round.correctAt) - round.start) / (round.correctAt - round.start));
-    if (plan.settings.difficulty !== "avalanche") {
     ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
     ctx.beginPath();
     ctx.roundRect(20, dockTop, w - 40, 8, 4);
@@ -951,7 +917,6 @@ export function renderTrailDemoFrame(
     ctx.beginPath();
     ctx.roundRect(20, dockTop, (w - 40) * barFill, 8, 4);
     ctx.fill();
-    }
 
     ctx.textAlign = "left";
     ctx.fillStyle = "#e2e8f0";
@@ -997,7 +962,7 @@ export function renderTrailDemoFrame(
         ctx.textAlign = "right";
         ctx.fillStyle = "#6ee7b7";
         ctx.font = `bold ${Math.max(12, w * 0.014)}px ${FONT}`;
-        ctx.fillText("�œ“", x + optionW - 12, y + optionH / 2);
+        ctx.fillText("✓", x + optionW - 12, y + optionH / 2);
       }
     });
     if (t >= round.correctAt) {
@@ -1021,7 +986,7 @@ export function renderTrailDemoFrame(
     ctx.textAlign = "center";
     ctx.fillStyle = "#f59e0b";
     ctx.font = `900 32px ${FONT}`;
-    ctx.fillText("�Ÿ�”️ TRILHA DO ALUNO CURIOSO", w / 2, h * 0.4);
+    ctx.fillText("🏔️ TRILHA DO ALUNO CURIOSO", w / 2, h * 0.4);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = `bold 42px ${FONT}`;
@@ -1075,7 +1040,7 @@ export function renderTrailDemoFrame(
     ctx.fillStyle = "#f59e0b";
     ctx.font = `900 64px sans-serif`;
     const summitWon = plan.settings.level === 7;
-    ctx.fillText(summitWon ? "�Ÿ�”️ �Ÿ‡��Ÿ‡� �Ÿ�†" : "�ŸŒ� �Ÿ‡��Ÿ‡� ⭐", w / 2, h * 0.38);
+    ctx.fillText(summitWon ? "🏔️ 🇫🇷 🏆" : "🌲 🇫🇷 ⭐", w / 2, h * 0.38);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = `900 ${Math.min(38, w * 0.035)}px ${FONT}`;
@@ -1092,7 +1057,7 @@ export function renderTrailDemoFrame(
     ctx.fillStyle = "#fcd34d";
     ctx.font = `bold 22px ${FONT}`;
     ctx.fillText(
-      summitWon ? "Você chegou feliz à cabana!" : `Próximo: Nível ${levelCfg.level + 1}`,
+      summitWon ? "Bandeira hasteada no topo!" : `Próximo: Nível ${levelCfg.level + 1}`,
       w / 2,
       h * 0.56
     );

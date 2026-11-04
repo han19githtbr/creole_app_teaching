@@ -391,7 +391,32 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 
 `POST /api/cquoi/arena` aceita as ações `heartbeat`, `leave`, `score`, `challenge` e `respond`; `GET /api/cquoi/arena?board=week|all|<nível>` devolve o painel. Todas exigem login. Não há variável de ambiente nova: o ranking usa o mesmo MongoDB do app.
 
-## Trilha do Aluno Curioso
+## Trilha do Aluno Curioso — novo visual da mata, fauna por clima e modo Avalanche
+
+> Esta seção descreve a versão atual e **substitui** o visual antigo (montanha desenhada em SVG, animais antigos e bandeira no cume).
+
+**Visual.** O mapa agora é uma trilha **vertical** pintada, dentro de uma mata densa (`public/trilha/mata-trilha.jpg`, arte original ampliada 2× e sem os rótulos/boneco que vinham desenhados nela). O caminho do jogo foi traçado sobre a trilha de terra da arte (`src/lib/curiousTrailGeometry.ts`, mundo de 1000 × 2201 unidades) e as 7 estações ficam sobre a curva. A câmera acompanha o aluno e o próximo objeto; no lobby dá para **arrastar** o mapa. No fim do Nível 7 o aluno **entra feliz na casinha do cume** (a bandeira foi removida).
+
+**Clima.** Sol, chuva e neve são aplicados sobre a mesma arte (dessaturação, névoa/geada, trilha molhada ou coberta de neve, chuva e neve caindo). Para trocar a arte basta substituir o arquivo da imagem e reajustar os pontos do caminho em `curiousTrailGeometry.ts`.
+
+**Fauna (espécies da arte).** Veado, raposa, coelho, esquilo, ouriço, capivara, macaco, tucano, arara, passarinho azul e águia, com temperamento próprio (`src/lib/trailWildlife.ts`):
+
+| Temperamento | Espécies | Comportamento |
+| --- | --- | --- |
+| Amigável | esquilo, passarinho, tucano, arara | aproximam-se curiosos, ficam/pousam perto do aluno |
+| Assustadiço | coelho, lebre-da-neve | congelam e fogem em zigue-zague |
+| Cauteloso | veado, raposa, raposa-do-ártico | erguem a cabeça, observam e se afastam (veado dá pulos ao fugir) |
+| Defensivo | ouriço | enrola-se em bola de espinhos |
+| Pacífico | capivara | ignora o aluno, anda devagar |
+| Agressivo | macaco, águia | macaco faz ameaça e investida de mentirinha; águia faz voo rasante (nada machuca o aluno) |
+
+Cada clima traz os bichos mais adaptados: **sol** (todos), **chuva** (capivara, tucano, arara, ouriço, veado, passarinho; mais ativos os que gostam de umidade), **neve** (raposa-do-ártico, lebre-da-neve, veado, raposa, águia). Tocar num bicho faz cada espécie reagir do seu jeito. O andar acompanha a distância percorrida (sem "patinar"), com saltos para coelho/esquilo.
+
+**Modo Avalanche (depois do Nativo).** Nova dificuldade sem cronômetro: uma avalanche nasce atrás do aluno e sobe a trilha até alcançá-lo (`src/lib/trailAvalanche.ts`). Calibragem: ritmo de equilíbrio de 12,5 s por objeto no Nível 1 até 9,5 s no Nível 7; folga inicial de ~2,4 espaços entre objetos; acerto de 1ª tentativa empurra a avalanche para trás, erro a aproxima; durante a comemoração/caminhada ela desacelera. HUD mostra a distância em metros e a barra de perigo; ao ser alcançado, aparece a tela "A avalanche te alcançou!" (tentar de novo / voltar ao mapa). Nos testes, responder em até ~13 s por objeto vence todos os níveis, e ~16 s por objeto perde nos níveis 6 e 7. As constantes ficam em `AVALANCHE_CONFIG`.
+
+**Vídeos do jogo.** `curiousTrailDemoVideo.ts` + `trailVideoWorld.ts` usam a **mesma arte, câmera, clima, fauna (mesmo motor) e avalanche (mesma física e mesmo desenho)** do jogo, quadro a quadro e com semente fixa. A dificuldade "Avalanche" também está no estúdio (Admin → Vídeos do Jogo → Trilha Curiosa). No vídeo o tempo da avalanche corre ~3× mais rápido que no jogo (é uma demonstração curta) e a hesitação do aluno é ajustada para a avalanche chegar perto sem alcançá-lo.
+
+### (versão anterior, mantida só como histórico)
 
 Novo módulo visual e dinâmico de gamificação em francês integrado à seção de jogos (`/dashboard/jogo?module=trilha`), simulando uma **expedição de subida de montanha**. O aluno sobe a montanha estação por estação, enfrentando mudanças de altitude e de clima, enquanto reconhece elementos ilustrados do tema escolhido.
 

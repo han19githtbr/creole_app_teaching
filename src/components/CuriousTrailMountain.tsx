@@ -7,66 +7,67 @@ import type { CestQuoiItem } from "@/lib/cquoiContent";
 import { CuriousTrailStudent } from "./CuriousTrailStudent";
 import { soundEffects } from "@/lib/soundEffects";
 import { createWildlife, type Wildlife } from "@/lib/trailWildlife";
-import { CURIOUS_TRAIL_PATH } from "@/lib/curiousTrailGeometry";
+import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
+import { renderAvalancheSvg, avalancheShake } from "@/lib/trailAvalanche";
 import { Check, Lock, Volume2 } from "lucide-react";
 
 export type TrailRoundState = "asking" | "correct" | "retry" | "reveal";
+
+/** Estado "ao vivo" da avalanche (escrito pelo jogo, lido a cada quadro pelo mapa). */
+export interface AvalancheLive {
+  active: boolean;
+  /** posição da frente (fração da trilha) no instante `stamp` */
+  front: number;
+  /** velocidade atual (fração da trilha por segundo) */
+  vel: number;
+  stamp: number;
+  danger: number;
+}
 
 export interface CuriousTrailMountainProps {
   currentLevel: number; // 1 a 7
   unlockedLevel: number; // 1 a 7
   completedLevels: number[];
   onSelectLevel?: (level: number) => void;
-  /**
-   * Modo JOGO: os objetos do nÃ­vel aparecem no prÃ³prio mapa, ao longo da trilha, e o aluno
-   * caminha pela curva do caminho a cada acerto. Sem `elements`, o mapa Ã© sÃ³ a prÃ©via do lobby.
-   */
+  /** Modo JOGO: os objetos do nível aparecem no próprio mapa, ao longo da trilha. Sem `elements`, é a prévia do lobby. */
   elements?: CestQuoiItem[];
   elementIndex?: number;
   roundState?: TrailRoundState;
-  /** true depois do Ãºltimo objeto do nÃ­vel: o aluno segue atÃ© a prÃ³xima estaÃ§Ã£o. */
+  /** true depois do último objeto do nível: o aluno segue até a próxima estação. */
   levelFinished?: boolean;
   isCheering?: boolean;
-  isRaisingFlag?: boolean;
-  flagProgress?: number; // 0..100
+  /** Nível 7 concluído: o aluno entra feliz na casinha do cume. */
+  enterHouse?: boolean;
   activeAnimalGreeting?: string | null;
   onAnimalClick?: (animalId: string, quote: string) => void;
   onSpeak?: (text: string) => void;
   themeColor?: string;
   className?: string;
-  /** ConteÃºdo de tela (HUD direito, alternativas, contagem...), fixo sobre o mapa. */
+  /** Avalanche (modo extra depois do Nativo). */
+  avalancheRef?: React.MutableRefObject<AvalancheLive>;
+  /** Conteúdo de tela (HUD direito, alternativas, contagem...), fixo sobre o mapa. */
   hudRight?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-// ---------- Geometria da trilha (mesma curva de sempre, em um viewBox 1000x600) ----------
-const VB_W = 1000;
-const VB_H = 600;
-/** Velocidade da caminhada em unidades do viewBox por segundo. */
-const WALK_SPEED = 70;
-
-/**
- * PosiÃ§Ã£o (fraÃ§Ã£o 0..1 do comprimento da trilha) onde fica cada acampamento.
- * O trecho de cada nÃ­vel Ã© proporcional Ã  quantidade de objetos, assim o aluno
-              Cume · 3.950m
- */
-const CAMP_FRACS: number[] = (() => {
-  const weights = TRAIL_LEVELS.map((l) => l.elementCount + 3);
-  const sum = weights.reduce((a, b) => a + b, 0);
-  const out = [0];
-  weights.forEach((w) => out.push(out[out.length - 1] + w / sum));
-  out[out.length - 1] = 1;
-  return out;
-})();
+// ---------- Geometria do mundo (RETRATO: 1000 x 2201, a arte da mata) ----------
+const VB_W = WORLD_W;
+const VB_H = WORLD_H;
+/** Velocidade da caminhada em unidades do mundo por segundo. */
+const WALK_SPEED = 150;
+/** Zoom da câmera durante o jogo, relativo ao mundo cobrindo a largura do palco. */
+const PLAY_ZOOM = 1.55;
+/** Imagem da mata (arte do cenário). */
+export const TRAIL_SCENE_SRC = "/trilha/mata-trilha.jpg";
 
 const clampN = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-/** Quantos px cada unidade do mapa (viewBox de 1000 de largura) ocupa durante o jogo. */
-function pxPerUnit(W: number) {
-  if (W < 480) return 1.3;
-  if (W < 800) return 1.45;
-  return 1.7;
-}
+/** Filtro aplicado à arte conforme o clima (mesma receita usada no vídeo). */
+const WEATHER_FILTER: Record<TrailWeather, string> = {
+  sunny: "none",
+  rain: "saturate(0.7) brightness(0.7) contrast(1.06)",
+  snow: "saturate(0.3) brightness(1.14) contrast(0.94)",
+};
 
 /** Exibe a ilustração isolada do objeto durante a pergunta. */
 function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean }) {
@@ -106,11 +107,12 @@ function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: 
 }
 
 /**
- * CenÃ¡rio vivo da Trilha Curiosa: montanha, trilha sinuosa, 7 acampamentos, clima, bichos e o aluno.
+ * Cenário vivo da Trilha Curiosa: a mata pintada (arte vertical), o caminho de terra, as 7 estações, o
+ * clima (sol, chuva, neve), os bichos da mata reagindo ao aluno e a avalanche do modo extra.
  *
- * No modo jogo toda a dinÃ¢mica acontece aqui dentro: a cÃ¢mera acompanha o aluno, os objetos do tema
- * aparecem como medalhões com a ilustração isolada, e a cada acerto o aluno CAMINHA pela curva
- * do caminho atÃ© o prÃ³ximo ponto. As alternativas e o cronÃ´metro sÃ£o desenhados por cima, como `children`.
+ * No modo jogo toda a dinâmica acontece aqui dentro: a câmera acompanha o aluno, os objetos do tema
+ * aparecem como medalhões com a ilustração isolada, e a cada acerto o aluno CAMINHA pela curva do
+ * caminho até o próximo ponto. No fim da trilha ele entra feliz na casinha do cume.
  */
 export function CuriousTrailMountain({
   currentLevel,
@@ -122,13 +124,13 @@ export function CuriousTrailMountain({
   roundState = "asking",
   levelFinished = false,
   isCheering = false,
-  isRaisingFlag = false,
-  flagProgress = 100,
+  enterHouse = false,
   activeAnimalGreeting,
   onAnimalClick,
   onSpeak,
   themeColor = "#3b82f6",
   className,
+  avalancheRef,
   hudRight,
   children,
 }: CuriousTrailMountainProps) {
@@ -138,12 +140,14 @@ export function CuriousTrailMountain({
   const summitDone = completedLevels.includes(7);
   const [localBubble, setLocalBubble] = useState<{ id: string; quote: string; name: string } | null>(null);
 
-  // ---------------- medidas, trilha e posiÃ§Ãµes ----------------
+  // ---------------- medidas, trilha e posições ----------------
   const stageRef = useRef<HTMLDivElement>(null);
   const worldRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const studentRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const avSvgRef = useRef<SVGSVGElement>(null);
+  const vignetteRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const worldWildRef = useRef<Wildlife | null>(null);
   const wildlifeWeatherRef = useRef(weather);
@@ -151,6 +155,8 @@ export function CuriousTrailMountain({
   const camRef = useRef({ tx: 0, ty: 0, s: 1 });
   const walkRef = useRef<number>(Number.NaN);
   const movingRef = useRef(false);
+  const panRef = useRef(0);
+  const dragRef = useRef<{ y0: number; pan0: number; moved: boolean } | null>(null);
   const [stage, setStage] = useState({ W: 0, H: 0, WW: 0, WH: 0 });
   const [walking, setWalking] = useState(false);
   const [studentFacing, setStudentFacing] = useState<"left" | "right">("right");
@@ -158,17 +164,17 @@ export function CuriousTrailMountain({
   const facingRef = useRef<"left" | "right">("right");
   const inclineRef = useRef<number>(0);
 
-  // Tabela de pontos da trilha (1 amostra a cada 2 unidades), calculada quando o <path> entra na tela.
+  // Tabela de pontos da trilha (1 amostra a cada 3 unidades), calculada quando o <path> entra na tela.
   const [pathInfo, setPathInfo] = useState<{ total: number; step: number; tbl: { x: number; y: number }[] }>({
     total: 0,
-    step: 2,
+    step: 3,
     tbl: [],
   });
   const setPathEl = useCallback((el: SVGPathElement | null) => {
     pathRef.current = el;
     if (!el) return;
     const t = el.getTotalLength();
-    const step = 2;
+    const step = 3;
     const tbl: { x: number; y: number }[] = [];
     for (let l = 0; l <= t + step; l += step) {
       const pt = el.getPointAtLength(Math.min(l, t));
@@ -178,12 +184,10 @@ export function CuriousTrailMountain({
   }, []);
   const total = pathInfo.total;
   const curItem = elements?.[elementIndex];
-  const maxCardHeight = clampN(stage.H * 0.48, 120, 310);
+  const maxCardHeight = clampN(stage.H * 0.42, 120, 300);
   const itemAspect = curItem && curItem.h > 0 ? curItem.w / curItem.h : 1;
-  const cardPx = Math.round(Math.min(clampN(stage.W * 0.36, 150, 250), maxCardHeight * itemAspect));
-  const cardHeight = curItem
-    ? Math.round((cardPx * curItem.h) / curItem.w) + 70
-    : 70;
+  const cardPx = Math.round(Math.min(clampN(stage.W * 0.46, 140, 250), maxCardHeight * itemAspect));
+  const cardHeight = curItem ? Math.round((cardPx * curItem.h) / curItem.w) + 70 : 70;
 
   const N = currentCfg.elementCount;
   const campStart = CAMP_FRACS[currentLevel - 1] * total;
@@ -197,12 +201,16 @@ export function CuriousTrailMountain({
   else if (levelFinished) targetLen = campEnd;
   else targetLen = elementIndex <= 0 ? campStart : elemLen(elementIndex - 1);
   const focusLen = hasCurrent ? elemLen(elementIndex) : null;
-  const focusBelow = focusLen != null && (pointPct(focusLen)?.y ?? 50) < 30;
+  const focusBelow = focusLen != null && ((pointPct(focusLen)?.y ?? 50) / 100) * VB_H < 320;
 
-  // espelhos para o laÃ§o de animaÃ§Ã£o (evita recriar o requestAnimationFrame a cada render)
+  // espelhos para o laço de animação (evita recriar o requestAnimationFrame a cada render)
   const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0 });
   useEffect(() => {
     live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total, cardH: focusLen != null && !focusBelow ? cardHeight : 0 };
+  });
+  const avRef = useRef(avalancheRef);
+  useEffect(() => {
+    avRef.current = avalancheRef;
   });
 
   function pointPct(len: number): { x: number; y: number } | null {
@@ -215,7 +223,7 @@ export function CuriousTrailMountain({
     return { x: ((a.x + (b.x - a.x) * k) / VB_W) * 100, y: ((a.y + (b.y - a.y) * k) / VB_H) * 100 };
   }
 
-  // ---------------- bichos vivos + cÃ¢mera + caminhada (um Ãºnico laÃ§o) ----------------
+  // ---------------- bichos vivos + câmera + caminhada + avalanche (um único laço) ----------------
   const bubbleIdRef = useRef<string | null>(null);
   const bubbleId = localBubble?.id ?? activeAnimalGreeting ?? null;
   useEffect(() => {
@@ -229,7 +237,7 @@ export function CuriousTrailMountain({
     const wild = createWildlife(wildlifeWeatherRef.current);
     worldWildRef.current = wild;
 
-    // O "mundo" mantÃ©m a proporÃ§Ã£o do desenho (1000x600) e COBRE o palco, como object-fit: cover.
+    // O "mundo" mantém a proporção da arte (1000 x 2201) e COBRE a largura do palco.
     const measure = () => {
       const W = stageEl.clientWidth, H = stageEl.clientHeight;
       const WW = Math.max(W, (H * VB_W) / VB_H);
@@ -244,17 +252,20 @@ export function CuriousTrailMountain({
 
     let raf = 0;
     let last = performance.now();
+    const t0 = last;
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
+      const tSec = (now - t0) / 1000;
       const { W, H, WW, WH } = sizeRef.current;
       const L = live.current;
       const path = pathRef.current;
       const world = worldRef.current;
       const cam = camRef.current;
+      let studentFrac: { x: number; y: number } | null = null;
 
       if (W > 0 && H > 0 && path && world && L.total > 0) {
-        // 1) caminhada ao longo da curva com cinemática de montanha realista
+        // 1) caminhada ao longo da curva
         let w = walkRef.current;
         if (Number.isNaN(w) || !L.animate) w = L.target;
         else {
@@ -263,8 +274,7 @@ export function CuriousTrailMountain({
           if (dist <= 0.35) {
             w = L.target;
           } else {
-            // Aceleração suave e desaceleração progressiva ao se aproximar do objetivo
-            const easeSpeed = Math.min(WALK_SPEED * 1.15, Math.max(22, Math.sqrt(dist * 135)));
+            const easeSpeed = Math.min(WALK_SPEED * 1.15, Math.max(30, Math.sqrt(dist * 320)));
             const step = easeSpeed * dt;
             w = dist <= step ? L.target : w + Math.sign(d) * step;
           }
@@ -276,8 +286,8 @@ export function CuriousTrailMountain({
           setWalking(moving);
         }
         const p = path.getPointAtLength(clampN(w, 0, L.total));
-        const pAhead = path.getPointAtLength(clampN(w + 4, 0, L.total));
-        const pBehind = path.getPointAtLength(clampN(w - 4, 0, L.total));
+        const pAhead = path.getPointAtLength(clampN(w + 6, 0, L.total));
+        const pBehind = path.getPointAtLength(clampN(w - 6, 0, L.total));
         const tdx = pAhead.x - pBehind.x;
         const tdy = pAhead.y - pBehind.y;
         const curFacing: "left" | "right" = tdx < -0.05 ? "left" : "right";
@@ -293,8 +303,9 @@ export function CuriousTrailMountain({
           st.style.left = `${(p.x / VB_W) * 100}%`;
           st.style.top = `${(p.y / VB_H) * 100}%`;
         }
+        studentFrac = { x: p.x / VB_W, y: p.y / VB_H };
 
-        // 2) cÃ¢mera: acompanha o aluno e o prÃ³ximo objeto
+        // 2) câmera: acompanha o aluno e o próximo objeto (no lobby, a estação atual + arrastar)
         const sx = (p.x / VB_W) * WW, sy = (p.y / VB_H) * WH;
         let fx = sx, fy = sy;
         let qy = -1;
@@ -304,10 +315,10 @@ export function CuriousTrailMountain({
           fy = sy + ((q.y / VB_H) * WH - sy) * 0.45;
           qy = (q.y / VB_H) * WH;
         }
-        const s = L.playing ? (pxPerUnit(W) * VB_W) / WW : 1;
-        const dtx = L.playing ? clampN(W * 0.5 - fx * s, W - WW * s, 0) : (W - WW) / 2;
-        let dty = L.playing ? clampN(H * 0.38 - fy * s, H - WH * s - H * 0.5, 0) : (H - WH) / 2;
-        // garante espaÃ§o, acima do ponto do objeto, para o cartÃ£o com a cena inteira
+        if (!L.playing) fy += (panRef.current / VB_H) * WH;
+        const s = L.playing ? PLAY_ZOOM : 1;
+        const dtx = clampN(W * 0.5 - fx * s, W - WW * s, 0);
+        let dty = clampN(H * (L.playing ? 0.42 : 0.5) - fy * s, H - WH * s, 0);
         if (L.playing && L.cardH > 0 && qy >= 0) {
           const ey = dty + qy * s;
           if (ey < L.cardH) dty = Math.min(0, dty + (L.cardH - ey));
@@ -316,13 +327,28 @@ export function CuriousTrailMountain({
         cam.s += (s - cam.s) * k;
         cam.tx += (dtx - cam.tx) * k;
         cam.ty += (dty - cam.ty) * k;
-        world.style.transform = `translate(${cam.tx}px, ${cam.ty}px) scale(${cam.s})`;
+
+        // 3) avalanche: tremor de câmera + desenho da onda de neve
+        const av = avRef.current?.current;
+        let shakeX = 0, shakeY = 0;
+        if (av && av.active && avSvgRef.current) {
+          const front = av.front + (av.vel * (performance.now() - av.stamp)) / 1000;
+          const sh = avalancheShake(tSec, av.danger);
+          shakeX = sh.dx;
+          shakeY = sh.dy;
+          avSvgRef.current.innerHTML = renderAvalancheSvg(front, tSec, av.danger);
+          if (vignetteRef.current) vignetteRef.current.style.opacity = String(Math.min(0.85, av.danger * av.danger * 0.9));
+        } else {
+          if (avSvgRef.current && avSvgRef.current.firstChild) avSvgRef.current.innerHTML = "";
+          if (vignetteRef.current) vignetteRef.current.style.opacity = "0";
+        }
+        world.style.transform = `translate(${cam.tx + shakeX}px, ${cam.ty + shakeY}px) scale(${cam.s})`;
         world.style.setProperty("--inv", String(1 / cam.s));
       }
 
-      // 3) bichos
+      // 4) bichos
       if (W > 0 && H > 0) {
-        wild.step(dt, WW, WH);
+        wild.step(dt, WW, WH, studentFrac);
         svg.innerHTML = wild.render(WW, WH);
         const b = bubbleRef.current;
         const id = bubbleIdRef.current;
@@ -353,6 +379,11 @@ export function CuriousTrailMountain({
     worldWildRef.current?.setWeather(weather);
   }, [weather]);
 
+  // ao mudar de nível o mapa volta a seguir a estação (zera o arrasto do lobby)
+  useEffect(() => {
+    panRef.current = 0;
+  }, [currentLevel, playing]);
+
   function handleAnimalTap(animal: TrailAnimal) {
     soundEffects.playTap();
     setLocalBubble({ id: animal.id, quote: animal.quote, name: animal.name });
@@ -362,13 +393,14 @@ export function CuriousTrailMountain({
     }, 4500);
   }
 
-  /** Converte o ponteiro (tela) para as coordenadas do mundo (considera o zoom da cÃ¢mera). */
+  /** Converte o ponteiro (tela) para as coordenadas do mundo (considera o zoom da câmera). */
   function pointerPos(e: React.PointerEvent | React.MouseEvent) {
     const r = stageRef.current!.getBoundingClientRect();
     const cam = camRef.current;
     return { x: (e.clientX - r.left - cam.tx) / cam.s, y: (e.clientY - r.top - cam.ty) / cam.s };
   }
   function handleMapClick(e: React.MouseEvent<HTMLDivElement>) {
+    if (dragRef.current?.moved) return;
     const wild = worldWildRef.current;
     if (!wild || !stageRef.current) return;
     const { x, y } = pointerPos(e);
@@ -378,297 +410,88 @@ export function CuriousTrailMountain({
       handleAnimalTap(c.animal);
     }
   }
-  function handleMapMove(e: React.PointerEvent<HTMLDivElement>) {
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if (playing) return;
+    dragRef.current = { y0: e.clientY, pan0: panRef.current, moved: false };
+  }
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
     const wild = worldWildRef.current;
+    const d = dragRef.current;
+    if (d && !playing) {
+      const dy = e.clientY - d.y0;
+      if (Math.abs(dy) > 6) d.moved = true;
+      const ppu = (camRef.current.s * sizeRef.current.WW) / VB_W;
+      panRef.current = clampN(d.pan0 - dy / ppu, -VB_H, VB_H);
+    }
     if (!wild || !stageRef.current) return;
     const { x, y } = pointerPos(e);
-    e.currentTarget.style.cursor = wild.hit(x, y, sizeRef.current.WW, sizeRef.current.WH) ? "pointer" : "default";
+    e.currentTarget.style.cursor = wild.hit(x, y, sizeRef.current.WW, sizeRef.current.WH) ? "pointer" : playing ? "default" : "grab";
+  }
+  function handlePointerUp() {
+    // mantém "moved" por um instante para o clique de arrasto não acionar o bicho
+    const d = dragRef.current;
+    if (d) setTimeout(() => { if (dragRef.current === d) dragRef.current = null; }, 60);
   }
   const bubbleAnimal = bubbleId ? ROAMING_ANIMAL_POOL.find((a) => a.id === bubbleId) : undefined;
 
   // ---------------- tamanhos que dependem da largura ----------------
   const studentPx = Math.round(clampN(stage.W * 0.14, 54, 76));
   const inv = "var(--inv, 1)";
+  const hutPct = { x: (HUT_POSITION.x / VB_W) * 100, y: (HUT_POSITION.y / VB_H) * 100 };
+  const doorPct = { x: (HUT_DOOR.x / VB_W) * 100, y: (HUT_DOOR.y / VB_H) * 100 };
 
   return (
     <div
       ref={stageRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
       className={cn(
-        "trail-mountain relative w-full max-h-[640px] rounded-3xl overflow-hidden border-2 border-[var(--border)] shadow-xl select-none transition-colors duration-1000",
-        playing ? "aspect-[3/4] sm:aspect-[16/10]" : "aspect-[16/10] sm:aspect-[16/9] max-h-[580px]",
-        weather === "sunny" && "bg-gradient-to-b from-sky-400 via-sky-200 to-amber-50",
-        weather === "rain" && "bg-gradient-to-b from-slate-700 via-slate-600 to-emerald-950/80",
-        weather === "snow" && "bg-gradient-to-b from-slate-400 via-indigo-100 to-blue-50",
+        "trail-mountain relative mx-auto w-full max-w-[560px] max-h-[760px] aspect-[4/5] rounded-3xl overflow-hidden border-2 border-[var(--border)] shadow-xl select-none touch-pan-x bg-emerald-950",
         className
       )}
     >
-      {/* ================= MUNDO (sofre zoom/pan da cÃ¢mera) ================= */}
+      {/* ================= MUNDO (sofre zoom/pan da câmera) ================= */}
       <div
         ref={worldRef}
         className="absolute left-0 top-0"
         style={{ transformOrigin: "0 0", width: stage.WW || "100%", height: stage.WH || "100%" }}
       >
-        {/* Sol e nuvens */}
-        {weather === "sunny" && (
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-6 left-12 w-20 h-20 rounded-full bg-amber-300 blur-sm opacity-90 animate-pulse" />
-            <div className="absolute top-8 left-14 w-16 h-16 rounded-full bg-amber-400 shadow-[0_0_40px_#f59e0b]" />
-            <div className="trail-cloud trail-cloud--first absolute top-8 right-20 h-14 w-44 rounded-full bg-white/70 blur-[2px]" />
-            <div className="trail-cloud trail-cloud--second absolute top-16 left-1/3 h-10 w-36 rounded-full bg-white/60 blur-[2px]" />
-          </div>
-        )}
-        {weather === "rain" && <div className="absolute -top-10 inset-x-0 h-36 pointer-events-none bg-gradient-to-b from-slate-900/90 via-slate-800/80 to-transparent" />}
-        {weather === "snow" && <div className="absolute top-0 inset-x-0 h-28 pointer-events-none bg-gradient-to-b from-slate-600/50 via-indigo-900/30 to-transparent" />}
-
-        {/* Montanhas, encosta e trilha realista com profundidade geológica alpina */}
-        <svg viewBox="0 0 1000 600" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-          <defs>
-            {/* Maciço distante com perspectiva atmosférica */}
-            <linearGradient id="farPeaksGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={weather === "snow" ? "#f1f5f9" : weather === "rain" ? "#334155" : "#93c5fd"} />
-              <stop offset="60%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#1e293b" : "#60a5fa"} />
-              <stop offset="100%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#0f172a" : "#3b82f6"} />
-            </linearGradient>
-
-            {/* Sombras nos paredões rochosos norte do maciço */}
-            <linearGradient id="farPeaksShadow" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#0f172a" : "#1d4ed8"} stopOpacity="0.85" />
-              <stop offset="100%" stopColor={weather === "snow" ? "#64748b" : weather === "rain" ? "#020617" : "#1e3a8a"} stopOpacity="0.95" />
-            </linearGradient>
-
-            {/* Cristas e falésias da meia-montanha com estratos rochosos */}
-            <linearGradient id="midMountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#1e293b" : "#15803d"} />
-              <stop offset="40%" stopColor={weather === "snow" ? "#64748b" : weather === "rain" ? "#0f172a" : "#166534"} />
-              <stop offset="100%" stopColor={weather === "snow" ? "#475569" : weather === "rain" ? "#022c22" : "#14532d"} />
-            </linearGradient>
-
-            {/* Encosta principal com pastagens alpinas e dobras de terreno */}
-            <linearGradient id="mainSlopeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={weather === "snow" ? "#f8fafc" : weather === "rain" ? "#166534" : "#22c55e"} />
-              <stop offset="45%" stopColor={weather === "snow" ? "#e2e8f0" : weather === "rain" ? "#14532d" : "#16a34a"} />
-              <stop offset="75%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#064e3b" : "#15803d"} />
-              <stop offset="100%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#022c22" : "#14532d"} />
-            </linearGradient>
-
-            {/* Geleira e manto de neve permanente no cume */}
-            <linearGradient id="summitSnowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="65%" stopColor="#f0f9ff" />
-              <stop offset="100%" stopColor="#bae6fd" />
-            </linearGradient>
-
-            {/* Leito da trilha (terra batida + cascalho de montanha) */}
-            <linearGradient id="trailEarthGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor={weather === "snow" ? "#cbd5e1" : weather === "rain" ? "#3e1f06" : "#a16207"} />
-              <stop offset="50%" stopColor={weather === "snow" ? "#e2e8f0" : weather === "rain" ? "#582f0e" : "#ca8a04"} />
-              <stop offset="100%" stopColor={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#291103" : "#854d0e"} />
-            </linearGradient>
-
-            {/* Sombra de escavação da encosta na borda da trilha */}
-            <linearGradient id="trailCutShadow" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#000000" stopOpacity="0.45" />
-              <stop offset="100%" stopColor="#000000" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-
-          {/* 1. MACIÇO ROCHOSO DISTANTE (Picos Alpinos Afiados com Faces de Luz e Sombra) */}
-          <g opacity={weather === "snow" ? 0.9 : weather === "rain" ? 0.75 : 0.88}>
-            <path
-              d="M-300 460 L-100 460 L60 300 L140 240 L210 320 L320 180 L440 290 L560 150 L680 270 L780 120 L890 230 L980 160 L1300 240 L1300 1200 L-300 1200 Z"
-              fill="url(#farPeaksGrad)"
-            />
-            {/* Faces de sombra nas encostas voltadas para a esquerda/norte */}
-            <path
-              d="M140 240 L60 300 L140 330 Z M320 180 L210 320 L320 330 Z M560 150 L440 290 L560 310 Z M780 120 L680 270 L780 290 Z M980 160 L890 230 L980 250 Z"
-              fill="url(#farPeaksShadow)"
-            />
-            {/* Cristas e nevados eternos nos picos do fundo */}
-            <polygon points="140,240 120,270 160,270" fill="#ffffff" opacity="0.95" />
-            <polygon points="320,180 295,225 345,225" fill="#ffffff" opacity="0.95" />
-            <polygon points="560,150 530,205 590,205" fill="#ffffff" opacity="0.95" />
-            <polygon points="780,120 745,175 815,175" fill="#ffffff" opacity="0.95" />
-            <polygon points="980,160 955,200 1005,200" fill="#ffffff" opacity="0.95" />
-            {/* Arestas de gelo e gretas glaciais */}
-            <path d="M140 240 L135 285 M320 180 L315 240 M560 150 L555 220 M780 120 L775 190" stroke="#bae6fd" strokeWidth="1.8" opacity="0.8" />
-          </g>
-
-          {/* 2. CRISTAS MÉDIAS (Paredões de Granito, Desfiladeiros e Floresta Conífera) */}
-          <path
-            d="M-300 500 L-60 500 L110 370 L240 430 L390 310 L520 390 L680 230 L840 340 L970 190 L1300 280 L1300 1200 L-300 1200 Z"
-            fill="url(#midMountainGrad)"
-            opacity="0.92"
-          />
-
-          {/* Fissuras e estratos verticais de rocha na crista média */}
-          <g stroke={weather === "snow" ? "#475569" : weather === "rain" ? "#022c22" : "#14532d"} strokeWidth="1.6" opacity="0.45" fill="none">
-            <path d="M390 310 L410 380 M520 390 L535 440 M680 230 L695 320 M840 340 L855 410" />
-            <path d="M380 340 L430 360 M670 270 L720 290 M830 370 L875 390" />
-          </g>
-
-          {/* Cascata alpina prateada descendo da geleira */}
-          <g opacity={weather === "snow" ? 0.4 : 0.85}>
-            <path
-              d="M560 215 Q550 250 565 290 T555 350 T570 410"
-              fill="none"
-              stroke="#e0f2fe"
-              strokeWidth="2.8"
-              strokeDasharray="8 3"
-              opacity="0.75"
-            />
-            <path
-              d="M562 215 Q552 250 567 290 T557 350"
-              fill="none"
-              stroke="#ffffff"
-              strokeWidth="1.4"
-            />
-            {/* Névoa na base da cascata */}
-            <circle cx="570" cy="410" r="14" fill="#ffffff" opacity="0.25" filter="blur(3px)" />
-          </g>
-
-          {/* 3. ENCOSTA PRINCIPAL (Pastagens Alpinas, Relevo Ondulado e Curvas de Nível) */}
-          <path
-            d="M-300 1200 L-300 520 L0 520 Q140 460 280 400 Q440 330 600 250 Q750 170 880 70 L980 90 L1000 130 L1300 130 L1300 1200 Z"
-            fill="url(#mainSlopeGrad)"
-          />
-
-          {/* Curvas de nível do terreno e dobras de pastagem */}
-          <path d="M-50 560 Q130 500 270 435 Q440 365 600 285 Q750 205 880 112" fill="none" stroke={weather === "snow" ? "#ffffff" : weather === "rain" ? "#86a99c" : "#86efac"} strokeWidth="2.5" opacity="0.28" />
-          <path d="M40 600 Q220 530 370 465 Q530 390 680 310 Q830 220 950 135" fill="none" stroke={weather === "snow" ? "#64748b" : weather === "rain" ? "#022c22" : "#14532d"} strokeWidth="3" opacity="0.22" />
-
-          {/* Geleira e campo de neve no topo do cume da vitória */}
-          <path d="M780 190 Q870 70 940 76 Q985 110 1000 150 L1000 310 L760 310 Z" fill="url(#summitSnowGrad)" stroke="#cbd5e1" strokeWidth="1.8" />
-          <path d="M840 140 Q900 110 970 115" fill="none" stroke="#94a3b8" strokeWidth="1.5" opacity="0.6" />
-          <path d="M820 170 Q890 145 950 155" fill="none" stroke="#94a3b8" strokeWidth="1.5" opacity="0.6" />
-
-          {/* 4. PINHEIROS E CONÍFERAS ALPINAS REALISTAS (Com camadas e leve balanço) */}
-          {[
-            { x: 170, y: 440, s: 0.95 }, { x: 220, y: 465, s: 1.15 }, { x: 280, y: 415, s: 0.85 },
-            { x: 410, y: 345, s: 0.9 }, { x: 475, y: 375, s: 1.05 }, { x: 610, y: 275, s: 0.8 },
-            { x: 660, y: 295, s: 0.95 }, { x: 50, y: 565, s: 1.35 }, { x: 320, y: 525, s: 1.25 },
-            { x: 550, y: 475, s: 1.15 }, { x: 740, y: 365, s: 1.05 }, { x: 860, y: 240, s: 0.75 },
-          ].map((tree, i) => (
-            <g key={`tree-${i}`} transform={`translate(${tree.x}, ${tree.y}) scale(${tree.s})`} className="trail-pine-breeze">
-              {/* Sombra no solo */}
-              <ellipse cx="0" cy="18" rx="14" ry="4" fill="#000000" opacity="0.25" />
-              {/* Tronco robusto de pinheiro */}
-              <rect x="-3.5" y="10" width="7" height="15" rx="1.5" fill="#451a03" stroke="#291103" strokeWidth="0.8" />
-              {/* Copa de conífera em camadas triangulares densas */}
-              <polygon points="0,-24 -18,-4 -5,-4 -22,12 22,12 5,-4 18,-4" fill={weather === "snow" ? "#334155" : "#14532d"} stroke={weather === "snow" ? "#1e293b" : "#0f381e"} strokeWidth="1" />
-              <polygon points="0,-24 -13,-9 -3,-9 -16,4 16,4 3,-9 13,-9" fill={weather === "snow" ? "#475569" : "#166534"} />
-              <polygon points="0,-24 -8,-14 -2,-14 -10,-3 10,-3 2,-14 8,-14" fill={weather === "snow" ? "#64748b" : "#15803d"} />
-              {/* Neve acumulada nos ramos */}
-              {weather === "snow" && (
-                <>
-                  <polygon points="0,-24 -9,-14 9,-14" fill="#ffffff" />
-                  <path d="M-15 4 Q0 -2 15 4" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
-                  <path d="M-20 12 Q0 6 20 12" fill="none" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" />
-                </>
-              )}
-            </g>
-          ))}
-
-          {/* 5. ROCHAS DE GRANITO, TALUS E CASCALHO DA MONTANHA */}
-          {[
-            { x: 350, y: 395, s: 1.1 }, { x: 530, y: 305, s: 0.85 }, { x: 775, y: 172, s: 0.9 },
-            { x: 190, y: 490, s: 0.95 }, { x: 670, y: 340, s: 1.0 }, { x: 825, y: 220, s: 0.8 },
-          ].map((rock, idx) => (
-            <g key={`rock-${idx}`} transform={`translate(${rock.x}, ${rock.y}) scale(${rock.s})`}>
-              <ellipse cx="0" cy="8" rx="24" ry="6" fill="#000000" opacity="0.22" />
-              {/* Rocha facetada com luz e sombra geológica */}
-              <path d="M-24 8 L-16 -6 L-5 -3 L4 -16 L17 -7 L26 8 Z" fill={weather === "snow" ? "#64748b" : "#475569"} stroke={weather === "snow" ? "#475569" : "#334155"} strokeWidth="1.2" />
-              <path d="M-16 -6 L-5 -3 L4 -16 L10 -5 L1 0 L-8 -1 Z" fill={weather === "snow" ? "#f8fafc" : "#94a3b8"} opacity="0.9" />
-              {/* Cascalho e pedrinhas ao redor da base da rocha */}
-              <circle cx="-20" cy="9" r="2.2" fill={weather === "snow" ? "#94a3b8" : "#64748b"} />
-              <circle cx="22" cy="7" r="1.8" fill={weather === "snow" ? "#94a3b8" : "#64748b"} />
-              <circle cx="12" cy="10" r="1.5" fill={weather === "snow" ? "#cbd5e1" : "#78716c"} />
-            </g>
-          ))}
-
-          {/* 6. A TRILHA REALISTA (Corte na Encosta + Leito de Terra + Pedras de Borda + Marcação Alpina) */}
-          {/* Sombra de escavação da encosta na borda da trilha */}
-          <path
-            d={CURIOUS_TRAIL_PATH}
-            fill="none"
-            stroke="rgba(45, 28, 12, 0.38)"
-            strokeWidth="23"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            transform="translate(0, 5)"
-          />
-
-          {/* Terra batida integrada à encosta, com bordas de solo exposto */}
-          <path
-            d={CURIOUS_TRAIL_PATH}
-            fill="none"
-            stroke="url(#trailEarthGrad)"
-            strokeWidth="17"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity="0.96"
-          />
-
-          {/* Faixa central de terra mais escura, como marcas de uso real */}
-          <path
-            d={CURIOUS_TRAIL_PATH}
-            fill="none"
-            stroke={weather === "snow" ? "#94a3b8" : weather === "rain" ? "#3f2614" : "#8b5a2b"}
-            strokeWidth="9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity="0.8"
-          />
-
-          {/* Pedras claras e pequenas marcas no leito de terra */}
-          <path
-            d={CURIOUS_TRAIL_PATH}
-            fill="none"
-            stroke={weather === "snow" ? "#f8fafc" : weather === "rain" ? "#a8794e" : "#e7c68b"}
-            strokeWidth="2"
-            strokeDasharray="1 12"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity="0.9"
-          />
+        {/* A mata: arte do cenário, com o clima aplicado por cima (filtro + névoa/geada) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={TRAIL_SCENE_SRC}
+          alt=""
+          draggable={false}
+          className="trail-scene-img absolute inset-0 h-full w-full pointer-events-none"
+          style={{ filter: WEATHER_FILTER[weather] }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none transition-opacity duration-[1200ms]"
+          style={{
+            opacity: weather === "sunny" ? 0 : 1,
+            background:
+              weather === "rain"
+                ? "linear-gradient(180deg, rgba(30,48,66,0.5) 0%, rgba(55,78,92,0.28) 55%, rgba(30,50,60,0.32) 100%)"
+                : "linear-gradient(180deg, rgba(214,228,255,0.5) 0%, rgba(232,241,255,0.34) 60%, rgba(255,255,255,0.28) 100%)",
+          }}
+        />
+        {/* Trilha coberta de neve / molhada (o desenho da trilha é o mesmo caminho do jogo) */}
+        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full pointer-events-none overflow-visible">
+          {weather === "snow" && (
+            <>
+              <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#ffffff" strokeWidth="46" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+              <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#eaf2ff" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="60 70" opacity="0.7" />
+            </>
+          )}
+          {weather === "rain" && <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#7fa7c4" strokeWidth="26" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="22 120" opacity="0.45" />}
           <path ref={setPathEl} d={CURIOUS_TRAIL_PATH} fill="none" stroke="transparent" strokeWidth="1" />
-
-          {/* Contenção de encosta nas curvas fechadas (pranchas de madeira rústica e estacas) */}
-          {[
-            { x: 310, y: 270, r: -22 },
-            { x: 445, y: 350, r: 18 },
-            { x: 555, y: 210, r: -15 },
-          ].map((bar, i) => (
-            <g key={`bar-${i}`} transform={`translate(${bar.x}, ${bar.y}) rotate(${bar.r})`}>
-              <line x1="-16" y1="9" x2="16" y2="9" stroke="#451a03" strokeWidth="3.5" strokeLinecap="round" />
-              <circle cx="-12" cy="11" r="2" fill="#18181b" />
-              <circle cx="12" cy="11" r="2" fill="#18181b" />
-            </g>
-          ))}
-
-          {/* Totens de trilha (Cairns de pedra com marcação de trilha alpina vermelho-e-branco) */}
-          {[
-            { x: 190, y: 450, s: 0.8 },
-            { x: 380, y: 370, s: 0.75 },
-            { x: 640, y: 235, s: 0.7 },
-            { x: 810, y: 150, s: 0.7 },
-          ].map((cairn, i) => (
-            <g key={`cairn-${i}`} transform={`translate(${cairn.x}, ${cairn.y}) scale(${cairn.s})`}>
-              {/* Pilha de pedras sobrepostas (Totem / Cairn) */}
-              <ellipse cx="0" cy="4" rx="14" ry="5" fill="#64748b" stroke="#334155" strokeWidth="1" />
-              <ellipse cx="-1" cy="-2" rx="11" ry="4" fill="#94a3b8" stroke="#475569" strokeWidth="1" />
-              <ellipse cx="0" cy="-7" rx="8" ry="3.5" fill="#cbd5e1" stroke="#64748b" strokeWidth="1" />
-              <ellipse cx="0" cy="-11" rx="5" ry="2.5" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
-              {/* Marcação clássica de trilha alpina GR: Branco / Vermelho / Branco */}
-              <rect x="-2.5" y="-1" width="5" height="1.8" fill="#ffffff" />
-              <rect x="-2.5" y="0.8" width="5" height="1.8" fill="#dc2626" />
-              <rect x="-2.5" y="2.6" width="5" height="1.8" fill="#ffffff" />
-            </g>
-          ))}
         </svg>
 
         {/* Bichos vivos */}
         <svg ref={svgRef} className="absolute inset-0 w-full h-full z-20 pointer-events-none" aria-hidden />
-        <div className="absolute inset-0 z-20" onClick={handleMapClick} onPointerMove={handleMapMove} />
+        <div className="absolute inset-0 z-20" onClick={handleMapClick} />
         <div
           ref={bubbleRef}
           className="absolute left-0 top-0 z-30 pointer-events-none transition-opacity duration-200"
@@ -683,39 +506,47 @@ export function CuriousTrailMountain({
           )}
         </div>
 
-        {/* ---------- AS 7 ESTAÃ‡Ã•ES (ficam sobre a curva da trilha) ---------- */}
+        {/* Avalanche (onda de neve que persegue o aluno) */}
+        <svg
+          ref={avSvgRef}
+          viewBox={`0 0 ${VB_W} ${VB_H}`}
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-full z-[38] pointer-events-none overflow-visible"
+          aria-hidden
+        />
+
+        {/* ---------- AS 7 ESTAÇÕES (ficam sobre a curva da trilha) ---------- */}
         {TRAIL_LEVELS.map((cfg) => {
           const isCurrent = cfg.level === currentLevel;
           const isUnlocked = cfg.level <= unlockedLevel;
           const isDone = completedLevels.includes(cfg.level);
-          const pos = pointPct(CAMP_FRACS[cfg.level - 1] * total) ?? cfg.coord;
+          const pos = pointPct(MARKER_FRACS[cfg.level - 1] * total);
+          if (!pos) return null;
           const clickable = !playing && isUnlocked && !!onSelectLevel;
           return (
             <button
               type="button"
               key={cfg.level}
-              onClick={() => clickable && onSelectLevel?.(cfg.level)}
+              onClick={() => clickable && !dragRef.current?.moved && onSelectLevel?.(cfg.level)}
               disabled={!clickable}
               aria-label={`Nível ${cfg.level}, ${cfg.name}, ${cfg.altitude} metros${isDone ? ", concluído" : isUnlocked ? ", desbloqueado" : ", bloqueado"}`}
               aria-current={isCurrent ? "step" : undefined}
               className={cn(
                 "trail-waypoint absolute z-20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300 rounded-full group",
                 clickable ? "cursor-pointer" : "cursor-default",
-                !isUnlocked && "opacity-60"
+                !isUnlocked && "opacity-70"
               )}
               style={{ left: `${pos.x}%`, top: `${pos.y}%`, transform: `translate(-50%, -50%) scale(${inv})`, transformOrigin: "50% 50%" }}
             >
-              {/* Estaca de madeira rústica e base de pedra do marco */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-2 h-7 bg-amber-950/80 rounded-sm -z-10 shadow-sm" />
               <span
                 className={cn(
-                  "relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full font-black text-xs sm:text-sm shadow-xl transition-all duration-300 border-2",
+                  "relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full font-black text-xs sm:text-sm shadow-xl transition-all duration-300 border-2",
                   isCurrent && !playing
                     ? "bg-gradient-to-br from-amber-400 via-orange-500 to-amber-600 text-white border-amber-200 ring-4 ring-amber-400/70 animate-pulse scale-110 shadow-amber-500/50"
                     : isDone
                     ? "bg-gradient-to-br from-emerald-500 to-emerald-700 text-white border-emerald-300 shadow-emerald-900/40"
                     : isUnlocked
-                    ? "bg-gradient-to-br from-sky-500 to-blue-700 text-white border-sky-300 shadow-blue-900/40 group-hover:scale-105"
+                    ? "bg-gradient-to-br from-amber-300 to-amber-500 text-slate-900 border-white shadow-amber-900/40 group-hover:scale-105"
                     : "bg-gradient-to-br from-slate-500 to-slate-700 text-slate-300 border-slate-400 shadow-slate-900/40",
                   isCurrent && playing && "ring-4 ring-amber-400/80 scale-105"
                 )}
@@ -724,22 +555,35 @@ export function CuriousTrailMountain({
               </span>
               <span
                 className={cn(
-                  "absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap shadow-md border pointer-events-none transition-colors",
-                  isCurrent ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-300 shadow-amber-500/30" : isDone ? "bg-emerald-700/95 text-white border-emerald-400" : "bg-slate-900/85 text-slate-100 border-slate-700"
+                  "absolute top-1/2 left-full ml-1.5 -translate-y-1/2 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap shadow-md border pointer-events-none transition-colors",
+                  isCurrent ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-300" : isDone ? "bg-emerald-700/95 text-white border-emerald-400" : "bg-[#14193d]/90 text-slate-100 border-slate-600"
                 )}
               >
-                N{cfg.level}
-                <span className="hidden sm:inline"> · {cfg.altitude}m</span>
+                {cfg.name} · {cfg.altitude.toLocaleString("pt-BR")}m
               </span>
             </button>
           );
         })}
 
-        {/* ---------- OBJETOS DO NÃVEL, NO PRÃ“PRIO MAPA ---------- */}
+        {/* ---------- CASINHA DO CUME: o aluno entra feliz quando termina a trilha ---------- */}
+        <div
+          className="absolute z-20 pointer-events-none"
+          style={{ left: `${hutPct.x}%`, top: `${hutPct.y}%`, transform: `translate(-50%, -100%) scale(${inv})`, transformOrigin: "50% 100%" }}
+        >
+          <span className="mb-6 block whitespace-nowrap rounded-full border border-amber-300/70 bg-[#14193d]/90 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-300 shadow-lg">
+            🏠 Casinha do Cume
+          </span>
+        </div>
+        <div
+          className={cn("absolute z-[21] pointer-events-none rounded-full transition-opacity duration-700", enterHouse || summitDone ? "opacity-100 trail-house-glow" : "opacity-0")}
+          style={{ left: `${doorPct.x}%`, top: `${doorPct.y}%`, width: 46, height: 46, transform: `translate(-50%, -60%) scale(${inv})`, background: "radial-gradient(circle, rgba(255,226,140,0.95) 0%, rgba(255,200,90,0.5) 40%, rgba(255,200,90,0) 70%)" }}
+        />
+
+        {/* ---------- OBJETOS DO NÍVEL, NO PRÓPRIO MAPA ---------- */}
         {playing && total > 0 && hasCurrent && curItem && (() => {
           const pos = pointPct(elemLen(elementIndex));
           if (!pos) return null;
-          const below = pos.y < 30;
+          const below = (pos.y / 100) * VB_H < 320;
           const revealed = roundState === "correct" || roundState === "reveal";
 
           return (
@@ -783,52 +627,31 @@ export function CuriousTrailMountain({
           );
         })()}
 
-        {/* ---------- O ALUNO: caminha pela curva da trilha ---------- */}
-        <div ref={studentRef} className="absolute z-[35] pointer-events-none" style={{ left: `${currentCfg.coord.x}%`, top: `${currentCfg.coord.y}%` }}>
-          <div style={{ transform: `translate(-50%, -88%) scale(${inv})`, transformOrigin: "50% 88%" }}>
+        {/* ---------- O ALUNO: caminha pela curva da trilha e, no fim, entra na casinha ---------- */}
+        <div ref={studentRef} className="absolute z-[35] pointer-events-none" style={{ left: "0%", top: "0%" }}>
+          <div
+            style={{
+              transform: `translate(-50%, -88%) scale(calc(${inv} * ${enterHouse ? 0.45 : 1}))`,
+              transformOrigin: "50% 88%",
+              opacity: enterHouse ? 0 : 1,
+              transition: "opacity 1.1s ease-in 0.5s, transform 1.4s ease-in",
+            }}
+          >
             <CuriousTrailStudent
               weather={weather}
               hasUmbrella={currentCfg.hasUmbrella}
               hasSnowGear={currentCfg.hasSnowGear}
               isWalking={walking}
               isCheering={isCheering}
-              isRaisingFlag={isRaisingFlag || (currentLevel === 7 && summitDone)}
-              flagProgress={flagProgress}
               size={studentPx}
               facing={studentFacing}
               incline={studentIncline}
             />
           </div>
         </div>
-
-        {/* ---------- BANDEIRA DA VITÃ“RIA NO CUME ---------- */}
-        <div
-          className="absolute z-20 pointer-events-none"
-          style={{ right: "3%", top: "3%", transform: `scale(${inv})`, transformOrigin: "100% 0%" }}
-          title="Cume da Vitória · Hasteie a bandeira ao passar no Nível 7!"
-        >
-          <div className="flex flex-col items-center">
-            <div className="relative w-1.5 h-16 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 rounded-full shadow">
-              <div className="absolute -top-2 -left-1.5 w-4 h-4 rounded-full bg-amber-400 border border-amber-600 shadow-md" />
-              {(summitDone || isRaisingFlag) && (
-                <div
-                  className="absolute left-1.5 top-0 flex w-12 h-8 rounded-sm overflow-hidden shadow-lg border border-slate-900/20 animate-[trailFlagWiggle_2.2s_ease-in-out_infinite]"
-                  style={{ transition: "top 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)", top: `${100 - flagProgress}%` }}
-                >
-                  <div className="w-1/3 h-full bg-[#2563eb]" />
-                  <div className="w-1/3 h-full bg-[#ffffff]" />
-                  <div className="w-1/3 h-full bg-[#dc2626]" />
-                </div>
-              )}
-            </div>
-            <span className="mt-1 whitespace-nowrap px-2 py-0.5 rounded-full bg-slate-900/90 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-400/50">
-              🏔️ Cume
-            </span>
-          </div>
-        </div>
       </div>
 
-      {/* ================= CLIMA (fixo na tela, nÃ£o dÃ¡ zoom) ================= */}
+      {/* ================= CLIMA (fixo na tela, não dá zoom) ================= */}
       {weather === "rain" && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
           <svg className="trail-rain-layer absolute inset-0 h-full w-full opacity-60">
@@ -856,6 +679,12 @@ export function CuriousTrailMountain({
           </svg>
         </div>
       )}
+      {/* aviso visual da avalanche: bordas geladas pulsando conforme o perigo */}
+      <div
+        ref={vignetteRef}
+        className="trail-avalanche-vignette absolute inset-0 z-[12] pointer-events-none"
+        style={{ opacity: 0, background: "radial-gradient(ellipse at center, rgba(255,255,255,0) 45%, rgba(190,215,255,0.75) 100%)" }}
+      />
 
       {/* ================= HUD SUPERIOR ================= */}
       <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 z-20 pointer-events-none">
@@ -880,6 +709,12 @@ export function CuriousTrailMountain({
           </div>
         )}
       </div>
+
+      {!playing && (
+        <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-slate-900/70 px-3 py-1 text-[10px] font-bold text-slate-200 backdrop-blur pointer-events-none">
+          ↕ Arraste para explorar a mata
+        </div>
+      )}
 
       {/* ================= CAMADA DE JOGO (alternativas, contagem, resultados) ================= */}
       {children && <div className="absolute inset-0 z-50 pointer-events-none">{children}</div>}

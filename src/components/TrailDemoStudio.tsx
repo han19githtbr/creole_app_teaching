@@ -18,6 +18,7 @@ import {
   type DemoImages,
 } from "@/lib/gameDemoVideo";
 import type { ExportResult } from "@/lib/gameDemoExport";
+import { TrailVideoWorld, loadTrailScene } from "@/lib/trailVideoWorld";
 import { TRAIL_LEVELS, TRAIL_THEMES } from "@/lib/curiousTrailData";
 import { SOCIAL_PLATFORMS, sanitizeSocialHandle, type SocialPlatform } from "@/lib/socialLinks";
 import { Download, Loader2, Pause, Play, Sparkles } from "lucide-react";
@@ -88,6 +89,30 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
     };
   }, [plan, imageLoadAttempt]);
 
+  // Arte da mata (a mesma do jogo) e camada dinâmica (bichos + avalanche), geradas pelo mesmo motor do jogo
+  const sceneRef = useRef<HTMLImageElement | null>(null);
+  const [sceneReady, setSceneReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    loadTrailScene()
+      .then((img) => {
+        if (cancelled) return;
+        sceneRef.current = img;
+        setSceneReady(true);
+      })
+      .catch((e) => console.error(e));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const world = useMemo(() => new TrailVideoWorld(plan), [plan]);
+  const worldRef = useRef(world);
+  const dynRef = useRef<{ img: HTMLImageElement | null; busy: boolean }>({ img: null, busy: false });
+  useEffect(() => {
+    worldRef.current = world;
+    dynRef.current = { img: null, busy: false };
+  }, [world]);
+
   const planRef = useRef(plan);
   const imagesRef = useRef(images);
   useEffect(() => {
@@ -106,8 +131,25 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext("2d");
       if (!canvas || !ctx) return;
+      // camada dinâmica: pede o quadro dos bichos/avalanche (assíncrono) e usa o último pronto
+      const d = dynRef.current;
+      if (!d.busy) {
+        d.busy = true;
+        const wld = worldRef.current;
+        void wld
+          .frameImage(t, canvas.width, canvas.height)
+          .then((img) => {
+            if (worldRef.current === wld) d.img = img;
+          })
+          .catch(() => undefined)
+          .finally(() => {
+            d.busy = false;
+          });
+      }
       renderTrailDemoFrame(ctx, canvas.width, canvas.height, t, planRef.current, {
         images: imagesRef.current,
+        scene: sceneRef.current,
+        dyn: d.img,
       });
     };
 
@@ -147,7 +189,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
 
   // Exportação em MP4 para redes sociais
   async function handleExport() {
-    if (imagesLoading || imagesError || !allPlanImagesLoaded) return;
+    if (imagesLoading || imagesError || !allPlanImagesLoaded || !sceneReady) return;
     setExporting(true);
     setProgress(0);
     setError(null);
@@ -184,13 +226,17 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       });
 
       recorder.start();
+      const exportWorldRef = new TrailVideoWorld(plan);
 
       const fps = 30;
       const totalFrames = Math.ceil(plan.total * fps);
       for (let f = 0; f < totalFrames; f++) {
         if (controller.signal.aborted) throw new Error("Cancelado");
         const tFrame = f / fps;
-        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images });
+        // exportação quadro a quadro, com o mundo recomeçando do zero (mesma simulação da prévia)
+        const exportWorld = exportWorldRef;
+        const dyn = await exportWorld.frameImage(tFrame, spec.w, spec.h);
+        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: sceneRef.current, dyn });
         setProgress(Math.round((f / totalFrames) * 100));
         await new Promise((r) => setTimeout(r, 16));
       }
@@ -299,12 +345,13 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         {/* DIFICULDADE */}
         <div className="space-y-1">
           <label className="text-xs font-bold text-[var(--text-secondary)]">Dificuldade da partida</label>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-5">
             {([
               ["easy", "Fácil", "20s"],
               ["intermediate", "Intermediário", "15s"],
               ["master", "Master", "10s"],
               ["native", "Nativo", "6s"],
+              ["avalanche", "Avalanche 🏔️", "sem tempo"],
             ] as const).map(([difficulty, label, seconds]) => (
               <button
                 key={difficulty}
@@ -317,7 +364,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
                 }`}
               >
                 <span className="block">{label}</span>
-                <span className="block text-[10px] opacity-70">{seconds} por objeto</span>
+                <span className="block text-[10px] opacity-70">{difficulty === "avalanche" ? "avalanche no lugar do tempo" : `${seconds} por objeto`}</span>
               </button>
             ))}
           </div>
@@ -383,7 +430,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           <Button
             type="button"
             onClick={handleExport}
-            disabled={exporting || imagesLoading || Boolean(imagesError) || !allPlanImagesLoaded}
+            disabled={exporting || imagesLoading || Boolean(imagesError) || !allPlanImagesLoaded || !sceneReady}
             className="w-full rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 py-3.5 text-sm font-black text-white shadow-lg hover:opacity-95"
           >
             {exporting ? (

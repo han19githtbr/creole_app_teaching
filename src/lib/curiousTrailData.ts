@@ -32,29 +32,14 @@ export interface TrailLevelConfig {
   xpBase: number;
 }
 
-/**
- * Pontos (em % do cenário) na encosta onde os bichos passeiam.
- * Correspondem às marcações vermelhas no mapa da montanha.
- */
-export const TRAIL_ROAM_SPOTS: { x: number; y: number }[] = [
-  { x: 58, y: 56 },
-  { x: 65, y: 66 },
-  { x: 73, y: 39 },
-  { x: 83, y: 62 },
-  { x: 90, y: 55 },
-  { x: 82, y: 84 },
-  { x: 68, y: 89 },
-  { x: 50, y: 82 },
-];
-
 /** Bichos extras que aparecem e somem da montanha (além dos 7 das estações). */
 export const EXTRA_TRAIL_ANIMALS: TrailAnimal[] = [
-  { id: "deer", name: "Le Cerf", namePt: "Cervo", emoji: "🦌", quote: "Je traverse la forêt en silence !", soundType: "rustle", badge: "Marcheur discret" },
+  { id: "deer", name: "Le Cerf", namePt: "Veado", emoji: "🦌", quote: "Je traverse la forêt en silence !", soundType: "rustle", badge: "Marcheur discret" },
   { id: "fox", name: "Le Renard roux", namePt: "Raposa", emoji: "🦊", quote: "Je suis rusé comme un renard !", soundType: "rustle", badge: "Esprit malin" },
   { id: "hedgehog", name: "Le Hérisson", namePt: "Ouriço", emoji: "🦔", quote: "Doucement, doucement, j'avance !", soundType: "rustle", badge: "Petit explorateur" },
-  { id: "butterfly", name: "Le Papillon", namePt: "Borboleta", emoji: "🦋", quote: "Je vole de fleur en fleur !", soundType: "chirp", badge: "Ailes colorées" },
-  { id: "turtle", name: "La Tortue", namePt: "Tartaruga", emoji: "🐢", quote: "Lentement mais sûrement !", soundType: "bell", badge: "Patience d'or" },
-  { id: "bee", name: "L'Abeille", namePt: "Abelha", emoji: "🐝", quote: "Bzzz ! Je cueille le miel du matin.", soundType: "chirp", badge: "Travailleuse" },
+  { id: "monkey", name: "Le Singe farceur", namePt: "Macaco", emoji: "🐒", quote: "Ouh ouh ! C'est ma branche, ici !", soundType: "chirp", badge: "Acrobate de la forêt" },
+  { id: "macaw", name: "L'Ara rouge", namePt: "Arara-vermelha", emoji: "🦜", quote: "Bonjour ! Bonjour ! Répète après moi !", soundType: "chirp", badge: "Plumes de feu" },
+  { id: "snowhare", name: "Le Lièvre des neiges", namePt: "Lebre-da-neve", emoji: "🐇", quote: "Brrr ! J'adore le froid, pas toi ?", soundType: "rustle", badge: "Manteau blanc" },
 ];
 
 export const TRAIL_LEVELS: TrailLevelConfig[] = [
@@ -137,11 +122,11 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     hasUmbrella: true, // Começa a chover e o aluno abre o guarda-chuva!
     hasSnowGear: false,
     animal: {
-      id: "frog",
-      name: "La Grenouille rieuse",
-      namePt: "Sapinho da chuva",
-      emoji: "🐸",
-      quote: "Coâ ! Ouvre ton parapluie, la pluie commence à tomber !",
+      id: "capybara",
+      name: "Le Capybara tranquille",
+      namePt: "Capivara da chuva",
+      emoji: "🦫",
+      quote: "Plouf ! J'adore la pluie. Ouvre ton parapluie !",
       soundType: "croak",
       badge: "Goutte d'argent",
     },
@@ -160,12 +145,12 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     hasUmbrella: true, // Chuva continua até o fim do nível 5
     hasSnowGear: false,
     animal: {
-      id: "snail",
-      name: "L'Escargot voyageur",
-      namePt: "Caracol viajante",
-      emoji: "🐌",
+      id: "toucan",
+      name: "Le Toucan bavard",
+      namePt: "Tucano viajante",
+      emoji: "🦜",
       quote: "La pluie persiste ! Garde ton parapluie bien haut !",
-      soundType: "rustle",
+      soundType: "chirp",
       badge: "Courage sous l'orage",
     },
     coord: { x: 56, y: 34 },
@@ -183,12 +168,12 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     hasUmbrella: false,
     hasSnowGear: true, // Aluno coloca gorro e cachecol quentinho
     animal: {
-      id: "chamois",
-      name: "Le Chamois agile",
-      namePt: "Camurça-dos-alpes",
-      emoji: "🐐",
+      id: "arcticfox",
+      name: "Le Renard polaire",
+      namePt: "Raposa-do-ártico",
+      emoji: "🦊",
       quote: "Regarde, la neige tombe ! Mets ton bonnet et ton écharpe !",
-      soundType: "bell",
+      soundType: "rustle",
       badge: "Pas de givre",
     },
     coord: { x: 74, y: 22 },
@@ -215,7 +200,7 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
       badge: "Conquérant du ciel",
     },
     coord: { x: 88, y: 10 },
-    description: "O topo nevado do mundo! Reconheça os 7 elementos e hasteie a bandeira da vitória!",
+    description: "O topo nevado do mundo! Reconheça os 7 elementos e entre na casinha do cume, vitorioso!",
     badgeEmoji: "🏔️",
     xpBase: 600,
   },

@@ -21,9 +21,27 @@ import {
   TRAIL_THEMES,
   type TrailProgressState,
 } from "@/lib/curiousTrailData";
-import { CuriousTrailMountain } from "./CuriousTrailMountain";
+import { CuriousTrailMountain, type AvalancheLive } from "./CuriousTrailMountain";
+import { CAMP_FRACS } from "@/lib/curiousTrailGeometry";
+import {
+  makeAvalancheTrack,
+  initAvalanche,
+  stepAvalanche,
+  studentFractionAt,
+  applyAnswerToAvalanche,
+  clampAvalancheGap,
+  avalancheDanger,
+  avalancheAlert,
+  avalancheDistanceMeters,
+  avalancheSpeed,
+  avalancheSecondsPerElement,
+  type AvalancheState,
+  type AvalancheTrack,
+  type AvalancheLevel,
+} from "@/lib/trailAvalanche";
 import {
   TrailAnswerDock,
+  TrailAvalancheCaughtOverlay,
   TrailCountdownOverlay,
   TrailLevelCompleteOverlay,
   TrailPlayHud,
@@ -79,14 +97,15 @@ const DIFFICULTY_CONFIGS: Record<TrailDifficulty, DifficultyConfig> = {
     desc: "6s por elemento · Reflexo de nativo",
     color: "from-violet-600 to-indigo-700",
   },
+  // Nível extra, depois do Nativo: sem cronômetro por elemento. Uma avalanche sobe a trilha atrás do aluno.
   avalanche: {
     id: "avalanche",
     label: "Avalanche",
-    emoji: "🌨️",
-    seconds: 0,
+    emoji: "🏔️",
+    seconds: 12,
     multiplier: 3.0,
-    desc: "A neve avança pela trilha atrás de você",
-    color: "from-sky-500 to-blue-800",
+    desc: "Sem cronômetro · uma avalanche persegue você",
+    color: "from-sky-500 to-blue-700",
   },
 };
 
@@ -238,6 +257,20 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   const progressRef = useRef(trailProgress);
   const levelRef = useRef(1);
   const advancedForRef = useRef(-1); // índice do objeto cujo avanço já foi feito (evita avanço duplo)
+  // Avalanche (modo extra): estado lógico em refs; o mapa lê `avalancheLive` a cada quadro
+  const isAvalanche = difficulty === "avalanche";
+  const avalancheLive = useRef<AvalancheLive>({ active: false, front: 0, vel: 0, stamp: 0, danger: 0 });
+  const avStateRef = useRef<AvalancheState>({ front: 0, caught: false });
+  const avTrackRef = useRef<AvalancheTrack | null>(null);
+  const roundStartRef = useRef(0);
+  const lastTickSecRef = useRef(-1);
+  const phaseRef = useRef(phase);
+  const roundStateRef = useRef(roundState);
+  const climbDoneRef = useRef(climbDone);
+  phaseRef.current = phase;
+  roundStateRef.current = roundState;
+  climbDoneRef.current = climbDone;
+  const [avInfo, setAvInfo] = useState<{ danger: number; alert: AvalancheLevel; meters: number }>({ danger: 0, alert: "calm", meters: 0 });
   indexRef.current = elementIndex;
   itemsRef.current = levelItems;
   progressRef.current = trailProgress;
@@ -245,6 +278,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
 
   // Animação do aluno e da montanha
   const [isCheering, setIsCheering] = useState<boolean>(false);
+  const [enterHouse, setEnterHouse] = useState<boolean>(false);
   const [confetti, setConfetti] = useState<boolean>(false);
   const [activeAnimalGreeting, setActiveAnimalGreeting] = useState<string | null>(null);
   const [muted, setMuted] = useState<boolean>(() => soundEffects.isMuted());
@@ -262,14 +296,75 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     soundEffects.setMuted(next);
   }
 
+  /** Publica a posição/velocidade da avalanche para o mapa desenhar de forma suave. */
+  function syncAvalancheLive(calm: boolean, moving = true) {
+    const tr = avTrackRef.current;
+    if (!tr) return;
+    const st = avStateRef.current;
+    const sf = studentFractionAt(tr, indexRef.current, climbDoneRef.current);
+    const danger = avalancheDanger(st, tr, sf);
+    avalancheLive.current = { active: true, front: st.front, vel: moving && !st.caught ? avalancheSpeed(tr, calm) : 0, stamp: performance.now(), danger };
+    setAvInfo((prev) => {
+      const alert = avalancheAlert(st, tr, sf);
+      const meters = avalancheDistanceMeters(st, sf);
+      return prev.alert === alert && Math.abs(prev.danger - danger) < 0.02 && prev.meters === meters ? prev : { danger, alert, meters };
+    });
+  }
+  function startAvalanche(lvl: number, count: number) {
+    const tr = makeAvalancheTrack(CAMP_FRACS[lvl - 1], CAMP_FRACS[lvl], count, lvl);
+    avTrackRef.current = tr;
+    avStateRef.current = initAvalanche(tr);
+    syncAvalancheLive(true, false);
+  }
+  function stopAvalanche() {
+    avalancheLive.current = { ...avalancheLive.current, active: false, vel: 0 };
+    avTrackRef.current = null;
+    setAvInfo({ danger: 0, alert: "calm", meters: 0 });
+  }
+
+  // A avalanche sobe a trilha atrás do aluno (no lugar do cronômetro)
+  useEffect(() => {
+    if (!isAvalanche || phase !== "playing") return;
+    const DT = 0.1;
+    const id = setInterval(() => {
+      const tr = avTrackRef.current;
+      const st = avStateRef.current;
+      if (!tr || st.caught) return;
+      if (climbDoneRef.current) {
+        avalancheLive.current = { ...avalancheLive.current, active: false, vel: 0 };
+        return;
+      }
+      const answering = roundStateRef.current === "asking" || roundStateRef.current === "retry";
+      const sf = studentFractionAt(tr, indexRef.current, false);
+      const caught = stepAvalanche(st, DT, tr, sf, !answering);
+      syncAvalancheLive(!answering);
+      if (caught) {
+        soundEffects.playTimeUp();
+        setStreak(0);
+        setPhase("avalanche_caught");
+        return;
+      }
+      if (avalancheAlert(st, tr, sf) === "danger" && answering) {
+        const sec = Math.floor(performance.now() / 1000);
+        if (sec !== lastTickSecRef.current) {
+          lastTickSecRef.current = sec;
+          soundEffects.playClockTick(true);
+        }
+      }
+    }, DT * 1000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAvalanche, phase]);
+
   function prepareRound(item: CestQuoiItem) {
-    const isHard = difficulty === "master" || difficulty === "native";
+    const isHard = difficulty === "master" || difficulty === "native" || difficulty === "avalanche";
     setOptions(buildWordOptions(item, allPool, isHard));
     setRoundState("asking");
     setWrongPicks([]);
     attemptRef.current = 1;
     setTimeLeft(diffCfg.seconds * 1000);
-    setTimerRunning(difficulty !== "avalanche");
+    setTimerRunning(!isAvalanche);
+    roundStartRef.current = performance.now();
     setSpeedBonusText(null);
   }
 
@@ -339,6 +434,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     }
 
     soundEffects.playRoundStart();
+    stopAvalanche();
     setCurrentLevel(lvl);
     levelRef.current = lvl;
 
@@ -404,6 +500,9 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     setIsCheering(false);
     setLevelXp(0);
     levelXpRef.current = 0;
+    setEnterHouse(false);
+    if (isAvalanche) startAvalanche(lvl, itemsForThisLevel.length);
+    else stopAvalanche();
     setCountdownNum(3);
     setPhase("countdown");
 
@@ -431,6 +530,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   // Próximo objeto (o aluno caminha pela trilha) ou fim do nível (sobe até a próxima estação)
   function advanceElement() {
     // idempotente: o timer normal e o "vigia" podem chamar; só o primeiro vale
+    if (phaseRef.current !== "playing") return;
     if (advancedForRef.current === indexRef.current) return;
     advancedForRef.current = indexRef.current;
     const nextIdx = indexRef.current + 1;
@@ -449,6 +549,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   // Conclusão com sucesso do nível da trilha
   function completeLevel() {
     setTimerRunning(false);
+    stopAvalanche();
     setIsCheering(true);
 
     const lvl = levelRef.current;
@@ -475,10 +576,11 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     setTrailProgress(newProgress);
 
     if (isLastLevel) {
-      // A criança chega feliz à cabana no cume.
+      // O aluno entra feliz na casinha do cume
+      setEnterHouse(true);
       soundEffects.playVictoryFanfare();
       setConfetti(true);
-      window.setTimeout(() => setPhase("summit_victory"), 1800);
+      setTimeout(() => setPhase("summit_victory"), 2800);
     } else {
       soundEffects.playLevelUp();
       setConfetti(true);
@@ -503,8 +605,19 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
       }
 
       // Bônus de velocidade
-      const totalMs = Math.max(1, diffCfg.seconds * 1000);
-      const speedRatio = difficulty === "avalanche" ? 0 : timeLeft / totalMs;
+      const totalMs = diffCfg.seconds * 1000;
+      let speedRatio = timeLeft / totalMs;
+      if (isAvalanche) {
+        // sem cronômetro: o bônus vem da rapidez em relação ao ritmo de equilíbrio da avalanche
+        const budgetMs = avalancheSecondsPerElement(levelRef.current) * 1000;
+        speedRatio = Math.max(0, 1 - (performance.now() - roundStartRef.current) / budgetMs);
+        const tr = avTrackRef.current;
+        if (tr) {
+          applyAnswerToAvalanche(avStateRef.current, tr, attemptRef.current === 1 ? "first" : "retry");
+          clampAvalancheGap(avStateRef.current, tr, studentFractionAt(tr, indexRef.current, false));
+          syncAvalancheLive(true);
+        }
+      }
       let speedMultiplier = 1.0;
       let bonusLabel = "";
       if (speedRatio >= 0.65) {
@@ -570,6 +683,10 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
       soundEffects.playError();
       setStreak(0);
       setWrongPicks((w) => [...w, chosenFr]);
+      if (isAvalanche && avTrackRef.current) {
+        applyAnswerToAvalanche(avStateRef.current, avTrackRef.current, "wrong");
+        syncAvalancheLive(false);
+      }
 
       if (attemptRef.current === 1) {
         attemptRef.current = 2;
@@ -648,10 +765,23 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
         roundState={roundState}
         wrongPicks={wrongPicks}
         timeLeft={timeLeft}
-        totalMs={difficulty === "avalanche" ? 1 : roundState === "retry" ? Math.max(4000, Math.round((diffCfg.seconds * 1000) / 2)) : diffCfg.seconds * 1000}
+        avalancheDanger={isAvalanche ? avInfo.danger : undefined}
+        totalMs={roundState === "retry" ? Math.max(4000, Math.round((diffCfg.seconds * 1000) / 2)) : diffCfg.seconds * 1000}
         bonusText={speedBonusText}
         onPick={handleSelectOption}
         timed={difficulty !== "avalanche"}
+      />
+    );
+  } else if (phase === "avalanche_caught") {
+    overlay = (
+      <TrailAvalancheCaughtOverlay
+        level={currentLevel}
+        name={currentLevelCfg.name}
+        onRetry={() => startLevel(currentLevel)}
+        onMap={() => {
+          stopAvalanche();
+          setPhase("lobby");
+        }}
       />
     );
   } else if (phase === "level_complete") {
@@ -780,14 +910,14 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
               </div>
               <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-[var(--text)]">Trilha do Aluno Curioso</h1>
               <p className="mt-2 text-xs sm:text-sm text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
-                Explore uma paisagem ilustrada, encontre os objetos no caminho e observe os animais de cada clima.
-                Depois do modo Nativo, encare a avalanche que segue seus passos até a cabana no topo!
+                Tudo acontece no mapa: o aluno sobe a trilha, os objetos do tema aparecem pelo caminho e, a cada acerto,
+                ele avança. Enfrente a <strong>chuva</strong>, a <strong>neve no cume</strong> e <strong>entre feliz na casinha do cume</strong> no Nível 7! No modo <strong>Avalanche</strong> não há cronômetro: uma avalanche sobe a trilha atrás de você.
               </p>
 
               {/* DIFICULDADE */}
               <div className="mt-5 max-w-lg mx-auto">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Ritmo e Dificuldade da Escalada</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                   {(Object.keys(DIFFICULTY_CONFIGS) as TrailDifficulty[]).map((dKey) => {
                     const cfg = DIFFICULTY_CONFIGS[dKey];
                     const isSel = difficulty === dKey;
@@ -809,7 +939,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
                         <span className="text-xl block">{cfg.emoji}</span>
                         <span className="text-xs font-extrabold text-[var(--text)] block">{cfg.label}</span>
                         <span className="text-[10px] text-[var(--text-muted)] font-semibold block">
-                          {dKey === "avalanche" ? "Desafio extra" : `${cfg.seconds}s · x${cfg.multiplier}`}
+                          {dKey === "avalanche" ? "sem tempo" : `${cfg.seconds}s`} · x{cfg.multiplier}
                         </span>
                       </button>
                     );
@@ -887,6 +1017,8 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
           avalancheMode={difficulty === "avalanche" && phase === "playing"}
           onAvalancheCaught={handleAvalancheCaught}
           isCheering={isCheering}
+          enterHouse={enterHouse}
+          avalancheRef={avalancheLive}
           activeAnimalGreeting={activeAnimalGreeting}
           onAnimalClick={(animalId, quote) => {
             speakWordFrench(quote);
@@ -896,7 +1028,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
           themeColor={selectedTheme.accentColor}
           hudRight={
             phase === "playing" && currentItem ? (
-              <TrailPlayHud timeLeft={timeLeft} totalMs={Math.max(1, diffCfg.seconds * 1000)} score={score} streak={streak} index={elementIndex} total={levelItems.length} avalanche={difficulty === "avalanche"} />
+              <TrailPlayHud timeLeft={timeLeft} totalMs={diffCfg.seconds * 1000} score={score} streak={streak} index={elementIndex} total={levelItems.length} avalanche={isAvalanche ? avInfo : undefined} />
             ) : undefined
           }
         >

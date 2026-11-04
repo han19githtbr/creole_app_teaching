@@ -1,7 +1,30 @@
+/**
+ * Geometria da "Trilha do Aluno Curioso" sobre a ilustração da mata (public/trilha/mata-trilha.jpg).
+ *
+ * O mundo é RETRATO: 1000 x 2201 unidades (proporção da arte original 688 x 1514). O caminho foi
+ * traçado sobre a trilha de terra da imagem, do início (embaixo) até a casinha no topo.
+ * Tudo aqui é matemática pura, usada igualmente pelo jogo e pelo gerador de vídeo.
+ */
 export interface TrailPoint {
   x: number;
   y: number;
 }
+
+export const WORLD_W = 1000;
+export const WORLD_H = 2201;
+/** arte original (px) -> unidades do mundo */
+const K = WORLD_W / 688;
+
+/** Pontos do caminho, em pixels da arte original (688x1514), de baixo (início) para cima (casinha). */
+const RAW_POINTS: [number, number][] = [
+  [345, 1495], [345, 1440], [385, 1412], [480, 1393], [560, 1365], [583, 1320], [560, 1285], [490, 1272], [380, 1258],
+  [260, 1238], [160, 1212], [112, 1172], [140, 1120], [240, 1092], [350, 1072], [460, 1052], [560, 1030], [585, 990],
+  [530, 970], [440, 950], [330, 925], [230, 895], [160, 862], [165, 820], [230, 790], [300, 765], [400, 748],
+  [520, 728], [590, 695], [520, 662], [400, 645], [300, 628], [245, 600], [236, 540], [230, 470], [240, 400],
+  [248, 330], [256, 268], [295, 238], [350, 212], [392, 192], [382, 168], [410, 150], [421, 140],
+];
+
+const POINTS: TrailPoint[] = RAW_POINTS.map(([x, y]) => ({ x: x * K, y: y * K }));
 
 interface TrailCurve {
   start: TrailPoint;
@@ -10,86 +33,48 @@ interface TrailCurve {
   end: TrailPoint;
 }
 
-const TRAIL_CURVES: TrailCurve[] = [
-  // Caminho da trilha completa (viewBox 1000x2200): do pé da montanha até a casinha do topo.
-  { start: { x: 515, y: 2180 }, control1: { x: 513, y: 2173 }, control2: { x: 498, y: 2160 }, end: { x: 505, y: 2140 } },
-  { start: { x: 505, y: 2140 }, control1: { x: 512, y: 2120 }, control2: { x: 528, y: 2080 }, end: { x: 560, y: 2060 } },
-  { start: { x: 560, y: 2060 }, control1: { x: 592, y: 2040 }, control2: { x: 662, y: 2037 }, end: { x: 700, y: 2020 } },
-  { start: { x: 700, y: 2020 }, control1: { x: 738, y: 2003 }, control2: { x: 780, y: 1982 }, end: { x: 790, y: 1960 } },
-  { start: { x: 790, y: 1960 }, control1: { x: 800, y: 1938 }, control2: { x: 792, y: 1910 }, end: { x: 760, y: 1890 } },
-  { start: { x: 760, y: 1890 }, control1: { x: 728, y: 1870 }, control2: { x: 660, y: 1853 }, end: { x: 600, y: 1840 } },
-  { start: { x: 600, y: 1840 }, control1: { x: 540, y: 1827 }, control2: { x: 457, y: 1822 }, end: { x: 400, y: 1810 } },
-  { start: { x: 400, y: 1810 }, control1: { x: 343, y: 1798 }, control2: { x: 292, y: 1788 }, end: { x: 260, y: 1770 } },
-  { start: { x: 260, y: 1770 }, control1: { x: 228, y: 1752 }, control2: { x: 207, y: 1723 }, end: { x: 205, y: 1700 } },
-  { start: { x: 205, y: 1700 }, control1: { x: 203, y: 1677 }, control2: { x: 214, y: 1650 }, end: { x: 250, y: 1630 } },
-  { start: { x: 250, y: 1630 }, control1: { x: 286, y: 1610 }, control2: { x: 355, y: 1594 }, end: { x: 420, y: 1580 } },
-  { start: { x: 420, y: 1580 }, control1: { x: 485, y: 1566 }, control2: { x: 580, y: 1560 }, end: { x: 640, y: 1545 } },
-  { start: { x: 640, y: 1545 }, control1: { x: 700, y: 1530 }, control2: { x: 753, y: 1511 }, end: { x: 780, y: 1490 } },
-  { start: { x: 780, y: 1490 }, control1: { x: 807, y: 1469 }, control2: { x: 812, y: 1442 }, end: { x: 800, y: 1420 } },
-  { start: { x: 800, y: 1420 }, control1: { x: 788, y: 1398 }, control2: { x: 757, y: 1375 }, end: { x: 710, y: 1360 } },
-  { start: { x: 710, y: 1360 }, control1: { x: 663, y: 1345 }, control2: { x: 583, y: 1340 }, end: { x: 520, y: 1330 } },
-  { start: { x: 520, y: 1330 }, control1: { x: 457, y: 1320 }, control2: { x: 378, y: 1314 }, end: { x: 330, y: 1300 } },
-  { start: { x: 330, y: 1300 }, control1: { x: 282, y: 1286 }, control2: { x: 251, y: 1266 }, end: { x: 230, y: 1245 } },
-  { start: { x: 230, y: 1245 }, control1: { x: 209, y: 1224 }, control2: { x: 198, y: 1197 }, end: { x: 205, y: 1175 } },
-  { start: { x: 205, y: 1175 }, control1: { x: 212, y: 1153 }, control2: { x: 229, y: 1132 }, end: { x: 270, y: 1115 } },
-  { start: { x: 270, y: 1115 }, control1: { x: 311, y: 1098 }, control2: { x: 387, y: 1087 }, end: { x: 450, y: 1075 } },
-  { start: { x: 450, y: 1075 }, control1: { x: 513, y: 1063 }, control2: { x: 595, y: 1058 }, end: { x: 650, y: 1045 } },
-  { start: { x: 650, y: 1045 }, control1: { x: 705, y: 1032 }, control2: { x: 757, y: 1015 }, end: { x: 780, y: 995 } },
-  { start: { x: 780, y: 995 }, control1: { x: 803, y: 975 }, control2: { x: 805, y: 944 }, end: { x: 790, y: 925 } },
-  { start: { x: 790, y: 925 }, control1: { x: 775, y: 906 }, control2: { x: 735, y: 891 }, end: { x: 690, y: 880 } },
-  { start: { x: 690, y: 880 }, control1: { x: 645, y: 869 }, control2: { x: 572, y: 870 }, end: { x: 520, y: 860 } },
-  { start: { x: 520, y: 860 }, control1: { x: 468, y: 850 }, control2: { x: 412, y: 837 }, end: { x: 380, y: 820 } },
-  { start: { x: 380, y: 820 }, control1: { x: 348, y: 803 }, control2: { x: 340, y: 782 }, end: { x: 330, y: 760 } },
-  { start: { x: 330, y: 760 }, control1: { x: 320, y: 738 }, control2: { x: 320, y: 713 }, end: { x: 318, y: 690 } },
-  { start: { x: 318, y: 690 }, control1: { x: 316, y: 667 }, control2: { x: 318, y: 640 }, end: { x: 318, y: 620 } },
-  { start: { x: 318, y: 620 }, control1: { x: 318, y: 600 }, control2: { x: 316, y: 584 }, end: { x: 318, y: 570 } },
-  { start: { x: 318, y: 570 }, control1: { x: 320, y: 556 }, control2: { x: 326, y: 554 }, end: { x: 327, y: 535 } },
-  { start: { x: 327, y: 535 }, control1: { x: 328, y: 516 }, control2: { x: 323, y: 484 }, end: { x: 325, y: 455 } },
-  { start: { x: 325, y: 455 }, control1: { x: 327, y: 426 }, control2: { x: 329, y: 384 }, end: { x: 341, y: 364 } },
-  { start: { x: 341, y: 364 }, control1: { x: 353, y: 344 }, control2: { x: 376, y: 344 }, end: { x: 398, y: 336 } },
-  { start: { x: 398, y: 336 }, control1: { x: 420, y: 328 }, control2: { x: 448, y: 318 }, end: { x: 472, y: 314 } },
-  { start: { x: 472, y: 314 }, control1: { x: 496, y: 310 }, control2: { x: 522, y: 315 }, end: { x: 540, y: 310 } },
-  { start: { x: 540, y: 310 }, control1: { x: 558, y: 305 }, control2: { x: 573, y: 292 }, end: { x: 580, y: 285 } },
-  { start: { x: 580, y: 285 }, control1: { x: 587, y: 278 }, control2: { x: 590, y: 273 }, end: { x: 583, y: 267 } },
-  { start: { x: 583, y: 267 }, control1: { x: 576, y: 261 }, control2: { x: 552, y: 252 }, end: { x: 541, y: 248 } },
-  { start: { x: 541, y: 248 }, control1: { x: 530, y: 244 }, control2: { x: 522, y: 248 }, end: { x: 520, y: 245 } },
-  { start: { x: 520, y: 245 }, control1: { x: 518, y: 242 }, control2: { x: 516, y: 238 }, end: { x: 529, y: 233 } },
-  { start: { x: 529, y: 233 }, control1: { x: 542, y: 228 }, control2: { x: 586, y: 218 }, end: { x: 598, y: 215 } },
-];
+/** Catmull-Rom -> Bézier cúbica, um segmento por par de pontos. */
+const TRAIL_CURVES: TrailCurve[] = POINTS.slice(0, -1).map((p1, i) => {
+  const p0 = POINTS[Math.max(0, i - 1)];
+  const p2 = POINTS[i + 1];
+  const p3 = POINTS[Math.min(POINTS.length - 1, i + 2)];
+  return {
+    start: p1,
+    control1: { x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6 },
+    control2: { x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6 },
+    end: p2,
+  };
+});
 
 export const CURIOUS_TRAIL_PATH = TRAIL_CURVES
   .map((curve, index) => {
-    const prefix = index === 0 ? `M ${curve.start.x} ${curve.start.y}` : "";
-    return `${prefix} C ${curve.control1.x} ${curve.control1.y} ${curve.control2.x} ${curve.control2.y} ${curve.end.x} ${curve.end.y}`;
+    const prefix = index === 0 ? `M ${curve.start.x.toFixed(1)} ${curve.start.y.toFixed(1)}` : "";
+    return `${prefix} C ${curve.control1.x.toFixed(1)} ${curve.control1.y.toFixed(1)} ${curve.control2.x.toFixed(1)} ${curve.control2.y.toFixed(1)} ${curve.end.x.toFixed(1)} ${curve.end.y.toFixed(1)}`;
   })
   .join(" ");
 
 const CURVE_SAMPLES = 40;
+const bez = (c: TrailCurve, t: number): TrailPoint => {
+  const i = 1 - t;
+  return {
+    x: i ** 3 * c.start.x + 3 * i ** 2 * t * c.control1.x + 3 * i * t ** 2 * c.control2.x + t ** 3 * c.end.x,
+    y: i ** 3 * c.start.y + 3 * i ** 2 * t * c.control1.y + 3 * i * t ** 2 * c.control2.y + t ** 3 * c.end.y,
+  };
+};
 const CURVE_LENGTHS = TRAIL_CURVES.map((curve) => {
   let length = 0;
   let previous = curve.start;
   for (let i = 1; i <= CURVE_SAMPLES; i++) {
-    const t = i / CURVE_SAMPLES;
-    const inverse = 1 - t;
-    const point = {
-      x:
-        inverse ** 3 * curve.start.x +
-        3 * inverse ** 2 * t * curve.control1.x +
-        3 * inverse * t ** 2 * curve.control2.x +
-        t ** 3 * curve.end.x,
-      y:
-        inverse ** 3 * curve.start.y +
-        3 * inverse ** 2 * t * curve.control1.y +
-        3 * inverse * t ** 2 * curve.control2.y +
-        t ** 3 * curve.end.y,
-    };
+    const point = bez(curve, i / CURVE_SAMPLES);
     length += Math.hypot(point.x - previous.x, point.y - previous.y);
     previous = point;
   }
   return length;
 });
 
-export const CURIOUS_TRAIL_LENGTH = CURVE_LENGTHS.reduce((sum, length) => sum + length, 0);
+const TOTAL_TRAIL_LENGTH = CURVE_LENGTHS.reduce((sum, length) => sum + length, 0);
+/** Comprimento total da trilha (unidades do mundo). */
+export const CURIOUS_TRAIL_LENGTH = TOTAL_TRAIL_LENGTH;
 
 export function getTrailPositionAtFraction(fraction: number): TrailPoint {
   let remaining = Math.max(0, Math.min(1, fraction)) * CURIOUS_TRAIL_LENGTH;
@@ -98,21 +83,54 @@ export function getTrailPositionAtFraction(fraction: number): TrailPoint {
     remaining -= length;
     return false;
   });
-  const selectedIndex = curveIndex < 0 ? TRAIL_CURVES.length - 1 : curveIndex;
-  const curve = TRAIL_CURVES[selectedIndex];
-  const length = CURVE_LENGTHS[selectedIndex];
-  const t = Math.max(0, Math.min(1, remaining / length));
-  const inverse = 1 - t;
-  return {
-    x:
-      inverse ** 3 * curve.start.x +
-      3 * inverse ** 2 * t * curve.control1.x +
-      3 * inverse * t ** 2 * curve.control2.x +
-      t ** 3 * curve.end.x,
-    y:
-      inverse ** 3 * curve.start.y +
-      3 * inverse ** 2 * t * curve.control1.y +
-      3 * inverse * t ** 2 * curve.control2.y +
-      t ** 3 * curve.end.y,
-  };
+  const idx = curveIndex < 0 ? TRAIL_CURVES.length - 1 : curveIndex;
+  return bez(TRAIL_CURVES[idx], Math.max(0, Math.min(1, remaining / CURVE_LENGTHS[idx])));
 }
+
+/**
+ * Como `getTrailPositionAtFraction`, mas aceita frações fora de 0..1: antes do início e depois do
+ * fim a trilha é prolongada em linha reta (a avalanche nasce antes do ponto de partida).
+ */
+export function getTrailPointExtended(fraction: number): TrailPoint {
+  if (fraction >= 0 && fraction <= 1) return getTrailPositionAtFraction(fraction);
+  const edge = fraction < 0 ? 0 : 1;
+  const a = getTrailPositionAtFraction(edge);
+  const b = getTrailPositionAtFraction(edge === 0 ? 0.004 : 0.996);
+  const dx = edge === 0 ? a.x - b.x : b.x - a.x;
+  const dy = edge === 0 ? a.y - b.y : b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const extra = Math.abs(fraction - edge) * TOTAL_TRAIL_LENGTH;
+  return { x: a.x + (dx / len) * extra, y: a.y + (dy / len) * extra };
+}
+
+/** Direção unitária (sentido da subida) da trilha na fração dada. */
+export function getTrailTangent(fraction: number): TrailPoint {
+  const d = 0.003;
+  const a = getTrailPointExtended(fraction - d);
+  const b = getTrailPointExtended(fraction + d);
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  return { x: dx / len, y: dy / len };
+}
+
+/**
+ * Limites de cada nível ao longo da trilha (8 valores). O trecho de cada nível é proporcional à
+ * quantidade de objetos (elementCount + 3 de folga): o nível 1 começa embaixo e o 7 termina na casinha.
+ */
+const LEVEL_ELEMENT_COUNTS = [1, 2, 3, 4, 5, 6, 7];
+export const CAMP_FRACS: number[] = (() => {
+  const weights = LEVEL_ELEMENT_COUNTS.map((n) => n + 3);
+  const sum = weights.reduce((a, b) => a + b, 0);
+  const out = [0];
+  weights.forEach((w) => out.push(out[out.length - 1] + w / sum));
+  out[out.length - 1] = 1;
+  return out;
+})();
+
+/** Fração da trilha onde fica o marcador de cada nível (1..7): o início do trecho do nível. */
+export const MARKER_FRACS: number[] = CAMP_FRACS.slice(0, 7);
+
+/** Casinha do topo (porta), em unidades do mundo. */
+export const HUT_DOOR: TrailPoint = { x: 421 * K, y: 134 * K };
+export const HUT_POSITION: TrailPoint = { x: 420 * K, y: 128 * K };

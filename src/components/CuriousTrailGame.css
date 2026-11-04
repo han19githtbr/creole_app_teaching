@@ -1,31 +1,5 @@
 /* Animações e Estilos Especializados para a Trilha do Aluno Curioso */
 
-@keyframes trailWaterGlint {
-  0%, 100% {
-    opacity: 0.2;
-    transform: translateX(-3px) scaleX(0.7);
-  }
-  50% {
-    opacity: 0.85;
-    transform: translateX(4px) scaleX(1.2);
-  }
-}
-
-.trail-water-glint {
-  fill: #d7fbff;
-  filter: drop-shadow(0 0 3px rgba(125, 211, 252, 0.85));
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: trailWaterGlint 3.8s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .trail-water-glint {
-    animation: none;
-    opacity: 0.45;
-  }
-}
-
 /* Movimento de caminhada alpina realista do estudante (passadas, inclinação e peso) */
 @keyframes trailHikerLegSwing {
   0% {

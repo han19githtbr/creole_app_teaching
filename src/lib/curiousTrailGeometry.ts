@@ -1,8 +1,8 @@
 /**
  * Geometria da "Trilha do Aluno Curioso" sobre a ilustração da mata (public/trilha/mata-trilha.jpg).
  *
- * O mundo é RETRATO: 1000 x 2201 unidades, seguindo a proporção da arte original (688 x 1514).
- * A trilha foi traçada de baixo até a casinha no topo; os mapas de fundo devem manter essa proporção.
+ * O mundo é RETRATO: 1000 x 2201 unidades (proporção da arte original 688 x 1514). O caminho foi
+ * traçado sobre a trilha de terra da imagem, do início (embaixo) até a casinha no topo.
  * Tudo aqui é matemática pura, usada igualmente pelo jogo e pelo gerador de vídeo.
  */
 export interface TrailPoint {

@@ -516,18 +516,6 @@ export function CuriousTrailMountain({
           {weather === "rain" && <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#7fa7c4" strokeWidth="26" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="22 120" opacity="0.45" />}
           <path ref={setPathEl} d={CURIOUS_TRAIL_PATH} fill="none" stroke="transparent" strokeWidth="1" />
         </svg>
-        <svg
-          viewBox={`0 0 ${VB_W} ${VB_H}`}
-          preserveAspectRatio="none"
-          className="absolute inset-0 z-[10] h-full w-full pointer-events-none"
-          aria-hidden
-        >
-          <g opacity={weather === "snow" ? 0.18 : weather === "rain" ? 0.8 : 0.55}>
-            <ellipse cx="550" cy="1430" rx="18" ry="3.5" className="trail-water-glint" />
-            <ellipse cx="578" cy="1441" rx="13" ry="2.8" className="trail-water-glint" style={{ animationDelay: "-1.2s" }} />
-            <ellipse cx="604" cy="1451" rx="16" ry="3" className="trail-water-glint" style={{ animationDelay: "-2.4s" }} />
-          </g>
-        </svg>
         {avalancheMode && total > 0 && (
           <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 z-[15] h-full w-full overflow-visible pointer-events-none" aria-hidden>
             <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#dbeafe" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} className="trail-avalanche-shadow" />

@@ -32,28 +32,14 @@ export interface TrailLevelConfig {
   xpBase: number;
 }
 
-/** Fauna ilustrada da nova mata; cada espécie possui um recorte transparente próprio. */
+/** Bichos extras que aparecem e somem da montanha (além dos 7 das estações). */
 export const EXTRA_TRAIL_ANIMALS: TrailAnimal[] = [
-  { id: "squirrel", name: "L'Écureuil", namePt: "Esquilo", emoji: "🐿️", quote: "Je cache une noisette pour plus tard !", soundType: "rustle", badge: "Petit prévoyant" },
-  { id: "deer", name: "Le Cerf", namePt: "Cervo", emoji: "🦌", quote: "Je traverse la forêt en silence !", soundType: "rustle", badge: "Marcheur discret" },
+  { id: "deer", name: "Le Cerf", namePt: "Veado", emoji: "🦌", quote: "Je traverse la forêt en silence !", soundType: "rustle", badge: "Marcheur discret" },
+  { id: "fox", name: "Le Renard roux", namePt: "Raposa", emoji: "🦊", quote: "Je suis rusé comme un renard !", soundType: "rustle", badge: "Esprit malin" },
   { id: "hedgehog", name: "Le Hérisson", namePt: "Ouriço", emoji: "🦔", quote: "Doucement, doucement, j'avance !", soundType: "rustle", badge: "Petit explorateur" },
-  { id: "skunk", name: "La Moufette", namePt: "Gambá", emoji: "🦨", quote: "Je préfère garder mes distances !", soundType: "rustle", badge: "Gardien prudent" },
-  { id: "woodpecker", name: "Le Pic", namePt: "Pica-pau", emoji: "🐦", quote: "Toc, toc ! Qui est là ?", soundType: "chirp", badge: "Tambour de la forêt" },
-  { id: "boar", name: "Le Sanglier", namePt: "Javali", emoji: "🐗", quote: "Je fouille le sol à la recherche de racines !", soundType: "rustle", badge: "Chercheur de racines" },
-  { id: "jaguar", name: "Le Jaguar", namePt: "Onça", emoji: "🐆", quote: "Je veille sur la forêt sans faire de bruit !", soundType: "rustle", badge: "Ombre de la forêt" },
-  { id: "owl", name: "La Chouette", namePt: "Coruja", emoji: "🦉", quote: "Je vois très bien dans la pénombre !", soundType: "chirp", badge: "Veilleur silencieux" },
-  { id: "anteater", name: "Le Tamanoir", namePt: "Tamanduá", emoji: "🐜", quote: "Je cherche des fourmis pour mon goûter !", soundType: "rustle", badge: "Gourmand patient" },
-  { id: "armadillo", name: "Le Tatou", namePt: "Tatu", emoji: "🦔", quote: "Ma carapace me protège quand je me roule !", soundType: "rustle", badge: "Petit blindé" },
-  { id: "caiman", name: "Le Caïman", namePt: "Jacaré", emoji: "🐊", quote: "Je me repose près de l'eau !", soundType: "croak", badge: "Roi de la rive" },
-  { id: "sloth", name: "Le Paresseux", namePt: "Preguiça", emoji: "🦥", quote: "Je prends mon temps, tout va bien !", soundType: "rustle", badge: "Champion du calme" },
-  { id: "toucan", name: "Le Toucan", namePt: "Tucano", emoji: "🦜", quote: "Bonjour ! Bonjour ! Répète après moi !", soundType: "chirp", badge: "Grand bavard" },
-  { id: "otter", name: "La Loutre", namePt: "Lontra", emoji: "🦦", quote: "L'eau est parfaite pour jouer !", soundType: "croak", badge: "Joueuse des rivières" },
-  { id: "coati", name: "Le Coati", namePt: "Quati", emoji: "🦝", quote: "Je renifle tout ce qui m'entoure !", soundType: "rustle", badge: "Nez curieux" },
-  { id: "maned-wolf", name: "Le Loup à crinière", namePt: "Lobo-guará", emoji: "🐺", quote: "Je marche tranquillement dans les hautes herbes !", soundType: "rustle", badge: "Longues pattes" },
-  { id: "pacu", name: "Le Pacou", namePt: "Pacu", emoji: "🐟", quote: "Je nage doucement dans l'eau fraîche !", soundType: "croak", badge: "Nageur paisible" },
-  { id: "tortoise", name: "La Tortue terrestre", namePt: "Jabuti", emoji: "🐢", quote: "Ma maison voyage toujours avec moi !", soundType: "rustle", badge: "Voyageur patient" },
-  { id: "frog", name: "La Grenouille", namePt: "Sapo", emoji: "🐸", quote: "Coâ, coâ ! J'adore les jours de pluie !", soundType: "croak", badge: "Chanteuse de pluie" },
-  { id: "agouti", name: "L'Agouti", namePt: "Cutia", emoji: "🐀", quote: "Je trottine vite entre les feuilles !", soundType: "rustle", badge: "Rapide des sous-bois" },
+  { id: "monkey", name: "Le Singe farceur", namePt: "Macaco", emoji: "🐒", quote: "Ouh ouh ! C'est ma branche, ici !", soundType: "chirp", badge: "Acrobate de la forêt" },
+  { id: "macaw", name: "L'Ara rouge", namePt: "Arara-vermelha", emoji: "🦜", quote: "Bonjour ! Bonjour ! Répète après moi !", soundType: "chirp", badge: "Plumes de feu" },
+  { id: "snowhare", name: "Le Lièvre des neiges", namePt: "Lebre-da-neve", emoji: "🐇", quote: "Brrr ! J'adore le froid, pas toi ?", soundType: "rustle", badge: "Manteau blanc" },
 ];
 
 export const TRAIL_LEVELS: TrailLevelConfig[] = [
@@ -90,13 +76,13 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     hasUmbrella: false,
     hasSnowGear: false,
     animal: {
-      id: "agouti",
-      name: "L'Agouti",
-      namePt: "Cutia curiosa",
-      emoji: "🐀",
+      id: "rabbit",
+      name: "Le Lapin blanc",
+      namePt: "Coelho da montanha",
+      emoji: "🐇",
       quote: "Tu grimpes vite ! Deux objets t'attendent entre les arbres !",
       soundType: "rustle",
-      badge: "Rapide des sous-bois",
+      badge: "Pied léger",
     },
     coord: { x: 41.8, y: 82.4 },
     description: "Bosque acolhedor com brisa fresca. Identifique 2 elementos para prosseguir.",
@@ -113,13 +99,13 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     hasUmbrella: false,
     hasSnowGear: false,
     animal: {
-      id: "woodpecker",
-      name: "Le Pic",
-      namePt: "Pica-pau",
+      id: "bird",
+      name: "L'Oiseau des cimes",
+      namePt: "Pássaro cantor",
       emoji: "🐦",
       quote: "Quelle belle vue ! Trois éléments se cachent sur ce versant !",
       soundType: "chirp",
-      badge: "Tambour de la forêt",
+      badge: "Chant d'altitude",
     },
     coord: { x: 45.3, y: 71.5 },
     description: "Encosta rochosa com vista panorâmica. Reconheça 3 elementos para subir mais alto.",
@@ -136,13 +122,13 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     hasUmbrella: true, // Começa a chover e o aluno abre o guarda-chuva!
     hasSnowGear: false,
     animal: {
-      id: "otter",
-      name: "La Loutre joueuse",
-      namePt: "Lontra da chuva",
-      emoji: "🦦",
+      id: "capybara",
+      name: "Le Capybara tranquille",
+      namePt: "Capivara da chuva",
+      emoji: "🦫",
       quote: "Plouf ! J'adore la pluie. Ouvre ton parapluie !",
       soundType: "croak",
-      badge: "Joueuse des rivières",
+      badge: "Goutte d'argent",
     },
     coord: { x: 59.4, y: 60.9 },
     description: "As nuvens fecham e a chuva começa! Abra seu guarda-chuva e reconheça 4 elementos.",
@@ -182,13 +168,13 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     hasUmbrella: false,
     hasSnowGear: true, // Aluno coloca gorro e cachecol quentinho
     animal: {
-      id: "deer",
-      name: "Le Cerf des neiges",
-      namePt: "Cervo da montanha",
-      emoji: "🦌",
+      id: "arcticfox",
+      name: "Le Renard polaire",
+      namePt: "Raposa-do-ártico",
+      emoji: "🦊",
       quote: "Regarde, la neige tombe ! Mets ton bonnet et ton écharpe !",
       soundType: "rustle",
-      badge: "Marcheur des hauteurs",
+      badge: "Pas de givre",
     },
     coord: { x: 39.0, y: 37.5 },
     description: "A chuva passou e a neve começou a cair! Agasalhe-se e identifique 6 elementos.",
@@ -205,13 +191,13 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     hasUmbrella: false,
     hasSnowGear: true,
     animal: {
-      id: "owl",
-      name: "La Chouette des cimes",
-      namePt: "Coruja do cume",
-      emoji: "🦉",
+      id: "eagle",
+      name: "L'Aigle royal",
+      namePt: "Águia dourada",
+      emoji: "🦅",
       quote: "Tu touches au sommet ! Plus que sept énigmes avant de hisser le drapeau !",
       soundType: "chirp",
-      badge: "Veilleur silencieux",
+      badge: "Conquérant du ciel",
     },
     coord: { x: 88, y: 10 },
     description: "O topo nevado do mundo! Reconheça os 7 elementos e entre na casinha do cume, vitorioso!",
@@ -779,5 +765,6 @@ export function saveTrailProgress(themeId: string, state: TrailProgressState): v
 
 /** Todos os bichos que podem passear pela montanha. */
 export const ROAMING_ANIMAL_POOL: TrailAnimal[] = [
+  ...TRAIL_LEVELS.map((l) => l.animal),
   ...EXTRA_TRAIL_ANIMALS,
 ];

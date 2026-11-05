@@ -281,8 +281,8 @@
   right: 0;
   bottom: 0;
   left: 0;
-  height: 10%;
-  background: linear-gradient(0deg, rgba(15, 23, 42, .08), transparent);
+  height: 25%;
+  background: linear-gradient(0deg, rgba(15, 23, 42, .22), transparent);
   content: "";
   pointer-events: none;
 }
@@ -366,7 +366,7 @@
   box-shadow: inset 0 1px 3px rgba(15, 23, 42, .18);
 }
 
-.trail-progress-track span {
+.trail-progress-track > span {
   display: block;
   height: 100%;
   border-radius: inherit;
@@ -411,20 +411,6 @@
   animation: trailTimerUrgent .8s ease-in-out infinite;
 }
 
-.trail-avalanche-shadow {
-  filter: drop-shadow(0 5px 8px rgba(30, 64, 175, .45));
-}
-
-.trail-avalanche-flow {
-  filter: drop-shadow(0 0 8px rgba(224, 242, 254, .95));
-  animation: trailAvalanchePulse 1.3s ease-in-out infinite;
-}
-
-@keyframes trailAvalanchePulse {
-  0%, 100% { opacity: .82; }
-  50% { opacity: 1; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .trail-cloud--first,
   .trail-cloud--second,
@@ -440,11 +426,7 @@
     animation: none;
   }
 
-  .trail-avalanche-flow {
-    animation: none;
-  }
-
-  .trail-progress-track span {
+  .trail-progress-track > span {
     transition: none;
   }
 }

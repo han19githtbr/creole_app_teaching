@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,9 @@ import { TRAIL_LEVELS, ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailWeather 
 import type { CestQuoiItem } from "@/lib/cquoiContent";
 import { CuriousTrailStudent } from "./CuriousTrailStudent";
 import { soundEffects } from "@/lib/soundEffects";
-import { createWildlife, type Wildlife } from "@/lib/trailWildlife";
+import { createFauna, type Fauna } from "@/lib/trailFauna";
+import { loadFaunaAssets, drawFauna, drawWater, type FaunaAssets } from "@/lib/trailFaunaDraw";
+import { gradeImage } from "@/lib/trailGrade";
 import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
 import { renderAvalancheSvg, avalancheShake } from "@/lib/trailAvalanche";
 import { Check, Lock, Volume2 } from "lucide-react";
@@ -35,8 +37,6 @@ export interface CuriousTrailMountainProps {
   roundState?: TrailRoundState;
   /** true depois do último objeto do nível: o aluno segue até a próxima estação. */
   levelFinished?: boolean;
-  avalancheMode?: boolean;
-  onAvalancheCaught?: () => void;
   isCheering?: boolean;
   /** Nível 7 concluído: o aluno entra feliz na casinha do cume. */
   enterHouse?: boolean;
@@ -64,12 +64,6 @@ export const TRAIL_SCENE_SRC = "/trilha/mata-trilha.jpg";
 
 const clampN = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-/** Filtro aplicado à arte conforme o clima (mesma receita usada no vídeo). */
-const WEATHER_FILTER: Record<TrailWeather, string> = {
-  sunny: "none",
-  rain: "saturate(0.7) brightness(0.7) contrast(1.06)",
-  snow: "saturate(0.3) brightness(1.14) contrast(0.94)",
-};
 
 /** Exibe a ilustração isolada do objeto durante a pergunta. */
 function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean }) {
@@ -125,8 +119,6 @@ export function CuriousTrailMountain({
   elementIndex = 0,
   roundState = "asking",
   levelFinished = false,
-  avalancheMode = false,
-  onAvalancheCaught,
   isCheering = false,
   enterHouse = false,
   activeAnimalGreeting,
@@ -139,7 +131,7 @@ export function CuriousTrailMountain({
   children,
 }: CuriousTrailMountainProps) {
   const currentCfg = TRAIL_LEVELS.find((l) => l.level === currentLevel) || TRAIL_LEVELS[0];
-  const weather: TrailWeather = avalancheMode ? "snow" : currentCfg.weather;
+  const weather: TrailWeather = currentCfg.weather;
   const playing = !!elements;
   const summitDone = completedLevels.includes(7);
   const [localBubble, setLocalBubble] = useState<{ id: string; quote: string; name: string } | null>(null);
@@ -149,12 +141,14 @@ export function CuriousTrailMountain({
   const worldRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const studentRef = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
+  const faunaCanvasRef = useRef<HTMLCanvasElement>(null);
+  const faunaAssetsRef = useRef<FaunaAssets | null>(null);
+  const weatherRef = useRef<TrailWeather>(weather);
+  const [sceneSrc, setSceneSrc] = useState<string>(TRAIL_SCENE_SRC);
   const avSvgRef = useRef<SVGSVGElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
-  const worldWildRef = useRef<Wildlife | null>(null);
-  const wildlifeWeatherRef = useRef(weather);
+  const faunaRef = useRef<Fauna | null>(null);
   const sizeRef = useRef({ W: 0, H: 0, WW: 0, WH: 0 });
   const camRef = useRef({ tx: 0, ty: 0, s: 1 });
   const walkRef = useRef<number>(Number.NaN);
@@ -163,10 +157,6 @@ export function CuriousTrailMountain({
   const dragRef = useRef<{ y0: number; pan0: number; moved: boolean } | null>(null);
   const [stage, setStage] = useState({ W: 0, H: 0, WW: 0, WH: 0 });
   const [walking, setWalking] = useState(false);
-  const [avalancheLen, setAvalancheLen] = useState(0);
-  const avalancheChaseRef = useRef({ len: 0, start: 0, caught: false, tick: 0 });
-  const avalancheCaughtCallbackRef = useRef(onAvalancheCaught);
-  useEffect(() => { avalancheCaughtCallbackRef.current = onAvalancheCaught; }, [onAvalancheCaught]);
   const [studentFacing, setStudentFacing] = useState<"left" | "right">("right");
   const [studentIncline, setStudentIncline] = useState<number>(0);
   const facingRef = useRef<"left" | "right">("right");
@@ -212,20 +202,14 @@ export function CuriousTrailMountain({
   const focusBelow = focusLen != null && ((pointPct(focusLen)?.y ?? 50) / 100) * VB_H < 320;
 
   // espelhos para o laço de animação (evita recriar o requestAnimationFrame a cada render)
-  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0, avalancheMode: false });
+  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0 });
   useEffect(() => {
-    live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total, cardH: focusLen != null && !focusBelow ? cardHeight : 0, avalancheMode };
+    live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total, cardH: focusLen != null && !focusBelow ? cardHeight : 0 };
   });
   const avRef = useRef(avalancheRef);
   useEffect(() => {
     avRef.current = avalancheRef;
   });
-
-  useEffect(() => {
-    const start = CAMP_FRACS[currentLevel - 1] * total;
-    avalancheChaseRef.current = { len: start - 115, start, caught: false, tick: 0 };
-    setAvalancheLen(start - 115);
-  }, [currentLevel, elements, total]);
 
   function pointPct(len: number): { x: number; y: number } | null {
     const { tbl, step } = pathInfo;
@@ -246,10 +230,18 @@ export function CuriousTrailMountain({
 
   useEffect(() => {
     const stageEl = stageRef.current;
-    const svg = svgRef.current;
-    if (!stageEl || !svg) return;
-    const wild = createWildlife(wildlifeWeatherRef.current);
-    worldWildRef.current = wild;
+    const fcanvas = faunaCanvasRef.current;
+    if (!stageEl || !fcanvas) return;
+    const fauna = createFauna(weatherRef.current);
+    faunaRef.current = fauna;
+    let alive = true;
+    loadFaunaAssets()
+      .then((a) => {
+        if (alive) faunaAssetsRef.current = a;
+      })
+      .catch((e) => console.error(e));
+    const fctx = fcanvas.getContext("2d");
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
 
     // O "mundo" mantém a proporção da arte (1000 x 2201) e COBRE a largura do palco.
     const measure = () => {
@@ -257,7 +249,10 @@ export function CuriousTrailMountain({
       const WW = Math.max(W, (H * VB_W) / VB_H);
       const WH = (WW * VB_H) / VB_W;
       sizeRef.current = { W, H, WW, WH };
-      svg.setAttribute("viewBox", `0 0 ${WW} ${WH}`);
+      fcanvas.width = Math.round(W * dpr);
+      fcanvas.height = Math.round(H * dpr);
+      fcanvas.style.width = `${W}px`;
+      fcanvas.style.height = `${H}px`;
       setStage((prev) => (prev.W === W && prev.H === H ? prev : { W, H, WW, WH }));
     };
     measure();
@@ -277,6 +272,8 @@ export function CuriousTrailMountain({
       const world = worldRef.current;
       const cam = camRef.current;
       let studentFrac: { x: number; y: number } | null = null;
+      let shakeX = 0;
+      let shakeY = 0;
 
       if (W > 0 && H > 0 && path && world && L.total > 0) {
         // 1) caminhada ao longo da curva
@@ -294,19 +291,6 @@ export function CuriousTrailMountain({
           }
         }
         walkRef.current = w;
-        if (L.avalancheMode && !avalancheChaseRef.current.caught) {
-          const hazard = avalancheChaseRef.current;
-          hazard.len = Math.min(L.total, hazard.len + dt * 4.2);
-          hazard.tick += dt;
-          if (w - hazard.len <= 42 && hazard.len >= hazard.start) {
-            hazard.caught = true;
-            avalancheCaughtCallbackRef.current?.();
-          }
-          if (hazard.tick >= 0.12) {
-            hazard.tick = 0;
-            setAvalancheLen(hazard.len);
-          }
-        }
         const moving = Math.abs(L.target - w) > 0.5;
         if (moving !== movingRef.current) {
           movingRef.current = moving;
@@ -330,11 +314,10 @@ export function CuriousTrailMountain({
           st.style.left = `${(p.x / VB_W) * 100}%`;
           st.style.top = `${(p.y / VB_H) * 100}%`;
         }
-        studentFrac = { x: p.x / VB_W, y: p.y / VB_H };
+        studentFrac = { x: p.x, y: p.y };
 
         // 2) câmera: acompanha o aluno e o próximo objeto (no lobby, a estação atual + arrastar)
         const sx = (p.x / VB_W) * WW, sy = (p.y / VB_H) * WH;
-        wild.setFocus(p.x / VB_W, p.y / VB_H);
         let fx = sx, fy = sy;
         let qy = -1;
         if (L.focus != null) {
@@ -358,7 +341,6 @@ export function CuriousTrailMountain({
 
         // 3) avalanche: tremor de câmera + desenho da onda de neve
         const av = avRef.current?.current;
-        let shakeX = 0, shakeY = 0;
         if (av && av.active && avSvgRef.current) {
           const front = av.front + (av.vel * (performance.now() - av.stamp)) / 1000;
           const sh = avalancheShake(tSec, av.danger);
@@ -374,18 +356,29 @@ export function CuriousTrailMountain({
         world.style.setProperty("--inv", String(1 / cam.s));
       }
 
-      // 4) bichos
-      if (W > 0 && H > 0) {
-        wild.step(dt, WW, WH, studentFrac);
-        svg.innerHTML = wild.render(WW, WH);
+      // 4) bichos, folhagem e água (canvas do tamanho da tela, alinhado à câmera dentro do mundo)
+      if (W > 0 && H > 0 && fctx) {
+        fauna.step(dt, studentFrac);
+        const k = (cam.s * WW) / VB_W;
+        const ex = cam.tx + shakeX;
+        const ey = cam.ty + shakeY;
+        fcanvas.style.transform = `translate(${-ex / cam.s}px, ${-ey / cam.s}px) scale(${1 / cam.s})`;
+        fctx.setTransform(1, 0, 0, 1, 0, 0);
+        fctx.clearRect(0, 0, fcanvas.width, fcanvas.height);
+        const assets = faunaAssetsRef.current;
+        if (assets) {
+          fctx.setTransform(dpr * k, 0, 0, dpr * k, dpr * ex, dpr * ey);
+          drawWater(fctx, tSec, weatherRef.current);
+          drawFauna(fctx, fauna, assets, weatherRef.current, tSec);
+        }
         const b = bubbleRef.current;
         const id = bubbleIdRef.current;
         if (b) {
-          const c = id ? wild.find(id) : undefined;
+          const c = id ? fauna.find(id) : undefined;
           if (c) {
-            const p = wild.position(c, WW, WH);
-            const x = Math.min(Math.max(p.x, 110), WW - 110);
-            b.style.transform = `translate(${x}px, ${Math.max(p.y, 70)}px) translate(-50%, -100%) scale(${1 / cam.s})`;
+            const hp = fauna.headPos(c);
+            const x = Math.min(Math.max((hp.x * WW) / VB_W, 110), WW - 110);
+            b.style.transform = `translate(${x}px, ${Math.max((hp.y * WW) / VB_W, 70)}px) translate(-50%, -100%) scale(${1 / cam.s})`;
             b.style.opacity = "1";
           } else {
             b.style.opacity = "0";
@@ -396,15 +389,52 @@ export function CuriousTrailMountain({
     };
     raf = requestAnimationFrame(loop);
     return () => {
+      alive = false;
       cancelAnimationFrame(raf);
       ro.disconnect();
-      worldWildRef.current = null;
+      faunaRef.current = null;
     };
   }, []);
 
   useEffect(() => {
-    wildlifeWeatherRef.current = weather;
-    worldWildRef.current?.setWeather(weather);
+    weatherRef.current = weather;
+    faunaRef.current?.setWeather(weather);
+  }, [weather]);
+
+  // a arte da mata com o clima aplicado (a MESMA receita dos bichos e dos retalhos de folhagem)
+  const baseSceneRef = useRef<HTMLImageElement | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    let url: string | null = null;
+    const apply = (img: HTMLImageElement) => {
+      if (weather === "sunny") {
+        setSceneSrc(TRAIL_SCENE_SRC);
+        return;
+      }
+      const g = gradeImage(img, weather) as HTMLCanvasElement;
+      g.toBlob(
+        (blob) => {
+          if (!blob || cancelled) return;
+          url = URL.createObjectURL(blob);
+          setSceneSrc(url);
+        },
+        "image/jpeg",
+        0.9
+      );
+    };
+    if (baseSceneRef.current) apply(baseSceneRef.current);
+    else {
+      const img = new Image();
+      img.onload = () => {
+        baseSceneRef.current = img;
+        if (!cancelled) apply(img);
+      };
+      img.src = TRAIL_SCENE_SRC;
+    }
+    return () => {
+      cancelled = true;
+      if (url) setTimeout(() => url && URL.revokeObjectURL(url), 2000);
+    };
   }, [weather]);
 
   // ao mudar de nível o mapa volta a seguir a estação (zera o arrasto do lobby)
@@ -429,12 +459,13 @@ export function CuriousTrailMountain({
   }
   function handleMapClick(e: React.MouseEvent<HTMLDivElement>) {
     if (dragRef.current?.moved) return;
-    const wild = worldWildRef.current;
-    if (!wild || !stageRef.current) return;
+    const fauna = faunaRef.current;
+    if (!fauna || !stageRef.current) return;
     const { x, y } = pointerPos(e);
-    const c = wild.hit(x, y, sizeRef.current.WW, sizeRef.current.WH);
+    const u = VB_W / sizeRef.current.WW;
+    const c = fauna.hit(x * u, y * u);
     if (c) {
-      wild.poke(c);
+      fauna.poke(c);
       handleAnimalTap(c.animal);
     }
   }
@@ -443,7 +474,7 @@ export function CuriousTrailMountain({
     dragRef.current = { y0: e.clientY, pan0: panRef.current, moved: false };
   }
   function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
-    const wild = worldWildRef.current;
+    const fauna = faunaRef.current;
     const d = dragRef.current;
     if (d && !playing) {
       const dy = e.clientY - d.y0;
@@ -451,9 +482,10 @@ export function CuriousTrailMountain({
       const ppu = (camRef.current.s * sizeRef.current.WW) / VB_W;
       panRef.current = clampN(d.pan0 - dy / ppu, -VB_H, VB_H);
     }
-    if (!wild || !stageRef.current) return;
+    if (!fauna || !stageRef.current) return;
     const { x, y } = pointerPos(e);
-    e.currentTarget.style.cursor = wild.hit(x, y, sizeRef.current.WW, sizeRef.current.WH) ? "pointer" : playing ? "default" : "grab";
+    const u = VB_W / sizeRef.current.WW;
+    e.currentTarget.style.cursor = fauna.hit(x * u, y * u) ? "pointer" : playing ? "default" : "grab";
   }
   function handlePointerUp() {
     // mantém "moved" por um instante para o clique de arrasto não acionar o bicho
@@ -486,47 +518,14 @@ export function CuriousTrailMountain({
         className="absolute left-0 top-0"
         style={{ transformOrigin: "0 0", width: stage.WW || "100%", height: stage.WH || "100%" }}
       >
-        {/* A mata: arte do cenário, com o clima aplicado por cima (filtro + névoa/geada) */}
+        {/* A mata: arte do cenário já com o clima aplicado */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={TRAIL_SCENE_SRC}
+          src={sceneSrc}
           alt=""
           draggable={false}
           className="trail-scene-img absolute inset-0 h-full w-full pointer-events-none"
-          style={{ filter: WEATHER_FILTER[weather] }}
         />
-        <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-[1200ms]"
-          style={{
-            opacity: weather === "sunny" ? 0 : 1,
-            background:
-              weather === "rain"
-                ? "linear-gradient(180deg, rgba(30,48,66,0.5) 0%, rgba(55,78,92,0.28) 55%, rgba(30,50,60,0.32) 100%)"
-                : "linear-gradient(180deg, rgba(214,228,255,0.5) 0%, rgba(232,241,255,0.34) 60%, rgba(255,255,255,0.28) 100%)",
-          }}
-        />
-        <svg
-          viewBox={`0 0 ${VB_W} ${VB_H}`}
-          preserveAspectRatio="none"
-          className="trail-water-life absolute inset-0 z-[4] h-full w-full pointer-events-none"
-          aria-hidden
-        >
-          <g className="trail-water-ripple">
-            <ellipse cx="482" cy="597" rx="19" ry="5" />
-          </g>
-          <g className="trail-water-ripple trail-water-ripple--late">
-            <ellipse cx="482" cy="597" rx="12" ry="3" />
-          </g>
-          <g className="trail-water-ripple trail-water-ripple--wide">
-            <ellipse cx="813" cy="1574" rx="22" ry="6" />
-          </g>
-          <g className="trail-water-ripple trail-water-ripple--late">
-            <ellipse cx="813" cy="1574" rx="13" ry="3.5" />
-          </g>
-          <g className="trail-water-ripple trail-water-ripple--wide">
-            <ellipse cx="328" cy="2114" rx="18" ry="5" />
-          </g>
-        </svg>
         {/* Trilha coberta de neve / molhada (o desenho da trilha é o mesmo caminho do jogo) */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full pointer-events-none overflow-visible">
           {weather === "snow" && (
@@ -538,16 +537,9 @@ export function CuriousTrailMountain({
           {weather === "rain" && <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#7fa7c4" strokeWidth="26" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="22 120" opacity="0.45" />}
           <path ref={setPathEl} d={CURIOUS_TRAIL_PATH} fill="none" stroke="transparent" strokeWidth="1" />
         </svg>
-        {avalancheMode && total > 0 && (
-          <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 z-[15] h-full w-full overflow-visible pointer-events-none" aria-hidden>
-            <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#dbeafe" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} className="trail-avalanche-shadow" />
-            <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#f8fafc" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} className="trail-avalanche-flow" />
-            <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#bae6fd" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${Math.max(0, avalancheLen)} ${total}`} opacity=".9" />
-          </svg>
-        )}
 
         {/* Bichos vivos */}
-        <svg ref={svgRef} className="absolute inset-0 w-full h-full z-20 pointer-events-none" aria-hidden />
+        <canvas ref={faunaCanvasRef} className="absolute left-0 top-0 z-20 pointer-events-none" style={{ transformOrigin: "0 0" }} aria-hidden />
         <div className="absolute inset-0 z-20" onClick={handleMapClick} />
         <div
           ref={bubbleRef}
@@ -556,7 +548,7 @@ export function CuriousTrailMountain({
         >
           {bubbleAnimal && (
             <div className="w-48 sm:w-56 p-2.5 bg-slate-900/95 text-white rounded-2xl shadow-xl text-xs border border-amber-400/60 animate-in fade-in zoom-in-95 relative">
-              <p className="font-extrabold text-amber-400 text-[11px]">{bubbleAnimal.emoji} {bubbleAnimal.namePt}</p>
+              <p className="font-extrabold text-amber-400 text-[11px]">{bubbleAnimal.emoji} {bubbleAnimal.name}</p>
               <p className="mt-1 font-medium leading-snug italic text-slate-100">&ldquo;{bubbleAnimal.quote}&rdquo;</p>
               <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
             </div>
@@ -695,9 +687,9 @@ export function CuriousTrailMountain({
             }}
           >
             <CuriousTrailStudent
+              weather={weather}
               hasUmbrella={currentCfg.hasUmbrella}
-              hasSnowGear={currentCfg.hasSnowGear || avalancheMode}
-              weather={avalancheMode ? "snow" : weather}
+              hasSnowGear={currentCfg.hasSnowGear}
               isWalking={walking}
               isCheering={isCheering}
               size={studentPx}
@@ -746,7 +738,7 @@ export function CuriousTrailMountain({
       {/* ================= HUD SUPERIOR ================= */}
       <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 z-20 pointer-events-none">
         <div className="flex items-center gap-2 rounded-2xl bg-slate-900/80 backdrop-blur-md px-3 py-1.5 text-white border border-white/20 shadow-lg min-w-0">
-          <span className="text-lg">{weather === "sunny" ? "�˜€️" : weather === "rain" ? "�ŸŒ�️" : "�„️"}</span>
+          <span className="text-lg">{weather === "sunny" ? "☀️" : weather === "rain" ? "🌧️" : "❄️"}</span>
           <div className="leading-tight min-w-0">
             <span className="block text-xs font-black text-amber-400 truncate">
               <span style={{ color: themeColor }}>Nível {currentLevel}</span> · {currentCfg.name}

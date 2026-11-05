@@ -101,16 +101,16 @@ export function TrailAnswerDock({
   return (
     <div className="pointer-events-auto absolute inset-x-0 bottom-0 p-2 sm:p-3">
       <div className="overflow-hidden rounded-2xl border border-white/20 bg-slate-950/78 shadow-2xl backdrop-blur-md">
-        {timed && <div className="h-1 w-full bg-white/10" aria-hidden>
+        <div className="h-1 w-full bg-white/10" aria-hidden>
           <div
             className={cn("h-full transition-[width] duration-200 ease-linear", barColor)}
             style={{ width: `${pct}%` }}
           />
-        </div>}
+        </div>
         <div className="px-2.5 pb-2.5 pt-1.5 sm:px-3">
           <p className="mb-1.5 flex items-center justify-between gap-2 text-[11px] font-bold text-slate-200">
             <span className="truncate">
-              {!timed ? <span className="text-sky-200">🌨️ Responda com atenção e continue subindo!</span> : roundState === "retry" ? (
+              {roundState === "retry" ? (
                 <span className="text-amber-300">Quase! Você tem mais uma chance 👀</span>
               ) : (
                 <>Que objeto a <span className="text-red-400">seta vermelha</span> aponta?</>

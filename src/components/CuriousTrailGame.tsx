@@ -418,13 +418,6 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     }
   }
 
-  function handleAvalancheCaught() {
-    if (phase !== "playing" || difficulty !== "avalanche") return;
-    setTimerRunning(false);
-    soundEffects.playTimeUp();
-    setPhase("avalanche_caught");
-  }
-
   // Iniciar um nível
   async function startLevel(lvl: number, resetMatch = false) {
     const requestId = ++loadRequestRef.current;
@@ -769,7 +762,6 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
         totalMs={roundState === "retry" ? Math.max(4000, Math.round((diffCfg.seconds * 1000) / 2)) : diffCfg.seconds * 1000}
         bonusText={speedBonusText}
         onPick={handleSelectOption}
-        timed={difficulty !== "avalanche"}
       />
     );
   } else if (phase === "avalanche_caught") {
@@ -1000,8 +992,6 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
           elementIndex={elementIndex}
           roundState={roundState}
           levelFinished={climbDone || phase === "level_complete" || phase === "summit_victory"}
-          avalancheMode={difficulty === "avalanche" && phase === "playing"}
-          onAvalancheCaught={handleAvalancheCaught}
           isCheering={isCheering}
           enterHouse={enterHouse}
           avalancheRef={avalancheLive}

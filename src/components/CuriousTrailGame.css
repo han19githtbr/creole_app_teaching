@@ -312,6 +312,36 @@
   animation: trailBlizzardGusts 5.5s ease-in-out infinite;
 }
 
+.trail-water-life {
+  overflow: visible;
+}
+
+.trail-water-ripple {
+  fill: none;
+  stroke: rgba(209, 246, 242, .82);
+  stroke-width: 2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: trailWaterRipple 3.8s ease-out infinite;
+}
+
+.trail-water-ripple--late {
+  animation-delay: 1.8s;
+}
+
+.trail-water-ripple--wide {
+  stroke: rgba(191, 232, 237, .72);
+  animation-duration: 4.6s;
+}
+
+@keyframes trailWaterRipple {
+  0% { opacity: 0; transform: scale(.35); }
+  15% { opacity: .7; }
+  80% { opacity: .28; }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+
 .trail-animal {
   border: 0;
   padding: 0;
@@ -387,6 +417,7 @@
   .trail-mist-layer,
   .trail-rain-layer,
   .trail-snow-layer,
+  .trail-water-ripple,
   .trail-scene-image,
   .trail-cold-shiver,
   .trail-breath-vapor,

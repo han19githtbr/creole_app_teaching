@@ -74,6 +74,35 @@ export const FAUNA_SPECIES: Record<string, FaunaSpec> = {
 };
 export const FAUNA_IDS = Object.keys(FAUNA_SPECIES);
 
+/**
+ * Os dados do jogo (curiousTrailData.ts) identificam os bichos em inglês (squirrel, deer...). Os recortes e o
+ * comportamento usam os ids em português abaixo. Este mapa liga os dois.
+ */
+export const DATA_TO_FAUNA_ID: Record<string, string> = {
+  squirrel: "esquilo",
+  deer: "cervo",
+  hedgehog: "ourico",
+  skunk: "gamba",
+  woodpecker: "picapau",
+  boar: "javali",
+  jaguar: "onca",
+  owl: "coruja",
+  anteater: "tamandua",
+  armadillo: "tatu",
+  caiman: "jacare",
+  sloth: "preguica",
+  toucan: "tucano",
+  otter: "lontra",
+  coati: "quati",
+  "maned-wolf": "guara",
+  pacu: "paca",
+  tortoise: "jabuti",
+  frog: "sapo",
+  agouti: "cutia",
+};
+const faunaIdOf = (dataId: string) => DATA_TO_FAUNA_ID[dataId] ?? (FAUNA_SPECIES[dataId] ? dataId : undefined);
+
+
 /** Os bichos de cada clima: os mais adaptados (sol: variedade; chuva: gostam de umidade; neve: aguentam o frio). */
 export const FAUNA_BY_WEATHER: Record<TrailWeather, readonly string[]> = {
   sunny: ["esquilo", "cervo", "picapau", "tucano", "quati", "tamandua", "tatu", "paca", "cutia", "jabuti", "guara", "onca", "gamba", "preguica", "javali"],
@@ -217,11 +246,14 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
 
   const speciesPool = () => {
     const allowed = new Set(FAUNA_BY_WEATHER[weather]);
-    return ROAMING_ANIMAL_POOL.filter((a) => allowed.has(a.id) && FAUNA_SPECIES[a.id]);
+    return ROAMING_ANIMAL_POOL.filter((a) => {
+      const f = faunaIdOf(a.id);
+      return !!f && allowed.has(f);
+    });
   };
 
   const mk = (animal: TrailAnimal): Critter => {
-    const spec = FAUNA_SPECIES[animal.id];
+    const spec = FAUNA_SPECIES[faunaIdOf(animal.id) as string];
     return {
       uid: uid++,
       animal,
@@ -284,10 +316,10 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
   }
 
   function spawn(initial: boolean, preferredId?: string) {
-    const present = new Set(critters.map((c) => c.animal.id));
+    const present = new Set(critters.map((c) => c.spec.id));
     const pool = speciesPool();
-    let cand = pool.filter((a) => !present.has(a.id) && (!preferredId || a.id === preferredId));
-    if (!cand.length && !preferredId) cand = pool.filter((a) => !present.has(a.id));
+    let cand = pool.filter((a) => !present.has(faunaIdOf(a.id) as string) && (!preferredId || faunaIdOf(a.id) === preferredId));
+    if (!cand.length && !preferredId) cand = pool.filter((a) => !present.has(faunaIdOf(a.id) as string));
     if (!cand.length) return;
     const c = mk(cand[Math.floor(rnd() * cand.length)]);
     if (c.spec.kind === "ground") {
@@ -320,7 +352,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     weather = next;
     pending.length = 0;
     const allowed = new Set(FAUNA_BY_WEATHER[weather]);
-    for (let i = critters.length - 1; i >= 0; i--) if (!allowed.has(critters[i].animal.id)) critters.splice(i, 1);
+    for (let i = critters.length - 1; i >= 0; i--) if (!allowed.has(critters[i].spec.id)) critters.splice(i, 1);
     if (populated) populate();
   }
 

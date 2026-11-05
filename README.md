@@ -399,22 +399,17 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 
 **Clima.** Sol, chuva e neve são aplicados sobre a mesma arte (dessaturação, névoa/geada, trilha molhada ou coberta de neve, chuva e neve caindo). Para trocar a arte basta substituir o arquivo da imagem e reajustar os pontos do caminho em `curiousTrailGeometry.ts`.
 
-**Fauna (espécies da arte).** Veado, raposa, coelho, esquilo, ouriço, capivara, macaco, tucano, arara, passarinho azul e águia, com temperamento próprio (`src/lib/trailWildlife.ts`):
+**Mata viva: fauna, folhagem e água.** O mapa não é mais estático:
 
-| Temperamento | Espécies | Comportamento |
-| --- | --- | --- |
-| Amigável | esquilo, passarinho, tucano, arara | aproximam-se curiosos, ficam/pousam perto do aluno |
-| Assustadiço | coelho, lebre-da-neve | congelam e fogem em zigue-zague |
-| Cauteloso | veado, raposa, raposa-do-ártico | erguem a cabeça, observam e se afastam (veado dá pulos ao fugir) |
-| Defensivo | ouriço | enrola-se em bola de espinhos |
-| Pacífico | capivara | ignora o aluno, anda devagar |
-| Agressivo | macaco, águia | macaco faz ameaça e investida de mentirinha; águia faz voo rasante (nada machuca o aluno) |
-
-Cada clima traz os bichos mais adaptados: **sol** (todos), **chuva** (capivara, tucano, arara, ouriço, veado, passarinho; mais ativos os que gostam de umidade), **neve** (raposa-do-ártico, lebre-da-neve, veado, raposa, águia). Tocar num bicho faz cada espécie reagir do seu jeito. O andar acompanha a distância percorrida (sem "patinar"), com saltos para coelho/esquilo.
+- **Bichos** (os 20 da ilustração de elenco, recortados em `public/trilha/fauna/*.png`): esquilo, cervo, ouriço, gambá, pica-pau, javali, onça, coruja, tamanduá, tatu, jacaré, preguiça, tucano, lontra, quati, lobo-guará, paca, jabuti, sapo e cutia. Os animais que antes estavam *pintados* no fundo foram retirados da arte (`mata-trilha.jpg`) e agora são esses bichos vivos; os animais antigos (desenhos vetoriais) foram removidos.
+- **Vivem DENTRO da mata** (`src/lib/trailFauna.ts`): passeiam pelas clareiras onde os bichos pintados estavam, às vezes **atravessam a trilha**, passam **atrás de retalhos de folhagem** (`public/trilha/patches/*.png`, recortes da própria arte que ficam na frente deles) e podem se **esconder** ali e espiar depois. Aves e preguiça **pousam em galhos, troncos e dentro das copas** (atrás das folhas) ou voam de um poleiro a outro.
+- **Temperamento por espécie:** amigáveis (esquilo, quati, lontra, tucano) se aproximam e pousam perto; assustadiços (paca, cutia, sapo) fogem para a folhagem; cautelosos (cervo, lobo-guará, coruja) observam e se afastam; defensivos (ouriço, tatu, jabuti) se encolhem; o gambá faz pose de aviso; agressivos (javali e onça) espreitam, ameaçam e fazem uma investida de mentirinha e o jacaré dá uma bocada de emboscada (nada machuca o aluno). Tocar num bicho faz cada um reagir.
+- **Por clima:** sol (esquilo, cervo, pica-pau, tucano, quati, tamanduá, tatu, paca, cutia, jabuti, lobo-guará, onça, gambá, preguiça, javali), chuva (sapo, lontra, jacaré, preguiça, tucano, quati, ouriço, jabuti, paca, cervo — os que gostam de água ficam nas lagoas) e neve (cervo, javali, coruja, esquilo, lobo-guará, pica-pau). O clima é aplicado igualmente na arte, nos retalhos e nos bichos (`src/lib/trailGrade.ts`).
+- **Água animada** (`src/lib/trailFaunaDraw.ts`): cachoeira e córrego correndo, lagoas com reflexos brilhando e ondinhas de chuva. A posição das águas e dos retalhos está nos próprios arquivos; para trocar a arte, refaça os recortes e ajuste `trailFaunaPatches.ts` e as listas de lugares em `trailFauna.ts`.
 
 **Modo Avalanche (depois do Nativo).** Nova dificuldade sem cronômetro: uma avalanche nasce atrás do aluno e sobe a trilha até alcançá-lo (`src/lib/trailAvalanche.ts`). Calibragem: ritmo de equilíbrio de 12,5 s por objeto no Nível 1 até 9,5 s no Nível 7; folga inicial de ~2,4 espaços entre objetos; acerto de 1ª tentativa empurra a avalanche para trás, erro a aproxima; durante a comemoração/caminhada ela desacelera. HUD mostra a distância em metros e a barra de perigo; ao ser alcançado, aparece a tela "A avalanche te alcançou!" (tentar de novo / voltar ao mapa). Nos testes, responder em até ~13 s por objeto vence todos os níveis, e ~16 s por objeto perde nos níveis 6 e 7. As constantes ficam em `AVALANCHE_CONFIG`.
 
-**Vídeos do jogo.** `curiousTrailDemoVideo.ts` + `trailVideoWorld.ts` usam a **mesma arte, câmera, clima, fauna (mesmo motor) e avalanche (mesma física e mesmo desenho)** do jogo, quadro a quadro e com semente fixa. A dificuldade "Avalanche" também está no estúdio (Admin → Vídeos do Jogo → Trilha Curiosa). No vídeo o tempo da avalanche corre ~3× mais rápido que no jogo (é uma demonstração curta) e a hesitação do aluno é ajustada para a avalanche chegar perto sem alcançá-lo.
+**Vídeos do jogo.** `curiousTrailDemoVideo.ts` + `trailVideoWorld.ts` usam a **mesma arte, câmera, clima, fauna, folhagem, água (mesmo motor e desenho) e avalanche (mesma física e mesmo desenho)** do jogo, quadro a quadro e com semente fixa. A dificuldade "Avalanche" também está no estúdio (Admin → Vídeos do Jogo → Trilha Curiosa). No vídeo o tempo da avalanche corre ~3× mais rápido que no jogo (é uma demonstração curta) e a hesitação do aluno é ajustada para a avalanche chegar perto sem alcançá-lo.
 
 ### (versão anterior, mantida só como histórico)
 

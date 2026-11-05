@@ -368,7 +368,14 @@ export function renderTrailDemoFrame(
   h: number,
   t: number,
   plan: TrailDemoPlan,
-  assets: { images: DemoImages; scene?: CanvasImageSource | null; dyn?: CanvasImageSource | null }
+  assets: {
+    images: DemoImages;
+    scene?: CanvasImageSource | null;
+    /** água + folhagem + bichos (mundo do vídeo) */
+    world?: { drawWorld: (ctx: CanvasRenderingContext2D, t: number) => void } | null;
+    /** avalanche (imagem rasterizada do quadro) */
+    dyn?: CanvasImageSource | null;
+  }
 ) {
   const spec = DEMO_FORMATS[plan.settings.format];
   const { theme, levelCfg, introDur, countdownDur, outroStart } = plan;
@@ -404,26 +411,8 @@ export function renderTrailDemoFrame(
     ctx.fillRect(0, 0, WORLD_W, WORLD_H);
   }
 
-  // clima aplicado sobre a arte (a mesma receita do jogo: dessaturar + névoa/geada)
+  // trilha coberta de neve / molhada (por cima da arte já com o clima aplicado)
   if (isRain || isSnow) {
-    ctx.save();
-    ctx.globalCompositeOperation = "saturation";
-    ctx.globalAlpha = isRain ? 0.32 : 0.72;
-    ctx.fillStyle = "hsl(0, 0%, 50%)";
-    ctx.fillRect(0, 0, WORLD_W, WORLD_H);
-    ctx.restore();
-    const tint = ctx.createLinearGradient(0, 0, 0, WORLD_H);
-    if (isRain) {
-      tint.addColorStop(0, "rgba(30, 48, 66, 0.52)");
-      tint.addColorStop(0.55, "rgba(55, 78, 92, 0.3)");
-      tint.addColorStop(1, "rgba(30, 50, 60, 0.34)");
-    } else {
-      tint.addColorStop(0, "rgba(214, 228, 255, 0.5)");
-      tint.addColorStop(0.6, "rgba(232, 241, 255, 0.34)");
-      tint.addColorStop(1, "rgba(255, 255, 255, 0.28)");
-    }
-    ctx.fillStyle = tint;
-    ctx.fillRect(0, 0, WORLD_W, WORLD_H);
     const trail = getTrailPath();
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -444,6 +433,10 @@ export function renderTrailDemoFrame(
       ctx.setLineDash([]);
     }
   }
+
+
+  // água, folhagem e bichos da mata (o mesmo motor e desenho do jogo)
+  assets.world?.drawWorld(ctx, t);
 
   // casinha do cume: rótulo e brilho da porta (acende quando o aluno chega)
   const lastEnd = plan.rounds.at(-1)?.end ?? Infinity;

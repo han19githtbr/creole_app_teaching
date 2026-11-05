@@ -18,7 +18,7 @@ import {
   type DemoImages,
 } from "@/lib/gameDemoVideo";
 import type { ExportResult } from "@/lib/gameDemoExport";
-import { TrailVideoWorld, loadTrailScene } from "@/lib/trailVideoWorld";
+import { TrailVideoWorld, loadTrailVideoAssets, type TrailVideoAssets } from "@/lib/trailVideoWorld";
 import { TRAIL_LEVELS, TRAIL_THEMES } from "@/lib/curiousTrailData";
 import { SOCIAL_PLATFORMS, sanitizeSocialHandle, type SocialPlatform } from "@/lib/socialLinks";
 import { Download, Loader2, Pause, Play, Sparkles } from "lucide-react";
@@ -89,29 +89,30 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
     };
   }, [plan, imageLoadAttempt]);
 
-  // Arte da mata (a mesma do jogo) e camada dinâmica (bichos + avalanche), geradas pelo mesmo motor do jogo
-  const sceneRef = useRef<HTMLImageElement | null>(null);
-  const [sceneReady, setSceneReady] = useState(false);
+  // Arte da mata (a mesma do jogo, com o clima do nível), bichos, folhagem e água: mesmos arquivos e mesmo motor do jogo
+  const vAssetsRef = useRef<TrailVideoAssets | null>(null);
+  const [loadedWeather, setLoadedWeather] = useState<string | null>(null);
+  const weatherKey = plan.levelCfg.weather;
+  const sceneReady = loadedWeather === weatherKey;
   useEffect(() => {
     let cancelled = false;
-    loadTrailScene()
-      .then((img) => {
+    loadTrailVideoAssets(weatherKey)
+      .then((a) => {
         if (cancelled) return;
-        sceneRef.current = img;
-        setSceneReady(true);
+        vAssetsRef.current = a;
+        setLoadedWeather(weatherKey);
       })
       .catch((e) => console.error(e));
     return () => {
       cancelled = true;
     };
-  }, []);
-  const world = useMemo(() => new TrailVideoWorld(plan), [plan]);
-  const worldRef = useRef(world);
+  }, [weatherKey]);
+  const worldRef = useRef<TrailVideoWorld | null>(null);
   const dynRef = useRef<{ img: HTMLImageElement | null; busy: boolean }>({ img: null, busy: false });
   useEffect(() => {
-    worldRef.current = world;
+    worldRef.current = sceneReady && vAssetsRef.current ? new TrailVideoWorld(plan, vAssetsRef.current.fauna) : null;
     dynRef.current = { img: null, busy: false };
-  }, [world]);
+  }, [plan, sceneReady]);
 
   const planRef = useRef(plan);
   const imagesRef = useRef(images);
@@ -131,13 +132,13 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext("2d");
       if (!canvas || !ctx) return;
-      // camada dinâmica: pede o quadro dos bichos/avalanche (assíncrono) e usa o último pronto
+      // avalanche: pede o quadro (assíncrono) e usa o último pronto
       const d = dynRef.current;
-      if (!d.busy) {
+      const wld = worldRef.current;
+      if (wld && !d.busy) {
         d.busy = true;
-        const wld = worldRef.current;
         void wld
-          .frameImage(t, canvas.width, canvas.height)
+          .avalancheImage(t, canvas.width, canvas.height)
           .then((img) => {
             if (worldRef.current === wld) d.img = img;
           })
@@ -148,7 +149,8 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       }
       renderTrailDemoFrame(ctx, canvas.width, canvas.height, t, planRef.current, {
         images: imagesRef.current,
-        scene: sceneRef.current,
+        scene: vAssetsRef.current?.scene ?? null,
+        world: wld,
         dyn: d.img,
       });
     };
@@ -226,7 +228,8 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       });
 
       recorder.start();
-      const exportWorldRef = new TrailVideoWorld(plan);
+      if (!vAssetsRef.current) throw new Error("A arte da trilha ainda não carregou.");
+      const exportWorld = new TrailVideoWorld(plan, vAssetsRef.current.fauna);
 
       const fps = 30;
       const totalFrames = Math.ceil(plan.total * fps);
@@ -234,9 +237,8 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         if (controller.signal.aborted) throw new Error("Cancelado");
         const tFrame = f / fps;
         // exportação quadro a quadro, com o mundo recomeçando do zero (mesma simulação da prévia)
-        const exportWorld = exportWorldRef;
-        const dyn = await exportWorld.frameImage(tFrame, spec.w, spec.h);
-        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: sceneRef.current, dyn });
+        const dyn = await exportWorld.avalancheImage(tFrame, spec.w, spec.h);
+        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: vAssetsRef.current?.scene ?? null, world: exportWorld, dyn });
         setProgress(Math.round((f / totalFrames) * 100));
         await new Promise((r) => setTimeout(r, 16));
       }

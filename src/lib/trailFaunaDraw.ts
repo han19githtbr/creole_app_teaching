@@ -206,22 +206,31 @@ function drawRigged(
 ) {
   const rig = FAUNA_RIGS[id];
   const k = h / rig.ih;
-  const run = c.mood === "flee" || c.mood === "lunge" ? 1.45 : 1;
-  const hop = hopping ? Math.abs(Math.sin(c.phase)) : 0;
+  const effort = Math.min(1.35, c.v / Math.max(1, c.spec.speed));
+  const run = (c.mood === "flee" || c.mood === "lunge" ? 1.18 : 0.92) * Math.max(0.45, effort);
+  const bodyBob = moving && !hopping
+    ? Math.abs(Math.sin(c.phase * 2)) * rig.ih * 0.012 * Math.max(0.5, effort)
+    : Math.sin(t * 2.1 + c.seed) * 0.65;
+  const bodyPitch = moving
+    ? Math.sin(c.phase * 2 + 0.45) * 2.2 * Math.max(0.45, effort)
+    : Math.sin(t * 1.25 + c.seed) * 0.45;
   const bodyPart = rig.parts.find((p) => p.kind === "body");
   const angleOf = (p: RigPart): { a: number; dy: number } => {
     if (p.kind === "leg") {
       if (hopping) {
-        // pulo: as patas se esticam para trás na decolagem e se recolhem no ar
-        const back = nativeFace * 30 * hop;
-        const tuck = nativeFace * -8 * (1 - hop);
-        return { a: moving ? back + tuck : 0, dy: 0 };
+        // As patas recolhem durante o voo e se estendem na aterrissagem.
+        const airborne = Math.max(0, Math.sin(c.phase));
+        const foreleg = id !== "sapo" && (p.x - rig.iw / 2) * nativeFace > 0;
+        const tuck = foreleg ? -17 : 23;
+        const land = foreleg ? 15 : -12;
+        return { a: moving ? nativeFace * (tuck * airborne + land * (1 - airborne)) : 0, dy: 0 };
       }
       if (!moving) return { a: 0, dy: 0 };
       const ph = c.phase + (p.group === "B" ? Math.PI : 0);
-      const swing = -nativeFace * 21 * run * Math.sin(ph);
-      // a pata que avança sai do chão
-      const lift = Math.max(0, Math.cos(ph)) * p.h * 0.09 * run;
+      const foreleg = (p.x - rig.iw / 2) * nativeFace > 0;
+      const swing = -nativeFace * (foreleg ? 19 : 23) * run * Math.sin(ph);
+      // Levanta o casco/pata ao avançar e mantém o apoio próximo ao chão no recuo.
+      const lift = Math.max(0, Math.cos(ph)) * p.h * 0.11 * run;
       return { a: swing, dy: -lift };
     }
     if (p.kind === "tail") {
@@ -236,6 +245,9 @@ function drawRigged(
     return { a: 0, dy: 0 };
   };
   ctx.save();
+  // O corpo acompanha o compasso dos apoios, em vez de deslizar rígido sobre as patas.
+  ctx.translate(0, -bodyBob);
+  ctx.rotate(bodyPitch * RAD);
   ctx.scale(k, k);
   ctx.translate(-rig.iw / 2, -rig.ih);
   const draw = (p: RigPart) => {
@@ -243,6 +255,7 @@ function drawRigged(
     ctx.save();
     ctx.translate(p.px, p.py + dy);
     ctx.rotate((a * Math.PI) / 180);
+    if (p.kind === "leg") ctx.scale(1.015, 1.035);
     ctx.translate(-p.px, -p.py);
     ctx.drawImage(atlas, p.sx, p.sy, p.w, p.h, p.x, p.y, p.w, p.h);
     ctx.restore();
@@ -464,9 +477,41 @@ function drawFlyingBird(
 function drawVectorAnimal(ctx: CanvasRenderingContext2D, id: string, w: number, h: number, c: Critter, t: number, moving: boolean) {
   if (id === "coelho") {
     const crouch = c.mood === "alert" ? 0.92 : 1;
-    const kick = moving ? Math.sin(c.phase * 0.5) : 0;
+    const stride = moving ? Math.sin(c.phase) : 0;
+    const airborne = moving ? Math.max(0, Math.sin(c.phase)) : 0;
+    const farLeg = (hind: boolean) => {
+      const hipX = hind ? -w * 0.2 : w * 0.13;
+      const hipY = hind ? -h * 0.23 : -h * 0.2;
+      const swing = stride * (hind ? -w * 0.09 : w * 0.08);
+      const tuck = airborne * (hind ? -w * 0.08 : -w * 0.035);
+      ctx.strokeStyle = "#755c48";
+      ctx.lineWidth = Math.max(1.6, h * 0.075);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(hipX, hipY);
+      ctx.quadraticCurveTo(hipX + swing * 0.45, hipY + h * 0.12, hipX + swing + tuck, -h * 0.03 + airborne * h * 0.12);
+      ctx.stroke();
+    };
+    const nearLeg = (hind: boolean) => {
+      const hipX = hind ? -w * 0.18 : w * 0.16;
+      const hipY = hind ? -h * 0.23 : -h * 0.2;
+      const swing = stride * (hind ? -w * 0.1 : w * 0.09);
+      const tuck = airborne * (hind ? -w * 0.09 : -w * 0.03);
+      ctx.strokeStyle = "#755940";
+      ctx.lineWidth = Math.max(2, h * 0.09);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(hipX, hipY);
+      ctx.quadraticCurveTo(hipX + swing * 0.45, hipY + h * 0.12, hipX + swing + tuck, -h * 0.015 + airborne * h * 0.12);
+      ctx.stroke();
+    };
+    // O par distante fica sob o corpo; o próximo aparece à frente, como em uma passada real.
+    farLeg(true);
+    farLeg(false);
     ctx.fillStyle = "#8c6b51";
-    ctx.beginPath(); ctx.ellipse(-w * 0.22, -h * 0.18, w * 0.2, h * 0.16, kick * 0.15, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-w * 0.22, -h * 0.18, w * 0.2, h * 0.16, stride * 0.08, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#cbb79c";
     ctx.beginPath(); ctx.ellipse(-w * 0.04, -h * 0.42 * crouch, w * 0.38, h * 0.3, -0.06, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(w * 0.28, -h * 0.67 * crouch, w * 0.2, h * 0.21, 0, 0, Math.PI * 2); ctx.fill();
@@ -480,51 +525,98 @@ function drawVectorAnimal(ctx: CanvasRenderingContext2D, id: string, w: number, 
     ctx.beginPath(); ctx.arc(w * 0.36, -h * 0.72 * crouch, 1.8, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#f4ede2";
     ctx.beginPath(); ctx.ellipse(-w * 0.4, -h * 0.47, h * 0.075, h * 0.075, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#755940"; ctx.lineWidth = h * 0.11; ctx.lineCap = "round";
-    ctx.beginPath(); ctx.moveTo(-w * 0.12, -h * 0.2); ctx.lineTo(-w * 0.19 + kick * 2, -h * 0.01); ctx.moveTo(w * 0.12, -h * 0.2); ctx.lineTo(w * 0.13 - kick * 2, -h * 0.01); ctx.stroke();
+    nearLeg(true);
+    nearLeg(false);
     return;
   }
   if (id === "cobra") {
-    const wave = Math.sin(t * 1.7 + c.seed) * h * 0.13;
+    const crawl = moving ? 2.7 + Math.min(2.8, c.v * 0.055) : 0.9;
+    const wavePhase = c.clk * crawl + c.seed;
+    const points = Array.from({ length: 7 }, (_, i) => {
+      const u = i / 6;
+      return {
+        x: -w * 0.48 + w * 0.77 * u,
+        y: -h * (0.08 + 0.4 * u) + Math.sin(wavePhase - u * Math.PI * 3.2) * h * (0.1 - u * 0.035),
+      };
+    });
+    const strokeBody = () => {
+      ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length - 1; i++) {
+        ctx.quadraticCurveTo(points[i].x, points[i].y, (points[i].x + points[i + 1].x) / 2, (points[i].y + points[i + 1].y) / 2);
+      }
+      ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y); ctx.stroke();
+    };
     ctx.lineCap = "round"; ctx.lineJoin = "round";
     ctx.strokeStyle = "#263f29"; ctx.lineWidth = h * 0.5;
-    ctx.beginPath(); ctx.moveTo(-w * 0.48, -h * 0.08); ctx.quadraticCurveTo(-w * 0.2, -h * 0.02 + wave, 0, -h * 0.12); ctx.quadraticCurveTo(w * 0.2, -h * 0.28 - wave, w * 0.29, -h * 0.48); ctx.stroke();
+    strokeBody();
     ctx.strokeStyle = c.mood === "threat" ? "#9e6b35" : "#66864a"; ctx.lineWidth = h * 0.33;
-    ctx.beginPath(); ctx.moveTo(-w * 0.48, -h * 0.08); ctx.quadraticCurveTo(-w * 0.2, -h * 0.02 + wave, 0, -h * 0.12); ctx.quadraticCurveTo(w * 0.2, -h * 0.28 - wave, w * 0.29, -h * 0.48); ctx.stroke();
+    strokeBody();
     ctx.fillStyle = c.mood === "threat" ? "#9e6b35" : "#789655";
-    ctx.beginPath(); ctx.ellipse(w * 0.31, -h * 0.5, w * 0.14, h * 0.18, -0.25, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#f8e9b0"; ctx.beginPath(); ctx.arc(w * 0.36, -h * 0.55, 1.6, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#161b13"; ctx.beginPath(); ctx.arc(w * 0.37, -h * 0.55, 0.8, 0, Math.PI * 2); ctx.fill();
-    if (c.mood === "threat") { ctx.strokeStyle = "#d15b55"; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(w * 0.43, -h * 0.43); ctx.lineTo(w * 0.52, -h * 0.4); ctx.lineTo(w * 0.45, -h * 0.37); ctx.stroke(); }
+    const head = points[points.length - 1];
+    ctx.beginPath(); ctx.ellipse(head.x + w * 0.035, head.y - h * 0.025, w * 0.14, h * 0.18, -0.25, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#f8e9b0"; ctx.beginPath(); ctx.arc(head.x + w * 0.09, head.y - h * 0.075, 1.6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#161b13"; ctx.beginPath(); ctx.arc(head.x + w * 0.095, head.y - h * 0.075, 0.8, 0, Math.PI * 2); ctx.fill();
+    if (c.mood === "threat" || Math.sin(c.clk * 7 + c.seed) > 0.96) {
+      ctx.strokeStyle = "#d15b55"; ctx.lineWidth = 1.3; ctx.beginPath();
+      ctx.moveTo(head.x + w * 0.13, head.y + h * 0.015); ctx.lineTo(head.x + w * 0.24, head.y + h * 0.03); ctx.lineTo(head.x + w * 0.15, head.y + h * 0.05); ctx.stroke();
+    }
     return;
   }
   if (id === "caracol") {
-    ctx.fillStyle = "#d7c49a"; ctx.beginPath(); ctx.ellipse(0, -h * 0.12, w * 0.48, h * 0.18, 0, 0, Math.PI * 2); ctx.fill();
+    const creep = c.clk * (moving ? 1.2 : 0.42) + c.seed;
+    const footPulse = moving ? Math.sin(creep * 2) * h * 0.035 : Math.sin(creep) * h * 0.012;
+    ctx.fillStyle = "#d7c49a"; ctx.beginPath(); ctx.ellipse(0, -h * 0.12 + footPulse, w * 0.48, h * 0.18, 0, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#88623c"; ctx.beginPath(); ctx.arc(-w * 0.05, -h * 0.65, h * 0.44, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#d9b878"; ctx.beginPath(); ctx.arc(-w * 0.05, -h * 0.65, h * 0.33, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = "#8a6037"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(-w * 0.05, -h * 0.65, h * 0.23, 0, Math.PI * 1.75); ctx.stroke();
-    ctx.strokeStyle = "#c6ad7f"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(w * 0.25, -h * 0.21); ctx.lineTo(w * 0.34, -h * 0.84); ctx.moveTo(w * 0.42, -h * 0.18); ctx.lineTo(w * 0.47, -h * 0.7); ctx.stroke();
-    ctx.fillStyle = "#242017"; ctx.beginPath(); ctx.arc(w * 0.34, -h * 0.86, 1, 0, Math.PI * 2); ctx.arc(w * 0.47, -h * 0.72, 1, 0, Math.PI * 2); ctx.fill();
+    const feelerA = Math.sin(creep * 1.4) * h * 0.045;
+    const feelerB = Math.sin(creep * 1.1 + 1.5) * h * 0.04;
+    ctx.strokeStyle = "#c6ad7f"; ctx.lineWidth = 1; ctx.beginPath();
+    ctx.moveTo(w * 0.25, -h * 0.21); ctx.quadraticCurveTo(w * 0.28, -h * 0.58, w * 0.34 + feelerA, -h * 0.84);
+    ctx.moveTo(w * 0.42, -h * 0.18); ctx.quadraticCurveTo(w * 0.43, -h * 0.48, w * 0.47 + feelerB, -h * 0.7); ctx.stroke();
+    ctx.fillStyle = "#242017"; ctx.beginPath(); ctx.arc(w * 0.34 + feelerA, -h * 0.86, 1, 0, Math.PI * 2); ctx.arc(w * 0.47 + feelerB, -h * 0.72, 1, 0, Math.PI * 2); ctx.fill();
+    if (moving && Math.floor(c.clk * 0.8) % 2 === 0) {
+      ctx.strokeStyle = "rgba(205, 220, 192, .48)"; ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(-w * 0.42, h * 0.035); ctx.quadraticCurveTo(-w * 0.58, h * 0.07, -w * 0.72, h * 0.025); ctx.stroke();
+    }
     return;
   }
   if (id === "formiga") {
     for (let i = 0; i < 3; i++) {
       const ax = (i - 1) * w * 0.38;
-      const bob = Math.sin(t * 8 + c.seed + i) * h * 0.08;
-      ctx.strokeStyle = "#30251c"; ctx.lineWidth = 0.8;
-      ctx.beginPath(); ctx.moveTo(ax, -h * 0.38 + bob); ctx.lineTo(ax - 2, -h * 0.03); ctx.moveTo(ax, -h * 0.38 + bob); ctx.lineTo(ax + 2, -h * 0.03); ctx.stroke();
-      ctx.fillStyle = "#332319"; ctx.beginPath(); ctx.arc(ax, -h * 0.38 + bob, h * 0.2, 0, Math.PI * 2); ctx.arc(ax + w * 0.13, -h * 0.39 + bob, h * 0.15, 0, Math.PI * 2); ctx.arc(ax - w * 0.13, -h * 0.37 + bob, h * 0.14, 0, Math.PI * 2); ctx.fill();
+      const stride = moving ? c.clk * 11 + i * 1.4 : Math.sin(t * 1.8 + c.seed + i) * 0.25;
+      const bob = moving ? Math.abs(Math.sin(stride * 2)) * h * 0.035 : Math.sin(t * 2 + c.seed + i) * h * 0.015;
+      ctx.strokeStyle = "#30251c"; ctx.lineWidth = 0.75; ctx.lineCap = "round";
+      for (let leg = 0; leg < 3; leg++) {
+        const lx = ax + (leg - 1) * w * 0.055;
+        const swing = Math.sin(stride + (leg % 2 ? Math.PI : 0)) * w * 0.045;
+        ctx.beginPath();
+        ctx.moveTo(lx, -h * 0.37 + bob); ctx.lineTo(lx + swing, -h * 0.19); ctx.lineTo(lx + swing * 1.4, -h * 0.015);
+        ctx.moveTo(lx, -h * 0.37 + bob); ctx.lineTo(lx - swing, -h * 0.19); ctx.lineTo(lx - swing * 1.4, -h * 0.015);
+        ctx.stroke();
+      }
+      ctx.fillStyle = "#332319";
+      ctx.beginPath();
+      ctx.arc(ax - w * 0.11, -h * 0.38 + bob, h * 0.16, 0, Math.PI * 2);
+      ctx.arc(ax, -h * 0.39 + bob, h * 0.11, 0, Math.PI * 2);
+      ctx.arc(ax + w * 0.13, -h * 0.39 + bob, h * 0.15, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#332319"; ctx.lineWidth = 0.55;
+      ctx.beginPath(); ctx.moveTo(ax + w * 0.19, -h * 0.44 + bob); ctx.quadraticCurveTo(ax + w * 0.24, -h * 0.55, ax + w * 0.28, -h * 0.48 + Math.sin(stride) * h * 0.025);
+      ctx.moveTo(ax + w * 0.17, -h * 0.43 + bob); ctx.quadraticCurveTo(ax + w * 0.19, -h * 0.53, ax + w * 0.23, -h * 0.5);
+      ctx.stroke();
     }
     return;
   }
   if (id === "pacu") {
-    const tailBeat = Math.sin(t * 5 + c.seed) * w * 0.04;
+    const swimPhase = moving ? c.clk * (3.5 + c.v * 0.08) + c.seed : t * 1.15 + c.seed;
+    const tailBeat = Math.sin(swimPhase * 2) * w * (moving ? 0.065 : 0.025);
     ctx.fillStyle = "#356d68";
     ctx.beginPath(); ctx.moveTo(-w * 0.4, -h * 0.5); ctx.lineTo(-w * 0.68, -h * 0.84 + tailBeat); ctx.lineTo(-w * 0.65, -h * 0.16 + tailBeat); ctx.closePath(); ctx.fill();
     ctx.fillStyle = "#4a9d8b";
-    ctx.beginPath(); ctx.ellipse(0, -h * 0.5, w * 0.48, h * 0.38, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0, -h * 0.5, w * 0.48, h * (0.38 + Math.sin(swimPhase * 2) * 0.012), Math.sin(swimPhase) * 0.025, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#77b6a0";
-    ctx.beginPath(); ctx.moveTo(-w * 0.05, -h * 0.74); ctx.lineTo(w * 0.12, -h * 1.02); ctx.lineTo(w * 0.28, -h * 0.69); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-w * 0.05, -h * 0.74); ctx.lineTo(w * 0.12, -h * (1.02 + Math.sin(swimPhase * 2) * 0.045)); ctx.lineTo(w * 0.28, -h * 0.69); ctx.closePath(); ctx.fill();
     ctx.fillStyle = "#b7d8b8";
     ctx.beginPath(); ctx.moveTo(-w * 0.05, -h * 0.28); ctx.lineTo(w * 0.16, -h * 0.03); ctx.lineTo(w * 0.3, -h * 0.35); ctx.closePath(); ctx.fill();
     ctx.fillStyle = "#12231d"; ctx.beginPath(); ctx.arc(w * 0.31, -h * 0.59, 1.5, 0, Math.PI * 2); ctx.fill();
@@ -542,6 +634,7 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   const h = sp.h;
   const w = (h * iw) / ih;
   const moving = c.state === "move" && c.v > 2;
+  const riggedGround = sp.kind === "ground" && Boolean(assets.rigs[sp.id] && FAUNA_RIGS[sp.id]);
   let lift = c.z;
   let sx = 1;
   let sy = 1;
@@ -558,11 +651,15 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
         sx *= 1 + 0.06 * (1 - s);
       }
     } else if (moving) {
-      lift += Math.abs(Math.sin(c.phase)) * h * 0.018;
-      rot += Math.sin(c.phase * 2) * 1.2;
+      lift += Math.abs(Math.sin(c.phase)) * h * (riggedGround ? 0.009 : 0.026);
+      rot += Math.sin(c.phase * 2) * (riggedGround ? 0.7 : 1.8);
+      if (!riggedGround) {
+        sx *= 1 + Math.sin(c.phase * 2) * 0.018;
+        sy *= 1 - Math.sin(c.phase * 2) * 0.018;
+      }
     }
     if (!moving) {
-      sy *= 1 + Math.sin(t * 2.2 + c.seed) * 0.012;
+      sy *= 1 + Math.sin(c.clk * 1.5 + c.seed) * 0.012;
       if (c.mood === "forage" && !FAUNA_RIGS[sp.id]) rot += Math.sin(t * 3 + c.seed) * 2.5;
     }
   } else if (c.state === "fly") {
@@ -573,18 +670,23 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
       rot += 9;
     }
   } else if (sp.pecks && c.mood === "calm") {
-    const burst = Math.max(0, Math.sin(t * 0.65 + c.seed));
-    rot += Math.sin(t * 15 + c.seed) * 3.5 * burst;
+    const burst = Math.max(0, Math.sin(c.clk * 0.7 + c.seed));
+    rot += Math.sin(c.clk * 6.5 + c.seed) * 2.6 * burst;
   } else if (sp.hangs) {
-    rot += Math.sin(t * 0.8 + c.seed) * 3;
+    rot += Math.sin(c.clk * 0.35 + c.seed) * 2.2;
+    lift += Math.sin(c.clk * 0.7 + c.seed) * h * 0.012;
   } else {
-    sy *= 1 + Math.sin(t * 2 + c.seed) * 0.012;
+    sy *= 1 + Math.sin(c.clk * 1.2 + c.seed) * 0.012;
+    if (sp.kind === "perch") {
+      lift += Math.max(0, Math.sin(c.clk * 1.7 + c.seed)) * h * 0.012;
+      rot += Math.sin(c.clk * 0.9 + c.seed) * 0.9;
+    }
   }
 
   switch (c.mood) {
     case "flee":
     case "lunge":
-      rot += 7;
+      rot += Math.sin(c.phase * 2) * 2.2 + 2;
       break;
     case "stalk":
       rot += 4;
@@ -599,8 +701,8 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
       sx *= 1.08;
       break;
     case "threat":
-      jx = Math.sin(t * 45) * 1.4;
-      rot += Math.sin(t * 38) * 2 - 3;
+      jx = Math.sin(c.clk * 5 + c.seed) * 0.55;
+      rot += Math.sin(c.clk * 3.2 + c.seed) * 0.9 - 2;
       break;
     default:
       break;

@@ -59,7 +59,7 @@ const TRAIL_DEMO_DIFFICULTY: Record<TrailDemoDifficulty, { seconds: number; mult
 export interface TrailDemoSettings {
   title: string;
   themeId: string;
-  level: number; // 1 a 7
+  levels: number[]; // níveis da montanha incluídos na sequência do vídeo
   difficulty: TrailDemoDifficulty;
   format: DemoFormat;
   showIntro: boolean;
@@ -73,7 +73,7 @@ export interface TrailDemoSettings {
 export const DEFAULT_TRAIL_DEMO_SETTINGS: TrailDemoSettings = {
   title: "Trilha do Aluno Curioso 🇫🇷\nSuba a montanha e aprenda francês!",
   themeId: "gastronomia",
-  level: 4, // Nível 4 demonstra a transição com chuva e guarda-chuva!
+  levels: [4], // Nível 4 demonstra a transição com chuva e guarda-chuva!
   difficulty: "intermediate",
   format: "story",
   showIntro: true,
@@ -96,9 +96,16 @@ export interface TrailDemoRound {
   scoreBefore: number;
   scoreAfter: number;
   xpAfter: number;
+  roundIndex: number;
+  roundCount: number;
+  segmentStart: number;
+  segmentEnd: number;
 }
 
 export interface TrailDemoAvalanche {
+  level: number;
+  start: number;
+  end: number;
   dt: number;
   active: boolean[];
   front: number[];
@@ -119,7 +126,8 @@ export interface TrailDemoPlan {
   /** duração da cena final em que o aluno entra feliz na casinha (nível 7) */
   houseDur: number;
   /** linha do tempo da avalanche (modo avalanche), amostrada a 30 quadros/s */
-  avalanche: TrailDemoAvalanche | null;
+  avalanche: TrailDemoAvalanche[];
+  levels: TrailLevelConfig[];
   outroStart: number;
   outroDur: number;
   total: number;
@@ -132,28 +140,40 @@ export function buildTrailDemoPlan(
   settings: TrailDemoSettings
 ): TrailDemoPlan {
   const theme = TRAIL_THEMES.find((t) => t.id === settings.themeId) || TRAIL_THEMES[0];
-  const levelCfg = TRAIL_LEVELS.find((l) => l.level === settings.level) || TRAIL_LEVELS[3];
+  const selectedLevels = [...new Set(settings.levels)].filter((level) => TRAIL_LEVELS.some((cfg) => cfg.level === level)).sort((a, b) => a - b);
+  if (!selectedLevels.length) selectedLevels.push(4);
+  const levels = selectedLevels.map((level) => TRAIL_LEVELS.find((cfg) => cfg.level === level)!).filter(Boolean);
+  const levelCfg = levels[0] || TRAIL_LEVELS[3];
 
   const introDur = settings.showIntro ? 2.8 : 0;
   const countdownDur = 2.4;
   const themePool = items.filter((item) => item.themeId === settings.themeId);
   const pool = themePool.length ? themePool : items;
-  const picked = shuffle(pool).slice(0, levelCfg.elementCount);
-  if (picked.length < levelCfg.elementCount) {
-    const remaining = items.filter((item) => !picked.some((selected) => selected.id === item.id));
-    picked.push(...shuffle(remaining).slice(0, levelCfg.elementCount - picked.length));
-  }
 
   const walkDur = 1.7;
   const difficulty = TRAIL_DEMO_DIFFICULTY[settings.difficulty];
   const isAvalanche = settings.difficulty === "avalanche";
   const startAt = introDur + countdownDur;
+  let cursor = startAt;
+  let score = 0;
+  let xp = 0;
+  const roundsByLevel: TrailDemoRound[][] = [];
+  const usedItemIds = new Set<string>();
+  let think = 6.4;
+  for (let order = 0; order < levels.length; order++) {
+    const cfg = levels[order];
+    if (order > 0) cursor += 1.8; // breve transição de estação após concluir o nível anterior
+    const segmentStart = CAMP_FRACS[order === 0 ? cfg.level - 1 : levels[order - 1].level];
+    const segmentEnd = CAMP_FRACS[cfg.level];
+    const levelStartTime = cursor;
+    const levelScoreBefore = score;
+    const levelXpBefore = xp;
+    const fresh = shuffle(pool.filter((item) => !usedItemIds.has(item.id)));
+    const picked = [...fresh.slice(0, cfg.elementCount)];
+    while (picked.length < cfg.elementCount && pool.length) picked.push(...shuffle(pool).slice(0, cfg.elementCount - picked.length));
+    picked.forEach((item) => usedItemIds.add(item.id));
 
-  const buildRounds = (answerDur: number): TrailDemoRound[] => {
-    let cursor = startAt;
-    let score = 0;
-    let xp = 0;
-    return picked.map((item) => {
+    const buildLevelRounds = (answerDur: number) => picked.map((item, roundIndex) => {
       const start = cursor;
       const correctAt = start + answerDur;
       const walkEnd = correctAt + walkDur;
@@ -164,34 +184,34 @@ export function buildTrailDemoPlan(
       const speedRatio = (difficulty.seconds - answerDur) / difficulty.seconds;
       const speedMultiplier = speedRatio >= 0.65 ? 1.5 : speedRatio >= 0.35 ? 1.25 : 1.1;
       score += Math.round(100 * difficulty.multiplier * speedMultiplier);
-      xp += Math.round((levelCfg.xpBase / levelCfg.elementCount) * difficulty.multiplier * speedMultiplier);
+      xp += Math.round((cfg.xpBase / cfg.elementCount) * difficulty.multiplier * speedMultiplier);
       cursor = end;
-      return { item, options: opts, correctIndex: opts.indexOf(item.fr), levelCfg, start, correctAt, walkEnd, end, scoreBefore, scoreAfter: score, xpAfter: xp };
+      return { item, options: opts, correctIndex: opts.indexOf(item.fr), levelCfg: cfg, start, correctAt, walkEnd, end, scoreBefore, scoreAfter: score, xpAfter: xp, roundIndex, roundCount: picked.length, segmentStart, segmentEnd };
     });
-  };
-
-  let rounds: TrailDemoRound[];
-  let avalanche: TrailDemoAvalanche | null = null;
-  if (!isAvalanche) {
-    rounds = buildRounds(2.6);
-  } else {
-    // Hesitação da demonstração: começa em 6,4 s por objeto e diminui até a avalanche nunca alcançar o aluno
-    let think = 6.4;
-    rounds = buildRounds(think);
-    for (let attempt = 0; attempt < 8; attempt++) {
-      const sim = simulateAvalancheTimeline(rounds, levelCfg, settings.level, startAt);
-      avalanche = sim.timeline;
-      if (sim.minGapElements >= 0.6) break;
-      think = Math.max(3, think - 0.6);
-      rounds = buildRounds(think);
+    let levelRounds = buildLevelRounds(isAvalanche ? think : 2.6);
+    if (isAvalanche) {
+      for (let attempt = 0; attempt < 8; attempt++) {
+        const sim = simulateAvalancheTimeline(levelRounds, cfg, cfg.level, levelRounds[0]?.start ?? cursor);
+        if (sim.minGapElements >= 0.6) break;
+        think = Math.max(3, think - 0.6);
+        cursor = levelStartTime;
+        score = levelScoreBefore;
+        xp = levelXpBefore;
+        levelRounds = buildLevelRounds(think);
+      }
     }
+    roundsByLevel.push(levelRounds);
   }
-  const score = rounds.at(-1)?.scoreAfter ?? 0;
-  const xp = rounds.at(-1)?.xpAfter ?? 0;
-  const cursor = rounds.at(-1)?.end ?? startAt;
-
-  const houseDur = settings.level === 7 ? 3.0 : 0;
-  const outroStart = cursor + houseDur;
+  const rounds = roundsByLevel.flat();
+  const avalanche = isAvalanche ? roundsByLevel.map((levelRounds) => {
+    const cfg = levelRounds[0]?.levelCfg;
+    return cfg ? simulateAvalancheTimeline(levelRounds, cfg, cfg.level, levelRounds[0].start).timeline : null;
+  }).filter((timeline): timeline is TrailDemoAvalanche => Boolean(timeline)) : [];
+  score = rounds.at(-1)?.scoreAfter ?? 0;
+  xp = rounds.at(-1)?.xpAfter ?? 0;
+  const finalCursor = rounds.at(-1)?.end ?? startAt;
+  const houseDur = levels.at(-1)?.level === 7 ? 3.0 : 0;
+  const outroStart = finalCursor + houseDur;
   const outroDur = settings.showOutro ? 3.2 : 0;
   const total = outroStart + outroDur;
 
@@ -200,6 +220,7 @@ export function buildTrailDemoPlan(
     theme,
     rounds,
     levelCfg,
+    levels,
     introDur,
     countdownDur,
     houseDur,
@@ -228,11 +249,11 @@ function simulateAvalancheTimeline(
   level: number,
   startAt: number
 ): { timeline: TrailDemoAvalanche; minGapElements: number } {
-  const track = makeAvalancheTrack(CAMP_FRACS[level - 1], CAMP_FRACS[level], levelCfg.elementCount, level);
+  const track = makeAvalancheTrack(rounds[0]?.segmentStart ?? CAMP_FRACS[level - 1], rounds[0]?.segmentEnd ?? CAMP_FRACS[level], levelCfg.elementCount, level);
   const st = initAvalanche(track);
   const endT = rounds.at(-1)?.end ?? startAt;
   const total = endT + 6;
-  const timeline: TrailDemoAvalanche = { dt: AV_DT, active: [], front: [], danger: [], meters: [], alert: [], timeScale: AVALANCHE_DEMO_TIME_SCALE };
+  const timeline: TrailDemoAvalanche = { level, start: startAt, end: endT, dt: AV_DT, active: [], front: [], danger: [], meters: [], alert: [], timeScale: AVALANCHE_DEMO_TIME_SCALE };
   const recoiled = new Set<number>();
   let minGap = Infinity;
   for (let i = 0; i * AV_DT <= total; i++) {
@@ -251,7 +272,7 @@ function simulateAvalancheTimeline(
       minGap = Math.min(minGap, (sf - st.front) / track.spacing);
     }
     const sfNow = studentFractionAt(track, Math.min(index, rounds.length - 1), tt >= endT);
-    timeline.active.push(tt < endT);
+    timeline.active.push(tt >= startAt && tt < endT);
     timeline.front.push(st.front);
     timeline.danger.push(avalancheDanger(st, track, sfNow));
     timeline.meters.push(avalancheDistanceMeters(st, sfNow));
@@ -261,7 +282,7 @@ function simulateAvalancheTimeline(
 }
 
 export function trailAvalancheAt(plan: TrailDemoPlan, t: number) {
-  const av = plan.avalanche;
+  const av = plan.avalanche.find((segment) => t >= segment.start && t < segment.end);
   if (!av) return null;
   const f = Math.max(0, t) / av.dt;
   const i = Math.min(av.front.length - 2, Math.floor(f));
@@ -273,22 +294,30 @@ export function trailAvalancheAt(plan: TrailDemoPlan, t: number) {
 
 /** Fração da trilha em que o aluno está (visual) no instante `t`. */
 export function trailStudentFraction(plan: TrailDemoPlan, t: number): number {
-  const levelIndex = plan.settings.level - 1;
-  const levelStart = TRAIL_LEVEL_FRACTIONS[levelIndex];
-  const levelEnd = TRAIL_LEVEL_FRACTIONS[levelIndex + 1];
-  const n = plan.levelCfg.elementCount;
-  const elementFraction = (index: number) => levelStart + ((levelEnd - levelStart) * (index + 1)) / (n + 1);
   const ri = plan.rounds.findIndex((entry) => t >= entry.start && t < entry.end);
   if (ri >= 0) {
     const r = plan.rounds[ri];
-    const from = ri === 0 ? levelStart : elementFraction(ri - 1);
-    const to = ri === plan.rounds.length - 1 ? levelEnd : elementFraction(ri);
+    const elementFraction = (index: number) => r.segmentStart + ((r.segmentEnd - r.segmentStart) * (index + 1)) / (r.roundCount + 1);
+    const from = r.roundIndex === 0 ? r.segmentStart : elementFraction(r.roundIndex - 1);
+    const to = r.roundIndex === r.roundCount - 1 ? r.segmentEnd : elementFraction(r.roundIndex);
     const walking = t >= r.correctAt;
     const p = walking ? easeOut((t - r.correctAt) / (r.walkEnd - r.correctAt)) : 0;
     return from + (to - from) * p;
   }
-  if (t >= (plan.rounds.at(-1)?.end ?? plan.introDur)) return levelEnd;
-  return levelStart;
+  const previous = [...plan.rounds].reverse().find((entry) => t >= entry.end);
+  return previous ? previous.segmentEnd : plan.rounds[0]?.segmentStart ?? CAMP_FRACS[0];
+}
+
+export function trailLevelForTime(plan: TrailDemoPlan, t: number): TrailLevelConfig {
+  const active = plan.rounds.find((entry) => t >= entry.start && t < entry.end);
+  if (active) return active.levelCfg;
+  const previous = [...plan.rounds].reverse().find((entry) => t >= entry.end);
+  return previous?.levelCfg ?? plan.rounds.find((entry) => t < entry.start)?.levelCfg ?? plan.levelCfg;
+}
+
+/** O mapa ocupa a área superior do vídeo e mantém as respostas logo abaixo dele. */
+export function trailMapHeight(videoHeight: number): number {
+  return Math.round(videoHeight * 0.72);
 }
 
 export interface TrailCamera {
@@ -304,9 +333,9 @@ function cameraTarget(plan: TrailDemoPlan, t: number) {
   const p = getTrailPositionAtFraction(f);
   const ri = plan.rounds.findIndex((entry) => t >= entry.start && t < entry.end);
   if (ri >= 0) {
-    const levelStart = TRAIL_LEVEL_FRACTIONS[plan.settings.level - 1];
-    const levelEnd = TRAIL_LEVEL_FRACTIONS[plan.settings.level];
-    const q = getTrailPositionAtFraction(levelStart + ((levelEnd - levelStart) * (ri + 1)) / (plan.levelCfg.elementCount + 1));
+    const round = plan.rounds[ri];
+    const qFraction = round.segmentStart + ((round.segmentEnd - round.segmentStart) * (round.roundIndex + 1)) / (round.roundCount + 1);
+    const q = getTrailPositionAtFraction(qFraction);
     return { x: p.x + (q.x - p.x) * 0.75, y: p.y + (q.y - p.y) * 0.75 };
   }
   return p;
@@ -331,7 +360,6 @@ export function computeTrailCamera(plan: TrailDemoPlan, t: number, w: number, h:
 const FONT = '"Inter", "Segoe UI", -apple-system, sans-serif';
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 const OPTION_COLORS = ["#3b82f6", "#ec4899", "#f59e0b", "#10b981"];
-const TRAIL_LEVEL_FRACTIONS = CAMP_FRACS;
 let cachedTrailPath: Path2D | null = null;
 
 function getTrailPath() {
@@ -380,25 +408,34 @@ export function renderTrailDemoFrame(
   }
 ) {
   const spec = DEMO_FORMATS[plan.settings.format];
-  const { theme, levelCfg, introDur, countdownDur, outroStart } = plan;
+  const { theme, introDur, countdownDur, outroStart } = plan;
   const activeRoundIndex = plan.rounds.findIndex((entry) => t >= entry.start && t < entry.end);
   const round = activeRoundIndex >= 0 ? plan.rounds[activeRoundIndex] : undefined;
-  const levelIndex = plan.settings.level - 1;
-  const levelStart = TRAIL_LEVEL_FRACTIONS[levelIndex];
-  const levelEnd = TRAIL_LEVEL_FRACTIONS[levelIndex + 1];
-  const elementFraction = (index: number) =>
-    levelStart + ((levelEnd - levelStart) * (index + 1)) / (levelCfg.elementCount + 1);
+  const previousRound = [...plan.rounds].reverse().find((entry) => t >= entry.end);
+  const nextRound = plan.rounds.find((entry) => t < entry.start);
+  const levelCfg = trailLevelForTime(plan, t);
+  const elementFraction = (index: number) => round
+    ? round.segmentStart + ((round.segmentEnd - round.segmentStart) * (index + 1)) / (round.roundCount + 1)
+    : 0;
 
   // 1. O MUNDO: a mesma arte da mata do jogo, com a mesma câmera, clima, trilha e marcadores
   const isRain = levelCfg.weather === "rain";
   const isSnow = levelCfg.weather === "snow";
-  const cam = computeTrailCamera(plan, t, w, h);
+  const mapH = trailMapHeight(h);
+  const dockTop = mapH + Math.max(12, h * 0.012);
+  const dockHeight = h - dockTop - Math.max(12, h * 0.012);
+  const cam = computeTrailCamera(plan, t, w, mapH);
   const toScreen = (p: { x: number; y: number }) => ({ x: p.x * cam.s + cam.tx, y: p.y * cam.s + cam.ty });
   const kPx = w / 1080; // tamanhos de interface pensados para 1080 px de largura
 
   ctx.save();
   ctx.fillStyle = "#052e16";
   ctx.fillRect(0, 0, w, h);
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, w, mapH);
+  ctx.clip();
+  ctx.save();
   ctx.translate(cam.tx, cam.ty);
   ctx.scale(cam.s, cam.s);
 
@@ -443,7 +480,8 @@ export function renderTrailDemoFrame(
   // casinha do cume: rótulo e brilho da porta (acende quando o aluno chega)
   const lastEnd = plan.rounds.at(-1)?.end ?? Infinity;
   const houseT = clamp((t - lastEnd) / 0.8);
-  const glow = plan.settings.level === 7 ? houseT : 0;
+  const finalLevel = plan.levels.at(-1)?.level ?? levelCfg.level;
+  const glow = finalLevel === 7 ? houseT : 0;
   if (glow > 0) {
     const g = ctx.createRadialGradient(HUT_DOOR.x, HUT_DOOR.y, 2, HUT_DOOR.x, HUT_DOOR.y, 60);
     g.addColorStop(0, `rgba(255, 226, 140, ${0.95 * glow})`);
@@ -477,9 +515,11 @@ export function renderTrailDemoFrame(
   TRAIL_LEVELS.forEach((cfg, idx) => {
     const lvl = idx + 1;
     const pt = getTrailPositionAtFraction(MARKER_FRACS[idx]);
-    const isDone = lvl < plan.settings.level;
-    const isCur = lvl === plan.settings.level;
-    const isUnl = lvl <= plan.settings.level;
+    const selectedIndex = plan.levels.findIndex((selected) => selected.level === lvl);
+    const currentOrder = plan.levels.findIndex((selected) => selected.level === levelCfg.level);
+    const isDone = selectedIndex >= 0 && selectedIndex < currentOrder;
+    const isCur = lvl === levelCfg.level;
+    const isUnl = lvl <= finalLevel;
     ctx.save();
     ctx.translate(pt.x, pt.y);
     ctx.scale(kPx / cam.s, kPx / cam.s);
@@ -500,7 +540,7 @@ export function renderTrailDemoFrame(
     ctx.font = `900 17px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(isDone ? "✓" : String(lvl), 0, 1);
+    ctx.fillText(isDone ? "✓" : !isUnl ? "🔒" : String(lvl), 0, 1);
     const label = `${cfg.name} · ${cfg.altitude.toLocaleString("pt-BR")}m`;
     ctx.font = `800 14px ${FONT}`;
     const lw = ctx.measureText(label).width + 22;
@@ -516,7 +556,7 @@ export function renderTrailDemoFrame(
   ctx.restore();
 
   // 2. BICHOS DA MATA + AVALANCHE (camada dinâmica gerada pelo mesmo motor do jogo)
-  if (assets.dyn) ctx.drawImage(assets.dyn, 0, 0, w, h);
+  if (assets.dyn) ctx.drawImage(assets.dyn, 0, 0, w, mapH);
 
   // 3. CLIMA ANIMADO (chuva / neve caindo na tela)
   if (isRain) {
@@ -525,8 +565,8 @@ export function renderTrailDemoFrame(
     ctx.lineWidth = 2.2;
     const rainOffset = (t * 900) % 140;
     for (let rx = -50; rx < w + 50; rx += 40) {
-      for (let ry = -40; ry < h; ry += 65) {
-        const y = (ry + rainOffset) % h;
+      for (let ry = -40; ry < mapH; ry += 65) {
+        const y = (ry + rainOffset) % mapH;
         const x = rx + y * 0.35;
         ctx.beginPath();
         ctx.moveTo(x, y);
@@ -540,8 +580,8 @@ export function renderTrailDemoFrame(
     ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
     const snowOffset = (t * 110) % 120;
     for (let sx = 0; sx < w; sx += 50) {
-      for (let sy = 0; sy < h; sy += 65) {
-        const y = (sy + snowOffset) % h;
+      for (let sy = 0; sy < mapH; sy += 65) {
+        const y = (sy + snowOffset) % mapH;
         const x = sx + Math.sin(t * 2.5 + sy * 0.1) * 20;
         ctx.beginPath();
         ctx.arc(x, y, 3.5, 0, Math.PI * 2);
@@ -560,7 +600,7 @@ export function renderTrailDemoFrame(
       vg.addColorStop(0, "rgba(255, 255, 255, 0)");
       vg.addColorStop(1, `rgba(190, 215, 255, ${a * 0.75})`);
       ctx.fillStyle = vg;
-      ctx.fillRect(0, 0, w, h);
+      ctx.fillRect(0, 0, w, mapH);
     }
   }
 
@@ -574,8 +614,8 @@ export function renderTrailDemoFrame(
   const studentY = studentScreen.y - 18 * kPx;
   const isFacingLeft = nextPosition.x < studentPosition.x;
   // nível 7: depois da última pergunta o aluno entra feliz na casinha (encolhe e some na porta)
-  const houseP = plan.settings.level === 7 ? clamp((t - (plan.rounds.at(-1)?.end ?? Infinity) - 0.6) / 1.8) : 0;
-  const hopHappy = plan.settings.level === 7 && t >= (plan.rounds.at(-1)?.end ?? Infinity) && houseP < 1 ? Math.abs(Math.sin(t * 9)) * 10 : 0;
+  const houseP = finalLevel === 7 ? clamp((t - (plan.rounds.at(-1)?.end ?? Infinity) - 0.6) / 1.8) : 0;
+  const hopHappy = finalLevel === 7 && t >= (plan.rounds.at(-1)?.end ?? Infinity) && houseP < 1 ? Math.abs(Math.sin(t * 9)) * 10 : 0;
 
   ctx.save();
   ctx.translate(studentX, studentY - hopHappy * kPx);
@@ -753,6 +793,7 @@ export function renderTrailDemoFrame(
   }
 
   ctx.restore();
+  ctx.restore();
 
   // HUD do mapa, imagem do objeto no caminho e alternativas fixas na base.
   ctx.save();
@@ -778,7 +819,7 @@ export function renderTrailDemoFrame(
     80
   );
 
-  const score = round ? (t >= round.correctAt ? round.scoreAfter : round.scoreBefore) : plan.finalScore;
+  const score = round ? (t >= round.correctAt ? round.scoreAfter : round.scoreBefore) : previousRound?.scoreAfter ?? 0;
   const difficulty = TRAIL_DEMO_DIFFICULTY[plan.settings.difficulty];
   const secondsLeft = round
     ? Math.ceil(Math.max(0, difficulty.seconds - (Math.min(t, round.correctAt) - round.start)))
@@ -797,10 +838,11 @@ export function renderTrailDemoFrame(
   ctx.font = `600 ${Math.max(10, w * 0.011)}px ${FONT}`;
   const streak = round
     ? t >= round.correctAt
-      ? activeRoundIndex + 1
-      : activeRoundIndex
-    : plan.rounds.length;
-  ctx.fillText(`🔥 ${streak} · ${round ? activeRoundIndex + 1 : plan.rounds.length}/${plan.rounds.length}`, hudX + hudW - 72, 79);
+      ? round.roundIndex + 1
+      : round.roundIndex
+    : (previousRound?.roundIndex ?? -1) + 1;
+  const roundNumber = round ?? previousRound;
+  ctx.fillText(`🔥 ${streak} · ${roundNumber ? roundNumber.roundIndex + 1 : 0}/${roundNumber?.roundCount ?? 0}`, hudX + hudW - 72, 79);
   if (avNow) {
     // modo avalanche: no lugar do cronômetro aparece o medidor de perigo (distância da avalanche)
     ctx.fillStyle = avNow.alert === "danger" ? "#dc2626" : avNow.alert === "warn" ? "#f59e0b" : "#0284c7";
@@ -824,18 +866,32 @@ export function renderTrailDemoFrame(
     ctx.fillText(round ? `${secondsLeft}s` : "✓", hudX + hudW - 32, 67);
   }
 
+  if (!round && previousRound && nextRound && previousRound.levelCfg.level !== nextRound.levelCfg.level) {
+    const message = `${previousRound.levelCfg.name} concluído!`;
+    ctx.fillStyle = "rgba(15, 23, 42, 0.86)";
+    ctx.beginPath();
+    ctx.roundRect(w * 0.12, mapH * 0.4, w * 0.76, 92 * kPx, 20 * kPx);
+    ctx.fill();
+    ctx.fillStyle = "#fcd34d";
+    ctx.textAlign = "center";
+    ctx.font = `900 ${Math.max(16, w * 0.022)}px ${FONT}`;
+    ctx.fillText(message, w / 2, mapH * 0.4 + 38 * kPx);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${Math.max(12, w * 0.016)}px ${FONT}`;
+    ctx.fillText(`Subindo para o Nível ${nextRound.levelCfg.level} · ${nextRound.levelCfg.name}`, w / 2, mapH * 0.4 + 68 * kPx);
+  }
+
   if (round && t >= round.start && t < round.walkEnd) {
-    const target = toScreen(getTrailPositionAtFraction(elementFraction(activeRoundIndex)));
+    const target = toScreen(getTrailPositionAtFraction(elementFraction(round.roundIndex)));
     const targetX = target.x;
     const targetY = target.y;
     const maxImageW = Math.min(w * 0.46, 500);
-    const imageH = Math.min(maxImageW * (round.item.h / round.item.w), h * 0.24);
+    const imageH = Math.min(maxImageW * (round.item.h / round.item.w), mapH * 0.24);
     const imageW = imageH * (round.item.w / round.item.h);
-    const dockTop = h * 0.64;
     const revealed = t >= round.correctAt;
     const answerLabelH = revealed ? 34 : 0;
     const imageX = clamp(targetX - imageW / 2, 20, w - imageW - 20);
-    const imageY = clamp(targetY - imageH - 30, spec.safeTop + 25, dockTop - imageH - answerLabelH - 20);
+    const imageY = clamp(targetY - imageH - 30, spec.safeTop + 25, mapH - imageH - answerLabelH - 45);
     const image = assets.images.get(round.item.id);
 
     const frame = ctx.createLinearGradient(imageX, imageY, imageX + imageW, imageY + imageH);
@@ -877,7 +933,7 @@ export function renderTrailDemoFrame(
     ctx.font = `900 ${Math.max(13, w * 0.016)}px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(String(activeRoundIndex + 1), imageX + imageW + 2, imageY - 7);
+    ctx.fillText(String(round.roundIndex + 1), imageX + imageW + 2, imageY - 7);
     ctx.textBaseline = "alphabetic";
     if (revealed) {
       const labelW = Math.min(imageW - 16, 200);
@@ -893,12 +949,11 @@ export function renderTrailDemoFrame(
       ctx.textBaseline = "alphabetic";
     }
 
-    const dockHeight = h - dockTop;
     ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
     ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.roundRect(18, dockTop, w - 36, dockHeight - 18, 24);
+    ctx.roundRect(18, dockTop, w - 36, dockHeight, 24);
     ctx.fill();
     ctx.stroke();
 
@@ -923,7 +978,7 @@ export function renderTrailDemoFrame(
     const left = 32;
     const top = dockTop + 64;
     const optionW = (w - left * 2 - gap) / 2;
-    const optionH = Math.max(50, Math.min(86, (dockHeight - 108) / 2 - gap / 2));
+    const optionH = Math.max(48, Math.min(86, (dockHeight - 108) / 2 - gap / 2));
     options.forEach((option, index) => {
       const col = index % 2;
       const row = Math.floor(index / 2);
@@ -995,7 +1050,7 @@ export function renderTrailDemoFrame(
     ctx.fillStyle = "#cbd5e1";
     ctx.font = `500 20px ${FONT}`;
     ctx.fillText(
-      `${levelCfg.elementCount} ${levelCfg.elementCount === 1 ? "objeto" : "objetos"} · Caminhe, acerte e avance`,
+      `${plan.levels.length} ${plan.levels.length === 1 ? "nível" : "níveis"} · ${plan.rounds.length} perguntas · Caminhe, acerte e avance`,
       w / 2,
       h * 0.61
     );
@@ -1035,13 +1090,14 @@ export function renderTrailDemoFrame(
     ctx.textAlign = "center";
     ctx.fillStyle = "#f59e0b";
     ctx.font = `900 64px sans-serif`;
-    const summitWon = plan.settings.level === 7;
+    const summitWon = finalLevel === 7;
+    const levelSummary = plan.levels.length === 1 ? `Nível ${finalLevel} concluído!` : `${plan.levels.length} níveis concluídos!`;
     ctx.fillText(summitWon ? "🏔️ 🇫🇷 🏆" : "🌲 🇫🇷 ⭐", w / 2, h * 0.38);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = `900 ${Math.min(38, w * 0.035)}px ${FONT}`;
     ctx.fillText(
-      summitWon ? "Cume da Vitória conquistado!" : `Nível ${levelCfg.level} concluído!`,
+      summitWon ? "Cume da Vitória conquistado!" : levelSummary,
       w / 2,
       h * 0.46
     );
@@ -1053,7 +1109,7 @@ export function renderTrailDemoFrame(
     ctx.fillStyle = "#fcd34d";
     ctx.font = `bold 22px ${FONT}`;
     ctx.fillText(
-      summitWon ? "Bandeira hasteada no topo!" : `Próximo: Nível ${levelCfg.level + 1}`,
+      summitWon ? "Bandeira hasteada no topo!" : `Níveis: ${plan.levels.map((level) => level.level).join(" · ")}`,
       w / 2,
       h * 0.56
     );

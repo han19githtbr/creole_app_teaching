@@ -8,6 +8,8 @@ import {
   DEFAULT_TRAIL_DEMO_SETTINGS,
   buildTrailDemoPlan,
   renderTrailDemoFrame,
+  trailLevelForTime,
+  trailMapHeight,
   type TrailDemoPlan,
   type TrailDemoSettings,
 } from "@/lib/curiousTrailDemoVideo";
@@ -91,14 +93,14 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
     };
   }, [plan, imageLoadAttempt]);
 
-  // Arte da mata (a mesma do jogo, com o clima do nível), bichos, folhagem e água: mesmos arquivos e mesmo motor do jogo
+  // Arte da mata em cada clima, além da fauna e da água compartilhadas com o jogo.
   const vAssetsRef = useRef<TrailVideoAssets | null>(null);
   const [loadedWeather, setLoadedWeather] = useState<string | null>(null);
-  const weatherKey = plan.levelCfg.weather;
+  const weatherKey = "all";
   const sceneReady = loadedWeather === weatherKey;
   useEffect(() => {
     let cancelled = false;
-    loadTrailVideoAssets(weatherKey)
+    loadTrailVideoAssets()
       .then((a) => {
         if (cancelled) return;
         vAssetsRef.current = a;
@@ -140,7 +142,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       if (wld && !d.busy) {
         d.busy = true;
         void wld
-          .avalancheImage(t, canvas.width, canvas.height)
+          .avalancheImage(t, canvas.width, trailMapHeight(canvas.height))
           .then((img) => {
             if (worldRef.current === wld) d.img = img;
           })
@@ -151,7 +153,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       }
       renderTrailDemoFrame(ctx, canvas.width, canvas.height, t, planRef.current, {
         images: imagesRef.current,
-        scene: vAssetsRef.current?.scene ?? null,
+        scene: vAssetsRef.current?.scenes[trailLevelForTime(planRef.current, t).weather] ?? null,
         world: wld,
         dyn: d.img,
       });
@@ -230,8 +232,9 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       });
 
       recorder.start();
-      if (!vAssetsRef.current) throw new Error("A arte da trilha ainda não carregou.");
-      const exportWorld = new TrailVideoWorld(plan, vAssetsRef.current.fauna);
+      const vAssets = vAssetsRef.current;
+      if (!vAssets) throw new Error("A arte da trilha ainda não carregou.");
+      const exportWorld = new TrailVideoWorld(plan, vAssets.fauna);
 
       const fps = 30;
       const totalFrames = Math.ceil(plan.total * fps);
@@ -239,8 +242,8 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         if (controller.signal.aborted) throw new Error("Cancelado");
         const tFrame = f / fps;
         // exportação quadro a quadro, com o mundo recomeçando do zero (mesma simulação da prévia)
-        const dyn = await exportWorld.avalancheImage(tFrame, spec.w, spec.h);
-        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: vAssetsRef.current?.scene ?? null, world: exportWorld, dyn });
+        const dyn = await exportWorld.avalancheImage(tFrame, spec.w, trailMapHeight(spec.h));
+        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: vAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn });
         setProgress(Math.round((f / totalFrames) * 100));
         await new Promise((r) => setTimeout(r, 16));
       }
@@ -250,7 +253,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       const url = URL.createObjectURL(blob);
       const ext = mime.includes("mp4") ? "mp4" : "webm";
       const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
-      const name = `trilha-curiosa-v3-${plan.theme.id}-nivel${plan.settings.level}-${stamp}.${ext}`;
+      const name = `trilha-curiosa-v3-${plan.theme.id}-niveis${plan.levels.map((level) => level.level).join("-")}-${stamp}.${ext}`;
 
       setResult({
         url,
@@ -317,19 +320,25 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           </select>
         </div>
 
-        {/* NÍVEL A DEMONSTRAR */}
+        {/* NÍVEIS A DEMONSTRAR */}
         <div className="space-y-1">
           <label className="text-xs font-bold text-[var(--text-secondary)]">
-            Nível da Montanha a Demonstrar
+            Níveis da montanha a incluir
           </label>
           <div className="grid grid-cols-4 gap-1.5">
             {TRAIL_LEVELS.map((lvl) => (
               <button
                 key={lvl.level}
                 type="button"
-                onClick={() => setSettings({ ...settings, level: lvl.level })}
+                aria-pressed={settings.levels.includes(lvl.level)}
+                onClick={() => setSettings((prev) => {
+                  const selected = prev.levels.includes(lvl.level)
+                    ? prev.levels.filter((level) => level !== lvl.level)
+                    : [...prev.levels, lvl.level];
+                  return { ...prev, levels: selected.length ? selected.sort((a, b) => a - b) : prev.levels };
+                })}
                 className={`rounded-xl border p-2 text-center text-xs font-bold transition-all ${
-                  settings.level === lvl.level
+                  settings.levels.includes(lvl.level)
                     ? "border-amber-500 bg-amber-500/20 text-amber-600 dark:text-amber-400"
                     : "border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-secondary)] hover:text-[var(--text)]"
                 }`}
@@ -339,10 +348,17 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
               </button>
             ))}
           </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setSettings((prev) => ({ ...prev, levels: TRAIL_LEVELS.map((level) => level.level) }))}
+              className="cursor-pointer text-[11px] font-bold text-[var(--accent)] hover:underline"
+            >
+              Selecionar todos
+            </button>
+          </div>
           <p className="text-[11px] text-amber-500 font-semibold pt-1">
-            {settings.level <= 3 && "☀️ Níveis 1-3: Céu aberto, sol suave e esquilos"}
-            {(settings.level === 4 || settings.level === 5) && "🌧️ Níveis 4-5: Chuva caindo e guarda-chuva aberto!"}
-            {settings.level >= 6 && "❄️ Níveis 6-7: Neve caindo e bandeira da vitória no cume!"}
+            {settings.levels.length} {settings.levels.length === 1 ? "nível selecionado" : "níveis selecionados"} · {plan.rounds.length} perguntas no vídeo
           </p>
         </div>
 
@@ -499,7 +515,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       <div className="lg:col-span-6 space-y-3">
         <div className="flex items-center justify-between px-1">
           <span className="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">
-            Prévia do nível {settings.level} · {plan.rounds.length} rodadas ({spec.w}×{spec.h})
+            Prévia dos níveis {plan.levels.map((level) => level.level).join(", ")} · {plan.rounds.length} perguntas ({spec.w}×{spec.h})
           </span>
           <button
             type="button"

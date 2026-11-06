@@ -6,24 +6,25 @@
  * com semente fixa (o vídeo exportado é idêntico à prévia).
  */
 import { createFauna, type Fauna } from "@/lib/trailFauna";
+import type { TrailWeather } from "@/lib/curiousTrailData";
 import { drawFauna, drawWater, loadFaunaAssets, type FaunaAssets } from "@/lib/trailFaunaDraw";
 import { gradeImage } from "@/lib/trailGrade";
 import { renderAvalancheSvg } from "@/lib/trailAvalanche";
 import { WORLD_W, WORLD_H, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
-import { computeTrailCamera, trailAvalancheAt, trailStudentFraction, type TrailDemoPlan } from "@/lib/curiousTrailDemoVideo";
+import { computeTrailCamera, trailAvalancheAt, trailLevelForTime, trailStudentFraction, type TrailDemoPlan } from "@/lib/curiousTrailDemoVideo";
 
 const STEP = 1 / 30;
 
 export const TRAIL_SCENE_URL = "/trilha/mata-trilha.jpg";
 
 export interface TrailVideoAssets {
-  /** arte da mata já com o clima do nível aplicado */
-  scene: CanvasImageSource;
+  /** Uma versão da arte da mata para cada clima possível da escalada. */
+  scenes: Record<TrailWeather, CanvasImageSource>;
   fauna: FaunaAssets;
 }
 
 /** Carrega a arte da mata e os recortes dos bichos/folhagem (mesmos arquivos do jogo). */
-export async function loadTrailVideoAssets(weather: TrailDemoPlan["levelCfg"]["weather"]): Promise<TrailVideoAssets> {
+export async function loadTrailVideoAssets(): Promise<TrailVideoAssets> {
   const img = await new Promise<HTMLImageElement>((resolve, reject) => {
     const i = new Image();
     i.onload = () => resolve(i);
@@ -31,7 +32,14 @@ export async function loadTrailVideoAssets(weather: TrailDemoPlan["levelCfg"]["w
     i.src = TRAIL_SCENE_URL;
   });
   const fauna = await loadFaunaAssets();
-  return { scene: gradeImage(img, weather), fauna };
+  return {
+    scenes: {
+      sunny: gradeImage(img, "sunny"),
+      rain: gradeImage(img, "rain"),
+      snow: gradeImage(img, "snow"),
+    },
+    fauna,
+  };
 }
 
 export class TrailVideoWorld {
@@ -47,7 +55,8 @@ export class TrailVideoWorld {
   }
 
   private fresh(): Fauna {
-    const f = createFauna(this.plan.levelCfg.weather, 7000 + this.plan.settings.level * 31);
+    const seed = 7000 + this.plan.levels.reduce((sum, level) => sum + level.level * 31, 0);
+    const f = createFauna(this.plan.levelCfg.weather, seed);
     f.step(0.001, this.studentAt(0));
     this.t = 0;
     return f;
@@ -65,7 +74,8 @@ export class TrailVideoWorld {
   /** Água, folhagem e bichos, em unidades do mundo (o contexto já está com a câmera aplicada). */
   drawWorld(ctx: CanvasRenderingContext2D, t: number) {
     this.advanceTo(t);
-    const weather = this.plan.levelCfg.weather;
+    const weather = trailLevelForTime(this.plan, t).weather;
+    this.fauna.setWeather(weather);
     drawWater(ctx, t, weather);
     drawFauna(ctx, this.fauna, this.assets, weather, t);
   }

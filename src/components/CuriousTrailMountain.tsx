@@ -573,8 +573,26 @@ export function CuriousTrailMountain({
           draggable={false}
           className="trail-scene-img absolute inset-0 h-full w-full pointer-events-none"
         />
+        {weather === "night" && (
+          <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="trail-night-overlay absolute inset-0 z-[1] h-full w-full pointer-events-none" aria-hidden>
+            <defs>
+              <radialGradient id="trailMoonlight">
+                <stop offset="0" stopColor="#e8f1ff" stopOpacity="0.36" />
+                <stop offset="0.42" stopColor="#afc9ef" stopOpacity="0.16" />
+                <stop offset="1" stopColor="#172447" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width={VB_W} height={VB_H} fill="#101a3a" opacity="0.27" />
+            <ellipse cx="780" cy="150" rx="470" ry="380" fill="url(#trailMoonlight)" />
+            <circle cx="780" cy="108" r="35" fill="#eff6ff" opacity="0.96" />
+            <circle cx="792" cy="98" r="31" fill="#7c8daf" opacity="0.24" />
+            {[{ x: 175, y: 94 }, { x: 280, y: 168 }, { x: 380, y: 64 }, { x: 460, y: 218 }, { x: 580, y: 82 }, { x: 670, y: 205 }, { x: 900, y: 175 }, { x: 935, y: 72 }, { x: 95, y: 218 }, { x: 735, y: 37 }, { x: 320, y: 260 }, { x: 535, y: 278 }].map((star, index) => (
+              <circle key={`night-star-${index}`} className="trail-night-star" cx={star.x} cy={star.y} r={index % 3 === 0 ? 3 : 2} fill="#fff8d6" style={{ animationDelay: `${(index % 5) * 0.38}s` }} />
+            ))}
+          </svg>
+        )}
         {/* Nuvens e pássaros recortados da própria arte do mapa ganham movimento suave. */}
-        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="trail-sky-life absolute inset-0 z-[2] h-full w-full overflow-visible pointer-events-none" aria-hidden>
+        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className={`trail-sky-life absolute inset-0 z-[2] h-full w-full overflow-visible pointer-events-none ${weather === "night" ? "trail-sky-life--night" : ""}`} aria-hidden>
           <defs>
             <linearGradient id="trailCloudFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="#ffffff" stopOpacity="0.9" />
@@ -866,13 +884,13 @@ export function CuriousTrailMountain({
       {/* ================= HUD SUPERIOR ================= */}
       <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 z-20 pointer-events-none">
         <div className="flex items-center gap-2 rounded-2xl bg-slate-900/80 backdrop-blur-md px-3 py-1.5 text-white border border-white/20 shadow-lg min-w-0">
-          <span className="text-lg">{weather === "sunny" ? "☀️" : weather === "rain" ? "🌧️" : "❄️"}</span>
+          <span className="text-lg">{weather === "sunny" ? "☀️" : weather === "night" ? "🌙" : weather === "rain" ? "🌧️" : "❄️"}</span>
           <div className="leading-tight min-w-0">
             <span className="block text-xs font-black text-amber-400 truncate">
               <span style={{ color: themeColor }}>Nível {currentLevel}</span> · {currentCfg.name}
             </span>
             <span className={cn("block text-[10px] text-slate-300 font-semibold truncate", playing && "hidden sm:block")}>
-              Altitude: {currentCfg.altitude} m · {weather === "sunny" ? "Ensolarado · brisa leve" : weather === "rain" ? "Chuva · rajadas de vento" : "Neve · vento alpino"}
+              Altitude: {currentCfg.altitude} m · {weather === "sunny" ? "Ensolarado · brisa leve" : weather === "night" ? "Noite · lua e estrelas" : weather === "rain" ? "Chuva · rajadas de vento" : "Neve · vento alpino"}
             </span>
           </div>
         </div>

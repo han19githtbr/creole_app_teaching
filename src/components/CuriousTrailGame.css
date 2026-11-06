@@ -310,6 +310,28 @@
   animation: trailCloudDriftFast 22s ease-in-out infinite;
 }
 
+.trail-sky-life--night .trail-cloud--first { opacity: .42; }
+.trail-sky-life--night .trail-cloud--second { opacity: .3; }
+
+.trail-night-star {
+  opacity: 0.6;
+  animation: trailStarTwinkle 3.2s ease-in-out infinite alternate;
+}
+
+.trail-night-overlay {
+  animation: trailNightfall 2.6s ease-out both;
+}
+
+@keyframes trailNightfall {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes trailStarTwinkle {
+  from { opacity: 0.32; }
+  to { opacity: 0.95; }
+}
+
 .trail-bird--flock,
 .trail-bird--sky,
 .trail-bird--eagle {
@@ -448,6 +470,8 @@
 @media (prefers-reduced-motion: reduce) {
   .trail-cloud--first,
   .trail-cloud--second,
+  .trail-night-star,
+  .trail-night-overlay,
   .trail-bird--flock,
   .trail-bird--sky,
   .trail-bird--eagle,

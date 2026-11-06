@@ -36,6 +36,8 @@ export interface FaunaSpec {
   face: 1 | -1;
   speed: number;
   hop?: boolean;
+  zigzag?: boolean;
+  climbs?: boolean;
   gait: number;
   stride: number;
   temper: Temper;
@@ -71,8 +73,14 @@ export const FAUNA_SPECIES: Record<string, FaunaSpec> = {
   jabuti: { id: "jabuti", kind: "ground", h: 29, face: -1, speed: 12, gait: 0, stride: 20, temper: "defensive", sense: 100, flee: 1, idle: [3, 6] },
   sapo: { id: "sapo", kind: "ground", h: 26, face: -1, speed: 60, hop: true, gait: 7, stride: 0, temper: "skittish", sense: 110, flee: 1.8, water: true, idle: [2, 4] },
   cutia: { id: "cutia", kind: "ground", h: 35, face: -1, speed: 55, hop: true, gait: 8, stride: 0, temper: "skittish", sense: 170, flee: 2.2, idle: [2, 4] },
+  coelho: { id: "coelho", kind: "ground", h: 44, face: 1, speed: 82, hop: true, gait: 4.1, stride: 0, temper: "skittish", sense: 190, flee: 2.8, zigzag: true, idle: [1.8, 3.8] },
+  cobra: { id: "cobra", kind: "ground", h: 30, face: 1, speed: 24, gait: 0, stride: 0, temper: "wary", sense: 130, flee: 1.2, climbs: true, idle: [4, 8] },
+  caracol: { id: "caracol", kind: "ground", h: 12, face: 1, speed: 4, gait: 0, stride: 0, temper: "peaceful", sense: 0, flee: 1, climbs: true, idle: [5, 12] },
+  formiga: { id: "formiga", kind: "ground", h: 9, face: 1, speed: 16, gait: 0, stride: 0, temper: "peaceful", sense: 0, flee: 1, idle: [0.5, 1.5] },
+  pacu: { id: "pacu", kind: "ground", h: 22, face: 1, speed: 22, gait: 0, stride: 0, temper: "wary", sense: 100, flee: 1.8, water: true, idle: [1, 2.5] },
 };
 export const FAUNA_IDS = Object.keys(FAUNA_SPECIES);
+export const VECTOR_FAUNA_IDS = new Set(["coelho", "cobra", "caracol", "formiga", "pacu"]);
 
 /**
  * Os dados do jogo (curiousTrailData.ts) identificam os bichos em inglês (squirrel, deer...). Os recortes e o
@@ -95,30 +103,37 @@ export const DATA_TO_FAUNA_ID: Record<string, string> = {
   otter: "lontra",
   coati: "quati",
   "maned-wolf": "guara",
-  pacu: "paca",
+  pacu: "pacu",
   tortoise: "jabuti",
   frog: "sapo",
   agouti: "cutia",
+  rabbit: "coelho",
+  snake: "cobra",
+  snail: "caracol",
+  ant: "formiga",
 };
 const faunaIdOf = (dataId: string) => DATA_TO_FAUNA_ID[dataId] ?? (FAUNA_SPECIES[dataId] ? dataId : undefined);
 
 
-/** Os bichos de cada clima: os mais adaptados (sol: variedade; chuva: gostam de umidade; neve: aguentam o frio). */
+/** Fauna presente em cada trecho, de acordo com seus horários e habitats. */
 export const FAUNA_BY_WEATHER: Record<TrailWeather, readonly string[]> = {
-  sunny: ["esquilo", "cervo", "picapau", "tucano", "quati", "tamandua", "tatu", "paca", "cutia", "jabuti", "guara", "onca", "gamba", "preguica", "javali"],
-  rain: ["sapo", "lontra", "jacare", "preguica", "tucano", "quati", "ourico", "jabuti", "paca", "cervo"],
+  sunny: ["esquilo", "cervo", "picapau", "tucano", "quati", "tamandua", "tatu", "paca", "cutia", "jabuti", "gamba", "preguica", "javali", "coelho", "formiga", "pacu"],
+  night: ["coruja", "onca", "guara", "gamba", "sapo", "cobra", "coelho", "tatu", "tamandua", "formiga"],
+  rain: ["sapo", "lontra", "jacare", "preguica", "tucano", "quati", "ourico", "jabuti", "paca", "cervo", "cobra", "caracol", "formiga", "coelho", "pacu"],
   snow: ["cervo", "javali", "coruja", "esquilo", "guara", "picapau"],
 };
 const HIGHLIGHTS: Record<TrailWeather, readonly string[]> = {
   sunny: ["esquilo", "cervo", "tucano"],
+  night: ["coruja", "onca", "guara"],
   rain: ["sapo", "lontra", "tucano"],
   snow: ["cervo", "coruja"],
 };
-const TARGET: Record<TrailWeather, number> = { sunny: 8, rain: 7, snow: 5 };
+const TARGET: Record<TrailWeather, number> = { sunny: 8, night: 7, rain: 8, snow: 5 };
 /** Quem adora/aguenta o tempo fica mais ativo; os demais, mais quietos. */
 const WEATHER_LOVERS: Record<TrailWeather, readonly string[]> = {
   sunny: FAUNA_IDS,
-  rain: ["sapo", "lontra", "jacare", "tucano", "ourico", "preguica"],
+  night: ["coruja", "onca", "guara", "gamba", "sapo", "cobra", "coelho", "tamandua"],
+  rain: ["sapo", "lontra", "jacare", "tucano", "ourico", "preguica", "caracol"],
   snow: ["cervo", "javali", "coruja", "guara", "esquilo"],
 };
 
@@ -203,6 +218,9 @@ export interface Critter {
   seed: number;
   /** Presa que está sendo perseguida; a interação termina com a presa escapando. */
   huntTargetUid: number | null;
+  fleePredatorUid: number | null;
+  zigzagTimer: number;
+  zigzagSide: number;
 }
 
 export interface DrawItem {
@@ -252,7 +270,11 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     const allowed = new Set(FAUNA_BY_WEATHER[weather]);
     return ROAMING_ANIMAL_POOL.filter((a) => {
       const f = faunaIdOf(a.id);
-      return !!f && allowed.has(f);
+      if (!f || !allowed.has(f)) return false;
+      // Caracóis e formigas são observações ocasionais, nunca uma parte dominante do cenário.
+      if (f === "caracol") return weather === "rain" && rnd() < 0.13;
+      if (f === "formiga") return rnd() < 0.22;
+      return true;
     });
   };
 
@@ -288,6 +310,9 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       age: 0,
       seed: rnd() * 1000,
       huntTargetUid: null,
+      fleePredatorUid: null,
+      zigzagTimer: 0,
+      zigzagSide: rnd() > 0.5 ? 1 : -1,
     };
   };
 
@@ -295,13 +320,15 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     const d = Math.abs(y - stu.y);
     return d >= lo && d <= hi;
   };
-  const crowded = (x: number, y: number, self?: Critter) => critters.some((c) => c !== self && Math.hypot(c.x - x, c.y - y) < 46);
+  const crowded = (x: number, y: number, self?: Critter) => critters.some((c) => c !== self && Math.hypot(c.x - x, c.y - y) < (self && self.spec.h < 15 ? 11 : 46));
   const perchTaken = (i: number) => critters.some((c) => c.perch === i);
 
   function pickGroundSpot(c: Critter, lo: number, hi: number): { x: number; y: number; patch: number } | null {
     const list: { x: number; y: number; patch: number }[] = [];
     if (c.spec.water) WATER_EDGES.forEach((p) => near(p.y, lo, hi) && list.push({ ...p, patch: -1 }));
-    else {
+    else if (c.spec.climbs) {
+      PERCHES.slice(0, 10).forEach((p) => near(p.y, lo, hi) && list.push({ x: p.x, y: p.y, patch: -1 }));
+    } else {
       HABITAT.forEach((p) => near(p.y, lo, hi) && list.push({ ...p, patch: -1 }));
       HIDES.forEach((p) => near(p.y, lo, hi) && list.push({ x: p.x, y: p.y, patch: p.patch }));
     }
@@ -386,15 +413,21 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     goTo(c, clamp(c.x + (ax / len) * dist, 20, 980), c.y + (ay / len) * dist * 0.6);
   };
   const preyByPredator: Record<string, readonly string[]> = {
-    onca: ["paca", "cutia", "quati", "tatu", "cervo"],
-    jacare: ["sapo"],
-    coruja: ["esquilo"],
-    guara: ["paca", "cutia", "sapo", "esquilo"],
+    onca: ["coelho", "paca", "cutia", "quati", "tatu", "cervo", "cobra", "jacare"],
+    jacare: ["sapo", "pacu"],
+    coruja: ["esquilo", "sapo", "cobra", "caracol", "formiga", "coelho", "gamba"],
+    guara: ["coelho", "paca", "cutia", "sapo", "cobra", "caracol", "formiga"],
+    cobra: ["sapo", "formiga", "caracol", "esquilo"],
+    gamba: ["caracol", "formiga", "sapo"],
+    tamandua: ["formiga"],
+    lontra: ["pacu"],
   };
-  const foragers = new Set(["esquilo", "cervo", "javali", "tamandua", "paca", "jabuti", "cutia"]);
+  const foragers = new Set(["esquilo", "cervo", "javali", "tamandua", "paca", "jabuti", "cutia", "coelho", "cobra", "caracol", "formiga"]);
 
   function fleeFromPredator(prey: Critter, predator: Critter) {
-    const cover = HIDES
+    prey.fleePredatorUid = predator.uid;
+    prey.zigzagTimer = 0.45;
+    const cover = prey.spec.zigzag ? undefined : HIDES
       .filter((h) => !prey.spec.water)
       .map((h) => ({ ...h, dist: Math.hypot(h.x - prey.x, h.y - prey.y) }))
       .filter((h) => h.dist < 250 && Math.hypot(h.x - predator.x, h.y - predator.y) > Math.hypot(prey.x - predator.x, prey.y - predator.y))
@@ -406,7 +439,8 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       const dx = prey.x - predator.x;
       const dy = prey.y - predator.y;
       const len = Math.hypot(dx, dy) || 1;
-      goTo(prey, clamp(prey.x + dx / len * 240, 20, 980), prey.y + dy / len * 150);
+      const side = prey.spec.zigzag ? prey.zigzagSide * 120 : 0;
+      goTo(prey, clamp(prey.x + dx / len * 240 - (dy / len) * side, 20, 980), prey.y + dy / len * 150 + (dx / len) * side);
     }
   }
 
@@ -416,7 +450,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     return critters
       .filter((other) => other !== c && allowed.includes(other.spec.id) && other.mood !== "hidden" && other.state !== "leaving")
       .map((other) => ({ other, d: Math.hypot(other.x - c.x, other.y - c.y) }))
-      .filter(({ other, d }) => d < 340 && d > 70 && (c.spec.id !== "jacare" || other.spec.water))
+      .filter(({ other, d }) => d < 340 && d > (other.spec.h < 15 ? 8 : 70) && (c.spec.id !== "jacare" || other.spec.water))
       .sort((a, b) => a.d - b.d)[0]?.other;
   }
   /** Foge para a folhagem mais próxima (se houver), senão para longe do aluno. */
@@ -547,6 +581,21 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     c.clk += dt;
     c.moodT = Math.max(0, c.moodT - dt);
     c.cool = Math.max(0, c.cool - dt);
+    if (c.spec.zigzag && c.fleePredatorUid != null && c.mood === "flee") {
+      c.zigzagTimer -= dt;
+      if (c.zigzagTimer <= 0) {
+        const threat = critters.find((other) => other.uid === c.fleePredatorUid);
+        if (threat) {
+          const dx = c.x - threat.x;
+          const dy = c.y - threat.y;
+          const len = Math.hypot(dx, dy) || 1;
+          const side = c.zigzagSide * 125;
+          goTo(c, clamp(c.x + dx / len * 165 - dy / len * side, 22, 978), c.y + dy / len * 100 + dx / len * side);
+          c.zigzagSide *= -1;
+        }
+        c.zigzagTimer = 0.48;
+      }
+    } else if (c.mood !== "flee") c.fleePredatorUid = null;
     const ds = Math.hypot(stu.x - c.x, stu.y - c.y);
     if (c.huntTargetUid != null) {
       const prey = critters.find((other) => other.uid === c.huntTargetUid);
@@ -557,12 +606,38 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
         stop(c, 1.5);
       } else {
         const d = Math.hypot(prey.x - c.x, prey.y - c.y);
-        if (d < 88) {
-          if (prey.mood !== "flee") fleeFromPredator(prey, c);
+        const protectedPrey = prey.spec.temper === "defensive" || prey.spec.temper === "warning" || prey.mood === "curl" || prey.mood === "threat";
+        if (d < 92 && protectedPrey) {
+          prey.mood = prey.spec.id === "cobra" || prey.spec.id === "gamba" ? "threat" : "curl";
+          stop(prey, 2.8);
+          c.huntTargetUid = null;
+          c.mood = "retreat";
+          c.moodT = 1.3;
+          c.cool = 15;
+          const dx = c.x - prey.x;
+          const dy = c.y - prey.y;
+          const len = Math.hypot(dx, dy) || 1;
+          goTo(c, clamp(c.x + dx / len * 150, 20, 980), c.y + dy / len * 110);
+        } else if (d < 44 && prey.mood === "flee" && rnd() < 0.22) {
+          // Capturas breves e sem violência gráfica: a presa some na vegetação enquanto o predador se alimenta.
+          prey.mood = "hidden";
+          prey.fleePredatorUid = null;
+          stop(prey, 4 + rnd() * 2);
+          c.huntTargetUid = null;
+          c.mood = "forage";
+          c.moodT = 3.2;
+          c.cool = 18;
+          stop(c, 3.2);
+        } else if (d < 92 && prey.mood !== "flee") {
+          fleeFromPredator(prey, c);
+          c.mood = "lunge";
+          c.moodT = 1.5;
+          goTo(c, prey.x, prey.y);
+        } else if (d > 210 && prey.mood === "flee") {
           c.huntTargetUid = null;
           c.mood = "calm";
-          c.cool = 14;
-          stop(c, 2.5);
+          c.cool = 13;
+          stop(c, 1.8);
         } else {
           c.moodT = Math.max(0, c.moodT - dt);
           if (c.mood === "stalk" && c.moodT === 0) {
@@ -672,9 +747,9 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     if (sp.hop) {
       c.phase += dt * sp.gait * (fast ? 1.3 : 1);
       const cyc = Math.max(0, Math.sin(c.phase));
-      speed *= 0.1 + 1.7 * cyc * cyc;
+      speed *= cyc > 0.12 ? 1.7 * cyc * cyc : 0;
     }
-    c.v = approach(c.v, speed, 300 * dt);
+    c.v = approach(c.v, speed, (speed === 0 ? 480 : 300) * dt);
     if (!sp.hop && sp.stride > 0) c.phase += ((c.v * dt) / sp.stride) * Math.PI * 2;
     c.x += (dx / dist) * c.v * dt;
     c.y += (dy / dist) * c.v * dt;
@@ -781,10 +856,11 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       c.perch = pi;
       c.patch = -1; // em voo: à frente de tudo
     };
-    // A coruja faz um voo curto de caça e a presa escapa para a cobertura.
+    // A coruja caça ao anoitecer: algumas investidas falham e outras terminam com a presa escondida.
     if (sp.id === "coruja" && c.mood === "calm" && c.cool <= 0 && rnd() < dt * 0.06) {
       const prey = findPrey(c);
       if (prey) {
+        const preyDistance = Math.hypot(prey.x - c.x, prey.y - c.y);
         let perch = -1;
         let best = Infinity;
         PERCHES.forEach((p, i) => {
@@ -793,9 +869,20 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
           if (d < best && d < 220) { best = d; perch = i; }
         });
         if (perch >= 0) {
-          fleeFromPredator(prey, c);
-          c.mood = "lunge";
-          c.moodT = 2;
+          if ((prey.spec.temper === "defensive" || prey.spec.temper === "warning") && preyDistance < 110) {
+            prey.mood = prey.spec.temper === "warning" ? "threat" : "curl";
+            stop(prey, 2.5);
+            c.mood = "retreat";
+          } else if (preyDistance < 105 && prey.spec.h < 48 && rnd() < 0.2) {
+            prey.mood = "hidden";
+            stop(prey, 4 + rnd() * 2);
+            c.mood = "forage";
+            c.moodT = 3;
+          } else {
+            fleeFromPredator(prey, c);
+            c.mood = "lunge";
+            c.moodT = 2;
+          }
           c.cool = 14;
           flyTo(perch, 1.4 + best / 180);
           return;

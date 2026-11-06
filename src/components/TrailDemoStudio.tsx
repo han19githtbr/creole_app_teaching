@@ -260,11 +260,13 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         source.start(audioStartAt);
         return { source, gain };
       };
-      addLoop(forestBuffer, 0.26);
-      addLoop(streamBuffer, 0.16);
+      const forestBed = addLoop(forestBuffer, 0.26);
+      const streamBed = addLoop(streamBuffer, 0.16);
       const rainBed = addLoop(rainBuffer, 0);
       plan.rounds.forEach((round) => {
         rainBed.gain.gain.setTargetAtTime(round.levelCfg.weather === "rain" ? 0.2 : 0, audioStartAt + round.start, 0.45);
+        forestBed.gain.gain.setTargetAtTime(round.levelCfg.weather === "night" ? 0.2 : 0.26, audioStartAt + round.start, 0.55);
+        streamBed.gain.gain.setTargetAtTime(round.levelCfg.weather === "night" ? 0.14 : 0.16, audioStartAt + round.start, 0.55);
       });
       plan.rounds.forEach((round) => {
         const buffer = wordsByText.get(round.item.speak.trim());

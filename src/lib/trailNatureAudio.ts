@@ -46,8 +46,8 @@ class TrailNatureAudio {
     if (!context || !this.master) return;
     const now = context.currentTime;
     this.master.gain.setTargetAtTime(soundEffects.isMuted() ? 0 : soundEffects.getVolume() * 0.48, now, 0.12);
-    this.gains.forest?.gain.setTargetAtTime(0.28, now, 0.5);
-    this.gains.stream?.gain.setTargetAtTime(0.2, now, 0.5);
+    this.gains.forest?.gain.setTargetAtTime(this.weather === "night" ? 0.2 : 0.28, now, 0.5);
+    this.gains.stream?.gain.setTargetAtTime(this.weather === "night" ? 0.14 : 0.2, now, 0.5);
     this.gains.rain?.gain.setTargetAtTime(this.weather === "rain" ? 0.2 : 0, now, 0.6);
   }
 

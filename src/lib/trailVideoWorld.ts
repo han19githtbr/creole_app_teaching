@@ -45,6 +45,7 @@ export async function loadTrailVideoAssets(): Promise<TrailVideoAssets> {
   return {
     scenes: {
       sunny: gradeImage(img, "sunny"),
+      night: gradeImage(img, "night"),
       rain: gradeImage(img, "rain"),
       snow: gradeImage(img, "snow"),
     },

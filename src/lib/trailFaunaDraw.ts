@@ -4,7 +4,7 @@
  * com o contexto já transformado pela câmera.
  */
 import type { TrailWeather } from "@/lib/curiousTrailData";
-import { FAUNA_IDS, type Critter, type Fauna, type Mood } from "@/lib/trailFauna";
+import { FAUNA_IDS, VECTOR_FAUNA_IDS, type Critter, type Fauna, type Mood } from "@/lib/trailFauna";
 import { FOLIAGE_PATCHES } from "@/lib/trailFaunaPatches";
 import { FAUNA_RIGS, type RigPart } from "@/lib/trailFaunaRig";
 import { gradeImage } from "@/lib/trailGrade";
@@ -32,7 +32,7 @@ function loadImg(src: string): Promise<HTMLImageElement> {
 export async function loadFaunaAssets(): Promise<FaunaAssets> {
   const sprites: Record<string, HTMLImageElement> = {};
   await Promise.all(
-    FAUNA_IDS.map(async (id) => {
+    FAUNA_IDS.filter((id) => !VECTOR_FAUNA_IDS.has(id)).map(async (id) => {
       sprites[id] = await loadImg(`${FAUNA_BASE}/${id}.png`);
     })
   );
@@ -373,13 +373,84 @@ function drawFlyingBird(
   ctx.restore();
 }
 
+function drawVectorAnimal(ctx: CanvasRenderingContext2D, id: string, w: number, h: number, c: Critter, t: number, moving: boolean) {
+  if (id === "coelho") {
+    const crouch = c.mood === "alert" ? 0.92 : 1;
+    const kick = moving ? Math.sin(c.phase * 0.5) : 0;
+    ctx.fillStyle = "#8c6b51";
+    ctx.beginPath(); ctx.ellipse(-w * 0.22, -h * 0.18, w * 0.2, h * 0.16, kick * 0.15, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#cbb79c";
+    ctx.beginPath(); ctx.ellipse(-w * 0.04, -h * 0.42 * crouch, w * 0.38, h * 0.3, -0.06, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(w * 0.28, -h * 0.67 * crouch, w * 0.2, h * 0.21, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#a98b72";
+    ctx.beginPath(); ctx.ellipse(w * 0.22, -h * 1.02 * crouch, w * 0.075, h * 0.28, -0.22, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(w * 0.38, -h * 0.99 * crouch, w * 0.07, h * 0.26, 0.14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#e7a5a0";
+    ctx.beginPath(); ctx.ellipse(w * 0.22, -h * 1.02 * crouch, w * 0.032, h * 0.19, -0.22, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(w * 0.38, -h * 0.99 * crouch, w * 0.03, h * 0.17, 0.14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#241914";
+    ctx.beginPath(); ctx.arc(w * 0.36, -h * 0.72 * crouch, 1.8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#f4ede2";
+    ctx.beginPath(); ctx.ellipse(-w * 0.4, -h * 0.47, h * 0.075, h * 0.075, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#755940"; ctx.lineWidth = h * 0.11; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(-w * 0.12, -h * 0.2); ctx.lineTo(-w * 0.19 + kick * 2, -h * 0.01); ctx.moveTo(w * 0.12, -h * 0.2); ctx.lineTo(w * 0.13 - kick * 2, -h * 0.01); ctx.stroke();
+    return;
+  }
+  if (id === "cobra") {
+    const wave = Math.sin(t * 1.7 + c.seed) * h * 0.13;
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.strokeStyle = "#263f29"; ctx.lineWidth = h * 0.5;
+    ctx.beginPath(); ctx.moveTo(-w * 0.48, -h * 0.08); ctx.quadraticCurveTo(-w * 0.2, -h * 0.02 + wave, 0, -h * 0.12); ctx.quadraticCurveTo(w * 0.2, -h * 0.28 - wave, w * 0.29, -h * 0.48); ctx.stroke();
+    ctx.strokeStyle = c.mood === "threat" ? "#9e6b35" : "#66864a"; ctx.lineWidth = h * 0.33;
+    ctx.beginPath(); ctx.moveTo(-w * 0.48, -h * 0.08); ctx.quadraticCurveTo(-w * 0.2, -h * 0.02 + wave, 0, -h * 0.12); ctx.quadraticCurveTo(w * 0.2, -h * 0.28 - wave, w * 0.29, -h * 0.48); ctx.stroke();
+    ctx.fillStyle = c.mood === "threat" ? "#9e6b35" : "#789655";
+    ctx.beginPath(); ctx.ellipse(w * 0.31, -h * 0.5, w * 0.14, h * 0.18, -0.25, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#f8e9b0"; ctx.beginPath(); ctx.arc(w * 0.36, -h * 0.55, 1.6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#161b13"; ctx.beginPath(); ctx.arc(w * 0.37, -h * 0.55, 0.8, 0, Math.PI * 2); ctx.fill();
+    if (c.mood === "threat") { ctx.strokeStyle = "#d15b55"; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(w * 0.43, -h * 0.43); ctx.lineTo(w * 0.52, -h * 0.4); ctx.lineTo(w * 0.45, -h * 0.37); ctx.stroke(); }
+    return;
+  }
+  if (id === "caracol") {
+    ctx.fillStyle = "#d7c49a"; ctx.beginPath(); ctx.ellipse(0, -h * 0.12, w * 0.48, h * 0.18, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#88623c"; ctx.beginPath(); ctx.arc(-w * 0.05, -h * 0.65, h * 0.44, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#d9b878"; ctx.beginPath(); ctx.arc(-w * 0.05, -h * 0.65, h * 0.33, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#8a6037"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(-w * 0.05, -h * 0.65, h * 0.23, 0, Math.PI * 1.75); ctx.stroke();
+    ctx.strokeStyle = "#c6ad7f"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(w * 0.25, -h * 0.21); ctx.lineTo(w * 0.34, -h * 0.84); ctx.moveTo(w * 0.42, -h * 0.18); ctx.lineTo(w * 0.47, -h * 0.7); ctx.stroke();
+    ctx.fillStyle = "#242017"; ctx.beginPath(); ctx.arc(w * 0.34, -h * 0.86, 1, 0, Math.PI * 2); ctx.arc(w * 0.47, -h * 0.72, 1, 0, Math.PI * 2); ctx.fill();
+    return;
+  }
+  if (id === "formiga") {
+    for (let i = 0; i < 3; i++) {
+      const ax = (i - 1) * w * 0.38;
+      const bob = Math.sin(t * 8 + c.seed + i) * h * 0.08;
+      ctx.strokeStyle = "#30251c"; ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(ax, -h * 0.38 + bob); ctx.lineTo(ax - 2, -h * 0.03); ctx.moveTo(ax, -h * 0.38 + bob); ctx.lineTo(ax + 2, -h * 0.03); ctx.stroke();
+      ctx.fillStyle = "#332319"; ctx.beginPath(); ctx.arc(ax, -h * 0.38 + bob, h * 0.2, 0, Math.PI * 2); ctx.arc(ax + w * 0.13, -h * 0.39 + bob, h * 0.15, 0, Math.PI * 2); ctx.arc(ax - w * 0.13, -h * 0.37 + bob, h * 0.14, 0, Math.PI * 2); ctx.fill();
+    }
+    return;
+  }
+  if (id === "pacu") {
+    const tailBeat = Math.sin(t * 5 + c.seed) * w * 0.04;
+    ctx.fillStyle = "#356d68";
+    ctx.beginPath(); ctx.moveTo(-w * 0.4, -h * 0.5); ctx.lineTo(-w * 0.68, -h * 0.84 + tailBeat); ctx.lineTo(-w * 0.65, -h * 0.16 + tailBeat); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#4a9d8b";
+    ctx.beginPath(); ctx.ellipse(0, -h * 0.5, w * 0.48, h * 0.38, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#77b6a0";
+    ctx.beginPath(); ctx.moveTo(-w * 0.05, -h * 0.74); ctx.lineTo(w * 0.12, -h * 1.02); ctx.lineTo(w * 0.28, -h * 0.69); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#b7d8b8";
+    ctx.beginPath(); ctx.moveTo(-w * 0.05, -h * 0.28); ctx.lineTo(w * 0.16, -h * 0.03); ctx.lineTo(w * 0.3, -h * 0.35); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#12231d"; ctx.beginPath(); ctx.arc(w * 0.31, -h * 0.59, 1.5, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
 function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAssets, weather: TrailWeather, t: number) {
   const sp = c.spec;
   const base = assets.sprites[sp.id];
-  if (!base) return;
-  const img = graded(sp.id, base, weather);
-  const iw = base.naturalWidth;
-  const ih = base.naturalHeight;
+  const vector = VECTOR_FAUNA_IDS.has(sp.id);
+  if (!base && !vector) return;
+  const img = base ? graded(sp.id, base, weather) : null;
+  const iw = base?.naturalWidth || (sp.id === "coelho" ? 1.42 : sp.id === "cobra" ? 2.3 : sp.id === "caracol" ? 1.5 : sp.id === "pacu" ? 2.2 : 2.1);
+  const ih = base?.naturalHeight || 1;
   const h = sp.h;
   const w = (h * iw) / ih;
   const moving = c.state === "move" && c.v > 2;
@@ -393,8 +464,8 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   if (sp.kind === "ground") {
     if (sp.hop) {
       if (moving) {
-        const s = Math.abs(Math.sin(c.phase));
-        lift += s * h * 0.38;
+        const s = Math.max(0, Math.sin(c.phase));
+        lift += s * h * (sp.id === "sapo" ? 0.62 : sp.id === "coelho" ? 0.34 : 0.3);
         sy *= 1 - 0.1 * (1 - s);
         sx *= 1 + 0.06 * (1 - s);
       }
@@ -464,12 +535,14 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   const rigAtlas = assets.rigs[sp.id];
   if (c.state === "fly" && sp.kind === "perch" && !sp.hangs) {
     drawFlyingBird(ctx, c, sp.id, h, w, weather, t);
+  } else if (vector) {
+    drawVectorAnimal(ctx, sp.id, w, h, c, t, moving);
   } else if (rigAtlas && FAUNA_RIGS[sp.id] && sp.kind === "ground") {
     drawRigged(ctx, graded(`rig:${sp.id}`, rigAtlas, weather), sp.id, h, sp.face, c, t, moving, Boolean(sp.hop));
   } else if (sp.hangs) {
-    ctx.drawImage(img, -w / 2, -h * 0.05, w, h);
+    if (img) ctx.drawImage(img, -w / 2, -h * 0.05, w, h);
   } else {
-    ctx.drawImage(img, -w / 2, -h, w, h);
+    if (img) ctx.drawImage(img, -w / 2, -h, w, h);
   }
   ctx.restore();
 

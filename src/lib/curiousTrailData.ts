@@ -4,7 +4,7 @@ import type { CestQuoiItem } from "@/lib/cquoiContent";
 import cquoiItemsRaw from "@/lib/cquoiItems.json";
 import { TRAIL_EXTRA_ITEMS } from "@/lib/curiousTrailExtraItems";
 
-export type TrailWeather = "sunny" | "rain" | "snow";
+export type TrailWeather = "sunny" | "night" | "rain" | "snow";
 
 export interface TrailAnimal {
   id: string;
@@ -54,6 +54,10 @@ export const FOREST_TRAIL_ANIMALS: TrailAnimal[] = [
   { id: "tortoise", name: "Jabuti", namePt: "Jabuti", emoji: "🐢", quote: "Vou devagar, mas chego lá!", soundType: "rustle", badge: "Casco aventureiro" },
   { id: "frog", name: "Sapo", namePt: "Sapo", emoji: "🐸", quote: "Pulo de folha em folha perto da água.", soundType: "croak", badge: "Saltador do brejo" },
   { id: "agouti", name: "Cutia", namePt: "Cutia", emoji: "🐿️", quote: "Encontrei uma fruta para guardar!", soundType: "rustle", badge: "Coletora de sementes" },
+  { id: "rabbit", name: "Coelho", namePt: "Coelho", emoji: "🐇", quote: "Fico quieto e corro em zigue-zague quando percebo perigo.", soundType: "rustle", badge: "Saltador crepuscular" },
+  { id: "snake", name: "Cobra", namePt: "Cobra", emoji: "🐍", quote: "Deslizo em silêncio pela mata e procuro pequenos animais.", soundType: "rustle", badge: "Caçadora discreta" },
+  { id: "snail", name: "Caracol", namePt: "Caracol", emoji: "🐌", quote: "Depois da chuva, avanço devagar sobre folhas úmidas.", soundType: "rustle", badge: "Pequeno explorador" },
+  { id: "ant", name: "Formiga", namePt: "Formiga", emoji: "🐜", quote: "Caminho em grupo levando alimento para o formigueiro.", soundType: "rustle", badge: "Trabalhadora da mata" },
 ];
 
 export const TRAIL_LEVELS: TrailLevelConfig[] = [
@@ -86,20 +90,20 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     name: "Bosque dos Pinheiros",
     nameFr: "La Forêt des Pins",
     elementCount: 2,
-    weather: "sunny",
+    weather: "night",
     hasUmbrella: false,
     hasSnowGear: false,
     animal: {
-      id: "agouti",
-      name: "Cutia",
-      namePt: "Cutia",
-      emoji: "🐿️",
-      quote: "Você está subindo rápido! Dois objetos esperam entre as árvores.",
-      soundType: "rustle",
-      badge: "Coletora de sementes",
+      id: "owl",
+      name: "La chouette de la forêt",
+      namePt: "Coruja da mata",
+      emoji: "🦉",
+      quote: "A noite chegou: meus olhos veem bem no escuro.",
+      soundType: "chirp",
+      badge: "Vigia noturna",
     },
     coord: { x: 41.8, y: 82.4 },
-    description: "Bosque acolhedor com brisa fresca. Identifique 2 elementos para prosseguir.",
+    description: "A noite chega à mata. Observe a lua, as estrelas e os animais noturnos.",
     badgeEmoji: "🌲",
     xpBase: 100,
   },
@@ -109,20 +113,20 @@ export const TRAIL_LEVELS: TrailLevelConfig[] = [
     name: "Mirante das Rochas",
     nameFr: "Le Belvédère des Rochers",
     elementCount: 3,
-    weather: "sunny",
+    weather: "night",
     hasUmbrella: false,
     hasSnowGear: false,
     animal: {
-      id: "woodpecker",
-      name: "Pica-pau",
-      namePt: "Pica-pau",
-      emoji: "🐦",
-      quote: "Que bela vista! Três elementos estão escondidos nesta encosta.",
-      soundType: "chirp",
-      badge: "Tambor da floresta",
+      id: "maned-wolf",
+      name: "Le loup à crinière",
+      namePt: "Lobo-guará",
+      emoji: "🐺",
+      quote: "Procuro pequenos animais e frutos ao entardecer.",
+      soundType: "rustle",
+      badge: "Caminhante noturno",
     },
     coord: { x: 45.3, y: 71.5 },
-    description: "Encosta rochosa com vista panorâmica. Reconheça 3 elementos para subir mais alto.",
+    description: "Sob a luz suave da lua, reconheça 3 elementos antes da chuva começar.",
     badgeEmoji: "🪨",
     xpBase: 160,
   },

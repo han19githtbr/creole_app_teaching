@@ -417,6 +417,9 @@ export function renderTrailDemoFrame(
   // 1. O MUNDO: a mesma arte da mata do jogo, com a mesma câmera, clima, trilha e marcadores
   const isRain = levelCfg.weather === "rain";
   const isSnow = levelCfg.weather === "snow";
+  const isNight = levelCfg.weather === "night";
+  const firstNightStart = plan.rounds.find((entry) => entry.levelCfg.weather === "night")?.start;
+  const nightfall = isNight ? (firstNightStart === undefined ? 1 : clamp((t - firstNightStart) / 2.6)) : 0;
   const mapH = trailMapHeight(h);
   const dockTop = mapH + Math.max(12, h * 0.012);
   const dockHeight = h - dockTop - Math.max(12, h * 0.012);
@@ -446,6 +449,30 @@ export function renderTrailDemoFrame(
     ctx.fillRect(0, 0, WORLD_W, WORLD_H);
   }
 
+  if (isNight) {
+    ctx.save();
+    ctx.globalAlpha = nightfall;
+    ctx.fillStyle = "rgba(16, 26, 58, 0.27)";
+    ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+    const moonGlow = ctx.createRadialGradient(780, 108, 24, 780, 150, 390);
+    moonGlow.addColorStop(0, "rgba(232, 241, 255, 0.32)");
+    moonGlow.addColorStop(0.44, "rgba(175, 201, 239, 0.14)");
+    moonGlow.addColorStop(1, "rgba(23, 36, 71, 0)");
+    ctx.fillStyle = moonGlow;
+    ctx.fillRect(310, -240, 940, 780);
+    ctx.fillStyle = "rgba(239, 246, 255, 0.96)";
+    ctx.beginPath(); ctx.arc(780, 108, 35, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(124, 141, 175, 0.24)";
+    ctx.beginPath(); ctx.arc(792, 98, 31, 0, Math.PI * 2); ctx.fill();
+    const stars = [[175, 94], [280, 168], [380, 64], [460, 218], [580, 82], [670, 205], [900, 175], [935, 72], [95, 218], [735, 37], [320, 260], [535, 278]] as const;
+    stars.forEach(([x, y], index) => {
+      const twinkle = 0.6 + Math.sin(t * 2.1 + index * 1.7) * 0.28;
+      ctx.fillStyle = `rgba(255, 248, 214, ${twinkle})`;
+      ctx.beginPath(); ctx.arc(x, y, index % 3 === 0 ? 3 : 2, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.restore();
+  }
+
   // Nuvens e bandos do mapa também são desenhados no canvas exportado, com movimento suave.
   const drawCloud = (x: number, y: number, scale: number, alpha: number) => {
     ctx.save();
@@ -461,8 +488,8 @@ export function renderTrailDemoFrame(
     ctx.fill();
     ctx.restore();
   };
-  drawCloud(524 + Math.sin(t * Math.PI * 2 / 28) * 45, 150, 1, 0.48);
-  drawCloud(827 - Math.sin(t * Math.PI * 2 / 22) * 42, 267, 0.78, 0.4);
+  drawCloud(524 + Math.sin(t * Math.PI * 2 / 28) * 45, 150, 1, 0.48 - nightfall * 0.28);
+  drawCloud(827 - Math.sin(t * Math.PI * 2 / 22) * 42, 267, 0.78, 0.4 - nightfall * 0.22);
   TRAIL_BIRDS.forEach((bird) => {
     const image = assets.birds?.[bird.id];
     if (!image) return;
@@ -867,7 +894,7 @@ export function renderTrailDemoFrame(
   ctx.font = `600 ${Math.max(11, w * 0.012)}px ${FONT}`;
   ctx.fillText(
     `Altitude: ${levelCfg.altitude} m · ${
-      levelCfg.weather === "sunny" ? "Ensolarado · brisa leve" : levelCfg.weather === "rain" ? "Chuva · rajadas de vento" : "Neve · vento alpino"
+      levelCfg.weather === "sunny" ? "Ensolarado · brisa leve" : levelCfg.weather === "night" ? "Noite · lua e estrelas" : levelCfg.weather === "rain" ? "Chuva · rajadas de vento" : "Neve · vento alpino"
     }`,
     42,
     80

@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Award, ChevronRight, Coins, Play, Trophy, Volume2, VolumeX } from "lucide-react";
 import { soundEffects } from "@/lib/soundEffects";
+import { trailNatureAudio } from "@/lib/trailNatureAudio";
 import { Confetti } from "@/components/Confetti";
 import { cn } from "@/lib/utils";
 import { recordQuizWin, type Badge, type LevelInfo } from "@/lib/gamification";
@@ -288,13 +289,19 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     return () => {
       loadRequestRef.current += 1;
       if (countdownRef.current) clearInterval(countdownRef.current);
+      trailNatureAudio.stop();
     };
   }, []);
+
+  useEffect(() => {
+    if (phase === "lobby" || phase === "load_error") trailNatureAudio.stop();
+  }, [phase]);
 
   function toggleSound() {
     const next = !muted;
     setMuted(next);
     soundEffects.setMuted(next);
+    trailNatureAudio.setMuted(next);
   }
 
   /** Publica a posição/velocidade da avalanche para o mapa desenhar de forma suave. */
@@ -421,6 +428,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
 
   // Iniciar um nível
   async function startLevel(lvl: number, resetMatch = false) {
+    trailNatureAudio.start(TRAIL_LEVELS[lvl - 1]?.weather ?? "sunny");
     const requestId = ++loadRequestRef.current;
     if (countdownRef.current) {
       clearInterval(countdownRef.current);

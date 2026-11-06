@@ -203,6 +203,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
 
     const controller = new AbortController();
     abortRef.current = controller;
+    let exportAudioContext: AudioContext | null = null;
 
     try {
       // Mock plan compatível para exportador
@@ -215,6 +216,67 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
 
       // Usamos MediaRecorder / WebCodecs padrão
       const stream = exportCanvas.captureStream(30);
+      exportAudioContext = new AudioContext();
+      await exportAudioContext.resume();
+      const audioDestination = exportAudioContext.createMediaStreamDestination();
+      const audioMaster = exportAudioContext.createGain();
+      audioMaster.gain.value = 0.38;
+      audioMaster.connect(audioDestination);
+
+      const loadAudio = async (url: string) => {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Não foi possível carregar o áudio ${url}`);
+        return exportAudioContext!.decodeAudioData(await response.arrayBuffer());
+      };
+      const [forestBuffer, streamBuffer, rainBuffer] = await Promise.all([
+        loadAudio("/trilha/audio/forest-ambience.ogg"),
+        loadAudio("/trilha/audio/small-stream.ogg"),
+        loadAudio("/trilha/audio/light-rain.ogg"),
+      ]);
+      // O jogo pronuncia o nome do objeto quando revela a resposta; usa o mesmo texto francês no vídeo.
+      const uniqueWords = [...new Set(plan.rounds.map((round) => round.item.speak.trim()))];
+      const spokenWords = await Promise.all(uniqueWords.map(async (word) => {
+        const response = await fetch("/api/trilha/pronuncia", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: word }),
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error(`Não foi possível preparar a pronúncia de “${word}”.`);
+        return [word, await exportAudioContext!.decodeAudioData(await response.arrayBuffer())] as const;
+      }));
+      const wordsByText = new Map(spokenWords);
+      // Só inicia os relógios de áudio depois que todos os clipes estiverem prontos.
+      const audioStartAt = exportAudioContext.currentTime + 0.25;
+      const addLoop = (buffer: AudioBuffer, volume: number) => {
+        const source = exportAudioContext!.createBufferSource();
+        const gain = exportAudioContext!.createGain();
+        source.buffer = buffer;
+        source.loop = true;
+        gain.gain.value = volume;
+        source.connect(gain);
+        gain.connect(audioMaster);
+        source.start(audioStartAt);
+        return { source, gain };
+      };
+      addLoop(forestBuffer, 0.26);
+      addLoop(streamBuffer, 0.16);
+      const rainBed = addLoop(rainBuffer, 0);
+      plan.rounds.forEach((round) => {
+        rainBed.gain.gain.setTargetAtTime(round.levelCfg.weather === "rain" ? 0.2 : 0, audioStartAt + round.start, 0.45);
+      });
+      plan.rounds.forEach((round) => {
+        const buffer = wordsByText.get(round.item.speak.trim());
+        if (!buffer) return;
+        const voice = exportAudioContext!.createBufferSource();
+        const voiceGain = exportAudioContext!.createGain();
+        voice.buffer = buffer;
+        voiceGain.gain.value = 0.9;
+        voice.connect(voiceGain);
+        voiceGain.connect(audioMaster);
+        voice.start(audioStartAt + round.correctAt);
+      });
+      stream.addTrack(audioDestination.stream.getAudioTracks()[0]);
       const mime = MediaRecorder.isTypeSupported("video/mp4;codecs=avc1")
         ? "video/mp4;codecs=avc1"
         : "video/webm";
@@ -231,23 +293,30 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         };
       });
 
+      await new Promise<void>((resolve) => {
+        const waitMs = Math.max(0, (audioStartAt - exportAudioContext!.currentTime) * 1000);
+        setTimeout(resolve, waitMs);
+      });
       recorder.start();
       const vAssets = vAssetsRef.current;
       if (!vAssets) throw new Error("A arte da trilha ainda não carregou.");
       const exportWorld = new TrailVideoWorld(plan, vAssets.fauna);
 
       const fps = 30;
-      const totalFrames = Math.ceil(plan.total * fps);
-      for (let f = 0; f < totalFrames; f++) {
+      const videoStartAt = performance.now();
+      while ((performance.now() - videoStartAt) / 1000 < plan.total) {
         if (controller.signal.aborted) throw new Error("Cancelado");
-        const tFrame = f / fps;
+        const frameStart = performance.now();
+        const tFrame = (frameStart - videoStartAt) / 1000;
         // exportação quadro a quadro, com o mundo recomeçando do zero (mesma simulação da prévia)
         const dyn = await exportWorld.avalancheImage(tFrame, spec.w, trailMapHeight(spec.h));
         renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: vAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn });
-        setProgress(Math.round((f / totalFrames) * 100));
-        await new Promise((r) => setTimeout(r, 16));
+        setProgress(Math.min(99, Math.round((tFrame / plan.total) * 100)));
+        const delay = Math.max(0, 1000 / fps - (performance.now() - frameStart));
+        if (delay) await new Promise((r) => setTimeout(r, delay));
       }
 
+      setProgress(100);
       recorder.stop();
       const blob = await finishPromise;
       const url = URL.createObjectURL(blob);
@@ -260,7 +329,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         info: {
           blob,
           extension: ext as "mp4" | "webm",
-          hasAudio: false,
+          hasAudio: true,
           method: "realtime",
           width: spec.w,
           height: spec.h,
@@ -272,6 +341,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         setError((err as Error)?.message || "Falha na exportação do vídeo.");
       }
     } finally {
+      if (exportAudioContext && exportAudioContext.state !== "closed") await exportAudioContext.close();
       setExporting(false);
       abortRef.current = null;
     }
@@ -292,6 +362,9 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
             </p>
           </div>
         </div>
+        <p className="rounded-xl bg-[var(--surface-2)] px-3 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)]">
+          🎧 O vídeo exportado inclui a pronúncia francesa dos objetos e sons gravados de floresta, riacho e chuva, mixados suavemente.
+        </p>
 
         {/* TÍTULO */}
         <div className="space-y-1">

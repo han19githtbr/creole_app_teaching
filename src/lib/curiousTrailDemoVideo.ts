@@ -23,8 +23,6 @@ import {
 } from "@/lib/curiousTrailData";
 import { buildWordOptions, type CestQuoiItem } from "@/lib/cquoiContent";
 import {
-  CURIOUS_TRAIL_PATH,
-  CURIOUS_TRAIL_LENGTH,
   CAMP_FRACS,
   MARKER_FRACS,
   WORLD_W,
@@ -360,13 +358,6 @@ export function computeTrailCamera(plan: TrailDemoPlan, t: number, w: number, h:
 const FONT = '"Inter", "Segoe UI", -apple-system, sans-serif';
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 const OPTION_COLORS = ["#3b82f6", "#ec4899", "#f59e0b", "#10b981"];
-let cachedTrailPath: Path2D | null = null;
-
-function getTrailPath() {
-  cachedTrailPath ??= new Path2D(CURIOUS_TRAIL_PATH);
-  return cachedTrailPath;
-}
-
 function shuffle<T>(values: T[]): T[] {
   const shuffled = [...values];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -453,27 +444,46 @@ export function renderTrailDemoFrame(
     ctx.fillRect(0, 0, WORLD_W, WORLD_H);
   }
 
-  // trilha coberta de neve / molhada (por cima da arte já com o clima aplicado)
-  if (isRain || isSnow) {
-    const trail = getTrailPath();
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    if (isSnow) {
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
-      ctx.lineWidth = 46;
-      ctx.stroke(trail);
-      ctx.strokeStyle = "rgba(234, 242, 255, 0.7)";
-      ctx.lineWidth = 30;
-      ctx.setLineDash([60, 70]);
-      ctx.stroke(trail);
-      ctx.setLineDash([]);
-    } else {
-      ctx.strokeStyle = "rgba(127, 167, 196, 0.45)";
-      ctx.lineWidth = 26;
-      ctx.setLineDash([22, 120]);
-      ctx.stroke(trail);
-      ctx.setLineDash([]);
-    }
+  // Mesmos indicadores discretos do jogo: poças na chuva e flocos no traçado durante a neve.
+  if (isRain) {
+    [0.08, 0.19, 0.31, 0.43, 0.55, 0.67, 0.79, 0.91].forEach((fraction, index) => {
+      const point = getTrailPositionAtFraction(fraction);
+      const rx = index % 2 === 0 ? 21 : 16;
+      const ry = index % 2 === 0 ? 9 : 7;
+      ctx.save();
+      ctx.translate(point.x, point.y);
+      ctx.rotate(index % 2 === 0 ? -0.31 : 0.28);
+      ctx.fillStyle = "rgba(23, 59, 74, 0.14)";
+      ctx.beginPath(); ctx.ellipse(0, 2, rx + 3, ry + 3, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(117, 201, 223, 0.48)";
+      ctx.strokeStyle = "rgba(212, 245, 244, 0.72)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = "rgba(240, 255, 255, 0.78)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(-rx * 0.55, -1); ctx.quadraticCurveTo(0, -ry * 0.7, rx * 0.48, -1); ctx.stroke();
+      ctx.restore();
+    });
+  } else if (isSnow) {
+    [0.07, 0.14, 0.22, 0.29, 0.37, 0.45, 0.52, 0.6, 0.68, 0.75, 0.83, 0.9, 0.96].forEach((fraction, index) => {
+      const point = getTrailPositionAtFraction(fraction);
+      const size = index % 3 === 0 ? 11 : index % 3 === 1 ? 8 : 6;
+      ctx.save();
+      ctx.translate(point.x, point.y);
+      ctx.rotate(((index * 29) % 60) * Math.PI / 180);
+      ctx.strokeStyle = `rgba(248, 253, 255, ${index % 3 === 0 ? 0.88 : 0.7})`;
+      ctx.fillStyle = "#ffffff";
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(-size, 0); ctx.lineTo(size, 0);
+      ctx.moveTo(0, -size); ctx.lineTo(0, size);
+      ctx.moveTo(-size * 0.7, -size * 0.7); ctx.lineTo(size * 0.7, size * 0.7);
+      ctx.moveTo(-size * 0.7, size * 0.7); ctx.lineTo(size * 0.7, -size * 0.7);
+      ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    });
   }
 
 
@@ -564,8 +574,8 @@ export function renderTrailDemoFrame(
   // 3. CLIMA ANIMADO (chuva / neve caindo na tela)
   if (isRain) {
     ctx.save();
-    ctx.strokeStyle = "rgba(186, 230, 253, 0.6)";
-    ctx.lineWidth = 2.2;
+    ctx.strokeStyle = "rgba(186, 230, 253, 0.42)";
+    ctx.lineWidth = 1.5;
     const rainOffset = (t * 900) % 140;
     for (let rx = -50; rx < w + 50; rx += 40) {
       for (let ry = -40; ry < mapH; ry += 65) {
@@ -580,14 +590,14 @@ export function renderTrailDemoFrame(
     ctx.restore();
   } else if (isSnow) {
     ctx.save();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.62)";
     const snowOffset = (t * 110) % 120;
     for (let sx = 0; sx < w; sx += 50) {
       for (let sy = 0; sy < mapH; sy += 65) {
         const y = (sy + snowOffset) % mapH;
         const x = sx + Math.sin(t * 2.5 + sy * 0.1) * 20;
         ctx.beginPath();
-        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.arc(x, y, 2.5, 0, Math.PI * 2);
         ctx.fill();
       }
     }

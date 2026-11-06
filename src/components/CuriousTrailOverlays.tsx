@@ -99,7 +99,7 @@ export function TrailAnswerDock({
     ? avalancheDanger > 0.7 ? "bg-red-500" : avalancheDanger > 0.4 ? "bg-amber-400" : "bg-sky-400"
     : timeLeft <= Math.min(3000, totalMs * 0.4) ? "bg-red-500" : timeLeft <= totalMs * 0.5 ? "bg-amber-400" : "bg-sky-400";
   return (
-    <div className="pointer-events-auto absolute inset-x-0 bottom-0 p-2 sm:p-3">
+    <div className="trail-answer-dock pointer-events-auto mx-auto w-full max-w-[560px] px-2 sm:px-0">
       <div className="overflow-hidden rounded-2xl border border-white/20 bg-slate-950/78 shadow-2xl backdrop-blur-md">
         <div className="h-1 w-full bg-white/10" aria-hidden>
           <div

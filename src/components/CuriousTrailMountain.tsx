@@ -11,7 +11,7 @@ import { loadFaunaAssets, drawFauna, drawWater, type FaunaAssets } from "@/lib/t
 import { gradeImage } from "@/lib/trailGrade";
 import { getTrailObjectImageSrc } from "@/lib/curiousTrailObjectImages";
 import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
-import { renderAvalancheSvg, avalancheShake } from "@/lib/trailAvalanche";
+import { renderAvalancheSvg } from "@/lib/trailAvalanche";
 import { Check, Lock, Volume2 } from "lucide-react";
 
 export type TrailRoundState = "asking" | "correct" | "retry" | "reveal";
@@ -298,8 +298,6 @@ export function CuriousTrailMountain({
       const world = worldRef.current;
       const cam = camRef.current;
       let studentFrac: { x: number; y: number } | null = null;
-      let shakeX = 0;
-      let shakeY = 0;
 
       if (W > 0 && H > 0 && path && world && L.total > 0) {
         // 1) caminhada ao longo da curva
@@ -376,32 +374,23 @@ export function CuriousTrailMountain({
             dty = Math.min(0, dty + (topMargin - ey));
             ey = dty + qy * s;
           }
-          const dockTop = H - Math.max(180, H * 0.36);
-          const cardBottom = ey + (L.cardBelow ? L.cardH : 0);
-          const bottomMargin = dockTop - 16;
-          if (cardBottom > bottomMargin) {
-            dty = Math.max(H - WH * s, dty - (cardBottom - bottomMargin));
-          }
         }
         const k = 1 - Math.exp(-dt * 4.5);
         cam.s += (s - cam.s) * k;
         cam.tx += (dtx - cam.tx) * k;
         cam.ty += (dty - cam.ty) * k;
 
-        // 3) avalanche: tremor de câmera + desenho da onda de neve
+        // 3) Avalanche: anima a onda sem deslocar o cenário, a trilha ou os marcos.
         const av = avRef.current?.current;
         if (av && av.active && avSvgRef.current) {
           const front = av.front + (av.vel * (performance.now() - av.stamp)) / 1000;
-          const sh = avalancheShake(tSec, av.danger);
-          shakeX = sh.dx;
-          shakeY = sh.dy;
           avSvgRef.current.innerHTML = renderAvalancheSvg(front, tSec, av.danger);
           if (vignetteRef.current) vignetteRef.current.style.opacity = String(Math.min(0.85, av.danger * av.danger * 0.9));
         } else {
           if (avSvgRef.current && avSvgRef.current.firstChild) avSvgRef.current.innerHTML = "";
           if (vignetteRef.current) vignetteRef.current.style.opacity = "0";
         }
-        world.style.transform = `translate(${cam.tx + shakeX}px, ${cam.ty + shakeY}px) scale(${cam.s})`;
+        world.style.transform = `translate(${cam.tx}px, ${cam.ty}px) scale(${cam.s})`;
         world.style.setProperty("--inv", String(1 / cam.s));
       }
 
@@ -409,8 +398,8 @@ export function CuriousTrailMountain({
       if (W > 0 && H > 0 && fctx) {
         fauna.step(dt, studentFrac);
         const k = (cam.s * WW) / VB_W;
-        const ex = cam.tx + shakeX;
-        const ey = cam.ty + shakeY;
+        const ex = cam.tx;
+        const ey = cam.ty;
         fcanvas.style.transform = `translate(${-ex / cam.s}px, ${-ey / cam.s}px) scale(${1 / cam.s})`;
         fctx.setTransform(1, 0, 0, 1, 0, 0);
         fctx.clearRect(0, 0, fcanvas.width, fcanvas.height);

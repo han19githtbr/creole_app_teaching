@@ -722,6 +722,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
   // ---------------- o que aparece SOBRE o mapa em cada fase ----------------
   const inLobby = phase === "lobby";
   let overlay: React.ReactNode = null;
+  let answerDock: React.ReactNode = null;
   if (phase === "preparing") {
     overlay = (
       <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-[2px]" role="status" aria-live="polite">
@@ -772,7 +773,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
       />
     );
   } else if (phase === "playing" && currentItem && !climbDone) {
-    overlay = (
+    answerDock = (
       <TrailAnswerDock
         options={options}
         correct={currentItem.fr}
@@ -1031,6 +1032,8 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
         >
           {overlay}
         </CuriousTrailMountain>
+
+        {answerDock}
 
         {inLobby && (
           <div className="flex justify-center pt-2">

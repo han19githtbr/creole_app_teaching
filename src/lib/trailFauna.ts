@@ -24,7 +24,7 @@ const K = 1000 / 688; // pixels da arte original -> unidades do mundo
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const approach = (v: number, to: number, d: number) => (v < to ? Math.min(to, v + d) : Math.max(to, v - d));
 
-export type Mood = "calm" | "alert" | "flee" | "curious" | "happy" | "curl" | "stalk" | "threat" | "lunge" | "retreat" | "hidden";
+export type Mood = "calm" | "alert" | "flee" | "curious" | "happy" | "curl" | "stalk" | "threat" | "lunge" | "retreat" | "hidden" | "forage";
 type Temper = "friendly" | "skittish" | "wary" | "defensive" | "aggressive" | "peaceful" | "warning";
 
 export interface FaunaSpec {
@@ -62,7 +62,7 @@ export const FAUNA_SPECIES: Record<string, FaunaSpec> = {
   tamandua: { id: "tamandua", kind: "ground", h: 46, face: -1, speed: 26, gait: 0, stride: 40, temper: "peaceful", sense: 0, flee: 1.5, idle: [3, 5] },
   tatu: { id: "tatu", kind: "ground", h: 38, face: -1, speed: 34, gait: 0, stride: 28, temper: "defensive", sense: 130, flee: 1.2, idle: [2, 4] },
   jacare: { id: "jacare", kind: "ground", h: 35, face: 1, speed: 14, gait: 0, stride: 40, temper: "aggressive", sense: 150, flee: 1, water: true, idle: [5, 9] },
-  preguica: { id: "preguica", kind: "perch", h: 64, face: 1, speed: 5, gait: 0, stride: 0, temper: "peaceful", sense: 0, flee: 1, hangs: true, idle: [6, 10] },
+  preguica: { id: "preguica", kind: "perch", h: 64, face: 1, speed: 12, gait: 0, stride: 0, temper: "peaceful", sense: 0, flee: 1, hangs: true, idle: [16, 25] },
   tucano: { id: "tucano", kind: "perch", h: 52, face: 1, speed: 72, gait: 0, stride: 0, temper: "friendly", sense: 240, flee: 1, idle: [3, 6] },
   lontra: { id: "lontra", kind: "ground", h: 40, face: 1, speed: 50, gait: 0, stride: 34, temper: "friendly", sense: 150, flee: 1.6, water: true, idle: [2, 4] },
   quati: { id: "quati", kind: "ground", h: 46, face: -1, speed: 56, gait: 0, stride: 36, temper: "friendly", sense: 140, flee: 1.8, idle: [1.5, 3] },
@@ -199,6 +199,8 @@ export interface Critter {
   react: number;
   age: number;
   seed: number;
+  /** Presa que está sendo perseguida; a interação termina com a presa escapando. */
+  huntTargetUid: number | null;
 }
 
 export interface DrawItem {
@@ -282,6 +284,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       react: 0,
       age: 0,
       seed: rnd() * 1000,
+      huntTargetUid: null,
     };
   };
 
@@ -377,6 +380,40 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     const len = Math.hypot(ax, ay) || 1;
     goTo(c, clamp(c.x + (ax / len) * dist, 20, 980), c.y + (ay / len) * dist * 0.6);
   };
+  const preyByPredator: Record<string, readonly string[]> = {
+    onca: ["paca", "cutia", "quati", "tatu", "cervo"],
+    jacare: ["sapo"],
+    coruja: ["esquilo"],
+    guara: ["paca", "cutia", "sapo", "esquilo"],
+  };
+  const foragers = new Set(["esquilo", "cervo", "javali", "tamandua", "paca", "jabuti", "cutia"]);
+
+  function fleeFromPredator(prey: Critter, predator: Critter) {
+    const cover = HIDES
+      .filter((h) => !prey.spec.water)
+      .map((h) => ({ ...h, dist: Math.hypot(h.x - prey.x, h.y - prey.y) }))
+      .filter((h) => h.dist < 250 && Math.hypot(h.x - predator.x, h.y - predator.y) > Math.hypot(prey.x - predator.x, prey.y - predator.y))
+      .sort((a, b) => a.dist - b.dist)[0];
+    prey.mood = "flee";
+    prey.moodT = 2.4;
+    if (cover) goTo(prey, cover.x, cover.y, cover.patch);
+    else {
+      const dx = prey.x - predator.x;
+      const dy = prey.y - predator.y;
+      const len = Math.hypot(dx, dy) || 1;
+      goTo(prey, clamp(prey.x + dx / len * 240, 20, 980), prey.y + dy / len * 150);
+    }
+  }
+
+  function findPrey(c: Critter): Critter | undefined {
+    const allowed = preyByPredator[c.spec.id];
+    if (!allowed) return undefined;
+    return critters
+      .filter((other) => other !== c && allowed.includes(other.spec.id) && other.mood !== "hidden" && other.state !== "leaving")
+      .map((other) => ({ other, d: Math.hypot(other.x - c.x, other.y - c.y) }))
+      .filter(({ other, d }) => d < 340 && d > 70 && (c.spec.id !== "jacare" || other.spec.water))
+      .sort((a, b) => a.d - b.d)[0]?.other;
+  }
   /** Foge para a folhagem mais próxima (se houver), senão para longe do aluno. */
   function fleeToCover(c: Critter, dist: number) {
     let best = -1;
@@ -412,7 +449,6 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
   function startFlee(c: Critter, dur: number, dist: number) {
     c.mood = "flee";
     c.moodT = dur;
-    c.patch = c.patch; // (mantido)
     fleeToCover(c, dist);
   }
 
@@ -486,49 +522,12 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
         }
         break;
       case "aggressive":
-        if (sp.id === "jacare") {
-          // emboscada: parado, só abocanha o ar se o aluno chegar perto
-          if (c.mood === "calm" && c.cool <= 0 && ds < R) {
-            c.mood = "threat";
-            c.moodT = 1.2;
-            stop(c, 1.2);
-          } else if (c.mood === "threat" && c.moodT <= 0) {
-            c.mood = "lunge";
-            c.moodT = 0.4;
-          } else if (c.mood === "lunge" && c.moodT <= 0) {
-            c.mood = "calm";
-            c.cool = 9;
-          }
-          break;
-        }
-        if (c.mood === "calm" && c.cool <= 0 && ds < R) {
-          c.mood = "stalk";
-          c.moodT = 7;
-        }
-        if (c.mood === "stalk") {
-          goTo(c, stu.x, stu.y);
-          if (ds < R * 0.42) {
-            c.mood = "threat";
-            c.moodT = 1.4;
-            stop(c, 1.4);
-          } else if (c.moodT <= 0 || ds > R * 1.4) {
-            c.mood = "calm";
-            c.cool = 7;
-          }
-        } else if (c.mood === "threat") {
-          stop(c, 0.3);
-          if (c.moodT <= 0) {
-            c.mood = "lunge";
-            c.moodT = 0.55;
-          }
-        } else if (c.mood === "lunge") {
-          goTo(c, stu.x, stu.y);
-          if (c.moodT <= 0 || ds < R * 0.2) {
-            c.mood = "retreat";
-            c.moodT = 3.5;
-            c.cool = 14;
-            fleeToCover(c, 200);
-          }
+        // Predadores observam o aluno com cautela; a perseguição fica reservada
+        // às presas naturais da espécie, sem ataques ao jogador.
+        if (c.mood === "calm" && ds < R) {
+          c.mood = "alert";
+          c.moodT = 1.8;
+          stop(c, 1.8);
         }
         break;
       default:
@@ -544,6 +543,47 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     c.moodT = Math.max(0, c.moodT - dt);
     c.cool = Math.max(0, c.cool - dt);
     const ds = Math.hypot(stu.x - c.x, stu.y - c.y);
+    if (c.huntTargetUid != null) {
+      const prey = critters.find((other) => other.uid === c.huntTargetUid);
+      if (!prey || prey.mood === "hidden" || prey.state === "leaving" || Math.hypot(prey.x - c.x, prey.y - c.y) > 380) {
+        c.huntTargetUid = null;
+        c.mood = "calm";
+        c.cool = 9;
+        stop(c, 1.5);
+      } else {
+        const d = Math.hypot(prey.x - c.x, prey.y - c.y);
+        if (d < 88) {
+          if (prey.mood !== "flee") fleeFromPredator(prey, c);
+          c.huntTargetUid = null;
+          c.mood = "calm";
+          c.cool = 14;
+          stop(c, 2.5);
+        } else {
+          c.moodT = Math.max(0, c.moodT - dt);
+          if (c.mood === "stalk" && c.moodT === 0) {
+            c.mood = "lunge";
+            c.moodT = 3.5;
+          } else if (c.mood === "lunge" && c.moodT === 0) {
+            c.huntTargetUid = null;
+            c.mood = "calm";
+            c.cool = 12;
+            stop(c, 1.8);
+          }
+          if (c.huntTargetUid != null) goTo(c, prey.x, prey.y);
+        }
+      }
+      if (c.huntTargetUid == null) return;
+    } else if (c.state === "idle" && c.cool <= 0 && c.mood === "calm" && preyByPredator[sp.id] && rnd() < dt * 0.08) {
+      const prey = findPrey(c);
+      if (prey) {
+        c.huntTargetUid = prey.uid;
+        c.mood = "stalk";
+        c.moodT = 2.2;
+        c.cool = 12;
+        goTo(c, prey.x, prey.y);
+        return;
+      }
+    }
     if (c.state !== "leaving") react(c, ds);
 
     if (c.state === "idle") {
@@ -560,9 +600,19 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
         }
       }
       c.timer -= dt;
+      if (c.mood === "forage") {
+        if (c.moodT <= 0) c.mood = "calm";
+        else return;
+      }
       if (c.timer <= 0 && c.mood !== "curl" && c.mood !== "threat" && c.mood !== "happy" && c.mood !== "lunge") {
         if (c.mood === "hidden") c.mood = "calm";
         const roll = rnd();
+        if (foragers.has(sp.id) && roll < 0.26) {
+          c.mood = "forage";
+          c.moodT = 1.8 + rnd() * 2.8;
+          c.timer = c.moodT;
+          return;
+        }
         const stayedHidden = c.patch >= 0;
         if (!stayedHidden && roll < 0.18 && !sp.water && HIDES.length) {
           // vai se esconder na folhagem
@@ -642,7 +692,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       c.y = c.fy + (c.ty - c.fy) * e;
       c.z = sp.hangs ? 0 : Math.sin(u * Math.PI) * (40 + Math.abs(dx) * 0.12);
       c.look = approach(c.look, dx >= 0 ? 1 : -1, 8 * dt);
-      c.phase += dt * 20;
+      c.phase += dt * (sp.id === "coruja" ? 9 : sp.id === "tucano" ? 13 : 20);
       if (u >= 1) {
         c.state = "idle";
         c.z = 0;
@@ -661,6 +711,10 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     c.look = approach(c.look, c.mood === "alert" || c.mood === "happy" ? (stu.x >= c.x ? 1 : -1) : c.look, 4 * dt);
     if (c.mood === "alert" && c.moodT <= 0) c.mood = "calm";
     if (c.mood === "happy" && c.moodT <= 0) {
+      c.mood = "calm";
+      c.cool = 14;
+    }
+    if (c.mood === "lunge" && c.moodT <= 0) {
       c.mood = "calm";
       c.cool = 14;
     }
@@ -683,6 +737,27 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       c.perch = pi;
       c.patch = -1; // em voo: à frente de tudo
     };
+    // A coruja faz um voo curto de caça e a presa escapa para a cobertura.
+    if (sp.id === "coruja" && c.mood === "calm" && c.cool <= 0 && rnd() < dt * 0.06) {
+      const prey = findPrey(c);
+      if (prey) {
+        let perch = -1;
+        let best = Infinity;
+        PERCHES.forEach((p, i) => {
+          if (perchTaken(i) || i === c.perch) return;
+          const d = Math.hypot(p.x - prey.x, p.y - prey.y);
+          if (d < best && d < 220) { best = d; perch = i; }
+        });
+        if (perch >= 0) {
+          fleeFromPredator(prey, c);
+          c.mood = "lunge";
+          c.moodT = 2;
+          c.cool = 14;
+          flyTo(perch, 1.4 + best / 180);
+          return;
+        }
+      }
+    }
     // amigáveis (tucano): vêm ver o aluno
     if (sp.temper === "friendly" && c.mood === "calm" && c.cool <= 0 && ds < sp.sense * 2.6 && ds > sp.sense * 0.5) {
       let best = -1;
@@ -713,7 +788,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       const pi = pickPerch(c, 0, NEAR + 120);
       if (pi >= 0) {
         const d = Math.hypot(PERCHES[pi].x - c.x, PERCHES[pi].y - c.y);
-        flyTo(pi, sp.hangs ? Math.max(10, d / sp.speed) : 1.4 + d / sp.speed);
+        flyTo(pi, sp.hangs ? Math.max(5, d / sp.speed) : 1.4 + d / sp.speed);
       } else c.timer = 2 + rnd() * 3;
     }
   }

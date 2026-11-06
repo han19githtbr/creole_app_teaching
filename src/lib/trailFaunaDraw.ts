@@ -143,6 +143,7 @@ function drawRigged(
       return { a: Math.sin(t * 3.2 * sp + c.seed) * (moving ? 11 : 6) * (c.mood === "threat" ? 2 : 1), dy: 0 };
     }
     if (p.kind === "head") {
+      if (c.mood === "forage") return { a: nativeFace * (17 + Math.sin(t * 3 + c.seed) * 2), dy: 0 };
       const sniff = c.mood === "alert" ? -nativeFace * -6 : 0;
       return { a: (moving ? Math.sin(c.phase * 2 + 1) * 3 : Math.sin(t * 1.3 + c.seed) * 2.2) + sniff, dy: 0 };
     }
@@ -401,7 +402,10 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
       lift += Math.abs(Math.sin(c.phase)) * h * 0.018;
       rot += Math.sin(c.phase * 2) * 1.2;
     }
-    if (!moving) sy *= 1 + Math.sin(t * 2.2 + c.seed) * 0.012;
+    if (!moving) {
+      sy *= 1 + Math.sin(t * 2.2 + c.seed) * 0.012;
+      if (c.mood === "forage" && !FAUNA_RIGS[sp.id]) rot += Math.sin(t * 3 + c.seed) * 2.5;
+    }
   } else if (c.state === "fly") {
     const f = Math.sin(c.phase);
     if (!sp.hangs) {
@@ -410,8 +414,8 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
       rot += 9;
     }
   } else if (sp.pecks && c.mood === "calm") {
-    const burst = Math.max(0, Math.sin(t * 0.9 + c.seed));
-    rot += Math.sin(t * 22) * 5 * burst;
+    const burst = Math.max(0, Math.sin(t * 0.65 + c.seed));
+    rot += Math.sin(t * 15 + c.seed) * 3.5 * burst;
   } else if (sp.hangs) {
     rot += Math.sin(t * 0.8 + c.seed) * 3;
   } else {
@@ -486,23 +490,9 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
       const img = assets.patches[it.patch];
       if (!img) continue;
 
-      // Agitação da copa quando há bicho pousado, escondido ou passando no galho
-      let rustle = 0;
-      for (const c of fauna.critters) {
-        if (c.patch === it.patch) {
-          const moving = c.state === "move" || c.state === "fly" || c.react > 0;
-          rustle += Math.sin(t * 26 + c.seed) * (moving ? 0.038 : 0.012);
-        } else if (Math.hypot(c.x - p.cx, c.y - p.cy) < Math.max(p.rx, p.ry) * 1.1) {
-          rustle += Math.sin(t * 22 + c.seed) * 0.022;
-        }
-      }
-
-      // Vento contínuo + chuva + tremor de gotas + agitação dos bichos
-      const sway = Math.sin(t * windSpeed + it.patch * 1.35) * windAmp +
-                   Math.sin(t * (windSpeed * 1.9) + it.patch * 0.7) * (windAmp * 0.28) +
-                   rustle;
-      const quiverY = weather === "rain" ? Math.sin(t * 36 + it.patch * 5.3) * 0.75 : 0;
-      const skewX = Math.sin(t * (windSpeed * 0.8) + it.patch) * 0.012;
+      // Os recortes de folhagem podem ser partes da mesma árvore: use o mesmo
+      // vento para todos, sem fases ou tremores independentes que quebrem a copa.
+      const sway = Math.sin(t * windSpeed) * windAmp;
 
       const sourceY = Math.round((Math.max(0, Math.min(p.h, p.base - p.y)) / p.h) * img.naturalHeight);
       if (sourceY < img.naturalHeight) {
@@ -526,7 +516,6 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
       ctx.translate(p.cx, p.base);
       ctx.rotate(sway);
       ctx.scale(1.025, 1.025);
-      ctx.transform(1, 0, skewX, 1, 0, quiverY);
       ctx.translate(-p.cx, -p.base);
       if (sourceY > 0) {
         ctx.drawImage(
@@ -544,7 +533,7 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
       ctx.restore();
 
       // Folhas ou flocos caindo quando a copa é agitada
-      if (Math.abs(rustle) > 0.018 || Math.abs(sway) > 0.04) {
+      if (Math.abs(sway) > 0.04) {
         for (let i = 0; i < 2; i++) {
           const ph = (t * 0.7 + i * 0.5 + it.patch * 0.3) % 1;
           const lx = p.cx + Math.sin(t * 3 + i) * p.rx * 0.6;

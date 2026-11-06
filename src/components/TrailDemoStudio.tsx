@@ -204,18 +204,28 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
     const controller = new AbortController();
     abortRef.current = controller;
     let exportAudioContext: AudioContext | null = null;
+    let exportStream: MediaStream | null = null;
+    let recorder: MediaRecorder | null = null;
 
     try {
       // Mock plan compatível para exportador
-      const exportCanvas = document.createElement("canvas");
       const spec = DEMO_FORMATS[plan.settings.format];
-      exportCanvas.width = spec.w;
-      exportCanvas.height = spec.h;
-      const ctx = exportCanvas.getContext("2d");
+      // Em celulares, limitar o quadro a 720p reduz bastante o uso de memória e o esforço do codificador.
+      const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
+      const mobile = window.matchMedia("(max-width: 767px)").matches || (deviceMemory !== undefined && deviceMemory <= 4);
+      const outputScale = mobile ? Math.min(1, 720 / spec.w) : 1;
+      const outputWidth = Math.floor((spec.w * outputScale) / 2) * 2;
+      const outputHeight = Math.floor((spec.h * outputScale) / 2) * 2;
+      const fps = mobile ? 24 : 30;
+      const exportCanvas = document.createElement("canvas");
+      exportCanvas.width = outputWidth;
+      exportCanvas.height = outputHeight;
+      const ctx = exportCanvas.getContext("2d", { alpha: false });
       if (!ctx) throw new Error("Erro ao inicializar contexto 2D");
+      if (outputScale < 1) ctx.setTransform(outputScale, 0, 0, outputScale, 0, 0);
 
-      // Usamos MediaRecorder / WebCodecs padrão
-      const stream = exportCanvas.captureStream(30);
+      // Usamos codecs compatíveis com players móveis e dividimos a gravação em blocos curtos.
+      exportStream = exportCanvas.captureStream(fps);
       exportAudioContext = new AudioContext();
       await exportAudioContext.resume();
       const audioDestination = exportAudioContext.createMediaStreamDestination();
@@ -278,34 +288,48 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         voiceGain.connect(audioMaster);
         voice.start(audioStartAt + round.correctAt);
       });
-      stream.addTrack(audioDestination.stream.getAudioTracks()[0]);
-      const mime = MediaRecorder.isTypeSupported("video/mp4;codecs=avc1")
-        ? "video/mp4;codecs=avc1"
-        : "video/webm";
-      const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12_000_000 });
+      exportStream.addTrack(audioDestination.stream.getAudioTracks()[0]);
+      const mimeCandidates = [
+        "video/mp4;codecs=avc1.42E028,mp4a.40.2",
+        "video/mp4;codecs=avc1.4D4028,mp4a.40.2",
+        "video/mp4;codecs=avc1,mp4a.40.2",
+        "video/webm;codecs=vp8,opus",
+        "video/webm;codecs=vp9,opus",
+      ];
+      const mime = mimeCandidates.find((candidate) => MediaRecorder.isTypeSupported(candidate));
+      if (!mime) throw new Error("Este navegador não oferece um formato de vídeo com áudio compatível. Atualize o navegador e tente novamente.");
+      const activeRecorder = new MediaRecorder(exportStream, {
+        mimeType: mime,
+        videoBitsPerSecond: mobile ? 4_500_000 : 8_000_000,
+        audioBitsPerSecond: 128_000,
+      });
+      recorder = activeRecorder;
       const chunks: Blob[] = [];
 
-      recorder.ondataavailable = (e) => {
+      activeRecorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunks.push(e.data);
       };
 
-      const finishPromise = new Promise<Blob>((resolve) => {
-        recorder.onstop = () => {
-          resolve(new Blob(chunks, { type: mime }));
+      const finishPromise = new Promise<Blob>((resolve, reject) => {
+        activeRecorder.onstop = () => {
+          const actualMime = activeRecorder.mimeType || mime;
+          resolve(new Blob(chunks, { type: actualMime }));
         };
+        activeRecorder.onerror = (event) => reject((event as Event & { error?: DOMException }).error ?? new Error("Falha ao gravar o vídeo."));
       });
+      void finishPromise.catch(() => undefined);
 
       await new Promise<void>((resolve) => {
         const waitMs = Math.max(0, (audioStartAt - exportAudioContext!.currentTime) * 1000);
         setTimeout(resolve, waitMs);
       });
-      recorder.start();
+      activeRecorder.start(1000);
       const vAssets = vAssetsRef.current;
       if (!vAssets) throw new Error("A arte da trilha ainda não carregou.");
       const exportWorld = new TrailVideoWorld(plan, vAssets.fauna);
 
-      const fps = 30;
       const videoStartAt = performance.now();
+      let lastProgress = -1;
       while ((performance.now() - videoStartAt) / 1000 < plan.total) {
         if (controller.signal.aborted) throw new Error("Cancelado");
         const frameStart = performance.now();
@@ -313,7 +337,11 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         // exportação quadro a quadro, com o mundo recomeçando do zero (mesma simulação da prévia)
         const dyn = await exportWorld.avalancheImage(tFrame, spec.w, trailMapHeight(spec.h));
         renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: vAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn });
-        setProgress(Math.min(99, Math.round((tFrame / plan.total) * 100)));
+        const nextProgress = Math.min(99, Math.round((tFrame / plan.total) * 100));
+        if (nextProgress !== lastProgress) {
+          lastProgress = nextProgress;
+          setProgress(nextProgress);
+        }
         const delay = Math.max(0, 1000 / fps - (performance.now() - frameStart));
         if (delay) await new Promise((r) => setTimeout(r, delay));
       }
@@ -322,7 +350,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       recorder.stop();
       const blob = await finishPromise;
       const url = URL.createObjectURL(blob);
-      const ext = mime.includes("mp4") ? "mp4" : "webm";
+      const ext = blob.type.includes("mp4") ? "mp4" : "webm";
       const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
       const name = `trilha-curiosa-v3-${plan.theme.id}-niveis${plan.levels.map((level) => level.level).join("-")}-${stamp}.${ext}`;
 
@@ -333,8 +361,8 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           extension: ext as "mp4" | "webm",
           hasAudio: true,
           method: "realtime",
-          width: spec.w,
-          height: spec.h,
+          width: outputWidth,
+          height: outputHeight,
         },
         name,
       });
@@ -343,6 +371,10 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         setError((err as Error)?.message || "Falha na exportação do vídeo.");
       }
     } finally {
+      if (recorder && recorder.state !== "inactive") {
+        try { recorder.stop(); } catch { /* já estava encerrado */ }
+      }
+      exportStream?.getTracks().forEach((track) => track.stop());
       if (exportAudioContext && exportAudioContext.state !== "closed") await exportAudioContext.close();
       setExporting(false);
       abortRef.current = null;

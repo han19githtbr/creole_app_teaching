@@ -22,7 +22,6 @@ import {
   type TrailThemeOption,
 } from "@/lib/curiousTrailData";
 import { buildWordOptions, type CestQuoiItem } from "@/lib/cquoiContent";
-import { TRAIL_BIRDS, trailBirdPosition } from "@/lib/trailSky";
 import {
   CAMP_FRACS,
   MARKER_FRACS,
@@ -397,7 +396,6 @@ export function renderTrailDemoFrame(
     world?: { drawWorld: (ctx: CanvasRenderingContext2D, t: number) => void } | null;
     /** avalanche (imagem rasterizada do quadro) */
     dyn?: CanvasImageSource | null;
-    birds?: Record<(typeof TRAIL_BIRDS)[number]["id"], CanvasImageSource>;
   }
 ) {
   // Preserve fine detail when the shared world and foliage are scaled to the video canvas.
@@ -490,12 +488,6 @@ export function renderTrailDemoFrame(
   };
   drawCloud(524 + Math.sin(t * Math.PI * 2 / 28) * 45, 150, 1, 0.48 - nightfall * 0.28);
   drawCloud(827 - Math.sin(t * Math.PI * 2 / 22) * 42, 267, 0.78, 0.4 - nightfall * 0.22);
-  TRAIL_BIRDS.forEach((bird) => {
-    const image = assets.birds?.[bird.id];
-    if (!image) return;
-    const position = trailBirdPosition(bird, t);
-    ctx.drawImage(image, position.x, position.y, bird.width, bird.height);
-  });
   // Mesmos indicadores discretos do jogo: poças na chuva e flocos no traçado durante a neve.
   if (isRain) {
     [0.08, 0.19, 0.31, 0.43, 0.55, 0.67, 0.79, 0.91].forEach((fraction, index) => {

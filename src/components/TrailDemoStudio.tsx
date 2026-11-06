@@ -156,7 +156,6 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         scene: vAssetsRef.current?.scenes[trailLevelForTime(planRef.current, t).weather] ?? null,
         world: wld,
         dyn: d.img,
-        birds: vAssetsRef.current?.birds,
       });
     };
 
@@ -313,7 +312,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         const tFrame = (frameStart - videoStartAt) / 1000;
         // exportação quadro a quadro, com o mundo recomeçando do zero (mesma simulação da prévia)
         const dyn = await exportWorld.avalancheImage(tFrame, spec.w, trailMapHeight(spec.h));
-        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: vAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn, birds: vAssets.birds });
+        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: vAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn });
         setProgress(Math.min(99, Math.round((tFrame / plan.total) * 100)));
         const delay = Math.max(0, 1000 / fps - (performance.now() - frameStart));
         if (delay) await new Promise((r) => setTimeout(r, delay));

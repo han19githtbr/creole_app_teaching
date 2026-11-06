@@ -59,6 +59,92 @@ function graded(key: string, img: HTMLImageElement, weather: TrailWeather): Canv
 
 const RAD = Math.PI / 180;
 
+function drawSkyBirds(ctx: CanvasRenderingContext2D, fauna: Fauna) {
+  for (const bird of fauna.skyBirds) {
+    const isRaptor = bird.kind === "raptor";
+    const size = isRaptor ? 48 : 13 + Math.abs(Math.sin(bird.seed)) * 6;
+    const flap = Math.sin(bird.phase);
+    const flapping = bird.state === "fly" || bird.state === "hunt" || bird.state === "flee";
+    const wingAngle = flapping ? flap * (isRaptor ? 0.75 : 0.95) : -0.1;
+    const foraging = bird.state === "forage";
+    ctx.save();
+    ctx.translate(bird.x, bird.y - bird.z);
+    ctx.scale(bird.facing, 1);
+
+    // Sombra sutil sólo cuando la ave pasa baja junto a la copa.
+    if (bird.z > 8) {
+      ctx.fillStyle = `rgba(12, 25, 20, ${Math.max(0.04, 0.12 - bird.z / 900)})`;
+      ctx.beginPath(); ctx.ellipse(0, bird.z + 12, size * 0.7, size * 0.12, 0, 0, Math.PI * 2); ctx.fill();
+    }
+
+    const bodyColor = isRaptor ? "#604a37" : "#46504a";
+    const wingColor = isRaptor ? "#4e3d31" : "#343d39";
+    const bellyColor = isRaptor ? "#c3b79f" : "#a7a18f";
+    const wingW = isRaptor ? size * 0.9 : size * 0.63;
+    const wingH = isRaptor ? size * 0.34 : size * 0.27;
+
+    // As asas são desenhadas individualmente e batem em oposição natural, em vez de deformar o bando como uma imagem única.
+    for (const side of [-1, 1]) {
+      ctx.save();
+      ctx.translate(side * (isRaptor ? size * 0.2 : size * 0.13), -size * 0.16);
+      ctx.rotate(side * wingAngle);
+      ctx.fillStyle = wingColor;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(side * wingW * 0.28, -wingH * 0.78, side * wingW, -wingH * (0.35 + Math.max(0, flap) * 0.28));
+      ctx.quadraticCurveTo(side * wingW * 0.65, wingH * 0.42, side * size * 0.2, wingH * 0.24);
+      ctx.closePath();
+      ctx.fill();
+      if (isRaptor) {
+        ctx.strokeStyle = "rgba(224, 211, 188, .52)";
+        ctx.lineWidth = 1.1;
+        ctx.beginPath();
+        for (let feather = 1; feather <= 3; feather++) {
+          ctx.moveTo(side * wingW * (0.38 + feather * 0.13), -wingH * (0.16 + feather * 0.04));
+          ctx.lineTo(side * wingW * (0.66 + feather * 0.09), wingH * (0.19 + feather * 0.04));
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    ctx.fillStyle = bodyColor;
+    ctx.beginPath();
+    ctx.ellipse(-size * 0.02, -size * 0.08 + (foraging ? size * 0.12 : 0), size * (isRaptor ? 0.4 : 0.36), size * 0.19, -0.12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = bellyColor;
+    ctx.beginPath();
+    ctx.ellipse(size * 0.06, -size * 0.015 + (foraging ? size * 0.12 : 0), size * 0.21, size * 0.095, -0.08, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = bodyColor;
+    ctx.beginPath();
+    ctx.arc(size * 0.29, -size * 0.19 + (foraging ? size * 0.12 : 0), size * (isRaptor ? 0.19 : 0.16), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#d9a84f";
+    ctx.beginPath();
+    ctx.moveTo(size * 0.4, -size * 0.2 + (foraging ? size * 0.12 : 0));
+    ctx.lineTo(size * (isRaptor ? 0.61 : 0.56), -size * 0.16 + (foraging ? size * 0.12 : 0));
+    ctx.lineTo(size * 0.4, -size * 0.12 + (foraging ? size * 0.12 : 0));
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#172019";
+    ctx.beginPath(); ctx.arc(size * 0.33, -size * 0.22 + (foraging ? size * 0.12 : 0), isRaptor ? 1.4 : 0.8, 0, Math.PI * 2); ctx.fill();
+
+    if (!flapping) {
+      ctx.strokeStyle = isRaptor ? "#8d6b43" : "#4e4635";
+      ctx.lineWidth = isRaptor ? 1.3 : 0.8;
+      ctx.beginPath();
+      ctx.moveTo(0, -size * 0.01); ctx.lineTo(size * 0.04, size * 0.11);
+      ctx.moveTo(size * 0.14, -size * 0.01); ctx.lineTo(size * 0.16, size * 0.11);
+      ctx.stroke();
+      if (foraging) {
+        ctx.strokeStyle = "rgba(245, 208, 95, .82)";
+        ctx.beginPath(); ctx.moveTo(size * 0.6, -size * 0.02); ctx.lineTo(size * 0.88, size * 0.05); ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+}
+
 function drawMoodIcon(ctx: CanvasRenderingContext2D, mood: Mood, x: number, y: number, t: number) {
   if (mood !== "happy" && mood !== "curious" && mood !== "alert" && mood !== "flee" && mood !== "threat" && mood !== "lunge" && mood !== "stalk") return;
   const bob = Math.sin(t * 6) * 1.6;
@@ -592,6 +678,8 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
       drawCritter(ctx, it.critter, assets, weather, t);
     }
   }
+
+  drawSkyBirds(ctx, fauna);
 
   // Rajadas curtas e regulares: a paisagem fica fixa e só folhas soltas cruzam a copa.
   // O mesmo ciclo guia as folhas e as linhas de vento, evitando movimentos desencontrados.

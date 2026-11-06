@@ -13,7 +13,6 @@ import { getTrailObjectImageSrc } from "@/lib/curiousTrailObjectImages";
 import type { AppLanguage } from "@/lib/languageShared";
 import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
 import { renderAvalancheSvg } from "@/lib/trailAvalanche";
-import { TRAIL_BIRDS } from "@/lib/trailSky";
 import { Check, Lock, Volume2 } from "lucide-react";
 
 export type TrailRoundState = "asking" | "correct" | "retry" | "reveal";
@@ -591,7 +590,7 @@ export function CuriousTrailMountain({
             ))}
           </svg>
         )}
-        {/* Nuvens e pássaros recortados da própria arte do mapa ganham movimento suave. */}
+        {/* Nuvens do cenário se movem atrás da fauna viva, sem acrescentar bandos desenhados sobre o fundo. */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className={`trail-sky-life absolute inset-0 z-[2] h-full w-full overflow-visible pointer-events-none ${weather === "night" ? "trail-sky-life--night" : ""}`} aria-hidden>
           <defs>
             <linearGradient id="trailCloudFill" x1="0" y1="0" x2="0" y2="1">
@@ -611,18 +610,6 @@ export function CuriousTrailMountain({
             <ellipse cx="833" cy="256" rx="29" ry="23" />
             <ellipse cx="854" cy="270" rx="24" ry="16" />
           </g>
-          {TRAIL_BIRDS.map((bird) => (
-            <image
-              key={bird.id}
-              href={bird.src}
-              x={bird.x}
-              y={bird.y}
-              width={bird.width}
-              height={bird.height}
-              className={`trail-bird--${bird.id}`}
-              preserveAspectRatio="none"
-            />
-          ))}
         </svg>
         {/* Poças e flocos acompanham o traçado real da trilha sem encobrir o mapa. */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full pointer-events-none overflow-visible">

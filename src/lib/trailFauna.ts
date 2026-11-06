@@ -19,6 +19,7 @@
 import { ROAMING_ANIMAL_POOL, type TrailAnimal, type TrailWeather } from "@/lib/curiousTrailData";
 import { WORLD_H, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
 import { FOLIAGE_PATCHES } from "@/lib/trailFaunaPatches";
+import { createSkyBirds, stepSkyBirds, type SkyBird } from "@/lib/trailSky";
 
 const K = 1000 / 688; // pixels da arte original -> unidades do mundo
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
@@ -231,6 +232,7 @@ export interface DrawItem {
 
 export interface Fauna {
   critters: Critter[];
+  skyBirds: SkyBird[];
   step: (dt: number, student?: { x: number; y: number } | null) => void;
   /** Bichos e retalhos de folhagem em ordem de profundidade (de trás para frente). */
   drawList: () => DrawItem[];
@@ -259,6 +261,7 @@ const FAR = 650; // além disso o bicho é reciclado
 export function createFauna(initialWeather: TrailWeather = "sunny", seed?: number): Fauna {
   const rnd = seed === undefined ? Math.random : mulberry32(seed);
   const critters: Critter[] = [];
+  const skyBirds = createSkyBirds(seed ?? 8041);
   const pending: { delay: number; id?: string }[] = [];
   let weather = initialWeather;
   let uid = 0;
@@ -937,6 +940,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       if (c.spec.kind === "ground") updateGround(c, dt);
       else updatePerch(c, dt);
     }
+    stepSkyBirds(skyBirds, dt);
     for (let i = critters.length - 1; i >= 0; i--) {
       const c = critters[i];
       if (Math.abs(c.y - stu.y) > FAR && c.state !== "fly") {
@@ -1029,7 +1033,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
   const find = (id: string) => critters.find((c) => c.animal.id === id && c.mood !== "hidden");
   const headPos = (c: Critter) => ({ x: c.x, y: c.spec.hangs ? c.y + c.spec.h * 0.1 : c.y - c.z - c.spec.h - 8 });
 
-  return { critters, step, drawList, hit, poke, find, headPos, setWeather };
+  return { critters, skyBirds, step, drawList, hit, poke, find, headPos, setWeather };
 }
 
 /** Quais bichos esse clima favorece (para legendas/ajuda). */

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import Link from "next/link";
 import { ArrowLeft, Award, Check, Coins, Flame, Heart, Lightbulb, Lock, RotateCcw, Swords, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { soundEffects } from "@/lib/soundEffects";
+import type { AppLanguage } from "@/lib/languageShared";
 import { Confetti } from "@/components/Confetti";
 import { CestQuoiStickman, type StickmanMood } from "@/components/CestQuoiStickman";
 import { CestQuoiHint } from "@/components/CestQuoiHint";
@@ -309,10 +310,12 @@ export function CestQuoiGame({
   items,
   initialTheme,
   initialModule,
+  language = "francais",
 }: {
   items: CestQuoiItem[];
   initialTheme?: string;
   initialModule?: string;
+  language?: AppLanguage;
 }) {
   const gameModule = initialModule === "trilha" ? "trail" : "classic";
   const themes = useMemo(() => {
@@ -879,6 +882,7 @@ export function CestQuoiGame({
       <CuriousTrailGame
         items={items}
         initialTheme={initialTheme}
+        language={language}
       />
     );
   }

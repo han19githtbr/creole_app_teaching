@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Award, ChevronRight, Coins, Play, Trophy, Volume2, VolumeX } from "lucide-react";
 import { soundEffects } from "@/lib/soundEffects";
 import { trailNatureAudio } from "@/lib/trailNatureAudio";
+import type { AppLanguage } from "@/lib/languageShared";
 import { Confetti } from "@/components/Confetti";
 import { cn } from "@/lib/utils";
 import { recordQuizWin, type Badge, type LevelInfo } from "@/lib/gamification";
@@ -175,9 +176,10 @@ function speakWordFrench(text: string, onEnd?: () => void) {
 export interface CuriousTrailGameProps {
   items: CestQuoiItem[];
   initialTheme?: string;
+  language?: AppLanguage;
 }
 
-export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps) {
+export function CuriousTrailGame({ items, initialTheme, language = "francais" }: CuriousTrailGameProps) {
   // Combina itens fornecidos com itens dedicados (incluindo idiomas)
   const allPool = useMemo(() => getAllTrailItems(items), [items]);
 
@@ -484,7 +486,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
               setPreloadProgress((progress) => ({ ...progress, loaded: progress.loaded + 1 }));
             }
           }),
-          ...itemsForThisLevel.map((item) => loadTrailObjectImage(item)),
+          ...itemsForThisLevel.map((item) => loadTrailObjectImage(item, language)),
         ]
       );
     } catch (error) {
@@ -1032,6 +1034,7 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
           }}
           onSpeak={speakWordFrench}
           themeColor={selectedTheme.accentColor}
+          language={language}
           hudRight={
             phase === "playing" && currentItem ? (
               <TrailPlayHud timeLeft={timeLeft} totalMs={diffCfg.seconds * 1000} score={score} streak={streak} index={elementIndex} total={levelItems.length} avalanche={isAvalanche ? avInfo : undefined} />

@@ -35,9 +35,10 @@ export default async function ImageQuizPage({
     return (
       <GameMonetizationWrapper>
         <CestQuoiGame
-          items={[...(cquoiItems as CestQuoiItem[]), ...(await listApprovedCquoiItems())]}
+          items={[...(cquoiItems as CestQuoiItem[]), ...(await listApprovedCquoiItems(language))]}
           initialTheme={theme}
           initialModule={initialModule}
+          language={language}
         />
       </GameMonetizationWrapper>
     );

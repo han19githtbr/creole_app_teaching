@@ -5,6 +5,7 @@ import { IMAGE_BANK, getBankImage, getElementLabel, type BankImage } from "@/lib
 import { THEMES, type ImageSection } from "@/lib/imageGen/config";
 import { GeneratedImage, type IGeneratedImage } from "@/models/ImageGen";
 import type { CestQuoiItem } from "@/components/CestQuoiGame";
+import type { AppLanguage } from "@/lib/languageShared";
 
 const FALLBACK_ANCHORS = [
   { left: 27, top: 64 },
@@ -85,9 +86,9 @@ export async function findAnyBankImage(
 }
 
 /** Itens do C'est quoi ? gerados e aprovados (mesmo formato de cquoiItems.json). */
-export async function listApprovedCquoiItems(): Promise<CestQuoiItem[]> {
+export async function listApprovedCquoiItems(language: AppLanguage = "francais"): Promise<CestQuoiItem[]> {
   await connectDB();
-  const docs = (await GeneratedImage.find({ section: "cquoi", status: "approved" }).sort({ createdAt: 1 }).lean()) as unknown as IGeneratedImage[];
+  const docs = (await GeneratedImage.find({ section: "cquoi", status: "approved", language }).sort({ createdAt: 1 }).lean()) as unknown as IGeneratedImage[];
   return docs
     .filter((doc) => doc.cquoi)
     .map((doc) => ({

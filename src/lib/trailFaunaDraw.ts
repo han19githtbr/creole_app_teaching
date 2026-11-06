@@ -504,13 +504,44 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
       const quiverY = weather === "rain" ? Math.sin(t * 36 + it.patch * 5.3) * 0.75 : 0;
       const skewX = Math.sin(t * (windSpeed * 0.8) + it.patch) * 0.012;
 
+      const sourceY = Math.round((Math.max(0, Math.min(p.h, p.base - p.y)) / p.h) * img.naturalHeight);
+      if (sourceY < img.naturalHeight) {
+        ctx.drawImage(
+          graded(`patch${it.patch}`, img, weather),
+          0,
+          sourceY,
+          img.naturalWidth,
+          img.naturalHeight - sourceY,
+          p.x,
+          p.base,
+          p.w,
+          p.y + p.h - p.base
+        );
+      }
+
       ctx.save();
+      ctx.beginPath();
+      ctx.rect(p.x - p.h, p.y - p.h, p.w + p.h * 2, p.base - p.y + p.h);
+      ctx.clip();
       ctx.translate(p.cx, p.base);
       ctx.rotate(sway);
       ctx.scale(1.025, 1.025);
       ctx.transform(1, 0, skewX, 1, 0, quiverY);
       ctx.translate(-p.cx, -p.base);
-      ctx.drawImage(graded(`patch${it.patch}`, img, weather), p.x, p.y, p.w, p.h);
+      if (sourceY > 0) {
+        ctx.drawImage(
+          graded(`patch${it.patch}`, img, weather),
+          0,
+          0,
+          img.naturalWidth,
+          sourceY,
+          p.x,
+          p.y,
+          p.w,
+          p.base - p.y
+        );
+      }
+      ctx.restore();
 
       // Folhas ou flocos caindo quando a copa é agitada
       if (Math.abs(rustle) > 0.018 || Math.abs(sway) > 0.04) {
@@ -526,8 +557,6 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
           ctx.restore();
         }
       }
-
-      ctx.restore();
     } else if (it.critter) {
       drawCritter(ctx, it.critter, assets, weather, t);
     }

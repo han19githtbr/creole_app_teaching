@@ -9,6 +9,7 @@ import { soundEffects } from "@/lib/soundEffects";
 import { createFauna, type Fauna } from "@/lib/trailFauna";
 import { loadFaunaAssets, drawFauna, drawWater, type FaunaAssets } from "@/lib/trailFaunaDraw";
 import { gradeImage } from "@/lib/trailGrade";
+import { getTrailObjectImageSrc } from "@/lib/curiousTrailObjectImages";
 import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
 import { renderAvalancheSvg, avalancheShake } from "@/lib/trailAvalanche";
 import { Check, Lock, Volume2 } from "lucide-react";
@@ -67,6 +68,7 @@ const clampN = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, 
 
 /** Exibe a ilustração do objeto durante a pergunta com enquadramento completo garantido. */
 function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean }) {
+  const [imageSrc, setImageSrc] = React.useState(() => getTrailObjectImageSrc(item));
   // Margem generosa de enquadramento (75% da dimensão mínima para nunca cortar objetos grandes)
   const cw = Math.min(item.w, item.h) * 0.75;
   const x0 = full ? 0 : clampN(item.arrow.x - cw / 2, 0, item.w - cw);
@@ -74,8 +76,6 @@ function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: 
   const vw = full ? item.w : cw;
   const vh = full ? item.h : cw;
   const arrowScale = 0.55;
-  const isolatedSource = /^[a-z0-9-]+$/.test(item.id) ? `/ghibli/trail-objects/${item.id}.svg` : null;
-  const source = full && isolatedSource ? isolatedSource : item.scene;
   return (
     <svg
       viewBox={`${x0} ${y0} ${vw} ${vh}`}
@@ -84,7 +84,17 @@ function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: 
       className={cn("block bg-white", full ? "rounded-xl" : "rounded-full", ring)}
       aria-hidden
     >
-      <image href={source} x={0} y={0} width={item.w} height={item.h} preserveAspectRatio="xMidYMid meet" />
+      <image
+        href={full ? imageSrc : item.scene}
+        x={0}
+        y={0}
+        width={item.w}
+        height={item.h}
+        preserveAspectRatio="xMidYMid meet"
+        onError={() => {
+          if (full && imageSrc !== item.scene) setImageSrc(item.scene);
+        }}
+      />
       {!full && (
         <g className="cq-sway">
           <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(${arrowScale})`}>
@@ -199,12 +209,28 @@ export function CuriousTrailMountain({
   else if (levelFinished) targetLen = campEnd;
   else targetLen = elementIndex <= 0 ? campStart : elemLen(elementIndex - 1);
   const focusLen = hasCurrent ? elemLen(elementIndex) : null;
-  const focusBelow = focusLen != null && ((pointPct(focusLen)?.y ?? 50) / 100) * VB_H < 320;
+  const focusBelow = focusLen != null && ((pointPct(focusLen)?.y ?? 50) / 100) * VB_H < 360;
 
   // espelhos para o laço de animação (evita recriar o requestAnimationFrame a cada render)
-  const live = useRef({ target: 0, focus: null as number | null, playing: false, animate: true, total: 0, cardH: 0 });
+  const live = useRef({
+    target: 0,
+    focus: null as number | null,
+    playing: false,
+    animate: true,
+    total: 0,
+    cardH: 0,
+    cardBelow: false,
+  });
   useEffect(() => {
-    live.current = { target: targetLen, focus: focusLen, playing, animate: playing, total, cardH: focusLen != null && !focusBelow ? cardHeight : 0 };
+    live.current = {
+      target: targetLen,
+      focus: focusLen,
+      playing,
+      animate: playing,
+      total,
+      cardH: focusLen != null ? cardHeight : 0,
+      cardBelow: focusBelow,
+    };
   });
   const avRef = useRef(avalancheRef);
   useEffect(() => {
@@ -344,14 +370,17 @@ export function CuriousTrailMountain({
             dtx = Math.max(W - WW * s, dtx - ((qScreenX + cardHalfW) - (W - 16)));
           }
 
-          const ey = dty + qy * s;
-          const topMargin = Math.max(120, L.cardH + 16);
+          let ey = dty + qy * s;
+          const topMargin = L.cardBelow ? 112 : L.cardH + 112;
           if (ey < topMargin) {
             dty = Math.min(0, dty + (topMargin - ey));
+            ey = dty + qy * s;
           }
-          const bottomMargin = H - 180;
-          if (ey > bottomMargin) {
-            dty = Math.max(H - WH * s, dty - (ey - bottomMargin));
+          const dockTop = H - Math.max(180, H * 0.36);
+          const cardBottom = ey + (L.cardBelow ? L.cardH : 0);
+          const bottomMargin = dockTop - 16;
+          if (cardBottom > bottomMargin) {
+            dty = Math.max(H - WH * s, dty - (cardBottom - bottomMargin));
           }
         }
         const k = 1 - Math.exp(-dt * 4.5);

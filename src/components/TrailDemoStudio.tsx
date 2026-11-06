@@ -13,21 +13,23 @@ import {
 } from "@/lib/curiousTrailDemoVideo";
 import {
   DEMO_FORMATS,
-  loadDemoImages,
   type DemoFormat,
-  type DemoImages,
 } from "@/lib/gameDemoVideo";
+import {
+  loadTrailObjectImages,
+  type TrailObjectImages,
+} from "@/lib/curiousTrailObjectImages";
 import type { ExportResult } from "@/lib/gameDemoExport";
 import { TrailVideoWorld, loadTrailVideoAssets, type TrailVideoAssets } from "@/lib/trailVideoWorld";
 import { TRAIL_LEVELS, TRAIL_THEMES } from "@/lib/curiousTrailData";
 import { SOCIAL_PLATFORMS, sanitizeSocialHandle, type SocialPlatform } from "@/lib/socialLinks";
 import { Download, Loader2, Pause, Play, Sparkles } from "lucide-react";
 
-const EMPTY_DEMO_IMAGES: DemoImages = new Map();
+const EMPTY_DEMO_IMAGES: TrailObjectImages = new Map();
 
 export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   const [settings, setSettings] = useState<TrailDemoSettings>(DEFAULT_TRAIL_DEMO_SETTINGS);
-  const [imageResult, setImageResult] = useState<{ plan: TrailDemoPlan; images: DemoImages } | null>(null);
+  const [imageResult, setImageResult] = useState<{ plan: TrailDemoPlan; images: TrailObjectImages } | null>(null);
   const [imageError, setImageError] = useState<{ plan: TrailDemoPlan; message: string } | null>(null);
   const [imageLoadAttempt, setImageLoadAttempt] = useState(0);
   const [playing, setPlaying] = useState(true);
@@ -57,16 +59,16 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   const imagesError = imageError?.plan === plan ? imageError.message : null;
   const imagesLoading = !imagesError && imageResult?.plan !== plan;
   const allPlanImagesLoaded =
-    plan.rounds.length > 0 && plan.rounds.every((round) => images.has(round.item.scene));
+    plan.rounds.length > 0 && plan.rounds.every((round) => images.has(round.item.id));
 
   // Carrega imagens usadas na trilha
   useEffect(() => {
     let cancelled = false;
-    const roundItems = [...new Map(plan.rounds.map((round) => [round.item.scene, round.item])).values()];
-    void loadDemoImages(roundItems)
+    const roundItems = [...new Map(plan.rounds.map((round) => [round.item.id, round.item])).values()];
+    void loadTrailObjectImages(roundItems)
       .then((map) => {
         if (cancelled) return;
-        const missing = roundItems.filter((item) => !map.has(item.scene));
+        const missing = roundItems.filter((item) => !map.has(item.id));
         if (missing.length) {
           setImageError({
             plan,

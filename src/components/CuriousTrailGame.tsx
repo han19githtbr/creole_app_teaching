@@ -23,6 +23,7 @@ import {
 } from "@/lib/curiousTrailData";
 import { CuriousTrailMountain, type AvalancheLive } from "./CuriousTrailMountain";
 import { CAMP_FRACS } from "@/lib/curiousTrailGeometry";
+import { loadTrailObjectImage } from "@/lib/curiousTrailObjectImages";
 import {
   makeAvalancheTrack,
   initAvalanche,
@@ -468,12 +469,15 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
 
     try {
       await Promise.all(
-        scenes.map(async (scene) => {
-          await preloadTrailScene(scene);
-          if (loadRequestRef.current === requestId) {
-            setPreloadProgress((progress) => ({ ...progress, loaded: progress.loaded + 1 }));
-          }
-        })
+        [
+          ...scenes.map(async (scene) => {
+            await preloadTrailScene(scene);
+            if (loadRequestRef.current === requestId) {
+              setPreloadProgress((progress) => ({ ...progress, loaded: progress.loaded + 1 }));
+            }
+          }),
+          ...itemsForThisLevel.map((item) => loadTrailObjectImage(item)),
+        ]
       );
     } catch (error) {
       if (loadRequestRef.current !== requestId) return;

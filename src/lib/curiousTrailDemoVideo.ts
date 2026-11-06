@@ -12,9 +12,9 @@
 import {
   DEMO_FORMATS,
   type DemoFormat,
-  type DemoImages,
 } from "@/lib/gameDemoVideo";
 import type { SocialPlatform } from "@/lib/socialLinks";
+import type { TrailObjectImages } from "@/lib/curiousTrailObjectImages";
 import {
   TRAIL_LEVELS,
   TRAIL_THEMES,
@@ -158,7 +158,8 @@ export function buildTrailDemoPlan(
       const correctAt = start + answerDur;
       const walkEnd = correctAt + walkDur;
       const end = walkEnd;
-      const opts = buildWordOptions(item, items, isAvalanche);
+      const isHard = settings.difficulty === "master" || settings.difficulty === "native" || isAvalanche;
+      const opts = buildWordOptions(item, items, isHard);
       const scoreBefore = score;
       const speedRatio = (difficulty.seconds - answerDur) / difficulty.seconds;
       const speedMultiplier = speedRatio >= 0.65 ? 1.5 : speedRatio >= 0.35 ? 1.25 : 1.1;
@@ -306,7 +307,7 @@ function cameraTarget(plan: TrailDemoPlan, t: number) {
     const levelStart = TRAIL_LEVEL_FRACTIONS[plan.settings.level - 1];
     const levelEnd = TRAIL_LEVEL_FRACTIONS[plan.settings.level];
     const q = getTrailPositionAtFraction(levelStart + ((levelEnd - levelStart) * (ri + 1)) / (plan.levelCfg.elementCount + 1));
-    return { x: p.x + (q.x - p.x) * 0.45, y: p.y + (q.y - p.y) * 0.45 };
+    return { x: p.x + (q.x - p.x) * 0.75, y: p.y + (q.y - p.y) * 0.75 };
   }
   return p;
 }
@@ -323,7 +324,7 @@ export function computeTrailCamera(plan: TrailDemoPlan, t: number, w: number, h:
     fy += c.y / SAMPLES;
   }
   const tx = clamp(w * 0.5 - fx * s, w - WORLD_W * s, 0);
-  const ty = clamp(h * 0.45 - fy * s, h - WORLD_H * s, 0);
+  const ty = clamp(h * 0.44 - fy * s, h - WORLD_H * s, 0);
   return { s, tx, ty };
 }
 
@@ -370,7 +371,7 @@ export function renderTrailDemoFrame(
   t: number,
   plan: TrailDemoPlan,
   assets: {
-    images: DemoImages;
+    images: TrailObjectImages;
     scene?: CanvasImageSource | null;
     /** água + folhagem + bichos (mundo do vídeo) */
     world?: { drawWorld: (ctx: CanvasRenderingContext2D, t: number) => void } | null;
@@ -827,18 +828,25 @@ export function renderTrailDemoFrame(
     const target = toScreen(getTrailPositionAtFraction(elementFraction(activeRoundIndex)));
     const targetX = target.x;
     const targetY = target.y;
-    const imageW = Math.min(w * 0.38, 430);
-    const imageH = Math.min(imageW * (round.item.h / round.item.w), h * 0.24);
-    const dockTop = h * 0.73;
+    const maxImageW = Math.min(w * 0.46, 500);
+    const imageH = Math.min(maxImageW * (round.item.h / round.item.w), h * 0.24);
+    const imageW = imageH * (round.item.w / round.item.h);
+    const dockTop = h * 0.64;
+    const revealed = t >= round.correctAt;
+    const answerLabelH = revealed ? 34 : 0;
     const imageX = clamp(targetX - imageW / 2, 20, w - imageW - 20);
-    const imageY = clamp(targetY - imageH - 30, spec.safeTop + 25, dockTop - imageH - 20);
-    const image = assets.images.get(round.item.scene);
+    const imageY = clamp(targetY - imageH - 30, spec.safeTop + 25, dockTop - imageH - answerLabelH - 20);
+    const image = assets.images.get(round.item.id);
 
-    ctx.fillStyle = "#f59e0b";
+    const frame = ctx.createLinearGradient(imageX, imageY, imageX + imageW, imageY + imageH);
+    frame.addColorStop(0, "#fbbf24");
+    frame.addColorStop(0.52, "#f97316");
+    frame.addColorStop(1, "#f43f5e");
+    ctx.fillStyle = frame;
     ctx.beginPath();
     ctx.roundRect(imageX - 5, imageY - 5, imageW + 10, imageH + 10, 18);
     ctx.fill();
-    ctx.fillStyle = "#0f172a";
+    ctx.fillStyle = "#ffffff";
     ctx.beginPath();
     ctx.roundRect(imageX, imageY, imageW, imageH, 14);
     ctx.fill();
@@ -856,38 +864,32 @@ export function renderTrailDemoFrame(
       const drawX = imageX + (imageW - drawW) / 2;
       const drawY = imageY + (imageH - drawH) / 2;
       ctx.drawImage(image, drawX, drawY, drawW, drawH);
-      const arrowX = drawX + (round.item.arrow.x / sourceW) * drawW;
-      const arrowY = drawY + (round.item.arrow.y / sourceH) * drawH;
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.9)";
-      ctx.lineWidth = 9;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(arrowX - 38, arrowY - 32);
-      ctx.lineTo(arrowX - 5, arrowY - 5);
-      ctx.stroke();
-      ctx.fillStyle = "#ef4444";
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(arrowX, arrowY);
-      ctx.lineTo(arrowX - 18, arrowY - 4);
-      ctx.lineTo(arrowX - 4, arrowY - 18);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
       ctx.restore();
     }
-    if (t >= round.correctAt) {
+    ctx.fillStyle = "#0f172a";
+    ctx.beginPath();
+    ctx.arc(imageX + imageW + 2, imageY - 7, 21, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = "#fcd34d";
+    ctx.font = `900 ${Math.max(13, w * 0.016)}px ${FONT}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(String(activeRoundIndex + 1), imageX + imageW + 2, imageY - 7);
+    ctx.textBaseline = "alphabetic";
+    if (revealed) {
       const labelW = Math.min(imageW - 16, 200);
       ctx.fillStyle = "rgba(5, 150, 105, 0.95)";
       ctx.beginPath();
-      ctx.roundRect(imageX + 8, imageY + imageH - 42, labelW, 34, 17);
+      ctx.roundRect(imageX + (imageW - labelW) / 2, imageY + imageH + 8, labelW, answerLabelH, 17);
       ctx.fill();
       ctx.fillStyle = "#ffffff";
       ctx.font = `bold ${Math.max(12, w * 0.014)}px ${FONT}`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(fitCanvasText(ctx, round.item.fr, labelW - 16), imageX + 8 + labelW / 2, imageY + imageH - 25);
+      ctx.fillText(fitCanvasText(ctx, round.item.fr, labelW - 16), imageX + imageW / 2, imageY + imageH + answerLabelH / 2 + 8);
       ctx.textBaseline = "alphabetic";
     }
 

@@ -481,18 +481,11 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
 
 /** Desenha bichos e retalhos de folhagem (os bichos passam ATRÁS dos retalhos quando estão mais ao fundo). */
 export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: FaunaAssets, weather: TrailWeather, t: number) {
-  const windSpeed = weather === "snow" ? 2.6 : weather === "rain" ? 2.1 : 1.4;
-  const windAmp = (weather === "snow" ? 0.045 : weather === "rain" ? 0.034 : 0.02) * (1 + Math.sin(t * 0.4) * 0.35);
-
   for (const it of fauna.drawList()) {
     if (it.patch !== undefined) {
       const p = FOLIAGE_PATCHES[it.patch];
       const img = assets.patches[it.patch];
       if (!img) continue;
-
-      // Os recortes de folhagem podem ser partes da mesma árvore: use o mesmo
-      // vento para todos, sem fases ou tremores independentes que quebrem a copa.
-      const sway = Math.sin(t * windSpeed) * windAmp;
 
       const sourceY = Math.round((Math.max(0, Math.min(p.h, p.base - p.y)) / p.h) * img.naturalHeight);
       if (sourceY < img.naturalHeight) {
@@ -509,14 +502,6 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
         );
       }
 
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(p.x - p.h, p.y - p.h, p.w + p.h * 2, p.base - p.y + p.h);
-      ctx.clip();
-      ctx.translate(p.cx, p.base);
-      ctx.rotate(sway);
-      ctx.scale(1.025, 1.025);
-      ctx.translate(-p.cx, -p.base);
       if (sourceY > 0) {
         ctx.drawImage(
           graded(`patch${it.patch}`, img, weather),
@@ -530,25 +515,62 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
           p.base - p.y
         );
       }
-      ctx.restore();
-
-      // Folhas ou flocos caindo quando a copa é agitada
-      if (Math.abs(sway) > 0.04) {
-        for (let i = 0; i < 2; i++) {
-          const ph = (t * 0.7 + i * 0.5 + it.patch * 0.3) % 1;
-          const lx = p.cx + Math.sin(t * 3 + i) * p.rx * 0.6;
-          const ly = p.cy + ph * p.ry * 1.6;
-          ctx.save();
-          ctx.fillStyle = weather === "snow" ? "#ffffff" : weather === "rain" ? "#2d5a3c" : "#65a30d";
-          ctx.beginPath();
-          ctx.ellipse(lx, ly, weather === "snow" ? 2.5 : 3.5, weather === "snow" ? 2.5 : 1.8, ph * 4, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-      }
     } else if (it.critter) {
       drawCritter(ctx, it.critter, assets, weather, t);
     }
+  }
+
+  // Rajadas curtas e regulares: a paisagem fica fixa e só folhas soltas cruzam a copa.
+  // O mesmo ciclo guia as folhas e as linhas de vento, evitando movimentos desencontrados.
+  const cycle = weather === "sunny" ? 12 : weather === "rain" ? 8 : 7;
+  const phase = ((t % cycle) + cycle) % cycle;
+  const gust = phase < 2.4 ? Math.sin((phase / 2.4) * Math.PI) : 0;
+  if (gust > 0.08) {
+    const direction = weather === "snow" ? -1 : 1;
+    const canopySway = Math.sin(t * 2.2) * gust * 2.5;
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.strokeStyle = `rgba(224, 242, 254, ${0.08 + gust * 0.12})`;
+    ctx.lineWidth = weather === "snow" ? 2.2 : 1.6;
+    for (let i = 0; i < 5; i++) {
+      const y = 280 + i * 370 + Math.sin(t * 1.7 + i) * 12;
+      const travel = (phase * 170 + i * 190) % 1180 - 90;
+      const x = direction > 0 ? travel : 1090 - travel;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.bezierCurveTo(x + direction * 34, y - 10, x + direction * 72, y + 10, x + direction * 108, y - 2);
+      ctx.stroke();
+    }
+
+    for (let i = 0; i < FOLIAGE_PATCHES.length; i++) {
+      const p = FOLIAGE_PATCHES[i];
+      // Pontas da copa acompanham a mesma rajada, em amplitude mínima.
+      for (const side of [-1, 1]) {
+        const tipX = p.cx + side * p.rx * 0.42 + canopySway;
+        const tipY = p.cy + p.ry * 0.28 + Math.abs(canopySway) * 0.2;
+        ctx.save();
+        ctx.translate(tipX, tipY);
+        ctx.rotate(side * 0.35 + canopySway * 0.025);
+        ctx.fillStyle = weather === "snow" ? "rgba(220, 238, 255, 0.9)" : "rgba(150, 190, 78, 0.88)";
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 5, 2.2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      const leafPhase = (phase * 0.55 + i * 0.173) % 1;
+      const x = p.cx + direction * (leafPhase * 70 - 24);
+      const y = p.cy + Math.sin(t * 3 + i) * p.ry * 0.24 + leafPhase * p.ry * 0.48;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(direction * (0.4 + leafPhase * 0.8));
+      ctx.fillStyle = weather === "snow" ? `rgba(255,255,255,${0.65 + gust * 0.25})` : `rgba(132, 170, 64, ${0.6 + gust * 0.3})`;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 5.5, 2.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
   }
 }
 

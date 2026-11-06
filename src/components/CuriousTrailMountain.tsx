@@ -406,6 +406,8 @@ export function CuriousTrailMountain({
         const assets = faunaAssetsRef.current;
         if (assets) {
           fctx.setTransform(dpr * k, 0, 0, dpr * k, dpr * ex, dpr * ey);
+          fctx.imageSmoothingEnabled = true;
+          fctx.imageSmoothingQuality = "high";
           drawWater(fctx, tSec, weatherRef.current);
           drawFauna(fctx, fauna, assets, weatherRef.current, tSec);
         }
@@ -803,7 +805,7 @@ export function CuriousTrailMountain({
               <span style={{ color: themeColor }}>Nível {currentLevel}</span> · {currentCfg.name}
             </span>
             <span className={cn("block text-[10px] text-slate-300 font-semibold truncate", playing && "hidden sm:block")}>
-              Altitude: {currentCfg.altitude} m · {weather === "sunny" ? "Ensolarado" : weather === "rain" ? "Chuva (guarda-chuva aberto!)" : "Neve e frio"}
+              Altitude: {currentCfg.altitude} m · {weather === "sunny" ? "Ensolarado · brisa leve" : weather === "rain" ? "Chuva · rajadas de vento" : "Neve · vento alpino"}
             </span>
           </div>
         </div>

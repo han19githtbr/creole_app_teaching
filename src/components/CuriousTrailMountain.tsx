@@ -572,6 +572,40 @@ export function CuriousTrailMountain({
           draggable={false}
           className="trail-scene-img absolute inset-0 h-full w-full pointer-events-none"
         />
+        {/* Nuvens lentas e bandos animados no céu complementam as aves que percorrem a mata. */}
+        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="trail-sky-life absolute inset-0 z-[2] h-full w-full overflow-visible pointer-events-none" aria-hidden>
+          <defs>
+            <linearGradient id="trailCloudFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#ffffff" stopOpacity="0.9" />
+              <stop offset="1" stopColor="#edf7ff" stopOpacity="0.48" />
+            </linearGradient>
+          </defs>
+          <g className="trail-cloud--first" fill="url(#trailCloudFill)">
+            <ellipse cx="524" cy="152" rx="62" ry="21" />
+            <ellipse cx="501" cy="143" rx="28" ry="23" />
+            <ellipse cx="532" cy="132" rx="34" ry="30" />
+            <ellipse cx="558" cy="146" rx="26" ry="22" />
+          </g>
+          <g className="trail-cloud--second" fill="url(#trailCloudFill)" opacity="0.72">
+            <ellipse cx="827" cy="274" rx="50" ry="16" />
+            <ellipse cx="805" cy="265" rx="23" ry="18" />
+            <ellipse cx="833" cy="256" rx="29" ry="23" />
+            <ellipse cx="854" cy="270" rx="24" ry="16" />
+          </g>
+          <g transform="translate(420 190)"><g className="trail-bird-flock trail-bird-flock--first" fill="none" stroke="#425b5c" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M0 0 Q8 -8 16 0 Q24 -9 32 -1" />
+            <path d="M42 15 Q49 8 56 14 Q63 6 70 13" />
+            <path d="M83 -9 Q89 -15 96 -9 Q103 -16 110 -10" />
+            <path d="M119 9 Q125 3 132 9 Q139 2 146 8" />
+            <path d="M61 -25 Q66 -30 72 -25 Q78 -31 84 -25" />
+          </g></g>
+          <g transform="translate(685 225)"><g className="trail-bird-flock trail-bird-flock--second" fill="none" stroke="#526b70" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M0 0 Q7 -7 14 0 Q21 -7 28 0" />
+            <path d="M39 -12 Q45 -18 51 -12 Q57 -18 63 -12" />
+            <path d="M70 10 Q76 4 82 10 Q88 4 94 10" />
+            <path d="M104 -3 Q109 -8 115 -3 Q121 -8 126 -3" />
+          </g></g>
+        </svg>
         {/* Poças e flocos acompanham o traçado real da trilha sem encobrir o mapa. */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full pointer-events-none overflow-visible">
           {pathInfo.total > 0 && weather === "rain" && [0.08, 0.19, 0.31, 0.43, 0.55, 0.67, 0.79, 0.91].map((fraction, index) => {
@@ -587,14 +621,23 @@ export function CuriousTrailMountain({
               </g>
             );
           })}
-          {pathInfo.total > 0 && weather === "snow" && [0.07, 0.14, 0.22, 0.29, 0.37, 0.45, 0.52, 0.6, 0.68, 0.75, 0.83, 0.9, 0.96].map((fraction, index) => {
-            const point = pathInfo.tbl[Math.min(pathInfo.tbl.length - 1, Math.round((pathInfo.total * fraction) / pathInfo.step))];
+          {pathInfo.total > 0 && weather === "snow" && [0.04, 0.09, 0.14, 0.19, 0.24, 0.29, 0.34, 0.39, 0.44, 0.49, 0.54, 0.59, 0.64, 0.69, 0.74, 0.79, 0.84, 0.89, 0.94, 0.98].map((fraction, index) => {
+            const pointIndex = Math.min(pathInfo.tbl.length - 1, Math.round((pathInfo.total * fraction) / pathInfo.step));
+            const point = pathInfo.tbl[pointIndex];
             if (!point) return null;
-            const size = index % 3 === 0 ? 11 : index % 3 === 1 ? 8 : 6;
+            const before = pathInfo.tbl[Math.max(0, pointIndex - 1)];
+            const after = pathInfo.tbl[Math.min(pathInfo.tbl.length - 1, pointIndex + 1)];
+            const tangentLength = Math.hypot(after.x - before.x, after.y - before.y) || 1;
+            const spread = [0, 12, -16, 7, -9][index % 5];
+            const x = point.x - ((after.y - before.y) / tangentLength) * spread;
+            const y = point.y + ((after.x - before.x) / tangentLength) * spread;
+            const size = index % 3 === 0 ? 19 : index % 3 === 1 ? 15 : 12;
             return (
-              <g key={`trail-snowflake-${fraction}`} transform={`translate(${point.x} ${point.y}) rotate(${(index * 29) % 60})`} opacity={index % 3 === 0 ? 0.88 : 0.7}>
-                <path d={`M${-size} 0H${size} M0 ${-size}V${size} M${-size * 0.7} ${-size * 0.7}L${size * 0.7} ${size * 0.7} M${-size * 0.7} ${size * 0.7}L${size * 0.7} ${-size * 0.7}`} fill="none" stroke="#f8fdff" strokeWidth="2.5" strokeLinecap="round" />
-                <circle r="2" fill="#ffffff" />
+              <g key={`trail-snowflake-${fraction}`} transform={`translate(${x} ${y}) rotate(${(index * 29) % 60})`}>
+                <circle r={size + 5} fill="#b7d9fb" opacity="0.62" />
+                <path d={`M${-size} 0H${size} M0 ${-size}V${size} M${-size * 0.7} ${-size * 0.7}L${size * 0.7} ${size * 0.7} M${-size * 0.7} ${size * 0.7}L${size * 0.7} ${-size * 0.7}`} fill="none" stroke="#6f9bc2" strokeWidth="6" strokeLinecap="round" />
+                <path d={`M${-size} 0H${size} M0 ${-size}V${size} M${-size * 0.7} ${-size * 0.7}L${size * 0.7} ${size * 0.7} M${-size * 0.7} ${size * 0.7}L${size * 0.7} ${-size * 0.7}`} fill="none" stroke="#f9fdff" strokeWidth="3.2" strokeLinecap="round" />
+                <circle r="3" fill="#ffffff" />
               </g>
             );
           })}
@@ -799,13 +842,15 @@ export function CuriousTrailMountain({
       )}
       {weather === "snow" && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-          <svg className="trail-snow-layer absolute inset-0 h-full w-full opacity-40">
-            <pattern id="snowPattern" width="80" height="80" patternUnits="userSpaceOnUse">
-              <circle cx="20" cy="15" r="2.5" fill="#ffffff" />
-              <circle cx="60" cy="25" r="3" fill="#ffffff" />
-              <circle cx="35" cy="55" r="2" fill="#ffffff" />
-              <circle cx="70" cy="70" r="2.5" fill="#ffffff" />
-              <circle cx="10" cy="75" r="1.5" fill="#f8fafc" />
+          <svg className="trail-snow-layer absolute inset-0 h-full w-full opacity-55">
+            <pattern id="snowPattern" width="96" height="104" patternUnits="userSpaceOnUse">
+              <circle cx="12" cy="18" r="3.4" fill="#ffffff" />
+              <circle cx="46" cy="12" r="2.3" fill="#ffffff" />
+              <circle cx="78" cy="31" r="4" fill="#ffffff" />
+              <circle cx="28" cy="58" r="2.8" fill="#ffffff" />
+              <circle cx="62" cy="72" r="3.5" fill="#ffffff" />
+              <circle cx="91" cy="91" r="2.4" fill="#f8fafc" />
+              <circle cx="7" cy="94" r="2.1" fill="#ffffff" />
             </pattern>
             <rect width="100%" height="100%" fill="url(#snowPattern)" />
           </svg>

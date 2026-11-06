@@ -7,8 +7,8 @@
  *    de vez em quando, ATRAVESSAM a trilha de terra para o outro lado;
  *  - passam ATRÁS de retalhos de folhagem (recortes da própria arte, ver trailFaunaPatches.ts) e
  *    podem se ESCONDER neles, espiando depois;
- *  - aves e preguiça POUSAM nos galhos, troncos e dentro das copas (atrás das folhas) ou voam de
- *    um poleiro a outro;
+ *  - aves pousam nos galhos e voam entre poleiros; a preguiça se mantém no mesmo tronco e escala
+ *    lentamente para cima e para baixo;
  *  - cada espécie tem um TEMPERAMENTO (amigável, assustadiço, cauteloso, defensivo, agressivo...)
  *    e reage ao aluno de acordo (nada machuca o aluno: é só comportamento e expressão);
  *  - cada CLIMA traz os bichos mais adaptados (sol, chuva, neve).
@@ -133,7 +133,7 @@ const HABITAT: { x: number; y: number }[] = [
   [230, 1100], [520, 1090], [470, 1230], [180, 760], [560, 650], [300, 470], [520, 330], [150, 330], [400, 250], [60, 240],
 ].map(([x, y]) => P(x, y));
 
-/** Poleiros (galhos e troncos) onde aves e preguiça pousam: os mesmos das aves pintadas originais. */
+/** Pontos de apoio pintados na mata; as dez primeiras posições também definem troncos reais para a preguiça. */
 const PERCHES: { x: number; y: number; patch: number }[] = [
   [52, 106], [142, 112], [40, 372], [604, 442], [672, 562], [25, 676], [42, 730], [612, 975], [626, 472], [80, 408],
 ].map(([x, y]) => ({ ...P(x, y), patch: -1 }));
@@ -176,7 +176,7 @@ export interface Critter {
   z: number;
   /** lado para o qual olha na tela (+1 direita, -1 esquerda) */
   look: number;
-  state: "idle" | "move" | "fly" | "leaving";
+  state: "idle" | "move" | "fly" | "climb" | "leaving";
   mood: Mood;
   moodT: number;
   cool: number;
@@ -187,6 +187,8 @@ export interface Critter {
   clk: number;
   /** fase da passada / do pulo */
   phase: number;
+  /** direção vertical da escalada da preguiça */
+  climbDir: -1 | 1;
   v: number;
   /** retalho de folhagem em que está escondido/pousado (-1 = nenhum) */
   patch: number;
@@ -274,6 +276,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       timer: 1 + rnd() * 2,
       clk: rnd() * 10,
       phase: rnd() * 6.28,
+      climbDir: rnd() > 0.5 ? 1 : -1,
       v: 0,
       patch: -1,
       flyU: 0,
@@ -309,6 +312,8 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
   function pickPerch(c: Critter, lo: number, hi: number, excludeCurrent = true): number {
     const ok: number[] = [];
     PERCHES.forEach((p, i) => {
+      // A preguiça usa somente os pontos de tronco/galho pintados na mata, nunca centros de folhagem.
+      if (c.spec.hangs && i >= 10) return;
       if (!near(p.y, lo, hi)) return;
       if (excludeCurrent && i === c.perch) return;
       if (perchTaken(i)) return;
@@ -682,6 +687,45 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     c.moodT = Math.max(0, c.moodT - dt);
     c.cool = Math.max(0, c.cool - dt);
     const ds = Math.hypot(stu.x - c.x, stu.y - c.y);
+
+    // A preguiça não voa de copa em copa: mantém o mesmo apoio e sobe/desce pelo tronco.
+    if (sp.hangs) {
+      if (c.state === "climb") {
+        c.flyU = Math.min(1, c.flyU + dt / c.fdur);
+        const eased = c.flyU * c.flyU * (3 - 2 * c.flyU);
+        c.x = c.fx;
+        c.y = c.fy + (c.ty - c.fy) * eased;
+        c.phase += dt * 5;
+        if (c.flyU >= 1) {
+          c.state = "idle";
+          c.y = c.ty;
+          c.climbDir = c.y >= PERCHES[c.perch].y ? -1 : 1;
+          c.timer = 2.5 + rnd() * 4;
+        }
+        return;
+      }
+
+      c.phase += dt * 0.8;
+      c.timer -= dt;
+      if (c.timer <= 0 && c.perch >= 0) {
+        const trunk = PERCHES[c.perch];
+        const minY = trunk.y - 54;
+        const maxY = trunk.y + 54;
+        let targetY = c.y + c.climbDir * (36 + rnd() * 14);
+        if (targetY < minY || targetY > maxY) {
+          c.climbDir = c.climbDir === 1 ? -1 : 1;
+          targetY = clamp(c.y + c.climbDir * (36 + rnd() * 14), minY, maxY);
+        }
+        c.fx = c.x;
+        c.fy = c.y;
+        c.tx = c.x;
+        c.ty = targetY;
+        c.flyU = 0;
+        c.fdur = 3.8 + rnd() * 2.2;
+        c.state = "climb";
+      }
+      return;
+    }
 
     if (c.state === "fly") {
       c.flyU = Math.min(1, c.flyU + dt / c.fdur);

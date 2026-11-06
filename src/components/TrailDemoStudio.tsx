@@ -23,6 +23,7 @@ import {
 } from "@/lib/curiousTrailObjectImages";
 import type { ExportResult } from "@/lib/gameDemoExport";
 import { TrailVideoWorld, loadTrailVideoAssets, type TrailVideoAssets } from "@/lib/trailVideoWorld";
+import { exportTrailDemoOffline } from "@/lib/trailDemoOfflineExport";
 import { TRAIL_LEVELS, TRAIL_THEMES } from "@/lib/curiousTrailData";
 import { SOCIAL_PLATFORMS, sanitizeSocialHandle, type SocialPlatform } from "@/lib/socialLinks";
 import { Download, Loader2, Pause, Play, Sparkles } from "lucide-react";
@@ -217,6 +218,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       const outputWidth = Math.floor((spec.w * outputScale) / 2) * 2;
       const outputHeight = Math.floor((spec.h * outputScale) / 2) * 2;
       const fps = mobile ? 24 : 30;
+      const videoBitrate = mobile ? 4_500_000 : 8_000_000;
       const exportCanvas = document.createElement("canvas");
       exportCanvas.width = outputWidth;
       exportCanvas.height = outputHeight;
@@ -256,6 +258,40 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         return [word, await exportAudioContext!.decodeAudioData(await response.arrayBuffer())] as const;
       }));
       const wordsByText = new Map(spokenWords);
+      const videoAssets = vAssetsRef.current;
+      if (!videoAssets) throw new Error("A arte da trilha ainda não carregou.");
+      const offlineResult = await exportTrailDemoOffline({
+        plan,
+        images,
+        assets: videoAssets,
+        sounds: { forest: forestBuffer, stream: streamBuffer, rain: rainBuffer, voices: wordsByText },
+        width: outputWidth,
+        height: outputHeight,
+        scale: outputScale,
+        fps,
+        bitrate: videoBitrate,
+        signal: controller.signal,
+        onProgress: setProgress,
+      });
+      if (offlineResult) {
+        const url = URL.createObjectURL(offlineResult.blob);
+        const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+        const name = `trilha-curiosa-v3-${plan.theme.id}-niveis${plan.levels.map((level) => level.level).join("-")}-${stamp}.mp4`;
+        setResult({
+          url,
+          info: {
+            blob: offlineResult.blob,
+            extension: "mp4",
+            hasAudio: true,
+            method: "offline",
+            width: offlineResult.width,
+            height: offlineResult.height,
+          },
+          name,
+        });
+        setProgress(100);
+        return;
+      }
       // Só inicia os relógios de áudio depois que todos os clipes estiverem prontos.
       const audioStartAt = exportAudioContext.currentTime + 0.25;
       const addLoop = (buffer: AudioBuffer, volume: number) => {
@@ -300,7 +336,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       if (!mime) throw new Error("Este navegador não oferece um formato de vídeo com áudio compatível. Atualize o navegador e tente novamente.");
       const activeRecorder = new MediaRecorder(exportStream, {
         mimeType: mime,
-        videoBitsPerSecond: mobile ? 4_500_000 : 8_000_000,
+        videoBitsPerSecond: videoBitrate,
         audioBitsPerSecond: 128_000,
       });
       recorder = activeRecorder;
@@ -324,9 +360,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         setTimeout(resolve, waitMs);
       });
       activeRecorder.start(1000);
-      const vAssets = vAssetsRef.current;
-      if (!vAssets) throw new Error("A arte da trilha ainda não carregou.");
-      const exportWorld = new TrailVideoWorld(plan, vAssets.fauna);
+      const exportWorld = new TrailVideoWorld(plan, videoAssets.fauna);
 
       const videoStartAt = performance.now();
       let lastProgress = -1;
@@ -336,7 +370,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         const tFrame = (frameStart - videoStartAt) / 1000;
         // exportação quadro a quadro, com o mundo recomeçando do zero (mesma simulação da prévia)
         const dyn = await exportWorld.avalancheImage(tFrame, spec.w, trailMapHeight(spec.h));
-        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: vAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn });
+        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: videoAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn });
         const nextProgress = Math.min(99, Math.round((tFrame / plan.total) * 100));
         if (nextProgress !== lastProgress) {
           lastProgress = nextProgress;

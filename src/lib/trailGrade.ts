@@ -13,8 +13,9 @@ interface Grade {
 
 const GRADES: Record<TrailWeather, Grade | null> = {
   sunny: null,
-  rain: { desaturate: 0.35, darken: 0.3, lighten: 0, tint: "rgba(35, 55, 72, 0.34)" },
-  snow: { desaturate: 0.72, darken: 0, lighten: 0.14, tint: "rgba(222, 234, 255, 0.4)" },
+  // Mantém a arte e as cores do mapa vivas; o clima aparece nos efeitos, sem cobrir o cenário.
+  rain: { desaturate: 0.08, darken: 0.04, lighten: 0, tint: "rgba(35, 55, 72, 0.07)" },
+  snow: { desaturate: 0.18, darken: 0, lighten: 0.025, tint: "rgba(222, 234, 255, 0.08)" },
 };
 
 type Src = CanvasImageSource & { width?: number; height?: number; naturalWidth?: number; naturalHeight?: number };

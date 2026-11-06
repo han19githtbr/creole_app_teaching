@@ -566,15 +566,32 @@ export function CuriousTrailMountain({
           draggable={false}
           className="trail-scene-img absolute inset-0 h-full w-full pointer-events-none"
         />
-        {/* Trilha coberta de neve / molhada (o desenho da trilha é o mesmo caminho do jogo) */}
+        {/* Poças e flocos acompanham o traçado real da trilha sem encobrir o mapa. */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full pointer-events-none overflow-visible">
-          {weather === "snow" && (
-            <>
-              <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#ffffff" strokeWidth="46" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
-              <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#eaf2ff" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="60 70" opacity="0.7" />
-            </>
-          )}
-          {weather === "rain" && <path d={CURIOUS_TRAIL_PATH} fill="none" stroke="#7fa7c4" strokeWidth="26" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="22 120" opacity="0.45" />}
+          {pathInfo.total > 0 && weather === "rain" && [0.08, 0.19, 0.31, 0.43, 0.55, 0.67, 0.79, 0.91].map((fraction, index) => {
+            const point = pathInfo.tbl[Math.min(pathInfo.tbl.length - 1, Math.round((pathInfo.total * fraction) / pathInfo.step))];
+            if (!point) return null;
+            const rx = index % 2 === 0 ? 21 : 16;
+            const ry = index % 2 === 0 ? 9 : 7;
+            return (
+              <g key={`puddle-${fraction}`} transform={`translate(${point.x} ${point.y}) rotate(${index % 2 === 0 ? -18 : 16})`}>
+                <ellipse cx="0" cy="2" rx={rx + 3} ry={ry + 3} fill="#173b4a" opacity="0.14" />
+                <ellipse cx="0" cy="0" rx={rx} ry={ry} fill="#75c9df" fillOpacity="0.48" stroke="#d4f5f4" strokeOpacity="0.72" strokeWidth="2" />
+                <path d={`M${-rx * 0.55} -1 Q0 ${-ry * 0.7} ${rx * 0.48} -1`} fill="none" stroke="#f0ffff" strokeOpacity="0.78" strokeWidth="2" strokeLinecap="round" />
+              </g>
+            );
+          })}
+          {pathInfo.total > 0 && weather === "snow" && [0.07, 0.14, 0.22, 0.29, 0.37, 0.45, 0.52, 0.6, 0.68, 0.75, 0.83, 0.9, 0.96].map((fraction, index) => {
+            const point = pathInfo.tbl[Math.min(pathInfo.tbl.length - 1, Math.round((pathInfo.total * fraction) / pathInfo.step))];
+            if (!point) return null;
+            const size = index % 3 === 0 ? 11 : index % 3 === 1 ? 8 : 6;
+            return (
+              <g key={`trail-snowflake-${fraction}`} transform={`translate(${point.x} ${point.y}) rotate(${(index * 29) % 60})`} opacity={index % 3 === 0 ? 0.88 : 0.7}>
+                <path d={`M${-size} 0H${size} M0 ${-size}V${size} M${-size * 0.7} ${-size * 0.7}L${size * 0.7} ${size * 0.7} M${-size * 0.7} ${size * 0.7}L${size * 0.7} ${-size * 0.7}`} fill="none" stroke="#f8fdff" strokeWidth="2.5" strokeLinecap="round" />
+                <circle r="2" fill="#ffffff" />
+              </g>
+            );
+          })}
           <path ref={setPathEl} d={CURIOUS_TRAIL_PATH} fill="none" stroke="transparent" strokeWidth="1" />
         </svg>
 
@@ -764,7 +781,7 @@ export function CuriousTrailMountain({
       {/* ================= CLIMA (fixo na tela, não dá zoom) ================= */}
       {weather === "rain" && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-          <svg className="trail-rain-layer absolute inset-0 h-full w-full opacity-60">
+          <svg className="trail-rain-layer absolute inset-0 h-full w-full opacity-35">
             <pattern id="rainPattern" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(20)">
               <line x1="10" y1="0" x2="10" y2="25" stroke="#bae6fd" strokeWidth="1.5" strokeLinecap="round" />
               <line x1="30" y1="20" x2="30" y2="45" stroke="#7dd3fc" strokeWidth="1.2" strokeLinecap="round" />
@@ -772,12 +789,11 @@ export function CuriousTrailMountain({
             </pattern>
             <rect width="100%" height="100%" fill="url(#rainPattern)" />
           </svg>
-          <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-slate-900/40 to-transparent" />
         </div>
       )}
       {weather === "snow" && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-          <svg className="trail-snow-layer absolute inset-0 h-full w-full opacity-80">
+          <svg className="trail-snow-layer absolute inset-0 h-full w-full opacity-40">
             <pattern id="snowPattern" width="80" height="80" patternUnits="userSpaceOnUse">
               <circle cx="20" cy="15" r="2.5" fill="#ffffff" />
               <circle cx="60" cy="25" r="3" fill="#ffffff" />

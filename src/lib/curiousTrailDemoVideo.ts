@@ -407,6 +407,9 @@ export function renderTrailDemoFrame(
     dyn?: CanvasImageSource | null;
   }
 ) {
+  // Preserve fine detail when the shared world and foliage are scaled to the video canvas.
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   const spec = DEMO_FORMATS[plan.settings.format];
   const { theme, introDur, countdownDur, outroStart } = plan;
   const activeRoundIndex = plan.rounds.findIndex((entry) => t >= entry.start && t < entry.end);
@@ -813,7 +816,7 @@ export function renderTrailDemoFrame(
   ctx.font = `600 ${Math.max(11, w * 0.012)}px ${FONT}`;
   ctx.fillText(
     `Altitude: ${levelCfg.altitude} m · ${
-      levelCfg.weather === "sunny" ? "Ensolarado" : levelCfg.weather === "rain" ? "Chuva · Guarda-chuva" : "Neve e frio"
+      levelCfg.weather === "sunny" ? "Ensolarado · brisa leve" : levelCfg.weather === "rain" ? "Chuva · rajadas de vento" : "Neve · vento alpino"
     }`,
     42,
     80

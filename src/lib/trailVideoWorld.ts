@@ -12,15 +12,17 @@ import { gradeImage } from "@/lib/trailGrade";
 import { renderAvalancheSvg } from "@/lib/trailAvalanche";
 import { WORLD_W, WORLD_H, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
 import { computeTrailCamera, trailAvalancheAt, trailLevelForTime, trailStudentFraction, type TrailDemoPlan } from "@/lib/curiousTrailDemoVideo";
+import { TRAIL_BIRDS } from "@/lib/trailSky";
 
 const STEP = 1 / 30;
 
-export const TRAIL_SCENE_URL = "/trilha/mata-trilha.jpg";
+export const TRAIL_SCENE_URL = "/trilha/mata-trilha-animada.jpg";
 
 export interface TrailVideoAssets {
   /** Uma versão da arte da mata para cada clima possível da escalada. */
   scenes: Record<TrailWeather, CanvasImageSource>;
   fauna: FaunaAssets;
+  birds: Record<(typeof TRAIL_BIRDS)[number]["id"], HTMLImageElement>;
 }
 
 /** Carrega a arte da mata e os recortes dos bichos/folhagem (mesmos arquivos do jogo). */
@@ -31,7 +33,15 @@ export async function loadTrailVideoAssets(): Promise<TrailVideoAssets> {
     i.onerror = () => reject(new Error("Não foi possível carregar a arte da trilha."));
     i.src = TRAIL_SCENE_URL;
   });
-  const fauna = await loadFaunaAssets();
+  const [fauna, birds] = await Promise.all([
+    loadFaunaAssets(),
+    Promise.all(TRAIL_BIRDS.map((bird) => new Promise<HTMLImageElement>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error("Não foi possível carregar as aves animadas da trilha."));
+      image.src = bird.src;
+    }))),
+  ]);
   return {
     scenes: {
       sunny: gradeImage(img, "sunny"),
@@ -39,6 +49,7 @@ export async function loadTrailVideoAssets(): Promise<TrailVideoAssets> {
       snow: gradeImage(img, "snow"),
     },
     fauna,
+    birds: Object.fromEntries(TRAIL_BIRDS.map((bird, index) => [bird.id, birds[index]])) as TrailVideoAssets["birds"],
   };
 }
 

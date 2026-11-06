@@ -203,16 +203,19 @@
   100% { transform: translateX(60px); }
 }
 
-@keyframes trailBirdFlightFirst {
-  0% { transform: translate(0, 0); }
-  50% { transform: translate(82px, -13px); }
-  100% { transform: translate(165px, 4px); }
+@keyframes trailBirdFlightFlock {
+  from { transform: translate(-42px, -8px); }
+  to { transform: translate(42px, 8px); }
 }
 
-@keyframes trailBirdFlightSecond {
-  0% { transform: translate(0, 0); }
-  50% { transform: translate(-72px, -9px); }
-  100% { transform: translate(-145px, 7px); }
+@keyframes trailBirdFlightSky {
+  from { transform: translate(34px, 6px); }
+  to { transform: translate(-34px, -6px); }
+}
+
+@keyframes trailBirdFlightEagle {
+  from { transform: translate(-30px, 6px); }
+  to { transform: translate(30px, -6px); }
 }
 
 /* Cascata de névoa descendo pelas gargantas da montanha */
@@ -307,12 +310,23 @@
   animation: trailCloudDriftFast 22s ease-in-out infinite;
 }
 
-.trail-bird-flock--first {
-  animation: trailBirdFlightFirst 19s ease-in-out infinite alternate;
+.trail-bird--flock,
+.trail-bird--sky,
+.trail-bird--eagle {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-.trail-bird-flock--second {
-  animation: trailBirdFlightSecond 23s ease-in-out infinite alternate;
+.trail-bird--flock {
+  animation: trailBirdFlightFlock 12s ease-in-out infinite alternate;
+}
+
+.trail-bird--sky {
+  animation: trailBirdFlightSky 15s ease-in-out infinite alternate;
+}
+
+.trail-bird--eagle {
+  animation: trailBirdFlightEagle 18s ease-in-out infinite alternate;
 }
 
 .trail-mist-layer {
@@ -434,8 +448,9 @@
 @media (prefers-reduced-motion: reduce) {
   .trail-cloud--first,
   .trail-cloud--second,
-  .trail-bird-flock--first,
-  .trail-bird-flock--second,
+  .trail-bird--flock,
+  .trail-bird--sky,
+  .trail-bird--eagle,
   .trail-mist-layer,
   .trail-rain-layer,
   .trail-snow-layer,

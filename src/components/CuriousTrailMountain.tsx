@@ -13,6 +13,7 @@ import { getTrailObjectImageSrc } from "@/lib/curiousTrailObjectImages";
 import type { AppLanguage } from "@/lib/languageShared";
 import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
 import { renderAvalancheSvg } from "@/lib/trailAvalanche";
+import { TRAIL_BIRDS } from "@/lib/trailSky";
 import { Check, Lock, Volume2 } from "lucide-react";
 
 export type TrailRoundState = "asking" | "correct" | "retry" | "reveal";
@@ -63,7 +64,7 @@ const WALK_SPEED = 150;
 /** Zoom da câmera durante o jogo, relativo ao mundo cobrindo a largura do palco. */
 const PLAY_ZOOM = 1.55;
 /** Imagem da mata (arte do cenário). */
-export const TRAIL_SCENE_SRC = "/trilha/mata-trilha.jpg";
+export const TRAIL_SCENE_SRC = "/trilha/mata-trilha-animada.jpg";
 
 const clampN = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
@@ -572,7 +573,7 @@ export function CuriousTrailMountain({
           draggable={false}
           className="trail-scene-img absolute inset-0 h-full w-full pointer-events-none"
         />
-        {/* Nuvens lentas e bandos animados no céu complementam as aves que percorrem a mata. */}
+        {/* Nuvens e pássaros recortados da própria arte do mapa ganham movimento suave. */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="trail-sky-life absolute inset-0 z-[2] h-full w-full overflow-visible pointer-events-none" aria-hidden>
           <defs>
             <linearGradient id="trailCloudFill" x1="0" y1="0" x2="0" y2="1">
@@ -592,19 +593,18 @@ export function CuriousTrailMountain({
             <ellipse cx="833" cy="256" rx="29" ry="23" />
             <ellipse cx="854" cy="270" rx="24" ry="16" />
           </g>
-          <g transform="translate(420 190)"><g className="trail-bird-flock trail-bird-flock--first" fill="none" stroke="#425b5c" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M0 0 Q8 -8 16 0 Q24 -9 32 -1" />
-            <path d="M42 15 Q49 8 56 14 Q63 6 70 13" />
-            <path d="M83 -9 Q89 -15 96 -9 Q103 -16 110 -10" />
-            <path d="M119 9 Q125 3 132 9 Q139 2 146 8" />
-            <path d="M61 -25 Q66 -30 72 -25 Q78 -31 84 -25" />
-          </g></g>
-          <g transform="translate(685 225)"><g className="trail-bird-flock trail-bird-flock--second" fill="none" stroke="#526b70" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M0 0 Q7 -7 14 0 Q21 -7 28 0" />
-            <path d="M39 -12 Q45 -18 51 -12 Q57 -18 63 -12" />
-            <path d="M70 10 Q76 4 82 10 Q88 4 94 10" />
-            <path d="M104 -3 Q109 -8 115 -3 Q121 -8 126 -3" />
-          </g></g>
+          {TRAIL_BIRDS.map((bird) => (
+            <image
+              key={bird.id}
+              href={bird.src}
+              x={bird.x}
+              y={bird.y}
+              width={bird.width}
+              height={bird.height}
+              className={`trail-bird--${bird.id}`}
+              preserveAspectRatio="none"
+            />
+          ))}
         </svg>
         {/* Poças e flocos acompanham o traçado real da trilha sem encobrir o mapa. */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full pointer-events-none overflow-visible">

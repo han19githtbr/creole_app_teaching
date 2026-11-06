@@ -22,6 +22,7 @@ import {
   type TrailThemeOption,
 } from "@/lib/curiousTrailData";
 import { buildWordOptions, type CestQuoiItem } from "@/lib/cquoiContent";
+import { TRAIL_BIRDS, trailBirdPosition } from "@/lib/trailSky";
 import {
   CAMP_FRACS,
   MARKER_FRACS,
@@ -396,6 +397,7 @@ export function renderTrailDemoFrame(
     world?: { drawWorld: (ctx: CanvasRenderingContext2D, t: number) => void } | null;
     /** avalanche (imagem rasterizada do quadro) */
     dyn?: CanvasImageSource | null;
+    birds?: Record<(typeof TRAIL_BIRDS)[number]["id"], CanvasImageSource>;
   }
 ) {
   // Preserve fine detail when the shared world and foliage are scaled to the video canvas.
@@ -444,6 +446,29 @@ export function renderTrailDemoFrame(
     ctx.fillRect(0, 0, WORLD_W, WORLD_H);
   }
 
+  // Nuvens e bandos do mapa também são desenhados no canvas exportado, com movimento suave.
+  const drawCloud = (x: number, y: number, scale: number, alpha: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#f7fcff";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 62, 18, 0, 0, Math.PI * 2);
+    ctx.ellipse(-23, -9, 28, 22, 0, 0, Math.PI * 2);
+    ctx.ellipse(8, -19, 34, 29, 0, 0, Math.PI * 2);
+    ctx.ellipse(34, -6, 26, 19, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  };
+  drawCloud(524 + Math.sin(t * Math.PI * 2 / 28) * 45, 150, 1, 0.48);
+  drawCloud(827 - Math.sin(t * Math.PI * 2 / 22) * 42, 267, 0.78, 0.4);
+  TRAIL_BIRDS.forEach((bird) => {
+    const image = assets.birds?.[bird.id];
+    if (!image) return;
+    const position = trailBirdPosition(bird, t);
+    ctx.drawImage(image, position.x, position.y, bird.width, bird.height);
+  });
   // Mesmos indicadores discretos do jogo: poças na chuva e flocos no traçado durante a neve.
   if (isRain) {
     [0.08, 0.19, 0.31, 0.43, 0.55, 0.67, 0.79, 0.91].forEach((fraction, index) => {
@@ -465,16 +490,32 @@ export function renderTrailDemoFrame(
       ctx.restore();
     });
   } else if (isSnow) {
-    [0.07, 0.14, 0.22, 0.29, 0.37, 0.45, 0.52, 0.6, 0.68, 0.75, 0.83, 0.9, 0.96].forEach((fraction, index) => {
+    [0.04, 0.09, 0.14, 0.19, 0.24, 0.29, 0.34, 0.39, 0.44, 0.49, 0.54, 0.59, 0.64, 0.69, 0.74, 0.79, 0.84, 0.89, 0.94, 0.98].forEach((fraction, index) => {
       const point = getTrailPositionAtFraction(fraction);
-      const size = index % 3 === 0 ? 11 : index % 3 === 1 ? 8 : 6;
+      const before = getTrailPositionAtFraction(Math.max(0, fraction - 0.003));
+      const after = getTrailPositionAtFraction(Math.min(1, fraction + 0.003));
+      const length = Math.hypot(after.x - before.x, after.y - before.y) || 1;
+      const spread = [0, 12, -16, 7, -9][index % 5];
+      const x = point.x - ((after.y - before.y) / length) * spread;
+      const y = point.y + ((after.x - before.x) / length) * spread;
+      const size = index % 3 === 0 ? 19 : index % 3 === 1 ? 15 : 12;
       ctx.save();
-      ctx.translate(point.x, point.y);
+      ctx.translate(x, y);
       ctx.rotate(((index * 29) % 60) * Math.PI / 180);
-      ctx.strokeStyle = `rgba(248, 253, 255, ${index % 3 === 0 ? 0.88 : 0.7})`;
-      ctx.fillStyle = "#ffffff";
-      ctx.lineWidth = 2.5;
+      ctx.fillStyle = "rgba(183, 217, 251, 0.62)";
+      ctx.beginPath(); ctx.arc(0, 0, size + 5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "rgba(111, 155, 194, 0.95)";
+      ctx.lineWidth = 6;
       ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(-size, 0); ctx.lineTo(size, 0);
+      ctx.moveTo(0, -size); ctx.lineTo(0, size);
+      ctx.moveTo(-size * 0.7, -size * 0.7); ctx.lineTo(size * 0.7, size * 0.7);
+      ctx.moveTo(-size * 0.7, size * 0.7); ctx.lineTo(size * 0.7, -size * 0.7);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(249, 253, 255, 1)";
+      ctx.fillStyle = "#ffffff";
+      ctx.lineWidth = 3.2;
       ctx.beginPath();
       ctx.moveTo(-size, 0); ctx.lineTo(size, 0);
       ctx.moveTo(0, -size); ctx.lineTo(0, size);
@@ -590,14 +631,14 @@ export function renderTrailDemoFrame(
     ctx.restore();
   } else if (isSnow) {
     ctx.save();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.62)";
-    const snowOffset = (t * 110) % 120;
-    for (let sx = 0; sx < w; sx += 50) {
-      for (let sy = 0; sy < mapH; sy += 65) {
-        const y = (sy + snowOffset) % mapH;
-        const x = sx + Math.sin(t * 2.5 + sy * 0.1) * 20;
+    for (let sx = -20; sx < w + 20; sx += 42) {
+      for (let sy = -10; sy < mapH + 10; sy += 52) {
+        const phase = (sx * 0.13 + sy * 0.07) % 1;
+        const y = (sy + (t * (70 + (sx % 3) * 12)) % 120 + 120) % mapH;
+        const x = sx + Math.sin(t * 1.4 + sy * 0.035 + sx * 0.02) * 20;
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.44 + Math.abs(Math.sin(phase * Math.PI * 2)) * 0.3})`;
         ctx.beginPath();
-        ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        ctx.arc(x, y, 2 + Math.abs(Math.sin(phase * Math.PI * 2)) * 1.8, 0, Math.PI * 2);
         ctx.fill();
       }
     }

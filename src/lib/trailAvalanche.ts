@@ -147,13 +147,39 @@ const f1 = (n: number) => Math.round(n * 10) / 10;
  * <svg viewBox="0 0 1000 600">.
  */
 export function renderAvalancheSvg(front: number, t: number, danger: number): string {
-  const LAYERS = 9;
-  const bodyLen = 300 + danger * 70; // unidades do mapa atrás da frente
+  const LAYERS = 12;
+  const bodyLen = 340 + danger * 100;
   const lenFrac = bodyLen / CURIOUS_TRAIL_LENGTH;
-  const grow = 1 + danger * 0.3;
-  const ink = "#42608f";
+  const grow = 1.15 + danger * 0.45;
   const puffs: string[] = [];
 
+  // Gradientes e filtros de iluminação volumétrica para realismo visual
+  const defs = `<defs>
+    <radialGradient id="avCloudGrad" cx="38%" cy="32%" r="68%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="42%" stop-color="#f1f5f9"/>
+      <stop offset="78%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </radialGradient>
+    <radialGradient id="avMistGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="50%" stop-color="#e2e8f0" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="avIceGrad" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#bfdbfe"/>
+      <stop offset="85%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </radialGradient>
+    <linearGradient id="avWindStreak" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+      <stop offset="70%" stop-color="#e0f2fe" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#bae6fd" stop-opacity="0"/>
+    </linearGradient>
+  </defs>`;
+
+  // 1. Massa volumétrica de neve em camadas (de trás para a frente)
   for (let k = LAYERS - 1; k >= 0; k--) {
     const u = k / (LAYERS - 1);
     const fk = front - u * lenFrac;
@@ -161,65 +187,104 @@ export function renderAvalancheSvg(front: number, t: number, danger: number): st
     const tg = getTrailTangent(fk);
     const nx = -tg.y;
     const ny = tg.x;
-    const baseR = (32 + 18 * (1 - u)) * grow;
-    const alpha = 1 - u * 0.5;
-    const tone = u < 0.35 ? "#ffffff" : u < 0.65 ? "#eef3fb" : "#d4e0f1";
-    const shade = u < 0.5 ? "#a9bfdc" : "#93aacd";
-    const lateral = [-2, -1, 0, 1, 2];
-    let ring = "";
-    let fill = "";
-    let hi = "";
+    const baseR = (38 + 24 * (1 - u)) * grow;
+    const alpha = (0.75 + (1 - u) * 0.25) * (1 - u * 0.35);
+
+    // Múltiplos núcleos laterais para formar a crista larga da montanha
+    const lateral = [-3, -2, -1, 0, 1, 2, 3];
+    let layerBlobs = "";
     for (const m of lateral) {
-      const bob = Math.sin(t * 3.1 + k * 1.9 + m * 1.3);
-      const lat = m * 38 + Math.sin(t * 1.7 + k * 2.1 + m) * 5;
-      const rise = 10 + 7 * bob + (1 - u) * 6;
-      const x = c.x + nx * lat - tg.x * 4;
+      const bob = Math.sin(t * 3.6 + k * 1.7 + m * 1.1);
+      const churn = Math.cos(t * 2.8 + k * 2.3 + m * 1.4);
+      const lat = m * 32 + churn * 7;
+      const rise = 14 + 10 * bob + (1 - u) * 9;
+      const x = c.x + nx * lat - tg.x * 5;
       const y = c.y + ny * lat - rise;
-      const r = baseR * (0.82 + 0.18 * Math.sin(t * 2.6 + k + m * 2.2)) * (m === 0 ? 1.12 : 1 - Math.abs(m) * 0.1);
-      ring += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r + 0.9)}"/>`;
-      fill += `<circle cx="${f1(x)}" cy="${f1(y + r * 0.1)}" r="${f1(r - 0.9)}"/>`;
-      hi += `<circle cx="${f1(x - r * 0.22)}" cy="${f1(y - r * 0.3)}" r="${f1(r * 0.62)}"/>`;
+      const r = baseR * (0.85 + 0.18 * Math.sin(t * 2.9 + k + m * 1.8)) * (m === 0 ? 1.18 : 1 - Math.abs(m) * 0.08);
+
+      // Sombra profunda na base da onda de neve
+      layerBlobs += `<circle cx="${f1(x + 2)}" cy="${f1(y + r * 0.22)}" r="${f1(r * 1.04)}" fill="#475569" opacity="0.35"/>`;
+      // Corpo volumétrico da nuvem de neve
+      layerBlobs += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="url(#avCloudGrad)"/>`;
+      // Crista de espuma e pó iluminado pelo sol
+      layerBlobs += `<circle cx="${f1(x - r * 0.24)}" cy="${f1(y - r * 0.28)}" r="${f1(r * 0.58)}" fill="#ffffff" opacity="${f1(0.7 + (1 - u) * 0.3)}"/>`;
     }
-    puffs.push(
-      `<g opacity="${f1(alpha)}"><g fill="${ink}">${ring}</g><g fill="${shade}">${fill}</g><g fill="${tone}">${hi}</g></g>`
-    );
+
+    puffs.push(`<g opacity="${f1(alpha)}">${layerBlobs}</g>`);
   }
-  const under = puffs.join("");
+  const snowBody = puffs.join("");
 
-  // base escura/ombra no chão sob a massa de neve
-  const fMid = front - lenFrac * 0.4;
+  // 2. Nuvem de pó aerossol (nuvem de poeira branca que envolve e precede a onda)
+  let powderMist = "";
+  for (let i = 0; i < 10; i++) {
+    const u = (i / 10) * 0.75;
+    const fk = front - u * lenFrac + Math.sin(t * 1.8 + i) * 0.005;
+    const c = getTrailPointExtended(fk);
+    const tg = getTrailTangent(fk);
+    const lat = Math.sin(t * 2.1 + i * 1.9) * (45 + i * 5);
+    const mx = c.x - tg.y * lat + tg.x * (10 + i * 4);
+    const my = c.y + tg.x * lat - 22 - (1 - u) * 20 - Math.sin(t * 3.2 + i) * 8;
+    const mr = (45 + i * 6) * grow;
+    powderMist += `<circle cx="${f1(mx)}" cy="${f1(my)}" r="${f1(mr)}" fill="url(#avMistGrad)"/>`;
+  }
+
+  // 3. Sombra dinâmica no chão da montanha sob o peso da avalanche
+  const fMid = front - lenFrac * 0.42;
   const mid = getTrailPointExtended(fMid);
-  const shadow = `<ellipse cx="${f1(mid.x)}" cy="${f1(mid.y + 8)}" rx="${f1(bodyLen * 0.5)}" ry="${f1(24 + danger * 8)}" fill="#1e293b" opacity="0.22" transform="rotate(${f1((Math.atan2(getTrailTangent(fMid).y, getTrailTangent(fMid).x) * 180) / Math.PI)} ${f1(mid.x)} ${f1(mid.y + 8)})"/>`;
+  const rotShadow = (Math.atan2(getTrailTangent(fMid).y, getTrailTangent(fMid).x) * 180) / Math.PI;
+  const shadow = `<ellipse cx="${f1(mid.x)}" cy="${f1(mid.y + 10)}" rx="${f1(bodyLen * 0.52)}" ry="${f1(32 + danger * 12)}" fill="#0f172a" opacity="0.32" transform="rotate(${f1(rotShadow)} ${f1(mid.x)} ${f1(mid.y + 10)})"/>`;
 
-  // pedras e blocos de gelo rolando
+  // 4. Blocos de gelo facetados e rochas de neve rolando e capotando com sombras 3D
   let debris = "";
-  for (let i = 0; i < 9; i++) {
-    const u = 0.04 + (i / 9) * 0.8;
-    const fk = front - u * lenFrac + Math.sin(t * 2 + i) * 0.003;
+  const debrisCount = 16 + Math.round(danger * 8);
+  for (let i = 0; i < debrisCount; i++) {
+    const u = 0.02 + (i / debrisCount) * 0.85;
+    const fk = front - u * lenFrac + Math.sin(t * 2.2 + i) * 0.004;
     const c = getTrailPointExtended(fk);
     const tg = getTrailTangent(fk);
     const side = i % 2 ? 1 : -1;
-    const lat = side * (28 + ((i * 17) % 31));
+    const lat = side * (16 + ((i * 19) % 52));
+    const bounce = Math.abs(Math.sin(t * 6.5 + i * 2.1)) * 14;
     const x = c.x - tg.y * lat;
-    const y = c.y + tg.x * lat - 8 - Math.abs(Math.sin(t * 5 + i * 1.7)) * 9;
-    const rot = t * (140 + i * 37) * (i % 2 ? 1 : -1);
-    const sz = 3 + (i % 3) * 1.3;
-    const ice = i % 3 === 0;
-    debris += `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(rot)})"><polygon points="${f1(-sz)},${f1(-sz * 0.2)} ${f1(-sz * 0.3)},${f1(-sz)} ${f1(sz)},${f1(-sz * 0.4)} ${f1(sz * 0.6)},${f1(sz)} ${f1(-sz * 0.7)},${f1(sz * 0.7)}" fill="${ice ? "#cfe8ff" : "#6b6f7a"}" stroke="#2b3550" stroke-width="0.9"/></g>`;
+    const y = c.y + tg.x * lat - 8 - bounce;
+    const rot = t * (190 + i * 45) * (i % 2 ? 1 : -1);
+    const sz = 4.2 + (i % 4) * 2.2;
+    const isIce = i % 2 === 0;
+
+    debris += `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(rot)})">
+      <ellipse cx="0" cy="${f1(sz * 0.9)}" rx="${f1(sz * 1.1)}" ry="${f1(sz * 0.45)}" fill="#0f172a" opacity="0.25"/>
+      <polygon points="${f1(-sz)},${f1(-sz * 0.3)} ${f1(-sz * 0.2)},${f1(-sz)} ${f1(sz * 0.9)},${f1(-sz * 0.4)} ${f1(sz * 0.7)},${f1(sz * 0.9)} ${f1(-sz * 0.6)},${f1(sz * 0.8)}" fill="${isIce ? "url(#avIceGrad)" : "#e2e8f0"}" stroke="${isIce ? "#3b82f6" : "#64748b"}" stroke-width="1.2"/>
+      <line x1="${f1(-sz * 0.2)}" y1="${f1(-sz * 0.8)}" x2="${f1(sz * 0.4)}" y2="${f1(sz * 0.2)}" stroke="#ffffff" stroke-width="1.4" opacity="0.8"/>
+    </g>`;
   }
 
-  // rajadas de neve à frente da onda
+  // 5. Rajadas de vento frontal, esteiras de velocidade e jato de neve à frente da onda
   const fc = getTrailPointExtended(front);
   const ft = getTrailTangent(front);
   let spray = "";
-  for (let i = 0; i < 12; i++) {
-    const ph = (t * (0.9 + (i % 4) * 0.25) + i * 0.37) % 1;
-    const ahead = 6 + ph * 40;
-    const lat = ((i * 29) % 70) - 35;
+  const sprayCount = 20 + Math.round(danger * 12);
+  for (let i = 0; i < sprayCount; i++) {
+    const ph = (t * (1.1 + (i % 5) * 0.35) + i * 0.21) % 1;
+    const ahead = 8 + ph * (55 + danger * 25);
+    const lat = ((i * 31) % 90) - 45;
     const x = fc.x + ft.x * ahead - ft.y * lat;
-    const y = fc.y + ft.y * ahead + ft.x * lat - 14 - ph * 16;
-    spray += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(1.6 + (1 - ph) * 2.6)}" fill="#ffffff" opacity="${f1((1 - ph) * 0.9)}"/>`;
+    const y = fc.y + ft.y * ahead + ft.x * lat - 12 - ph * 22;
+    const r = (2.2 + (1 - ph) * 3.8);
+    spray += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#ffffff" opacity="${f1((1 - ph) * 0.95)}"/>`;
   }
 
-  return `<g class="trail-avalanche">${shadow}${under}${debris}${spray}</g>`;
+  // Linhas de vento rasante ao longo do solo
+  let windStreaks = "";
+  for (let i = 0; i < 6; i++) {
+    const ph = (t * 2.2 + i * 0.38) % 1;
+    const ahead = ph * 75;
+    const lat = (i - 2.5) * 18;
+    const sx = fc.x + ft.x * ahead - ft.y * lat;
+    const sy = fc.y + ft.y * ahead + ft.x * lat - 6;
+    const ex = sx + ft.x * 28;
+    const ey = sy + ft.y * 28;
+    windStreaks += `<line x1="${f1(sx)}" y1="${f1(sy)}" x2="${f1(ex)}" y2="${f1(ey)}" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" opacity="${f1((1 - ph) * 0.75)}"/>`;
+  }
+
+  return `<g class="trail-avalanche">${defs}${shadow}${powderMist}${snowBody}${debris}${windStreaks}${spray}</g>`;
 }

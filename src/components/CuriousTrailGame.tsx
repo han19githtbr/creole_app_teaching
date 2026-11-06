@@ -569,13 +569,30 @@ export function CuriousTrailGame({ items, initialTheme }: CuriousTrailGameProps)
     setTrailProgress(newProgress);
 
     if (isLastLevel) {
-      // O aluno entra feliz na casinha do cume
-      setEnterHouse(true);
-      soundEffects.playVictoryFanfare();
-      setConfetti(true);
-      setTimeout(() => setPhase("summit_victory"), 2800);
+      // 1. O aluno primeiro caminha pela trilha até a casinha
+      setIsCheering(false);
+      setEnterHouse(false);
+
+      // 2. Ao chegar no cume (~1.8s de caminhada), comemora alegremente no ponto de chegada!
+      setTimeout(() => {
+        setIsCheering(true);
+        soundEffects.playVictoryFanfare();
+        soundEffects.playReward();
+        setConfetti(true);
+
+        // 3. Após comemorar por 2.5s no ponto de chegada, a casinha acende a luz e ele entra feliz!
+        setTimeout(() => {
+          setEnterHouse(true);
+
+          // 4. Após entrar na casa (1.8s), exibe o painel de vitória do cume
+          setTimeout(() => {
+            setPhase("summit_victory");
+          }, 1800);
+        }, 2500);
+      }, 1800);
     } else {
       soundEffects.playLevelUp();
+      soundEffects.playReward();
       setConfetti(true);
       setPhase("level_complete");
     }

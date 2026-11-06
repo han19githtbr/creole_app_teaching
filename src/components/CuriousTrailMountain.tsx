@@ -65,17 +65,17 @@ export const TRAIL_SCENE_SRC = "/trilha/mata-trilha.jpg";
 const clampN = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 
-/** Exibe a ilustração isolada do objeto durante a pergunta. */
+/** Exibe a ilustração do objeto durante a pergunta com enquadramento completo garantido. */
 function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean }) {
-  // A miniatura circular ainda usa a cena; a pergunta mostra a ilustração isolada.
-  const cw = Math.min(item.w, item.h) * 0.5;
+  // Margem generosa de enquadramento (75% da dimensão mínima para nunca cortar objetos grandes)
+  const cw = Math.min(item.w, item.h) * 0.75;
   const x0 = full ? 0 : clampN(item.arrow.x - cw / 2, 0, item.w - cw);
   const y0 = full ? 0 : clampN(item.arrow.y - cw / 2, 0, item.h - cw);
   const vw = full ? item.w : cw;
   const vh = full ? item.h : cw;
   const arrowScale = 0.55;
   const isolatedSource = /^[a-z0-9-]+$/.test(item.id) ? `/ghibli/trail-objects/${item.id}.svg` : null;
-  const source = full && item.scene.startsWith("/ghibli/") && isolatedSource ? isolatedSource : item.scene;
+  const source = full && isolatedSource ? isolatedSource : item.scene;
   return (
     <svg
       viewBox={`${x0} ${y0} ${vw} ${vh}`}
@@ -84,7 +84,7 @@ function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: 
       className={cn("block bg-white", full ? "rounded-xl" : "rounded-full", ring)}
       aria-hidden
     >
-      <image href={source} x={0} y={0} width={item.w} height={item.h} preserveAspectRatio={full ? "xMidYMid meet" : "none"} />
+      <image href={source} x={0} y={0} width={item.w} height={item.h} preserveAspectRatio="xMidYMid meet" />
       {!full && (
         <g className="cq-sway">
           <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(${arrowScale})`}>
@@ -322,17 +322,37 @@ export function CuriousTrailMountain({
         let qy = -1;
         if (L.focus != null) {
           const q = path.getPointAtLength(clampN(L.focus, 0, L.total));
-          fx = sx + ((q.x / VB_W) * WW - sx) * 0.45;
-          fy = sy + ((q.y / VB_H) * WH - sy) * 0.45;
+          const qx = (q.x / VB_W) * WW;
           qy = (q.y / VB_H) * WH;
+          // Quando um objeto está em jogo, a câmera centraliza no objeto para visualização total
+          fx = sx + (qx - sx) * 0.75;
+          fy = sy + (qy - sy) * 0.75;
         }
         if (!L.playing) fy += (panRef.current / VB_H) * WH;
         const s = L.playing ? PLAY_ZOOM : 1;
-        const dtx = clampN(W * 0.5 - fx * s, W - WW * s, 0);
-        let dty = clampN(H * (L.playing ? 0.42 : 0.5) - fy * s, H - WH * s, 0);
-        if (L.playing && L.cardH > 0 && qy >= 0) {
+        let dtx = clampN(W * 0.5 - fx * s, W - WW * s, 0);
+        let dty = clampN(H * (L.playing ? 0.44 : 0.5) - fy * s, H - WH * s, 0);
+
+        // Garante que o card do objeto nunca saia pelas bordas da tela nem colida com o dock inferior
+        if (L.playing && L.focus != null && qy >= 0) {
+          const q = path.getPointAtLength(clampN(L.focus, 0, L.total));
+          const qScreenX = dtx + ((q.x / VB_W) * WW) * s;
+          const cardHalfW = (L.cardH > 0 ? L.cardH * 0.55 : 100) + 20;
+          if (qScreenX - cardHalfW < 16) {
+            dtx = Math.min(0, dtx + (16 - (qScreenX - cardHalfW)));
+          } else if (qScreenX + cardHalfW > W - 16) {
+            dtx = Math.max(W - WW * s, dtx - ((qScreenX + cardHalfW) - (W - 16)));
+          }
+
           const ey = dty + qy * s;
-          if (ey < L.cardH) dty = Math.min(0, dty + (L.cardH - ey));
+          const topMargin = Math.max(120, L.cardH + 16);
+          if (ey < topMargin) {
+            dty = Math.min(0, dty + (topMargin - ey));
+          }
+          const bottomMargin = H - 180;
+          if (ey > bottomMargin) {
+            dty = Math.max(H - WH * s, dty - (ey - bottomMargin));
+          }
         }
         const k = 1 - Math.exp(-dt * 4.5);
         cam.s += (s - cam.s) * k;
@@ -619,32 +639,42 @@ export function CuriousTrailMountain({
           className="absolute z-20 pointer-events-none"
           style={{ left: `${hutPct.x}%`, top: `${hutPct.y}%`, transform: `translate(-50%, -100%) scale(${inv})`, transformOrigin: "50% 100%" }}
         >
-          <span className="mb-6 block whitespace-nowrap rounded-full border border-amber-300/70 bg-[#14193d]/90 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-300 shadow-lg">
+          <span className="mb-2 block whitespace-nowrap rounded-full border border-amber-300/70 bg-[#14193d]/90 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-300 shadow-lg">
             🏠 Casinha do Cume
           </span>
         </div>
         <div
           className={cn("absolute z-[21] pointer-events-none rounded-full transition-opacity duration-700", enterHouse || summitDone ? "opacity-100 trail-house-glow" : "opacity-0")}
-          style={{ left: `${doorPct.x}%`, top: `${doorPct.y}%`, width: 46, height: 46, transform: `translate(-50%, -60%) scale(${inv})`, background: "radial-gradient(circle, rgba(255,226,140,0.95) 0%, rgba(255,200,90,0.5) 40%, rgba(255,200,90,0) 70%)" }}
+          style={{ left: `${doorPct.x}%`, top: `${doorPct.y}%`, width: 44, height: 44, transform: `translate(-50%, -50%) scale(${inv})`, background: "radial-gradient(circle, rgba(255,226,140,0.95) 0%, rgba(255,200,90,0.5) 40%, rgba(255,200,90,0) 70%)" }}
         />
 
         {/* ---------- OBJETOS DO NÍVEL, NO PRÓPRIO MAPA ---------- */}
         {playing && total > 0 && hasCurrent && curItem && (() => {
-          const pos = pointPct(elemLen(elementIndex));
-          if (!pos) return null;
-          const below = (pos.y / 100) * VB_H < 320;
+          const rawPos = pointPct(elemLen(elementIndex));
+          if (!rawPos) return null;
+
+          // Clamping horizontal da posição do card para nunca vazar das bordas laterais
+          const cardWorldW = (cardPx * VB_W) / (stage.WW || VB_W);
+          const minWorldX = cardWorldW * 0.5 + 24;
+          const maxWorldX = VB_W - cardWorldW * 0.5 - 24;
+          const rawWorldX = (rawPos.x / 100) * VB_W;
+          const clampedWorldX = clampN(rawWorldX, minWorldX, maxWorldX);
+          const cardLeftPct = (clampedWorldX / VB_W) * 100;
+
+          const rawWorldY = (rawPos.y / 100) * VB_H;
+          const below = rawWorldY < 360;
           const revealed = roundState === "correct" || roundState === "reveal";
 
           return (
             <div
               key={curItem.id}
-              className="absolute z-40 flex flex-col items-center"
+              className="absolute z-40 flex flex-col items-center pointer-events-auto"
               style={{
-                left: `${pos.x}%`,
-                top: `${pos.y}%`,
+                left: `${cardLeftPct}%`,
+                top: `${rawPos.y}%`,
                 transform: below
-                  ? `translate(-50%, 0) translate(0, calc(10px * ${inv})) scale(${inv})`
-                  : `translate(-50%, -100%) translate(0, calc(-12px * ${inv})) scale(${inv})`,
+                  ? `translate(-50%, 0) translate(0, calc(12px * ${inv})) scale(${inv})`
+                  : `translate(-50%, -100%) translate(0, calc(-14px * ${inv})) scale(${inv})`,
                 transformOrigin: below ? "50% 0%" : "50% 100%",
               }}
             >
@@ -680,10 +710,10 @@ export function CuriousTrailMountain({
         <div ref={studentRef} className="absolute z-[35] pointer-events-none" style={{ left: "0%", top: "0%" }}>
           <div
             style={{
-              transform: `translate(-50%, -88%) scale(calc(${inv} * ${enterHouse ? 0.45 : 1}))`,
+              transform: `translate(-50%, -88%) scale(calc(${inv} * ${enterHouse ? 0.35 : 1})) ${enterHouse ? "translateY(-14px)" : ""}`,
               transformOrigin: "50% 88%",
               opacity: enterHouse ? 0 : 1,
-              transition: "opacity 1.1s ease-in 0.5s, transform 1.4s ease-in",
+              transition: "opacity 1.2s ease-in 0.4s, transform 1.5s ease-in",
             }}
           >
             <CuriousTrailStudent
@@ -697,6 +727,17 @@ export function CuriousTrailMountain({
               incline={studentIncline}
             />
           </div>
+          {/* Balão comemorativo de vitória quando chega ao topo e comemora */}
+          {isCheering && currentLevel === 7 && !enterHouse && (
+            <div
+              className="absolute left-1/2 bottom-[95%] -translate-x-1/2 mb-2 flex items-center gap-1.5 whitespace-nowrap rounded-2xl border-2 border-amber-300 bg-slate-900/95 px-3 py-1.5 text-xs font-black text-amber-300 shadow-2xl animate-bounce"
+              style={{ transform: `translateX(-50%) scale(${inv})`, transformOrigin: "50% 100%" }}
+            >
+              <span>🎉</span>
+              <span>Victoire! J&apos;ai réussi!</span>
+              <span>🏔️✨</span>
+            </div>
+          )}
         </div>
       </div>
 

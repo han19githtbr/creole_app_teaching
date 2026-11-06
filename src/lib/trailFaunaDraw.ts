@@ -168,6 +168,210 @@ function drawRigged(
   ctx.restore();
 }
 
+/**
+ * Desenha pássaros em voo real com batimento de asas fluido, corpo aerodinâmico e garras recolhidas
+ * (sem nenhum galho preso às patas, corrigindo o efeito de pássaro pausado).
+ */
+function drawFlyingBird(
+  ctx: CanvasRenderingContext2D,
+  c: Critter,
+  spId: string,
+  h: number,
+  w: number,
+  weather: TrailWeather,
+  t: number
+) {
+  const flap = Math.sin(c.phase);
+  const flapWing = flap * 0.72;
+  const tipFlex = Math.cos(c.phase) * 0.22;
+  const bob = -Math.abs(flap) * (h * 0.06);
+
+  ctx.save();
+  ctx.translate(0, bob);
+
+  let bodyColor = "#111827";
+  let wingFarColor = "#0f172a";
+  let wingNearColor = "#1e293b";
+  let featherTone = "#334155";
+  let beakColor = "#f59e0b";
+  let accentColor = "#ef4444";
+  let chestColor = "#f8fafc";
+
+  if (spId === "tucano") {
+    bodyColor = "#090d16";
+    wingFarColor = "#0b1220";
+    wingNearColor = "#1e293b";
+    featherTone = "#3b82f6";
+    beakColor = "#f59e0b";
+    accentColor = "#dc2626";
+    chestColor = "#fef08a";
+  } else if (spId === "coruja") {
+    bodyColor = "#78350f";
+    wingFarColor = "#572407";
+    wingNearColor = "#92400e";
+    featherTone = "#b45309";
+    beakColor = "#d97706";
+    accentColor = "#fef3c7";
+    chestColor = "#fef3c7";
+  } else if (spId === "picapau") {
+    bodyColor = "#18181b";
+    wingFarColor = "#09090b";
+    wingNearColor = "#27272a";
+    featherTone = "#e4e4e7";
+    beakColor = "#71717a";
+    accentColor = "#dc2626";
+    chestColor = "#f4f4f5";
+  }
+
+  // 1. Asa traseira (por trás do corpo)
+  ctx.save();
+  ctx.translate(-w * 0.08, -h * 0.52);
+  ctx.rotate(-flapWing * 0.85 - 0.2);
+  ctx.fillStyle = wingFarColor;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.quadraticCurveTo(-w * 0.45, -h * (0.65 - tipFlex), -w * 0.75, -h * (0.5 + flapWing * 0.3));
+  ctx.quadraticCurveTo(-w * 0.55, -h * 0.1, -w * 0.15, -h * 0.05);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // 2. Cauda aerodinâmica
+  ctx.save();
+  ctx.translate(-w * 0.36, -h * 0.38);
+  ctx.rotate(0.12 - flap * 0.05);
+  ctx.fillStyle = bodyColor;
+  ctx.beginPath();
+  ctx.moveTo(0, -h * 0.08);
+  ctx.lineTo(-w * 0.35, -h * 0.14);
+  ctx.lineTo(-w * 0.38, h * 0.04);
+  ctx.lineTo(0, h * 0.04);
+  ctx.closePath();
+  ctx.fill();
+  if (spId === "tucano") {
+    ctx.fillStyle = "#ef4444";
+    ctx.beginPath();
+    ctx.arc(-w * 0.04, 0, h * 0.07, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // 3. Corpo e cabeça horizontais / aerodinâmicos
+  ctx.save();
+  ctx.translate(0, -h * 0.46);
+
+  ctx.fillStyle = bodyColor;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, w * 0.32, h * 0.24, 0.08, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = chestColor;
+  ctx.beginPath();
+  ctx.ellipse(w * 0.14, -h * 0.02, w * 0.15, h * 0.18, 0.25, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Patas recolhidas (sem galho!)
+  ctx.fillStyle = "#334155";
+  ctx.beginPath();
+  ctx.ellipse(-w * 0.04, h * 0.18, w * 0.06, h * 0.04, -0.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Olho
+  ctx.fillStyle = "#38bdf8";
+  ctx.beginPath();
+  ctx.arc(w * 0.22, -h * 0.09, h * 0.048, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#0f172a";
+  ctx.beginPath();
+  ctx.arc(w * 0.23, -h * 0.09, h * 0.024, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Crista (pica-pau)
+  if (spId === "picapau") {
+    ctx.fillStyle = accentColor;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.15, -h * 0.16);
+    ctx.lineTo(w * 0.05, -h * 0.32);
+    ctx.lineTo(w * 0.25, -h * 0.15);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Bico característico projetado à frente
+  if (spId === "tucano") {
+    ctx.fillStyle = beakColor;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.26, -h * 0.14);
+    ctx.quadraticCurveTo(w * 0.52, -h * 0.2, w * 0.68, -h * 0.02);
+    ctx.quadraticCurveTo(w * 0.48, h * 0.05, w * 0.26, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = accentColor;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.54, -h * 0.14);
+    ctx.quadraticCurveTo(w * 0.64, -h * 0.12, w * 0.68, -h * 0.02);
+    ctx.quadraticCurveTo(w * 0.58, 0, w * 0.54, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#090d16";
+    ctx.beginPath();
+    ctx.arc(w * 0.66, -h * 0.02, h * 0.028, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (spId === "coruja") {
+    ctx.fillStyle = beakColor;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.26, -h * 0.07);
+    ctx.lineTo(w * 0.35, -h * 0.03);
+    ctx.lineTo(w * 0.26, 0);
+    ctx.closePath();
+    ctx.fill();
+  } else {
+    ctx.fillStyle = beakColor;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.26, -h * 0.08);
+    ctx.lineTo(w * 0.52, -h * 0.05);
+    ctx.lineTo(w * 0.26, -h * 0.02);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  ctx.restore();
+
+  // 4. Asa dianteira com batimento de asas
+  ctx.save();
+  ctx.translate(w * 0.02, -h * 0.48);
+  ctx.rotate(flapWing + 0.1);
+  ctx.fillStyle = wingNearColor;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.quadraticCurveTo(w * 0.25, -h * (0.6 + tipFlex), -w * 0.42, -h * (0.68 + flapWing * 0.2));
+  ctx.quadraticCurveTo(-w * 0.28, -h * 0.1, -w * 0.08, 0);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = featherTone;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(-w * 0.1, -h * 0.3);
+  ctx.lineTo(-w * 0.36, -h * (0.62 + flapWing * 0.18));
+  ctx.moveTo(-w * 0.05, -h * 0.22);
+  ctx.lineTo(-w * 0.28, -h * (0.55 + flapWing * 0.15));
+  ctx.stroke();
+  ctx.restore();
+
+  // 5. Linhas de ar sutis na ponta das asas
+  if (Math.abs(flap) > 0.4) {
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(-w * 0.45, -h * 0.8 + flapWing * h * 0.2);
+    ctx.lineTo(-w * 0.7, -h * 0.75 + flapWing * h * 0.2);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
 function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAssets, weather: TrailWeather, t: number) {
   const sp = c.spec;
   const base = assets.sprites[sp.id];
@@ -254,10 +458,15 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   ctx.rotate(rot * RAD * look);
   ctx.scale(look * sp.face * sx, sy);
   const rigAtlas = assets.rigs[sp.id];
-  if (rigAtlas && FAUNA_RIGS[sp.id] && sp.kind === "ground") {
+  if (c.state === "fly" && sp.kind === "perch" && !sp.hangs) {
+    drawFlyingBird(ctx, c, sp.id, h, w, weather, t);
+  } else if (rigAtlas && FAUNA_RIGS[sp.id] && sp.kind === "ground") {
     drawRigged(ctx, graded(`rig:${sp.id}`, rigAtlas, weather), sp.id, h, sp.face, c, t, moving, Boolean(sp.hop));
-  } else if (sp.hangs) ctx.drawImage(img, -w / 2, -h * 0.12, w, h);
-  else ctx.drawImage(img, -w / 2, -h, w, h);
+  } else if (sp.hangs) {
+    ctx.drawImage(img, -w / 2, -h * 0.05, w, h);
+  } else {
+    ctx.drawImage(img, -w / 2, -h, w, h);
+  }
   ctx.restore();
 
   if (c.mood !== "hidden") {
@@ -268,11 +477,57 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
 
 /** Desenha bichos e retalhos de folhagem (os bichos passam ATRÁS dos retalhos quando estão mais ao fundo). */
 export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: FaunaAssets, weather: TrailWeather, t: number) {
+  const windSpeed = weather === "snow" ? 2.6 : weather === "rain" ? 2.1 : 1.4;
+  const windAmp = (weather === "snow" ? 0.045 : weather === "rain" ? 0.034 : 0.02) * (1 + Math.sin(t * 0.4) * 0.35);
+
   for (const it of fauna.drawList()) {
     if (it.patch !== undefined) {
       const p = FOLIAGE_PATCHES[it.patch];
       const img = assets.patches[it.patch];
-      if (img) ctx.drawImage(graded(`patch${it.patch}`, img, weather), p.x, p.y, p.w, p.h);
+      if (!img) continue;
+
+      // Agitação da copa quando há bicho pousado, escondido ou passando no galho
+      let rustle = 0;
+      for (const c of fauna.critters) {
+        if (c.patch === it.patch) {
+          const moving = c.state === "move" || c.state === "fly" || c.react > 0;
+          rustle += Math.sin(t * 26 + c.seed) * (moving ? 0.038 : 0.012);
+        } else if (Math.hypot(c.x - p.cx, c.y - p.cy) < Math.max(p.rx, p.ry) * 1.1) {
+          rustle += Math.sin(t * 22 + c.seed) * 0.022;
+        }
+      }
+
+      // Vento contínuo + chuva + tremor de gotas + agitação dos bichos
+      const sway = Math.sin(t * windSpeed + it.patch * 1.35) * windAmp +
+                   Math.sin(t * (windSpeed * 1.9) + it.patch * 0.7) * (windAmp * 0.28) +
+                   rustle;
+      const quiverY = weather === "rain" ? Math.sin(t * 36 + it.patch * 5.3) * 0.75 : 0;
+      const skewX = Math.sin(t * (windSpeed * 0.8) + it.patch) * 0.012;
+
+      ctx.save();
+      ctx.translate(p.cx, p.base);
+      ctx.rotate(sway);
+      ctx.scale(1.025, 1.025);
+      ctx.transform(1, 0, skewX, 1, 0, quiverY);
+      ctx.translate(-p.cx, -p.base);
+      ctx.drawImage(graded(`patch${it.patch}`, img, weather), p.x, p.y, p.w, p.h);
+
+      // Folhas ou flocos caindo quando a copa é agitada
+      if (Math.abs(rustle) > 0.018 || Math.abs(sway) > 0.04) {
+        for (let i = 0; i < 2; i++) {
+          const ph = (t * 0.7 + i * 0.5 + it.patch * 0.3) % 1;
+          const lx = p.cx + Math.sin(t * 3 + i) * p.rx * 0.6;
+          const ly = p.cy + ph * p.ry * 1.6;
+          ctx.save();
+          ctx.fillStyle = weather === "snow" ? "#ffffff" : weather === "rain" ? "#2d5a3c" : "#65a30d";
+          ctx.beginPath();
+          ctx.ellipse(lx, ly, weather === "snow" ? 2.5 : 3.5, weather === "snow" ? 2.5 : 1.8, ph * 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      ctx.restore();
     } else if (it.critter) {
       drawCritter(ctx, it.critter, assets, weather, t);
     }

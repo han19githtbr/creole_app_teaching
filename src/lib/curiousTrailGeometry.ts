@@ -21,7 +21,7 @@ const RAW_POINTS: [number, number][] = [
   [260, 1238], [160, 1212], [112, 1172], [140, 1120], [240, 1092], [350, 1072], [460, 1052], [560, 1030], [585, 990],
   [530, 970], [440, 950], [330, 925], [230, 895], [160, 862], [165, 820], [230, 790], [300, 765], [400, 748],
   [520, 728], [590, 695], [520, 662], [400, 645], [300, 628], [245, 600], [236, 540], [230, 470], [240, 400],
-  [248, 330], [256, 268], [295, 238], [350, 212], [392, 192], [382, 168], [410, 150], [421, 140],
+  [248, 330], [256, 268], [295, 238], [350, 212], [392, 192], [382, 168], [400, 158],
 ];
 
 const POINTS: TrailPoint[] = RAW_POINTS.map(([x, y]) => ({ x: x * K, y: y * K }));
@@ -132,5 +132,5 @@ export const CAMP_FRACS: number[] = (() => {
 export const MARKER_FRACS: number[] = CAMP_FRACS.slice(0, 7);
 
 /** Casinha do topo (porta), em unidades do mundo. */
-export const HUT_DOOR: TrailPoint = { x: 421 * K, y: 134 * K };
-export const HUT_POSITION: TrailPoint = { x: 420 * K, y: 128 * K };
+export const HUT_DOOR: TrailPoint = { x: 412 * K, y: 145 * K };
+export const HUT_POSITION: TrailPoint = { x: 418 * K, y: 110 * K };

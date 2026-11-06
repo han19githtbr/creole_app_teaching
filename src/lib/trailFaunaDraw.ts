@@ -247,10 +247,12 @@ function drawRigged(
     ctx.drawImage(atlas, p.sx, p.sy, p.w, p.h, p.x, p.y, p.w, p.h);
     ctx.restore();
   };
-  // por trás do corpo: pata/rabo do grupo B primeiro, depois o corpo, depois as patas A e a cabeça
+  // Mantém as patas distantes atrás do corpo; depois desenha o corpo e as patas próximas à frente.
+  // Desenhar os dois grupos antes do corpo escondia parte das patas dianteiras e fazia alguns bichos
+  // parecerem ter apenas três patas.
   for (const p of rig.parts) if ((p.kind === "leg" && p.group === "B") || p.kind === "tail") draw(p);
-  for (const p of rig.parts) if (p.kind === "leg" && p.group === "A") draw(p);
   if (bodyPart) draw(bodyPart);
+  for (const p of rig.parts) if (p.kind === "leg" && p.group === "A") draw(p);
   for (const p of rig.parts) if (p.kind === "head") draw(p);
   ctx.restore();
 }

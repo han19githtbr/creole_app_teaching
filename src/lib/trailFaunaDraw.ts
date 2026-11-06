@@ -6,6 +6,7 @@
 import type { TrailWeather } from "@/lib/curiousTrailData";
 import { FAUNA_IDS, type Critter, type Fauna, type Mood } from "@/lib/trailFauna";
 import { FOLIAGE_PATCHES } from "@/lib/trailFaunaPatches";
+import { FAUNA_RIGS, type RigPart } from "@/lib/trailFaunaRig";
 import { gradeImage } from "@/lib/trailGrade";
 
 export const FAUNA_BASE = "/trilha/fauna";
@@ -13,6 +14,8 @@ export const PATCH_BASE = "/trilha/patches";
 
 export interface FaunaAssets {
   sprites: Record<string, HTMLImageElement>;
+  /** atlas das partes (corpo, patas, rabo, cabeça) dos bichos que andam */
+  rigs: Record<string, HTMLImageElement>;
   patches: HTMLImageElement[];
 }
 
@@ -33,8 +36,14 @@ export async function loadFaunaAssets(): Promise<FaunaAssets> {
       sprites[id] = await loadImg(`${FAUNA_BASE}/${id}.png`);
     })
   );
+  const rigs: Record<string, HTMLImageElement> = {};
+  await Promise.all(
+    Object.keys(FAUNA_RIGS).map(async (id) => {
+      rigs[id] = await loadImg(`${FAUNA_BASE}/rig/${id}.png`);
+    })
+  );
   const patches = await Promise.all(FOLIAGE_PATCHES.map((_, i) => loadImg(`${PATCH_BASE}/p${i}.png`)));
-  return { sprites, patches };
+  return { sprites, rigs, patches };
 }
 
 const gradeCache = new Map<string, CanvasImageSource>();
@@ -93,6 +102,72 @@ function drawMoodIcon(ctx: CanvasRenderingContext2D, mood: Mood, x: number, y: n
   ctx.restore();
 }
 
+/**
+ * Desenha um bicho "articulado": patas em passada alternada (trote diagonal), rabo abanando e cabeça
+ * balançando. As partes giram em torno das suas articulações (quadril, base do rabo, pescoço).
+ * `stride` = fase da passada; `moving` = está andando; `hopping` = anda aos pulos (sapo, cutia).
+ */
+function drawRigged(
+  ctx: CanvasRenderingContext2D,
+  atlas: CanvasImageSource,
+  id: string,
+  h: number,
+  nativeFace: 1 | -1,
+  c: Critter,
+  t: number,
+  moving: boolean,
+  hopping: boolean
+) {
+  const rig = FAUNA_RIGS[id];
+  const k = h / rig.ih;
+  const run = c.mood === "flee" || c.mood === "lunge" ? 1.45 : 1;
+  const hop = hopping ? Math.abs(Math.sin(c.phase)) : 0;
+  const bodyPart = rig.parts.find((p) => p.kind === "body");
+  const angleOf = (p: RigPart): { a: number; dy: number } => {
+    if (p.kind === "leg") {
+      if (hopping) {
+        // pulo: as patas se esticam para trás na decolagem e se recolhem no ar
+        const back = nativeFace * 30 * hop;
+        const tuck = nativeFace * -8 * (1 - hop);
+        return { a: moving ? back + tuck : 0, dy: 0 };
+      }
+      if (!moving) return { a: 0, dy: 0 };
+      const ph = c.phase + (p.group === "B" ? Math.PI : 0);
+      const swing = -nativeFace * 21 * run * Math.sin(ph);
+      // a pata que avança sai do chão
+      const lift = Math.max(0, Math.cos(ph)) * p.h * 0.09 * run;
+      return { a: swing, dy: -lift };
+    }
+    if (p.kind === "tail") {
+      const sp = moving ? 1.8 : 1;
+      return { a: Math.sin(t * 3.2 * sp + c.seed) * (moving ? 11 : 6) * (c.mood === "threat" ? 2 : 1), dy: 0 };
+    }
+    if (p.kind === "head") {
+      const sniff = c.mood === "alert" ? -nativeFace * -6 : 0;
+      return { a: (moving ? Math.sin(c.phase * 2 + 1) * 3 : Math.sin(t * 1.3 + c.seed) * 2.2) + sniff, dy: 0 };
+    }
+    return { a: 0, dy: 0 };
+  };
+  ctx.save();
+  ctx.scale(k, k);
+  ctx.translate(-rig.iw / 2, -rig.ih);
+  const draw = (p: RigPart) => {
+    const { a, dy } = angleOf(p);
+    ctx.save();
+    ctx.translate(p.px, p.py + dy);
+    ctx.rotate((a * Math.PI) / 180);
+    ctx.translate(-p.px, -p.py);
+    ctx.drawImage(atlas, p.sx, p.sy, p.w, p.h, p.x, p.y, p.w, p.h);
+    ctx.restore();
+  };
+  // por trás do corpo: pata/rabo do grupo B primeiro, depois o corpo, depois as patas A e a cabeça
+  for (const p of rig.parts) if ((p.kind === "leg" && p.group === "B") || p.kind === "tail") draw(p);
+  for (const p of rig.parts) if (p.kind === "leg" && p.group === "A") draw(p);
+  if (bodyPart) draw(bodyPart);
+  for (const p of rig.parts) if (p.kind === "head") draw(p);
+  ctx.restore();
+}
+
 function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAssets, weather: TrailWeather, t: number) {
   const sp = c.spec;
   const base = assets.sprites[sp.id];
@@ -119,8 +194,8 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
         sx *= 1 + 0.06 * (1 - s);
       }
     } else if (moving) {
-      lift += Math.abs(Math.sin(c.phase)) * h * 0.03;
-      rot += Math.sin(c.phase) * 2.6;
+      lift += Math.abs(Math.sin(c.phase)) * h * 0.018;
+      rot += Math.sin(c.phase * 2) * 1.2;
     }
     if (!moving) sy *= 1 + Math.sin(t * 2.2 + c.seed) * 0.012;
   } else if (c.state === "fly") {
@@ -178,7 +253,10 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   ctx.translate(c.x + jx, c.y - lift);
   ctx.rotate(rot * RAD * look);
   ctx.scale(look * sp.face * sx, sy);
-  if (sp.hangs) ctx.drawImage(img, -w / 2, -h * 0.12, w, h);
+  const rigAtlas = assets.rigs[sp.id];
+  if (rigAtlas && FAUNA_RIGS[sp.id] && sp.kind === "ground") {
+    drawRigged(ctx, graded(`rig:${sp.id}`, rigAtlas, weather), sp.id, h, sp.face, c, t, moving, Boolean(sp.hop));
+  } else if (sp.hangs) ctx.drawImage(img, -w / 2, -h * 0.12, w, h);
   else ctx.drawImage(img, -w / 2, -h, w, h);
   ctx.restore();
 

@@ -7,6 +7,10 @@ export interface RigPart {
   kind: "body" | "leg" | "tail" | "head";
   /** grupo de passada: as patas A e B se movem em oposição (trote diagonal) */
   group: "A" | "B" | null;
+  /** pixels do topo do recorte a ignorar quando uma pata foi reconstruída a partir de outro recorte */
+  trimTop?: number;
+  /** mantém uma pata reconstruída atrás do tronco para que o encaixe fique oculto */
+  behindBody?: boolean;
   /** retângulo da parte no atlas */
   sx: number;
   sy: number;

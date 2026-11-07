@@ -59,6 +59,37 @@ function graded(key: string, img: HTMLImageElement, weather: TrailWeather): Canv
 
 const RAD = Math.PI / 180;
 
+// Alguns recortes originais deixavam a quarta pata embutida no corpo. Reutilizamos o recorte
+// mais próximo para torná-la articulada também, em uma posição própria no perfil do animal.
+const EXTRA_LEG_LAYOUT: Record<string, { sourceX: number; x: number; y: number; group: "A" | "B"; trimTop?: number; behindBody?: boolean }[]> = {
+  ourico: [{ sourceX: 29, x: 58, y: 119, group: "B" }],
+  jacare: [{ sourceX: 108, x: 145, y: 79, group: "B" }],
+  lontra: [{ sourceX: 94, x: 127, y: 116, group: "A" }],
+  guara: [{ sourceX: 69, x: 178, y: 108, group: "A", behindBody: true }],
+  paca: [{ sourceX: 159, x: 127, y: 104, group: "A" }],
+  jabuti: [{ sourceX: 100, x: 145, y: 98, group: "B" }],
+  cutia: [
+    { sourceX: 44, x: 61, y: 89, group: "B" },
+    { sourceX: 123, x: 147, y: 97, group: "A" },
+  ],
+};
+
+function rigPartsWithCompleteLegs(id: string, parts: RigPart[]): RigPart[] {
+  const extras = EXTRA_LEG_LAYOUT[id];
+  const legCount = parts.filter((part) => part.kind === "leg").length;
+  if (!extras || legCount >= 4) return parts;
+  const completed = [...parts];
+  for (const extra of extras) {
+    if (completed.filter((part) => part.kind === "leg").length >= 4) break;
+    const source = parts.find((part) => part.kind === "leg" && part.x === extra.sourceX);
+    if (!source) continue;
+    const dx = extra.x - source.x;
+    const dy = extra.y - source.y;
+    completed.push({ ...source, x: extra.x, y: extra.y, px: source.px + dx, py: source.py + dy, group: extra.group, trimTop: extra.trimTop, behindBody: extra.behindBody });
+  }
+  return completed;
+}
+
 function drawSkyBirds(ctx: CanvasRenderingContext2D, fauna: Fauna) {
   for (const bird of fauna.skyBirds) {
     const isRaptor = bird.kind === "raptor";
@@ -215,6 +246,7 @@ function drawRigged(
     ? Math.sin(c.phase * 2 + 0.45) * 2.2 * Math.max(0.45, effort)
     : Math.sin(t * 1.25 + c.seed) * 0.45;
   const bodyPart = rig.parts.find((p) => p.kind === "body");
+  const parts = rigPartsWithCompleteLegs(id, rig.parts);
   const angleOf = (p: RigPart): { a: number; dy: number } => {
     if (p.kind === "leg") {
       if (hopping) {
@@ -257,16 +289,17 @@ function drawRigged(
     ctx.rotate((a * Math.PI) / 180);
     if (p.kind === "leg") ctx.scale(1.015, 1.035);
     ctx.translate(-p.px, -p.py);
-    ctx.drawImage(atlas, p.sx, p.sy, p.w, p.h, p.x, p.y, p.w, p.h);
+    const trimTop = p.trimTop ?? 0;
+    ctx.drawImage(atlas, p.sx, p.sy + trimTop, p.w, p.h - trimTop, p.x, p.y, p.w, p.h);
     ctx.restore();
   };
   // Mantém as patas distantes atrás do corpo; depois desenha o corpo e as patas próximas à frente.
   // Desenhar os dois grupos antes do corpo escondia parte das patas dianteiras e fazia alguns bichos
   // parecerem ter apenas três patas.
-  for (const p of rig.parts) if ((p.kind === "leg" && p.group === "B") || p.kind === "tail") draw(p);
+  for (const p of parts) if ((p.kind === "leg" && (p.group === "B" || p.behindBody)) || p.kind === "tail") draw(p);
   if (bodyPart) draw(bodyPart);
-  for (const p of rig.parts) if (p.kind === "leg" && p.group === "A") draw(p);
-  for (const p of rig.parts) if (p.kind === "head") draw(p);
+  for (const p of parts) if (p.kind === "leg" && p.group === "A" && !p.behindBody) draw(p);
+  for (const p of parts) if (p.kind === "head") draw(p);
   ctx.restore();
 }
 
@@ -635,6 +668,12 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   const w = (h * iw) / ih;
   const moving = c.state === "move" && c.v > 2;
   const riggedGround = sp.kind === "ground" && Boolean(assets.rigs[sp.id] && FAUNA_RIGS[sp.id]);
+  const moveDx = c.tx - c.x;
+  const moveDy = c.ty - c.y;
+  const facing = moving && Math.abs(moveDx) > 0.1 ? (moveDx < 0 ? -1 : 1) : (c.look < 0 ? -1 : 1);
+  const heading = moving
+    ? Math.max(-34, Math.min(34, Math.atan2(moveDy, Math.max(1, Math.abs(moveDx))) * (moveDx < 0 ? -1 : 1) / RAD))
+    : 0;
   let lift = c.z;
   let sx = 1;
   let sy = 1;
@@ -720,8 +759,10 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
 
   ctx.save();
   ctx.translate(c.x + jx, c.y - lift);
-  ctx.rotate(rot * RAD * look);
-  ctx.scale(look * sp.face * sx, sy);
+  // O corpo acompanha a direção real do deslocamento, inclusive em subidas e descidas.
+  // A orientação horizontal é discreta para evitar que o sprite se achate ao virar.
+  ctx.rotate((heading + rot * facing) * RAD);
+  ctx.scale(facing * sp.face * sx, sy);
   const rigAtlas = assets.rigs[sp.id];
   if (c.state === "fly" && sp.kind === "perch" && !sp.hangs) {
     drawFlyingBird(ctx, c, sp.id, h, w, weather, t);

@@ -216,14 +216,14 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
     try {
       // Mock plan compatível para exportador
       const spec = DEMO_FORMATS[plan.settings.format];
-      // Em celulares, limitar o quadro a 720p reduz bastante o uso de memória e o esforço do codificador.
+      // Mantém o formato de origem em 1080 px também no celular para preservar o detalhe da mata.
       const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
       const mobile = window.matchMedia("(max-width: 767px)").matches || (deviceMemory !== undefined && deviceMemory <= 4);
-      const outputScale = mobile ? Math.min(1, 720 / spec.w) : 1;
+      const outputScale = 1;
       const outputWidth = Math.floor((spec.w * outputScale) / 2) * 2;
       const outputHeight = Math.floor((spec.h * outputScale) / 2) * 2;
-      const fps = mobile ? 24 : 30;
-      const videoBitrate = mobile ? 4_500_000 : 8_000_000;
+      const fps = 30;
+      const videoBitrate = mobile ? 12_000_000 : 16_000_000;
       const exportCanvas = document.createElement("canvas");
       exportCanvas.width = outputWidth;
       exportCanvas.height = outputHeight;

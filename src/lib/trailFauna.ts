@@ -142,30 +142,8 @@ const WEATHER_LOVERS: Record<TrailWeather, readonly string[]> = {
 
 const P = (x: number, y: number) => ({ x: x * K, y: y * K });
 
-/** Clareiras do chão da mata (os lugares onde os bichos pintados originais estavam). */
-const HABITAT: { x: number; y: number }[] = [
-  [40, 530], [130, 556], [381, 505], [100, 980], [432, 1160], [376, 1190], [498, 1205], [100, 1297], [633, 1290], [280, 1337],
-  [288, 1397], [470, 1345], [608, 1405], [75, 837], [590, 815], [138, 700], [655, 728], [20, 1182], [417, 1498], [645, 367],
-  [230, 1100], [520, 1090], [470, 1230], [180, 760], [560, 650], [300, 470], [520, 330], [150, 330], [400, 250], [60, 240],
-].map(([x, y]) => P(x, y));
-
-/** Pontos de apoio pintados na mata; as dez primeiras posições também definem troncos reais para a preguiça. */
-const PERCHES: { x: number; y: number; patch: number }[] = [
-  [52, 106], [142, 112], [40, 372], [604, 442], [672, 562], [25, 676], [42, 730], [612, 975], [626, 472], [80, 408],
-].map(([x, y]) => ({ ...P(x, y), patch: -1 }));
-// dentro das copas: o bicho fica ATRÁS do retalho de folhagem (some entre as folhas)
-FOLIAGE_PATCHES.forEach((p, i) => PERCHES.push({ x: p.cx, y: p.cy - p.ry * 0.25, patch: i }));
-
-/** Esconderijos: dentro da folhagem densa. */
-const HIDES = FOLIAGE_PATCHES.map((p, i) => ({ x: p.cx, y: p.cy - p.ry * 0.2, patch: i }));
-
-/** Beiras d'água (para sapo, lontra, jacaré). */
-const WATER_EDGES: { x: number; y: number }[] = [
-  [383, 1040], [350, 1036], [420, 1040], [323, 812], [300, 809], [560, 1096], [410, 917], [445, 952],
-].map(([x, y]) => P(x, y));
-
-/** Pontos da trilha usados para os bichos ATRAVESSAREM o caminho. */
-const PATH_SAMPLES = (() => {
+/** Pontos da trilha usados para os bichos ATRAVESSAREM o caminho e para evitar que fiquem sobre ela. */
+export const PATH_SAMPLES = (() => {
   const out: { x: number; y: number; nx: number; ny: number }[] = [];
   for (let i = 0; i <= 80; i++) {
     const f = i / 80;
@@ -179,6 +157,68 @@ const PATH_SAMPLES = (() => {
   }
   return out;
 })();
+
+/** Distância euclidiana mínima de qualquer ponto (x, y) até a linha central da trilha. */
+export function getTrailDistance(x: number, y: number): number {
+  let minD = Infinity;
+  for (let i = 0; i < PATH_SAMPLES.length; i++) {
+    const p = PATH_SAMPLES[i];
+    const d = Math.hypot(p.x - x, p.y - y);
+    if (d < minD) minD = d;
+  }
+  return minD;
+}
+
+export function getNearestTrailSample(x: number, y: number) {
+  let minD = Infinity;
+  let best = PATH_SAMPLES[0];
+  for (let i = 0; i < PATH_SAMPLES.length; i++) {
+    const p = PATH_SAMPLES[i];
+    const d = Math.hypot(p.x - x, p.y - y);
+    if (d < minD) {
+      minD = d;
+      best = p;
+    }
+  }
+  return best;
+}
+
+/**
+ * Clareiras reais do chão da mata, situadas bem afastadas da trilha de terra
+ * (distância mínima garantida de 95 unidades do centro da trilha), garantindo
+ * que nenhum animal apareça no meio do caminho ou pareça surgir da terra batida.
+ */
+const RAW_HABITAT: [number, number][] = [
+  // Clareiras à esquerda, bem profundas na vegetação
+  [40, 530], [130, 556], [100, 980], [75, 837], [138, 700], [20, 1182], [100, 1297], [60, 240], [150, 330],
+  [50, 780], [70, 1120], [80, 1420], [140, 460], [45, 620], [55, 1360],
+  // Clareiras à direita, bem inseridas no bosque
+  [633, 1290], [608, 1405], [590, 815], [655, 728], [645, 367], [560, 650], [520, 330], [400, 250],
+  [620, 950], [610, 1150], [580, 1220], [580, 510], [540, 410], [630, 850],
+];
+
+const HABITAT: { x: number; y: number }[] = RAW_HABITAT
+  .map(([x, y]) => P(x, y))
+  .filter((p) => getTrailDistance(p.x, p.y) >= 95);
+
+/** Pontos de apoio pintados na mata; as dez primeiras posições também definem troncos reais para a preguiça. */
+const PERCHES: { x: number; y: number; patch: number }[] = [
+  [52, 106], [142, 112], [40, 372], [604, 442], [672, 562], [25, 676], [42, 730], [612, 975], [626, 472], [80, 408],
+].map(([x, y]) => ({ ...P(x, y), patch: -1 }));
+// dentro das copas: o bicho fica ATRÁS do retalho de folhagem (some entre as folhas)
+FOLIAGE_PATCHES.forEach((p, i) => PERCHES.push({ x: p.cx, y: p.cy - p.ry * 0.25, patch: i }));
+
+/** Esconderijos: dentro da folhagem densa, apenas aqueles afastados da trilha. */
+const HIDES = FOLIAGE_PATCHES
+  .map((p, i) => ({ x: p.cx, y: p.cy - p.ry * 0.2, patch: i }))
+  .filter((h) => getTrailDistance(h.x, h.y) >= 95);
+
+/** Beiras d'água (para sapo, lontra, jacaré) com distância segura da trilha de terra. */
+const WATER_EDGES: { x: number; y: number }[] = [
+  [383, 1040], [350, 1036], [420, 1040], [323, 812], [300, 809], [560, 1096], [410, 917], [445, 952],
+]
+  .map(([x, y]) => P(x, y))
+  .filter((p) => getTrailDistance(p.x, p.y) >= 65);
 
 /* ------------------------------------------------------------------ estado */
 
@@ -222,6 +262,8 @@ export interface Critter {
   fleePredatorUid: number | null;
   zigzagTimer: number;
   zigzagSide: number;
+  /** Flag ativo apenas quando atravessa deliberadamente a trilha de um lado para o outro */
+  crossingTrail?: boolean;
 }
 
 export interface DrawItem {
@@ -401,9 +443,21 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     c.v = 0;
     c.timer = t;
   };
-  const goTo = (c: Critter, x: number, y: number, patch = -1) => {
-    c.tx = x;
-    c.ty = clamp(y, 20, WORLD_H - 10);
+  const goTo = (c: Critter, x: number, y: number, patch = -1, isCrossing = false) => {
+    let targetX = clamp(x, 24, 976);
+    let targetY = clamp(y, 24, WORLD_H - 12);
+    // Se não for uma travessia deliberada de caminho, afasta o alvo da trilha para mantê-lo confortavelmente na mata
+    if (!isCrossing) {
+      const td = getTrailDistance(targetX, targetY);
+      if (td < 92) {
+        const nearest = getNearestTrailSample(targetX, targetY);
+        const side = (targetX - nearest.x) * nearest.nx + (targetY - nearest.y) * nearest.ny >= 0 ? 1 : -1;
+        targetX = clamp(nearest.x + nearest.nx * 115 * side, 28, 972);
+        targetY = clamp(nearest.y + nearest.ny * 115 * side, 28, WORLD_H - 14);
+      }
+    }
+    c.tx = targetX;
+    c.ty = targetY;
     c.state = "move";
     c.hasTarget = true;
     c.patch = c.patch >= 0 && patch < 0 ? c.patch : patch; // mantém o retalho até sair dele (atrás da folha)
@@ -431,7 +485,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     prey.fleePredatorUid = predator.uid;
     prey.zigzagTimer = 0.45;
     const cover = prey.spec.zigzag ? undefined : HIDES
-      .filter((h) => !prey.spec.water)
+      .filter((h) => !prey.spec.water && getTrailDistance(h.x, h.y) >= 95)
       .map((h) => ({ ...h, dist: Math.hypot(h.x - prey.x, h.y - prey.y) }))
       .filter((h) => h.dist < 250 && Math.hypot(h.x - predator.x, h.y - predator.y) > Math.hypot(prey.x - predator.x, prey.y - predator.y))
       .sort((a, b) => a.dist - b.dist)[0];
@@ -459,8 +513,9 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
   /** Foge para a folhagem mais próxima (se houver), senão para longe do aluno. */
   function fleeToCover(c: Critter, dist: number) {
     let best = -1;
-    let bd = 260;
+    let bd = 280;
     HIDES.forEach((h, i) => {
+      if (getTrailDistance(h.x, h.y) < 95) return;
       const d = Math.hypot(h.x - c.x, h.y - c.y);
       const away = Math.hypot(h.x - stu.x, h.y - stu.y) > Math.hypot(c.x - stu.x, c.y - stu.y);
       if (d < bd && away) {
@@ -483,8 +538,9 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
       }
     });
     const p = PATH_SAMPLES[bi];
-    const side = (c.x - p.x) * p.nx + (c.y - p.y) * p.ny >= 0 ? -1 : 1; // para o lado oposto
-    goTo(c, clamp(p.x + p.nx * 95 * side, 30, 970), p.y + p.ny * 95 * side);
+    const side = (c.x - p.x) * p.nx + (c.y - p.y) * p.ny >= 0 ? -1 : 1; // atravessa para o lado oposto
+    c.crossingTrail = true;
+    goTo(c, clamp(p.x + p.nx * 130 * side, 30, 970), p.y + p.ny * 130 * side, -1, true);
     c.mood = "calm";
   }
 
@@ -670,6 +726,13 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     if (c.state !== "leaving") react(c, ds);
 
     if (c.state === "idle") {
+      // Se o bicho estiver parado na faixa central da trilha, conduz imediatamente para a clareira da mata
+      if (!c.crossingTrail && getTrailDistance(c.x, c.y) < 85) {
+        const nearest = getNearestTrailSample(c.x, c.y);
+        const side = (c.x - nearest.x) * nearest.nx + (c.y - nearest.y) * nearest.ny >= 0 ? 1 : -1;
+        goTo(c, clamp(nearest.x + nearest.nx * 115 * side, 30, 970), nearest.y + nearest.ny * 115 * side);
+        return;
+      }
       c.v = approach(c.v, 0, 240 * dt);
       if (c.mood === "alert" || c.mood === "threat" || c.mood === "curl" || c.mood === "happy" || c.mood === "curious" || c.mood === "lunge") {
         c.look = approach(c.look, stu.x >= c.x ? 1 : -1, 7 * dt);
@@ -722,6 +785,7 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
     const dist = Math.hypot(dx, dy);
     if (dist < 8) {
       if (c.state === "leaving") return;
+      c.crossingTrail = false;
       if (c.mood === "stalk") {
         c.mood = "threat";
         c.moodT = 1.4;

@@ -453,21 +453,46 @@ export function renderTrailDemoFrame(
     ctx.globalAlpha = nightfall;
     ctx.fillStyle = "rgba(16, 26, 58, 0.27)";
     ctx.fillRect(0, 0, WORLD_W, WORLD_H);
-    const moonGlow = ctx.createRadialGradient(780, 108, 24, 780, 150, 390);
-    moonGlow.addColorStop(0, "rgba(232, 241, 255, 0.32)");
-    moonGlow.addColorStop(0.44, "rgba(175, 201, 239, 0.14)");
+    const moonGlow = ctx.createRadialGradient(780, 108, 24, 780, 150, 420);
+    moonGlow.addColorStop(0, "rgba(232, 241, 255, 0.36)");
+    moonGlow.addColorStop(0.35, "rgba(175, 201, 239, 0.18)");
+    moonGlow.addColorStop(0.7, "rgba(59, 82, 132, 0.06)");
     moonGlow.addColorStop(1, "rgba(23, 36, 71, 0)");
     ctx.fillStyle = moonGlow;
-    ctx.fillRect(310, -240, 940, 780);
-    ctx.fillStyle = "rgba(239, 246, 255, 0.96)";
+    ctx.fillRect(260, -270, 1040, 840);
+    // Corona da Lua
+    const corona = ctx.createRadialGradient(780, 108, 30, 780, 108, 48);
+    corona.addColorStop(0, "rgba(255, 255, 255, 0.9)");
+    corona.addColorStop(0.75, "rgba(224, 236, 255, 0.4)");
+    corona.addColorStop(1, "rgba(175, 201, 239, 0)");
+    ctx.fillStyle = corona;
+    ctx.beginPath(); ctx.arc(780, 108, 48, 0, Math.PI * 2); ctx.fill();
+    // Disco lunar nítido
+    ctx.fillStyle = "#f8fafc";
     ctx.beginPath(); ctx.arc(780, 108, 35, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "rgba(124, 141, 175, 0.24)";
-    ctx.beginPath(); ctx.arc(792, 98, 31, 0, Math.PI * 2); ctx.fill();
-    const stars = [[175, 94], [280, 168], [380, 64], [460, 218], [580, 82], [670, 205], [900, 175], [935, 72], [95, 218], [735, 37], [320, 260], [535, 278]] as const;
-    stars.forEach(([x, y], index) => {
-      const twinkle = 0.6 + Math.sin(t * 2.1 + index * 1.7) * 0.28;
+    // Crateras e relevo lunar (maria)
+    ctx.fillStyle = "rgba(148, 163, 184, 0.32)";
+    ctx.beginPath(); ctx.arc(770, 98, 7.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(148, 163, 184, 0.28)";
+    ctx.beginPath(); ctx.arc(792, 114, 9, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(148, 163, 184, 0.25)";
+    ctx.beginPath(); ctx.arc(776, 122, 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(148, 163, 184, 0.2)";
+    ctx.beginPath(); ctx.arc(764, 112, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(100, 116, 139, 0.18)";
+    ctx.beginPath(); ctx.arc(792, 96, 32, 0, Math.PI * 2); ctx.fill();
+
+    const stars = [
+      [175, 94, 2.8], [280, 168, 2], [380, 64, 3.2], [460, 218, 2.2],
+      [580, 82, 3], [670, 205, 2], [900, 175, 3], [935, 72, 2.2],
+      [95, 218, 2], [735, 37, 2.5], [320, 260, 2], [535, 278, 2.4],
+      [220, 340, 1.8], [640, 310, 2.5], [840, 330, 2], [140, 440, 2],
+      [420, 390, 2.6], [740, 450, 2.2], [880, 480, 2.8], [60, 320, 2.2]
+    ] as const;
+    stars.forEach(([x, y, r], index) => {
+      const twinkle = 0.55 + Math.sin(t * 2.2 + index * 1.6) * 0.35;
       ctx.fillStyle = `rgba(255, 248, 214, ${twinkle})`;
-      ctx.beginPath(); ctx.arc(x, y, index % 3 === 0 ? 3 : 2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     });
     ctx.restore();
   }

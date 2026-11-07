@@ -566,17 +566,44 @@ export function CuriousTrailMountain({
           <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="trail-night-overlay absolute inset-0 z-[1] h-full w-full pointer-events-none" aria-hidden>
             <defs>
               <radialGradient id="trailMoonlight">
-                <stop offset="0" stopColor="#e8f1ff" stopOpacity="0.36" />
-                <stop offset="0.42" stopColor="#afc9ef" stopOpacity="0.16" />
+                <stop offset="0" stopColor="#e8f1ff" stopOpacity="0.38" />
+                <stop offset="0.35" stopColor="#afc9ef" stopOpacity="0.18" />
+                <stop offset="0.7" stopColor="#3b5284" stopOpacity="0.06" />
                 <stop offset="1" stopColor="#172447" stopOpacity="0" />
+              </radialGradient>
+              <radialGradient id="moonCorona">
+                <stop offset="0" stopColor="#ffffff" stopOpacity="0.9" />
+                <stop offset="0.75" stopColor="#e0ecff" stopOpacity="0.4" />
+                <stop offset="1" stopColor="#afc9ef" stopOpacity="0" />
               </radialGradient>
             </defs>
             <rect width={VB_W} height={VB_H} fill="#101a3a" opacity="0.27" />
-            <ellipse cx="780" cy="150" rx="470" ry="380" fill="url(#trailMoonlight)" />
-            <circle cx="780" cy="108" r="35" fill="#eff6ff" opacity="0.96" />
-            <circle cx="792" cy="98" r="31" fill="#7c8daf" opacity="0.24" />
-            {[{ x: 175, y: 94 }, { x: 280, y: 168 }, { x: 380, y: 64 }, { x: 460, y: 218 }, { x: 580, y: 82 }, { x: 670, y: 205 }, { x: 900, y: 175 }, { x: 935, y: 72 }, { x: 95, y: 218 }, { x: 735, y: 37 }, { x: 320, y: 260 }, { x: 535, y: 278 }].map((star, index) => (
-              <circle key={`night-star-${index}`} className="trail-night-star" cx={star.x} cy={star.y} r={index % 3 === 0 ? 3 : 2} fill="#fff8d6" style={{ animationDelay: `${(index % 5) * 0.38}s` }} />
+            <ellipse cx="780" cy="150" rx="520" ry="420" fill="url(#trailMoonlight)" />
+            <circle cx="780" cy="108" r="48" fill="url(#moonCorona)" />
+            <circle cx="780" cy="108" r="35" fill="#f8fafc" />
+            {/* Crateras e relevo lunar (maria) para realismo autêntico */}
+            <circle cx="770" cy="98" r="7.5" fill="#94a3b8" opacity="0.32" />
+            <circle cx="792" cy="114" r="9" fill="#94a3b8" opacity="0.28" />
+            <circle cx="776" cy="122" r="5.5" fill="#94a3b8" opacity="0.25" />
+            <circle cx="764" cy="112" r="4" fill="#94a3b8" opacity="0.2" />
+            <circle cx="792" cy="96" r="32" fill="#64748b" opacity="0.18" />
+            {/* Constelações e estrelas com magnitudes e cintilâncias variadas */}
+            {[
+              { x: 175, y: 94, r: 2.8 }, { x: 280, y: 168, r: 2 }, { x: 380, y: 64, r: 3.2 }, { x: 460, y: 218, r: 2.2 },
+              { x: 580, y: 82, r: 3 }, { x: 670, y: 205, r: 2 }, { x: 900, y: 175, r: 3 }, { x: 935, y: 72, r: 2.2 },
+              { x: 95, y: 218, r: 2 }, { x: 735, y: 37, r: 2.5 }, { x: 320, y: 260, r: 2 }, { x: 535, y: 278, r: 2.4 },
+              { x: 220, y: 340, r: 1.8 }, { x: 640, y: 310, r: 2.5 }, { x: 840, y: 330, r: 2 }, { x: 140, y: 440, r: 2 },
+              { x: 420, y: 390, r: 2.6 }, { x: 740, y: 450, r: 2.2 }, { x: 880, y: 480, r: 2.8 }, { x: 60, y: 320, r: 2.2 }
+            ].map((star, index) => (
+              <circle
+                key={`night-star-${index}`}
+                className="trail-night-star"
+                cx={star.x}
+                cy={star.y}
+                r={star.r}
+                fill="#fff8d6"
+                style={{ animationDelay: `${(index % 6) * 0.35}s` }}
+              />
             ))}
           </svg>
         )}

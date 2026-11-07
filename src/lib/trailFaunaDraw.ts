@@ -291,6 +291,14 @@ function drawRigged(
     ctx.translate(-p.px, -p.py);
     const trimTop = p.trimTop ?? 0;
     ctx.drawImage(atlas, p.sx, p.sy + trimTop, p.w, p.h - trimTop, p.x, p.y, p.w, p.h);
+    // Membros distantes (Group B ou atrás do tronco) recebem sombreamento volumétrico sob o ventre
+    if (p.kind === "leg" && (p.group === "B" || p.behindBody)) {
+      ctx.save();
+      ctx.globalCompositeOperation = "source-atop";
+      ctx.fillStyle = "rgba(10, 22, 16, 0.36)";
+      ctx.fillRect(p.x, p.y, p.w, p.h);
+      ctx.restore();
+    }
     ctx.restore();
   };
   // Mantém as patas distantes atrás do corpo; depois desenha o corpo e as patas próximas à frente.
@@ -656,30 +664,191 @@ function drawVectorAnimal(ctx: CanvasRenderingContext2D, id: string, w: number, 
   }
 }
 
+function drawRealisticGroundShadow(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  lift: number,
+  weather: TrailWeather,
+  facing: number
+) {
+  const airScale = Math.max(0.18, 1 - Math.max(0, lift) / 130);
+  const blurFactor = 1 + Math.max(0, lift) * 0.04;
+
+  ctx.save();
+  // 1. Sombra de oclusão de contato profunda (Ambient Occlusion) sob as patas e ventre
+  // Fixa o animal com firmeza no solo da mata, eliminando o efeito de adesivo/recorte solto
+  const aoAlpha = (weather === "night" ? 0.42 : 0.48) * airScale;
+  ctx.fillStyle = `rgba(10, 20, 14, ${aoAlpha})`;
+  ctx.beginPath();
+  ctx.ellipse(x, y + 1, w * 0.28 * airScale, h * 0.055 * airScale, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 2. Sombra projetada direcional que responde à iluminação do clima (Sol ou Lua)
+  let shadowDx = -facing * w * 0.12;
+  let shadowDy = h * 0.04;
+  let castAlpha = 0.24 * airScale;
+  let shadowTint = "rgba(10, 20, 14, ";
+
+  if (weather === "night") {
+    // Luar vindo do alto à direita (x: 780, y: 108)
+    const ldx = (x - 780) / 1000;
+    shadowDx = ldx * 36;
+    shadowDy = h * 0.055;
+    shadowTint = "rgba(6, 12, 28, ";
+    castAlpha = 0.2 * airScale;
+  } else if (weather === "rain") {
+    // Solo úmido encharcado: sombra mais difusa e espalhada
+    castAlpha = 0.3 * airScale;
+    shadowDy = h * 0.025;
+    shadowTint = "rgba(16, 26, 22, ";
+  } else if (weather === "snow") {
+    castAlpha = 0.25 * airScale;
+    shadowTint = "rgba(28, 42, 58, ";
+  }
+
+  ctx.fillStyle = `${shadowTint}${castAlpha})`;
+  ctx.beginPath();
+  ctx.ellipse(
+    x + shadowDx,
+    y + shadowDy,
+    w * 0.36 * airScale * blurFactor,
+    h * 0.08 * airScale * blurFactor,
+    -0.05 * facing,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawGroundFoliageContact(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  weather: TrailWeather,
+  seed: number
+) {
+  // Desenha micro-tufos de grama/folhas do solo cobrindo levemente as patas (2-3px)
+  // Isso quebra a borda dura do sprite contra o fundo e ancora o animal à mata viva
+  ctx.save();
+  ctx.translate(x, y);
+  const colorA = weather === "snow" ? "rgba(195, 218, 235, 0.78)" : weather === "night" ? "rgba(20, 38, 28, 0.75)" : "rgba(42, 74, 32, 0.85)";
+  const colorB = weather === "snow" ? "rgba(225, 240, 252, 0.85)" : weather === "night" ? "rgba(32, 54, 38, 0.7)" : "rgba(68, 108, 42, 0.8)";
+  const spread = w * 0.3;
+  const blades = 4;
+  for (let i = 0; i < blades; i++) {
+    const u = i / (blades - 1) - 0.5;
+    const bx = u * spread + Math.sin(seed + i * 2.3) * (spread * 0.15);
+    const bh = 3.2 + Math.abs(Math.sin(seed * 3 + i)) * 3.2;
+    const bend = Math.sin(seed + i * 1.7) * 2.6;
+    ctx.strokeStyle = i % 2 === 0 ? colorA : colorB;
+    ctx.lineWidth = 1.2;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(bx, 1);
+    ctx.quadraticCurveTo(bx + bend * 0.5, -bh * 0.6, bx + bend, -bh);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function applyEnvironmentalRimLighting(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  weather: TrailWeather
+) {
+  ctx.save();
+  ctx.globalCompositeOperation = "source-atop";
+  if (weather === "night") {
+    // Luar prateado na silhueta superior e sombra noturna azulada no ventre
+    const grad = ctx.createLinearGradient(0, -h, 0, 0);
+    grad.addColorStop(0, "rgba(215, 235, 255, 0.32)");
+    grad.addColorStop(0.32, "rgba(140, 185, 240, 0.1)");
+    grad.addColorStop(1, "rgba(8, 16, 36, 0.28)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+  } else if (weather === "sunny") {
+    // Luz solar filtrada pelas copas nas costas e reflexo quente da vegetação por baixo
+    const grad = ctx.createLinearGradient(0, -h, 0, 0);
+    grad.addColorStop(0, "rgba(255, 248, 210, 0.25)");
+    grad.addColorStop(0.35, "rgba(255, 235, 170, 0.06)");
+    grad.addColorStop(1, "rgba(25, 48, 18, 0.18)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+  } else if (weather === "rain") {
+    // Brilho úmido (wet sheen) nas superfícies superiores e sombra densa difusa
+    const grad = ctx.createLinearGradient(0, -h, 0, 0);
+    grad.addColorStop(0, "rgba(225, 245, 255, 0.24)");
+    grad.addColorStop(0.28, "rgba(190, 220, 240, 0.05)");
+    grad.addColorStop(1, "rgba(14, 26, 30, 0.22)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+  } else if (weather === "snow") {
+    // Geada alpina e pó de neve nas costas
+    const grad = ctx.createLinearGradient(0, -h, 0, 0);
+    grad.addColorStop(0, "rgba(245, 250, 255, 0.38)");
+    grad.addColorStop(0.25, "rgba(215, 235, 255, 0.1)");
+    grad.addColorStop(1, "rgba(14, 24, 38, 0.16)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+  }
+  ctx.restore();
+}
+
 function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAssets, weather: TrailWeather, t: number) {
   const sp = c.spec;
   const base = assets.sprites[sp.id];
   const vector = VECTOR_FAUNA_IDS.has(sp.id);
   if (!base && !vector) return;
+
+  if (c.mood === "hidden") {
+    // Oculto dentro da vegetação densa: não surge como recorte flutuando no meio do cenário
+    const peek = Math.sin(c.clk * 1.5 + c.seed);
+    if (peek < 0.65) return;
+    ctx.save();
+    ctx.globalAlpha = 0.35 + (peek - 0.65) * 1.4;
+  }
+
   const img = base ? graded(sp.id, base, weather) : null;
   const iw = base?.naturalWidth || (sp.id === "coelho" ? 1.42 : sp.id === "cobra" ? 2.3 : sp.id === "caracol" ? 1.5 : sp.id === "pacu" ? 2.2 : 2.1);
   const ih = base?.naturalHeight || 1;
-  const h = sp.h;
-  const w = (h * iw) / ih;
+
+  // Escala de altitude na montanha: animais no topo (y menor) são sutilmente menores em perspectiva
+  const altitudeScale = 0.88 + (c.y / 2201) * 0.16;
+  const h = sp.h * altitudeScale;
+  const w = ((sp.h * iw) / ih) * altitudeScale;
+
   const moving = c.state === "move" && c.v > 2;
   const riggedGround = sp.kind === "ground" && Boolean(assets.rigs[sp.id] && FAUNA_RIGS[sp.id]);
   const moveDx = c.tx - c.x;
   const moveDy = c.ty - c.y;
   const facing = moving && Math.abs(moveDx) > 0.1 ? (moveDx < 0 ? -1 : 1) : (c.look < 0 ? -1 : 1);
-  const heading = moving
-    ? Math.max(-34, Math.min(34, Math.atan2(moveDy, Math.max(1, Math.abs(moveDx))) * (moveDx < 0 ? -1 : 1) / RAD))
-    : 0;
+
+  // Inclinação corporal realista em relevo (no máximo 6-8 graus), eliminando o efeito de recorte tombado
+  const slopeAngle = moving ? (Math.atan2(moveDy * 0.22, Math.max(20, Math.abs(moveDx))) * (moveDx < 0 ? -1 : 1)) / RAD : 0;
+  const heading = Math.max(-7, Math.min(7, slopeAngle));
+
   let lift = c.z;
   let sx = 1;
   let sy = 1;
   let rot = 0;
   let jx = 0;
-  const look = c.look;
+
+  // Foreshortening em perspectiva 2.5D durante deslocamento
+  if (moving) {
+    if (moveDy < -6) {
+      sy *= 0.94; // subindo para o fundo
+      sx *= 0.98;
+    } else if (moveDy > 6) {
+      sy *= 1.03; // descendo para a frente
+      sx *= 1.01;
+    }
+  }
 
   if (sp.kind === "ground") {
     if (sp.hop) {
@@ -748,19 +917,14 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   }
   if (c.react > 0) lift += Math.sin((c.react / 0.7) * Math.PI) * 12;
 
-  // sombra no chão
+  // Sombra no chão realista: oclusão profunda sob as patas + sombra direcional suave
   if (!(sp.kind === "perch" && c.state !== "fly")) {
-    const sh = Math.max(0.3, 1 - c.z / 140);
-    ctx.fillStyle = `rgba(0,0,0,${0.22 * sh})`;
-    ctx.beginPath();
-    ctx.ellipse(c.x, c.y + 1, w * 0.36 * sh, h * 0.07 * sh, 0, 0, Math.PI * 2);
-    ctx.fill();
+    drawRealisticGroundShadow(ctx, c.x, c.y, w, h, lift, weather, facing);
   }
 
   ctx.save();
   ctx.translate(c.x + jx, c.y - lift);
-  // O corpo acompanha a direção real do deslocamento, inclusive em subidas e descidas.
-  // A orientação horizontal é discreta para evitar que o sprite se achate ao virar.
+  // O corpo acompanha a inclinação suave do terreno
   ctx.rotate((heading + rot * facing) * RAD);
   ctx.scale(facing * sp.face * sx, sy);
   const rigAtlas = assets.rigs[sp.id];
@@ -775,12 +939,122 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   } else {
     if (img) ctx.drawImage(img, -w / 2, -h, w, h);
   }
+  // Aplica iluminação de borda e sombra ambiental para harmonizar o bicho com a mata
+  applyEnvironmentalRimLighting(ctx, w, h, weather);
   ctx.restore();
+
+  // Integração com o solo: micro-vegetação cobrindo levemente a base das patas no chão
+  if (sp.kind === "ground" && lift <= 2) {
+    drawGroundFoliageContact(ctx, c.x, c.y, w, weather, c.seed);
+  }
+
+  if (c.mood === "hidden") {
+    ctx.restore();
+  }
 
   if (c.mood !== "hidden") {
     const topY = sp.hangs ? c.y + h * 0.9 : c.y - lift - h * sy - 10;
     drawMoodIcon(ctx, c.mood, c.x, topY - (sp.hangs ? h : 0), t);
   }
+}
+
+/** Efeitos visuais e atmosfera viva da mata: raios de sol, luar, vagalumes, névoas e esporos. */
+function drawForestAtmosphere(
+  ctx: CanvasRenderingContext2D,
+  weather: TrailWeather,
+  t: number
+) {
+  ctx.save();
+
+  if (weather === "sunny") {
+    // 1. Raios de Sol Volumétricos (God Rays) filtrando pelas frestas das copas
+    const beams = [
+      { x1: 220, y1: 60, x2: 380, y2: 720, w: 90, ph: 0 },
+      { x1: 520, y1: 100, x2: 670, y2: 840, w: 110, ph: 1.8 },
+      { x1: 710, y1: 140, x2: 880, y2: 980, w: 100, ph: 3.5 },
+    ];
+    for (const b of beams) {
+      const shimmer = 0.035 + 0.02 * Math.sin(t * 0.75 + b.ph);
+      const grad = ctx.createLinearGradient(b.x1, b.y1, b.x2, b.y2);
+      grad.addColorStop(0, `rgba(255, 246, 215, ${shimmer * 1.3})`);
+      grad.addColorStop(0.5, `rgba(255, 242, 195, ${shimmer})`);
+      grad.addColorStop(1, "rgba(255, 240, 185, 0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(b.x1 - b.w * 0.3, b.y1);
+      ctx.lineTo(b.x1 + b.w * 0.3, b.y1);
+      ctx.lineTo(b.x2 + b.w * 0.85, b.y2);
+      ctx.lineTo(b.x2 - b.w * 0.85, b.y2);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // 2. Esporos dourados / poeira vegetal flutuando na luz do sol
+    for (let i = 0; i < 18; i++) {
+      const px = ((i * 59 + t * 9 + Math.sin(t * 0.6 + i) * 22) % 960) + 20;
+      const py = ((340 + i * 95 + Math.cos(t * 0.5 + i * 1.3) * 35) % 1800) + 150;
+      const tw = Math.max(0, Math.sin(t * 1.8 + i * 2.1));
+      ctx.fillStyle = `rgba(255, 245, 185, ${tw * 0.55})`;
+      ctx.beginPath();
+      ctx.arc(px, py, 1.2 + tw * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (weather === "night") {
+    // 1. Vagalumes (Fireflies) bioluminescentes flutuando suavemente pelo sub-bosque da mata
+    for (let i = 0; i < 22; i++) {
+      const baseX = 80 + (i * 44) % 840;
+      const baseY = 420 + (i * 78) % 1450;
+      const driftX = baseX + Math.sin(t * 0.85 + i * 1.7) * 45;
+      const driftY = baseY + Math.cos(t * 0.65 + i * 2.2) * 32;
+      const glow = Math.max(0, Math.sin(t * 2.2 + i * 1.9)) ** 3;
+      if (glow > 0.05) {
+        // Halo suave verde-dourado
+        ctx.fillStyle = `rgba(163, 230, 53, ${glow * 0.32})`;
+        ctx.beginPath();
+        ctx.arc(driftX, driftY, 5 + glow * 4, 0, Math.PI * 2);
+        ctx.fill();
+        // Núcleo luminoso
+        ctx.fillStyle = `rgba(254, 240, 138, ${glow * 0.95})`;
+        ctx.beginPath();
+        ctx.arc(driftX, driftY, 1.3 + glow * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    // 2. Fachos translúcidos de luar filtrados pela copa alta
+    const moonShafts = [
+      { x1: 780, y1: 110, x2: 450, y2: 1200, w: 160 },
+      { x1: 780, y1: 110, x2: 240, y2: 1400, w: 190 },
+    ];
+    for (const ms of moonShafts) {
+      const shimmer = 0.025 + 0.015 * Math.sin(t * 0.6 + ms.w);
+      const grad = ctx.createLinearGradient(ms.x1, ms.y1, ms.x2, ms.y2);
+      grad.addColorStop(0, `rgba(220, 238, 255, ${shimmer * 1.4})`);
+      grad.addColorStop(0.6, `rgba(175, 215, 255, ${shimmer})`);
+      grad.addColorStop(1, "rgba(20, 35, 70, 0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(ms.x1 - 25, ms.y1);
+      ctx.lineTo(ms.x1 + 25, ms.y1);
+      ctx.lineTo(ms.x2 + ms.w, ms.y2);
+      ctx.lineTo(ms.x2 - ms.w, ms.y2);
+      ctx.closePath();
+      ctx.fill();
+    }
+  } else if (weather === "rain") {
+    // Brumas úmidas e névoa da serra deslizando suavemente pelas curvas da montanha
+    for (let i = 0; i < 4; i++) {
+      const my = 480 + i * 360 + Math.sin(t * 0.4 + i) * 20;
+      const mx = ((t * 22 + i * 280) % 1300) - 150;
+      const grad = ctx.createRadialGradient(mx, my, 20, mx, my, 220);
+      grad.addColorStop(0, "rgba(220, 238, 248, 0.075)");
+      grad.addColorStop(0.6, "rgba(205, 225, 240, 0.035)");
+      grad.addColorStop(1, "rgba(200, 220, 235, 0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(mx, my, 240, 55, 0.05, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
 }
 
 /** Desenha bichos e retalhos de folhagem (os bichos passam ATRÁS dos retalhos quando estão mais ao fundo). */
@@ -825,6 +1099,7 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
   }
 
   drawSkyBirds(ctx, fauna);
+  drawForestAtmosphere(ctx, weather, t);
 
   // Rajadas curtas e regulares: a paisagem fica fixa e só folhas soltas cruzam a copa.
   // O mesmo ciclo guia as folhas e as linhas de vento, evitando movimentos desencontrados.

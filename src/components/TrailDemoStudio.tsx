@@ -19,6 +19,7 @@ import {
 } from "@/lib/gameDemoVideo";
 import {
   loadTrailObjectImages,
+  loadTrailSceneImages,
   type TrailObjectImages,
 } from "@/lib/curiousTrailObjectImages";
 import type { ExportResult } from "@/lib/gameDemoExport";
@@ -32,7 +33,7 @@ const EMPTY_DEMO_IMAGES: TrailObjectImages = new Map();
 
 export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   const [settings, setSettings] = useState<TrailDemoSettings>(DEFAULT_TRAIL_DEMO_SETTINGS);
-  const [imageResult, setImageResult] = useState<{ plan: TrailDemoPlan; images: TrailObjectImages } | null>(null);
+  const [imageResult, setImageResult] = useState<{ plan: TrailDemoPlan; images: TrailObjectImages; sceneImages: TrailObjectImages } | null>(null);
   const [imageError, setImageError] = useState<{ plan: TrailDemoPlan; message: string } | null>(null);
   const [imageLoadAttempt, setImageLoadAttempt] = useState(0);
   const [playing, setPlaying] = useState(true);
@@ -59,6 +60,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
     [items, cleanSettings]
   );
   const images = imageResult?.plan === plan ? imageResult.images : EMPTY_DEMO_IMAGES;
+  const sceneImages = imageResult?.plan === plan ? imageResult.sceneImages : EMPTY_DEMO_IMAGES;
   const imagesError = imageError?.plan === plan ? imageError.message : null;
   const imagesLoading = !imagesError && imageResult?.plan !== plan;
   const allPlanImagesLoaded =
@@ -68,10 +70,10 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   useEffect(() => {
     let cancelled = false;
     const roundItems = [...new Map(plan.rounds.map((round) => [round.item.id, round.item])).values()];
-    void loadTrailObjectImages(roundItems)
-      .then((map) => {
+    void Promise.all([loadTrailObjectImages(roundItems), loadTrailSceneImages(roundItems)])
+      .then(([map, sceneMap]) => {
         if (cancelled) return;
-        const missing = roundItems.filter((item) => !map.has(item.id));
+        const missing = roundItems.filter((item) => !map.has(item.id) || !sceneMap.has(item.id));
         if (missing.length) {
           setImageError({
             plan,
@@ -79,7 +81,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           });
           return;
         }
-        setImageResult({ plan, images: map });
+        setImageResult({ plan, images: map, sceneImages: sceneMap });
       })
       .catch((error: unknown) => {
         if (cancelled) return;
@@ -121,10 +123,12 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
 
   const planRef = useRef(plan);
   const imagesRef = useRef(images);
+  const sceneImagesRef = useRef(sceneImages);
   useEffect(() => {
     planRef.current = plan;
     imagesRef.current = images;
-  }, [plan, images]);
+    sceneImagesRef.current = sceneImages;
+  }, [plan, images, sceneImages]);
 
   useEffect(() => {
     clockRef.current = { start: performance.now(), offset: 0 };
@@ -154,6 +158,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       }
       renderTrailDemoFrame(ctx, canvas.width, canvas.height, t, planRef.current, {
         images: imagesRef.current,
+        sceneImages: sceneImagesRef.current,
         scene: vAssetsRef.current?.scenes[trailLevelForTime(planRef.current, t).weather] ?? null,
         world: wld,
         dyn: d.img,
@@ -263,6 +268,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
       const offlineResult = await exportTrailDemoOffline({
         plan,
         images,
+        sceneImages,
         assets: videoAssets,
         sounds: { forest: forestBuffer, stream: streamBuffer, rain: rainBuffer, voices: wordsByText },
         width: outputWidth,
@@ -370,7 +376,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         const tFrame = (frameStart - videoStartAt) / 1000;
         // exportação quadro a quadro, com o mundo recomeçando do zero (mesma simulação da prévia)
         const dyn = await exportWorld.avalancheImage(tFrame, spec.w, trailMapHeight(spec.h));
-        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, scene: videoAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn });
+        renderTrailDemoFrame(ctx, spec.w, spec.h, tFrame, plan, { images, sceneImages, scene: videoAssets.scenes[trailLevelForTime(plan, tFrame).weather], world: exportWorld, dyn });
         const nextProgress = Math.min(99, Math.round((tFrame / plan.total) * 100));
         if (nextProgress !== lastProgress) {
           lastProgress = nextProgress;

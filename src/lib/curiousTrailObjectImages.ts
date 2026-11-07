@@ -54,3 +54,12 @@ export async function loadTrailObjectImages(items: CestQuoiItem[], language: App
   );
   return new Map(entries);
 }
+
+/** Carrega as cenas completas para que a seta aponte ao objeto dentro do contexto original. */
+export async function loadTrailSceneImages(items: CestQuoiItem[]): Promise<TrailObjectImages> {
+  const uniqueItems = [...new Map(items.map((item) => [item.id, item])).values()];
+  const entries = await Promise.all(
+    uniqueItems.map(async (item) => [item.id, await loadImage(item.scene)] as const)
+  );
+  return new Map(entries);
+}

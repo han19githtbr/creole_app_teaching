@@ -26,6 +26,7 @@ export interface TrailOfflineExport {
 export async function exportTrailDemoOffline(params: {
   plan: TrailDemoPlan;
   images: TrailObjectImages;
+  sceneImages: TrailObjectImages;
   assets: TrailVideoAssets;
   sounds: TrailDemoSoundBuffers;
   width: number;
@@ -159,6 +160,7 @@ export async function exportTrailDemoOffline(params: {
       const dyn = await world.avalancheImage(time, spec.w, trailMapHeight(spec.h));
       renderTrailDemoFrame(ctx, spec.w, spec.h, time, params.plan, {
         images: params.images,
+        sceneImages: params.sceneImages,
         scene: params.assets.scenes[trailLevelForTime(params.plan, time).weather],
         world,
         dyn,

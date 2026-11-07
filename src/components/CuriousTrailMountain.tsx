@@ -10,6 +10,7 @@ import { createFauna, type Fauna } from "@/lib/trailFauna";
 import { loadFaunaAssets, drawFauna, drawWater, type FaunaAssets } from "@/lib/trailFaunaDraw";
 import { gradeImage } from "@/lib/trailGrade";
 import type { AppLanguage } from "@/lib/languageShared";
+import { getTrailObjectImageSrc } from "@/lib/curiousTrailObjectImages";
 import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
 import { renderAvalancheSvg } from "@/lib/trailAvalanche";
 import { Check, Lock, Volume2 } from "lucide-react";
@@ -68,24 +69,18 @@ const clampN = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, 
 
 
 /** Exibe a ilustração do objeto durante a pergunta com enquadramento completo garantido. */
-function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean }) {
+function ObjectLens({ item, px, ring, full = false, language = "francais" }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean; language?: AppLanguage }) {
   // Margem generosa de enquadramento (75% da dimensão mínima para nunca cortar objetos grandes)
-  const cw = Math.min(item.w, item.h) * 0.75;
-  const x0 = full ? 0 : clampN(item.arrow.x - cw / 2, 0, item.w - cw);
-  const y0 = full ? 0 : clampN(item.arrow.y - cw / 2, 0, item.h - cw);
-  const vw = full ? item.w : cw;
-  const vh = full ? item.h : cw;
-  const arrowScale = 0.55;
   return (
     <svg
-      viewBox={`${x0} ${y0} ${vw} ${vh}`}
+      viewBox={`0 0 ${item.w} ${item.h}`}
       width={px}
       height={full ? Math.round((px * item.h) / item.w) : px}
       className={cn("block bg-white", full ? "rounded-xl" : "rounded-full", ring)}
       aria-hidden
     >
       <image
-        href={item.scene}
+        href={getTrailObjectImageSrc(item, language)}
         x={0}
         y={0}
         width={item.w}
@@ -93,7 +88,7 @@ function ObjectLens({ item, px, ring, full = false }: { item: CestQuoiItem; px: 
         preserveAspectRatio="xMidYMid meet"
       />
       <g className="cq-sway">
-        <g transform={`translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(${arrowScale})`}>
+        <g transform="translate(600 720) rotate(-90) scale(0.55)">
           <path
             d="M-90 -10 L-40 -10 L-45 -25 L0 0 L-45 25 L-40 10 L-90 10 Z"
             fill="#ef4444"
@@ -790,7 +785,7 @@ export function CuriousTrailMountain({
               <div className="relative">
                 <span className="absolute -inset-1.5 rounded-3xl bg-amber-400/50 blur-md animate-pulse" aria-hidden />
                 <div className="relative rounded-2xl bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-[4px] shadow-2xl">
-                  <ObjectLens item={curItem} px={cardPx} full />
+                  <ObjectLens item={curItem} px={cardPx} full language={language} />
                 </div>
                 <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-900 text-[11px] font-black text-amber-300 shadow">
                   {elementIndex + 1}

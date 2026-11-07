@@ -59,35 +59,10 @@ function graded(key: string, img: HTMLImageElement, weather: TrailWeather): Canv
 
 const RAD = Math.PI / 180;
 
-// Alguns recortes originais deixavam a quarta pata embutida no corpo. Reutilizamos o recorte
-// mais próximo para torná-la articulada também, em uma posição própria no perfil do animal.
-const EXTRA_LEG_LAYOUT: Record<string, { sourceX: number; x: number; y: number; group: "A" | "B"; trimTop?: number; behindBody?: boolean }[]> = {
-  ourico: [{ sourceX: 29, x: 58, y: 119, group: "B" }],
-  jacare: [{ sourceX: 108, x: 145, y: 79, group: "B" }],
-  lontra: [{ sourceX: 94, x: 127, y: 116, group: "A" }],
-  guara: [{ sourceX: 69, x: 178, y: 108, group: "A", behindBody: true }],
-  paca: [{ sourceX: 159, x: 127, y: 104, group: "A" }],
-  jabuti: [{ sourceX: 100, x: 145, y: 98, group: "B" }],
-  cutia: [
-    { sourceX: 44, x: 61, y: 89, group: "B" },
-    { sourceX: 123, x: 147, y: 97, group: "A" },
-  ],
-};
-
-function rigPartsWithCompleteLegs(id: string, parts: RigPart[]): RigPart[] {
-  const extras = EXTRA_LEG_LAYOUT[id];
-  const legCount = parts.filter((part) => part.kind === "leg").length;
-  if (!extras || legCount >= 4) return parts;
-  const completed = [...parts];
-  for (const extra of extras) {
-    if (completed.filter((part) => part.kind === "leg").length >= 4) break;
-    const source = parts.find((part) => part.kind === "leg" && part.x === extra.sourceX);
-    if (!source) continue;
-    const dx = extra.x - source.x;
-    const dy = extra.y - source.y;
-    completed.push({ ...source, x: extra.x, y: extra.y, px: source.px + dx, py: source.py + dy, group: extra.group, trimTop: extra.trimTop, behindBody: extra.behindBody });
-  }
-  return completed;
+// Todas as espécies quadrúpedes possuem as 4 patas (2 traseiras e 2 dianteiras)
+// configuradas com articulação diagonal e grupos A e B em FAUNA_RIGS.
+function rigPartsWithCompleteLegs(_id: string, parts: RigPart[]): RigPart[] {
+  return parts;
 }
 
 function drawSkyBirds(ctx: CanvasRenderingContext2D, fauna: Fauna) {
@@ -252,7 +227,7 @@ function drawRigged(
       if (hopping) {
         // As patas recolhem durante o voo e se estendem na aterrissagem.
         const airborne = Math.max(0, Math.sin(c.phase));
-        const foreleg = id !== "sapo" && (p.x - rig.iw / 2) * nativeFace > 0;
+        const foreleg = (p.x - rig.iw / 2) * nativeFace > 0;
         const tuck = foreleg ? -17 : 23;
         const land = foreleg ? 15 : -12;
         return { a: moving ? nativeFace * (tuck * airborne + land * (1 - airborne)) : 0, dy: 0 };

@@ -206,13 +206,13 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
                 </div>
 
                 {/* Prévia Visual da Dinâmica de C'est quoi */}
-                <div className="relative mt-4 overflow-hidden rounded-xl border border-blue-500/25 bg-slate-900 shadow-md">
+                <div className="relative mt-4 aspect-video max-h-72 overflow-hidden rounded-xl border border-blue-500/25 bg-slate-900 shadow-md">
                   {/* Imagem de Fundo / Cena */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/games/cquoi-preview.webp"
-                    alt="Prévia do Jogo C'est quoi ?"
-                    className="h-44 sm:h-52 w-full object-cover opacity-85 transition-transform duration-700 hover:scale-105"
+                    alt="Cena do jogo C'est quoi ? com um computador para adivinhar"
+                    className="h-full w-full object-cover opacity-85 transition-transform duration-700 hover:scale-105"
                   />
 
                   {/* Overlay Interativo Simulando a Dinâmica em Tempo Real */}
@@ -332,12 +332,12 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
                 </div>
 
                 {/* Prévia Visual da Dinâmica da Trilha */}
-                <div className="relative mt-4 overflow-hidden rounded-xl border border-amber-500/30 bg-slate-900 shadow-md">
+                <div className="relative mt-4 aspect-video max-h-72 overflow-hidden rounded-xl border border-amber-500/30 bg-slate-900 shadow-md">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/games/trilha-preview.webp"
-                    alt="Prévia da Trilha do Aluno Curioso"
-                    className="h-44 sm:h-52 w-full object-cover opacity-85 transition-transform duration-700 hover:scale-105"
+                    alt="Trilha ilustrada do jogo Trilha do Aluno Curioso"
+                    className="h-full w-full object-cover opacity-85 transition-transform duration-700 hover:scale-105"
                   />
 
                   {/* Overlay Interativo Simulando o Ecossistema da Montanha */}

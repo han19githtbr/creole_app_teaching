@@ -28,8 +28,6 @@ interface GamesPromotionModalProps {
   onClose?: () => void;
 }
 
-const STORAGE_KEY = "crioulo_games_promo_seen_v1";
-
 export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -50,26 +48,15 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
       setIsOpen(true);
       return;
     }
-    // Ao fazer login/abrir o painel na sessão atual, verifica se já foi visualizado
-    try {
-      const seen = sessionStorage.getItem(STORAGE_KEY);
-      if (!seen) {
-        // Breve delay para a transição suave de entrada após carregar o dashboard
-        const timer = setTimeout(() => {
-          setIsOpen(true);
-        }, 450);
-        return () => clearTimeout(timer);
-      }
-    } catch {
-      // Caso cookies/storage estejam bloqueados
-    }
+    // Breve delay para a transição suave de entrada após carregar o dashboard.
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 450);
+    return () => clearTimeout(timer);
   }, [forceOpen]);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
-    try {
-      sessionStorage.setItem(STORAGE_KEY, "true");
-    } catch {}
     if (onClose) onClose();
   }, [onClose]);
 

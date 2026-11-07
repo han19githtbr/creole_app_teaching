@@ -991,7 +991,9 @@ export function renderTrailDemoFrame(
     const answerLabelH = revealed ? 34 : 0;
     const imageX = clamp(targetX - imageW / 2, 20, w - imageW - 20);
     const imageY = clamp(targetY - imageH - 30, spec.safeTop + 25, mapH - imageH - answerLabelH - 45);
-    const image = assets.sceneImages?.get(round.item.id) ?? assets.images.get(round.item.id);
+    // Use a imagem isolada do objeto (incluindo a variante francesa quando existe),
+    // como no cartão exibido durante a partida. A cena completa contém outros itens.
+    const image = assets.images.get(round.item.id) ?? assets.sceneImages?.get(round.item.id);
 
     const frame = ctx.createLinearGradient(imageX, imageY, imageX + imageW, imageY + imageH);
     frame.addColorStop(0, "#fbbf24");
@@ -1019,13 +1021,13 @@ export function renderTrailDemoFrame(
       const drawX = imageX + (imageW - drawW) / 2;
       const drawY = imageY + (imageH - drawH) / 2;
       ctx.drawImage(image, drawX, drawY, drawW, drawH);
-      const arrowScale = 0.62 * (drawW / round.item.w);
+      const arrowScale = 0.55 * (drawW / round.item.w);
       ctx.save();
       ctx.translate(
-        drawX + (round.item.arrow.x / round.item.w) * drawW,
-        drawY + (round.item.arrow.y / round.item.h) * drawH
+        drawX + (600 / round.item.w) * drawW,
+        drawY + (720 / round.item.h) * drawH
       );
-      ctx.rotate((25 * Math.PI) / 180);
+      ctx.rotate((-90 * Math.PI) / 180);
       ctx.scale(arrowScale, arrowScale);
       ctx.beginPath();
       ctx.moveTo(-90, -10);

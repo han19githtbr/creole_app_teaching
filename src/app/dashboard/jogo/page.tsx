@@ -26,10 +26,11 @@ export default async function ImageQuizPage({
 
   const language = await getAppLanguage();
 
-  // No painel em francês, a aba Jogos oferece uma escolha entre os dois jogos.
-  // O desafio de uma postagem (?post=...) continua sendo o jogo de palavras da própria postagem.
-  if (language === "francais" && !(await searchParams).post) {
-    const { theme, module: initialModule } = await searchParams;
+  const { post: postId, image: imageId, theme, module: initialModule } = await searchParams;
+
+  // Quando um módulo ou tema de jogo é requisitado (ex: cquoi ou trilha), ou na aba Jogos do painel em francês:
+  // Abre o seletor ou o jogo interativo diretamente.
+  if ((initialModule || theme || language === "francais") && !postId) {
     if (!initialModule && !theme) return <GamesPicker />;
 
     return (
@@ -43,8 +44,6 @@ export default async function ImageQuizPage({
       </GameMonetizationWrapper>
     );
   }
-
-  const { post: postId, image: imageId } = await searchParams;
   const requestedImage = imageId ? await findAnyBankImage(imageId) : undefined;
   if (imageId && !requestedImage) notFound();
   const pool = requestedImage ? [] : [...IMAGE_BANK, ...(await listApprovedGenerated("posts"))];

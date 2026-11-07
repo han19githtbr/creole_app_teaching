@@ -17,6 +17,7 @@ import { VideoCard } from "@/components/VideoCard";
 import { LessonCard } from "@/components/LessonCard";
 import { ProgressCard } from "@/components/ProgressCard";
 import { GamificationCard } from "@/components/GamificationCard";
+import { GamesPromotionModal, GamesPromoSpotlightBanner } from "@/components/GamesPromotionModal";
 import { getBankImage } from "@/lib/imageBank";
 import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 import { Card, CardContent } from "@/components/ui/card";
@@ -144,6 +145,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 space-y-8">
+      {/* Propaganda de boas-vindas dos jogos (C'est quoi ? e Trilha do Aluno Curioso) */}
+      <GamesPromotionModal />
+
       {/* Top Welcome & Live Banner */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -164,6 +168,9 @@ export default async function DashboardPage() {
           </Link>
         )}
       </div>
+
+      {/* Destaque visual dos jogos interativos */}
+      <GamesPromoSpotlightBanner />
 
       {/* Progresso e conquistas (alunos) */}
       {!isAdmin && totalLessons > 0 && (

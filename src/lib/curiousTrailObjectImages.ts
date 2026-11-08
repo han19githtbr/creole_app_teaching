@@ -1,16 +1,20 @@
 import type { CestQuoiItem } from "@/lib/cquoiContent";
 import type { AppLanguage } from "@/lib/languageShared";
 import frenchVariants from "@/lib/trailObjectFrenchVariants.json";
+import availableIds from "@/lib/trailObjectAvailableIds.json";
 
 export type TrailObjectImages = Map<string, HTMLImageElement>;
 const FRENCH_TRAIL_OBJECT_IDS = new Set(frenchVariants as string[]);
+const AVAILABLE_TRAIL_OBJECT_IDS = new Set(availableIds as string[]);
 
 export function getTrailObjectImageSrc(item: CestQuoiItem, language: AppLanguage = "francais"): string {
-  if (!/^[a-z0-9-]+$/.test(item.id)) return item.scene;
-  if (language === "francais" && FRENCH_TRAIL_OBJECT_IDS.has(item.id)) {
-    return `/ghibli/fr/trail-objects/${item.id}.svg`;
+  if (AVAILABLE_TRAIL_OBJECT_IDS.has(item.id)) {
+    if (language === "francais" && FRENCH_TRAIL_OBJECT_IDS.has(item.id)) {
+      return `/ghibli/fr/trail-objects/${item.id}.svg`;
+    }
+    return `/ghibli/trail-objects/${item.id}.svg`;
   }
-  return `/ghibli/trail-objects/${item.id}.svg`;
+  return item.scene;
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {

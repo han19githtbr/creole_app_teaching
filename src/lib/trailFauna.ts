@@ -55,7 +55,7 @@ export interface FaunaSpec {
 
 export const FAUNA_SPECIES: Record<string, FaunaSpec> = {
   esquilo: { id: "esquilo", kind: "ground", h: 44, face: 1, speed: 80, hop: true, gait: 9, stride: 0, temper: "friendly", sense: 130, flee: 2, idle: [1.2, 3] },
-  cervo: { id: "cervo", kind: "ground", h: 92, face: 1, speed: 42, gait: 0, stride: 70, temper: "wary", sense: 240, flee: 2.6, idle: [3, 5] },
+  cervo: { id: "cervo", kind: "ground", h: 92, face: 1, speed: 58, gait: 0, stride: 68, temper: "wary", sense: 150, flee: 2.2, idle: [1.4, 3.2] },
   ourico: { id: "ourico", kind: "ground", h: 35, face: 1, speed: 24, gait: 0, stride: 22, temper: "defensive", sense: 120, flee: 1, idle: [2, 4] },
   gamba: { id: "gamba", kind: "ground", h: 44, face: -1, speed: 30, gait: 0, stride: 30, temper: "warning", sense: 170, flee: 1.4, idle: [2, 4] },
   picapau: { id: "picapau", kind: "perch", h: 50, face: 1, speed: 70, gait: 0, stride: 0, temper: "peaceful", sense: 0, flee: 1, pecks: true, idle: [3, 6] },
@@ -119,22 +119,22 @@ const faunaIdOf = (dataId: string) => DATA_TO_FAUNA_ID[dataId] ?? (FAUNA_SPECIES
 /** Fauna presente em cada trecho, de acordo com seus horários e habitats. */
 export const FAUNA_BY_WEATHER: Record<TrailWeather, readonly string[]> = {
   sunny: ["esquilo", "cervo", "picapau", "tucano", "quati", "tamandua", "tatu", "paca", "cutia", "jabuti", "gamba", "preguica", "javali", "coelho", "formiga", "pacu"],
-  night: ["coruja", "onca", "guara", "gamba", "sapo", "cobra", "coelho", "tatu", "tamandua", "formiga"],
+  night: ["coruja", "onca", "guara", "cervo", "gamba", "sapo", "cobra", "coelho", "tatu", "tamandua", "formiga"],
   rain: ["sapo", "lontra", "jacare", "preguica", "tucano", "quati", "ourico", "jabuti", "paca", "cervo", "cobra", "caracol", "formiga", "coelho", "pacu"],
   snow: ["cervo", "javali", "coruja", "esquilo", "guara", "picapau"],
 };
 const HIGHLIGHTS: Record<TrailWeather, readonly string[]> = {
   sunny: ["esquilo", "cervo", "tucano"],
-  night: ["coruja", "onca", "guara"],
-  rain: ["sapo", "lontra", "tucano"],
+  night: ["coruja", "onca", "guara", "cervo"],
+  rain: ["sapo", "lontra", "cervo", "tucano"],
   snow: ["cervo", "coruja"],
 };
 const TARGET: Record<TrailWeather, number> = { sunny: 8, night: 7, rain: 8, snow: 5 };
 /** Quem adora/aguenta o tempo fica mais ativo; os demais, mais quietos. */
 const WEATHER_LOVERS: Record<TrailWeather, readonly string[]> = {
   sunny: FAUNA_IDS,
-  night: ["coruja", "onca", "guara", "gamba", "sapo", "cobra", "coelho", "tamandua"],
-  rain: ["sapo", "lontra", "jacare", "tucano", "ourico", "preguica", "caracol"],
+  night: ["coruja", "onca", "guara", "cervo", "gamba", "sapo", "cobra", "coelho", "tamandua"],
+  rain: ["sapo", "lontra", "jacare", "tucano", "ourico", "preguica", "caracol", "cervo"],
   snow: ["cervo", "javali", "coruja", "guara", "esquilo"],
 };
 

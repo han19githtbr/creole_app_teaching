@@ -70,7 +70,10 @@ const clampN = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, 
 
 /** Exibe a ilustração do objeto durante a pergunta com enquadramento completo garantido. */
 function ObjectLens({ item, px, ring, full = false, language = "francais" }: { item: CestQuoiItem; px: number; ring?: string; full?: boolean; language?: AppLanguage }) {
-  // Margem generosa de enquadramento (75% da dimensão mínima para nunca cortar objetos grandes)
+  // Se a ilustração isolada falhar (arquivo ausente/erro de rede), cai para a cena completa em vez de mostrar o ícone de imagem quebrada.
+  const primary = getTrailObjectImageSrc(item, language);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const src = failedSrc === primary ? item.scene : primary;
   return (
     <svg
       viewBox={`0 0 ${item.w} ${item.h}`}
@@ -80,7 +83,8 @@ function ObjectLens({ item, px, ring, full = false, language = "francais" }: { i
       aria-hidden
     >
       <image
-        href={getTrailObjectImageSrc(item, language)}
+        href={src}
+        onError={() => setFailedSrc(primary)}
         x={0}
         y={0}
         width={item.w}
@@ -88,7 +92,7 @@ function ObjectLens({ item, px, ring, full = false, language = "francais" }: { i
         preserveAspectRatio="xMidYMid meet"
       />
       <g className="cq-sway">
-        <g transform="translate(600 720) rotate(-90) scale(0.55)">
+        <g transform={src === item.scene ? `translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(0.55)` : "translate(600 720) rotate(-90) scale(0.55)"}>
           <path
             d="M-90 -10 L-40 -10 L-45 -25 L0 0 L-45 25 L-40 10 L-90 10 Z"
             fill="#ef4444"

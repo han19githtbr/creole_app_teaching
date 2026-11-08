@@ -775,6 +775,9 @@ function applyEnvironmentalRimLighting(
   ctx.restore();
 }
 
+/** Camada transparente reutilizada para desenhar cada bicho isoladamente. */
+let critterLayer: HTMLCanvasElement | null = null;
+
 function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAssets, weather: TrailWeather, t: number) {
   const sp = c.spec;
   const base = assets.sprites[sp.id];
@@ -897,6 +900,35 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
     drawRealisticGroundShadow(ctx, c.x, c.y, w, h, lift, weather, facing);
   }
 
+  // O bicho é desenhado numa CAMADA TRANSPARENTE ISOLADA: assim a luz (luar, sol, umidade) só afeta os
+  // pixels do animal. Aplicada direto no mapa, a mistura "source-atop" pintaria um retângulo em volta dele.
+  const mainCtx = ctx;
+  let layerOut: { cv: HTMLCanvasElement; E: number } | null = null;
+  {
+    const M = mainCtx.getTransform();
+    const sc = Math.hypot(M.a, M.b) || 1;
+    const E = Math.max(h * 1.6, w * 1.5) + 34 + Math.max(0, lift);
+    const px = Math.ceil(2 * E * sc);
+    if (px >= 8 && px <= 1500 && typeof document !== "undefined") {
+      if (!critterLayer) critterLayer = document.createElement("canvas");
+      const lcv = critterLayer;
+      if (lcv.width < px || lcv.height < px) {
+        lcv.width = px;
+        lcv.height = px;
+      }
+      const lctx = lcv.getContext("2d");
+      if (lctx) {
+        lctx.setTransform(1, 0, 0, 1, 0, 0);
+        lctx.globalAlpha = 1;
+        lctx.globalCompositeOperation = "source-over";
+        lctx.clearRect(0, 0, lcv.width, lcv.height);
+        lctx.setTransform(sc, 0, 0, sc, (E - c.x) * sc, (E - c.y) * sc);
+        ctx = lctx;
+        layerOut = { cv: lcv, E };
+      }
+    }
+  }
+
   ctx.save();
   ctx.translate(c.x + jx, c.y - lift);
   // O corpo acompanha a inclinação suave do terreno
@@ -917,6 +949,12 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   // Aplica iluminação de borda e sombra ambiental para harmonizar o bicho com a mata
   applyEnvironmentalRimLighting(ctx, w, h, weather);
   ctx.restore();
+  if (layerOut) {
+    // leva a camada (com a luz já aplicada só no animal) para o mapa, em escala 1:1 com a tela
+    ctx = mainCtx;
+    const px = Math.ceil(2 * layerOut.E * (Math.hypot(mainCtx.getTransform().a, mainCtx.getTransform().b) || 1));
+    mainCtx.drawImage(layerOut.cv, 0, 0, px, px, c.x - layerOut.E, c.y - layerOut.E, 2 * layerOut.E, 2 * layerOut.E);
+  }
 
   // Integração com o solo: micro-vegetação cobrindo levemente a base das patas no chão
   if (sp.kind === "ground" && lift <= 2) {

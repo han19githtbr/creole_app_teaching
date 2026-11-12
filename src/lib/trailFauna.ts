@@ -214,6 +214,11 @@ const HIDES = FOLIAGE_PATCHES
   .filter((h) => getTrailDistance(h.x, h.y) >= 95);
 
 /** Beiras d'água (para sapo, lontra, jacaré) com distância segura da trilha de terra. */
+/** Dentro d'água (lagoas): o peixe só vive aqui, nunca em terra. */
+const POND_INTERIOR: { x: number; y: number }[] = [
+  [383, 1025], [360, 1022], [405, 1028], [323, 797], [309, 796], [337, 798],
+].map(([x, y]) => P(x, y));
+
 const WATER_EDGES: { x: number; y: number }[] = [
   [383, 1040], [350, 1036], [420, 1040], [323, 812], [300, 809], [560, 1096], [410, 917], [445, 952],
 ]
@@ -370,14 +375,15 @@ export function createFauna(initialWeather: TrailWeather = "sunny", seed?: numbe
 
   function pickGroundSpot(c: Critter, lo: number, hi: number): { x: number; y: number; patch: number } | null {
     const list: { x: number; y: number; patch: number }[] = [];
-    if (c.spec.water) WATER_EDGES.forEach((p) => near(p.y, lo, hi) && list.push({ ...p, patch: -1 }));
+    if (c.spec.id === "pacu") POND_INTERIOR.forEach((p) => near(p.y, lo, hi) && list.push({ ...p, patch: -1 }));
+    else if (c.spec.water) WATER_EDGES.forEach((p) => near(p.y, lo, hi) && list.push({ ...p, patch: -1 }));
     else if (c.spec.climbs) {
       PERCHES.slice(0, 10).forEach((p) => near(p.y, lo, hi) && list.push({ x: p.x, y: p.y, patch: -1 }));
     } else {
       HABITAT.forEach((p) => near(p.y, lo, hi) && list.push({ ...p, patch: -1 }));
       HIDES.forEach((p) => near(p.y, lo, hi) && list.push({ x: p.x, y: p.y, patch: p.patch }));
     }
-    const ok = list.filter((s) => !crowded(s.x, s.y, c));
+    const ok = list.filter((s) => !crowded(s.x, s.y, c) && (c.spec.id !== "pacu" || Math.hypot(s.x - c.x, s.y - c.y) < 120));
     const pool = ok.length ? ok : list;
     return pool.length ? pool[Math.floor(rnd() * pool.length)] : null;
   }

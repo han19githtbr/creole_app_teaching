@@ -662,15 +662,17 @@ function drawRealisticGroundShadow(
   ctx.fill();
 
   // 2. Sombra projetada direcional que responde à iluminação do clima (Sol ou Lua)
-  let shadowDx = -facing * w * 0.12;
-  let shadowDy = h * 0.04;
+  // UMA fonte de luz coerente: o sol (dia) e a lua (noite) ficam no alto à direita do mapa, como na arte.
+  // Por isso todas as sombras caem para a esquerda/baixo e NÃO dependem do lado para onde o bicho olha.
+  const sunDx = Math.max(-1, Math.min(1, (x - 820) / 700));
+  let shadowDx = sunDx * w * 0.2 - w * 0.06;
+  let shadowDy = h * 0.045;
   let castAlpha = 0.24 * airScale;
   let shadowTint = "rgba(10, 20, 14, ";
 
   if (weather === "night") {
     // Luar vindo do alto à direita (x: 780, y: 108)
-    const ldx = (x - 780) / 1000;
-    shadowDx = ldx * 36;
+    shadowDx = sunDx * w * 0.14 - w * 0.03;
     shadowDy = h * 0.055;
     shadowTint = "rgba(6, 12, 28, ";
     castAlpha = 0.2 * airScale;
@@ -691,7 +693,7 @@ function drawRealisticGroundShadow(
     y + shadowDy,
     w * 0.36 * airScale * blurFactor,
     h * 0.08 * airScale * blurFactor,
-    -0.05 * facing,
+    sunDx * 0.12,
     0,
     Math.PI * 2
   );
@@ -735,7 +737,9 @@ function applyEnvironmentalRimLighting(
   ctx: CanvasRenderingContext2D,
   w: number,
   h: number,
-  weather: TrailWeather
+  weather: TrailWeather,
+  /** lado (no desenho do bicho) que fica voltado para a luz: +1 direita, -1 esquerda */
+  litSide = 1
 ) {
   ctx.save();
   ctx.globalCompositeOperation = "source-atop";
@@ -770,6 +774,21 @@ function applyEnvironmentalRimLighting(
     grad.addColorStop(0.25, "rgba(215, 235, 255, 0.1)");
     grad.addColorStop(1, "rgba(14, 24, 38, 0.16)");
     ctx.fillStyle = grad;
+    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+  }
+  // luz lateral: o lado voltado para o sol/lua (alto à direita) recebe um fio de luz; o oposto, penumbra
+  if (weather === "sunny" || weather === "night") {
+    const lg = ctx.createLinearGradient(w * 0.5 * litSide, 0, -w * 0.5 * litSide, 0);
+    if (weather === "sunny") {
+      lg.addColorStop(0, "rgba(255, 240, 190, 0.24)");
+      lg.addColorStop(0.5, "rgba(255, 240, 190, 0)");
+      lg.addColorStop(1, "rgba(20, 40, 20, 0.14)");
+    } else {
+      lg.addColorStop(0, "rgba(190, 220, 255, 0.3)");
+      lg.addColorStop(0.5, "rgba(190, 220, 255, 0)");
+      lg.addColorStop(1, "rgba(6, 12, 30, 0.22)");
+    }
+    ctx.fillStyle = lg;
     ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
   }
   ctx.restore();
@@ -947,7 +966,7 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
     if (img) ctx.drawImage(img, -w / 2, -h, w, h);
   }
   // Aplica iluminação de borda e sombra ambiental para harmonizar o bicho com a mata
-  applyEnvironmentalRimLighting(ctx, w, h, weather);
+  applyEnvironmentalRimLighting(ctx, w, h, weather, (c.look * sp.face) >= 0 ? 1 : -1);
   ctx.restore();
   if (layerOut) {
     // leva a camada (com a luz já aplicada só no animal) para o mapa, em escala 1:1 com a tela
@@ -1071,6 +1090,417 @@ function drawForestAtmosphere(
 }
 
 /** Desenha bichos e retalhos de folhagem (os bichos passam ATRÁS dos retalhos quando estão mais ao fundo). */
+/* ------------------------------------------------------------------ casinha do cume (desenhada por código) */
+
+const HUT_ORIGIN = { x: 536, y: 128 };
+const HUT_SPRITE_W = 220;
+const HUT_SPRITE_H = 150;
+const HUT_PX = 4; // pixels do sprite por unidade do mundo
+const hutCache = new Map<string, CanvasImageSource>();
+
+const rnd01 = (a: number, b = 0) => {
+  const x = Math.sin(a * 91.7 + b * 17.3) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+/** Parte estática da casinha (morrinho de grama, paredes de pedra, telhado de sapê, porta, janela), com o clima já aplicado. */
+function buildHutSprite(weather: TrailWeather): CanvasImageSource | null {
+  if (typeof document === "undefined") return null;
+  const key = weather;
+  const hit = hutCache.get(key);
+  if (hit) return hit;
+  const c = document.createElement("canvas");
+  c.width = HUT_SPRITE_W * HUT_PX;
+  c.height = HUT_SPRITE_H * HUT_PX;
+  const g = c.getContext("2d");
+  if (!g) return null;
+  g.scale(HUT_PX, HUT_PX);
+  g.translate(-HUT_ORIGIN.x, -HUT_ORIGIN.y);
+  const ink = "#43301f";
+  g.lineJoin = "round";
+  g.lineCap = "round";
+
+  // morrinho de grama que cobre o chão do cume (e a emenda da arte atrás)
+  const mound = g.createLinearGradient(0, 190, 0, 262);
+  mound.addColorStop(0, "#c4e35e");
+  mound.addColorStop(0.55, "#9ccc46");
+  mound.addColorStop(1, "#78ad38");
+  g.fillStyle = "rgba(30,50,20,0.22)";
+  g.beginPath();
+  g.ellipse(628, 240, 98, 30, 0, 0, Math.PI * 2);
+  g.fill();
+  g.fillStyle = mound;
+  g.strokeStyle = "#3f5f24";
+  g.lineWidth = 2.2;
+  g.beginPath();
+  g.ellipse(622, 226, 94, 34, 0, 0, Math.PI * 2);
+  g.fill();
+  g.stroke();
+  g.fillStyle = "rgba(255,255,200,0.28)";
+  g.beginPath();
+  g.ellipse(608, 216, 56, 12, -0.08, 0, Math.PI * 2);
+  g.fill();
+  // tufos e florzinhas
+  g.strokeStyle = "#4f8a2c";
+  g.lineWidth = 1.2;
+  for (let i = 0; i < 26; i++) {
+    const x = 540 + rnd01(i, 1) * 168;
+    const y = 214 + rnd01(i, 2) * 36;
+    if (((x - 622) / 94) ** 2 + ((y - 226) / 34) ** 2 > 0.86) continue;
+    g.beginPath();
+    g.moveTo(x, y);
+    g.lineTo(x - 2, y - 6);
+    g.moveTo(x, y);
+    g.lineTo(x + 2.5, y - 5);
+    g.stroke();
+    if (i % 4 === 0) {
+      g.fillStyle = ["#ffd83a", "#ffffff", "#ff7a4a"][i % 3];
+      g.beginPath();
+      g.arc(x + 4, y - 3, 1.6, 0, Math.PI * 2);
+      g.fill();
+    }
+  }
+
+  if (weather === "snow") {
+    g.save();
+    g.beginPath();
+    g.ellipse(622, 226, 94, 34, 0, 0, Math.PI * 2);
+    g.clip();
+    g.fillStyle = "rgba(255,255,255,0.66)";
+    g.fillRect(520, 190, 220, 90);
+    g.restore();
+  }
+
+  // paredes de pedra
+  const wall = g.createLinearGradient(580, 176, 580, 216);
+  wall.addColorStop(0, "#dcc59b");
+  wall.addColorStop(1, "#c4a577");
+  g.fillStyle = wall;
+  g.strokeStyle = ink;
+  g.lineWidth = 2.6;
+  g.beginPath();
+  g.rect(581, 176, 68, 40);
+  g.fill();
+  g.stroke();
+  g.strokeStyle = "rgba(90,64,38,0.55)";
+  g.lineWidth = 1;
+  for (let r = 0; r < 4; r++) {
+    for (let k = 0; k < 6; k++) {
+      const x = 583 + k * 11 + (r % 2) * 5;
+      const y = 180 + r * 9.5;
+      g.strokeRect(x, y, 9.6, 8);
+    }
+  }
+  g.fillStyle = "rgba(60,40,22,0.2)"; // lado na sombra (luz vem do alto à direita)
+  g.fillRect(581, 176, 16, 40);
+
+  // porta em arco
+  g.fillStyle = "#7d4b2a";
+  g.strokeStyle = ink;
+  g.lineWidth = 2.2;
+  g.beginPath();
+  g.moveTo(604, 216);
+  g.lineTo(604, 198);
+  g.quadraticCurveTo(612, 186, 620, 198);
+  g.lineTo(620, 216);
+  g.closePath();
+  g.fill();
+  g.stroke();
+  g.strokeStyle = "rgba(40,22,10,0.6)";
+  g.lineWidth = 1;
+  g.beginPath();
+  g.moveTo(612, 189);
+  g.lineTo(612, 216);
+  g.stroke();
+  g.fillStyle = "#f2c04a";
+  g.beginPath();
+  g.arc(616.5, 208, 1.4, 0, Math.PI * 2);
+  g.fill();
+  // degrau de pedra
+  g.fillStyle = "#bdb7a6";
+  g.strokeStyle = ink;
+  g.lineWidth = 1.6;
+  g.beginPath();
+  g.roundRect(601, 214.5, 22, 5, 2);
+  g.fill();
+  g.stroke();
+
+  // janela
+  g.fillStyle = weather === "night" ? "#ffe29a" : "#a9d6ee";
+  g.strokeStyle = ink;
+  g.lineWidth = 2;
+  g.beginPath();
+  g.rect(630, 188, 12, 12);
+  g.fill();
+  g.stroke();
+  g.lineWidth = 1.2;
+  g.beginPath();
+  g.moveTo(636, 188);
+  g.lineTo(636, 200);
+  g.moveTo(630, 194);
+  g.lineTo(642, 194);
+  g.stroke();
+
+  // chaminé de pedra
+  g.fillStyle = "#98958c";
+  g.strokeStyle = ink;
+  g.lineWidth = 2.2;
+  g.beginPath();
+  g.rect(641, 148, 12, 28);
+  g.fill();
+  g.stroke();
+  g.strokeStyle = "rgba(60,55,50,0.5)";
+  g.lineWidth = 1;
+  for (let i = 0; i < 3; i++) {
+    g.beginPath();
+    g.moveTo(641, 154 + i * 8);
+    g.lineTo(653, 154 + i * 8);
+    g.stroke();
+  }
+
+  // telhado de sapê
+  const roof = g.createLinearGradient(560, 146, 660, 196);
+  roof.addColorStop(0, "#e9c27c");
+  roof.addColorStop(0.5, "#d8a24f");
+  roof.addColorStop(1, "#b97f35");
+  g.fillStyle = roof;
+  g.strokeStyle = ink;
+  g.lineWidth = 3;
+  g.beginPath();
+  g.moveTo(556, 190);
+  g.quadraticCurveTo(580, 170, 612, 142);
+  g.quadraticCurveTo(646, 168, 672, 190);
+  for (let i = 0; i <= 12; i++) {
+    const x = 672 - i * (116 / 12);
+    g.lineTo(x, 190 + (i % 2 ? 7 : 3.5));
+  }
+  g.closePath();
+  g.fill();
+  g.stroke();
+  // feixes de palha
+  g.strokeStyle = "rgba(120,78,30,0.55)";
+  g.lineWidth = 1.3;
+  for (let i = 0; i < 16; i++) {
+    const a = 566 + i * 6.8;
+    g.beginPath();
+    g.moveTo(612 + (a - 612) * 0.18, 150 + Math.abs(a - 612) * 0.12);
+    g.quadraticCurveTo(a - 2, 172, a, 190 + (i % 2 ? 6 : 3));
+    g.stroke();
+  }
+  g.fillStyle = "rgba(255,236,170,0.32)"; // luz do alto no lado direito do telhado
+  g.beginPath();
+  g.moveTo(612, 144);
+  g.quadraticCurveTo(646, 168, 668, 188);
+  g.lineTo(640, 190);
+  g.quadraticCurveTo(630, 170, 612, 150);
+  g.closePath();
+  g.fill();
+  g.fillStyle = "#c58b3e";
+  g.strokeStyle = ink;
+  g.lineWidth = 2;
+  g.beginPath();
+  g.ellipse(612, 143, 7, 3.6, 0, 0, Math.PI * 2);
+  g.fill();
+  g.stroke();
+
+  if (weather === "snow") {
+    // neve acumulada no alto do telhado (recortada no desenho do telhado) e no morrinho
+    g.save();
+    g.beginPath();
+    g.moveTo(556, 190);
+    g.quadraticCurveTo(580, 170, 612, 142);
+    g.quadraticCurveTo(646, 168, 672, 190);
+    g.lineTo(556, 190);
+    g.closePath();
+    g.clip();
+    g.fillStyle = "#ffffff";
+    g.strokeStyle = "#5a6f9a";
+    g.lineWidth = 2;
+    g.beginPath();
+    g.moveTo(540, 120);
+    g.lineTo(690, 120);
+    g.lineTo(690, 183);
+    for (let i = 0; i <= 10; i++) g.lineTo(690 - i * 15, 176 + (i % 2 ? 7 : 1) + Math.sin(i * 1.7) * 2);
+    g.closePath();
+    g.fill();
+    g.beginPath();
+    for (let i = 0; i <= 10; i++) {
+      const x = 690 - i * 15;
+      const y = 176 + (i % 2 ? 7 : 1) + Math.sin(i * 1.7) * 2;
+      i ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
+    g.restore();
+  }
+  const out = gradeImage(c, weather);
+  hutCache.set(key, out);
+  return out;
+}
+
+/**
+ * Casinha do cume (destino da trilha). `celebrate` (0..1) acende a porta e solta estrelinhas quando o aluno
+ * entra e comemora. A fumaça sobe da chaminé; à noite a janela e a porta emitem luz quente.
+ */
+export function drawHut(ctx: CanvasRenderingContext2D, t: number, weather: TrailWeather, celebrate = 0) {
+  const sprite = buildHutSprite(weather);
+  if (!sprite) return;
+  ctx.save();
+  const bounce = celebrate > 0 ? Math.abs(Math.sin(t * 6)) * 1.6 * celebrate : 0;
+  ctx.translate(0, -bounce);
+  ctx.drawImage(sprite, HUT_ORIGIN.x, HUT_ORIGIN.y, HUT_SPRITE_W, HUT_SPRITE_H);
+  ctx.restore();
+
+  // luz quente da janela e da porta
+  const warm = weather === "night" ? 1 : weather === "rain" ? 0.55 : weather === "snow" ? 0.5 : 0.15;
+  const lit = Math.min(1.2, warm + celebrate);
+  if (lit > 0.1) {
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (const [x, y, r] of [[636, 194, 34], [612, 204, 38]] as const) {
+      const gr = ctx.createRadialGradient(x, y, 1, x, y, r);
+      gr.addColorStop(0, `rgba(255, 214, 120, ${0.5 * lit})`);
+      gr.addColorStop(1, "rgba(255, 190, 90, 0)");
+      ctx.fillStyle = gr;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // fumaça da chaminé (some mais devagar na chuva/neve)
+  ctx.save();
+  for (let i = 0; i < 6; i++) {
+    const ph = (t * 0.32 + i / 6) % 1;
+    const x = 647 + Math.sin(ph * 5 + i) * 5 + ph * 12;
+    const y = 146 - ph * 52;
+    const r = 3.2 + ph * 9;
+    ctx.fillStyle = weather === "night" ? `rgba(190,200,220,${0.42 * (1 - ph)})` : `rgba(240,240,240,${0.55 * (1 - ph)})`;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // estrelinhas de festa quando o aluno comemora dentro/na porta
+  if (celebrate > 0) {
+    ctx.save();
+    for (let i = 0; i < 14; i++) {
+      const ph = (t * 0.9 + i * 0.19) % 1;
+      const a = i * 2.4;
+      const x = 612 + Math.cos(a) * (18 + ph * 54);
+      const y = 190 + Math.sin(a) * (10 + ph * 40) - ph * 26;
+      ctx.globalAlpha = (1 - ph) * celebrate;
+      ctx.fillStyle = ["#fde047", "#f472b6", "#60a5fa", "#4ade80"][i % 4];
+      ctx.beginPath();
+      for (let k = 0; k < 5; k++) {
+        const ang = -Math.PI / 2 + (k * 2 * Math.PI) / 5;
+        const ang2 = ang + Math.PI / 5;
+        ctx.lineTo(x + Math.cos(ang) * 4.2, y + Math.sin(ang) * 4.2);
+        ctx.lineTo(x + Math.cos(ang2) * 1.8, y + Math.sin(ang2) * 1.8);
+      }
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+/** Estrelas (só na área de céu do mapa, nunca sobre a mata): x, y em unidades do mundo, raio. */
+const NIGHT_STARS: [number, number, number][] = [
+  [362, 24, 2.6], [405, 78, 2], [452, 40, 2.8], [498, 112, 2], [545, 18, 2.2], [588, 66, 3], [640, 30, 2.2], [690, 96, 2],
+  [725, 44, 2.6], [838, 28, 2.2], [878, 84, 2.8], [925, 40, 2], [958, 112, 2.4], [980, 18, 2], [880, 150, 2], [790, 176, 2],
+  [345, 128, 2], [420, 150, 1.8], [610, 150, 2.2], [940, 190, 1.8],
+];
+
+/**
+ * Luz do céu sobre o mapa, desenhada POR CIMA de tudo (bichos e folhagem) com mistura aditiva, para não criar
+ * emendas: noite = luar + lua + estrelas cintilando; dia = brilho e feixes de sol vindo do alto à direita.
+ * A escuridão uniforme da noite fica no ajuste de cor (trailGrade.ts), igual na arte, nos retalhos e nos bichos.
+ */
+export function drawSkyLight(ctx: CanvasRenderingContext2D, t: number, weather: TrailWeather) {
+  if (weather !== "night" && weather !== "sunny") return;
+  ctx.save();
+  if (weather === "night") {
+    ctx.globalCompositeOperation = "lighter";
+    ctx.save();
+    ctx.translate(780, 150);
+    ctx.scale(520, 420);
+    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+    g.addColorStop(0, "rgba(120, 150, 205, 0.2)");
+    g.addColorStop(0.4, "rgba(80, 110, 170, 0.1)");
+    g.addColorStop(1, "rgba(40, 60, 110, 0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(0, 0, 1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    ctx.globalCompositeOperation = "source-over";
+    // lua
+    const corona = ctx.createRadialGradient(780, 108, 20, 780, 108, 62);
+    corona.addColorStop(0, "rgba(255,255,255,0.85)");
+    corona.addColorStop(0.6, "rgba(224,236,255,0.32)");
+    corona.addColorStop(1, "rgba(175,201,239,0)");
+    ctx.fillStyle = corona;
+    ctx.beginPath();
+    ctx.arc(780, 108, 62, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#f8fafc";
+    ctx.beginPath();
+    ctx.arc(780, 108, 35, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "rgba(148,163,184,0.3)";
+    for (const [cx, cy, r] of [[770, 98, 7.5], [792, 114, 9], [776, 122, 5.5], [764, 112, 4]] as const) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // estrelas cintilantes
+    NIGHT_STARS.forEach(([x, y, r], i) => {
+      const tw = 0.55 + 0.45 * Math.sin(t * 1.7 + i * 1.3);
+      ctx.fillStyle = `rgba(255, 248, 214, ${0.45 + 0.55 * tw})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r * (0.8 + 0.3 * tw), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = `rgba(255, 248, 214, ${0.35 * tw})`;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(x - r * 2.4, y);
+      ctx.lineTo(x + r * 2.4, y);
+      ctx.moveTo(x, y - r * 2.4);
+      ctx.lineTo(x, y + r * 2.4);
+      ctx.stroke();
+    });
+  } else {
+    // sol: brilho quente no alto à direita e feixes de luz atravessando a mata (mesma direção da sombra dos bichos)
+    ctx.globalCompositeOperation = "lighter";
+    const glow = ctx.createRadialGradient(840, 30, 10, 840, 30, 460);
+    glow.addColorStop(0, "rgba(255, 238, 190, 0.2)");
+    glow.addColorStop(0.5, "rgba(255, 226, 160, 0.07)");
+    glow.addColorStop(1, "rgba(255, 220, 150, 0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(840, 30, 460, 0, Math.PI * 2);
+    ctx.fill();
+    for (let i = 0; i < 3; i++) {
+      const sway = 0.75 + 0.25 * Math.sin(t * 0.35 + i * 1.9);
+      const x0 = 960 + i * 70;
+      const g = ctx.createLinearGradient(x0, 0, x0 - 520, 760);
+      g.addColorStop(0, `rgba(255, 240, 190, ${0.09 * sway})`);
+      g.addColorStop(1, "rgba(255, 240, 190, 0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.moveTo(x0, -20);
+      ctx.lineTo(x0 + 60, -20);
+      ctx.lineTo(x0 - 460, 760);
+      ctx.lineTo(x0 - 610, 760);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
 export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: FaunaAssets, weather: TrailWeather, t: number) {
   for (const it of fauna.drawList()) {
     if (it.patch !== undefined) {

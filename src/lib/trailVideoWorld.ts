@@ -7,11 +7,11 @@
  */
 import { createFauna, type Fauna } from "@/lib/trailFauna";
 import type { TrailWeather } from "@/lib/curiousTrailData";
-import { drawFauna, drawWater, loadFaunaAssets, type FaunaAssets } from "@/lib/trailFaunaDraw";
+import { drawFauna, drawWater, drawSkyLight, drawHut, loadFaunaAssets, type FaunaAssets } from "@/lib/trailFaunaDraw";
 import { gradeImage } from "@/lib/trailGrade";
-import { renderAvalancheSvg } from "@/lib/trailAvalanche";
+import { drawAvalanche } from "@/lib/trailAvalanche";
 import { WORLD_W, WORLD_H, getTrailPositionAtFraction } from "@/lib/curiousTrailGeometry";
-import { computeTrailCamera, trailAvalancheAt, trailLevelForTime, trailStudentFraction, type TrailDemoPlan } from "@/lib/curiousTrailDemoVideo";
+import { computeTrailCamera, trailAvalancheAt, trailHouseCelebrate, trailLevelForTime, trailStudentFraction, type TrailDemoPlan } from "@/lib/curiousTrailDemoVideo";
 
 const STEP = 1 / 30;
 
@@ -78,21 +78,21 @@ export class TrailVideoWorld {
     const weather = trailLevelForTime(this.plan, t).weather;
     this.fauna.setWeather(weather);
     drawWater(ctx, t, weather);
+    drawHut(ctx, t, weather, trailHouseCelebrate(this.plan, t));
     drawFauna(ctx, this.fauna, this.assets, weather, t);
+    drawSkyLight(ctx, t, weather);
   }
 
-  /** Quadro da avalanche (SVG rasterizado no tamanho do canvas) ou null se não há avalanche agora. */
-  async avalancheImage(t: number, w: number, h: number): Promise<HTMLImageElement | null> {
+  /** Avalanche (a mesma do jogo), desenhada por cima do aluno quando ativa. O contexto já tem a câmera aplicada. */
+  drawAvalancheLayer(ctx: CanvasRenderingContext2D, t: number) {
     const av = trailAvalancheAt(this.plan, t);
-    if (!av || !av.active) return null;
-    const cam = computeTrailCamera(this.plan, t, w, h);
-    const vx = -cam.tx / cam.s;
-    const vy = -cam.ty / cam.s;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vx.toFixed(2)} ${vy.toFixed(2)} ${(w / cam.s).toFixed(2)} ${(h / cam.s).toFixed(2)}" width="${w}" height="${h}">${renderAvalancheSvg(av.front, t, av.danger)}</svg>`;
-    const img = new Image();
-    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-    await img.decode();
-    return img;
+    if (!av || !av.active) return;
+    drawAvalanche(ctx, av.front, t, av.danger);
+  }
+
+  /** Mantido por compatibilidade: a avalanche agora é desenhada direto no canvas (drawAvalancheLayer). */
+  async avalancheImage(_t: number, _w: number, _h: number): Promise<HTMLImageElement | null> {
+    return null;
   }
 }
 // (WORLD_W/WORLD_H são re-exportados pela geometria; mantidos aqui só para quem importa deste módulo)

@@ -324,6 +324,16 @@ export interface TrailCamera {
   ty: number;
 }
 
+/** Segundos depois da última pergunta em que o aluno reaparece na porta da casinha, comemorando. */
+export const HOUSE_REAPPEAR = 2.6;
+
+/** Intensidade (0..1) da festa na casinha do cume no instante t: acende a porta quando ele reaparece comemorando. */
+export function trailHouseCelebrate(plan: TrailDemoPlan, t: number): number {
+  const end = plan.rounds.at(-1)?.end ?? Infinity;
+  const finalLevel = plan.rounds.at(-1)?.levelCfg.level ?? plan.levelCfg.level;
+  return finalLevel === 7 && t >= end + HOUSE_REAPPEAR ? Math.min(1, (t - end - HOUSE_REAPPEAR) / 0.4) : 0;
+}
+
 const VIDEO_ZOOM = 1.55;
 
 function cameraTarget(plan: TrailDemoPlan, t: number) {
@@ -394,7 +404,7 @@ export function renderTrailDemoFrame(
     sceneImages?: TrailObjectImages;
     scene?: CanvasImageSource | null;
     /** água + folhagem + bichos (mundo do vídeo) */
-    world?: { drawWorld: (ctx: CanvasRenderingContext2D, t: number) => void } | null;
+    world?: { drawWorld: (ctx: CanvasRenderingContext2D, t: number) => void; drawAvalancheLayer?: (ctx: CanvasRenderingContext2D, t: number) => void } | null;
     /** avalanche (imagem rasterizada do quadro) */
     dyn?: CanvasImageSource | null;
   }
@@ -576,39 +586,7 @@ export function renderTrailDemoFrame(
   // água, folhagem e bichos da mata (o mesmo motor e desenho do jogo)
   assets.world?.drawWorld(ctx, t);
 
-  // casinha do cume: rótulo e brilho da porta (acende quando o aluno chega)
-  const lastEnd = plan.rounds.at(-1)?.end ?? Infinity;
-  const houseT = clamp((t - lastEnd) / 0.8);
   const finalLevel = plan.levels.at(-1)?.level ?? levelCfg.level;
-  const glow = finalLevel === 7 ? houseT : 0;
-  if (glow > 0) {
-    const g = ctx.createRadialGradient(HUT_DOOR.x, HUT_DOOR.y, 2, HUT_DOOR.x, HUT_DOOR.y, 60);
-    g.addColorStop(0, `rgba(255, 226, 140, ${0.95 * glow})`);
-    g.addColorStop(0.4, `rgba(255, 200, 90, ${0.5 * glow})`);
-    g.addColorStop(1, "rgba(255, 200, 90, 0)");
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(HUT_DOOR.x, HUT_DOOR.y, 60, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.save();
-  ctx.translate(HUT_POSITION.x, HUT_POSITION.y - 24);
-  ctx.scale(kPx / cam.s, kPx / cam.s);
-  ctx.font = `bold 15px ${FONT}`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  const hutLabel = "🏠 Casinha do Cume";
-  const hutW = ctx.measureText(hutLabel).width + 22;
-  ctx.fillStyle = "rgba(20, 25, 61, 0.92)";
-  ctx.strokeStyle = "rgba(252, 211, 77, 0.8)";
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(-hutW / 2, -24, hutW, 24, 12);
-  ctx.fill();
-  ctx.stroke();
-  ctx.fillStyle = "#fcd34d";
-  ctx.fillText(hutLabel, 0, -12);
-  ctx.restore();
 
   // as 7 estações (N1 a N7), no mesmo estilo dos marcadores do jogo
   TRAIL_LEVELS.forEach((cfg, idx) => {
@@ -713,13 +691,17 @@ export function renderTrailDemoFrame(
   const studentY = studentScreen.y - 18 * kPx;
   const isFacingLeft = nextPosition.x < studentPosition.x;
   // nível 7: depois da última pergunta o aluno entra feliz na casinha (encolhe e some na porta)
-  const houseP = finalLevel === 7 ? clamp((t - (plan.rounds.at(-1)?.end ?? Infinity) - 0.6) / 1.8) : 0;
-  const hopHappy = finalLevel === 7 && t >= (plan.rounds.at(-1)?.end ?? Infinity) && houseP < 1 ? Math.abs(Math.sin(t * 9)) * 10 : 0;
+  // Vitória (nível 7): chega, entra na casinha (encolhe e some na porta) e reaparece na porta pulando de alegria
+  const endT = plan.rounds.at(-1)?.end ?? Infinity;
+  const houseP = finalLevel === 7 ? clamp((t - endT - 0.6) / 1.8) : 0;
+  const reappear = finalLevel === 7 && t >= endT + HOUSE_REAPPEAR;
+  const hopHappy = finalLevel === 7 && t >= endT && (houseP < 1 || reappear) ? Math.abs(Math.sin(t * 9)) * 10 : 0;
+  const houseScale = reappear ? 1 : 1 - houseP * 0.55;
 
   ctx.save();
   ctx.translate(studentX, studentY - hopHappy * kPx);
-  ctx.scale(1.25 * kPx * (1 - houseP * 0.55), 1.25 * kPx * (1 - houseP * 0.55));
-  ctx.globalAlpha = 1 - clamp((houseP - 0.55) / 0.45);
+  ctx.scale(1.25 * kPx * houseScale, 1.25 * kPx * houseScale);
+  ctx.globalAlpha = reappear ? clamp((t - endT - HOUSE_REAPPEAR) / 0.35) : 1 - clamp((houseP - 0.55) / 0.45);
   if (isFacingLeft) ctx.scale(-1, 1);
 
   // Bobbing rítmico do passo de montanha
@@ -894,6 +876,18 @@ export function renderTrailDemoFrame(
   ctx.restore();
   ctx.restore();
 
+  // Avalanche (a mesma do jogo): por cima do aluno, alinhada à câmera e recortada na área do mapa
+  if (assets.world?.drawAvalancheLayer) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, w, mapH);
+    ctx.clip();
+    ctx.translate(cam.tx, cam.ty);
+    ctx.scale(cam.s, cam.s);
+    assets.world.drawAvalancheLayer(ctx, t);
+    ctx.restore();
+  }
+
   // HUD do mapa, imagem do objeto no caminho e alternativas fixas na base.
   ctx.save();
   ctx.fillStyle = "rgba(15, 23, 42, 0.84)";
@@ -1021,11 +1015,11 @@ export function renderTrailDemoFrame(
       const drawX = imageX + (imageW - drawW) / 2;
       const drawY = imageY + (imageH - drawH) / 2;
       ctx.drawImage(image, drawX, drawY, drawW, drawH);
-      const arrowScale = 0.55 * (drawW / round.item.w);
+      const arrowScale = 1.0 * (drawW / round.item.w);
       ctx.save();
       ctx.translate(
         drawX + (600 / round.item.w) * drawW,
-        drawY + (720 / round.item.h) * drawH
+        drawY + (690 / round.item.h) * drawH
       );
       ctx.rotate((-90 * Math.PI) / 180);
       ctx.scale(arrowScale, arrowScale);
@@ -1147,6 +1141,24 @@ export function renderTrailDemoFrame(
       ctx.font = `bold ${Math.max(12, w * 0.015)}px ${FONT}`;
       ctx.fillText(`Correto! +${round.scoreAfter - round.scoreBefore} pts`, w - 38, dockTop + 44);
     }
+  } else if (t >= plan.introDur) {
+    // Entre as perguntas (passagem de nível, começo e fim): painel da base com o nível e o clima, em vez de um vazio
+    const cfgNow = plan.rounds.find((r) => r.end > t)?.levelCfg ?? plan.rounds.at(-1)?.levelCfg ?? plan.levelCfg;
+    ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(18, dockTop, w - 36, dockHeight, 24);
+    ctx.fill();
+    ctx.stroke();
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#fbbf24";
+    ctx.font = `900 ${Math.max(18, w * 0.026)}px ${FONT}`;
+    const wx = cfgNow.weather === "night" ? "🌙 Noite" : cfgNow.weather === "rain" ? "🌧️ Chuva" : cfgNow.weather === "snow" ? "❄️ Neve" : "☀️ Dia de sol";
+    ctx.fillText(`Nível ${cfgNow.level} · ${cfgNow.name}`, w / 2, dockTop + dockHeight * 0.42);
+    ctx.fillStyle = "#cbd5e1";
+    ctx.font = `600 ${Math.max(13, w * 0.017)}px ${FONT}`;
+    ctx.fillText(`${wx} · ${cfgNow.altitude.toLocaleString("pt-BR")} m de altitude`, w / 2, dockTop + dockHeight * 0.62);
   }
   ctx.restore();
 

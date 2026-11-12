@@ -7,12 +7,12 @@ import type { CestQuoiItem } from "@/lib/cquoiContent";
 import { CuriousTrailStudent } from "./CuriousTrailStudent";
 import { soundEffects } from "@/lib/soundEffects";
 import { createFauna, type Fauna } from "@/lib/trailFauna";
-import { loadFaunaAssets, drawFauna, drawWater, type FaunaAssets } from "@/lib/trailFaunaDraw";
+import { loadFaunaAssets, drawFauna, drawWater, drawSkyLight, drawHut, type FaunaAssets } from "@/lib/trailFaunaDraw";
 import { gradeImage } from "@/lib/trailGrade";
 import type { AppLanguage } from "@/lib/languageShared";
 import { getTrailObjectImageSrc } from "@/lib/curiousTrailObjectImages";
 import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
-import { renderAvalancheSvg } from "@/lib/trailAvalanche";
+import { drawAvalanche } from "@/lib/trailAvalanche";
 import { Check, Lock, Volume2 } from "lucide-react";
 
 export type TrailRoundState = "asking" | "correct" | "retry" | "reveal";
@@ -92,7 +92,7 @@ function ObjectLens({ item, px, ring, full = false, language = "francais" }: { i
         preserveAspectRatio="xMidYMid meet"
       />
       <g className="cq-sway">
-        <g transform={src === item.scene ? `translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(0.55)` : "translate(600 720) rotate(-90) scale(0.55)"}>
+        <g transform={src === item.scene ? `translate(${item.arrow.x} ${item.arrow.y}) rotate(25) scale(1.15)` : "translate(600 690) rotate(-90) scale(1.0)"}>
           <path
             d="M-90 -10 L-40 -10 L-45 -25 L0 0 L-45 25 L-40 10 L-90 10 Z"
             fill="#ef4444"
@@ -150,7 +150,7 @@ export function CuriousTrailMountain({
   const faunaAssetsRef = useRef<FaunaAssets | null>(null);
   const weatherRef = useRef<TrailWeather>(weather);
   const [sceneSrc, setSceneSrc] = useState<string>(TRAIL_SCENE_SRC);
-  const avSvgRef = useRef<SVGSVGElement>(null);
+  const avCanvasRef = useRef<HTMLCanvasElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const faunaRef = useRef<Fauna | null>(null);
@@ -162,6 +162,9 @@ export function CuriousTrailMountain({
   const dragRef = useRef<{ y0: number; pan0: number; moved: boolean } | null>(null);
   const [stage, setStage] = useState({ W: 0, H: 0, WW: 0, WH: 0 });
   const [walking, setWalking] = useState(false);
+  /** Vitória: 0 = ainda andando, 1 = entrando na casinha, 2 = de volta à porta, comemorando */
+  const [houseStage, setHouseStage] = useState<0 | 1 | 2>(0);
+  const houseCelebrateRef = useRef(0);
   const [studentFacing, setStudentFacing] = useState<"left" | "right">("right");
   const [studentIncline, setStudentIncline] = useState<number>(0);
   const facingRef = useRef<"left" | "right">("right");
@@ -274,6 +277,13 @@ export function CuriousTrailMountain({
       fcanvas.height = Math.round(H * dpr);
       fcanvas.style.width = `${W}px`;
       fcanvas.style.height = `${H}px`;
+      const avc = avCanvasRef.current;
+      if (avc) {
+        avc.width = fcanvas.width;
+        avc.height = fcanvas.height;
+        avc.style.width = `${W}px`;
+        avc.style.height = `${H}px`;
+      }
       setStage((prev) => (prev.W === W && prev.H === H ? prev : { W, H, WW, WH }));
     };
     measure();
@@ -377,14 +387,20 @@ export function CuriousTrailMountain({
 
         // 3) Avalanche: anima a onda sem deslocar o cenário, a trilha ou os marcos.
         const av = avRef.current?.current;
-        if (av && av.active && avSvgRef.current) {
-          const front = av.front + (av.vel * (performance.now() - av.stamp)) / 1000;
-          avSvgRef.current.innerHTML = renderAvalancheSvg(front, tSec, av.danger);
-          if (vignetteRef.current) vignetteRef.current.style.opacity = String(Math.min(0.85, av.danger * av.danger * 0.9));
-        } else {
-          if (avSvgRef.current && avSvgRef.current.firstChild) avSvgRef.current.innerHTML = "";
-          if (vignetteRef.current) vignetteRef.current.style.opacity = "0";
+        const avCanvas = avCanvasRef.current;
+        const avCtx = avCanvas?.getContext("2d");
+        if (avCanvas && avCtx) {
+          const kk = (cam.s * WW) / VB_W;
+          avCanvas.style.transform = `translate(${-cam.tx / cam.s}px, ${-cam.ty / cam.s}px) scale(${1 / cam.s})`;
+          avCtx.setTransform(1, 0, 0, 1, 0, 0);
+          avCtx.clearRect(0, 0, avCanvas.width, avCanvas.height);
+          if (av && av.active) {
+            const front = av.front + (av.vel * (performance.now() - av.stamp)) / 1000;
+            avCtx.setTransform(dpr * kk, 0, 0, dpr * kk, dpr * cam.tx, dpr * cam.ty);
+            drawAvalanche(avCtx, front, tSec, av.danger);
+          }
         }
+        if (vignetteRef.current) vignetteRef.current.style.opacity = av && av.active ? String(Math.min(0.85, av.danger * av.danger * 0.9)) : "0";
         world.style.transform = `translate(${cam.tx}px, ${cam.ty}px) scale(${cam.s})`;
         world.style.setProperty("--inv", String(1 / cam.s));
       }
@@ -404,7 +420,9 @@ export function CuriousTrailMountain({
           fctx.imageSmoothingEnabled = true;
           fctx.imageSmoothingQuality = "high";
           drawWater(fctx, tSec, weatherRef.current);
+          drawHut(fctx, tSec, weatherRef.current, houseCelebrateRef.current);
           drawFauna(fctx, fauna, assets, weatherRef.current, tSec);
+          drawSkyLight(fctx, tSec, weatherRef.current);
         }
         const b = bubbleRef.current;
         const id = bubbleIdRef.current;
@@ -472,6 +490,23 @@ export function CuriousTrailMountain({
     };
   }, [weather]);
 
+  useEffect(() => {
+    if (!enterHouse) {
+      houseCelebrateRef.current = 0;
+      const id = setTimeout(() => setHouseStage(0), 0);
+      return () => clearTimeout(id);
+    }
+    const t1 = setTimeout(() => setHouseStage(1), 0);
+    const t2 = setTimeout(() => {
+      setHouseStage(2);
+      houseCelebrateRef.current = 1;
+    }, 1900);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [enterHouse]);
+
   // ao mudar de nível o mapa volta a seguir a estação (zera o arrasto do lobby)
   useEffect(() => {
     panRef.current = 0;
@@ -532,8 +567,6 @@ export function CuriousTrailMountain({
   // ---------------- tamanhos que dependem da largura ----------------
   const studentPx = Math.round(clampN(stage.W * 0.14, 54, 76));
   const inv = "var(--inv, 1)";
-  const hutPct = { x: (HUT_POSITION.x / VB_W) * 100, y: (HUT_POSITION.y / VB_H) * 100 };
-  const doorPct = { x: (HUT_DOOR.x / VB_W) * 100, y: (HUT_DOOR.y / VB_H) * 100 };
 
   return (
     <div
@@ -561,51 +594,6 @@ export function CuriousTrailMountain({
           draggable={false}
           className="trail-scene-img absolute inset-0 h-full w-full pointer-events-none"
         />
-        {weather === "night" && (
-          <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="trail-night-overlay absolute inset-0 z-[1] h-full w-full pointer-events-none" aria-hidden>
-            <defs>
-              <radialGradient id="trailMoonlight">
-                <stop offset="0" stopColor="#e8f1ff" stopOpacity="0.38" />
-                <stop offset="0.35" stopColor="#afc9ef" stopOpacity="0.18" />
-                <stop offset="0.7" stopColor="#3b5284" stopOpacity="0.06" />
-                <stop offset="1" stopColor="#172447" stopOpacity="0" />
-              </radialGradient>
-              <radialGradient id="moonCorona">
-                <stop offset="0" stopColor="#ffffff" stopOpacity="0.9" />
-                <stop offset="0.75" stopColor="#e0ecff" stopOpacity="0.4" />
-                <stop offset="1" stopColor="#afc9ef" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <rect width={VB_W} height={VB_H} fill="#101a3a" opacity="0.27" />
-            <ellipse cx="780" cy="150" rx="520" ry="420" fill="url(#trailMoonlight)" />
-            <circle cx="780" cy="108" r="48" fill="url(#moonCorona)" />
-            <circle cx="780" cy="108" r="35" fill="#f8fafc" />
-            {/* Crateras e relevo lunar (maria) para realismo autêntico */}
-            <circle cx="770" cy="98" r="7.5" fill="#94a3b8" opacity="0.32" />
-            <circle cx="792" cy="114" r="9" fill="#94a3b8" opacity="0.28" />
-            <circle cx="776" cy="122" r="5.5" fill="#94a3b8" opacity="0.25" />
-            <circle cx="764" cy="112" r="4" fill="#94a3b8" opacity="0.2" />
-            <circle cx="792" cy="96" r="32" fill="#64748b" opacity="0.18" />
-            {/* Constelações e estrelas com magnitudes e cintilâncias variadas */}
-            {[
-              { x: 175, y: 94, r: 2.8 }, { x: 280, y: 168, r: 2 }, { x: 380, y: 64, r: 3.2 }, { x: 460, y: 218, r: 2.2 },
-              { x: 580, y: 82, r: 3 }, { x: 670, y: 205, r: 2 }, { x: 900, y: 175, r: 3 }, { x: 935, y: 72, r: 2.2 },
-              { x: 95, y: 218, r: 2 }, { x: 735, y: 37, r: 2.5 }, { x: 320, y: 260, r: 2 }, { x: 535, y: 278, r: 2.4 },
-              { x: 220, y: 340, r: 1.8 }, { x: 640, y: 310, r: 2.5 }, { x: 840, y: 330, r: 2 }, { x: 140, y: 440, r: 2 },
-              { x: 420, y: 390, r: 2.6 }, { x: 740, y: 450, r: 2.2 }, { x: 880, y: 480, r: 2.8 }, { x: 60, y: 320, r: 2.2 }
-            ].map((star, index) => (
-              <circle
-                key={`night-star-${index}`}
-                className="trail-night-star"
-                cx={star.x}
-                cy={star.y}
-                r={star.r}
-                fill="#fff8d6"
-                style={{ animationDelay: `${(index % 6) * 0.35}s` }}
-              />
-            ))}
-          </svg>
-        )}
         {/* Nuvens do cenário se movem atrás da fauna viva, sem acrescentar bandos desenhados sobre o fundo. */}
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className={`trail-sky-life absolute inset-0 z-[2] h-full w-full overflow-visible pointer-events-none ${weather === "night" ? "trail-sky-life--night" : ""}`} aria-hidden>
           <defs>
@@ -682,14 +670,8 @@ export function CuriousTrailMountain({
           )}
         </div>
 
-        {/* Avalanche (onda de neve que persegue o aluno) */}
-        <svg
-          ref={avSvgRef}
-          viewBox={`0 0 ${VB_W} ${VB_H}`}
-          preserveAspectRatio="none"
-          className="absolute inset-0 h-full w-full z-[38] pointer-events-none overflow-visible"
-          aria-hidden
-        />
+        {/* Avalanche (onda de neve que persegue o aluno): canvas alinhado à câmera, acima do aluno */}
+        <canvas ref={avCanvasRef} className="absolute left-0 top-0 z-[38] pointer-events-none" style={{ transformOrigin: "0 0" }} aria-hidden />
 
         {/* ---------- AS 7 ESTAÇÕES (ficam sobre a curva da trilha) ---------- */}
         {TRAIL_LEVELS.map((cfg) => {
@@ -740,20 +722,6 @@ export function CuriousTrailMountain({
             </button>
           );
         })}
-
-        {/* ---------- CASINHA DO CUME: o aluno entra feliz quando termina a trilha ---------- */}
-        <div
-          className="absolute z-20 pointer-events-none"
-          style={{ left: `${hutPct.x}%`, top: `${hutPct.y}%`, transform: `translate(-50%, -100%) scale(${inv})`, transformOrigin: "50% 100%" }}
-        >
-          <span className="mb-2 block whitespace-nowrap rounded-full border border-amber-300/70 bg-[#14193d]/90 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-300 shadow-lg">
-            🏠 Casinha do Cume
-          </span>
-        </div>
-        <div
-          className={cn("absolute z-[21] pointer-events-none rounded-full transition-opacity duration-700", enterHouse || summitDone ? "opacity-100 trail-house-glow" : "opacity-0")}
-          style={{ left: `${doorPct.x}%`, top: `${doorPct.y}%`, width: 44, height: 44, transform: `translate(-50%, -50%) scale(${inv})`, background: "radial-gradient(circle, rgba(255,226,140,0.95) 0%, rgba(255,200,90,0.5) 40%, rgba(255,200,90,0) 70%)" }}
-        />
 
         {/* ---------- OBJETOS DO NÍVEL, NO PRÓPRIO MAPA ---------- */}
         {playing && total > 0 && hasCurrent && curItem && (() => {
@@ -817,10 +785,12 @@ export function CuriousTrailMountain({
         <div ref={studentRef} className="absolute z-[35] pointer-events-none" style={{ left: "0%", top: "0%" }}>
           <div
             style={{
-              transform: `translate(-50%, -88%) scale(calc(${inv} * ${enterHouse ? 0.35 : 1})) ${enterHouse ? "translateY(-14px)" : ""}`,
+              // 1: encolhe e some na porta; 2: reaparece na frente da casinha, pulando de alegria
+              transform: `translate(-50%, -88%) scale(calc(${inv} * ${houseStage === 1 ? 0.3 : 1}))`,
               transformOrigin: "50% 88%",
-              opacity: enterHouse ? 0 : 1,
-              transition: "opacity 1.2s ease-in 0.4s, transform 1.5s ease-in",
+              opacity: houseStage === 1 ? 0 : 1,
+              transition: houseStage === 2 ? "opacity 0.4s ease-out, transform 0.5s cubic-bezier(.2,1.6,.4,1)" : "opacity 1.2s ease-in 0.2s, transform 1.6s ease-in",
+              animation: houseStage === 2 ? "trail-house-hop 0.7s ease-in-out infinite" : undefined,
             }}
           >
             <CuriousTrailStudent
@@ -828,14 +798,14 @@ export function CuriousTrailMountain({
               hasUmbrella={currentCfg.hasUmbrella}
               hasSnowGear={currentCfg.hasSnowGear}
               isWalking={walking}
-              isCheering={isCheering}
+              isCheering={isCheering || houseStage === 2}
               size={studentPx}
               facing={studentFacing}
               incline={studentIncline}
             />
           </div>
           {/* Balão comemorativo de vitória quando chega ao topo e comemora */}
-          {isCheering && currentLevel === 7 && !enterHouse && (
+          {isCheering && currentLevel === 7 && houseStage !== 1 && (
             <div
               className="absolute left-1/2 bottom-[95%] -translate-x-1/2 mb-2 flex items-center gap-1.5 whitespace-nowrap rounded-2xl border-2 border-amber-300 bg-slate-900/95 px-3 py-1.5 text-xs font-black text-amber-300 shadow-2xl animate-bounce"
               style={{ transform: `translateX(-50%) scale(${inv})`, transformOrigin: "50% 100%" }}

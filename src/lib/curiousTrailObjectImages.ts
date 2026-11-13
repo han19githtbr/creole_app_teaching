@@ -1,16 +1,15 @@
 import type { CestQuoiItem } from "@/lib/cquoiContent";
 import type { AppLanguage } from "@/lib/languageShared";
 import frenchVariants from "@/lib/trailObjectFrenchVariants.json";
-import isolatedIds from "@/lib/trailObjectIsolatedIds.json";
+import availableIds from "@/lib/trailObjectAvailableIds.json";
 
 export type TrailObjectImages = Map<string, HTMLImageElement>;
 const FRENCH_TRAIL_OBJECT_IDS = new Set(frenchVariants as string[]);
-/** Objetos que têm ilustração isolada em /ghibli/trail-objects (os demais usam a cena completa). */
-const ISOLATED_TRAIL_OBJECT_IDS = new Set(isolatedIds as string[]);
+/** Objetos com ilustração isolada em /ghibli/trail-objects; os demais usam a cena completa. */
+const AVAILABLE_TRAIL_OBJECT_IDS = new Set(availableIds as string[]);
 
 export function getTrailObjectImageSrc(item: CestQuoiItem, language: AppLanguage = "francais"): string {
-  // Sem ilustração isolada para este objeto: usa a cena completa (com a seta), em vez de um endereço que não existe.
-  if (!/^[a-z0-9-]+$/.test(item.id) || !ISOLATED_TRAIL_OBJECT_IDS.has(item.id)) return item.scene;
+  if (!/^[a-z0-9-]+$/.test(item.id) || !AVAILABLE_TRAIL_OBJECT_IDS.has(item.id)) return item.scene;
   if (language === "francais" && FRENCH_TRAIL_OBJECT_IDS.has(item.id)) {
     return `/ghibli/fr/trail-objects/${item.id}.svg`;
   }

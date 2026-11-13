@@ -856,38 +856,50 @@ function applyEnvironmentalRimLighting(
 ) {
   ctx.save();
   ctx.globalCompositeOperation = "source-atop";
+  const rx = w * 0.48;
+  const ry = h * 0.28;
+  const cy = -h * 0.74;
+
   if (weather === "night") {
-    // Luar prateado na silhueta superior e sombra noturna azulada no ventre
-    const grad = ctx.createLinearGradient(0, -h, 0, 0);
-    grad.addColorStop(0, "rgba(215, 235, 255, 0.32)");
-    grad.addColorStop(0.32, "rgba(140, 185, 240, 0.1)");
-    grad.addColorStop(1, "rgba(8, 16, 36, 0.28)");
+    // Luar prateado na silhueta superior (dorso/cabeça) e leve tom noturno
+    const grad = ctx.createRadialGradient(rx * 0.2, cy - ry * 0.4, 2, 0, cy, rx);
+    grad.addColorStop(0, "rgba(224, 240, 255, 0.45)");
+    grad.addColorStop(0.45, "rgba(160, 200, 255, 0.18)");
+    grad.addColorStop(1, "rgba(16, 28, 56, 0)");
     ctx.fillStyle = grad;
-    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+    ctx.beginPath();
+    ctx.ellipse(0, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
   } else if (weather === "sunny") {
-    // Luz solar filtrada pelas copas nas costas e reflexo quente da vegetação por baixo
-    const grad = ctx.createLinearGradient(0, -h, 0, 0);
-    grad.addColorStop(0, "rgba(255, 248, 210, 0.25)");
-    grad.addColorStop(0.35, "rgba(255, 235, 170, 0.06)");
-    grad.addColorStop(1, "rgba(25, 48, 18, 0.18)");
+    // Luz solar dourada filtrada pelas copas nas costas e ombros
+    const grad = ctx.createRadialGradient(-rx * 0.1, cy - ry * 0.5, 3, 0, cy, rx);
+    grad.addColorStop(0, "rgba(255, 248, 200, 0.42)");
+    grad.addColorStop(0.4, "rgba(255, 230, 160, 0.15)");
+    grad.addColorStop(1, "rgba(40, 65, 20, 0)");
     ctx.fillStyle = grad;
-    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+    ctx.beginPath();
+    ctx.ellipse(0, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
   } else if (weather === "rain") {
-    // Brilho úmido (wet sheen) nas superfícies superiores e sombra densa difusa
-    const grad = ctx.createLinearGradient(0, -h, 0, 0);
-    grad.addColorStop(0, "rgba(225, 245, 255, 0.24)");
-    grad.addColorStop(0.28, "rgba(190, 220, 240, 0.05)");
-    grad.addColorStop(1, "rgba(14, 26, 30, 0.22)");
+    // Brilho úmido (wet sheen) nas superfícies superiores
+    const grad = ctx.createRadialGradient(0, cy - ry * 0.4, 2, 0, cy, rx);
+    grad.addColorStop(0, "rgba(235, 248, 255, 0.38)");
+    grad.addColorStop(0.35, "rgba(190, 225, 245, 0.12)");
+    grad.addColorStop(1, "rgba(20, 36, 42, 0)");
     ctx.fillStyle = grad;
-    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+    ctx.beginPath();
+    ctx.ellipse(0, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
   } else if (weather === "snow") {
     // Geada alpina e pó de neve nas costas
-    const grad = ctx.createLinearGradient(0, -h, 0, 0);
-    grad.addColorStop(0, "rgba(245, 250, 255, 0.38)");
-    grad.addColorStop(0.25, "rgba(215, 235, 255, 0.1)");
-    grad.addColorStop(1, "rgba(14, 24, 38, 0.16)");
+    const grad = ctx.createRadialGradient(0, cy - ry * 0.5, 2, 0, cy, rx);
+    grad.addColorStop(0, "rgba(255, 255, 255, 0.52)");
+    grad.addColorStop(0.38, "rgba(220, 240, 255, 0.2)");
+    grad.addColorStop(1, "rgba(24, 38, 58, 0)");
     ctx.fillStyle = grad;
-    ctx.fillRect(-w * 1.2, -h * 1.3, w * 2.4, h * 1.6);
+    ctx.beginPath();
+    ctx.ellipse(0, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
   }
   // luz lateral: o lado voltado para o sol/lua (alto à direita) recebe um fio de luz; o oposto, penumbra
   if (weather === "sunny" || weather === "night") {

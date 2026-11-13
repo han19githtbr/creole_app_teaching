@@ -16,9 +16,7 @@ import {
   Sun,
   Moon,
   CloudRain,
-  Snowflake,
   Flame,
-  Award,
   Zap,
 } from "lucide-react";
 
@@ -28,35 +26,62 @@ interface GamesPromotionModalProps {
   onClose?: () => void;
 }
 
+/** Lembra, durante a sessão, que a propaganda já foi vista/dispensada. */
+const SEEN_KEY = "games-promo-seen";
+
 export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalProps) {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  /**
+   * closed  = nada na tela
+   * compact = cartão pequeno e discreto marcado como "Propaganda" (padrão ao entrar no painel)
+   * details = explicação completa da dinâmica dos 2 jogos (só abre se a pessoa pedir)
+   */
+  const [mode, setMode] = useState<"closed" | "compact" | "details">("closed");
+  const isOpen = mode !== "closed";
   const [activeTab, setActiveTab] = useState<"both" | "cquoi" | "trilha">("both");
   const [simCountdown, setSimCountdown] = useState(5);
 
   // Animação de contagem regressiva para simular a dinâmica frenética de 5s do C'est quoi ?
   useEffect(() => {
-    if (!isOpen) return;
+    if (mode !== "details") return;
     const interval = setInterval(() => {
       setSimCountdown((prev) => (prev <= 1 ? 5 : prev - 1));
     }, 1000);
     return () => clearInterval(interval);
-  }, [isOpen]);
+  }, [mode]);
+
+  // No celular, a explicação mostra um jogo por vez (aba), em vez de uma coluna longa com os dois.
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches) {
+      const id = setTimeout(() => setActiveTab("cquoi"), 0);
+      return () => clearTimeout(id);
+    }
+  }, []);
 
   useEffect(() => {
     if (forceOpen) {
-      setIsOpen(true);
-      return;
+      const id = setTimeout(() => setMode("details"), 0);
+      return () => clearTimeout(id);
     }
-    // Breve delay para a transição suave de entrada após carregar o dashboard.
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 450);
+    // Aparece uma vez por sessão (ao entrar), depois que o painel já carregou: não atrapalha a navegação.
+    let seen = false;
+    try {
+      seen = window.sessionStorage.getItem(SEEN_KEY) === "1";
+    } catch {
+      seen = false;
+    }
+    if (seen) return;
+    const timer = setTimeout(() => setMode("compact"), 1200);
     return () => clearTimeout(timer);
   }, [forceOpen]);
 
   const handleClose = useCallback(() => {
-    setIsOpen(false);
+    setMode("closed");
+    try {
+      window.sessionStorage.setItem(SEEN_KEY, "1");
+    } catch {
+      /* sem armazenamento: apenas não lembra */
+    }
     if (onClose) onClose();
   }, [onClose]);
 
@@ -74,7 +99,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
   // Listener para evento customizado de reabrir a propaganda de qualquer lugar
   useEffect(() => {
     const handleReopen = () => {
-      setIsOpen(true);
+      setMode("details");
     };
     window.addEventListener("open-games-promo", handleReopen);
     return () => window.removeEventListener("open-games-promo", handleReopen);
@@ -85,11 +110,76 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
     router.push(url);
   };
 
-  if (!isOpen) return null;
+  if (mode === "closed") return null;
+
+  if (mode === "compact") {
+    // Cartão pequeno, SEM escurecer a página: dá para ver o painel por trás e entender que é um aviso/propaganda.
+    return (
+      <aside
+        className="fixed inset-x-3 bottom-3 z-50 mx-auto w-auto max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3.5 text-[var(--text)] shadow-2xl shadow-black/40 animate-in slide-in-from-bottom-6 fade-in duration-300 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:mx-0 sm:w-[380px]"
+        style={{ paddingBottom: "calc(0.875rem + env(safe-area-inset-bottom, 0px))" }}
+        aria-label="Propaganda dos jogos da plataforma"
+      >
+        <div className="flex items-center justify-between gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
+            <Sparkles className="h-3 w-3" /> Propaganda · Jogos
+          </span>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-secondary)] transition hover:text-[var(--text)]"
+            aria-label="Fechar propaganda"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <h2 className="mt-2 text-base font-black leading-tight text-[var(--text)]">Aprenda jogando!</h2>
+        <p className="mt-0.5 text-xs leading-snug text-[var(--text-secondary)]">
+          Treine seu francês com 2 jogos da plataforma: <strong className="text-[var(--text)]">C&apos;est quoi ?</strong> e{" "}
+          <strong className="text-[var(--text)]">Trilha do Aluno Curioso</strong>.
+        </p>
+
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => handlePlayGame("/dashboard/jogo?module=cquoi")}
+            className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-2 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-blue-500 active:scale-[0.98]"
+          >
+            <Gamepad2 className="h-4 w-4" /> C&apos;est quoi ?
+          </button>
+          <button
+            type="button"
+            onClick={() => handlePlayGame("/dashboard/jogo?module=trilha")}
+            className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-2 py-2.5 text-xs font-bold text-white shadow-sm transition hover:brightness-110 active:scale-[0.98]"
+          >
+            <MountainSnow className="h-4 w-4" /> Trilha
+          </button>
+        </div>
+
+        <div className="mt-2 flex items-center justify-between gap-2 text-xs">
+          <button
+            type="button"
+            onClick={() => setMode("details")}
+            className="cursor-pointer font-semibold text-[var(--accent)] underline-offset-2 hover:underline"
+          >
+            Ver como funciona
+          </button>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="cursor-pointer font-medium text-[var(--text-muted)] hover:text-[var(--text)]"
+          >
+            Agora não
+          </button>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 sm:py-8 overflow-y-auto bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 sm:items-center sm:p-5"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
       }}
@@ -97,7 +187,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
       aria-modal="true"
       aria-labelledby="promo-modal-title"
     >
-      <div className="relative my-auto w-full max-w-4xl rounded-3xl border border-white/20 bg-[var(--surface)] text-[var(--text)] shadow-2xl shadow-black/60 overflow-hidden transition-all scale-100 animate-in zoom-in-95 duration-200">
+      <div className="relative flex max-h-[86dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-white/20 bg-[var(--surface)] text-[var(--text)] shadow-2xl shadow-black/60 animate-in slide-in-from-bottom-8 duration-200 sm:max-h-[90dvh] sm:rounded-3xl sm:zoom-in-95">
         {/* Faixa Superior com Efeito de Luz */}
         <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-blue-500 via-amber-400 to-emerald-500" />
 
@@ -112,24 +202,24 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
         </button>
 
         {/* Cabeçalho da Propaganda */}
-        <div className="px-5 pt-7 pb-4 sm:px-8 sm:pt-8 text-center border-b border-[var(--border)] bg-gradient-to-b from-[var(--surface-2)]/60 to-transparent">
+        <div className="shrink-0 px-5 pt-6 pb-3 sm:px-8 sm:pt-8 sm:pb-4 text-center border-b border-[var(--border)] bg-gradient-to-b from-[var(--surface-2)]/60 to-transparent">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-amber-500 dark:text-amber-300">
             <Sparkles className="h-3.5 w-3.5 animate-spin" style={{ animationDuration: "3s" }} />
-            Espaço de Jogos Interativos da Plataforma
+            Propaganda · Jogos da Plataforma
           </div>
 
           <h2
             id="promo-modal-title"
-            className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[var(--text)]"
+            className="mt-2 text-xl sm:mt-3 sm:text-3xl lg:text-4xl font-black tracking-tight text-[var(--text)]"
           >
             Aprenda Jogando: <span className="bg-gradient-to-r from-blue-500 via-amber-500 to-emerald-500 bg-clip-text text-transparent">Dois Mundos Interativos</span>
           </h2>
-          <p className="mt-2 text-xs sm:text-sm text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-2 hidden text-xs sm:block sm:text-sm text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
             Seja bem-vindo! Além das lições estruturadas, você tem acesso a dois jogos completos desenvolvidos para acelerar sua fluência com desafios dinâmicos, áudio nativo e exploração visual.
           </p>
 
           {/* Abas de Navegação Rápida */}
-          <div className="mt-5 inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-1 text-xs font-bold">
+          <div className="mt-3 sm:mt-5 inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-1 text-xs font-bold">
             <button
               type="button"
               onClick={() => setActiveTab("both")}
@@ -150,7 +240,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
                   : "text-[var(--text-secondary)] hover:text-[var(--text)]"
               }`}
             >
-              🎮 C'est quoi ?
+              🎮 C&apos;est quoi ?
             </button>
             <button
               type="button"
@@ -167,7 +257,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
         </div>
 
         {/* Corpo do Modal: Apresentação Detalhada da Dinâmica dos Jogos */}
-        <div className="p-4 sm:p-6 lg:p-8 max-h-[68vh] overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 lg:p-8">
           <div className={`grid gap-6 ${activeTab === "both" ? "lg:grid-cols-2" : "grid-cols-1"}`}>
             {/* ============================================================== */}
             {/* JOGO 1: C'EST QUOI ? */}
@@ -193,7 +283,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
                 </div>
 
                 {/* Prévia Visual da Dinâmica de C'est quoi */}
-                <div className="relative mt-4 aspect-video max-h-72 overflow-hidden rounded-xl border border-blue-500/25 bg-slate-900 shadow-md">
+                <div className="relative mt-4 aspect-video max-h-44 sm:max-h-72 overflow-hidden rounded-xl border border-blue-500/25 bg-slate-900 shadow-md">
                   {/* Imagem de Fundo / Cena */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -319,7 +409,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
                 </div>
 
                 {/* Prévia Visual da Dinâmica da Trilha */}
-                <div className="relative mt-4 aspect-video max-h-72 overflow-hidden rounded-xl border border-amber-500/30 bg-slate-900 shadow-md">
+                <div className="relative mt-4 aspect-video max-h-44 sm:max-h-72 overflow-hidden rounded-xl border border-amber-500/30 bg-slate-900 shadow-md">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/games/trilha-preview.webp"
@@ -421,8 +511,8 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
         </div>
 
         {/* Rodapé com Botão para Fechar / Continuar no Painel */}
-        <div className="px-6 py-4 border-t border-[var(--border)] bg-[var(--surface-2)]/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+        <div className="shrink-0 px-5 py-3 sm:px-6 sm:py-4 border-t border-[var(--border)] bg-[var(--surface-2)]/80 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}>
+          <div className="hidden items-center gap-2 text-xs text-[var(--text-muted)] sm:flex">
             <Zap className="h-4 w-4 text-amber-500" />
             <span>
               Você pode voltar a jogar a qualquer momento através do menu <strong>&ldquo;Jogo&rdquo;</strong> na barra de navegação.

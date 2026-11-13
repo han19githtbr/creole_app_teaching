@@ -65,24 +65,11 @@ function rigPartsWithCompleteLegs(_id: string, parts: RigPart[]): RigPart[] {
   return parts;
 }
 
-function drawSkyBirds(ctx: CanvasRenderingContext2D, fauna: Fauna) {
-  for (const bird of fauna.skyBirds) {
-    const isRaptor = bird.kind === "raptor";
-    const size = isRaptor ? 48 : 13 + Math.abs(Math.sin(bird.seed)) * 6;
-    const flap = Math.sin(bird.phase);
-    const flapping = bird.state === "fly" || bird.state === "hunt" || bird.state === "flee";
-    const wingAngle = flapping ? flap * (isRaptor ? 0.75 : 0.95) : -0.1;
-    const foraging = bird.state === "forage";
-    ctx.save();
-    ctx.translate(bird.x, bird.y - bird.z);
-    ctx.scale(bird.facing, 1);
-
-    // Sombra sutil sólo cuando la ave pasa baja junto a la copa.
-    if (bird.z > 8) {
-      ctx.fillStyle = `rgba(12, 25, 20, ${Math.max(0.04, 0.12 - bird.z / 900)})`;
-      ctx.beginPath(); ctx.ellipse(0, bird.z + 12, size * 0.7, size * 0.12, 0, 0, Math.PI * 2); ctx.fill();
-    }
-
+/** Silhueta de ave (pequena ou de rapina) com asas que batem individualmente. Origem = centro do corpo. */
+function drawBirdShape(
+  ctx: CanvasRenderingContext2D,
+  { size, isRaptor, flap, wingAngle, flapping, foraging }: { size: number; isRaptor: boolean; flap: number; wingAngle: number; flapping: boolean; foraging: boolean }
+) {
     const bodyColor = isRaptor ? "#604a37" : "#46504a";
     const wingColor = isRaptor ? "#4e3d31" : "#343d39";
     const bellyColor = isRaptor ? "#c3b79f" : "#a7a18f";
@@ -147,6 +134,132 @@ function drawSkyBirds(ctx: CanvasRenderingContext2D, fauna: Fauna) {
         ctx.beginPath(); ctx.moveTo(size * 0.6, -size * 0.02); ctx.lineTo(size * 0.88, size * 0.05); ctx.stroke();
       }
     }
+}
+
+/** Vaga-lumes (piscam), morcegos (batem asas e caçam insetos) e borboletas (voo ondulado e pousos). */
+function drawAmbient(ctx: CanvasRenderingContext2D, fauna: Fauna, t: number) {
+  const list = fauna.ambient;
+  if (!list.length) return;
+  // brilho dos vaga-lumes (aditivo) por baixo das silhuetas
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  for (const m of list) {
+    if (m.kind !== "firefly" || m.state === "gone" || m.glow <= 0.02) continue;
+    const r = 7 + m.glow * 16;
+    const g = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, r);
+    g.addColorStop(0, `rgba(235, 255, 150, ${0.95 * m.glow})`);
+    g.addColorStop(0.35, `rgba(190, 245, 90, ${0.42 * m.glow})`);
+    g.addColorStop(1, "rgba(160, 230, 70, 0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, r, 0, Math.PI * 2);
+    ctx.fill();
+    // o clarão acende de leve a folhagem em volta
+    const g2 = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, r * 3.2);
+    g2.addColorStop(0, `rgba(200, 255, 120, ${0.09 * m.glow})`);
+    g2.addColorStop(1, "rgba(200, 255, 120, 0)");
+    ctx.fillStyle = g2;
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, r * 3.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  for (const m of list) {
+    if (m.state === "gone") continue;
+    if (m.kind === "firefly") {
+      // corpinho escuro com a "lanterna" na ponta do abdome
+      ctx.fillStyle = "#1c1f14";
+      ctx.beginPath();
+      ctx.ellipse(m.x, m.y, 2.2, 1.3, m.a, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = `rgba(230, 255, 140, ${0.25 + m.glow * 0.75})`;
+      ctx.beginPath();
+      ctx.arc(m.x - Math.cos(m.a) * 1.8, m.y - Math.sin(m.a) * 1.8, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (m.kind === "bat") {
+      const face = Math.cos(m.a) >= 0 ? 1 : -1;
+      const flap = Math.sin(m.phase * 22 + m.seed);
+      const hunting = m.state === "hunt";
+      ctx.save();
+      ctx.translate(m.x, m.y);
+      ctx.scale(face, 1);
+      ctx.rotate(Math.sin(m.a) * (face > 0 ? 0.5 : -0.5) + (hunting ? 0.25 : 0));
+      ctx.fillStyle = "#17141f";
+      ctx.strokeStyle = "#0d0b12";
+      ctx.lineWidth = 0.8;
+      for (const side of [-1, 1]) {
+        ctx.save();
+        ctx.translate(0, -1);
+        ctx.rotate(side * (0.15 + flap * 0.85) * 0.9 - 0.2);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(side * 6, -9, side * 17, -4);
+        ctx.quadraticCurveTo(side * 14, -1, side * 13, 1);
+        ctx.quadraticCurveTo(side * 9, -1, side * 8, 3);
+        ctx.quadraticCurveTo(side * 4, 0, 0, 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.beginPath();
+      ctx.ellipse(0, 1, 4.2, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(4.4, -0.8, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(3.2, -2.6); ctx.lineTo(3.8, -5.4); ctx.lineTo(5.2, -2.8);
+      ctx.moveTo(5.2, -2.4); ctx.lineTo(6.6, -5); ctx.lineTo(6.6, -1.8);
+      ctx.fill();
+      ctx.restore();
+    } else {
+      const hues = ["#f59e0b", "#3b82f6", "#f4d03f", "#e8f0ff"];
+      const col = hues[Math.floor(m.seed) % hues.length];
+      const open = m.state === "rest" ? 0.35 + 0.35 * Math.sin(t * 1.3 + m.seed) : Math.abs(Math.sin(m.phase * 9 + m.seed));
+      ctx.save();
+      ctx.translate(m.x, m.y);
+      ctx.rotate(Math.sin(m.a) * 0.3);
+      for (const side of [-1, 1]) {
+        ctx.fillStyle = col;
+        ctx.strokeStyle = "rgba(40,25,15,.7)";
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.ellipse(side * 3.2 * open, -2, 3.6 * open + 0.4, 4.4, side * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,.45)";
+        ctx.beginPath();
+        ctx.ellipse(side * 3.8 * open, 1.8, 2.4 * open + 0.3, 2.8, -side * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = "#2a1f18";
+      ctx.fillRect(-0.5, -4, 1, 7);
+      ctx.restore();
+    }
+  }
+}
+
+function drawSkyBirds(ctx: CanvasRenderingContext2D, fauna: Fauna) {
+  for (const bird of fauna.skyBirds) {
+    const isRaptor = bird.kind === "raptor";
+    const size = isRaptor ? 48 : 13 + Math.abs(Math.sin(bird.seed)) * 6;
+    const flap = Math.sin(bird.phase);
+    const flapping = bird.state === "fly" || bird.state === "hunt" || bird.state === "flee";
+    const wingAngle = flapping ? flap * (isRaptor ? 0.75 : 0.95) : -0.1;
+    const foraging = bird.state === "forage";
+    ctx.save();
+    ctx.translate(bird.x, bird.y - bird.z);
+    ctx.scale(bird.facing, 1);
+
+    // Sombra sutil sólo cuando la ave pasa baja junto a la copa.
+    if (bird.z > 8) {
+      ctx.fillStyle = `rgba(12, 25, 20, ${Math.max(0.04, 0.12 - bird.z / 900)})`;
+      ctx.beginPath(); ctx.ellipse(0, bird.z + 12, size * 0.7, size * 0.12, 0, 0, Math.PI * 2); ctx.fill();
+    }
+
+    drawBirdShape(ctx, { size, isRaptor, flap, wingAngle, flapping, foraging });
     ctx.restore();
   }
 }
@@ -799,6 +912,19 @@ let critterLayer: HTMLCanvasElement | null = null;
 
 function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAssets, weather: TrailWeather, t: number) {
   const sp = c.spec;
+  if (sp.id === "gaviao") {
+    // Gavião-carijó: ave de rapina diurna, pousada ou em voo/mergulho com as asas batendo
+    const flying = c.state === "fly";
+    const diving = c.mood === "lunge";
+    ctx.save();
+    ctx.translate(c.x, c.y - c.z - sp.h * 0.2);
+    ctx.scale(c.look < 0 ? -1 : 1, 1);
+    if (diving) ctx.rotate(0.5);
+    drawBirdShape(ctx, { size: 56, isRaptor: true, flap: Math.sin(c.phase), wingAngle: flying ? Math.sin(c.phase) * 0.75 : -0.1, flapping: flying, foraging: c.mood === "forage" });
+    ctx.restore();
+    if (c.mood !== "hidden") drawMoodIcon(ctx, c.mood, c.x, c.y - c.z - sp.h - 12, t);
+    return;
+  }
   const base = assets.sprites[sp.id];
   const vector = VECTOR_FAUNA_IDS.has(sp.id);
   if (!base && !vector) return;
@@ -820,7 +946,7 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
   const h = sp.h * altitudeScale;
   const w = ((sp.h * iw) / ih) * altitudeScale;
 
-  const moving = c.state === "move" && c.v > 2;
+  const moving = c.state === "move" && (sp.hop ? c.hopState >= 1 && c.hopState <= 3 : c.v > 2);
   const riggedGround = sp.kind === "ground" && Boolean(assets.rigs[sp.id] && FAUNA_RIGS[sp.id]);
   const moveDx = c.tx - c.x;
   const moveDy = c.ty - c.y;
@@ -849,11 +975,24 @@ function drawCritter(ctx: CanvasRenderingContext2D, c: Critter, assets: FaunaAss
 
   if (sp.kind === "ground") {
     if (sp.hop) {
-      if (moving) {
-        const s = Math.max(0, Math.sin(c.phase));
-        lift += s * h * (sp.id === "sapo" ? 0.62 : sp.id === "coelho" ? 0.34 : 0.3);
-        sy *= 1 - 0.1 * (1 - s);
-        sx *= 1 + 0.06 * (1 - s);
+      // ciclo real de pulo: agacha (carrega) -> estica no impulso -> corpo inclina no ar -> amortece ao pousar
+      const u = Math.min(1, c.hopU);
+      if (c.state === "move" && c.hopState === 1) {
+        sy *= 0.82;
+        sx *= 1.12;
+        rot += 3;
+      } else if (c.hopState === 2) {
+        const stretch = u < 0.28 ? 1.14 : u > 0.78 ? 0.97 : 1.04;
+        sy *= stretch;
+        sx *= 2 - stretch;
+        rot += (u - 0.5) * (sp.id === "sapo" ? 26 : 20);
+      } else if (c.hopState === 3) {
+        sy *= 0.86;
+        sx *= 1.1;
+      } else if (c.hopState === 4) {
+        // sentado: o sapo infla e esvazia a garganta; o coelho fica ereto e atento
+        sy *= 1 + Math.sin(t * (sp.id === "sapo" ? 5.5 : 3) + c.seed) * (sp.id === "sapo" ? 0.035 : 0.012);
+        if (sp.id === "coelho") sy *= 1.05;
       }
     } else if (moving) {
       lift += Math.abs(Math.sin(c.phase)) * h * (riggedGround ? 0.009 : 0.026);
@@ -1543,6 +1682,7 @@ export function drawFauna(ctx: CanvasRenderingContext2D, fauna: Fauna, assets: F
 
   drawSkyBirds(ctx, fauna);
   drawForestAtmosphere(ctx, weather, t);
+  drawAmbient(ctx, fauna, t);
 
   // Rajadas curtas e regulares: a paisagem fica fixa e só folhas soltas cruzam a copa.
   // O mesmo ciclo guia as folhas e as linhas de vento, evitando movimentos desencontrados.

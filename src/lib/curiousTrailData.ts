@@ -58,6 +58,7 @@ export const FOREST_TRAIL_ANIMALS: TrailAnimal[] = [
   { id: "snake", name: "Cobra", namePt: "Cobra", emoji: "🐍", quote: "Deslizo em silêncio pela mata e procuro pequenos animais.", soundType: "rustle", badge: "Caçadora discreta" },
   { id: "snail", name: "Caracol", namePt: "Caracol", emoji: "🐌", quote: "Depois da chuva, avanço devagar sobre folhas úmidas.", soundType: "rustle", badge: "Pequeno explorador" },
   { id: "ant", name: "Formiga", namePt: "Formiga", emoji: "🐜", quote: "Caminho em grupo levando alimento para o formigueiro.", soundType: "rustle", badge: "Trabalhadora da mata" },
+  { id: "hawk", name: "Gavião", namePt: "Gavião", emoji: "🦅", quote: "Do alto, vejo tudo o que se move na mata.", soundType: "chirp", badge: "Olhar de águia" },
 ];
 
 export const TRAIL_LEVELS: TrailLevelConfig[] = [

@@ -364,6 +364,29 @@ html {
   scrollbar-gutter: stable;
 }
 
+@keyframes games-promo-border-pulse {
+  0%,
+  100% {
+    border-color: #f59e0b;
+    outline: 0 solid rgba(245, 158, 11, 0.35);
+  }
+  50% {
+    border-color: #3b82f6;
+    outline: 3px solid rgba(59, 130, 246, 0.2);
+  }
+}
+
+.games-promo-border-pulse {
+  animation: games-promo-border-pulse 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .games-promo-border-pulse {
+    animation: none;
+    border-color: #f59e0b;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Respostas às postagens (status, animações)                          */
 /* ------------------------------------------------------------------ */

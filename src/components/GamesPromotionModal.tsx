@@ -116,7 +116,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
     // Cartão pequeno, SEM escurecer a página: dá para ver o painel por trás e entender que é um aviso/propaganda.
     return (
       <aside
-        className="fixed inset-x-3 bottom-3 z-50 mx-auto w-auto max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3.5 text-[var(--text)] shadow-2xl shadow-black/40 animate-in slide-in-from-bottom-6 fade-in duration-300 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:mx-0 sm:w-[380px]"
+        className="games-promo-border-pulse fixed inset-x-3 top-1/2 bottom-auto z-50 mx-auto max-h-[calc(100dvh-2rem)] w-auto max-w-md -translate-y-1/2 overflow-y-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3.5 text-[var(--text)] shadow-2xl shadow-black/40 animate-in slide-in-from-bottom-6 fade-in duration-300 sm:inset-x-auto sm:top-auto sm:right-5 sm:bottom-5 sm:translate-y-0 sm:mx-0 sm:w-[380px]"
         style={{ paddingBottom: "calc(0.875rem + env(safe-area-inset-bottom, 0px))" }}
         aria-label="Propaganda dos jogos da plataforma"
       >

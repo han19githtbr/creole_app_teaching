@@ -9,11 +9,13 @@ interface Grade {
   darken: number;
   lighten: number;
   tint: string;
+  /** segunda camada uniforme (ex.: a escuridão da noite), aplicada igualmente na arte, nos retalhos e nos bichos */
+  overlay?: string;
 }
 
 const GRADES: Record<TrailWeather, Grade | null> = {
   sunny: null,
-  night: { desaturate: 0.12, darken: 0.18, lighten: 0.035, tint: "rgba(34, 48, 96, 0.12)" },
+  night: { desaturate: 0.12, darken: 0.18, lighten: 0.035, tint: "rgba(34, 48, 96, 0.12)", overlay: "rgba(16, 26, 58, 0.27)" },
   // Mantém a arte e as cores do mapa vivas; o clima aparece nos efeitos, sem cobrir o cenário.
   rain: { desaturate: 0.08, darken: 0.04, lighten: 0, tint: "rgba(35, 55, 72, 0.07)" },
   snow: { desaturate: 0.18, darken: 0, lighten: 0.025, tint: "rgba(222, 234, 255, 0.08)" },
@@ -26,7 +28,18 @@ const sizeOf = (img: Src) => ({
   h: (img as HTMLImageElement).naturalHeight || (img.height as number),
 });
 
-/** Devolve a imagem com o clima aplicado (ou a própria imagem, no sol). O resultado preserva a transparência. */
+const parseRgba = (css: string): [number, number, number, number] => {
+  const m = css.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+))?\s*\)/);
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3]), m[4] === undefined ? 1 : Number(m[4])] : [0, 0, 0, 0];
+};
+
+/**
+ * Devolve a imagem com o clima aplicado (ou a própria imagem, no sol).
+ *
+ * O ajuste é feito PIXEL A PIXEL e só nos canais de cor: o canal alfa (transparência) nunca é tocado.
+ * (Misturar com operações de composição do canvas deixava um retângulo esbranquiçado ao redor dos bichos e
+ * dos retalhos de folhagem, que têm fundo transparente.)
+ */
 export function gradeImage(img: Src, weather: TrailWeather): CanvasImageSource {
   const g = GRADES[weather];
   if (!g) return img;
@@ -34,34 +47,40 @@ export function gradeImage(img: Src, weather: TrailWeather): CanvasImageSource {
   const c = document.createElement("canvas");
   c.width = w;
   c.height = h;
-  const ctx = c.getContext("2d");
+  const ctx = c.getContext("2d", { willReadFrequently: true }) as CanvasRenderingContext2D | null;
   if (!ctx) return img;
   ctx.drawImage(img, 0, 0);
-  // dessatura
-  ctx.save();
-  ctx.globalCompositeOperation = "saturation";
-  ctx.globalAlpha = g.desaturate;
-  ctx.fillStyle = "hsl(0, 0%, 50%)";
-  ctx.fillRect(0, 0, w, h);
-  ctx.restore();
-  // restaura a transparência original (a mistura acima pintaria também as áreas vazias)
-  ctx.save();
-  ctx.globalCompositeOperation = "destination-in";
-  ctx.drawImage(img, 0, 0);
-  ctx.restore();
-  // brilho + névoa/geada, só onde há pixels
-  ctx.save();
-  ctx.globalCompositeOperation = "source-atop";
-  if (g.darken > 0) {
-    ctx.fillStyle = `rgba(0, 0, 0, ${g.darken})`;
-    ctx.fillRect(0, 0, w, h);
+  const data = ctx.getImageData(0, 0, w, h);
+  const px = data.data;
+  const [tr, tg, tb, ta] = parseRgba(g.tint);
+  const [or, og, ob, oa] = g.overlay ? parseRgba(g.overlay) : [0, 0, 0, 0];
+  const dark = 1 - g.darken;
+  for (let i = 0; i < px.length; i += 4) {
+    if (px[i + 3] === 0) continue;
+    let r = px[i];
+    let gg = px[i + 1];
+    let b = px[i + 2];
+    const gray = 0.299 * r + 0.587 * gg + 0.114 * b;
+    r += (gray - r) * g.desaturate;
+    gg += (gray - gg) * g.desaturate;
+    b += (gray - b) * g.desaturate;
+    r *= dark;
+    gg *= dark;
+    b *= dark;
+    if (g.lighten > 0) {
+      r += (255 - r) * g.lighten;
+      gg += (255 - gg) * g.lighten;
+      b += (255 - b) * g.lighten;
+    }
+    px[i] = r * (1 - ta) + tr * ta;
+    px[i + 1] = gg * (1 - ta) + tg * ta;
+    px[i + 2] = b * (1 - ta) + tb * ta;
+    if (oa > 0) {
+      px[i] = px[i] * (1 - oa) + or * oa;
+      px[i + 1] = px[i + 1] * (1 - oa) + og * oa;
+      px[i + 2] = px[i + 2] * (1 - oa) + ob * oa;
+    }
   }
-  if (g.lighten > 0) {
-    ctx.fillStyle = `rgba(255, 255, 255, ${g.lighten})`;
-    ctx.fillRect(0, 0, w, h);
-  }
-  ctx.fillStyle = g.tint;
-  ctx.fillRect(0, 0, w, h);
-  ctx.restore();
+  ctx.putImageData(data, 0, 0);
   return c;
 }

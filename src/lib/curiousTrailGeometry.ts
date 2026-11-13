@@ -1,5 +1,5 @@
 /**
- * Geometria da "Trilha do Aluno Curioso" sobre a ilustração da mata (public/trilha/mata-trilha.jpg).
+ * Geometria da "Trilha do Aluno Curioso" sobre a ilustração da mata (public/trilha/mata-trilha-animada.jpg).
  *
  * O mundo é RETRATO: 1000 x 2201 unidades (proporção da arte original 688 x 1514). O caminho foi
  * traçado sobre a trilha de terra da imagem, do início (embaixo) até a casinha no topo.

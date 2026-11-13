@@ -141,150 +141,311 @@ export function avalancheShake(t: number, danger: number): { dx: number; dy: num
 
 const f1 = (n: number) => Math.round(n * 10) / 10;
 
+/* ------------------------------------------------------------------ desenho (canvas, unidades do mundo) */
+
+const hash = (a: number, b = 0) => {
+  const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+  return x - Math.floor(x);
+};
+/** ruído suave 1D (valor interpolado) */
+const vnoise = (x: number, seed = 0) => {
+  const i = Math.floor(x);
+  const f = x - i;
+  const u = f * f * (3 - 2 * f);
+  return hash(i, seed) * (1 - u) + hash(i + 1, seed) * u;
+};
+
+let puffSprite: HTMLCanvasElement | null = null;
+let puffShade: HTMLCanvasElement | null = null;
+function makePuff(inner: string, mid: string): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  c.width = c.height = 96;
+  const g = c.getContext("2d");
+  if (g) {
+    const gr = g.createRadialGradient(48, 48, 2, 48, 48, 48);
+    gr.addColorStop(0, inner);
+    gr.addColorStop(0.45, mid);
+    gr.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 96, 96);
+  }
+  return c;
+}
+
 /**
- * Onda de neve rolando pela trilha: nuvem de poeira branca com contorno azulado (mesmo traço do cenário
- * Ghibli), pedras e gelo rolando e rajadas de neve na frente. Devolve só a marcação interna de um
- * <svg viewBox="0 0 1000 600">.
+ * AVALANCHE de neve (canvas, unidades do mundo; o contexto já tem a câmera aplicada).
+ *
+ * Em vez de uma "nuvem de fumaça", é uma avalanche mista como as reais:
+ *  - uma MASSA DE NEVE densa escoando pelo caminho, com bordas irregulares, línguas de neve na frente,
+ *    sulcos de fluxo e sombreado azulado (mesmo traço pintado da arte);
+ *  - BLOCOS e bolas de neve angulosos rolando e capotando;
+ *  - uma NUVEM DE PÓ turbulenta, mais alta na frente (a "parede" de poeira de neve) e se dissipando atrás;
+ *  - detritos (pedras e gelo) arremessados, rajadas de neve e faixas de vento à frente;
+ *  - sombra no chão e rastro de neve deixado para trás.
  */
-export function renderAvalancheSvg(front: number, t: number, danger: number): string {
-  const LAYERS = 12;
-  const bodyLen = 340 + danger * 100;
-  const lenFrac = bodyLen / CURIOUS_TRAIL_LENGTH;
-  const grow = 1.15 + danger * 0.45;
-  const puffs: string[] = [];
+export function drawAvalanche(ctx: CanvasRenderingContext2D, front: number, t: number, danger: number) {
+  if (!puffSprite) puffSprite = makePuff("rgba(255,255,255,0.95)", "rgba(244,249,255,0.55)");
+  if (!puffShade) puffShade = makePuff("rgba(196,212,235,0.9)", "rgba(170,192,222,0.5)");
+  const L = 330 + danger * 90;
+  const lenFrac = L / CURIOUS_TRAIL_LENGTH;
+  const N = 34;
+  const wBase = 60 + danger * 16;
 
-  // Gradientes e filtros de iluminação volumétrica para realismo visual
-  const defs = `<defs>
-    <radialGradient id="avCloudGrad" cx="38%" cy="32%" r="68%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="42%" stop-color="#f1f5f9"/>
-      <stop offset="78%" stop-color="#cbd5e1"/>
-      <stop offset="100%" stop-color="#94a3b8"/>
-    </radialGradient>
-    <radialGradient id="avMistGrad" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
-      <stop offset="50%" stop-color="#e2e8f0" stop-opacity="0.45"/>
-      <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="avIceGrad" cx="35%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="45%" stop-color="#bfdbfe"/>
-      <stop offset="85%" stop-color="#60a5fa"/>
-      <stop offset="100%" stop-color="#2563eb"/>
-    </radialGradient>
-    <linearGradient id="avWindStreak" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
-      <stop offset="70%" stop-color="#e0f2fe" stop-opacity="0.3"/>
-      <stop offset="100%" stop-color="#bae6fd" stop-opacity="0"/>
-    </linearGradient>
-  </defs>`;
-
-  // 1. Massa volumétrica de neve em camadas (de trás para a frente)
-  for (let k = LAYERS - 1; k >= 0; k--) {
-    const u = k / (LAYERS - 1);
-    const fk = front - u * lenFrac;
+  type Seg = { x: number; y: number; tx: number; ty: number; nx: number; ny: number; w: number; s: number };
+  const segs: Seg[] = [];
+  for (let k = 0; k <= N; k++) {
+    const s = k / N; // 0 = frente, 1 = cauda
+    const fk = front - s * lenFrac;
     const c = getTrailPointExtended(fk);
     const tg = getTrailTangent(fk);
-    const nx = -tg.y;
-    const ny = tg.x;
-    const baseR = (38 + 24 * (1 - u)) * grow;
-    const alpha = (0.75 + (1 - u) * 0.25) * (1 - u * 0.35);
+    // largura: estreita na ponta, mais larga um pouco atrás, afinando na cauda; borda irregular que "respira"
+    const prof = Math.sin(Math.min(1, s * 1.35 + 0.12) * Math.PI * 0.62 + 0.35) * (1 - s * 0.45);
+    const w = wBase * (0.42 + 0.8 * prof) * (0.88 + 0.3 * vnoise(k * 0.7 + t * 1.6, 3));
+    segs.push({ x: c.x, y: c.y, tx: tg.x, ty: tg.y, nx: -tg.y, ny: tg.x, w, s });
+  }
+  const side = (sg: Seg, sign: number, shift = 0) => ({
+    x: sg.x + sg.nx * sg.w * sign + sg.tx * shift,
+    y: sg.y + sg.ny * sg.w * sign + sg.ty * shift,
+  });
 
-    // Múltiplos núcleos laterais para formar a crista larga da montanha
-    const lateral = [-3, -2, -1, 0, 1, 2, 3];
-    let layerBlobs = "";
-    for (const m of lateral) {
-      const bob = Math.sin(t * 3.6 + k * 1.7 + m * 1.1);
-      const churn = Math.cos(t * 2.8 + k * 2.3 + m * 1.4);
-      const lat = m * 32 + churn * 7;
-      const rise = 14 + 10 * bob + (1 - u) * 9;
-      const x = c.x + nx * lat - tg.x * 5;
-      const y = c.y + ny * lat - rise;
-      const r = baseR * (0.85 + 0.18 * Math.sin(t * 2.9 + k + m * 1.8)) * (m === 0 ? 1.18 : 1 - Math.abs(m) * 0.08);
+  ctx.save();
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
 
-      // Sombra profunda na base da onda de neve
-      layerBlobs += `<circle cx="${f1(x + 2)}" cy="${f1(y + r * 0.22)}" r="${f1(r * 1.04)}" fill="#475569" opacity="0.35"/>`;
-      // Corpo volumétrico da nuvem de neve
-      layerBlobs += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="url(#avCloudGrad)"/>`;
-      // Crista de espuma e pó iluminado pelo sol
-      layerBlobs += `<circle cx="${f1(x - r * 0.24)}" cy="${f1(y - r * 0.28)}" r="${f1(r * 0.58)}" fill="#ffffff" opacity="${f1(0.7 + (1 - u) * 0.3)}"/>`;
+  // 1) sombra no chão (a neve pesada escurece o terreno) e rastro claro na cauda
+  ctx.fillStyle = `rgba(20, 30, 50, ${0.2 + danger * 0.08})`;
+  ctx.beginPath();
+  segs.forEach((sg, i) => {
+    const q = side(sg, 1, 0);
+    i ? ctx.lineTo(q.x + 5, q.y + 12) : ctx.moveTo(q.x + 5, q.y + 12);
+  });
+  for (let i = segs.length - 1; i >= 0; i--) {
+    const q = side(segs[i], -1, 0);
+    ctx.lineTo(q.x + 5, q.y + 12);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  // 2) nuvem de pó ao fundo (atrás da massa): turbulenta, mais alta na frente
+  const powder = (pass: number) => {
+    const count = pass === 0 ? 46 : 34;
+    for (let i = 0; i < count; i++) {
+      const u = (i + 0.5) / count; // 0 frente .. 1 cauda
+      const sg = segs[Math.min(N, Math.round(u * N * 0.9))];
+      const wob = vnoise(i * 0.9 + t * (pass === 0 ? 0.9 : 1.4), 9 + pass);
+      const wob2 = vnoise(i * 1.3 + t * 1.1, 21 + pass);
+      const lat = (wob - 0.5) * 2 * sg.w * 1.35;
+      const rise = (pass === 0 ? 20 : 8) + (1 - u) * (70 + danger * 40) * (0.55 + 0.6 * wob2);
+      const r = (26 + (1 - u) * 34 + wob * 16) * (pass === 0 ? 1.15 : 0.8) * (1 + danger * 0.25);
+      const x = sg.x + sg.nx * lat + sg.tx * (pass === 0 ? -6 : 14) + Math.sin(t * 1.3 + i) * 5;
+      const y = sg.y + sg.ny * lat - rise - Math.abs(Math.sin(t * 2.2 + i * 1.7)) * 8;
+      ctx.globalAlpha = (pass === 0 ? 0.42 : 0.55) * (1 - u * 0.55);
+      const spr = pass === 0 || u > 0.55 ? puffShade! : puffSprite!;
+      ctx.drawImage(spr, x - r, y - r * 0.85, r * 2, r * 1.7);
     }
+    ctx.globalAlpha = 1;
+  };
 
-    puffs.push(`<g opacity="${f1(alpha)}">${layerBlobs}</g>`);
-  }
-  const snowBody = puffs.join("");
-
-  // 2. Nuvem de pó aerossol (nuvem de poeira branca que envolve e precede a onda)
-  let powderMist = "";
-  for (let i = 0; i < 10; i++) {
-    const u = (i / 10) * 0.75;
-    const fk = front - u * lenFrac + Math.sin(t * 1.8 + i) * 0.005;
-    const c = getTrailPointExtended(fk);
-    const tg = getTrailTangent(fk);
-    const lat = Math.sin(t * 2.1 + i * 1.9) * (45 + i * 5);
-    const mx = c.x - tg.y * lat + tg.x * (10 + i * 4);
-    const my = c.y + tg.x * lat - 22 - (1 - u) * 20 - Math.sin(t * 3.2 + i) * 8;
-    const mr = (45 + i * 6) * grow;
-    powderMist += `<circle cx="${f1(mx)}" cy="${f1(my)}" r="${f1(mr)}" fill="url(#avMistGrad)"/>`;
-  }
-
-  // 3. Sombra dinâmica no chão da montanha sob o peso da avalanche
-  const fMid = front - lenFrac * 0.42;
-  const mid = getTrailPointExtended(fMid);
-  const rotShadow = (Math.atan2(getTrailTangent(fMid).y, getTrailTangent(fMid).x) * 180) / Math.PI;
-  const shadow = `<ellipse cx="${f1(mid.x)}" cy="${f1(mid.y + 10)}" rx="${f1(bodyLen * 0.52)}" ry="${f1(32 + danger * 12)}" fill="#0f172a" opacity="0.32" transform="rotate(${f1(rotShadow)} ${f1(mid.x)} ${f1(mid.y + 10)})"/>`;
-
-  // 4. Blocos de gelo facetados e rochas de neve rolando e capotando com sombras 3D
-  let debris = "";
-  const debrisCount = 16 + Math.round(danger * 8);
-  for (let i = 0; i < debrisCount; i++) {
-    const u = 0.02 + (i / debrisCount) * 0.85;
-    const fk = front - u * lenFrac + Math.sin(t * 2.2 + i) * 0.004;
-    const c = getTrailPointExtended(fk);
-    const tg = getTrailTangent(fk);
-    const side = i % 2 ? 1 : -1;
-    const lat = side * (16 + ((i * 19) % 52));
-    const bounce = Math.abs(Math.sin(t * 6.5 + i * 2.1)) * 14;
-    const x = c.x - tg.y * lat;
-    const y = c.y + tg.x * lat - 8 - bounce;
-    const rot = t * (190 + i * 45) * (i % 2 ? 1 : -1);
-    const sz = 4.2 + (i % 4) * 2.2;
-    const isIce = i % 2 === 0;
-
-    debris += `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(rot)})">
-      <ellipse cx="0" cy="${f1(sz * 0.9)}" rx="${f1(sz * 1.1)}" ry="${f1(sz * 0.45)}" fill="#0f172a" opacity="0.25"/>
-      <polygon points="${f1(-sz)},${f1(-sz * 0.3)} ${f1(-sz * 0.2)},${f1(-sz)} ${f1(sz * 0.9)},${f1(-sz * 0.4)} ${f1(sz * 0.7)},${f1(sz * 0.9)} ${f1(-sz * 0.6)},${f1(sz * 0.8)}" fill="${isIce ? "url(#avIceGrad)" : "#e2e8f0"}" stroke="${isIce ? "#3b82f6" : "#64748b"}" stroke-width="1.2"/>
-      <line x1="${f1(-sz * 0.2)}" y1="${f1(-sz * 0.8)}" x2="${f1(sz * 0.4)}" y2="${f1(sz * 0.2)}" stroke="#ffffff" stroke-width="1.4" opacity="0.8"/>
-    </g>`;
+  // 3) FLUXO DE NEVE no chão: lâmina densa e baixa de neve escoando (borda irregular, sombreada, com contorno)
+  const ground = () => {
+    ctx.beginPath();
+    segs.forEach((sg, i) => {
+      const q = side(sg, 1, (vnoise(i * 1.1 + t * 2, 5) - 0.5) * 14);
+      i ? ctx.lineTo(q.x, q.y - 1) : ctx.moveTo(q.x, q.y - 1);
+    });
+    for (let i = segs.length - 1; i >= 0; i--) {
+      const q = side(segs[i], -1, (vnoise(i * 1.1 + 40 + t * 2, 6) - 0.5) * 14);
+      ctx.lineTo(q.x, q.y - 1);
+    }
+    ctx.closePath();
+  };
+  ground();
+  ctx.fillStyle = "#aebfdb";
+  ctx.fill();
+  ctx.strokeStyle = "#4a638f";
+  ctx.lineWidth = 2.4;
+  ctx.stroke();
+  ctx.save();
+  ctx.translate(-1.5, -5);
+  ground();
+  ctx.fillStyle = "#e7eff9";
+  ctx.fill();
+  ctx.restore();
+  // pequenos montes de neve na borda de ataque
+  for (let i = 0; i < 16; i++) {
+    const sg = segs[Math.min(N, Math.floor(hash(i, 50) * 9))];
+    const lane = (hash(i, 51) - 0.5) * 1.9;
+    const r = 6 + hash(i, 52) * 8;
+    const x = sg.x + sg.nx * sg.w * lane + sg.tx * (hash(i, 53) * 14 - 4);
+    const y = sg.y + sg.ny * sg.w * lane - 3;
+    ctx.beginPath();
+    ctx.ellipse(x, y, r * 1.3, r * 0.8, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#f4f8fd";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(80,108,160,.8)";
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
   }
 
-  // 5. Rajadas de vento frontal, esteiras de velocidade e jato de neve à frente da onda
-  const fc = getTrailPointExtended(front);
-  const ft = getTrailTangent(front);
-  let spray = "";
-  const sprayCount = 20 + Math.round(danger * 12);
-  for (let i = 0; i < sprayCount; i++) {
-    const ph = (t * (1.1 + (i % 5) * 0.35) + i * 0.21) % 1;
-    const ahead = 8 + ph * (55 + danger * 25);
-    const lat = ((i * 31) % 90) - 45;
-    const x = fc.x + ft.x * ahead - ft.y * lat;
-    const y = fc.y + ft.y * ahead + ft.x * lat - 12 - ph * 22;
-    const r = (2.2 + (1 - ph) * 3.8);
-    spray += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#ffffff" opacity="${f1((1 - ph) * 0.95)}"/>`;
+  // sulcos de fluxo (linhas ao longo do movimento) e rugas na superfície
+  ctx.lineWidth = 1.5;
+  for (let i = 0; i < 16; i++) {
+    const lane = ((i + 0.5) / 16 - 0.5) * 1.7;
+    const phase = (t * (0.9 + (i % 4) * 0.3) + i * 0.37) % 1;
+    const s0 = Math.max(0, phase * 0.7);
+    const s1 = Math.min(1, s0 + 0.2);
+    ctx.strokeStyle = `rgba(112, 140, 186, ${0.45 * Math.sin(phase * Math.PI)})`;
+    ctx.beginPath();
+    for (let k = Math.floor(s0 * N); k <= Math.floor(s1 * N); k++) {
+      const sg = segs[Math.min(N, k)];
+      const q = { x: sg.x + sg.nx * sg.w * lane * 0.8, y: sg.y + sg.ny * sg.w * lane * 0.8 - 5 };
+      k === Math.floor(s0 * N) ? ctx.moveTo(q.x, q.y) : ctx.lineTo(q.x, q.y);
+    }
+    ctx.stroke();
   }
 
-  // Linhas de vento rasante ao longo do solo
-  let windStreaks = "";
-  for (let i = 0; i < 6; i++) {
-    const ph = (t * 2.2 + i * 0.38) % 1;
-    const ahead = ph * 75;
-    const lat = (i - 2.5) * 18;
-    const sx = fc.x + ft.x * ahead - ft.y * lat;
-    const sy = fc.y + ft.y * ahead + ft.x * lat - 6;
-    const ex = sx + ft.x * 28;
-    const ey = sy + ft.y * 28;
-    windStreaks += `<line x1="${f1(sx)}" y1="${f1(sy)}" x2="${f1(ex)}" y2="${f1(ey)}" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" opacity="${f1((1 - ph) * 0.75)}"/>`;
+  // 4) blocos de neve angulosos e bolas de neve rolando e capotando na superfície
+  const blocks = 26;
+  for (let i = 0; i < blocks; i++) {
+    const u = hash(i, 1) * 0.78 + 0.02;
+    const sg = segs[Math.min(N, Math.round(u * N))];
+    const lane = (hash(i, 2) - 0.5) * 1.5;
+    const bounce = Math.abs(Math.sin(t * (4.5 + hash(i, 3) * 3) + i * 2)) * (7 + hash(i, 4) * 9);
+    const x = sg.x + sg.nx * sg.w * lane * 0.85 + sg.tx * Math.sin(t * 1.5 + i) * 6;
+    const y = sg.y + sg.ny * sg.w * lane * 0.85 - 6 - bounce;
+    const size = 5 + hash(i, 5) * 9;
+    const rot = t * (90 + hash(i, 6) * 220) * (i % 2 ? 1 : -1) * (Math.PI / 180);
+    const round = i % 4 === 0;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.fillStyle = "rgba(25,35,60,0.18)";
+    ctx.beginPath();
+    ctx.ellipse(0, size * 0.9 + bounce * 0.4, size * 1.1, size * 0.34, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    if (round) ctx.arc(0, 0, size * 0.95, 0, Math.PI * 2);
+    else {
+      const verts = 6;
+      for (let v = 0; v < verts; v++) {
+        const ang = (v / verts) * Math.PI * 2 + hash(i, v) * 0.7;
+        const rr = size * (0.7 + hash(i, 10 + v) * 0.45);
+        v ? ctx.lineTo(Math.cos(ang) * rr, Math.sin(ang) * rr) : ctx.moveTo(Math.cos(ang) * rr, Math.sin(ang) * rr);
+      }
+      ctx.closePath();
+    }
+    ctx.fillStyle = i % 5 === 0 ? "#cfe3fb" : "#f2f7fd";
+    ctx.fill();
+    ctx.strokeStyle = "#556f9b";
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.beginPath();
+    ctx.ellipse(-size * 0.25, -size * 0.3, size * 0.4, size * 0.22, -0.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 
-  return `<g class="trail-avalanche">${defs}${shadow}${powderMist}${snowBody}${debris}${windStreaks}${spray}</g>`;
+  // 5) detritos arremessados: pedras escuras e lascas de gelo, voando para fora e à frente
+  for (let i = 0; i < 12 + Math.round(danger * 6); i++) {
+    const ph = (t * (0.7 + hash(i, 20) * 0.6) + hash(i, 21)) % 1;
+    const sg = segs[Math.min(N, Math.floor(hash(i, 22) * 8))];
+    const lat = (hash(i, 23) - 0.5) * 2 * (sg.w + 26 * ph);
+    const ahead = ph * 60;
+    const arc = Math.sin(ph * Math.PI) * (34 + hash(i, 24) * 30);
+    const x = sg.x + sg.nx * lat + sg.tx * ahead;
+    const y = sg.y + sg.ny * lat + sg.ty * ahead - 12 - arc;
+    const rock = i % 3 !== 0;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(t * 5 + i);
+    ctx.globalAlpha = 1 - ph * 0.6;
+    ctx.fillStyle = rock ? "#6b7280" : "#cfe6ff";
+    ctx.strokeStyle = rock ? "#1f2937" : "#4a6fa5";
+    ctx.lineWidth = 1.3;
+    const sz = 3.2 + hash(i, 25) * 4.2;
+    ctx.beginPath();
+    ctx.moveTo(-sz, -sz * 0.3);
+    ctx.lineTo(-sz * 0.2, -sz);
+    ctx.lineTo(sz, -sz * 0.2);
+    ctx.lineTo(sz * 0.5, sz);
+    ctx.lineTo(-sz * 0.7, sz * 0.7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 6) PAREDE DE NEVE: cúmulos de neve sólidos (como as nuvens pintadas da arte), com topo branco, base
+  //    azulada, contorno e altura crescente na frente: a crista da avalanche
+  type Billow = { x: number; y: number; r: number; k: number };
+  const billows: Billow[] = [];
+  const COUNT = 54;
+  for (let i = 0; i < COUNT; i++) {
+    const u = Math.pow(hash(i, 60), 1.25) * 0.9; // 0 frente .. 1 cauda
+    const sg = segs[Math.min(N, Math.round(u * N))];
+    const lane = (hash(i, 61) - 0.5) * 1.6;
+    const row = hash(i, 62);
+    const height = (10 + (1 - u) * (92 + danger * 40)) * (0.35 + 0.75 * row) * (0.85 + 0.3 * vnoise(i + t * 1.2, 7));
+    const r = (15 + (1 - u) * 20 + hash(i, 63) * 12) * (1 + danger * 0.2) * (0.6 + 0.5 * (height / 110 + 0.4));
+    const x = sg.x + sg.nx * sg.w * lane * 0.85 + sg.tx * (6 - u * 10) + Math.sin(t * 2.1 + i * 1.7) * 3;
+    const y = sg.y + sg.ny * sg.w * lane * 0.85 - height + Math.cos(t * 2.6 + i * 1.3) * 3.5;
+    billows.push({ x, y, r, k: i });
+  }
+  billows.sort((p, q) => p.y - q.y);
+  // contorno único da massa (círculos maiores em tinta por baixo) e depois as cores
+  ctx.fillStyle = "#47608c";
+  for (const b of billows) {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r + 1.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  for (const b of billows) {
+    const g = ctx.createLinearGradient(b.x, b.y - b.r, b.x, b.y + b.r);
+    g.addColorStop(0, "#ffffff");
+    g.addColorStop(0.5, "#e9f1fb");
+    g.addColorStop(1, "#a9bcdb");
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+  }
+  for (const b of billows) {
+    // luz do alto/esquerda e uma dobra de sombra: dá volume de "couve-flor" aos cúmulos
+    ctx.beginPath();
+    ctx.arc(b.x - b.r * 0.22, b.y - b.r * 0.3, b.r * 0.55, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.95)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(96,124,176,0.55)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(b.x + b.r * 0.1, b.y + b.r * 0.15, b.r * 0.72, 0.15 * Math.PI, 0.85 * Math.PI);
+    ctx.stroke();
+  }
+  // poeira fina no topo, translúcida (a parte realmente "fumaça" fica só como acabamento leve)
+  for (let i = 0; i < 18; i++) {
+    const sg = segs[Math.min(N, Math.floor(hash(i, 70) * 14))];
+    const rise = 70 + (1 - sg.s) * 70 + hash(i, 71) * 40;
+    const r = 18 + hash(i, 72) * 24;
+    ctx.globalAlpha = 0.28;
+    ctx.drawImage(puffSprite!, sg.x + (hash(i, 73) - 0.5) * sg.w * 2 - r, sg.y - rise + Math.sin(t * 1.3 + i) * 4 - r * 0.8, r * 2, r * 1.6);
+  }
+  ctx.globalAlpha = 1;
+
+  // 7) rajadas de neve e faixas de vento adiante da frente
+  const f0 = segs[0];
+  for (let i = 0; i < 26 + Math.round(danger * 12); i++) {
+    const ph = (t * (1.2 + (i % 5) * 0.3) + i * 0.19) % 1;
+    const ahead = 10 + ph * (70 + danger * 30);
+    const lat = (hash(i, 31) - 0.5) * 2 * (f0.w + 30);
+    const x = f0.x + f0.nx * lat + f0.tx * ahead;
+    const y = f0.y + f0.ny * lat + f0.ty * ahead - 10 - ph * 28;
+    ctx.strokeStyle = `rgba(255,255,255,${(1 - ph) * 0.9})`;
+    ctx.lineWidth = 1.8 + hash(i, 32) * 1.6;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + f0.tx * 14, y + f0.ty * 14 + 2);
+    ctx.stroke();
+  }
+  ctx.restore();
 }

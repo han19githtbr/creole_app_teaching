@@ -598,10 +598,10 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
         setTimeout(() => {
           setEnterHouse(true);
 
-          // 4. Após entrar na casa (1.8s), exibe o painel de vitória do cume
+          // 4. Ele entra na casa (~1,9s), reaparece na porta comemorando (~3s) e só então vem o painel de vitória
           setTimeout(() => {
             setPhase("summit_victory");
-          }, 1800);
+          }, 5200);
         }, 2500);
       }, 1800);
     } else {

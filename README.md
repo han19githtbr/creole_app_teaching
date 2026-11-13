@@ -395,13 +395,13 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 
 > Esta seção descreve a versão atual e **substitui** o visual antigo (montanha desenhada em SVG, animais antigos e bandeira no cume).
 
-**Visual.** O mapa agora é uma trilha **vertical** pintada, dentro de uma mata densa (`public/trilha/mata-trilha.jpg`, arte original ampliada 2× e sem os rótulos/boneco que vinham desenhados nela). O caminho do jogo foi traçado sobre a trilha de terra da arte (`src/lib/curiousTrailGeometry.ts`, mundo de 1000 × 2201 unidades) e as 7 estações ficam sobre a curva. A câmera acompanha o aluno e o próximo objeto; no lobby dá para **arrastar** o mapa. No fim do Nível 7 o aluno **entra feliz na casinha do cume** (a bandeira foi removida).
+**Visual.** O mapa agora é uma trilha **vertical** pintada, dentro de uma mata densa (`public/trilha/mata-trilha-animada.jpg`, arte original ampliada 2× e sem os rótulos/boneco que vinham desenhados nela). O caminho do jogo foi traçado sobre a trilha de terra da arte (`src/lib/curiousTrailGeometry.ts`, mundo de 1000 × 2201 unidades) e as 7 estações ficam sobre a curva. A câmera acompanha o aluno e o próximo objeto; no lobby dá para **arrastar** o mapa. No fim do Nível 7 o aluno **entra feliz na casinha do cume** (a bandeira foi removida).
 
 **Clima.** Sol, chuva e neve são aplicados sobre a mesma arte (dessaturação, névoa/geada, trilha molhada ou coberta de neve, chuva e neve caindo). Para trocar a arte basta substituir o arquivo da imagem e reajustar os pontos do caminho em `curiousTrailGeometry.ts`.
 
 **Mata viva: fauna, folhagem e água.** O mapa não é mais estático:
 
-- **Bichos** (os 20 da ilustração de elenco, recortados em `public/trilha/fauna/*.png`): esquilo, cervo, ouriço, gambá, pica-pau, javali, onça, coruja, tamanduá, tatu, jacaré, preguiça, tucano, lontra, quati, lobo-guará, paca, jabuti, sapo e cutia. Os animais que antes estavam *pintados* no fundo foram retirados da arte (`mata-trilha.jpg`) e agora são esses bichos vivos; os animais antigos (desenhos vetoriais) foram removidos.
+- **Bichos** (os 20 da ilustração de elenco, recortados em `public/trilha/fauna/*.png`): esquilo, cervo, ouriço, gambá, pica-pau, javali, onça, coruja, tamanduá, tatu, jacaré, preguiça, tucano, lontra, quati, lobo-guará, paca, jabuti, sapo e cutia. Os animais que antes estavam *pintados* no fundo foram retirados da arte (`mata-trilha-animada.jpg`) e agora são esses bichos vivos; os animais antigos (desenhos vetoriais) foram removidos.
 - **Vivem DENTRO da mata** (`src/lib/trailFauna.ts`): passeiam pelas clareiras onde os bichos pintados estavam, às vezes **atravessam a trilha**, passam **atrás de retalhos de folhagem** (`public/trilha/patches/*.png`, recortes da própria arte que ficam na frente deles) e podem se **esconder** ali e espiar depois. Aves e preguiça **pousam em galhos, troncos e dentro das copas** (atrás das folhas) ou voam de um poleiro a outro.
 - **Temperamento por espécie:** amigáveis (esquilo, quati, lontra, tucano) se aproximam e pousam perto; assustadiços (paca, cutia, sapo) fogem para a folhagem; cautelosos (cervo, lobo-guará, coruja) observam e se afastam; defensivos (ouriço, tatu, jabuti) se encolhem; o gambá faz pose de aviso; agressivos (javali e onça) espreitam, ameaçam e fazem uma investida de mentirinha e o jacaré dá uma bocada de emboscada (nada machuca o aluno). Tocar num bicho faz cada um reagir.
 - **Por clima:** sol (esquilo, cervo, pica-pau, tucano, quati, tamanduá, tatu, paca, cutia, jabuti, lobo-guará, onça, gambá, preguiça, javali), chuva (sapo, lontra, jacaré, preguiça, tucano, quati, ouriço, jabuti, paca, cervo — os que gostam de água ficam nas lagoas) e neve (cervo, javali, coruja, esquilo, lobo-guará, pica-pau). O clima é aplicado igualmente na arte, nos retalhos e nos bichos (`src/lib/trailGrade.ts`).
@@ -416,7 +416,7 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 
 ### Cenário da trilha e vida na mata
 
-- O cenário é uma única ilustração alta (`public/trilha-completa.jpg`, viewBox 1000×2200): a trilha sobe em zigue-zague do pé da montanha até a casinha do topo (ponto de chegada, nível 7). O caminho do aluno está em `src/lib/curiousTrailGeometry.ts` e acompanha o desenho.
+- O cenário é uma única ilustração alta (`public/trilha/mata-trilha-animada.jpg`, viewBox 1000×2200): a trilha sobe em zigue-zague do pé da montanha até a casinha do topo (ponto de chegada, nível 7). O caminho do aluno está em `src/lib/curiousTrailGeometry.ts` e acompanha o desenho.
 - Os animais passeiam pela mata, fora da trilha, em pontos definidos em `TRAIL_ROAM_SPOTS` (`src/lib/curiousTrailData.ts`). A vida selvagem acontece em uma faixa em volta do aluno (`setFocus` em `src/lib/trailWildlife.ts`), então sempre há bichos à vista conforme ele sobe.
 - Animais terrestres (esquilo, coelho, cervo, raposa, camurça etc.) andam entre pontos próximos da mata; pássaros em bando cruzam o ar sobre a mata, a águia plana em círculos acima do aluno, e borboletas e abelhas ficam nas clareiras floridas.
 Novo módulo visual e dinâmico de gamificação em francês integrado à seção de jogos (`/dashboard/jogo?module=trilha`), simulando uma **expedição de subida de montanha**. O aluno sobe a montanha estação por estação, enfrentando mudanças de altitude e de clima, enquanto reconhece elementos ilustrados do tema escolhido.
@@ -492,6 +492,18 @@ Novo módulo visual e dinâmico de gamificação em francês integrado à seçã
 | `src/components/TrailDemoStudio.tsx` | Estúdio administrativo para gerar e baixar vídeos da Trilha em MP4 |
 | `src/components/AdminJogoVideosTabs.tsx` | Abas no painel administrativo alternando entre vídeos do C'est quoi ? e da Trilha |
 | `src/app/dashboard/jogo/page.tsx` | Rota do jogo com alternador de módulos (Trilha Curiosa e C'est quoi ? Clássico) |
+
+
+### Trilha do Aluno Curioso — acabamento visual (luz, avalanche, casinha, objetos)
+
+- **Sem retângulos em volta dos bichos.** A causa era a iluminação de borda aplicada direto no mapa (a mistura `source-atop` do canvas pintava o retângulo todo). Agora cada bicho é desenhado numa camada transparente isolada (`drawCritter`, em `trailFaunaDraw.ts`) e a luz só atinge os pixels do animal. O ajuste de clima (`trailGrade.ts`) também passou a ser feito pixel a pixel, sem tocar na transparência, e a escuridão da noite ficou no próprio ajuste de cor (igual na arte, nos retalhos de folhagem e nos bichos).
+- **Fundo reparado** (`public/trilha/mata-trilha-animada.jpg`): o cervo pintado que sobrava saiu (agora ele é um dos bichos vivos) e as emendas retangulares onde os rótulos e os animais pintados foram removidos foram refeitas com mistura de gradiente (Poisson). Os retalhos de folhagem (`public/trilha/patches`) são recortados desta mesma imagem; se você trocar o fundo, regenere-os.
+- **Luz coerente.** Uma só fonte de luz, no alto à direita: de dia o sol (brilho quente e feixes), de noite a lua (luar, lua e estrelas só na área de céu, nunca sobre a mata). As sombras dos bichos caem para o lado oposto e não dependem para onde o bicho olha; o lado voltado para a luz recebe um fio de luz (quente de dia, azulado à noite). Em `drawSkyLight`.
+- **Avalanche** (`drawAvalanche`, em `trailAvalanche.ts`): agora é uma avalanche de neve (lâmina de neve escoando pelo chão com borda irregular, parede de cúmulos de neve sombreados na frente, blocos, detritos e rajadas), desenhada em canvas no mesmo traço pintado da arte e **compartilhada** pelo jogo e pelo vídeo.
+- **Casinha do cume** desenhada por código (`drawHut`): telhado de sapê, paredes de pedra, chaminé com fumaça, janela e porta que acendem à noite/chuva/neve e neve no inverno. No final, o aluno entra na casa, reaparece na porta pulando de alegria e só depois aparece o painel de vitória (jogo e vídeo).
+- **Imagens dos objetos.** Quando um objeto não tem ilustração isolada em `public/ghibli/trail-objects`, o jogo usa a cena completa com a seta (em vez de mostrar o ícone de imagem quebrada); há também um fallback em caso de erro de carregamento. A **seta vermelha** ficou ~1,8× maior no jogo e no vídeo.
+- **Vídeo** (`curiousTrailDemoVideo.ts`, `trailVideoWorld.ts`): usa as mesmas funções de desenho do jogo (bichos, folhagem, água, luz, casinha e avalanche), tem painel informativo na base entre as perguntas e a sequência de vitória idêntica.
+- **Limpeza:** imagens de teste soltas na raiz (`game.png`, `scratch_*.png`, `test_upgraded_*.png`...) e arquivos de `public/` sem uso foram removidos.
 
 ## Postagens em francês
 

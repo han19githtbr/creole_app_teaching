@@ -13,7 +13,6 @@ export const dynamic = "force-dynamic";
 export default async function ContoPage({ params }: { params: Promise<{ slug: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
-  if ((await getAppLanguage()) !== "francais") redirect("/dashboard/stories");
 
   const { slug } = await params;
   const tale = getTale(slug);

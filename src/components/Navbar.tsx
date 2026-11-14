@@ -10,13 +10,14 @@ import { NotificationsPopover } from "@/components/NotificationsPopover";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { LANGUAGE_META } from "@/lib/languageShared";
-import { BookOpen, Gamepad2, LayoutDashboard, Menu, Radio, ShieldCheck, Sparkles, Video, X } from "lucide-react";
+import { BookOpen, BookOpenText, Gamepad2, LayoutDashboard, Menu, Radio, ShieldCheck, Sparkles, Video, X } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
   { href: "/dashboard/lessons", label: "Lições", icon: BookOpen },
   { href: "/dashboard/videos", label: "Vídeos", icon: Video },
   { href: "/dashboard/stories", label: "Histórias", icon: Sparkles },
+  { href: "/dashboard/contos", label: "Contos", icon: BookOpenText },
   { href: "/dashboard/jogo", label: "Jogo", icon: Gamepad2 },
   { href: "/live", label: "Ao vivo", icon: Radio },
 ];

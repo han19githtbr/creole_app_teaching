@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       user: updatedUser,
-      message: `Adicionados ${minutes} min e ${bonusStories} histórias bônus para ${updatedUser.name}!`,
+      message: `Adicionados ${minutes} min e ${bonusStories} curiosidades bônus para ${updatedUser.name}!`,
     });
   } catch (err) {
     console.error("[add-minutes] Erro ao adicionar minutos:", err);

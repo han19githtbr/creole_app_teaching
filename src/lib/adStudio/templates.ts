@@ -630,8 +630,8 @@ const live: TemplateInfo = {
 
 const stories: TemplateInfo = {
   id: "stories",
-  name: "Histórias animadas",
-  description: "Mockup da história narrada em Kreyòl com legendas em português.",
+  name: "Curiosidades animadas",
+  description: "Mockup da curiosidade narrada em Kreyòl com legendas em português.",
   emoji: "✨",
   slides: 1,
   languages: ["kreyol"],
@@ -640,19 +640,19 @@ const stories: TemplateInfo = {
     const img = c.hero;
     const slide = compose(
       {
-        name: "Histórias",
-        a: "Histórias animadas",
+        name: "Curiosidades",
+        a: "Curiosidades animadas",
         b: "em Kreyòl",
         sub: "Cada elemento da cena ganha vida, com narração em Kreyòl e legendas em português.",
         bullets: ["Treine o ouvido de forma divertida", "Baixe e compartilhe nas redes"],
-        cta: "Ver as histórias",
+        cta: "Ver as curiosidades",
         ctaIcon: "✨",
         visual: phoneVisual("story", { title: img?.title ?? "", items: (img?.elements ?? []).slice(0, 4), imageSrc: img?.src ?? "" }),
         bg: { pattern: "confetti", patternOpacity: 0.12 },
       },
       c
     );
-    return { slides: [slide], caption: buildCaption(c.language, c.brand, "Histórias animadas em Kreyòl com legendas em português!") };
+    return { slides: [slide], caption: buildCaption(c.language, c.brand, "Curiosidades animadas em Kreyòl com legendas em português!") };
   },
 };
 

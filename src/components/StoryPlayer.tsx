@@ -204,7 +204,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     const firstCap = story.captions[0];
     const quote = firstCap ? `"${firstCap.kreyol}" (${firstCap.portuguese})` : "";
     const tags = isFr ? "#frances #aprenderfrances #français #cultura" : "#kreyol #haiti #idiomas #cultura";
-    return `✨ ${story.title} ${flag} 🇧🇷\nTema: ${story.theme}\n\n${quote}\n\n📖 Aprenda ${targetLangLabel} com histórias animadas e tradução sincronizada em português!\n${tags} #educacao #estudo`;
+    return `✨ ${story.title} ${flag} 🇧🇷\nTema: ${story.theme}\n\n${quote}\n\n📖 Aprenda ${targetLangLabel} com curiosidades animadas e tradução sincronizada em português!\n${tags} #educacao #estudo`;
   }, [story.title, story.theme, isFr, targetLangLabel, story.captions]);
 
   function copySocialCaption() {
@@ -1573,7 +1573,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
               ref={captionRef}
               role="group"
               tabIndex={0}
-              aria-label="Legenda sincronizada da história"
+              aria-label="Legenda sincronizada da curiosidade"
               title="Legenda sincronizada (arraste para mover se desejar)"
               onPointerDown={startCaptionDrag}
               onPointerMove={moveCaptionDrag}
@@ -1653,7 +1653,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           <div
             role="slider"
             tabIndex={0}
-            aria-label="Controle de reprodução da história"
+            aria-label="Controle de reprodução da curiosidade"
             aria-valuemin={0}
             aria-valuemax={duration}
             aria-valuenow={currentTime}
@@ -1692,7 +1692,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                 onClick={() => void togglePlay()}
                 disabled={exporting}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5cf72] text-[#18241d] transition-transform hover:scale-105 disabled:opacity-50 shadow-md"
-                aria-label={playing ? "Pausar história" : isVideoFinished ? "Assistir novamente" : "Reproduzir história"}
+                aria-label={playing ? "Pausar curiosidade" : isVideoFinished ? "Assistir novamente" : "Reproduzir curiosidade"}
               >
                 {playing ? (
                   <Pause className="h-4 w-4" />
@@ -1706,7 +1706,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                 {playing
                   ? "A aventura está acontecendo…"
                   : isVideoFinished
-                  ? "História concluída! Clique para assistir novamente"
+                  ? "Curiosidade concluída! Clique para assistir novamente"
                   : `Ouça a narração em ${targetLangLabel} com tradução sincronizada`}
               </span>
             </div>
@@ -1741,7 +1741,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
             Ouvir e compreender
           </p>
           <h2 className="mt-1 text-lg font-bold text-[var(--text)]">
-            A história, na sua língua
+            A curiosidade, na sua língua
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
             A narração é em {targetLangLabel}. A tradução acompanha cada fala em português, sincronizada ao áudio.

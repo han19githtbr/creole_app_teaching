@@ -50,11 +50,11 @@ export function StoryMonetizationWrapper({ story }: StoryMonetizationWrapperProp
 
           <div className="max-w-md mx-auto space-y-2">
             <h2 className="text-xl font-bold text-[var(--text)]">
-              Cota de Histórias Encerrada
+              Cota de Curiosidades Encerrada
             </h2>
             <p className="text-xs text-[var(--text-secondary)]">
-              Seu período de degustação de 3 dias finalizou ou seus minutos de histórias acabaram.
-              Recarregue seus minutos agora para continuar ouvindo e aprendendo com as histórias vivas!
+              Seu período de degustação de 3 dias finalizou ou seus minutos de curiosidades acabaram.
+              Recarregue seus minutos agora para continuar ouvindo e aprendendo com as curiosidades vivas!
             </p>
           </div>
 
@@ -69,7 +69,7 @@ export function StoryMonetizationWrapper({ story }: StoryMonetizationWrapperProp
 
             <Link href="/dashboard/stories">
               <Button variant="outline" className="text-xs">
-                Voltar às Histórias
+                Voltar às Curiosidades
               </Button>
             </Link>
           </div>

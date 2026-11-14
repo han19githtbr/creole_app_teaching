@@ -41,7 +41,7 @@ function sanitizePackages(input: unknown[]):
       return { ok: false, error: `Minutos inválidos em "${name}".` };
     }
     if (!Number.isFinite(bonusStories) || bonusStories < 0 || bonusStories > 1000) {
-      return { ok: false, error: `Histórias bônus inválidas em "${name}".` };
+      return { ok: false, error: `Curiosidades bônus inválidas em "${name}".` };
     }
 
     packages.push({

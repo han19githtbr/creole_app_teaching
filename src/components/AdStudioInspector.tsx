@@ -13,7 +13,7 @@ const SCREEN_OPTIONS: { value: ScreenKind; label: string }[] = [
   { value: "game", label: "Jogo" },
   { value: "ranking", label: "Ranking" },
   { value: "video", label: "Aula em vídeo" },
-  { value: "story", label: "História animada" },
+  { value: "story", label: "Curiosidade animada" },
   { value: "live", label: "Aula ao vivo" },
   { value: "achievements", label: "Níveis e conquistas" },
 ];

@@ -327,7 +327,7 @@ export default function AdminMonetizationPage() {
           </p>
           <h1 className="mt-1 text-2xl font-bold text-[var(--text)]">Controle de Tempo, Pacotes & Degustação</h1>
           <p className="mt-1 max-w-2xl text-sm text-[var(--text-secondary)]">
-            Acompanhe o engajamento dos alunos nas Histórias e no Jogo C&apos;est quoi ?, configure o cálculo exato por unidade, gerencie pacotes de minutos e realize sorteios de gratuidade.
+            Acompanhe o engajamento dos alunos nas Curiosidades e no Jogo C&apos;est quoi ?, configure o cálculo exato por unidade, gerencie pacotes de minutos e realize sorteios de gratuidade.
           </p>
         </div>
 
@@ -426,9 +426,9 @@ export default function AdminMonetizationPage() {
                   <BookOpen className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-[var(--text)]">Histórias Vivas Narradas</h3>
+                  <h3 className="font-bold text-base text-[var(--text)]">Curiosidades Vivas Narradas</h3>
                   <p className="text-xs text-[var(--text-secondary)]">
-                    Consumo exclusivo das histórias em Francês e Kreyòl
+                    Consumo exclusivo das curiosidades em Francês e Kreyòl
                   </p>
                 </div>
               </div>
@@ -438,7 +438,7 @@ export default function AdminMonetizationPage() {
                   <div className="text-xl font-black text-amber-500">{data.stats.totalStoriesHours} horas</div>
                 </div>
                 <div>
-                  <span className="text-xs text-[var(--text-secondary)]">Histórias Assistidas:</span>
+                  <span className="text-xs text-[var(--text-secondary)]">Curiosidades Assistidas:</span>
                   <div className="text-xl font-black text-[var(--text)]">{data.stats.totalStoriesWatched}</div>
                 </div>
               </div>
@@ -476,7 +476,7 @@ export default function AdminMonetizationPage() {
               <span>Regras de Proteção e Cobrança Ativas</span>
             </div>
             <p className="text-[var(--text-secondary)]">
-              • <strong>Apenas Histórias e Jogo:</strong> Navegação no painel, lições de gramática e vídeos gerais não debitam minutos.
+              • <strong>Apenas Curiosidades e Jogo:</strong> Navegação no painel, lições de gramática e vídeos gerais não debitam minutos.
             </p>
             <p className="text-[var(--text-secondary)]">
               • <strong>Pausa Inteligente:</strong> Se a aba for minimizada ou o aluno ficar mais de 45s sem interagir, a contagem de tempo congela instantaneamente.
@@ -654,7 +654,7 @@ export default function AdminMonetizationPage() {
                 <tr>
                   <th className="p-3">Aluno</th>
                   <th className="p-3">Status de Cobrança</th>
-                  <th className="p-3">Histórias (Tempo/Vistas)</th>
+                  <th className="p-3">Curiosidades (Tempo/Vistas)</th>
                   <th className="p-3">Jogo (Tempo/Partidas)</th>
                   <th className="p-3">Última Atividade</th>
                   <th className="p-3 text-right">Ações</th>
@@ -714,11 +714,11 @@ export default function AdminMonetizationPage() {
                           )}
                         </td>
 
-                        {/* Histórias */}
+                        {/* Curiosidades */}
                         <td className="p-3">
                           <div className="font-semibold text-[var(--text)]">{storiesMins} min ativos</div>
                           <div className="text-[11px] text-[var(--text-secondary)]">
-                            {u.totalStoriesWatched || 0} histórias assistidas
+                            {u.totalStoriesWatched || 0} curiosidades assistidas
                           </div>
                         </td>
 
@@ -806,7 +806,7 @@ export default function AdminMonetizationPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[var(--text)]">Histórias Bônus a Adicionar:</label>
+                <label className="text-xs font-semibold text-[var(--text)]">Curiosidades Bônus a Adicionar:</label>
                 <Input
                   type="number"
                   min={0}
@@ -859,7 +859,7 @@ export default function AdminMonetizationPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                 <div className="rounded-lg bg-[var(--surface)] p-3 border border-[var(--border)]">
-                  <div className="text-xs text-[var(--text-secondary)]">Custo de 1 História Narrada:</div>
+                  <div className="text-xs text-[var(--text-secondary)]">Custo de 1 Curiosidade Narrada:</div>
                   <div className="font-bold text-base text-[var(--text)] mt-1">
                     {settingsForm.storyCreditsCost} créditos × {settingsForm.minutesPerCredit} min ={" "}
                     <span className="text-amber-500">{exactStoryMinutes} minutos exatos da cota</span>
@@ -879,7 +879,7 @@ export default function AdminMonetizationPage() {
             {/* Inputs de Configuração */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
               <div>
-                <label className="text-xs font-semibold text-[var(--text)]">Créditos por História:</label>
+                <label className="text-xs font-semibold text-[var(--text)]">Créditos por Curiosidade:</label>
                 <Input
                   type="number"
                   min={1}
@@ -931,7 +931,7 @@ export default function AdminMonetizationPage() {
               <div>
                 <h2 className="text-lg font-bold text-[var(--text)]">Degustação para Aluno Novo (Boas-Vindas)</h2>
                 <p className="text-xs text-[var(--text-secondary)]">
-                  Configuração dos dias de acesso gratuito e franquia inicial de histórias e jogos concedida automaticamente aos novos cadastrados.
+                  Configuração dos dias de acesso gratuito e franquia inicial de curiosidades e jogos concedida automaticamente aos novos cadastrados.
                 </p>
               </div>
             </div>
@@ -954,7 +954,7 @@ export default function AdminMonetizationPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[var(--text)]">Histórias Grátis no Período:</label>
+                <label className="text-xs font-semibold text-[var(--text)]">Curiosidades Grátis no Período:</label>
                 <Input
                   type="number"
                   min={1}
@@ -964,7 +964,7 @@ export default function AdminMonetizationPage() {
                   }
                   className="mt-1"
                 />
-                <span className="text-[11px] text-[var(--text-muted)]">Cota de degustação de histórias</span>
+                <span className="text-[11px] text-[var(--text-muted)]">Cota de degustação de curiosidades</span>
               </div>
 
               <div>
@@ -1009,7 +1009,7 @@ export default function AdminMonetizationPage() {
                   Pacotes de Minutos (Stripe · Cartão)
                 </h2>
                 <p className="text-xs text-[var(--text-secondary)]">
-                  Aumente ou diminua os minutos de cada pacote, altere preços e defina bônus exclusivos de histórias.
+                  Aumente ou diminua os minutos de cada pacote, altere preços e defina bônus exclusivos de curiosidades.
                 </p>
               </div>
 
@@ -1107,7 +1107,7 @@ export default function AdminMonetizationPage() {
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-[var(--text-secondary)]">Histórias Bônus:</label>
+                    <label className="text-[11px] font-semibold text-[var(--text-secondary)]">Curiosidades Bônus:</label>
                     <Input
                       type="number"
                       min={0}

@@ -33,7 +33,7 @@ export const LANGUAGE_META: Record<
     tagline: "Continue seu progresso em Kreyòl Ayisyen.",
     lessonsTitle: "Lições de Kreyòl Ayisyen",
     videosTitle: "Aulas em vídeo de Kreyòl",
-    storiesTitle: "Histórias em Kreyòl",
+    storiesTitle: "Curiosidades em Kreyòl",
     gameTitle: "Jogo das Imagens",
   },
   francais: {
@@ -44,7 +44,7 @@ export const LANGUAGE_META: Record<
     tagline: "Continue seu progresso em Francês.",
     lessonsTitle: "Lições de Francês",
     videosTitle: "Aulas em vídeo de Francês",
-    storiesTitle: "Histórias em Francês",
+    storiesTitle: "Curiosidades em Francês",
     gameTitle: "C'est quoi ?",
   },
 };

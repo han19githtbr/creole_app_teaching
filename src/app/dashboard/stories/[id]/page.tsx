@@ -45,7 +45,7 @@ export default async function WatchStoryPage({ params }: { params: Promise<{ id:
   return (
     <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-7 sm:px-6">
       <Link href="/dashboard/stories" className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
-        <ChevronLeft className="h-4 w-4"/> Todas as histórias
+        <ChevronLeft className="h-4 w-4"/> Todas as curiosidades
       </Link>
       <header className="border-b border-[var(--border)] pb-4">
         <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">

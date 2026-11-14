@@ -29,14 +29,14 @@ export function StoryTable({ stories }: { stories: StoryRow[] }) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function deleteStory(story: StoryRow) {
-    if (!confirm(`Excluir a história “${story.title}”? Esta ação não pode ser desfeita.`)) return;
+    if (!confirm(`Excluir a curiosidade “${story.title}”? Esta ação não pode ser desfeita.`)) return;
     setDeletingId(story._id);
     try {
       const response = await fetch(`/api/stories/${story._id}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Falha ao excluir história.");
+      if (!response.ok) throw new Error("Falha ao excluir curiosidade.");
       router.refresh();
     } catch {
-      alert("Não foi possível excluir a história.");
+      alert("Não foi possível excluir a curiosidade.");
     } finally {
       setDeletingId(null);
     }
@@ -44,7 +44,7 @@ export function StoryTable({ stories }: { stories: StoryRow[] }) {
 
   return (
     <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-      {stories.length === 0 ? <div className="p-12 text-center"><p className="font-semibold text-[var(--text)]">Ainda não há histórias</p><p className="mt-1 text-sm text-[var(--text-muted)]">Crie uma aventura com as cenas do banco Ghibli.</p></div> : <div className="divide-y divide-[var(--border-soft)]">
+      {stories.length === 0 ? <div className="p-12 text-center"><p className="font-semibold text-[var(--text)]">Ainda não há curiosidades</p><p className="mt-1 text-sm text-[var(--text-muted)]">Crie uma aventura com as cenas do banco Ghibli.</p></div> : <div className="divide-y divide-[var(--border-soft)]">
         {stories.map((story) => {
           const scheduled = story.isPublished && story.publishAt && new Date(story.publishAt) > new Date();
           return <article key={story._id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">

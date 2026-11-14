@@ -33,7 +33,7 @@ export default async function StoriesPage() {
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-[var(--border)] pb-5">
         <div>
           <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
-            <Sparkles className="h-4 w-4" /> {isFr ? "Histoires en français" : "Istwa an kreyòl"}
+            <Sparkles className="h-4 w-4" /> {isFr ? "Curiosités en français" : "Kiryozite an kreyòl"}
           </p>
           <h1 className="mt-1 text-2xl font-bold text-[var(--text)]">{LANGUAGE_META[language].storiesTitle}</h1>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
@@ -42,7 +42,7 @@ export default async function StoriesPage() {
         </div>
         {session.user.role === "admin" && (
           <Link href="/admin/stories">
-            <Button variant="outline" size="sm">Gerenciar histórias</Button>
+            <Button variant="outline" size="sm">Gerenciar curiosidades</Button>
           </Link>
         )}
       </header>
@@ -50,7 +50,7 @@ export default async function StoriesPage() {
       {stories.length === 0 ? (
         <div className="border-b border-[var(--border)] py-16 text-center">
           <Sparkles className="mx-auto h-8 w-8 text-[var(--text-muted)]" />
-          <p className="mt-3 font-semibold text-[var(--text)]">A próxima história está sendo preparada</p>
+          <p className="mt-3 font-semibold text-[var(--text)]">A próxima curiosidade está sendo preparada</p>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
             Volte em breve para explorar uma nova aventura em {isFr ? "Francês" : "Kreyòl"}.
           </p>

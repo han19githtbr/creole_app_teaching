@@ -71,7 +71,7 @@ export async function POST(req: Request) {
               product_data: {
                 name: `${pkg.name} — ${pkg.minutes} Minutos`,
                 description: `${pkg.minutes} minutos de aprendizado${
-                  pkg.bonusStories ? ` + ${pkg.bonusStories} histórias bônus` : ""
+                  pkg.bonusStories ? ` + ${pkg.bonusStories} curiosidades bônus` : ""
                 }`,
               },
               unit_amount: unitAmount,

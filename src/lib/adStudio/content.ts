@@ -38,7 +38,7 @@ export const COPY: Record<AppLanguage, LangCopy> = {
       { icon: "🎥", title: "Aulas em vídeo", desc: "Assista quando quiser, no seu ritmo, direto do celular." },
       { icon: "📡", title: "Aulas ao vivo", desc: "Tire dúvidas em tempo real com o professor." },
       { icon: "🖼️", title: "Jogo das imagens", desc: "Descubra os elementos de cenas ilustradas e ganhe pontos." },
-      { icon: "✨", title: "Histórias animadas", desc: "Narração em Kreyòl com legendas em português." },
+      { icon: "✨", title: "Curiosidades animadas", desc: "Narração em Kreyòl com legendas em português." },
       { icon: "🏆", title: "Conquistas e níveis", desc: "Suba de nível, ganhe selos e compartilhe suas vitórias." },
     ],
     words: [
@@ -90,7 +90,7 @@ export function buildCaption(language: AppLanguage, brand: Brand, topic: string)
   lines.push("");
   lines.push(
     language === "kreyol"
-      ? `Venha aprender ${c.ptName} com a gente${brand.name ? ` (@${brand.name.replace(/^@/, "")})` : ""}: lições, aulas em vídeo, aulas ao vivo, jogos e histórias animadas em um só lugar.`
+      ? `Venha aprender ${c.ptName} com a gente${brand.name ? ` (@${brand.name.replace(/^@/, "")})` : ""}: lições, aulas em vídeo, aulas ao vivo, jogos e curiosidades animadas em um só lugar.`
       : `Venha aprender ${c.ptName} com a gente${brand.name ? ` (@${brand.name.replace(/^@/, "")})` : ""}: lições, aulas em vídeo, aulas ao vivo, o jogo C'est quoi ? e ranking com outros alunos.`
   );
   lines.push("");

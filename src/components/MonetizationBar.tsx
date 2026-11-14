@@ -82,7 +82,7 @@ export function MonetizationBar({
               <span>
                 Degustação: {status.trialDaysLeft} {status.trialDaysLeft === 1 ? "dia restante" : "dias restantes"} ·{" "}
                 {feature === "stories"
-                  ? `${status.trialStoriesLeft} histórias livres`
+                  ? `${status.trialStoriesLeft} curiosidades livres`
                   : `${status.trialGamesLeft} jogos livres`}
               </span>
             </div>

@@ -630,7 +630,7 @@ html {
   color: var(--accent-hover);
 }
 
-/* ===== Animações dos Elementos com Vida das Histórias ===== */
+/* ===== Animações dos Elementos com Vida das Curiosidades ===== */
 @keyframes living-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }

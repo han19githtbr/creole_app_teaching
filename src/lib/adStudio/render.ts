@@ -1009,7 +1009,7 @@ function screenStory(ctx: CanvasRenderingContext2D, L: PhoneLayer, S: Screen, u:
   ctx.textBaseline = "middle";
   ctx.fillStyle = "#fff";
   ctx.font = fontString("sans", 800, 4.2 * u);
-  ctx.fillText("✨ História animada", 5 * u, 19 * u);
+  ctx.fillText("✨ Curiosidade animada", 5 * u, 19 * u);
   // rótulos dos elementos
   const anchors = [
     { x: 26, y: 42 },

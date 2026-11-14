@@ -17,7 +17,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
   await connectDB();
   const video = await VideoLesson.findOne({ _id: id, story: { $exists: true } });
-  if (!video) return NextResponse.json({ error: "História não encontrada." }, { status: 404 });
+  if (!video) return NextResponse.json({ error: "Curiosidade não encontrada." }, { status: 404 });
   const wasAvailable = video.isPublished && (!video.publishAt || video.publishAt <= new Date());
   const publishAt = body.publishAt ? new Date(body.publishAt) : null;
   if (body.language === "francais" || body.language === "kreyol") {
@@ -33,7 +33,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const isAvailable = video.isPublished && (!video.publishAt || video.publishAt <= new Date());
   if (isAvailable && !wasAvailable) {
     video.announcedAt = new Date();
-    await sendContentPush({ title: "Nova história em Kreyòl", body: video.title, url: `/dashboard/stories/${video.id}`, language: video.language });
+    await sendContentPush({ title: video.language === "francais" ? "Nouvelle curiosité en français" : "Nova curiosidade em Kreyòl", body: video.title, url: `/dashboard/stories/${video.id}`, language: video.language });
   }
   await video.save();
   return NextResponse.json({ success: true });
@@ -45,7 +45,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
   const { id } = await params;
   await connectDB();
   const deleted = await VideoLesson.findOneAndDelete({ _id: id, story: { $exists: true } });
-  if (!deleted) return NextResponse.json({ error: "História não encontrada." }, { status: 404 });
+  if (!deleted) return NextResponse.json({ error: "Curiosidade não encontrada." }, { status: 404 });
   return NextResponse.json({ success: true });
 }
 
@@ -55,9 +55,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   const { id } = await params;
   await connectDB();
   const story = await VideoLesson.findOne({ _id: id, story: { $exists: true } }).lean();
-  if (!story) return NextResponse.json({ error: "História não encontrada." }, { status: 404 });
+  if (!story) return NextResponse.json({ error: "Curiosidade não encontrada." }, { status: 404 });
   if (session.user.role !== "admin" && (!story.isPublished || (story.publishAt && story.publishAt > new Date()))) {
-    return NextResponse.json({ error: "História não disponível." }, { status: 404 });
+    return NextResponse.json({ error: "Curiosidade não disponível." }, { status: 404 });
   }
   return NextResponse.json({
     _id: String(story._id), title: story.title, description: story.description,

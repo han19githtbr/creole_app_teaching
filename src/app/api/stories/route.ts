@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (video.isPublished && (!video.publishAt || video.publishAt <= new Date())) {
-    await sendContentPush({ title: language === "francais" ? "Nouvelle histoire en français" : "Nova história em Kreyòl", body: video.title, url: `/dashboard/stories/${video.id}`, language });
+    await sendContentPush({ title: language === "francais" ? "Nouvelle curiosité en français" : "Nova curiosidade em Kreyòl", body: video.title, url: `/dashboard/stories/${video.id}`, language });
   }
   return NextResponse.json({ _id: String(video._id) }, { status: 201 });
 }

@@ -134,7 +134,7 @@ const SCREEN_BUTTONS: { screen: ScreenKind; label: string }[] = [
   { screen: "game", label: "🎮 Jogo" },
   { screen: "ranking", label: "🥇 Ranking" },
   { screen: "video", label: "🎥 Vídeo" },
-  { screen: "story", label: "✨ História" },
+  { screen: "story", label: "✨ Curiosidade" },
   { screen: "live", label: "📡 Ao vivo" },
   { screen: "achievements", label: "🏆 Conquistas" },
 ];

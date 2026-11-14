@@ -11,7 +11,7 @@ const items = [
   { href: "/admin", label: "Painel geral", icon: LayoutDashboard },
   { href: "/admin/monetizacao", label: "Monetização e Alunos", icon: Coins },
   { href: "/admin/videos", label: "Vídeos e Gravações", icon: Video },
-  { href: "/admin/stories", label: "Histórias", icon: Sparkles },
+  { href: "/admin/stories", label: "Curiosidades", icon: Sparkles },
   { href: "/admin/lessons", label: "Lições", icon: BookOpen },
   { href: "/admin/posts", label: "Postagens", icon: MessageSquare },
   { href: "/admin/answers", label: "Respostas", icon: MessageCircleQuestion },

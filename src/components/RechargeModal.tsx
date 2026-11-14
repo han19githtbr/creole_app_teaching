@@ -100,7 +100,7 @@ export function RechargeModal({
               Recarregar Minutos de Aprendizado
             </h2>
             <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-              Acesso exclusivo às Histórias Vivas e ao Jogo C&apos;est quoi ? com liberdade total.
+              Acesso exclusivo às Curiosidades Vivas e ao Jogo C&apos;est quoi ? com liberdade total.
             </p>
           </div>
           <button
@@ -149,7 +149,7 @@ export function RechargeModal({
                   </div>
                   {pkg.bonusStories > 0 && (
                     <div className="mt-2 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 rounded-md py-1">
-                      + {pkg.bonusStories} Histórias bônus
+                      + {pkg.bonusStories} Curiosidades bônus
                     </div>
                   )}
                 </Card>
@@ -171,7 +171,7 @@ export function RechargeModal({
                 <div className="flex justify-between">
                   <span>Bônus especial:</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                    {selectedPkg.bonusStories} histórias livres da cota
+                    {selectedPkg.bonusStories} curiosidades livres da cota
                   </span>
                 </div>
               )}

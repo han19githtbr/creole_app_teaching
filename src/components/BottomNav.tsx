@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/lessons", label: "Lições", icon: BookOpen },
   { href: "/dashboard/jogo", label: "Jogos", icon: Gamepad2 },
   { href: "/dashboard/videos", label: "Vídeos", icon: Video },
-  { href: "/dashboard/stories", label: "Histórias", icon: Sparkles },
+  { href: "/dashboard/stories", label: "Curiosidades", icon: Sparkles },
 ];
 
 export function BottomNav() {

@@ -16,7 +16,7 @@ const NAV_LINKS = [
   { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
   { href: "/dashboard/lessons", label: "Lições", icon: BookOpen },
   { href: "/dashboard/videos", label: "Vídeos", icon: Video },
-  { href: "/dashboard/stories", label: "Histórias", icon: Sparkles },
+  { href: "/dashboard/stories", label: "Curiosidades", icon: Sparkles },
   { href: "/dashboard/contos", label: "Contos", icon: BookOpenText },
   { href: "/dashboard/jogo", label: "Jogo", icon: Gamepad2 },
   { href: "/live", label: "Ao vivo", icon: Radio },

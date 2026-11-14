@@ -247,7 +247,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
     event.preventDefault();
     setError(null);
     if (busy) return setError("Aguarde o fim da gravação ou da conversão da narração.");
-    if (!imageSrc) return setError("Escolha uma imagem para a história.");
+    if (!imageSrc) return setError("Escolha uma imagem para a curiosidade.");
     if (!hasNarration) return setError(`Grave, envie ou converta a narração em ${targetLangLabel}.`);
     if (!(audioDuration > 0)) return setError("Não foi possível medir a duração da narração. Envie o áudio novamente.");
     if (audioDuration < STORY_AUDIO_MIN_SECONDS - STORY_TIME_TOLERANCE || audioDuration > STORY_AUDIO_MAX_SECONDS + STORY_TIME_TOLERANCE) {
@@ -302,12 +302,12 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
       });
       if (!response.ok) {
         const result = await response.json().catch(() => ({}));
-        throw new Error(result.error || "Não foi possível salvar a história.");
+        throw new Error(result.error || "Não foi possível salvar a curiosidade.");
       }
       router.push("/admin/stories");
       router.refresh();
     } catch (saveError) {
-      setError(saveError instanceof Error ? saveError.message : "Erro ao salvar história.");
+      setError(saveError instanceof Error ? saveError.message : "Erro ao salvar curiosidade.");
     } finally {
       setSaving(false);
     }
@@ -324,19 +324,19 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <section className="grid gap-6 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-4">
-          <label className="block text-sm font-semibold text-[var(--text)]">Título da história
+          <label className="block text-sm font-semibold text-[var(--text)]">Título da curiosidade
             <Input className="mt-1.5" value={title} onChange={(event) => setTitle(event.target.value)} required maxLength={120} placeholder="Ex.: O tambor que chamou a chuva" />
           </label>
           <label className="block text-sm font-semibold text-[var(--text)]">Apresentação
             <Textarea className="mt-1.5" value={description} onChange={(event) => setDescription(event.target.value)} rows={3} placeholder="Uma breve introdução à aventura..." />
           </label>
           <div className="flex items-center gap-2 rounded-lg bg-[var(--surface-2)] px-3 py-2 text-xs text-[var(--text-secondary)]">
-            <BookOpen className="h-4 w-4 shrink-0 text-[var(--accent)]" /> História com cenas animadas e narração em {targetLangLabel}; a duração do vídeo é a da narração.
+            <BookOpen className="h-4 w-4 shrink-0 text-[var(--accent)]" /> Curiosidade com cenas animadas e narração em {targetLangLabel}; a duração do vídeo é a da narração.
           </div>
         </div>
         <div className="overflow-hidden rounded-lg bg-[#1d3028] text-white">
           {imageSrc ? <Image src={getLanguageImageSrc(imageSrc, language)} alt="Cena escolhida" width={900} height={600} unoptimized className="aspect-[3/2] w-full object-cover" /> : <div className="flex aspect-[3/2] flex-col items-center justify-center gap-2 text-white/70"><ImageIcon className="h-8 w-8" /><span className="text-xs">Escolha uma cena temática</span></div>}
-          <div className="flex items-center justify-between px-3 py-2 text-xs"><span>{theme || "Cena da história"}</span><span>{audioDuration > 0 ? formatStoryTime(audioDuration) : "--:--"}</span></div>
+          <div className="flex items-center justify-between px-3 py-2 text-xs"><span>{theme || "Cena da curiosidade"}</span><span>{audioDuration > 0 ? formatStoryTime(audioDuration) : "--:--"}</span></div>
         </div>
         <details className="sm:col-span-2">
           <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-[var(--accent)]"><ImageIcon className="h-4 w-4" /> {imageSrc ? "Trocar imagem temática" : "Escolher imagem temática"}</summary>
@@ -529,7 +529,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
         {publishMode === "scheduled" && <div className="grid max-w-md grid-cols-2 gap-3"><Input type="date" value={scheduledDate} onChange={(event) => setScheduledDate(event.target.value)} required /><Input type="time" value={scheduledTime} onChange={(event) => setScheduledTime(event.target.value)} required /></div>}
       </section>
       {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-      <div className="flex justify-end gap-2"><Button type="button" variant="outline" onClick={() => router.back()} disabled={saving}>Cancelar</Button><Button type="submit" disabled={saving || busy}>{saving ? "Salvando..." : initial ? "Salvar alterações" : "Criar história"}</Button></div>
+      <div className="flex justify-end gap-2"><Button type="button" variant="outline" onClick={() => router.back()} disabled={saving}>Cancelar</Button><Button type="submit" disabled={saving || busy}>{saving ? "Salvando..." : initial ? "Salvar alterações" : "Criar curiosidade"}</Button></div>
     </form>
   );
 }

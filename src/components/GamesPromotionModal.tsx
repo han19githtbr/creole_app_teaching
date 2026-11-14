@@ -59,35 +59,25 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
   }, []);
 
   useEffect(() => {
+    // Limpa chave antiga da sessão para garantir que recarregar ou relogar sempre reexiba a janela
+    try {
+      window.sessionStorage.removeItem(SEEN_KEY);
+    } catch {
+      /* sem acesso ao sessionStorage */
+    }
+
     if (forceOpen) {
       const id = setTimeout(() => setMode("details"), 0);
       return () => clearTimeout(id);
     }
-    // Aparece uma vez por sessão (ao entrar), depois que o painel já carregou: não atrapalha a navegação.
-    let seen = false;
-    try {
-      if (typeof window !== "undefined") {
-        const params = new URLSearchParams(window.location.search);
-        if (params.has("promo") || params.has("forcePromo")) {
-          window.sessionStorage.removeItem(SEEN_KEY);
-        }
-      }
-      seen = window.sessionStorage.getItem(SEEN_KEY) === "1";
-    } catch {
-      seen = false;
-    }
-    if (seen) return;
-    const timer = setTimeout(() => setMode("compact"), 1200);
+
+    // Exibe a janela de propaganda após 900ms para o painel carregar suavemente primeiro
+    const timer = setTimeout(() => setMode("compact"), 900);
     return () => clearTimeout(timer);
   }, [forceOpen]);
 
   const handleClose = useCallback(() => {
     setMode("closed");
-    try {
-      window.sessionStorage.setItem(SEEN_KEY, "1");
-    } catch {
-      /* sem armazenamento: apenas não lembra */
-    }
     if (onClose) onClose();
   }, [onClose]);
 

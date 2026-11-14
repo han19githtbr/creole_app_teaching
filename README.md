@@ -8,7 +8,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Stack](#stack)
 - [Histórias narradas com Elementos com Vida, Transcrição Automática e Publicação Social](#histórias-narradas)
 - [Jogo C'est quoi ?](#jogo-cest-quoi-)
-- [Trilha do Aluno Curioso (Subida da Montanha e Clima Dinâmico)](#trilha-do-aluno-curioso)
+- [Trilha do Aluno Curioso (Montanha Vertical, Fauna Viva, Cabana do Cume e Modo Avalanche)](#trilha-do-aluno-curioso)
 - [Postagens em francês](#postagens-em-francês)
 - [Avatar falante e rede social no vídeo](#avatar-falante-e-rede-social-no-vídeo)
 - [Vídeos do jogo para redes sociais](#vídeos-do-jogo-para-redes-sociais)
@@ -40,6 +40,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - Vídeos com likes, comentários, gravação no navegador e agendamento. Os **Contos ilustrados** em francês (narrados e legendados, com a logo do Instagram no final) podem ser baixados em MP4. Em **Vídeos do Jogo** o administrador gera vídeos MP4 demonstrando o jogo para Stories, Reels e feed. O **avatar fala de verdade** (lábios na voz do microfone, piscar, gestos) e **aponta para o ícone da rede social** anotada no vídeo, com link clicável na página.
 - **Histórias narradas com Elementos com Vida**: uma cena ilustrada + narração em Kreyòl + legendas bilíngues, onde cada elemento da cena ganha vida e se comporta realisticamente (pássaros voam, cachorros correm/latem, árvores balançam ao vento, etc.) de acordo com as ações descritas na fala ou na legenda. Acompanha exportação de vídeo vertical 9:16 com as mesmas animações gravadas, rótulos inteligentes e legenda móvel arrastável.
 - **Jogo "C'est quoi ?"** (painel em francês): 5 níveis, incluindo o **Nativo** (20 imagens, com os sub-níveis *Palavra* e *Frase*), botão **Dica** que congela o tempo, **arena online** com jogadores online, ranking e duelos.
+- **Trilha do Aluno Curioso** (painel em francês): expedição vertical de montanha por 7 estações de altitude (450m a 3950m), clima dinâmico (sol, chuva com guarda-chuva, neve com gorro/cachecol), 20 espécies da fauna brasileira viva que passeiam e se escondem na folhagem, águas animadas com reflexos, modo Avalanche de alta tensão, chegada triunfal à acolhedora cabana do cume e estúdio de vídeos MP4 para redes sociais com áudio integrado e paridade total com o jogo.
 - Aulas ao vivo com LiveKit, quando configurado.
 - Fundo virtual (MediaPipe) na gravação de vídeos e nas aulas ao vivo.
 - PWA com service worker, página offline e Web Push opcional.
@@ -391,119 +392,96 @@ Painel **Arena online** (`CestQuoiArena`), exibido abaixo do jogo na tela inicia
 
 `POST /api/cquoi/arena` aceita as ações `heartbeat`, `leave`, `score`, `challenge` e `respond`; `GET /api/cquoi/arena?board=week|all|<nível>` devolve o painel. Todas exigem login. Não há variável de ambiente nova: o ranking usa o mesmo MongoDB do app.
 
-## Trilha do Aluno Curioso — novo visual da mata, fauna por clima e modo Avalanche
+## Trilha do Aluno Curioso — montanha vertical, fauna viva, cabana do cume e modo Avalanche
 
-> Esta seção descreve a versão atual e **substitui** o visual antigo (montanha desenhada em SVG, animais antigos e bandeira no cume).
+Módulo visual e imersivo de gamificação em francês (`/dashboard/jogo?module=trilha`), que transporta o aluno para uma **expedição de subida de montanha**. O aluno escala as encostas da montanha estação por estação, enfrentando variações dinâmicas de altitude e clima, enquanto reconhece elementos ilustrados do vocabulário francês.
 
-**Visual.** O mapa agora é uma trilha **vertical** pintada, dentro de uma mata densa (`public/trilha/mata-trilha-animada.jpg`, arte original ampliada 2× e sem os rótulos/boneco que vinham desenhados nela). O caminho do jogo foi traçado sobre a trilha de terra da arte (`src/lib/curiousTrailGeometry.ts`, mundo de 1000 × 2201 unidades) e as 7 estações ficam sobre a curva. A câmera acompanha o aluno e o próximo objeto; no lobby dá para **arrastar** o mapa. No fim do Nível 7 o aluno **entra feliz na casinha do cume** (a bandeira foi removida).
+### 1. Cenário da mata e trilha vertical
 
-**Clima.** Sol, chuva e neve são aplicados sobre a mesma arte (dessaturação, névoa/geada, trilha molhada ou coberta de neve, chuva e neve caindo). Para trocar a arte basta substituir o arquivo da imagem e reajustar os pontos do caminho em `curiousTrailGeometry.ts`.
+- **Arte em alta definição:** O cenário é composto por uma ilustração vertical pintada em alta definição (`public/trilha/mata-trilha-animada.jpg`, espaço de mundo com 1000 × 2201 unidades). A trilha de terra sobe em zigue-zague desde a base da floresta até o cume nevado.
+- **Geometria precisa do traçado:** O caminho do aluno foi modelado matematicamente em `src/lib/curiousTrailGeometry.ts`. Todas as 7 estações, as posições dos objetos e a trajetória do aluno acompanham com precisão as curvas da trilha.
+- **Câmera dinâmica:** No jogo e no gerador de vídeos, a câmera acompanha suavemente o deslocamento do aluno e o próximo objeto em foco com zoom cinematográfico (1.55×), mantendo ampla visibilidade do mapa. No lobby inicial, o mapa permite arrasto e exploração livre.
 
-**Mata viva: fauna, folhagem e água.** O mapa não é mais estático:
+### 2. Os 7 níveis e distribuição progressiva de elementos
 
-- **Bichos** (os 20 da ilustração de elenco, recortados em `public/trilha/fauna/*.png`): esquilo, cervo, ouriço, gambá, pica-pau, javali, onça, coruja, tamanduá, tatu, jacaré, preguiça, tucano, lontra, quati, lobo-guará, paca, jabuti, sapo e cutia. Os animais que antes estavam *pintados* no fundo foram retirados da arte (`mata-trilha-animada.jpg`) e agora são esses bichos vivos; os animais antigos (desenhos vetoriais) foram removidos.
-- **Vivem DENTRO da mata** (`src/lib/trailFauna.ts`): passeiam pelas clareiras onde os bichos pintados estavam, às vezes **atravessam a trilha**, passam **atrás de retalhos de folhagem** (`public/trilha/patches/*.png`, recortes da própria arte que ficam na frente deles) e podem se **esconder** ali e espiar depois. Aves e preguiça **pousam em galhos, troncos e dentro das copas** (atrás das folhas) ou voam de um poleiro a outro.
-- **Temperamento por espécie:** amigáveis (esquilo, quati, lontra, tucano) se aproximam e pousam perto; assustadiços (paca, cutia, sapo) fogem para a folhagem; cautelosos (cervo, lobo-guará, coruja) observam e se afastam; defensivos (ouriço, tatu, jabuti) se encolhem; o gambá faz pose de aviso; agressivos (javali e onça) espreitam, ameaçam e fazem uma investida de mentirinha e o jacaré dá uma bocada de emboscada (nada machuca o aluno). Tocar num bicho faz cada um reagir.
-- **Por clima:** sol (esquilo, cervo, pica-pau, tucano, quati, tamanduá, tatu, paca, cutia, jabuti, lobo-guará, onça, gambá, preguiça, javali), chuva (sapo, lontra, jacaré, preguiça, tucano, quati, ouriço, jabuti, paca, cervo — os que gostam de água ficam nas lagoas) e neve (cervo, javali, coruja, esquilo, lobo-guará, pica-pau). O clima é aplicado igualmente na arte, nos retalhos e nos bichos (`src/lib/trailGrade.ts`).
-- **Água animada** (`src/lib/trailFaunaDraw.ts`): cachoeira e córrego correndo, lagoas com reflexos brilhando e ondinhas de chuva. A posição das águas e dos retalhos está nos próprios arquivos; para trocar a arte, refaça os recortes e ajuste `trailFaunaPatches.ts` e as listas de lugares em `trailFauna.ts`.
+Ao iniciar a subida, o aluno escolhe um dos 15 temas de vocabulário da plataforma (Gastronomia, Natureza, Tecnologia, Idiomas, Lazeres, Cultura, Turismo, Interior, Música, Dança, História, Cinema, Geografia, Religião ou Estoicismo):
 
-**Modo Avalanche (depois do Nativo).** Nova dificuldade sem cronômetro: uma avalanche nasce atrás do aluno e sobe a trilha até alcançá-lo (`src/lib/trailAvalanche.ts`). Calibragem: ritmo de equilíbrio de 12,5 s por objeto no Nível 1 até 9,5 s no Nível 7; folga inicial de ~2,4 espaços entre objetos; acerto de 1ª tentativa empurra a avalanche para trás, erro a aproxima; durante a comemoração/caminhada ela desacelera. HUD mostra a distância em metros e a barra de perigo; ao ser alcançado, aparece a tela "A avalanche te alcançou!" (tentar de novo / voltar ao mapa). Nos testes, responder em até ~13 s por objeto vence todos os níveis, e ~16 s por objeto perde nos níveis 6 e 7. As constantes ficam em `AVALANCHE_CONFIG`.
+1. **Nível 1 · Base da Montanha (450m)**: 1 elemento a reconhecer · 100 XP base · Sol e brisa leve.
+2. **Nível 2 · Bosque dos Pinheiros (980m)**: 2 elementos a reconhecer · 130 XP base · Mata aberta.
+3. **Nível 3 · Mirante das Rochas (1520m)**: 3 elementos a reconhecer · 180 XP base · Altitude crescente.
+4. **Nível 4 · Encosta Chuvosa (2100m)**: 4 elementos a reconhecer · 240 XP base · Chuva fina; o aluno abre o guarda-chuva.
+5. **Nível 5 · Cascata da Neblina (2750m)**: 5 elementos a reconhecer · 330 XP base · Chuva intensa e neblina densa.
+6. **Nível 6 · Planalto Glacial (3300m)**: 6 elementos a reconhecer · 440 XP base · A chuva cede lugar à neve alpina; o aluno veste gorro de inverno e cachecol quente.
+7. **Nível 7 · Cume da Vitória (3950m)**: 7 elementos a reconhecer · 600 XP base · Topo nevado e chegada triunfal à cabana do cume.
 
-**Vídeos do jogo.** `curiousTrailDemoVideo.ts` + `trailVideoWorld.ts` usam a **mesma arte, câmera, clima, fauna, folhagem, água (mesmo motor e desenho) e avalanche (mesma física e mesmo desenho)** do jogo, quadro a quadro e com semente fixa. A dificuldade "Avalanche" também está no estúdio (Admin → Vídeos do Jogo → Trilha Curiosa). No vídeo o tempo da avalanche corre ~3× mais rápido que no jogo (é uma demonstração curta) e a hesitação do aluno é ajustada para a avalanche chegar perto sem alcançá-lo.
+### 3. Cabana do cume e celebração triunfal
 
-### (versão anterior, mantida só como histórico)
+A antiga bandeira vetorial foi substituída por uma acolhedora cabana de montanha desenhada proceduralmente por código (`drawHut` em `src/lib/trailHut.ts`):
+- Paredes de pedras empilhadas, telhado rústico de palha/sapê, chaminé expelindo fumaça e neve acumulada no inverno.
+- Janelas e porta iluminadas por luz interna acolhedora, que se acendem automaticamente durante chuva, noite ou neve.
+- **Chegada triunfal:** Ao concluir o Nível 7, o aluno corre até a entrada, entra na cabana aquecida e reaparece na porta saltando de alegria com balão de fala comemorativo (*"🎉 Victoire! J'ai réussi! 🏔️✨"*).
+- **Modal de Vitória (`TrailSummitOverlay`):** Abre-se o painel dourado de vitória com ícone 🏔️🏆, chuva de confetes, 3 cartões de estatísticas da expedição (7/7 níveis vencidos, XP total acumulado e sequência máxima de acertos), acompanhados de botões para jogar novamente ou explorar um novo tema.
 
+### 4. Clima dinâmico e reações do aluno
 
-### Cenário da trilha e vida na mata
+- **Ensolarado (Níveis 1 a 3):** Sol radiante com feixes quentes de luz. O aluno sobe com sua mochila técnica e boina francesa.
+- **Chuva (Níveis 4 e 5):** Gotas de chuva caem sobre o cenário, poças d'água formam-se na trilha e o aluno abre automaticamente o guarda-chuva, caminhando protegido.
+- **Neve (Níveis 6 e 7):** Flocos de neve flutuam pela tela e camadas de gelo cobrem as pedras; o aluno guarda o guarda-chuva e veste gorro de lã com pompom e cachecol volumoso, deixando pegadas nítidas na neve fresca e apresentando leve tremor de frio quando parado.
+- **Noite estrelada:** Iluminação com luar prateado, lua volumosa detalhada e estrelas piscantes sobre a área de céu aberto.
 
-- O cenário é uma única ilustração alta (`public/trilha/mata-trilha-animada.jpg`, viewBox 1000×2200): a trilha sobe em zigue-zague do pé da montanha até a casinha do topo (ponto de chegada, nível 7). O caminho do aluno está em `src/lib/curiousTrailGeometry.ts` e acompanha o desenho.
-- Os animais passeiam pela mata, fora da trilha, em pontos definidos em `TRAIL_ROAM_SPOTS` (`src/lib/curiousTrailData.ts`). A vida selvagem acontece em uma faixa em volta do aluno (`setFocus` em `src/lib/trailWildlife.ts`), então sempre há bichos à vista conforme ele sobe.
-- Animais terrestres (esquilo, coelho, cervo, raposa, camurça etc.) andam entre pontos próximos da mata; pássaros em bando cruzam o ar sobre a mata, a águia plana em círculos acima do aluno, e borboletas e abelhas ficam nas clareiras floridas.
-Novo módulo visual e dinâmico de gamificação em francês integrado à seção de jogos (`/dashboard/jogo?module=trilha`), simulando uma **expedição de subida de montanha**. O aluno sobe a montanha estação por estação, enfrentando mudanças de altitude e de clima, enquanto reconhece elementos ilustrados do tema escolhido.
+### 5. Mata viva: fauna brasileira, folhagem e águas animadas
 
-### Como funciona
+- **20 espécies da fauna brasileira:** Esquilo, cervo, ouriço, gambá, pica-pau, javali, onça, coruja, tamanduá, tatu, jacaré, preguiça, tucano, lontra, quati, lobo-guará, pacu, jabuti, sapo e cutia (`public/trilha/fauna/*.png`).
+- **Comportamento orgânico dentro da floresta:** Os animais passeiam por clareiras naturais, atravessam a trilha de terra, pousam em galhos e troncos e escondem-se atrás de retalhos de folhagem recortados da própria arte (`public/trilha/patches/*.png`), espiando por entre os arbustos (`src/lib/trailFauna.ts` e `src/lib/trailFaunaPatches.ts`).
+- **Temperamentos distintos:** Amigáveis (esquilo, tucano, lontra) aproximam-se; assustadiços (paca, cutia, sapo) fogem para a vegetação; cautelosos (cervo, lobo-guará, coruja) observam alertas; defensivos (tatu, ouriço, jabuti) recolhem-se em suas carapaças; e predadores (onça, javali) observam a mata em vigília. Tocar em qualquer bicho faz o animal emitir uma saudação em francês com áudio e balão de fala.
+- **Águas correntes animadas (`src/lib/trailFaunaDraw.ts`):** Cachoeiras com névoa d'água, corredeiras descendo a encosta e lagoas com ondulações e reflexos cintilantes.
+- **Iluminação direcional unificada (`drawSkyLight`):** Uma única fonte de luz no alto à direita (sol dourado de dia, luar azulado à noite) projeta sombras orgânicas no relevo e ilumina as arestas dos animais e da folhagem sem criar bordas artificiais.
 
-1. **Escolha do Tema**: O aluno escolhe entre os 15 temas da plataforma:
-   - 🍳 **Gastronomia** (`gastronomia`)
-   - 🌲 **Natureza** (`natureza`)
-   - 💻 **Tecnologia** (`tecnologia`)
-   - 📚 **Idiomas** (`idiomas`)
-   - 🎨 **Lazeres** (`lazeres`)
-   - 🎭 **Cultura** (`cultura`)
-   - ⛵ **Turismo** (`turismo`)
-   - 🌾 **Vida no interior** (`interior`)
-   - 🎵 **Música** (`musica`)
-   - 💃 **Dança** (`danca`)
-   - 📜 **História** (`historia`)
-   - 🎬 **Cinema** (`cinema`)
-   - 🗺️ **Geografia** (`geografia`)
-   - 🕊️ **Religião** (`religiao`)
-   - 🏛️ **Estoicismo** (`estoicismo`)
+### 6. Modo Avalanche (Dificuldade Extrema)
 
-2. **Os 7 Níveis da Montanha (Distribuição Progressiva de Elementos)**:
-   - **Nível 1 · Base da Montanha (450m)**: 1 elemento a reconhecer.
-   - **Nível 2 · Bosque dos Pinheiros (980m)**: 2 elementos a reconhecer.
-   - **Nível 3 · Mirante das Rochas (1520m)**: 3 elementos a reconhecer.
-   - **Nível 4 · Encosta Chuvosa (2100m)**: 4 elementos a reconhecer.
-   - **Nível 5 · Cascata da Neblina (2750m)**: 5 elementos a reconhecer.
-   - **Nível 6 · Planalto Glacial (3300m)**: 6 elementos a reconhecer.
-   - **Nível 7 · Cume da Vitória (3950m)**: 7 elementos a reconhecer.
-   Ao reconhecer com sucesso os 7 elementos do Nível 7, o aluno atinge o cume da montanha e **sobe e hasteia a bandeira da vitória**, com confetes, fanfarra e insígnia dourada!
+Dificuldade avançada (disponível após o nível Nativo) que dispensa o cronômetro individual por elemento:
+- **Avanço contínuo da neve:** Uma avalanche alpina nasce atrás do aluno e sobe a montanha no seu encalço (`src/lib/trailAvalanche.ts`).
+- **Calibragem de ritmo:** Ritmo de equilíbrio entre 12,5 s por elemento no Nível 1 e 9,5 s no Nível 7, com folga inicial de 2,4 espaços entre objetos.
+- **Dinâmica de respostas:** Acertos de primeira tentativa empurram a avalanche de volta (+0,45 espaço) recompensando o reflexo; acertos de segunda tentativa concedem +0,20; e erros aplicam penalidade severa aproximando a neve (+0,30 espaço). Durante a caminhada pós-acerto ela desacelera suavemente.
+- **Renderização volumétrica realista (`drawAvalanche`):** Lâmina densa de neve escoando no solo, rastro de neve depositada, parede monumental de nuvem de pó (cauliflower billows) com vórtices sombreados em 3 passes, dezenas de blocos de gelo 3D capotando em arcos parabólicos, spindrift e jatos frontais de vento.
+- **Sensação tátil:** Tremor sísmico de câmera (`avalancheShake`) que vibra e solavanca o mapa conforme o perigo aumenta, além de vinheta periférica de gelo pulsante na tela.
 
-3. **Clima Dinâmico e Reações do Aluno**:
-   - **Níveis 1 a 3**: Céu aberto, sol radiante e brisa fresca de montanha. O aluno caminha animado com sua mochila e boina francesa.
-   - **Níveis 4 e 5**: O clima muda com frio e chuva! Nuvens escuras e gotas de chuva começam a cair; **o aluno abre o guarda-chuva** e caminha protegido pela chuva até o fim do Nível 5.
-   - **Níveis 6 e 7**: A chuva passa e **começa a nevar** no cume! O aluno guarda o guarda-chuva e veste **gorro de inverno e cachecol quente**, deixando pegadas na neve fresca enquanto sobe em direção ao pico.
+### 7. Áudio integrado e efeitos sonoros
 
-4. **Bichos no Caminho ("Animaux du Sentier")**:
-   Animais selvagens interativos aparecem nas estações da montanha:
-   - 🐿️ **L'Écureuil des bois** (Esquilo curioso nos galhos)
-   - 🐇 **Le Lapin blanc** (Coelho alpino entre as flores)
-   - 🐦 **L'Oiseau des cimes** (Pássaro cantor no poste de trilha)
-   - 🐸 **La Grenouille rieuse** (Sapinho na chuva avisando para abrir o guarda-chuva)
-   - 🐌 **L'Escargot voyageur** (Caracol na encosta molhada)
-   - 🐐 **Le Chamois agile** (Cabra-montesa / Íbex nas rochas nevadas)
-   - 🦅 **L'Aigle royal** (Águia dourada sobrevoando o cume da vitória)
-   Tocar em qualquer bicho faz o animal emitir uma saudação em francês com áudio e balão de fala.
+- **Camadas sonoras naturais:** Sons gravados de floresta, riacho e chuva (`public/trilha/audio/`), mixados dinamicamente de acordo com o clima e a altitude da estação.
+- **Pronúncia francesa nativa:** Reprodução automática da pronúncia correta em francês nativo para cada objeto ao ser identificado, através da rota `/api/trilha/pronuncia` com cache global.
+- **Efeitos sonoros sintetizados:** Tiques sonoros 3-2-1 na largada, cliques de seleção, zumbido em erros, harmonias triplas em acertos, arpeggio em sequências de combo, acordes triunfais de subida de nível e fanfarra no cume.
 
-5. **Dificuldade, Temporizador e Bônus de Rapidez (XP)**:
-   - Fácil (15s por elemento · x1.0)
-   - Intermediário (10s por elemento · x1.5)
-   - Master (5s por elemento · x2.0)
-   - Nativo (4s por elemento · x2.5)
-   - **Bônus de Rapidez**: respostas rápidas concedem multiplicador de velocidade (+50% XP relâmpago se acertado nos primeiros 35% do tempo, +25% se em menos de 65%).
+### 8. Cartão do objeto e seta indicadora inteligente
 
-6. **Pronúncia em Francês Nativo**:
-   Assim que o elemento é reconhecido na trilha, a Web Speech API reproduz imediatamente a pronúncia clara em francês (`speakWordFrench`), com botão para ouvir novamente a qualquer momento.
+- **Lente do objeto:** Ao entrar em uma pergunta, um cartão com borda vibrante exibe a ilustração do objeto ancorada ao ponto da trilha por um triângulo indicador (*caret*).
+- **Seta indicadora inteligente:**
+  - Em ilustrações com foco isolado no objeto (`public/ghibli/trail-objects/`), a seta vermelha é desenhada centralizada com rotação de `-90°`.
+  - Em ilustrações de cena completa (fallback), a seta vermelha utiliza as coordenadas precisas do item (`item.arrow.x, item.arrow.y`) com rotação de `25°` e escala ampliada em `1.15×`.
+  - Ao acertar, a pílula verde exibe o nome em francês com botão para ouvir a pronúncia.
 
-7. **Vídeos para Redes Sociais (Stories, Reels e Feed)**:
-   Em **Admin → Vídeos do Jogo** (`/admin/jogo-videos`), uma nova aba **Trilha Curiosa** permite gerar vídeos demonstrativos em alta definição (1080×1920 para Stories/Reels, 1080×1350 para Feed vertical ou 1080×1080 quadrado) mostrando a subida da montanha, o clima, o animal, a resposta e o hasteamento da bandeira.
-
-### Arquivos do módulo
+### 9. Arquivos do módulo
 
 | Arquivo | Função |
 | --- | --- |
-| `src/lib/curiousTrailData.ts` | Configuração dos 7 níveis, 15 temas, animais, coordenadas da montanha, clima e persistência |
-| `src/components/CuriousTrailStudent.tsx` | Personagem do aluno animado com mochila, guarda-chuva aberto na chuva, gorro na neve e bandeira no topo |
-| `src/components/CuriousTrailMountain.tsx` | Cenário visual da montanha com trilha sinuosa, estações 1-7, chuva/neve animadas e bichos |
-| `src/components/CuriousTrailGame.tsx` | Componente interativo completo da Trilha do Aluno Curioso, temporizadores, XP e áudio |
-| `src/components/CuriousTrailGame.css` | Animações CSS especializadas (chuva, neve, bandeira, passos e brilho) |
-| `src/lib/curiousTrailDemoVideo.ts` | Motor de renderização quadro a quadro de vídeos demonstrativos da trilha para Stories e Feed |
+| `src/lib/curiousTrailData.ts` | Configuração dos 7 níveis, 15 temas de vocabulário, animais, altitudes, clima e pontuação |
+| `src/lib/curiousTrailGeometry.ts` | Espaço de mundo de 1000 × 2201 unidades, coordenadas da trilha, tangentes e interpolação |
+| `src/lib/curiousTrailObjectImages.ts` | Carregamento assíncrono e cache das ilustrações isoladas e cenas fallback |
+| `src/lib/trailFauna.ts` | Motor de vida dos 20 animais da mata, clareiras, poleiros em copas e temperamentos |
+| `src/lib/trailFaunaDraw.ts` | Desenho dos animais em camada transparente isolada e animação das águas |
+| `src/lib/trailFaunaPatches.ts` | Retalhos de folhagem para oclusão e profundidade natural dos animais |
+| `src/lib/trailAvalanche.ts` | Física da avalanche, controle de perigo, desenho volumétrico e tremor sísmico de câmera |
+| `src/lib/trailHut.ts` | Desenho procedural da cabana de pedra do cume com sapê, fumaça e iluminação |
+| `src/lib/trailGrade.ts` | Ajuste de iluminação solar/lunar e tonalidade de clima pixel a pixel |
+| `src/components/CuriousTrailMountain.tsx` | Mapa visual interativo da montanha, estações, clima e fauna |
+| `src/components/CuriousTrailGame.tsx` | Experiência de gameplay interativa com temporizadores, XP, combo e overlays |
+| `src/components/CuriousTrailGame.css` | Efeitos de chuva, neve, passadas e brilho |
+| `src/lib/curiousTrailDemoVideo.ts` | Motor de renderização quadro a quadro com paridade visual e física 100% |
+| `src/lib/trailDemoOfflineExport.ts` | Pipeline de exportação offline WebCodecs H.264/AAC com mixagem de ambiência e SFX |
+| `src/lib/trailDemoAudio.ts` | Reprodutor de áudio sincronizado da prévia com camadas naturais, pronúncia e SFX |
 | `src/components/TrailDemoStudio.tsx` | Estúdio administrativo para gerar e baixar vídeos da Trilha em MP4 |
-| `src/components/AdminJogoVideosTabs.tsx` | Abas no painel administrativo alternando entre vídeos do C'est quoi ? e da Trilha |
-| `src/app/dashboard/jogo/page.tsx` | Rota do jogo com alternador de módulos (Trilha Curiosa e C'est quoi ? Clássico) |
-
-
-### Trilha do Aluno Curioso — acabamento visual (luz, avalanche, casinha, objetos)
-
-- **Sem retângulos em volta dos bichos.** A causa era a iluminação de borda aplicada direto no mapa (a mistura `source-atop` do canvas pintava o retângulo todo). Agora cada bicho é desenhado numa camada transparente isolada (`drawCritter`, em `trailFaunaDraw.ts`) e a luz só atinge os pixels do animal. O ajuste de clima (`trailGrade.ts`) também passou a ser feito pixel a pixel, sem tocar na transparência, e a escuridão da noite ficou no próprio ajuste de cor (igual na arte, nos retalhos de folhagem e nos bichos).
-- **Fundo reparado** (`public/trilha/mata-trilha-animada.jpg`): o cervo pintado que sobrava saiu (agora ele é um dos bichos vivos) e as emendas retangulares onde os rótulos e os animais pintados foram removidos foram refeitas com mistura de gradiente (Poisson). Os retalhos de folhagem (`public/trilha/patches`) são recortados desta mesma imagem; se você trocar o fundo, regenere-os.
-- **Luz coerente.** Uma só fonte de luz, no alto à direita: de dia o sol (brilho quente e feixes), de noite a lua (luar, lua e estrelas só na área de céu, nunca sobre a mata). As sombras dos bichos caem para o lado oposto e não dependem para onde o bicho olha; o lado voltado para a luz recebe um fio de luz (quente de dia, azulado à noite). Em `drawSkyLight`.
-- **Avalanche** (`drawAvalanche`, em `trailAvalanche.ts`): agora é uma avalanche de neve (lâmina de neve escoando pelo chão com borda irregular, parede de cúmulos de neve sombreados na frente, blocos, detritos e rajadas), desenhada em canvas no mesmo traço pintado da arte e **compartilhada** pelo jogo e pelo vídeo.
-- **Casinha do cume** desenhada por código (`drawHut`): telhado de sapê, paredes de pedra, chaminé com fumaça, janela e porta que acendem à noite/chuva/neve e neve no inverno. No final, o aluno entra na casa, reaparece na porta pulando de alegria e só depois aparece o painel de vitória (jogo e vídeo).
-- **Imagens dos objetos.** Quando um objeto não tem ilustração isolada em `public/ghibli/trail-objects`, o jogo usa a cena completa com a seta (em vez de mostrar o ícone de imagem quebrada); há também um fallback em caso de erro de carregamento. A **seta vermelha** ficou ~1,8× maior no jogo e no vídeo.
-- **Vídeo** (`curiousTrailDemoVideo.ts`, `trailVideoWorld.ts`): usa as mesmas funções de desenho do jogo (bichos, folhagem, água, luz, casinha e avalanche), tem painel informativo na base entre as perguntas e a sequência de vitória idêntica.
-- **Limpeza:** imagens de teste soltas na raiz (`game.png`, `scratch_*.png`, `test_upgraded_*.png`...) e arquivos de `public/` sem uso foram removidos.
+| `src/components/AdminJogoVideosTabs.tsx` | Seletor em abas entre vídeos do C'est quoi ? e da Trilha Curiosa |
+| `src/app/dashboard/jogo/page.tsx` | Rota da área do aluno com alternador entre C'est quoi ? e Trilha Curiosa |
 
 ## Postagens em francês
 
@@ -561,50 +539,74 @@ O vídeo gravado só mostra o ícone; por isso a página do vídeo ganha um bot�
 
 ## Vídeos do jogo para redes sociais
 
-No painel do administrador, **Admin → Vídeos do Jogo** (`/admin/jogo-videos`) cria vídeos que mostram como o jogo **C'est quoi ?** funciona, para baixar e postar nos **Stories, Reels e feed do Instagram e do Facebook**.
+No painel do administrador, **Admin → Vídeos do Jogo** (`/admin/jogo-videos`) reúne dois estúdios especializados para criar vídeos demonstrativos prontos para download e publicação nos **Stories, Reels e Feed do Instagram e do Facebook**:
 
-### O que o vídeo mostra
+1. **Aba "C'est quoi ?"**: Demonstra as partidas do jogo clássico de vocabulário, com 4 alternativas, contagem regressiva, tentativas erradas opcionais, acertos vibrantes e revelação do termo em francês.
+2. **Aba "Trilha Curiosa"**: Demonstra a expedição de subida da montanha da Trilha do Aluno Curioso, reproduzindo 100% da física, dinâmica e visual do jogo.
 
-Cada pergunta repete a dinâmica real do jogo, com o mesmo visual (cena, seta vermelha que cai sobre o objeto, relógio com contagem regressiva, 4 alternativas A–D, balão "C'est quoi ?"):
+---
 
-1. a cena aparece e a **seta vermelha** cai sobre o objeto;
-2. as 4 alternativas surgem uma a uma e o **relógio** começa a contar (o tempo é o do nível escolhido);
-3. opcionalmente o vídeo mostra uma **tentativa errada**: a alternativa é tocada, treme, fica vermelha e riscada, a cena pisca em vermelho e o balão diz "Quase! Tente de novo";
-4. a **resposta certa** é tocada: fica verde, a cena pisca em verde, saem estrelas, o balão revela o nome em francês, aparecem os pontos (`+209`) e o placar sobe;
-5. no começo há uma **abertura** com o título e, no fim, um **encerramento** com a pontuação, a chamada final e o cartão da rede social (Instagram `frances_com_tres_nativos` por padrão).
+### Gerador de Vídeos da Trilha do Aluno Curioso
 
-### Como usar
+O motor de renderização (`src/lib/curiousTrailDemoVideo.ts`, `src/lib/trailDemoOfflineExport.ts` e `src/lib/trailDemoAudio.ts`) foi desenvolvido para alcançar paridade total com a experiência do jogador:
 
-| Passo | O que fazer |
-| --- | --- |
-| 1. Perguntas | Escolha de 1 a 6 objetos (filtro por tema e busca) ou clique em **Sortear 3**. Entram os mesmos objetos do jogo, inclusive as imagens de IA aprovadas |
-| 2. Estilo | Nível (Fácil, Intermediário, Master, Nativo · Palavra: muda tempo e pontos), formato, erros e acertos (misturado, sempre ou só acertos), título, chamada final, rede social e perfil, abertura, encerramento e efeitos sonoros |
-| 3. Gerar | Escolha a qualidade e clique em **Gerar vídeo (MP4)**. Quando terminar, confira no player e clique em **Baixar** |
+1. **Paridade visual e física absoluta:**
+   - **Cenário e câmera viva:** Utiliza a mesma arte em alta definição da mata (`mata-trilha-animada.jpg`), as mesmas águas correntes com reflexos (`trailFaunaDraw.ts`), os 20 animais da fauna brasileira em suas clareiras e poleiros com oclusão atrás de folhagens (`trailFaunaPatches.ts`), e luz direcional solar e lunar.
+   - **Câmera cinematográfica:** Segue suavemente o aluno e o objeto em jogo com zoom de 1.55×. Durante o modo Avalanche, aplica tremor sísmico contínuo e solavancos de impactos (`avalancheShake`).
+   - **Modo Avalanche em tempo real:** A massa volumétrica de neve, pó e blocos de gelo 3D (`drawAvalanche`) é desenhada diretamente nas coordenadas de mundo da trilha, avançando e recuando realisticamente de acordo com as respostas.
+   - **Anatomia viva do aluno:** Inclinação anatômica para a frente conforme a inclinação da encosta, passada rítmica, tremor de frio na neve e troca de vestimentas (boina no sol, guarda-chuva aberto na chuva, gorro e cachecol quente na neve).
 
-A **pré-visualização** ao lado toca o mesmo desenho que será exportado, com barra de posição, e **Embaralhar alternativas** troca as respostas erradas.
+2. **Seta indicadora inteligente:**
+   - Em ilustrações com foco isolado no objeto (`public/ghibli/trail-objects/`), a seta vermelha é centralizada com rotação de `-90°`.
+   - Em imagens de cena completa (fallback), a seta aponta exatamente para as coordenadas originais registradas (`item.arrow.x, item.arrow.y`) com rotação de `25°` e escala ampliada em `1.15×`.
+
+3. **Telas intermediárias e overlays idênticos ao jogo:**
+   - **Contagem Regressiva (`TrailCountdownOverlay`):** Inicia a demonstração com anel de progresso circular, tiques sonoros 3-2-1 e o aviso *"Partez !"* com partículas em expansão.
+   - **Conclusão de Nível (`TrailLevelCompleteOverlay`):** Ao completar qualquer nível (1 a 6), exibe a tela de transição idêntica com o título do nível, ícone da estação, pontuação da partida, XP conquistado e confetes.
+   - **Celebração do Cume (`TrailSummitOverlay`):** No nível 7, o aluno atinge o pico de 3.950m, corre para a cabana de pedra aquecida, reaparece na porta saltando de alegria com balão comemorativo (*"🎉 Victoire! J'ai réussi! 🏔️✨"*), chuva de confetes e o modal dourado com resumo da expedição (7/7 níveis, XP total acumulado e sequência de acertos).
+   - **Abertura e Encerramento:** Vinheta inicial com o tema e nível escolhidos e encerramento com o cartão oficial da rede social (Instagram `@frances_com_tres_nativos`).
+
+4. **Trilha de áudio imersiva e efeitos sonoros sincronizados:**
+   - **Ambiência natural:** Camadas gravadas de floresta, riacho e chuva (`/trilha/audio/`) mixadas dinamicamente segundo o clima de cada nível.
+   - **Pronúncias oficiais em francês nativo:** Cada objeto identificado reproduz sua pronúncia correta em francês nativo pré-carregada via `/api/trilha/pronuncia`.
+   - **Síntese de efeitos sonoros (SFX):** Motor de áudio procedural (`synthTrailDemoSfx`) que gera tiques 3-2-1, quem-chimes de erro, harmônicos triplos de acerto, arpeggios de combo e fanfarra de vitória.
+   - **Estúdio com som em tempo real:** Na prévia do estúdio (`TrailDemoStudio.tsx`), o áudio toca perfeitamente sincronizado com o vídeo, com botão dedicado para alternar entre Som e Mudo (`Volume2`/`VolumeX`).
+
+5. **Exportação offline em alta definição (WebCodecs H.264 / AAC):**
+   - Renderização quadro a quadro sem dependência do desempenho da máquina, garantindo 30 fps estáveis e resolução nativa (1080×1920 nos Stories/Reels, 1080×1350 no Feed ou 1080×1080 no quadrado).
+   - A faixa de áudio estéreo 48 kHz é mixada offline combinando os fundos naturais, as pronúncias e todos os efeitos sonoros diretamente no contêiner MP4 gerado por `mp4-muxer`.
+
+---
+
+### Vídeos do C'est quoi ?
+
+Para o jogo clássico de vocabulário, cada pergunta repete a dinâmica real:
+1. A cena ilustrada aparece e a seta vermelha cai sobre o objeto;
+2. As 4 alternativas surgem sequencialmente enquanto o relógio de tempo conta regressivamente;
+3. Tentativas incorretas opcionais (a opção balança em vermelho e o balão exibe "Quase! Tente de novo");
+4. Toque na alternativa correta com animação verde, estrelas, pontuação em destaque e pronúncia em francês;
+5. Abertura temática e encerramento com chamada de ação e cartão da rede social.
 
 ### Formatos e qualidade
 
 | Formato | Tamanho | Onde usar |
 | --- | --- | --- |
-| Stories e Reels (9:16) | 1080 × 1920 | Stories e Reels do Instagram e do Facebook. Título, alternativas e rodapé ficam fora das faixas que a interface das redes cobre (topo e base) |
-| Feed vertical (4:5) | 1080 × 1350 | Feed do Instagram e do Facebook (ocupa mais tela) |
-| Feed quadrado (1:1) | 1080 × 1080 | Qualquer rede |
+| Stories e Reels (9:16) | 1080 × 1920 | Stories e Reels do Instagram e do Facebook. Elementos essenciais ficam dentro das áreas seguras |
+| Feed vertical (4:5) | 1080 × 1350 | Feed do Instagram e do Facebook com maior área visual |
+| Feed quadrado (1:1) | 1080 × 1080 | Feed e postagens em formato padrão |
 
-- **MP4 com H.264 e áudio AAC, 30 quadros por segundo**, que é o que o Instagram e o Facebook pedem. Qualidade **Máxima (16 Mbps)** ou **Alta (10 Mbps)**.
-- O vídeo é renderizado **quadro a quadro** e codificado com WebCodecs (`mp4-muxer`), o mesmo caminho da exportação das histórias. Não depende da velocidade do computador nem perde quadros, e as cenas são desenhadas direto de SVG na resolução final, então ficam nítidas.
-- Os efeitos sonoros (surgir das alternativas, tique-taque, toque, erro, acerto) são **sintetizados no código**, sem arquivos de áudio.
-- Sem WebCodecs, o navegador grava em tempo real (precisa deixar a aba aberta). Se só sair WebM, gere no **Chrome ou no Edge atualizados, no computador**, porque o Instagram e o Facebook não aceitam bem WebM.
+### Arquivos dos estúdios de vídeo
 
-### Arquivos
-
-- `src/lib/gameDemoVideo.ts`: rodadas, linha do tempo, pontuação, desenho de cada quadro (função pura do tempo) e efeitos sonoros do C'est quoi ?.
-- `src/lib/curiousTrailDemoVideo.ts`: renderização quadro a quadro da Trilha do Aluno Curioso (montanha, clima com chuva/neve, bicho, resposta e bandeira no topo).
-- `src/components/TrailDemoStudio.tsx`: tela do administrador para vídeos da Trilha Curiosa.
-- `src/components/AdminJogoVideosTabs.tsx`: seletor em abas entre vídeos do C'est quoi ? e da Trilha Curiosa.
-- `src/lib/gameDemoExport.ts`: exportação em MP4 (offline com WebCodecs; plano B com `MediaRecorder`).
-- `src/components/GameDemoStudio.tsx`: tela do administrador (perguntas, estilo, pré-visualização e download).
-- `src/app/admin/jogo-videos/page.tsx`: página e item **Vídeos do Jogo** no menu do admin.
+| Arquivo | Função |
+| --- | --- |
+| `src/lib/gameDemoVideo.ts` | Motor de vídeo e sintetizador sonoro do jogo C'est quoi ? |
+| `src/components/GameDemoStudio.tsx` | Interface do estúdio de vídeos do C'est quoi ? |
+| `src/lib/curiousTrailDemoVideo.ts` | Motor quadro a quadro da Trilha Curiosa com câmera, fauna, avalanche e overlays |
+| `src/lib/trailDemoOfflineExport.ts` | Exportador offline WebCodecs H.264/AAC com mixagem de áudio e SFX |
+| `src/lib/trailDemoAudio.ts` | Reprodutor de áudio sincronizado com pré-carregamento de pronúncias e ambiência |
+| `src/components/TrailDemoStudio.tsx` | Interface do estúdio de vídeos da Trilha Curiosa com prévia e som |
+| `src/components/AdminJogoVideosTabs.tsx` | Seletor de abas entre os estúdios do C'est quoi ? e da Trilha Curiosa |
+| `src/app/admin/jogo-videos/page.tsx` | Página principal de administração dos vídeos do jogo |
 
 ## Contos ilustrados em francês
 

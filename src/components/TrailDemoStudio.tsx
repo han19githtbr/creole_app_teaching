@@ -27,7 +27,8 @@ import { TrailVideoWorld, loadTrailVideoAssets, type TrailVideoAssets } from "@/
 import { exportTrailDemoOffline } from "@/lib/trailDemoOfflineExport";
 import { TRAIL_LEVELS, TRAIL_THEMES } from "@/lib/curiousTrailData";
 import { SOCIAL_PLATFORMS, sanitizeSocialHandle, type SocialPlatform } from "@/lib/socialLinks";
-import { Download, Loader2, Pause, Play, Sparkles } from "lucide-react";
+import { loadTrailDemoPronunciations, TrailDemoPreviewAudioPlayer } from "@/lib/trailDemoAudio";
+import { Download, Loader2, Pause, Play, Sparkles, Volume2, VolumeX } from "lucide-react";
 
 const EMPTY_DEMO_IMAGES: TrailObjectImages = new Map();
 
@@ -37,6 +38,8 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   const [imageError, setImageError] = useState<{ plan: TrailDemoPlan; message: string } | null>(null);
   const [imageLoadAttempt, setImageLoadAttempt] = useState(0);
   const [playing, setPlaying] = useState(true);
+  const [muted, setMuted] = useState(false);
+  const [audioReady, setAudioReady] = useState(false);
   const [time, setTime] = useState(0);
   const [exporting, setExporting] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -46,6 +49,18 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const clockRef = useRef({ start: 0, offset: 0 });
   const abortRef = useRef<AbortController | null>(null);
+  const audioPlayerRef = useRef<TrailDemoPreviewAudioPlayer | null>(null);
+
+  // Reprodutor de áudio da prévia sincronizado com o vídeo
+  useEffect(() => {
+    const player = new TrailDemoPreviewAudioPlayer();
+    audioPlayerRef.current = player;
+    void player.preloadAmbience();
+    return () => {
+      player.destroy();
+      audioPlayerRef.current = null;
+    };
+  }, []);
 
   const cleanSettings = useMemo(
     () => ({
@@ -132,7 +147,32 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
 
   useEffect(() => {
     clockRef.current = { start: performance.now(), offset: 0 };
-  }, [plan]);
+    if (!muted) {
+      audioPlayerRef.current?.seek(0);
+    }
+  }, [plan, muted]);
+
+  // Prepara pronúncias das palavras em francês para a prévia sincronizada
+  useEffect(() => {
+    const player = audioPlayerRef.current;
+    if (!player) return;
+    const ac = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const abort = new AbortController();
+    loadTrailDemoPronunciations(plan, ac, abort.signal)
+      .then((voices) => {
+        if (abort.signal.aborted) return;
+        player.updateData(plan, voices);
+        setAudioReady(true);
+        if (playing && !muted) {
+          player.play(clockRef.current.offset);
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      abort.abort();
+      void ac.close();
+    };
+  }, [plan, playing, muted]);
 
   // Loop de animação no Canvas de pré-visualização
   useEffect(() => {
@@ -173,6 +213,7 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
         if (t >= total) {
           clockRef.current = { start: now, offset: 0 };
           t = 0;
+          if (!muted) audioPlayerRef.current?.play(0);
         }
         draw(t);
         setTime(t);
@@ -184,19 +225,39 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
 
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [playing]);
+  }, [playing, muted]);
 
   function togglePlay() {
+    const player = audioPlayerRef.current;
     if (playing) {
       const current =
         (clockRef.current.offset + (performance.now() - clockRef.current.start) / 1000) %
         (plan.total || 1);
       clockRef.current.offset = current;
       setPlaying(false);
+      player?.pause(current);
     } else {
       clockRef.current.start = performance.now();
       setPlaying(true);
+      if (!muted) {
+        player?.play(clockRef.current.offset);
+      }
     }
+  }
+
+  function toggleMute() {
+    setMuted((prev) => {
+      const next = !prev;
+      const player = audioPlayerRef.current;
+      player?.setMuted(next);
+      if (!next && playing) {
+        const current =
+          (clockRef.current.offset + (performance.now() - clockRef.current.start) / 1000) %
+          (plan.total || 1);
+        player?.play(current);
+      }
+      return next;
+    });
   }
 
   // Exportação em MP4 para redes sociais
@@ -664,14 +725,25 @@ export function TrailDemoStudio({ items }: { items: CestQuoiItem[] }) {
           <span className="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">
             Prévia dos níveis {plan.levels.map((level) => level.level).join(", ")} · {plan.rounds.length} perguntas ({spec.w}×{spec.h})
           </span>
-          <button
-            type="button"
-            onClick={togglePlay}
-            className="cursor-pointer inline-flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text)]"
-          >
-            {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-            {playing ? "Pausar" : "Tocar"}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={toggleMute}
+              title={muted ? "Ativar som da prévia" : "Desativar som da prévia"}
+              className="cursor-pointer inline-flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text)]"
+            >
+              {muted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+              {muted ? "Mudo" : "Som"}
+            </button>
+            <button
+              type="button"
+              onClick={togglePlay}
+              className="cursor-pointer inline-flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text)]"
+            >
+              {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+              {playing ? "Pausar" : "Tocar"}
+            </button>
+          </div>
         </div>
         <p className="px-1 text-xs text-[var(--text-secondary)]">
           A prévia simula uma sequência de acertos: o aluno identifica o objeto, responde, recebe pontos e caminha pela mesma trilha do jogo. O cronômetro e a pontuação seguem a dificuldade escolhida.

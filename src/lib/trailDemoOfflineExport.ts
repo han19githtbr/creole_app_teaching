@@ -1,7 +1,7 @@
 import { ArrayBufferTarget, Muxer } from "mp4-muxer";
 import type { TrailDemoPlan } from "@/lib/curiousTrailDemoVideo";
 import type { TrailObjectImages } from "@/lib/curiousTrailObjectImages";
-import { trailLevelForTime, trailMapHeight, renderTrailDemoFrame } from "@/lib/curiousTrailDemoVideo";
+import { trailLevelForTime, trailMapHeight, renderTrailDemoFrame, synthTrailDemoSfx } from "@/lib/curiousTrailDemoVideo";
 import { TrailVideoWorld, type TrailVideoAssets } from "@/lib/trailVideoWorld";
 
 const SAMPLE_RATE = 48_000;
@@ -107,6 +107,25 @@ export async function exportTrailDemoOffline(params: {
       source.start(round.correctAt);
     }
   }
+
+  // Efeitos sonoros sintetizados do jogo (contagem 3-2-1, cliques, erros, acertos, fanfarra do cume)
+  try {
+    const sfxPcm = synthTrailDemoSfx(params.plan, SAMPLE_RATE);
+    if (sfxPcm && sfxPcm.length > 0) {
+      const sfxBuffer = offlineAudio.createBuffer(1, sfxPcm.length, SAMPLE_RATE);
+      sfxBuffer.getChannelData(0).set(sfxPcm);
+      const sfxSource = offlineAudio.createBufferSource();
+      const sfxGain = offlineAudio.createGain();
+      sfxGain.gain.value = 0.95;
+      sfxSource.buffer = sfxBuffer;
+      sfxSource.connect(sfxGain);
+      sfxGain.connect(master);
+      sfxSource.start(0);
+    }
+  } catch (err) {
+    console.warn("Falha ao sintetizar efeitos sonoros para exportação offline:", err);
+  }
+
   const mixedAudio = await offlineAudio.startRendering();
   const channelData = [mixedAudio.getChannelData(0), mixedAudio.getChannelData(1)];
 

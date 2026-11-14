@@ -38,14 +38,14 @@ export function Navbar() {
   const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname?.startsWith(href + "/"));
 
   const linkClass = (href: string) =>
-    `flex items-center gap-1.5 text-sm font-medium transition-colors ${
+    `flex items-center gap-1.5 text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${
       isActive(href)
         ? "text-[var(--accent)] font-semibold"
         : "text-[var(--text-secondary)] hover:text-[var(--text)]"
     }`;
 
   const mobileLinkClass = (href: string) =>
-    `flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+    `flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${
       isActive(href)
         ? "bg-[var(--accent-soft)] text-white font-bold [&_svg]:stroke-[2.5]"
         : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)]"
@@ -53,30 +53,30 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 font-bold text-[var(--text)]">
-          <span className="text-xl">{meta.flag}</span>
-          <span className="bg-gradient-to-r from-[var(--text)] via-[var(--accent)] to-[var(--text)] bg-clip-text text-transparent">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+        <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-[var(--text)]">
+          <span className="text-xl shrink-0">{meta.flag}</span>
+          <span className="whitespace-nowrap bg-gradient-to-r from-[var(--text)] via-[var(--accent)] to-[var(--text)] bg-clip-text text-transparent">
             {meta.brand}
           </span>
         </Link>
 
         {status === "authenticated" && (
-          <nav className="hidden items-center gap-5 md:flex">
+          <nav className="hidden items-center gap-2.5 lg:gap-3.5 xl:gap-5 md:flex">
             {NAV_LINKS.map(({ href, label, icon: Icon }) => (
               <Link key={href} href={href} className={linkClass(href)}>
-                <Icon className="h-4 w-4" /> {navLabel(href, label)}
+                <Icon className="h-4 w-4 shrink-0" /> {navLabel(href, label)}
               </Link>
             ))}
             {role === "admin" && (
               <Link href="/admin" className={linkClass("/admin")}>
-                <ShieldCheck className="h-4 w-4" /> Admin
+                <ShieldCheck className="h-4 w-4 shrink-0" /> Admin
               </Link>
             )}
           </nav>
         )}
 
-        <div className="flex items-center gap-2.5 md:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-2.5 md:gap-3">
           <ThemeToggle />
 
           {status === "authenticated" && (
@@ -84,10 +84,10 @@ export function Navbar() {
               type="button"
               onClick={() => switchLanguage(otherLanguage)}
               title={`Trocar para ${otherMeta.label}`}
-              className="flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 text-xs font-semibold text-[var(--text)] hover:bg-[var(--surface-2)] cursor-pointer"
+              className="flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 text-xs font-semibold text-[var(--text)] hover:bg-[var(--surface-2)] cursor-pointer whitespace-nowrap"
             >
-              <span className="text-base leading-none">{otherMeta.flag}</span>
-              <span className="hidden sm:inline">{otherMeta.label}</span>
+              <span className="text-base leading-none shrink-0">{otherMeta.flag}</span>
+              <span className="hidden sm:inline whitespace-nowrap">{otherMeta.label}</span>
             </button>
           )}
 

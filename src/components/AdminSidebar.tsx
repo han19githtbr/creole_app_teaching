@@ -60,7 +60,7 @@ export function AdminSidebar({ pendingAnswers = 0 }: { pendingAnswers?: number }
               key={href}
               href={href}
               className={cn(
-                "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap",
                 active
                   ? "bg-[var(--accent-soft)] text-white font-bold [&_svg]:stroke-[2.5]"
                   : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"

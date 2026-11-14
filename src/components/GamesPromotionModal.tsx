@@ -66,6 +66,12 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
     // Aparece uma vez por sessão (ao entrar), depois que o painel já carregou: não atrapalha a navegação.
     let seen = false;
     try {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("promo") || params.has("forcePromo")) {
+          window.sessionStorage.removeItem(SEEN_KEY);
+        }
+      }
       seen = window.sessionStorage.getItem(SEEN_KEY) === "1";
     } catch {
       seen = false;
@@ -96,6 +102,16 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, handleClose]);
 
+  // Trava a rolagem da página ao fundo enquanto a janela de propaganda estiver aberta
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
   // Listener para evento customizado de reabrir a propaganda de qualquer lugar
   useEffect(() => {
     const handleReopen = () => {
@@ -113,67 +129,80 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
   if (mode === "closed") return null;
 
   if (mode === "compact") {
-    // Cartão pequeno, SEM escurecer a página: dá para ver o painel por trás e entender que é um aviso/propaganda.
+    // Janela de propaganda com destaque centralizado no Desktop e Mobile,
+    // com fundo escurecido/apagado (backdrop). Ao fechar, a página volta a aparecer claramente.
     return (
-      <aside
-        className="games-promo-border-pulse fixed inset-x-3 top-1/2 bottom-auto z-50 mx-auto max-h-[calc(100dvh-2rem)] w-auto max-w-md -translate-y-1/2 overflow-y-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3.5 text-[var(--text)] shadow-2xl shadow-black/40 animate-in slide-in-from-bottom-6 fade-in duration-300 sm:inset-x-auto sm:top-auto sm:right-5 sm:bottom-5 sm:translate-y-0 sm:mx-0 sm:w-[380px]"
-        style={{ paddingBottom: "calc(0.875rem + env(safe-area-inset-bottom, 0px))" }}
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-200"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) handleClose();
+        }}
+        role="dialog"
+        aria-modal="true"
         aria-label="Propaganda dos jogos da plataforma"
       >
-        <div className="flex items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-            <Sparkles className="h-3 w-3" /> Propaganda · Jogos
-          </span>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-secondary)] transition hover:text-[var(--text)]"
-            aria-label="Fechar propaganda"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+        <aside
+          className="games-promo-border-pulse relative w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5 text-[var(--text)] shadow-2xl shadow-black/60 animate-in zoom-in-95 duration-200"
+          style={{ paddingBottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))" }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
+              <Sparkles className="h-3 w-3" /> Propaganda · Jogos
+            </span>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-secondary)] transition hover:text-[var(--text)] hover:scale-105"
+              aria-label="Fechar propaganda"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
 
-        <h2 className="mt-2 text-base font-black leading-tight text-[var(--text)]">Aprenda jogando!</h2>
-        <p className="mt-0.5 text-xs leading-snug text-[var(--text-secondary)]">
-          Treine seu francês com 2 jogos da plataforma: <strong className="text-[var(--text)]">C&apos;est quoi ?</strong> e{" "}
-          <strong className="text-[var(--text)]">Trilha do Aluno Curioso</strong>.
-        </p>
+          <h2 className="mt-2.5 text-base sm:text-lg font-black leading-tight text-[var(--text)]">
+            Aprenda jogando!
+          </h2>
+          <p className="mt-1 text-xs sm:text-sm leading-snug text-[var(--text-secondary)]">
+            Treine seu francês com 2 jogos da plataforma: <strong className="text-[var(--text)]">C&apos;est quoi ?</strong> e{" "}
+            <strong className="text-[var(--text)]">Trilha do Aluno Curioso</strong>.
+          </p>
 
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => handlePlayGame("/dashboard/jogo?module=cquoi")}
-            className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-2 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-blue-500 active:scale-[0.98]"
-          >
-            <Gamepad2 className="h-4 w-4" /> C&apos;est quoi ?
-          </button>
-          <button
-            type="button"
-            onClick={() => handlePlayGame("/dashboard/jogo?module=trilha")}
-            className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-2 py-2.5 text-xs font-bold text-white shadow-sm transition hover:brightness-110 active:scale-[0.98]"
-          >
-            <MountainSnow className="h-4 w-4" /> Trilha
-          </button>
-        </div>
+          <div className="mt-3.5 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => handlePlayGame("/dashboard/jogo?module=cquoi")}
+              className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-2.5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-sm transition hover:bg-blue-500 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Gamepad2 className="h-4 w-4" /> C&apos;est quoi ?
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePlayGame("/dashboard/jogo?module=trilha")}
+              className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-2.5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-sm transition hover:brightness-110 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <MountainSnow className="h-4 w-4" /> Trilha
+            </button>
+          </div>
 
-        <div className="mt-2 flex items-center justify-between gap-2 text-xs">
-          <button
-            type="button"
-            onClick={() => setMode("details")}
-            className="cursor-pointer font-semibold text-[var(--accent)] underline-offset-2 hover:underline"
-          >
-            Ver como funciona
-          </button>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="cursor-pointer font-medium text-[var(--text-muted)] hover:text-[var(--text)]"
-          >
-            Agora não
-          </button>
-        </div>
-      </aside>
+          <div className="mt-2.5 flex items-center justify-between gap-2 text-xs sm:text-sm pt-0.5">
+            <button
+              type="button"
+              onClick={() => setMode("details")}
+              className="cursor-pointer font-semibold text-[var(--accent)] underline-offset-2 hover:underline"
+            >
+              Ver como funciona
+            </button>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="cursor-pointer font-medium text-[var(--text-muted)] hover:text-[var(--text)]"
+            >
+              Agora não
+            </button>
+          </div>
+        </aside>
+      </div>
     );
   }
 

@@ -61,6 +61,14 @@ class SoundEffectsManager {
     return this.masterGain;
   }
 
+  public getAudioContext(): AudioContext | null {
+    return this.getContext();
+  }
+
+  public getMasterGain(): GainNode | null {
+    return this.getMasterNode();
+  }
+
   public isMuted(): boolean {
     return this.muted;
   }

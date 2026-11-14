@@ -12,7 +12,7 @@ import { gradeImage } from "@/lib/trailGrade";
 import type { AppLanguage } from "@/lib/languageShared";
 import { getTrailObjectImageSrc } from "@/lib/curiousTrailObjectImages";
 import { CURIOUS_TRAIL_PATH, CAMP_FRACS, MARKER_FRACS, WORLD_W, WORLD_H, HUT_DOOR, HUT_POSITION } from "@/lib/curiousTrailGeometry";
-import { drawAvalanche } from "@/lib/trailAvalanche";
+import { drawAvalanche, avalancheShake } from "@/lib/trailAvalanche";
 import { Check, Lock, Volume2 } from "lucide-react";
 
 export type TrailRoundState = "asking" | "correct" | "retry" | "reveal";
@@ -400,8 +400,14 @@ export function CuriousTrailMountain({
             drawAvalanche(avCtx, front, tSec, av.danger);
           }
         }
-        if (vignetteRef.current) vignetteRef.current.style.opacity = av && av.active ? String(Math.min(0.85, av.danger * av.danger * 0.9)) : "0";
-        world.style.transform = `translate(${cam.tx}px, ${cam.ty}px) scale(${cam.s})`;
+        if (vignetteRef.current) {
+          vignetteRef.current.style.opacity =
+            av && av.active && av.danger > 0.03
+              ? String(Math.min(0.92, av.danger * 0.55 + Math.pow(av.danger, 2) * 0.45))
+              : "0";
+        }
+        const shake = av && av.active ? avalancheShake(tSec, av.danger) : { dx: 0, dy: 0 };
+        world.style.transform = `translate(${cam.tx + shake.dx}px, ${cam.ty + shake.dy}px) scale(${cam.s})`;
         world.style.setProperty("--inv", String(1 / cam.s));
       }
 
@@ -850,8 +856,13 @@ export function CuriousTrailMountain({
       {/* aviso visual da avalanche: bordas geladas pulsando conforme o perigo */}
       <div
         ref={vignetteRef}
-        className="trail-avalanche-vignette absolute inset-0 z-[12] pointer-events-none"
-        style={{ opacity: 0, background: "radial-gradient(ellipse at center, rgba(255,255,255,0) 45%, rgba(190,215,255,0.75) 100%)" }}
+        className="trail-avalanche-vignette absolute inset-0 z-[12] pointer-events-none transition-opacity duration-150"
+        style={{
+          opacity: 0,
+          background:
+            "radial-gradient(ellipse at center, rgba(255,255,255,0) 35%, rgba(185,220,255,0.38) 72%, rgba(140,195,255,0.85) 100%)",
+          boxShadow: "inset 0 0 90px rgba(160, 215, 255, 0.55)",
+        }}
       />
 
       {/* ================= HUD SUPERIOR ================= */}

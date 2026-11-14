@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Award, ChevronRight, Coins, Play, Trophy, Volume2, VolumeX } from "lucide-react";
 import { soundEffects } from "@/lib/soundEffects";
 import { trailNatureAudio } from "@/lib/trailNatureAudio";
+import { trailAvalancheAudio } from "@/lib/trailAvalancheAudio";
 import type { AppLanguage } from "@/lib/languageShared";
 import { Confetti } from "@/components/Confetti";
 import { cn } from "@/lib/utils";
@@ -210,7 +211,26 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
 
   // Fases: o jogo todo (contagem, perguntas, nível concluído, vitória) acontece em cima do mapa
   const [phase, setPhase] = useState<"lobby" | "preparing" | "load_error" | "countdown" | "playing" | "level_complete" | "summit_victory" | "avalanche_caught">("lobby");
-  const [difficulty, setDifficulty] = useState<TrailDifficulty>("intermediate");
+  const [difficulty, setDifficulty] = useState<TrailDifficulty>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const modeParam = urlParams.get("mode") || urlParams.get("difficulty") || urlParams.get("diff");
+        if (modeParam === "avalanche") return "avalanche";
+        const saved = localStorage.getItem("kreyol:trail-difficulty") as TrailDifficulty | null;
+        if (saved && ["easy", "intermediate", "master", "native", "avalanche"].includes(saved)) {
+          return saved;
+        }
+      } catch {}
+    }
+    return "intermediate";
+  });
+  const updateDifficulty = (dKey: TrailDifficulty) => {
+    setDifficulty(dKey);
+    try {
+      localStorage.setItem("kreyol:trail-difficulty", dKey);
+    } catch {}
+  };
   const diffCfg = DIFFICULTY_CONFIGS[difficulty];
   const [preloadProgress, setPreloadProgress] = useState({ loaded: 0, total: 0 });
   const loadRequestRef = useRef(0);
@@ -292,11 +312,15 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
       loadRequestRef.current += 1;
       if (countdownRef.current) clearInterval(countdownRef.current);
       trailNatureAudio.stop();
+      trailAvalancheAudio.stop();
     };
   }, []);
 
   useEffect(() => {
-    if (phase === "lobby" || phase === "load_error") trailNatureAudio.stop();
+    if (phase === "lobby" || phase === "load_error" || phase === "level_complete" || phase === "summit_victory") {
+      trailNatureAudio.stop();
+      trailAvalancheAudio.stop();
+    }
   }, [phase]);
 
   function toggleSound() {
@@ -304,6 +328,7 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
     setMuted(next);
     soundEffects.setMuted(next);
     trailNatureAudio.setMuted(next);
+    trailAvalancheAudio.setMuted(next);
   }
 
   /** Publica a posição/velocidade da avalanche para o mapa desenhar de forma suave. */
@@ -314,6 +339,7 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
     const sf = studentFractionAt(tr, indexRef.current, climbDoneRef.current);
     const danger = avalancheDanger(st, tr, sf);
     avalancheLive.current = { active: true, front: st.front, vel: moving && !st.caught ? avalancheSpeed(tr, calm) : 0, stamp: performance.now(), danger };
+    trailAvalancheAudio.update(danger);
     setAvInfo((prev) => {
       const alert = avalancheAlert(st, tr, sf);
       const meters = avalancheDistanceMeters(st, sf);
@@ -325,11 +351,13 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
     avTrackRef.current = tr;
     avStateRef.current = initAvalanche(tr);
     syncAvalancheLive(true, false);
+    trailAvalancheAudio.start(0);
   }
   function stopAvalanche() {
     avalancheLive.current = { ...avalancheLive.current, active: false, vel: 0 };
     avTrackRef.current = null;
     setAvInfo({ danger: 0, alert: "calm", meters: 0 });
+    trailAvalancheAudio.stop();
   }
 
   // A avalanche sobe a trilha atrás do aluno (no lugar do cronômetro)
@@ -349,6 +377,7 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
       const caught = stepAvalanche(st, DT, tr, sf, !answering);
       syncAvalancheLive(!answering);
       if (caught) {
+        trailAvalancheAudio.playCrash();
         soundEffects.playTimeUp();
         setStreak(0);
         setPhase("avalanche_caught");
@@ -431,6 +460,9 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
   // Iniciar um nível
   async function startLevel(lvl: number, resetMatch = false) {
     trailNatureAudio.start(TRAIL_LEVELS[lvl - 1]?.weather ?? "sunny");
+    if (isAvalanche) {
+      trailAvalancheAudio.prime();
+    }
     const requestId = ++loadRequestRef.current;
     if (countdownRef.current) {
       clearInterval(countdownRef.current);
@@ -530,6 +562,9 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
         prepareRound(firstItem);
         soundEffects.playWhoosh();
         setPhase("playing");
+        if (isAvalanche) {
+          trailAvalancheAudio.resumeIfSuspended();
+        }
       }
     }, 800);
   }
@@ -615,6 +650,9 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
   // Resposta do usuário
   function handleSelectOption(chosenFr: string) {
     if (!canAnswer || !currentItem) return;
+    if (isAvalanche) {
+      trailAvalancheAudio.resumeIfSuspended();
+    }
 
     if (chosenFr === currentItem.fr) {
       // ACERTO!
@@ -640,6 +678,7 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
           applyAnswerToAvalanche(avStateRef.current, tr, attemptRef.current === 1 ? "first" : "retry");
           clampAvalancheGap(avStateRef.current, tr, studentFractionAt(tr, indexRef.current, false));
           syncAvalancheLive(true);
+          trailAvalancheAudio.playRecoil();
         }
       }
       let speedMultiplier = 1.0;
@@ -710,6 +749,7 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
       if (isAvalanche && avTrackRef.current) {
         applyAnswerToAvalanche(avStateRef.current, avTrackRef.current, "wrong");
         syncAvalancheLive(false);
+        trailAvalancheAudio.playSurge();
       }
 
       if (attemptRef.current === 1) {
@@ -937,12 +977,14 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
                         type="button"
                         onClick={() => {
                           soundEffects.playTap();
-                          setDifficulty(dKey);
+                          updateDifficulty(dKey);
                         }}
                         className={cn(
                           "cursor-pointer rounded-2xl border-2 p-2.5 text-center transition-all",
                           isSel
-                            ? "border-amber-500 bg-amber-500/15 shadow-md ring-2 ring-amber-400/50"
+                            ? dKey === "avalanche"
+                              ? "border-sky-400 bg-sky-500/20 shadow-md ring-2 ring-sky-400/60"
+                              : "border-amber-500 bg-amber-500/15 shadow-md ring-2 ring-amber-400/50"
                             : "border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-2)] opacity-80"
                         )}
                       >
@@ -955,6 +997,33 @@ export function CuriousTrailGame({ items, initialTheme, language = "francais" }:
                     );
                   })}
                 </div>
+
+                {/* Banner e Demonstração sonora do Modo Avalanche */}
+                {difficulty === "avalanche" && (
+                  <div className="mt-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border-2 border-sky-400/50 bg-gradient-to-r from-sky-950/70 via-slate-900/80 to-blue-950/70 p-3.5 text-left text-xs shadow-lg animate-fadeIn">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl shrink-0" aria-hidden>🏔️💨</span>
+                      <div>
+                        <p className="font-black text-white text-sm">Modo Avalanche Eletrizante Ativo</p>
+                        <p className="text-[11px] text-sky-200/90 leading-tight">
+                          A neve desce a montanha atrás de você com estrondo real e vento cortante. Responda rápido para empurrá-la de volta!
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundEffects.playTap();
+                        trailAvalancheAudio.previewSound();
+                      }}
+                      className="shrink-0 flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:scale-95 text-white font-extrabold px-3.5 py-2 shadow-md cursor-pointer transition-all border border-sky-300/30"
+                      title="Ouvir demonstração do som da avalanche"
+                    >
+                      <Volume2 className="h-4 w-4" />
+                      <span>Ouvir Avalanche</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* TEMA */}

@@ -22,7 +22,7 @@ import { getBankImage } from "@/lib/imageBank";
 import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { Radio, BookOpen, Bell, Video, ArrowRight } from "lucide-react";
+import { Radio, BookOpen, Bell, Video, ArrowRight, Gamepad2, MountainSnow } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -206,9 +206,31 @@ export default async function DashboardPage() {
         </div>
 
         {recentLessons.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-sm text-[var(--text-muted)]">
-              Nenhuma lição publicada no momento. O professor publicará conteúdos em breve!
+          <Card className="border-dashed border-[var(--border)] bg-[var(--surface)]/60">
+            <CardContent className="flex flex-col items-center justify-center py-9 px-4 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-soft)]/10 text-[var(--accent)] mb-3">
+                <BookOpen className="h-6 w-6" />
+              </span>
+              <p className="font-bold text-[var(--text)]">Novas lições a caminho!</p>
+              <p className="mt-1 max-w-md text-xs sm:text-sm text-[var(--text-muted)]">
+                O professor está preparando novos conteúdos para o seu nível. Enquanto isso, aproveite para treinar o vocabulário nos jogos da plataforma!
+              </p>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                <Link
+                  href="/dashboard/jogo?module=cquoi"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-blue-500 transition-colors"
+                >
+                  <Gamepad2 className="h-3.5 w-3.5" /> Praticar no C&apos;est quoi ?
+                </Link>
+                {language === "francais" && (
+                  <Link
+                    href="/dashboard/jogo?module=trilha"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:brightness-110 transition-all"
+                  >
+                    <MountainSnow className="h-3.5 w-3.5" /> Subir a Trilha
+                  </Link>
+                )}
+              </div>
             </CardContent>
           </Card>
         ) : (
@@ -254,9 +276,15 @@ export default async function DashboardPage() {
         </div>
 
         {recentVideos.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-sm text-[var(--text-muted)]">
-              Nenhuma aula gravada disponível no momento. O professor publicará vídeos em breve!
+          <Card className="border-dashed border-[var(--border)] bg-[var(--surface)]/60">
+            <CardContent className="flex flex-col items-center justify-center py-8 px-4 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 mb-2.5">
+                <Video className="h-6 w-6" />
+              </span>
+              <p className="font-bold text-[var(--text)]">Nenhum vídeo publicado ainda</p>
+              <p className="mt-1 max-w-md text-xs sm:text-sm text-[var(--text-muted)]">
+                Em breve, gravações de aulas e dicas explicativas em vídeo estarão disponíveis aqui.
+              </p>
             </CardContent>
           </Card>
         ) : (
@@ -289,9 +317,15 @@ export default async function DashboardPage() {
         <div className="space-y-4 lg:col-span-2">
           <h2 className="text-lg font-semibold text-[var(--text)]">Avisos e Postagens do professor</h2>
           {posts.length === 0 ? (
-            <Card>
-              <CardContent className="text-center text-sm text-[var(--text-muted)]">
-                Nenhuma postagem no momento.
+            <Card className="border-dashed border-[var(--border)] bg-[var(--surface)]/60">
+              <CardContent className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--surface-2)] text-[var(--text-muted)] mb-2">
+                  <Radio className="h-5 w-5" />
+                </span>
+                <p className="text-sm font-semibold text-[var(--text)]">Sem avisos no momento</p>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                  Fique atento às notificações para novas mensagens e postagens do professor.
+                </p>
               </CardContent>
             </Card>
           ) : (

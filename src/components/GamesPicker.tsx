@@ -5,20 +5,24 @@ const GAMES = [
   {
     href: "/dashboard/jogo?module=cquoi",
     title: "C'est quoi ?",
-    description: "Observe a cena e adivinhe o nome dos objetos em francês.",
-    detail: "Desafios rápidos de vocabulário",
+    description: "Observe a cena ilustrada e adivinhe o nome dos objetos em francês em até 5 segundos com áudio nativo.",
+    detail: "Vocabulário dinâmico & Arena",
+    badge: "⚡ 5 Segundos",
+    badgeColor: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30",
     icon: Gamepad2,
-    styles: "border-blue-500/30 bg-blue-500/5 hover:border-blue-500/60 hover:bg-blue-500/10",
-    iconStyles: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+    styles: "border-blue-500/30 bg-gradient-to-b from-blue-500/[0.07] to-transparent hover:border-blue-500/60 hover:shadow-blue-500/10",
+    iconStyles: "bg-blue-500/20 text-blue-600 dark:text-blue-400",
   },
   {
     href: "/dashboard/jogo?module=trilha",
     title: "Trilha do Aluno Curioso",
-    description: "Suba a montanha identificando objetos e avance por sete níveis.",
-    detail: "Uma aventura de exploração",
+    description: "Suba a montanha identificando objetos ocultos, enfrente o modo avalanche e explore a fauna em 7 níveis.",
+    detail: "Aventura 2.5D & Exploração",
+    badge: "🏔️ 7 Níveis",
+    badgeColor: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30",
     icon: MountainSnow,
-    styles: "border-amber-500/35 bg-amber-500/5 hover:border-amber-500/60 hover:bg-amber-500/10",
-    iconStyles: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    styles: "border-amber-500/35 bg-gradient-to-b from-amber-500/[0.08] to-transparent hover:border-amber-500/60 hover:shadow-amber-500/10",
+    iconStyles: "bg-amber-500/20 text-amber-600 dark:text-amber-400",
   },
 ];
 
@@ -42,22 +46,31 @@ export function GamesPicker() {
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {GAMES.map(({ href, title, description, detail, icon: Icon, styles, iconStyles }) => (
+      <div className="grid gap-5 sm:grid-cols-2">
+        {GAMES.map(({ href, title, description, detail, badge, badgeColor, icon: Icon, styles, iconStyles }) => (
           <Link
             key={title}
             href={href}
-            className={`group flex min-h-56 flex-col rounded-2xl border-2 p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg ${styles}`}
+            className={`group flex min-h-60 flex-col rounded-2xl border-2 p-5 sm:p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl ${styles}`}
           >
-            <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${iconStyles}`}>
-              <Icon className="h-6 w-6" />
+            <div className="flex items-center justify-between">
+              <span className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner ${iconStyles}`}>
+                <Icon className="h-6 w-6" />
+              </span>
+              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider ${badgeColor}`}>
+                {badge}
+              </span>
+            </div>
+            <span className="mt-4 text-xl font-black text-[var(--text)] group-hover:text-[var(--accent)] transition-colors">
+              {title}
             </span>
-            <span className="mt-4 text-lg font-black text-[var(--text)]">{title}</span>
-            <span className="mt-1 text-sm leading-relaxed text-[var(--text-secondary)]">{description}</span>
-            <span className="mt-auto flex items-center justify-between gap-2 pt-5">
+            <span className="mt-1 text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)]">
+              {description}
+            </span>
+            <span className="mt-auto flex items-center justify-between gap-2 pt-6 border-t border-[var(--border)]/60">
               <span className="text-xs font-semibold text-[var(--text-muted)]">{detail}</span>
-              <span className="inline-flex items-center gap-1 text-sm font-bold text-[var(--text)]">
-                Jogar <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[var(--text)] group-hover:text-[var(--accent)] transition-colors">
+                Jogar agora <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </span>
             </span>
           </Link>

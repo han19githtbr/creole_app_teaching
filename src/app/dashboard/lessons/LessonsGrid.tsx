@@ -70,9 +70,15 @@ export function LessonsGrid({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-12 text-center text-sm text-[var(--text-muted)]">
-          Nenhuma lição encontrada.
-        </p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface)]/50 py-12 px-4 text-center">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--surface-2)] text-[var(--text-muted)] mb-3">
+            <Search className="h-6 w-6" />
+          </span>
+          <p className="font-semibold text-[var(--text)]">Nenhuma lição encontrada</p>
+          <p className="mt-1 text-xs sm:text-sm text-[var(--text-muted)]">
+            Tente buscar com outros termos ou selecione a categoria &ldquo;Todas&rdquo;.
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {filtered.map((lesson) => (

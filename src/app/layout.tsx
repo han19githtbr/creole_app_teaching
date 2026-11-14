@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { Navbar } from "@/components/Navbar";
+import { BottomNav } from "@/components/BottomNav";
 import { ThemeProvider, themeInitScript } from "@/components/ThemeProvider";
 import { PwaRegister } from "@/components/PwaRegister";
 
@@ -49,7 +50,8 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <Navbar />
-            <main className="flex flex-1 flex-col">{children}</main>
+            <main className="flex flex-1 flex-col pb-20 md:pb-0">{children}</main>
+            <BottomNav />
           </AuthProvider>
         </ThemeProvider>
         <PwaRegister />

@@ -7,6 +7,7 @@ import Lesson from "@/models/Lesson";
 import User from "@/models/User";
 import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 import { LessonCompleteButton } from "@/components/LessonCompleteButton";
+import { LessonReadingProgress } from "@/components/LessonReadingProgress";
 import { Markdown } from "@/components/Markdown";
 import { ArrowLeft, ArrowRight, ChevronLeft } from "lucide-react";
 
@@ -62,6 +63,7 @@ export default async function LessonDetailPage({
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+      <LessonReadingProgress />
       <Link
         href="/dashboard/lessons"
         className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)]"

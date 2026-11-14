@@ -567,13 +567,47 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
  * a propaganda / explicação da dinâmica dos dois jogos sempre que quiserem.
  */
 export function GamesPromoSpotlightBanner() {
+  const [dismissed, setDismissed] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    try {
+      if (window.localStorage.getItem("games-spotlight-dismissed") === "1") {
+        setDismissed(true);
+      }
+    } catch {
+      // localStorage indisponível
+    }
+  }, []);
+
   const triggerOpen = () => {
     window.dispatchEvent(new CustomEvent("open-games-promo"));
   };
 
+  const handleDismiss = () => {
+    setDismissed(true);
+    try {
+      window.localStorage.setItem("games-spotlight-dismissed", "1");
+    } catch {
+      // ignora se desabilitado
+    }
+  };
+
+  if (!mounted || dismissed) return null;
+
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-blue-900/15 via-amber-900/15 to-emerald-900/15 p-4 sm:p-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-blue-900/15 via-amber-900/15 to-emerald-900/15 p-4 sm:p-5 shadow-sm animate-in fade-in duration-200">
+      <button
+        type="button"
+        onClick={handleDismiss}
+        className="absolute top-2.5 right-2.5 flex h-7 w-7 items-center justify-center rounded-full text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] transition-colors cursor-pointer"
+        title="Dispensar este destaque"
+        aria-label="Dispensar destaque de jogos"
+      >
+        <X className="h-4 w-4" />
+      </button>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pr-6 sm:pr-8">
         <div className="flex items-center gap-3.5">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-blue-600 text-white shadow-md">
             <Gamepad2 className="h-6 w-6" />

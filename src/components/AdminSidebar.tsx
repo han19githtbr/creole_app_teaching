@@ -26,6 +26,9 @@ const items = [
 export function AdminSidebar({ pendingAnswers = 0 }: { pendingAnswers?: number }) {
   const pathname = usePathname();
   const { language, switchLanguage } = useAppLanguage();
+  const visibleItems = items.filter(
+    (item) => item.href !== "/admin/contos" || language === "francais"
+  );
 
   return (
     <aside className="w-full shrink-0 sm:w-56">
@@ -52,7 +55,7 @@ export function AdminSidebar({ pendingAnswers = 0 }: { pendingAnswers?: number }
         </div>
       </div>
       <nav className="flex gap-2 overflow-x-auto sm:flex-col sm:gap-1 sm:overflow-visible pb-2 sm:pb-0">
-        {items.map(({ href, label, icon: Icon }) => {
+        {visibleItems.map(({ href, label, icon: Icon }) => {
           const active =
             href === "/admin" ? pathname === href : pathname?.startsWith(href);
           return (

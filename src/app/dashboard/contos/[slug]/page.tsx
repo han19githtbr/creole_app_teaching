@@ -14,6 +14,9 @@ export default async function ContoPage({ params }: { params: Promise<{ slug: st
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
 
+  const language = await getAppLanguage();
+  if (language !== "francais") redirect("/dashboard");
+
   const { slug } = await params;
   const tale = getTale(slug);
   if (!tale) notFound();

@@ -14,7 +14,8 @@ export default async function ContosPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
   const language = await getAppLanguage();
-  const isFr = language === "francais";
+  if (language !== "francais") redirect("/dashboard");
+  const isFr = true;
   const isAdmin = session.user.role === "admin";
   const { tales, publishedSlugs } = await getVisibleTales(isAdmin);
   const drafts = new Set(tales.filter((tale) => !publishedSlugs.has(tale.slug)).map((tale) => tale.slug));

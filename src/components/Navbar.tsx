@@ -35,6 +35,10 @@ export function Navbar() {
   const navLabel = (href: string, label: string) =>
     href === "/dashboard/jogo" && language === "francais" ? "Jogos" : label;
 
+  const visibleNavLinks = NAV_LINKS.filter(
+    (item) => item.href !== "/dashboard/contos" || language === "francais"
+  );
+
   const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname?.startsWith(href + "/"));
 
   const linkClass = (href: string) =>
@@ -63,7 +67,7 @@ export function Navbar() {
 
         {status === "authenticated" && (
           <nav className="hidden items-center gap-2.5 lg:gap-3.5 xl:gap-5 md:flex">
-            {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+            {visibleNavLinks.map(({ href, label, icon: Icon }) => (
               <Link key={href} href={href} className={linkClass(href)}>
                 <Icon className="h-4 w-4 shrink-0" /> {navLabel(href, label)}
               </Link>
@@ -132,7 +136,7 @@ export function Navbar() {
 
       {status === "authenticated" && mobileOpen && (
         <nav className="flex flex-col gap-1 border-t border-[var(--border)] bg-[var(--surface)] p-3 md:hidden shadow-lg">
-          {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+          {visibleNavLinks.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}

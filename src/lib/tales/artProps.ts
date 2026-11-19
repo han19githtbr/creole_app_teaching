@@ -1,5 +1,5 @@
 /** Cenário dos contos: árvores, celeiro, cerca, flores, etc. (origem = base no chão). */
-import { TAU, circle, ell, fillStroke, limb, rng, vgrad, rgrad, type Ctx } from "./artCore";
+import { TAU, circle, ell, fillStroke, limb, rng, vgrad, rgrad, lgrad, softContactShadow, type Ctx } from "./artCore";
 
 export interface PropOpts {
   variant?: number;
@@ -7,6 +7,9 @@ export interface PropOpts {
   seed?: number;
   /** progresso da cena 0→1 */
   p?: number;
+  anim?: string;
+  speed?: number;
+  dx?: number;
 }
 
 const OUT = "rgba(40,24,12,0.3)";
@@ -385,208 +388,392 @@ export function drawSign(ctx: Ctx) {
 
 export function drawCar(ctx: Ctx, t: number, o: PropOpts) {
   ctx.save();
-  // Sombra suave de contato no chão
-  ctx.fillStyle = "rgba(10, 15, 25, 0.45)";
-  ell(ctx, 0, 6, 270, 24);
-  ctx.fill();
-  ctx.fillStyle = "rgba(5, 8, 15, 0.6)";
-  ell(ctx, 0, 4, 210, 14);
-  ctx.fill();
 
   const broken = o.variant === 1;
+  const isDriving = o.anim === "drive" || Boolean(o.dx) || Boolean(o.speed);
+  const engineVib = broken ? 0 : Math.sin(t * 26) * 0.5;
+  const drivePitch = isDriving ? -0.012 : 0;
+  const wheelSpeed = isDriving ? t * 14 : 0;
 
-  // Carroceria principal (estilo clássico cupê britânico dos anos 60)
-  // Gradiente metálico de alta classe (Verde Racing / Esmeralda Profundo)
-  const bodyPaint = vgrad(ctx, -140, 0, [
-    [0, "#2a6845"],
-    [0.15, "#3d8e5f"],
-    [0.45, "#1e4f34"],
-    [0.85, "#133824"],
-    [1, "#0b2216"],
+  // 1. SOMBRAS DE CONTATO REALISTAS COM OCLUSÃO AMBIENTE
+  softContactShadow(ctx, 0, 8, 290, 28, 0.55);
+  softContactShadow(ctx, -150, 4, 56, 16, 0.65);
+  softContactShadow(ctx, 160, 4, 56, 16, 0.65);
+
+  // Vibração e física de suspensão
+  ctx.translate(0, -engineVib);
+  ctx.rotate(drivePitch);
+
+  // 2. FEIXE DE LUZ VOLUMÉTRICO DOS FARÓIS (QUANDO LIGADO / NÃO QUEBRADO)
+  if (!broken) {
+    ctx.save();
+    const beam = ctx.createRadialGradient(252, -34, 12, 520, -10, 320);
+    beam.addColorStop(0, "rgba(255, 250, 210, 0.42)");
+    beam.addColorStop(0.35, "rgba(255, 240, 180, 0.18)");
+    beam.addColorStop(0.75, "rgba(255, 230, 150, 0.05)");
+    beam.addColorStop(1, "rgba(255, 220, 120, 0)");
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(252, -34);
+    ctx.lineTo(680, -90);
+    ctx.lineTo(720, 50);
+    ctx.lineTo(252, -22);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 3. ESCAPAMENTO COM VAPOR REALISTA DE COMBUSTÃO
+  if (!broken) {
+    ctx.save();
+    ctx.translate(-262, -18);
+    // Ponteira dupla cromada
+    ctx.fillStyle = "#8a9aa8";
+    ctx.fillRect(-8, -4, 12, 7);
+    ctx.fillStyle = "#121820";
+    ctx.fillRect(-8, -3, 3, 5);
+    // Wisps de vapor pulsando suavemente com o ritmo dos pistões
+    for (let i = 0; i < 3; i++) {
+      const ph = (t * 1.8 + i * 0.33) % 1;
+      const vx = -ph * 90 - Math.sin(ph * 3 + i) * 12;
+      const vy = -ph * 24 + Math.sin(t * 3 + i) * 6;
+      const r = 6 + ph * 22;
+      const a = (1 - ph) * 0.28;
+      ctx.fillStyle = `rgba(220, 230, 240, ${a})`;
+      circle(ctx, vx, vy, r);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Cores da pintura automotiva (Britânico Racing Green de alta classe)
+  const bodyPaint = vgrad(ctx, -145, 0, [
+    [0, "#2a6b46"],
+    [0.12, "#3f9a64"],
+    [0.4, "#245e3c"],
+    [0.78, "#143d26"],
+    [1, "#0a2416"],
   ]);
-  const highlight = "rgba(255, 255, 255, 0.35)";
-  const chrome = vgrad(ctx, -20, 0, [
-    [0, "#f5f9fc"],
-    [0.4, "#cbd7e3"],
-    [0.7, "#6b8094"],
+  const chrome = vgrad(ctx, -22, 0, [
+    [0, "#ffffff"],
+    [0.35, "#dae5ef"],
+    [0.65, "#778d9f"],
     [1, "#3c4d5c"],
   ]);
 
-  // Cabine e vidros (curva aerodinâmica)
+  // 4. CABINE, VIDROS AERODINÂMICOS E INTERIOR EM COURO
   ctx.beginPath();
-  ctx.moveTo(-160, -60);
-  ctx.quadraticCurveTo(-110, -135, 10, -140);
-  ctx.quadraticCurveTo(110, -140, 160, -65);
+  ctx.moveTo(-165, -60);
+  ctx.quadraticCurveTo(-112, -138, 12, -142);
+  ctx.quadraticCurveTo(112, -142, 162, -65);
   ctx.closePath();
-  fillStroke(ctx, vgrad(ctx, -140, -60, [[0, "#1f3344"], [0.6, "#2e4860"], [1, "#182838"]]), "rgba(200, 215, 230, 0.8)", 3);
+  fillStroke(ctx, vgrad(ctx, -142, -60, [[0, "#192836"], [0.55, "#273d52"], [1, "#14202c"]]), "rgba(210, 225, 240, 0.85)", 3);
 
-  // Reflexo do céu no vidro curvo
+  // Interior: bancos concha em couro caramelo nobre e volante clássico
   ctx.save();
   ctx.clip();
+  // Encosto do banco traseiro
+  ell(ctx, -45, -92, 19, 24, -0.05);
+  fillStroke(ctx, "#6d3b1b", "#3d1e0d", 1.5);
+  // Banco dianteiro e encosto de cabeça
+  ell(ctx, 36, -92, 18, 25, -0.05);
+  fillStroke(ctx, "#7d4420", "#3d1e0d", 1.5);
+  circle(ctx, 36, -118, 9);
+  fillStroke(ctx, "#8a4d25", "#3d1e0d", 1.2);
+  // Volante clássico esportivo com aro de madeira e 3 raios perfurados
+  ctx.save();
+  ctx.translate(68, -96);
+  ctx.rotate(-0.25);
+  ell(ctx, 0, 0, 5, 20);
+  ctx.strokeStyle = "#8f4e24";
+  ctx.lineWidth = 3.5;
+  ctx.stroke();
+  ctx.strokeStyle = "#d6e2ed";
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.moveTo(-120, -135);
-  ctx.lineTo(-40, -135);
-  ctx.lineTo(-110, -65);
-  ctx.lineTo(-150, -65);
-  ctx.closePath();
+  ctx.moveTo(0, -18);
+  ctx.lineTo(0, 18);
+  ctx.stroke();
+  ctx.restore();
+
+  // Reflexos do céu e do horizonte nos vidros curvos
   ctx.fillStyle = "rgba(255, 255, 255, 0.28)";
-  ctx.fill();
-
   ctx.beginPath();
-  ctx.moveTo(10, -138);
-  ctx.lineTo(80, -138);
-  ctx.lineTo(130, -65);
-  ctx.lineTo(70, -65);
+  ctx.moveTo(-125, -138);
+  ctx.lineTo(-45, -138);
+  ctx.lineTo(-115, -65);
+  ctx.lineTo(-155, -65);
   ctx.closePath();
-  ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
   ctx.fill();
 
-  // Coluna central da janela (chrome)
+  ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+  ctx.beginPath();
+  ctx.moveTo(12, -140);
+  ctx.lineTo(82, -140);
+  ctx.lineTo(132, -65);
+  ctx.lineTo(72, -65);
+  ctx.closePath();
+  ctx.fill();
+
+  // Coluna central da janela em cromo maciço
   ctx.strokeStyle = "#cbd7e3";
   ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.moveTo(12, -140);
+  ctx.moveTo(12, -142);
   ctx.lineTo(20, -60);
   ctx.stroke();
-
-  // Silhueta do volante e encostos de couro
-  ctx.fillStyle = "rgba(20, 12, 8, 0.75)";
-  ell(ctx, 35, -88, 16, 16);
-  ctx.fill();
-  ell(ctx, -40, -90, 18, 22);
-  ctx.fill();
+  // Espelho retrovisor interno
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(8, -135, 10, 4);
   ctx.restore();
 
-  // Carroceria inferior e para-lamas esculpidos
+  // 5. CARROCERIA ESCULPIDA E CURVAS AERODINÂMICAS
   ctx.beginPath();
-  ctx.moveTo(-250, -42); // traseira
-  ctx.quadraticCurveTo(-240, -78, -170, -72); // curva traseira
+  ctx.moveTo(-252, -42); // traseira
+  ctx.quadraticCurveTo(-242, -78, -172, -72); // ombro traseiro
   ctx.quadraticCurveTo(-50, -64, 40, -66); // linha de cintura
   if (broken) {
-    // Capô ligeiramente erguido / quebrado
-    ctx.lineTo(150, -84);
-    ctx.quadraticCurveTo(225, -80, 248, -48);
+    // Capô erguido com vareta metálica de sustentação
+    ctx.lineTo(145, -88);
+    ctx.quadraticCurveTo(225, -86, 250, -52);
   } else {
-    ctx.quadraticCurveTo(180, -68, 250, -42); // capô longo dianteiro
+    ctx.quadraticCurveTo(180, -68, 252, -42); // capô longo dianteiro
   }
-  ctx.quadraticCurveTo(262, -25, 256, -15); // bico dianteiro
-  ctx.lineTo(205, -15); // cava da roda dianteira
-  ctx.arc(160, -15, 46, 0, Math.PI, true);
-  ctx.lineTo(-100, -15); // saia lateral
-  ctx.arc(-150, -15, 46, 0, Math.PI, true);
-  ctx.lineTo(-240, -15); // cava da roda traseira
-  ctx.quadraticCurveTo(-258, -25, -250, -42);
+  ctx.quadraticCurveTo(266, -25, 258, -15); // nariz dianteiro
+  ctx.lineTo(208, -15); // início da caixa de roda dianteira
+  ctx.arc(160, -15, 48, 0, Math.PI, true); // arco dianteiro
+  ctx.lineTo(-98, -15); // saia lateral inferior
+  ctx.arc(-150, -15, 48, 0, Math.PI, true); // arco traseiro
+  ctx.lineTo(-242, -15); // traseira inferior
+  ctx.quadraticCurveTo(-260, -25, -252, -42);
   ctx.closePath();
-  fillStroke(ctx, bodyPaint, "rgba(8, 20, 14, 0.7)", 2.5);
+  fillStroke(ctx, bodyPaint, "rgba(6, 18, 12, 0.8)", 2.5);
 
-  // Linha de reflexo especular na lataria (brilho metálico automotivo)
-  ctx.strokeStyle = highlight;
-  ctx.lineWidth = 3.5;
+  // Se o capô estiver aberto por quebra (variant 1), mostrar o motor detalhado por baixo!
+  if (broken) {
+    ctx.save();
+    // Vareta metálica de suporte do capô
+    ctx.strokeStyle = "#cbd7e3";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(158, -44);
+    ctx.lineTo(185, -84);
+    ctx.stroke();
+    // Bloco do motor com aletas de refrigeração e cabeçote em alumínio
+    ctx.fillStyle = "#2a3440";
+    ctx.fillRect(160, -58, 62, 34);
+    ctx.fillStyle = "#d0d8e0";
+    ctx.fillRect(162, -62, 58, 6); // tampa de válvulas polida
+    // Cabos de vela vermelhos
+    ctx.strokeStyle = "#e53935";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.moveTo(168 + i * 12, -62);
+      ctx.lineTo(172 + i * 12, -48);
+      ctx.stroke();
+    }
+    // Tampa do radiador em latão polido
+    circle(ctx, 230, -46, 5);
+    ctx.fillStyle = "#e0a826";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 6. DETALHES DE ALTA FIDELIDADE: BRILHO ESPECULAR, FRISOS E MAÇANETAS
+  // Linha de reflexo especular na lataria (brilho metálico automotivo com verniz)
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
+  ctx.lineWidth = 3.8;
   ctx.lineCap = "round";
   ctx.beginPath();
-  ctx.moveTo(-235, -60);
-  ctx.quadraticCurveTo(-60, -52, 235, -50);
+  ctx.moveTo(-238, -60);
+  ctx.quadraticCurveTo(-60, -52, 238, -50);
   ctx.stroke();
 
-  // Friso lateral cromado
+  // Friso lateral cromado ao longo da porta
   ctx.strokeStyle = "#d6e2ed";
   ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.moveTo(-240, -32);
-  ctx.lineTo(245, -30);
+  ctx.moveTo(-242, -32);
+  ctx.lineTo(248, -30);
   ctx.stroke();
 
-  // Farol clássico redondo cromado
+  // Maçaneta cromada da porta com rebaixo e fechadura
   ctx.save();
-  ctx.translate(244, -36);
-  ell(ctx, 0, 0, 11, 14);
+  ctx.translate(-24, -46);
+  ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+  ell(ctx, 0, 2, 14, 5);
+  ctx.fill();
+  fillStroke(ctx, chrome, "#506475", 1);
+  ell(ctx, 0, 0, 12, 3);
+  ctx.fill();
+  circle(ctx, -7, 0, 1.4);
+  ctx.fillStyle = "#1e293b";
+  ctx.fill();
+  ctx.restore();
+
+  // Espelho retrovisor cromado clássico na porta dianteira
+  ctx.save();
+  ctx.translate(14, -68);
+  ctx.strokeStyle = "#cbd7e3";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-4, -12);
+  ctx.stroke();
+  circle(ctx, -5, -14, 7);
+  fillStroke(ctx, chrome, "#475569", 1.5);
+  circle(ctx, -5, -14, 4.5);
+  ctx.fillStyle = "rgba(240, 248, 255, 0.85)";
+  ctx.fill();
+  ctx.restore();
+
+  // Farol clássico redondo cromado com ótica de vidro texturizado
+  ctx.save();
+  ctx.translate(248, -36);
+  ell(ctx, 0, 0, 12, 16);
   fillStroke(ctx, chrome, "#506475", 1.5);
-  ell(ctx, -1, 0, 8, 11);
-  fillStroke(ctx, rgrad(ctx, -2, -2, 1, 9, [[0, "#ffffff"], [0.5, "#fff2cc"], [1, "#d9aa36"]]), null);
-  // Brilho do farol
-  ctx.fillStyle = "#ffffff";
+  ell(ctx, -1, 0, 9, 13);
+  fillStroke(ctx, rgrad(ctx, -2, -2, 1, 10, [[0, "#ffffff"], [0.6, "#fff4cc"], [1, "#d4a22b"]]), null);
+  // Estrias de dispersão óptica do vidro do farol
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+  ctx.lineWidth = 1;
+  for (let fx = -6; fx <= 6; fx += 3) {
+    ctx.beginPath();
+    ctx.moveTo(fx, -10);
+    ctx.lineTo(fx, 10);
+    ctx.stroke();
+  }
   circle(ctx, -2, -3, 3);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+  ctx.restore();
+
+  // Lanterna traseira clássica rubi com aro cromado
+  ctx.save();
+  ctx.translate(-254, -38);
+  ell(ctx, 0, 0, 6, 10);
+  fillStroke(ctx, chrome, "#425566", 1.2);
+  ell(ctx, 1, 0, 4, 8);
+  fillStroke(ctx, rgrad(ctx, 0, -1, 0.5, 6, [[0, "#ff6b6b"], [0.6, "#d32f2f"], [1, "#801212"]]), null);
+  circle(ctx, 1, -2, 1.5);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
   ctx.fill();
   ctx.restore();
 
   // Para-choques cromados envolventes
   // Dianteiro
   ctx.beginPath();
-  ctx.moveTo(230, -16);
-  ctx.quadraticCurveTo(260, -18, 264, -28);
-  ctx.lineTo(260, -30);
-  ctx.quadraticCurveTo(256, -22, 228, -20);
+  ctx.moveTo(234, -16);
+  ctx.quadraticCurveTo(264, -18, 268, -28);
+  ctx.lineTo(264, -30);
+  ctx.quadraticCurveTo(260, -22, 232, -20);
   ctx.closePath();
   fillStroke(ctx, chrome, "#425566", 2);
 
   // Traseiro
   ctx.beginPath();
-  ctx.moveTo(-232, -18);
-  ctx.quadraticCurveTo(-260, -20, -262, -32);
-  ctx.lineTo(-258, -34);
-  ctx.quadraticCurveTo(-256, -24, -230, -22);
+  ctx.moveTo(-236, -18);
+  ctx.quadraticCurveTo(-264, -20, -266, -32);
+  ctx.lineTo(-262, -34);
+  ctx.quadraticCurveTo(-260, -24, -234, -22);
   ctx.closePath();
   fillStroke(ctx, chrome, "#425566", 2);
 
-  // Grade frontal cromada
+  // Grade frontal cromada com fendas verticais
   ctx.fillStyle = "#111820";
-  ctx.fillRect(238, -25, 6, 12);
+  ctx.fillRect(240, -26, 7, 14);
   ctx.strokeStyle = "#cbd7e3";
   ctx.lineWidth = 1.5;
-  for (let gy = -24; gy <= -14; gy += 3) {
+  for (let gy = -25; gy <= -13; gy += 3.2) {
     ctx.beginPath();
-    ctx.moveTo(238, gy);
-    ctx.lineTo(244, gy);
+    ctx.moveTo(240, gy);
+    ctx.lineTo(247, gy);
     ctx.stroke();
   }
 
-  // Rodas com pneus de borracha realista e aros raiados clássicos
+  // 7. RODAS COM PNEUS DE BORRACHA VULCANIZADA, FRISOS E AROS RAIADOS GIRATÓRIOS
   const drawWheel = (wx: number) => {
     ctx.save();
     ctx.translate(wx, -15);
-    // Pneu preto vulcanizado com sombreamento
-    circle(ctx, 0, 0, 42);
-    fillStroke(ctx, vgrad(ctx, -42, 42, [[0, "#262b33"], [0.5, "#14171c"], [1, "#0a0c0f"]]), "#050608", 2);
-    // Roda interna (banda branca clássica sutil)
-    circle(ctx, 0, 0, 31);
-    ctx.strokeStyle = "#e8ecef";
+
+    // Pneu vulcanizado preto profundo com sulcos e sombra de caixa de roda
+    circle(ctx, 0, 0, 43);
+    fillStroke(ctx, vgrad(ctx, -43, 43, [[0, "#2a3038"], [0.5, "#16191f"], [1, "#0a0c0f"]]), "#06070a", 2);
+
+    // Ranhuras da banda de rodagem (treads) nas bordas
+    ctx.strokeStyle = "rgba(5, 7, 10, 0.6)";
     ctx.lineWidth = 2.5;
-    ctx.stroke();
-    // Aro metálico cromado
-    circle(ctx, 0, 0, 27);
-    fillStroke(ctx, chrome, "#425566", 1.5);
-    // Raios de arame cromado
-    ctx.strokeStyle = "rgba(240, 245, 250, 0.75)";
-    ctx.lineWidth = 1.2;
-    for (let a = 0; a < Math.PI; a += Math.PI / 8) {
+    for (let a = 0; a < TAU; a += TAU / 16) {
+      const rot = a + wheelSpeed;
       ctx.beginPath();
-      ctx.moveTo(-23 * Math.cos(a), -23 * Math.sin(a));
-      ctx.lineTo(23 * Math.cos(a), 23 * Math.sin(a));
+      ctx.moveTo(40 * Math.cos(rot), 40 * Math.sin(rot));
+      ctx.lineTo(43 * Math.cos(rot), 43 * Math.sin(rot));
       ctx.stroke();
     }
-    // Cubo central da roda com borboleta "knock-off spinner"
+
+    // Banda branca clássica elegante (estilo vintage dos anos 60)
+    circle(ctx, 0, 0, 32);
+    ctx.strokeStyle = "#eff2f5";
+    ctx.lineWidth = 2.8;
+    ctx.stroke();
+
+    // Aro metálico cromado externo
+    circle(ctx, 0, 0, 28);
+    fillStroke(ctx, chrome, "#425566", 1.5);
+
+    // Disco de freio e pinça visíveis atrás dos raios
+    circle(ctx, 0, 0, 20);
+    ctx.fillStyle = "#475569";
+    ctx.fill();
+    ctx.fillStyle = "#c53030"; // pinça de freio esportiva vermelha
+    ell(ctx, 14, -4, 5, 8, 0.2);
+    ctx.fill();
+
+    // Raios de arame cromado com rotação dinâmica ao andar/dirigir
+    ctx.save();
+    ctx.rotate(wheelSpeed);
+    ctx.strokeStyle = "rgba(245, 250, 255, 0.85)";
+    ctx.lineWidth = 1.3;
+    const spokeCount = 16;
+    for (let i = 0; i < spokeCount; i++) {
+      const a = (i / spokeCount) * TAU;
+      ctx.beginPath();
+      ctx.moveTo(6 * Math.cos(a + 0.3), 6 * Math.sin(a + 0.3));
+      ctx.lineTo(26 * Math.cos(a), 26 * Math.sin(a));
+      ctx.stroke();
+    }
+
+    // Cubo central cromado da roda com borboleta "knock-off spinner" de 2 orelhas
     circle(ctx, 0, 0, 9);
     fillStroke(ctx, rgrad(ctx, -2, -2, 1, 9, [[0, "#ffffff"], [0.7, "#cbd7e3"], [1, "#506475"]]), "#22313f", 1);
-    ctx.fillStyle = "#e8edf2";
-    ell(ctx, 0, 0, 14, 4, 0.4);
+    ctx.fillStyle = "#f1f5f9";
+    ell(ctx, 0, 0, 15, 4.5, 0.35);
     ctx.fill();
-    ctx.restore();
+    ctx.restore(); // fim da rotação dos raios
+
+    ctx.restore(); // fim da roda
   };
 
   drawWheel(-150);
   drawWheel(160);
 
-  // Se o motor quebrou (variant 1): fumaça/vapor saindo do capô aberto
+  // 8. SE O MOTOR QUEBROU (VARIANT 1): PLUMAS REALISTAS DE VAPOR E FUMAÇA
   if (broken) {
     ctx.save();
-    ctx.translate(180, -78);
-    for (let i = 0; i < 4; i++) {
-      const ph = (t * 0.8 + i * 0.25) % 1;
-      const sx = Math.sin(ph * 4 + i) * 22 + i * 8;
-      const sy = -ph * 130;
-      const r = 14 + ph * 32;
-      const a = Math.sin(ph * Math.PI) * 0.45;
-      ctx.fillStyle = `rgba(230, 240, 245, ${a})`;
+    ctx.translate(182, -82);
+    for (let i = 0; i < 5; i++) {
+      const ph = (t * 0.75 + i * 0.2) % 1;
+      const sx = Math.sin(ph * 5 + i * 1.7) * 28 + i * 10;
+      const sy = -ph * 150;
+      const r = 12 + ph * 38;
+      const a = Math.sin(ph * Math.PI) * 0.42;
+      const g = rgrad(ctx, sx, sy, 0, r, [
+        [0, `rgba(255, 255, 255, ${a})`],
+        [0.6, `rgba(235, 242, 248, ${a * 0.6})`],
+        [1, "rgba(235, 242, 248, 0)"],
+      ]);
+      ctx.fillStyle = g;
       circle(ctx, sx, sy, r);
       ctx.fill();
     }

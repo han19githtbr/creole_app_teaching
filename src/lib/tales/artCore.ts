@@ -48,10 +48,32 @@ export function vgrad(ctx: Ctx, y0: number, y1: number, stops: [number, string][
   return g;
 }
 
+export function lgrad(ctx: Ctx, x0: number, y0: number, x1: number, y1: number, stops: [number, string][]) {
+  const g = ctx.createLinearGradient(x0, y0, x1, y1);
+  stops.forEach(([o, c]) => g.addColorStop(o, c));
+  return g;
+}
+
 export function rgrad(ctx: Ctx, x: number, y: number, r0: number, r1: number, stops: [number, string][]) {
   const g = ctx.createRadialGradient(x, y, r0, x, y, r1);
   stops.forEach(([o, c]) => g.addColorStop(o, c));
   return g;
+}
+
+/** Sombra de contato no chão com oclusão ambiente realista e penumbra suave */
+export function softContactShadow(ctx: Ctx, x: number, y: number, rx: number, ry: number, maxAlpha = 0.45) {
+  ctx.save();
+  const g = rgrad(ctx, x, y, 0, rx, [
+    [0, `rgba(12, 16, 22, ${maxAlpha})`],
+    [0.35, `rgba(18, 22, 28, ${maxAlpha * 0.7})`],
+    [0.75, `rgba(24, 28, 34, ${maxAlpha * 0.25})`],
+    [1, "rgba(24, 28, 34, 0)"],
+  ]);
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(x, y, Math.max(0.01, rx), Math.max(0.01, ry), 0, 0, TAU);
+  ctx.fill();
+  ctx.restore();
 }
 
 /** Traço arredondado entre dois pontos (patas, pernas, braços). */

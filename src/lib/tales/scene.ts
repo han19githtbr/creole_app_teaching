@@ -4,7 +4,7 @@
  */
 import {
   SKY, TAU, circle, clamp, drawCloud, drawGround, drawMoon, drawRidge, drawSky, drawSun, easeInOut, ell, lerp,
-  rgrad, rng, vgrad, type Ctx, type Look,
+  rgrad, rng, vgrad, softContactShadow, type Ctx, type Look,
 } from "./artCore";
 import { ACTORS, drawCheese } from "./artAnimals";
 import { PROPS } from "./artProps";
@@ -204,11 +204,16 @@ export function renderSceneArt(ctx: Ctx, scene: SceneDef, t: number, p: number) 
       draw: () => {
         ctx.save();
         ctx.translate(ax - cam.x * depth, baseY);
-        // sombra no chão
+        // Sombra de contato realista e difusa
         if (!air) {
-          ctx.fillStyle = "rgba(20,30,10,0.26)";
-          ell(ctx, 0, 6, 110 * s, 16 * s);
-          ctx.fill();
+          softContactShadow(ctx, 0, 4, 115 * s, 18 * s, 0.42);
+        } else {
+          // Sombra projetada no solo se voando sobre a terra
+          const groundY = rowY(horizon, row) - baseY;
+          if (groundY > 0 && groundY < 900) {
+            const atten = Math.max(0, 1 - groundY / 900);
+            softContactShadow(ctx, 0, groundY, (120 + groundY * 0.15) * s, (24 + groundY * 0.05) * s, 0.22 * atten);
+          }
         }
         ctx.scale(flip ? -s : s, s);
         fn(ctx, t + (actor.x % 7) * 0.31, { anim: actor.anim, speed: actor.speed, variant: actor.variant, carry: actor.carry, p });

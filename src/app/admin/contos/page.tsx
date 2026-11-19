@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getAppLanguage } from "@/lib/language";
 import { TALES } from "@/lib/tales/tales";
 import { planTale } from "@/lib/tales/timeline";
 import { getTaleStatuses } from "@/lib/taleAccess";
@@ -12,6 +14,8 @@ function minutes(seconds: number) {
 }
 
 export default async function AdminContosPage() {
+  const language = await getAppLanguage();
+  if (language !== "francais") redirect("/admin");
   const statuses = new Map((await getTaleStatuses()).map((status) => [status.slug, status]));
   const rows: TaleRow[] = TALES.map((tale) => ({
     tale,

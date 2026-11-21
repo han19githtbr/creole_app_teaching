@@ -18,7 +18,7 @@ const MILESTONES: Milestone[] = [
 export function currentMilestone(completed: number, total: number): Milestone | null {
   if (completed <= 0) return null;
   if (total > 0 && completed >= total) {
-    return { at: total, title: "Lição finalizada", kreyol: "Felisitasyon!", emoji: "🏆" };
+    return { at: total, title: "Curso concluído", kreyol: "Felisitasyon!", emoji: "🏆" };
   }
   let found: Milestone | null = null;
   for (const m of MILESTONES) if (completed >= m.at) found = m;

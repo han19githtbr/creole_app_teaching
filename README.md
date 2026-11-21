@@ -23,6 +23,7 @@ Aplicação web em Next.js para ensinar Kreyòl Ayisyen. Reúne área do aluno, 
 - [Pagamento real com Stripe](#pagamento-real-com-stripe)
 - [Geração de imagens por IA (Controle Exato de Quantidade)](#geração-de-imagens-por-ia)
 - [Cores, Animações e Legibilidade](#cores-e-legibilidade)
+- [Ajustes de Qualidade, UX e Gráficos da Monetização](#ajustes-de-qualidade-ux-e-gráficos-da-monetização)
 - [Funcionalidades](#funcionalidades)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Configuração local](#configuração-local)
@@ -1095,6 +1096,38 @@ O sistema visual e de estilos (`src/app/globals.css`) foi atualizado para propor
   - `@keyframes living-float`: flutuação aquática e aérea suave para nuvens, barcos e lanternas.
   - `@keyframes particle-rise` e `particle-twinkle`: partículas reativas (brilhos, notas musicais, folhas, zzz) emanando dos elementos vivos.
   - Classes utilitárias Tailwind complementares (`.animate-living-pulse`, `.animate-living-fly`, etc.) para uso imediato em componentes React.
+
+## Ajustes de Qualidade, UX e Gráficos da Monetização
+
+Com o objetivo de posicionar o app como uma **plataforma séria de ensino de idiomas de padrão comercial e monetizável**, foram implementados refinamentos abrangentes na comunicação textual, no design visual dos gráficos e na experiência do usuário para eliminar qualquer dúvida ou atrito:
+
+### 1. Revisão e Correção Gramatical em Todo o Conteúdo
+- **Norma-padrão e tom pedagógico:** Toda a interface em Português do Brasil foi harmonizada com linguagem clara, respeitosa e profissional.
+- **Concordância e precisão de termos:**
+  - Substituição de termos coloquiais ou ambíguos por formulações elegantes (ex.: *"{nome} convidou você para um duelo"* em vez de *"te desafiou"*; *"Para qual objeto a seta vermelha está apontando?"* em vez de *"Que objeto a seta aponta?"*).
+  - Padronização de mensagens de feedback e estados do jogo (ex.: *"Você tem mais uma chance"*, *"Confira a resposta correta!"*, *"Partidas concluídas"* no lugar de *"jogos jogados"*, e *"Todas as 7 estações foram concluídas com sucesso"*).
+  - Clareza nas dicas interativas: *"Deseja uma ajuda adicional? Revelamos o artigo e a primeira letra do termo em francês."* e *"Voltar ao jogo (o cronômetro continuará)"*.
+  - No painel administrativo de imagens com IA: atualização do status para *"Pendentes de Aprovação"* (em vez de *"Para aprovar"*).
+
+### 2. Layout, Gráficos e Visualizações no Painel de Monetização (`/admin/monetizacao`)
+- **Gráfico de Segmentação da Base de Alunos:** Barra visual proporcional segmentada exibindo em tempo real a divisão dos estudantes em 4 grupos com cartões de contagem e porcentagem:
+  - 🟢 **Com Saldo Pago** (alunos que compraram minutos no Stripe).
+  - 🟡 **Em Degustação** (novos alunos nos 3 dias iniciais gratuitos).
+  - 🟣 **VIP / Isentos** (alunos sorteados ou liberados manualmente pelo administrador).
+  - ⚪ **Sem Saldo Ativo** (alunos com período inicial esgotado).
+- **Gráfico Comparativo de Engajamento e Preferência:** Comparativo visual de barras proporcionais entre as duas experiências monetizadas:
+  - *Curiosidades Vivas Narradas* (horas acumuladas, sessões assistidas e média de minutos por sessão).
+  - *Jogos Educativos (C'est quoi ? & Trilha)* (horas jogadas, partidas concluídas e tempo médio por partida).
+- **Métricas e Fórmulas em Tempo Real:** Exibição clara das taxas de equivalência (ex.: 2 créditos × 2 min = 4 minutos da cota por curiosidade narrada).
+
+### 3. Otimização da Experiência do Usuário (Transparência Total)
+- **Desmistificação da Cobrança de Acesso:** Em todos os pontos de contato (`MonetizationBar`, `StoryMonetizationWrapper`, `GameMonetizationWrapper` e `RechargeModal`), foi adicionada a explicação clara de que **as lições teóricas de gramática, o vocabulário, as postagens e os comunicados do professor são 100% gratuitos e livres**. O consumo de minutos restringe-se exclusivamente aos áudios nativos das histórias e aos jogos interativos.
+- **Garantias no Modal de Recarga (`RechargeModal`):**
+  - Informação de que a recarga é avulsa (sem renovação automática nem assinaturas ocultas).
+  - Lembrete da pausa inteligente (o cronômetro pausa sozinho ao minimizar ou pausar o áudio).
+  - Selo de pagamento seguro via Stripe com criptografia de ponta a ponta.
+- **Marcadores de Checkpoints no Progresso do Aluno (`ProgressCard`):** Adição de marcadores visuais luminosos (25%, 50%, 75% e 100%) na barra de progresso da página principal, permitindo ao estudante visualizar claramente as etapas conquistadas em direção à conclusão do módulo.
+- **Acessibilidade e Contraste:** Melhoria no contraste visual do botão de desafio de palavras nos cards de postagem (`PostCard`), assegurando legibilidade perfeita em qualquer modo (claro/escuro).
 
 ## Funcionalidades
 

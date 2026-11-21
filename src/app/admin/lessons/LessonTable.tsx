@@ -63,7 +63,7 @@ export function LessonTable({ lessons }: { lessons: LessonRow[] }) {
             <th className="px-4 py-3">#</th>
             <th className="px-4 py-3">Título</th>
             <th className="px-4 py-3">Categoria</th>
-            <th className="px-4 py-3">Painel dos alunos</th>
+            <th className="px-4 py-3">Visibilidade para Alunos</th>
             <th className="px-4 py-3 text-right">Ações</th>
           </tr>
         </thead>
@@ -82,7 +82,7 @@ export function LessonTable({ lessons }: { lessons: LessonRow[] }) {
                   {visible ? (
                     <Badge variant="success" className="whitespace-nowrap">Publicada</Badge>
                   ) : (
-                    <Badge variant="outline" className="whitespace-nowrap">Rascunho (oculta)</Badge>
+                    <Badge variant="outline" className="whitespace-nowrap">Rascunho (Oculta)</Badge>
                   )}
                 </td>
                 <td className="px-4 py-3">
@@ -90,13 +90,13 @@ export function LessonTable({ lessons }: { lessons: LessonRow[] }) {
                     <Button
                       size="sm"
                       variant={visible ? "outline" : "primary"}
-                      title={visible ? "Retirar do painel dos alunos" : "Publicar para os alunos"}
+                      title={visible ? "Ocultar do painel dos alunos" : "Publicar para os alunos"}
                       disabled={togglingId === lesson._id}
                       onClick={() => handleTogglePublish(lesson._id, visible)}
                     >
                       {visible ? (
                         <>
-                          <EyeOff className="h-3.5 w-3.5" /> Retirar
+                          <EyeOff className="h-3.5 w-3.5" /> Ocultar
                         </>
                       ) : (
                         <>

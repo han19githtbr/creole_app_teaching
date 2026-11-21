@@ -113,7 +113,7 @@ export function TrailAnswerDock({
               {roundState === "retry" ? (
                 <span className="text-amber-300">Quase! Você tem mais uma chance 👀</span>
               ) : (
-                <>Que objeto a <span className="text-red-400">seta vermelha</span> aponta?</>
+                <>Para qual objeto a <span className="text-red-400">seta vermelha</span> está apontando?</>
               )}
             </span>
             {bonusText && <span className="trail-score-pop shrink-0 font-black text-amber-300">{bonusText}</span>}
@@ -272,7 +272,7 @@ export function TrailSummitOverlay({
         <div className="mt-2 text-4xl">🏔️🏆</div>
         <h2 className="mt-1 text-xl font-black">Você chegou à cabana!</h2>
         <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-slate-300">
-          Félicitations ! Os 7 níveis do tema <strong className="text-white">{theme}</strong> estão completos.
+          Félicitations ! Todas as 7 estações do tema <strong className="text-white">{theme}</strong> foram concluídas com sucesso.
         </p>
         <div className="mt-3 grid grid-cols-3 gap-2">
           <div className="rounded-xl border border-white/15 bg-white/10 p-2">

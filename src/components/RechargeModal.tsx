@@ -100,7 +100,7 @@ export function RechargeModal({
               Recarregar Minutos de Aprendizado
             </h2>
             <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-              Acesso exclusivo às Curiosidades Vivas e ao Jogo C&apos;est quoi ? com liberdade total.
+              Acesso ilimitado às Curiosidades Narradas e aos Jogos Interativos da plataforma.
             </p>
           </div>
           <button
@@ -119,8 +119,28 @@ export function RechargeModal({
           </div>
         )}
 
+        {/* Benefícios Claros & Garantia de Não-Cobrança Indevida */}
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-xl bg-amber-500/5 border border-amber-500/20 p-3 text-[11px] text-[var(--text-secondary)]">
+          <div className="flex items-center gap-1.5">
+            <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+            <span>Recarga avulsa (sem renovação automática)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+            <span>Pausa inteligente ao sair da aba ou áudio</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+            <span>Acesso completo às Curiosidades e Jogos</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+            <span>Lições e gramática continuam sempre livres</span>
+          </div>
+        </div>
+
         {/* Seleção de Pacotes */}
-        <div className="mt-5 space-y-4">
+        <div className="mt-4 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {packages.map((pkg) => {
               const isSelected = selectedPkg?.id === pkg.id;
@@ -171,7 +191,7 @@ export function RechargeModal({
                 <div className="flex justify-between">
                   <span>Bônus especial:</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                    {selectedPkg.bonusStories} curiosidades livres da cota
+                    +{selectedPkg.bonusStories} curiosidades extras sem consumo de saldo
                   </span>
                 </div>
               )}
@@ -187,14 +207,14 @@ export function RechargeModal({
             <Button
               onClick={handleStripeCheckout}
               disabled={loadingStripe || !selectedPkg}
-              className="w-full bg-[#635bff] hover:bg-[#534be0] text-white font-bold h-10 shadow-sm"
+              className="w-full bg-[#635bff] hover:bg-[#534be0] text-white font-bold h-10 shadow-sm transition-all"
             >
               <CreditCard className="h-4 w-4 mr-2" />
-              {loadingStripe ? "Conectando ao Stripe..." : "Pagar com Stripe (Cartão de Crédito)"}
+              {loadingStripe ? "Conectando ao Stripe seguro..." : "Pagar com Cartão (Stripe Checkout)"}
             </Button>
-            <p className="flex items-center justify-center gap-1 text-[10px] text-[var(--text-muted)]">
-              <ShieldCheck className="h-3 w-3" />
-              Pagamento seguro processado pelo Stripe. Seus dados de cartão não passam pelo nosso servidor.
+            <p className="flex items-center justify-center gap-1 text-[10px] text-[var(--text-muted)] text-center">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+              Pagamento 100% seguro com criptografia de ponta a ponta. Seus dados de cartão não passam pelo nosso servidor.
             </p>
 
             {SHOW_DEV_INSTANT_UNLOCK && (

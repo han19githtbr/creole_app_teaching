@@ -19,20 +19,20 @@ const COPY: Record<
 > = {
   kreyol: {
     title: "Aprenda Crioulo Haitiano",
-    text: "Curso de crioulo ao redor de temas como : comunicação, gramática, turismo, cultura, religião e vários outros — com lições estruturadas, postagens do professor e aulas ao vivo.",
+    text: "Curso completo de Crioulo Haitiano estruturado em torno de temas essenciais: comunicação, gramática, conversação, turismo, cultura e expressões do cotidiano — com lições práticas, postagens do professor e aulas ao vivo.",
     features: [
-      { icon: "book", title: "26 lições completas", description: "Gramática, vocabulário, diálogos, cultura e referência ." },
-      { icon: "radio", title: "Aulas ao vivo", description: "Participe de aulas em tempo real com o professor e chat ao vivo." },
-      { icon: "grad", title: "Exercícios e gabarito", description: "Banco de exercícios em estilos diferentes, com gabarito comentado para praticar no seu ritmo." },
+      { icon: "book", title: "26 lições completas", description: "Gramática detalhada, vocabulário temático, diálogos autênticos, aspectos culturais e materiais de referência." },
+      { icon: "radio", title: "Aulas ao vivo", description: "Participe de aulas interativas em tempo real com o professor, com tira-dúvidas e chat integrado." },
+      { icon: "grad", title: "Exercícios e gabarito", description: "Banco diversificado de exercícios com gabarito comentado para você praticar e evoluir no seu próprio ritmo." },
     ],
   },
   francais: {
     title: "Aprenda Francês (FLE)",
-    text: "Curso de francês avançado (B2 → C2) baseado no Manuel Complet de Français: subjuntivo, concordância, falsos amigos, registro formal, homófonos, expressões idiomáticas e preparação para DELF/DALF — com postagens do professor, aulas ao vivo e o jogo C'est quoi ?.",
+    text: "Curso de francês avançado (B2 → C2) fundamentado no Manuel Complet de Français: subjuntivo, concordância, falsos amigos, registro formal, homófonos, expressões idiomáticas e preparação para exames oficiais DELF/DALF — com postagens pedagógicas, aulas ao vivo e jogos interativos.",
     features: [
-      { icon: "book", title: "Lições do Manuel Complet", description: "Gramática avançada, vocabulário, diálogos, exercícios e referência para os exames oficiais." },
-      { icon: "game", title: "Jogo C'est quoi ?", description: "Adivinhe o nome dos objetos em 5 segundos, com áudio da pronúncia e o bonequinho de boina." },
-      { icon: "radio", title: "Aulas ao vivo", description: "Participe de aulas em tempo real com o professor e chat ao vivo." },
+      { icon: "book", title: "Lições do Manuel Complet", description: "Gramática avançada, vocabulário refinado, diálogos estruturados e preparação completa para certificações internacionais." },
+      { icon: "game", title: "Jogo C'est quoi ?", description: "Fixe o vocabulário em desafios rápidos de 5 segundos, com pronúncia nativa e dinâmicas visuais imersivas." },
+      { icon: "radio", title: "Aulas ao vivo", description: "Participe de encontros em tempo real com o professor para aperfeiçoar sua conversação e fluência." },
     ],
   },
 };

@@ -95,10 +95,10 @@ export function CestQuoiArena({
           onClick={() => { soundEffects.playTap(); setVisible(!visible); }}
           className="relative z-10 inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1.5 text-[11px] font-extrabold hover:bg-white/30"
           aria-pressed={visible}
-          title={visible ? "Você aparece como online para os outros jogadores" : "Você está invisível: não aparece na lista de online nem recebe desafios"}
+          title={visible ? "Você está visível para os outros alunos" : "Você está no modo invisível: não aparece na lista de jogadores online nem recebe desafios"}
         >
           {visible ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-          {visible ? "Aparecendo" : "Invisível"}
+          {visible ? "Visível" : "Invisível"}
         </button>
       </div>
 
@@ -111,7 +111,7 @@ export function CestQuoiArena({
               <div key={invite.id} className="cqa-invite flex items-center gap-2.5 rounded-2xl border border-amber-400/60 bg-[var(--surface)] p-2.5 shadow">
                 <Avatar person={invite.from} size={38} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-extrabold text-[var(--text)]">⚔️ {invite.from.name} te desafiou!</p>
+                  <p className="truncate text-sm font-extrabold text-[var(--text)]">⚔️ {invite.from.name} convidou você para um duelo!</p>
                   <p className="text-[11px] font-semibold text-[var(--text-secondary)]">{cfg.emoji} {cfg.label} · {invite.rounds} imagens · mesmas imagens para os dois</p>
                 </div>
                 <div className="flex shrink-0 flex-col gap-1">

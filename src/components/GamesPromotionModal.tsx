@@ -59,25 +59,31 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
   }, []);
 
   useEffect(() => {
-    // Limpa chave antiga da sessão para garantir que recarregar ou relogar sempre reexiba a janela
-    try {
-      window.sessionStorage.removeItem(SEEN_KEY);
-    } catch {
-      /* sem acesso ao sessionStorage */
-    }
-
     if (forceOpen) {
       const id = setTimeout(() => setMode("details"), 0);
       return () => clearTimeout(id);
     }
 
-    // Exibe a janela de propaganda após 900ms para o painel carregar suavemente primeiro
+    // Exibe o destaque de boas-vindas uma única vez por sessão para não atrapalhar a navegação do aluno
+    try {
+      if (window.sessionStorage.getItem(SEEN_KEY) === "1") {
+        return;
+      }
+    } catch {
+      /* sem acesso ao sessionStorage */
+    }
+
     const timer = setTimeout(() => setMode("compact"), 900);
     return () => clearTimeout(timer);
   }, [forceOpen]);
 
   const handleClose = useCallback(() => {
     setMode("closed");
+    try {
+      window.sessionStorage.setItem(SEEN_KEY, "1");
+    } catch {
+      /* sem acesso ao sessionStorage */
+    }
     if (onClose) onClose();
   }, [onClose]);
 
@@ -129,7 +135,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
         }}
         role="dialog"
         aria-modal="true"
-        aria-label="Propaganda dos jogos da plataforma"
+        aria-label="Apresentação dos jogos educativos da plataforma"
       >
         <aside
           className="games-promo-border-pulse relative w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5 text-[var(--text)] shadow-2xl shadow-black/60 animate-in zoom-in-95 duration-200"
@@ -138,13 +144,13 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
         >
           <div className="flex items-center justify-between gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-              <Sparkles className="h-3 w-3" /> Propaganda · Jogos
+              <Sparkles className="h-3 w-3" /> Jogos Educativos
             </span>
             <button
               type="button"
               onClick={handleClose}
               className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-secondary)] transition hover:text-[var(--text)] hover:scale-105"
-              aria-label="Fechar propaganda"
+              aria-label="Fechar destaque"
             >
               <X className="h-4 w-4" />
             </button>
@@ -154,7 +160,7 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
             Aprenda jogando!
           </h2>
           <p className="mt-1 text-xs sm:text-sm leading-snug text-[var(--text-secondary)]">
-            Treine seu francês com 2 jogos da plataforma: <strong className="text-[var(--text)]">C&apos;est quoi ?</strong> e{" "}
+            Aprimore sua fluência e vocabulário com jogos interativos: <strong className="text-[var(--text)]">C&apos;est quoi ?</strong> e{" "}
             <strong className="text-[var(--text)]">Trilha do Aluno Curioso</strong>.
           </p>
 
@@ -215,16 +221,16 @@ export function GamesPromotionModal({ forceOpen, onClose }: GamesPromotionModalP
           type="button"
           onClick={handleClose}
           className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white/80 hover:text-white hover:bg-black/60 hover:scale-105 transition-all cursor-pointer border border-white/10"
-          aria-label="Fechar propaganda"
+          aria-label="Fechar janela"
         >
           <X className="h-5 w-5" />
         </button>
 
-        {/* Cabeçalho da Propaganda */}
+        {/* Cabeçalho de Destaque dos Jogos */}
         <div className="shrink-0 px-5 pt-6 pb-3 sm:px-8 sm:pt-8 sm:pb-4 text-center border-b border-[var(--border)] bg-gradient-to-b from-[var(--surface-2)]/60 to-transparent">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-amber-500 dark:text-amber-300">
             <Sparkles className="h-3.5 w-3.5 animate-spin" style={{ animationDuration: "3s" }} />
-            Propaganda · Jogos da Plataforma
+            Destaque Interativo · Jogos Educativos
           </div>
 
           <h2

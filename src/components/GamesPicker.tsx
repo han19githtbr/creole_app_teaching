@@ -38,11 +38,11 @@ export function GamesPicker() {
 
       <header className="mb-6">
         <p className="text-sm font-bold uppercase tracking-wider text-[var(--accent)]">
-          Espaço de jogos
+          Espaço de Jogos Interativos
         </p>
-        <h1 className="mt-1 text-3xl font-black text-[var(--text)]">Escolha um jogo</h1>
-        <p className="mt-2 text-[var(--text-secondary)]">
-          São duas experiências diferentes. Escolha por onde quer começar.
+        <h1 className="mt-1 text-3xl font-black text-[var(--text)]">Escolha seu desafio</h1>
+        <p className="mt-2 text-sm text-[var(--text-secondary)]">
+          Duas experiências imersivas para acelerar seu vocabulário, compreensão auditiva e agilidade mental:
         </p>
       </header>
 

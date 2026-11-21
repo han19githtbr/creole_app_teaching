@@ -18,6 +18,7 @@ import { LessonCard } from "@/components/LessonCard";
 import { ProgressCard } from "@/components/ProgressCard";
 import { GamificationCard } from "@/components/GamificationCard";
 import { GamesPromotionModal, GamesPromoSpotlightBanner } from "@/components/GamesPromotionModal";
+import { DashboardMonetizationBanner } from "@/components/DashboardMonetizationBanner";
 import { getBankImage } from "@/lib/imageBank";
 import { getAppLanguage, languageFilter, LANGUAGE_META } from "@/lib/language";
 import { Card, CardContent } from "@/components/ui/card";
@@ -169,6 +170,9 @@ export default async function DashboardPage() {
         )}
       </div>
 
+      {/* Saldo de Minutos e Status de Acesso */}
+      <DashboardMonetizationBanner />
+
       {/* Destaque visual dos jogos interativos */}
       <GamesPromoSpotlightBanner />
 
@@ -315,7 +319,7 @@ export default async function DashboardPage() {
       {/* Main Grid: Posts and Categories */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
-          <h2 className="text-lg font-semibold text-[var(--text)]">Avisos e Postagens do professor</h2>
+          <h2 className="text-lg font-bold text-[var(--text)]">Avisos e Postagens do Professor</h2>
           {posts.length === 0 ? (
             <Card className="border-dashed border-[var(--border)] bg-[var(--surface)]/60">
               <CardContent className="flex flex-col items-center justify-center py-8 px-4 text-center">
@@ -373,7 +377,7 @@ export default async function DashboardPage() {
 
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-[var(--text)]">Lições por categoria</h2>
+            <h2 className="text-lg font-bold text-[var(--text)]">Lições por Categoria</h2>
             {hasNewLesson && (
               <Link
                 href="/dashboard/lessons"

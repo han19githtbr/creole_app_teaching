@@ -50,7 +50,7 @@ interface State {
 const field =
   "h-10 w-full rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none";
 const card = "rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] p-4 shadow-sm";
-const STATUS_LABEL: Record<GeneratedStatus, string> = { pending: "Para aprovar", approved: "Aprovadas", rejected: "Rejeitadas" };
+const STATUS_LABEL: Record<GeneratedStatus, string> = { pending: "Pendentes de Aprovação", approved: "Aprovadas", rejected: "Rejeitadas" };
 const themeName = (id: string) => (id === "all" ? "Todos os temas" : THEMES.find((t) => t.id === id)?.label ?? id);
 
 function scoreStyle(img: Img) {

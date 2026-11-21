@@ -206,7 +206,7 @@ export function CestQuoiHint({
       {
         icon: "🧠",
         title: "Agora é com você",
-        text: mode === "phrase" ? "Volte ao jogo e escolha a frase que combina com o objeto da seta vermelha." : "Volte ao jogo e escolha o nome do objeto da seta vermelha em francês.",
+        text: mode === "phrase" ? "Retorne ao jogo e selecione a frase que descreve o objeto indicado pela seta vermelha." : "Retorne ao jogo e selecione o nome correto do objeto indicado pela seta vermelha em francês.",
       },
     ],
     [hint, mode]
@@ -336,14 +336,14 @@ export function CestQuoiHint({
                 <div className="rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)] p-4">
                   <p className="text-3xl" aria-hidden>🔤</p>
                   <p className="mt-1 text-sm font-semibold text-[var(--text-secondary)]">
-                    Quer ainda mais ajuda? Mostro o artigo e a primeira letra de cada palavra do nome em francês.
+                    Deseja uma ajuda adicional? Revelamos o artigo e a primeira letra de cada palavra do termo em francês.
                   </p>
                   <button
                     type="button"
                     onClick={showLetter}
                     className="mt-3 cursor-pointer rounded-2xl border-b-4 border-indigo-900 bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-2.5 text-sm font-black text-white shadow-md active:translate-y-[2px] active:border-b-2"
                   >
-                    Mostrar a pista (−{Math.round(HINT_LETTER_PENALTY * 100)}% dos pontos)
+                    Revelar a pista (−{Math.round(HINT_LETTER_PENALTY * 100)}% da pontuação)
                   </button>
                 </div>
               )}
@@ -357,7 +357,7 @@ export function CestQuoiHint({
             onClick={close}
             className="cq2-shine relative w-full cursor-pointer overflow-hidden rounded-2xl border-b-4 border-green-800 bg-gradient-to-r from-emerald-400 to-green-600 px-4 py-3 text-base font-black text-white shadow-lg active:translate-y-[2px] active:border-b-2"
           >
-            Voltar ao jogo ▶ (o tempo volta a correr)
+            Voltar ao jogo ▶ (o cronômetro continuará)
           </button>
         </div>
       </div>

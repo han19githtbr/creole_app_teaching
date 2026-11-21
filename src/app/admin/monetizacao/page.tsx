@@ -24,6 +24,9 @@ import {
   UserCheck,
   UserX,
   PlusCircle,
+  BarChart2,
+  PieChart,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -379,7 +382,7 @@ export default function AdminMonetizationPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="border-[var(--border)] bg-[var(--surface)] p-4">
               <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
-                <span>Alunos Totais</span>
+                <span>Total de Alunos</span>
                 <Users className="h-4 w-4 text-blue-500" />
               </div>
               <div className="mt-2 text-2xl font-black text-[var(--text)]">{data.stats.totalUsers}</div>
@@ -417,6 +420,189 @@ export default function AdminMonetizationPage() {
               <div className="mt-1 text-[11px] text-[var(--text-muted)]">Alunos com saldo recarregado</div>
             </Card>
           </div>
+
+          {/* ======================================================== */}
+          {/* GRÁFICOS VISUAIS: DISTRIBUIÇÃO E ENGAJAMENTO DOS ALUNOS */}
+          {/* ======================================================== */}
+          {(() => {
+            const totalU = Math.max(1, data.stats.totalUsers);
+            const exemptPct = Math.round((data.stats.exemptUsersCount / totalU) * 100);
+            const trialPct = Math.round((data.stats.activeTrialUsersCount / totalU) * 100);
+            const paidPct = Math.round((data.stats.paidBalanceUsersCount / totalU) * 100);
+            const depletedCount = Math.max(
+              0,
+              data.stats.totalUsers - data.stats.exemptUsersCount - data.stats.activeTrialUsersCount - data.stats.paidBalanceUsersCount
+            );
+            const depletedPct = Math.max(0, 100 - exemptPct - trialPct - paidPct);
+
+            const sHours = parseFloat(data.stats.totalStoriesHours) || 0;
+            const cHours = parseFloat(data.stats.totalCquoiHours) || 0;
+            const totalHours = sHours + cHours;
+            const sShare = totalHours > 0 ? Math.round((sHours / totalHours) * 100) : 50;
+            const cShare = totalHours > 0 ? Math.round((cHours / totalHours) * 100) : 50;
+
+            return (
+              <div className="space-y-4">
+                {/* Gráfico 1: Barra Segmentada de Distribuição da Base */}
+                <Card className="border-[var(--border)] bg-[var(--surface)] p-5 space-y-4 shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500">
+                        <BarChart2 className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-sm text-[var(--text)]">
+                          Distribuição e Segmentação da Base de Alunos
+                        </h3>
+                        <p className="text-xs text-[var(--text-secondary)]">
+                          Status em tempo real de monetização e modelo de acesso de cada estudante
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold text-[var(--text-muted)]">
+                      {data.stats.totalUsers} {data.stats.totalUsers === 1 ? "aluno cadastrado" : "alunos cadastrados"}
+                    </span>
+                  </div>
+
+                  {/* Barra Visual Segmentada Proporcional */}
+                  <div className="space-y-2">
+                    <div className="h-5 w-full overflow-hidden rounded-full bg-[var(--surface-2)] flex p-0.5 border border-[var(--border)]">
+                      {paidPct > 0 && (
+                        <div
+                          style={{ width: `${paidPct}%` }}
+                          className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-700 first:rounded-l-full last:rounded-r-full"
+                          title={`Com Saldo Pago: ${data.stats.paidBalanceUsersCount} alunos (${paidPct}%)`}
+                        />
+                      )}
+                      {trialPct > 0 && (
+                        <div
+                          style={{ width: `${trialPct}%` }}
+                          className="h-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-700 first:rounded-l-full last:rounded-r-full"
+                          title={`Em Degustação: ${data.stats.activeTrialUsersCount} alunos (${trialPct}%)`}
+                        />
+                      )}
+                      {exemptPct > 0 && (
+                        <div
+                          style={{ width: `${exemptPct}%` }}
+                          className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-700 first:rounded-l-full last:rounded-r-full"
+                          title={`Acesso VIP / Isentos: ${data.stats.exemptUsersCount} alunos (${exemptPct}%)`}
+                        />
+                      )}
+                      {depletedPct > 0 && (
+                        <div
+                          style={{ width: `${depletedPct}%` }}
+                          className="h-full bg-slate-400/40 dark:bg-slate-700/50 transition-all duration-700 first:rounded-l-full last:rounded-r-full"
+                          title={`Esgotados / Cadastro Gratuito: ${depletedCount} alunos (${depletedPct}%)`}
+                        />
+                      )}
+                    </div>
+
+                    {/* Legenda dos 4 Segmentos com Percentuais */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+                      <div className="flex items-center gap-2 rounded-xl bg-emerald-500/10 p-2.5 border border-emerald-500/20">
+                        <span className="h-3 w-3 rounded-full bg-emerald-500 shrink-0 shadow-sm" />
+                        <div>
+                          <div className="font-bold text-emerald-700 dark:text-emerald-300">
+                            {paidPct}% ({data.stats.paidBalanceUsersCount})
+                          </div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">Com Saldo Pago</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 rounded-xl bg-amber-500/10 p-2.5 border border-amber-500/20">
+                        <span className="h-3 w-3 rounded-full bg-amber-500 shrink-0 shadow-sm" />
+                        <div>
+                          <div className="font-bold text-amber-700 dark:text-amber-300">
+                            {trialPct}% ({data.stats.activeTrialUsersCount})
+                          </div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">Em Degustação</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 rounded-xl bg-purple-500/10 p-2.5 border border-purple-500/20">
+                        <span className="h-3 w-3 rounded-full bg-purple-500 shrink-0 shadow-sm" />
+                        <div>
+                          <div className="font-bold text-purple-700 dark:text-purple-300">
+                            {exemptPct}% ({data.stats.exemptUsersCount})
+                          </div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">VIP / Isentos</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 rounded-xl bg-[var(--surface-2)] p-2.5 border border-[var(--border)]">
+                        <span className="h-3 w-3 rounded-full bg-slate-400 shrink-0 shadow-sm" />
+                        <div>
+                          <div className="font-bold text-[var(--text)]">
+                            {depletedPct}% ({depletedCount})
+                          </div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">Sem Saldo Ativo</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Gráfico 2: Comparativo Visual de Engajamento e Preferência */}
+                <Card className="border-[var(--border)] bg-[var(--surface)] p-5 space-y-4 shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-lg bg-indigo-500/10 p-2 text-indigo-500">
+                      <PieChart className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm text-[var(--text)]">
+                        Comparativo Visual de Engajamento por Atividade
+                      </h3>
+                      <p className="text-xs text-[var(--text-secondary)]">
+                        Proporção de tempo de estudo entre Curiosidades Narradas e Jogos Educativos
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                    {/* Barra Curiosidades */}
+                    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/60 p-4 space-y-2">
+                      <div className="flex items-center justify-between text-xs font-semibold">
+                        <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-bold">
+                          <BookOpen className="h-4 w-4" /> Curiosidades Vivas ({sShare}%)
+                        </span>
+                        <span className="text-[var(--text)] font-bold">{data.stats.totalStoriesHours} horas</span>
+                      </div>
+                      <div className="h-3 w-full rounded-full bg-[var(--surface)] overflow-hidden border border-[var(--border)]">
+                        <div
+                          style={{ width: `${sShare}%` }}
+                          className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-700"
+                        />
+                      </div>
+                      <div className="flex justify-between text-[11px] text-[var(--text-muted)]">
+                        <span>{data.stats.totalStoriesWatched} curiosidades assistidas</span>
+                        <span>Média: ~{data.stats.totalStoriesWatched > 0 ? Math.round((sHours * 60) / data.stats.totalStoriesWatched) : 0} min/sessão</span>
+                      </div>
+                    </div>
+
+                    {/* Barra Jogos */}
+                    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/60 p-4 space-y-2">
+                      <div className="flex items-center justify-between text-xs font-semibold">
+                        <span className="flex items-center gap-1.5 text-purple-600 dark:text-purple-400 font-bold">
+                          <Gamepad2 className="h-4 w-4" /> Jogos Educativos ({cShare}%)
+                        </span>
+                        <span className="text-[var(--text)] font-bold">{data.stats.totalCquoiHours} horas</span>
+                      </div>
+                      <div className="h-3 w-full rounded-full bg-[var(--surface)] overflow-hidden border border-[var(--border)]">
+                        <div
+                          style={{ width: `${cShare}%` }}
+                          className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600 transition-all duration-700"
+                        />
+                      </div>
+                      <div className="flex justify-between text-[11px] text-[var(--text-muted)]">
+                        <span>{data.stats.totalCquoiGamesPlayed} partidas concluídas</span>
+                        <span>Média: ~{data.stats.totalCquoiGamesPlayed > 0 ? Math.round((cHours * 60) / data.stats.totalCquoiGamesPlayed) : 0} min/partida</span>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            );
+          })()}
 
           {/* Métricas de Uso Acumulado das Duas Features Monetizadas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -515,11 +701,11 @@ export default function AdminMonetizationPage() {
                     onChange={(e) => setDrawCount(Number(e.target.value))}
                     className="mt-1.5 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-2)] p-2 text-sm text-[var(--text)]"
                   >
-                    <option value={1}>1 aluno sortudo</option>
-                    <option value={2}>2 alunos sortudos</option>
-                    <option value={3}>3 alunos sortudos</option>
-                    <option value={5}>5 alunos sortudos</option>
-                    <option value={10}>10 alunos sortudos</option>
+                    <option value={1}>1 aluno</option>
+                    <option value={2}>2 alunos</option>
+                    <option value={3}>3 alunos</option>
+                    <option value={5}>5 alunos</option>
+                    <option value={10}>10 alunos</option>
                   </select>
                 </div>
 
@@ -726,7 +912,7 @@ export default function AdminMonetizationPage() {
                         <td className="p-3">
                           <div className="font-semibold text-[var(--text)]">{gameMins} min ativos</div>
                           <div className="text-[11px] text-[var(--text-secondary)]">
-                            {u.totalCquoiGamesPlayed || 0} jogos jogados
+                            {u.totalCquoiGamesPlayed || 0} partidas concluídas
                           </div>
                         </td>
 

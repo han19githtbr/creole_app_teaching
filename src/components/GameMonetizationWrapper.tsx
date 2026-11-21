@@ -51,25 +51,31 @@ export function GameMonetizationWrapper({ children }: GameMonetizationWrapperPro
 
           <div className="max-w-md mx-auto space-y-2">
             <h2 className="text-xl font-bold text-[var(--text)]">
-              Tempo de Jogo Esgotado
+              Tempo de Jogos Educativos Esgotado
             </h2>
-            <p className="text-xs text-[var(--text-secondary)]">
-              Seu período de degustação de 3 dias finalizou ou seus minutos para jogar acabaram.
-              Recarregue seus minutos agora para continuar competindo na arena e se divertindo com o C&apos;est quoi ?!
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              Seu período de degustação inicial encerrou ou seu saldo de minutos de jogo se esgotou.
+              Recarregue seus minutos agora para continuar competindo na arena e praticando nos jogos interativos! Suas lições de gramática e avisos continuam 100% disponíveis.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Button
               onClick={() => setRechargeModalOpen(true)}
-              className="bg-purple-600 hover:bg-purple-700 text-white font-bold gap-2 px-6 shadow-md"
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold gap-2 px-6 shadow-md transition-all cursor-pointer"
             >
               <PlusCircle className="h-4 w-4" />
-              Recarregar Minutos (a partir de R$ 15)
+              Recarregar Minutos de Aprendizado
             </Button>
 
-            <Link href="/dashboard">
+            <Link href="/dashboard/lessons">
               <Button variant="outline" className="text-xs">
+                Ir para as Lições
+              </Button>
+            </Link>
+
+            <Link href="/dashboard">
+              <Button variant="ghost" className="text-xs text-[var(--text-muted)]">
                 Voltar ao Painel
               </Button>
             </Link>

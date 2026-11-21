@@ -8,14 +8,14 @@ import { ShieldCheck, Gift, Clock, PlusCircle, CheckCircle2, XCircle } from "luc
 
 interface MonetizationBarProps {
   status: UserMonetizationStatus | null;
-  feature: "stories" | "cquoi";
+  feature?: "stories" | "cquoi" | "dashboard";
   isActive?: boolean;
   onRefresh?: () => void;
 }
 
 export function MonetizationBar({
   status,
-  feature,
+  feature = "dashboard",
   isActive = true,
   onRefresh,
 }: MonetizationBarProps) {
@@ -80,10 +80,12 @@ export function MonetizationBar({
             <div className="flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400">
               <Clock className="h-4 w-4" />
               <span>
-                Degustação: {status.trialDaysLeft} {status.trialDaysLeft === 1 ? "dia restante" : "dias restantes"} ·{" "}
+                Período de Degustação: {status.trialDaysLeft} {status.trialDaysLeft === 1 ? "dia restante" : "dias restantes"} ·{" "}
                 {feature === "stories"
-                  ? `${status.trialStoriesLeft} curiosidades livres`
-                  : `${status.trialGamesLeft} jogos livres`}
+                  ? `${status.trialStoriesLeft} curiosidades com áudio inclusas`
+                  : feature === "cquoi"
+                  ? `${status.trialGamesLeft} rodadas de jogos inclusas`
+                  : `${status.trialStoriesLeft} curiosidades e ${status.trialGamesLeft} partidas inclusas`}
               </span>
             </div>
           ) : (
@@ -91,14 +93,19 @@ export function MonetizationBar({
               <Clock className="h-4 w-4 text-amber-500" />
               <span>
                 Saldo: <strong className="text-amber-500">{Math.floor(status.availableMinutes)} min</strong> disponíveis
-                {status.bonusStoriesBalance > 0 && feature === "stories" && (
+                {status.bonusStoriesBalance > 0 && (
                   <span className="ml-1 text-emerald-600 dark:text-emerald-400">
-                    · +{status.bonusStoriesBalance} bônus
+                    · +{status.bonusStoriesBalance} curiosidades bônus
                   </span>
                 )}
               </span>
             </div>
           )}
+
+          {/* Dica discreta de gratuidade das lições */}
+          <span className="hidden xl:inline-block text-[11px] text-[var(--text-muted)] border-l border-[var(--border)] pl-2">
+            Lições e gramática são 100% livres
+          </span>
 
           {/* Indicador de Tempo Ativo (pulsa quando o usuário está interagindo na tela) */}
           {!status.hasUnlimitedAccess && (

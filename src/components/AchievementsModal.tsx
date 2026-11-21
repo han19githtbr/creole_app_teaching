@@ -136,11 +136,11 @@ export function AchievementsModal({ isOpen, onClose, language = "kreyol" }: Achi
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
               {isFrench ? (
                 <>
-                  💶 <strong className="text-[var(--text)]">Moeda Fictícia do Jogo:</strong> Os <em>Écus</em> são moedas virtuais gratuitas. A cada palavra acertada no <strong>C&apos;est quoi ?</strong> você ganha écus! Ao somar <strong>50, 100, 200 écus</strong>, desbloqueie os próximos níveis para aumentar seu <strong>XP</strong>!
+                  💶 <strong className="text-[var(--text)]">Moeda Fictícia do Jogo:</strong> Os <em>Écus</em> são moedas virtuais gratuitas da gamificação. A cada palavra acertada no jogo <strong>C&apos;est quoi ?</strong> você acumula écus! Ao somar <strong>50, 100 ou 200 écus</strong>, você desbloqueia novos níveis e títulos para acelerar seu <strong>XP</strong>!
                 </>
               ) : (
                 <>
-                  🪙 <strong className="text-[var(--text)]">Moeda Fictícia do Jogo:</strong> As <em>Gourdes (Goud)</em> são moedas virtuais gratuitas. A cada postagem com palavras acertadas você ganha <strong>+10 Goud</strong>! Ao somar <strong>50, 100, 200 Goud</strong>, desbloqueie os próximos níveis para aumentar seu <strong>XP</strong>!
+                  🪙 <strong className="text-[var(--text)]">Moeda Fictícia do Jogo:</strong> As <em>Gourdes (Goud)</em> são moedas virtuais gratuitas da gamificação. A cada desafio de palavras concluído você ganha <strong>+10 Goud</strong>! Ao somar <strong>50, 100 ou 200 Goud</strong>, desbloqueie novos títulos de honra para aumentar seu <strong>XP</strong>!
                 </>
               )}
             </p>
@@ -149,7 +149,7 @@ export function AchievementsModal({ isOpen, onClose, language = "kreyol" }: Achi
               onClick={onClose}
               className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-amber-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm hover:bg-amber-600 transition self-start sm:self-auto cursor-pointer"
             >
-              <Gamepad2 className="h-3.5 w-3.5" /> {isFrench ? "Jogar C'est quoi ?" : "+10 Goud por cena"}
+              <Gamepad2 className="h-3.5 w-3.5" /> {isFrench ? "Jogar C'est quoi ?" : "Praticar Desafios"}
             </Link>
           </div>
         </div>

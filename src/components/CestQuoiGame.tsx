@@ -563,7 +563,7 @@ export function CestQuoiGame({
 
       if (attemptRef.current < MAX_ATTEMPTS) {
         setRoundState("retry");
-        setMessage(picked === null ? "Tempo esgotado! Mais uma chance." : "Ainda não! Mais uma chance.");
+        setMessage(picked === null ? "Tempo esgotado! Você tem mais uma chance." : "Não foi dessa vez! Você tem mais uma chance.");
         later(() => {
           attemptRef.current += 1;
           setAttempt(attemptRef.current);
@@ -573,7 +573,7 @@ export function CestQuoiGame({
       } else {
         setRoundState("reveal");
         setResults((r) => r.map((v, i) => (i === indexRef.current ? "miss" : v)));
-        setMessage("Veja a resposta certa!");
+        setMessage("Confira a resposta correta!");
         playAnswerAndAdvance(current, LEVELS[levelRef.current].mode, 500, 1400);
       }
     },
@@ -894,7 +894,7 @@ export function CestQuoiGame({
     const classic: Level[] = ["easy", "intermediate", "master"];
     const nativeLevels: Level[] = ["native_word", "native_phrase"];
 
-    const lockText = (lv: Level) => `🔒 Passe o nível ${LEVELS[LEVEL_ORDER[LEVEL_ORDER.indexOf(lv) - 1]].label} para desbloquear`;
+    const lockText = (lv: Level) => `🔒 Conclua o nível ${LEVELS[LEVEL_ORDER[LEVEL_ORDER.indexOf(lv) - 1]].label} para desbloquear`;
 
     return (
       <div className="cq2-bg min-h-[calc(100vh-4rem)]">
@@ -1056,7 +1056,7 @@ export function CestQuoiGame({
             </div>
 
             <p className="mt-3 rounded-xl bg-[var(--surface-2)] px-3 py-2 text-xs text-[var(--text-secondary)]">
-              Para <strong>passar de nível</strong>, acerte pelo menos <strong>{passTarget(level)} de {selCfg.rounds}</strong> ({Math.round(PASS_RATIO * 100)}%).
+              Para <strong>avançar de nível</strong>, acerte pelo menos <strong>{passTarget(level)} de {selCfg.rounds}</strong> ({Math.round(PASS_RATIO * 100)}%).
             </p>
             <p className="mt-2 flex items-start gap-2 rounded-xl border border-sky-300/50 bg-sky-500/10 px-3 py-2 text-left text-xs text-[var(--text-secondary)]">
               <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-sky-500" />
@@ -1138,7 +1138,7 @@ export function CestQuoiGame({
               {passed ? (levelsDone && level === "native_phrase" ? "Vous êtes Natif !" : "Bravo !") : "Presque !"}
             </h2>
             <p className="mt-1 text-sm text-[var(--text-secondary)]">
-              {passed ? `Você passou o nível ${levelCfg.label}!` : `Você precisa de ${need} acertos para passar. Tente de novo!`}
+              {passed ? `Você concluiu o nível ${levelCfg.label} com sucesso!` : `Você precisa de ${need} acertos para avançar de nível. Tente novamente!`}
             </p>
             <p className="mt-2 text-2xl">{[0, 1, 2].map((s) => <span key={s} className={cn("inline-block", s < stars ? "cq2-unlock" : "opacity-25")} style={{ animationDelay: `${0.3 + s * 0.25}s` }}>⭐</span>)}</p>
 

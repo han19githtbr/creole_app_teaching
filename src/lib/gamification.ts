@@ -515,7 +515,7 @@ export function buyTitle(titleId: string, language: AppLanguage = "kreyol"): {
         : `Acerte palavras nas postagens para acumular +10 Goud por acerto!`;
     return {
       success: false,
-      message: `Você precisa de ${target.price} ${config.currency}s fictícios (saldo: ${current.goud} ${config.currency}). ${hint}`,
+      message: `Você precisa de ${target.price} ${config.currency} virtuais (seu saldo atual: ${current.goud} ${config.currency}). ${hint}`,
       state: current,
     };
   }

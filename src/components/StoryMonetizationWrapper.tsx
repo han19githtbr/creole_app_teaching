@@ -50,26 +50,32 @@ export function StoryMonetizationWrapper({ story }: StoryMonetizationWrapperProp
 
           <div className="max-w-md mx-auto space-y-2">
             <h2 className="text-xl font-bold text-[var(--text)]">
-              Cota de Curiosidades Encerrada
+              Tempo de Curiosidades Narradas Esgotado
             </h2>
-            <p className="text-xs text-[var(--text-secondary)]">
-              Seu período de degustação de 3 dias finalizou ou seus minutos de curiosidades acabaram.
-              Recarregue seus minutos agora para continuar ouvindo e aprendendo com as curiosidades vivas!
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              Seu período de degustação inicial encerrou ou seu saldo de minutos ativos se esgotou.
+              Recarregue seus minutos para continuar ouvindo e aprendendo com as ilustrações narradas e elementos interativos! Suas lições de gramática e avisos continuam 100% disponíveis.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Button
               onClick={() => setRechargeModalOpen(true)}
-              className="bg-amber-500 hover:bg-amber-600 text-white font-bold gap-2 px-6 shadow-md"
+              className="bg-amber-500 hover:bg-amber-600 text-white font-bold gap-2 px-6 shadow-md transition-all cursor-pointer"
             >
               <PlusCircle className="h-4 w-4" />
-              Recarregar Minutos (a partir de R$ 15)
+              Recarregar Minutos de Aprendizado
             </Button>
 
-            <Link href="/dashboard/stories">
+            <Link href="/dashboard/lessons">
               <Button variant="outline" className="text-xs">
-                Voltar às Curiosidades
+                Ir para as Lições
+              </Button>
+            </Link>
+
+            <Link href="/dashboard/stories">
+              <Button variant="ghost" className="text-xs text-[var(--text-muted)]">
+                Voltar à Lista
               </Button>
             </Link>
           </div>

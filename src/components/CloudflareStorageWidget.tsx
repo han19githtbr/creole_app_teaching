@@ -95,10 +95,10 @@ export function CloudflareStorageWidget({ initialStats }: { initialStats: R2Stor
           </p>
         </div>
 
-        {/* Sobra no plano gratuito */}
+        {/* Espaço disponível no plano gratuito */}
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/60 p-4">
           <div className="flex items-center justify-between text-xs font-medium text-[var(--text-secondary)]">
-            <span>Sobra no plano gratuito</span>
+            <span>Espaço disponível</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
           </div>
           <p className="mt-2 text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
@@ -112,7 +112,7 @@ export function CloudflareStorageWidget({ initialStats }: { initialStats: R2Stor
         {/* Quantidade de Arquivos */}
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/60 p-4">
           <div className="flex items-center justify-between text-xs font-medium text-[var(--text-secondary)]">
-            <span>Arquivos guardados</span>
+            <span>Arquivos armazenados</span>
             <FileText className="h-4 w-4 text-blue-500" />
           </div>
           <p className="mt-2 text-2xl font-extrabold text-[var(--text)]">

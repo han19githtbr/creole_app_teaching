@@ -9,7 +9,7 @@ export type { LocalizedText, StoryScriptItem } from "./types";
 
 /**
  * Banco completo de roteiros para gravação de áudio na seção de Curiosidades.
- * Contém 150 conteúdos (10 para cada um dos 15 temas do banco de imagens),
+ * Contém 225 conteúdos (15 para cada um dos 15 temas do banco de imagens),
  * em Francês e Kreyòl Ayisyen, com tradução de apoio em Português.
  */
 export const STORY_CONTENT_BANK: StoryScriptItem[] = [

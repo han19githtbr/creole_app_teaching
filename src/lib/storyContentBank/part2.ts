@@ -282,6 +282,146 @@ Depois de guardar o passaporte no hotel, vale se sentar em uma cadeira de praia 
 
 Viajar sem pressa transforma férias comuns em memórias duradouras e encontros verdadeiros.`,
   },
+  {
+    id: "turismo-11",
+    theme: "Turismo",
+    suggestedSceneId: "turismo-09",
+    estimatedSeconds: 65,
+    elementsCited: ["gid", "bis touristik", "aparèy foto", "tant"],
+    title: {
+      fr: "Comment l'appareil photo portable a transformé notre façon de voyager",
+      kreyol: "Kijan aparèy foto pòtab la te chanje fason moun vwayaje",
+      pt: "Como a câmera portátil transformou a forma de viajar",
+    },
+    summaryPt: "A história das primeiras câmeras para turistas e como os registros de viagem mudaram.",
+    fr: `Sur une place ensoleillée, devant un bus touristique et un guide prêt à expliquer l'histoire du quartier, presque tout le monde sort aujourd'hui son appareil photo. Mais avant la fin du dix-neuvième siècle, seuls des photographes professionnels voyageaient avec de lourdes plaques de verre !
+
+En mille huit cent quatre-vingt-huit, l'invention du premier appareil photo portable à pellicule a tout changé : les voyageurs — des groupes en excursion jusqu'aux campeurs sous la tente — ont pu rapporter leurs propres souvenirs visuels.
+
+Depuis ce jour, photographier un lieu est devenu une façon universelle de partager la beauté du monde.`,
+    kreyol: `Sou yon plas ki gen solèy, devan yon bis touristik ak yon gid ki pare pou esplike istwa katye a, prèske tout moun soti aparèy foto yo jodi a. Men anvan fen diznevyèm syèk la, se sèlman fotograf pwofesyonèl ki te ka vwayaje ak gwo ekipman lou an vè !
+
+Nan ane mil uit san katreven uit, envansyon premye aparèy foto pòtab ak woulo fim te chanje tout bagay : vwayajè yo — soti nan gwoup nan bis rive nan moun k ap dòmi anba tant — te kapab pote pwòp bèl souvni pa yo lakay yo.
+
+Depi jou sa a, pran foto yon kote tounen yon fason inivèsèl pou pataje bote mond lan.`,
+    pt: `Em uma praça ensolarada, diante de um ônibus de turismo e de um guia pronto para explicar o lugar, quase todos sacam a câmera. Mas até o fim do século XIX, apenas fotógrafos profissionais conseguiam viajar carregando pesadas chapas de vidro!
+
+Em 1888, a chegada da primeira câmera portátil com filme mudou tudo: turistas em excursão e viajantes em barraca passaram a registrar as próprias lembranças.
+
+Desde então, fotografar paisagens e encontros tornou-se uma forma universal de guardar e compartilhar o mundo.`,
+  },
+  {
+    id: "turismo-12",
+    theme: "Turismo",
+    suggestedSceneId: "turismo-11",
+    estimatedSeconds: 60,
+    elementsCited: ["tikè", "teleferik", "sak a do", "tou"],
+    title: {
+      fr: "Pourquoi aimons-nous tant monter au sommet des tours panoramiques ?",
+      kreyol: "Poukisa nou renmen monte anwo gwo tou panoramik yo konsa ?",
+      pt: "Por que gostamos tanto de subir ao topo de torres panorâmicas?",
+    },
+    summaryPt: "O fascínio humano de ver cidades e montanhas do alto, de teleféricos a mirantes.",
+    fr: `Avec son sac à dos et son billet en main, on fait souvent la queue pour monter dans un téléphérique ou au sommet d'une grande tour d'observation. D'où vient ce plaisir universel de regarder le paysage d'en haut ?
+
+Les psychologues et géographes expliquent que voir une ville ou une côte dans son ensemble apaise l'esprit : les rues compliquées deviennent claires comme un dessin, et l'on comprend d'un seul regard comment la mer, les collines et les maisons se rejoignent.
+
+En mille huit cent quatre-vingt-neuf, la tour Eiffel elle-même devait n'être qu'un pavillon temporaire, mais son succès touristique l'a sauvée pour toujours !`,
+    kreyol: `Avèk sak a do nou ak tikè nou nan men nou, nou souvan pran ran pou monte yon teleferik oswa tèt yon gwo tou pou gade peyizaj. Ki kote plezi sa a pou gade tè a depi byen wo soti ?
+
+Sikològ yo ak jeyograf yo esplike lè nou wè tout yon vil oswa tout yon kòt ansanm, sa kalme lespri nou : ti lari ki konplike yo vin klè kou yon desen, epi nou konprann nan yon sèl kout je kijan lanmè a, mòn yo ak kay yo konekte.
+
+Nan ane mil uit san katrevendiznèf, Tou Eiffel la menm te sipoze rete la pou yon ti tan sèlman, men siksè li ak touris yo te sove l pou toutan !`,
+    pt: `De mochila nas costas e bilhete na mão, muita gente pega fila para subir em um teleférico ou no alto de uma torre de observação. De onde vem esse encanto de ver a paisagem de cima?
+
+Psicólogos e geógrafos explicam que enxergar uma cidade ou costa por inteiro traz clareza e admiração: ruas que pareciam confusas viram um mapa vivo, mostrando como mar, morros e bairros se conectam.
+
+Em 1889, a própria Torre Eiffel deveria ser desmontada após a exposição, mas o entusiasmo dos visitantes garantiu sua permanência para sempre!`,
+  },
+  {
+    id: "turismo-13",
+    theme: "Turismo",
+    suggestedSceneId: "turismo-12",
+    estimatedSeconds: 60,
+    elementsCited: ["kat", "fa", "valiz", "bousòl"],
+    title: {
+      fr: "Des lourds coffres en bois aux valises à roulettes : une révolution tardive",
+      kreyol: "Soti nan gwo kòf bwa lou rive nan valiz ki gen wou : yon revolisyon ki fèt ta",
+      pt: "Dos pesados baús às malas com rodinhas: uma invenção surpreendentemente recente",
+    },
+    summaryPt: "Como uma ideia simples nos anos 1970 facilitou carregar bagagens ao lado de mapas e bússolas.",
+    fr: `Sous un ciel étoilé, près du phare, d'une carte et d'une boussole, on prépare aujourd'hui sa valise sans même y penser. Pourtant, saviez-vous que la valise à roulettes n'a été inventée qu'en mille neuf cent soixante-dix ?
+
+Pendant des siècles, les voyageurs transportaient d'énormes malles en bois, puis des valises qu'il fallait porter à bout de bras. C'est un pilote américain nommé Bernard Sadow qui, fatigué de porter de lourds bagages dans un aéroport, a eu l'idée géniale de fixer quatre petites roues sous une valise rigide !
+
+Cette innovation toute simple a rendu les gares et les voyages bien plus accessibles à tous.`,
+    kreyol: `Anba yon syèl ki plen zetwal, toupre fa a, yon kat ak yon bousòl, jodi a nou ranje valiz nou san nou pa menm reflechi. Poutan, èske ou te konnen valiz ki gen wou anba l la te fèk envante nan ane mil nèf san swasanndis ?
+
+Pandan plizyè syèk, vwayajè yo te pote gwo kòf an bwa, epi apre sa valiz yo te oblije pote nan men yo. Se yon pilòt ameriken ki rele Bernard Sadow ki te fatige pote gwo bagaj lou nan ayewopò, epi li te jwenn bèl lide pou l kole kat ti wou anba yon valiz !
+
+Ti envansyon senp sa a te rann vwayaj nan estasyon ak ayewopò pi fasil pou tout moun.`,
+    pt: `Sob um céu estrelado, perto do farol, de um mapa e de uma bússola, hoje preparamos a mala sem esforço. Mas você sabia que a mala com rodinhas só foi inventada em 1970?
+
+Durante séculos, os viajantes usavam baús pesados de madeira ou malas carregadas inteiramente no braço. Foi um funcionário de aviação chamado Bernard Sadow que, cansado de carregar bagagens pesadas em aeroportos, teve a ideia simples de parafusar quatro rodinhas embaixo de uma mala!
+
+Essa inovação tardia tornou estações, viagens e caminhadas muito mais leves para todo mundo.`,
+  },
+  {
+    id: "turismo-14",
+    theme: "Turismo",
+    suggestedSceneId: "turismo-13",
+    estimatedSeconds: 60,
+    elementsCited: ["tren", "fa", "balon", "tant"],
+    title: {
+      fr: "Comment le train a ouvert le plaisir du voyage à tout le monde",
+      kreyol: "Kijan tren an te louvri plezi vwayaje pou tout moun",
+      pt: "Como o trem abriu o prazer de viajar para todo mundo",
+    },
+    summaryPt: "A chegada das ferrovias que popularizou excursões para o mar, montanhas e acampamentos.",
+    fr: `Au crépuscule doré, quand un train longe la côte vers un phare lointain pendant qu'une montgolfière flotte près d'une tente de camping, on oublie souvent que le tourisme moderne est né sur les rails !
+
+Avant le dix-neuvième siècle, voyager pour le plaisir coûtait très cher et prenait des semaines en diligence. Avec l'arrivée des premiers chemins de fer, des trajets qui duraient plusieurs jours ne prenaient plus que quelques heures.
+
+Des familles entières ont alors commencé à partir le week-end voir la mer ou la campagne, inventant les excursions accessibles à tous.`,
+    kreyol: `Lè solèy ap kouche ak koulè lò, lè yon tren ap pase bò kòt la nan direksyon yon fa pandan yon balon ap flote toupre yon tant, nou souvan bliye touris modèn nan te fèt sou ray tren yo !
+
+Anvan diznevyèm syèk la, vwayaje pou plezi te koute chè anpil epi l te pran plizyè semèn nan charyo. Lè premye tren yo te rive, vwayaj ki te konn pran plizyè jou te vin pran kèk èdtan sèlman.
+
+Tout fanmi te kòmanse soti nan wikenn pou al wè lanmè a oswa kanpay la, sa ki te envante vwayaj pou tout moun.`,
+    pt: `No entardecer dourado, quando um trem segue rumo a um farol distante enquanto um balão flutua perto de uma barraca de camping, quase esquecemos que o turismo popular nasceu sobre trilhos!
+
+Antes do século XIX, viajar por lazer era caro e levava semanas em carruagens. Com a chegada das primeiras ferrovias, trajetos que exigiam dias passaram a durar poucas horas.
+
+Famílias inteiras começaram então a fazer passeios de fim de semana para a praia ou para as serras, inaugurando o turismo acessível.`,
+  },
+  {
+    id: "turismo-15",
+    theme: "Turismo",
+    suggestedSceneId: "turismo-16",
+    estimatedSeconds: 65,
+    elementsCited: ["chèz plaj", "bato", "kokoye", "kat"],
+    title: {
+      fr: "Le tourisme responsable : découvrir les îles tout en protégeant la nature",
+      kreyol: "Touris responsab : dekouvri bèl zile yo toutpandan n ap pwoteje lanati",
+      pt: "Turismo responsável: explorar ilhas preservando a natureza e a cultura local",
+    },
+    summaryPt: "Pequenos gestos que tornam passeios de barco e dias de praia positivos para as comunidades.",
+    fr: `Sur une plage ensoleillée, assis sur une chaise de plage avec une noix de coco fraîche en admirant un bateau et sa carte d'exploration, chaque visiteur peut devenir un voyageur attentif.
+
+Aujourd'hui, le tourisme durable encourage chacun à respecter les récifs coralliens, à ne laisser aucun déchet sur le sable, à privilégier les artisans locaux et à apprendre quelques mots de la langue du pays.
+
+Dire « bonjou » ou « mèsi » avec le sourire, c'est déjà voyager avec respect et laisser une belle trace derrière soi.`,
+    kreyol: `Sou yon bèl plaj ki gen solèy, chita sou yon chèz plaj ak yon kokoye fre pandan w ap gade yon bato ak kat vwayaj ou, chak vizitè ka vin tounen yon vwayajè ki gen konsyans.
+
+Jodi a, touris dirab ankouraje tout moun respekte resif koray yo, pa kite okenn fatra sou sab la, ankouraje atizan lokal yo epi aprann kèk mo nan lang peyi a.
+
+Di « bonjou » oswa « mèsi » ak yon bèl souri, se deja vwayaje ak respè epi kite yon bèl souvni dèyè nou.`,
+    pt: `Em uma praia ensolarada, sentado em uma cadeira de praia com um coco fresco enquanto observa um barco e o mapa do passeio, todo visitante pode ser um viajante consciente.
+
+Hoje, o turismo sustentável incentiva proteger os recifes de coral, não deixar lixo na areia, valorizar artesãos e guias da região e aprender algumas palavras do idioma local.
+
+Dizer "bonjou" ou "mèsi" com um sorriso já é uma forma gentil de viajar com respeito.`,
+  },
 
   // ==================== VIDA NO INTERIOR (10) ====================
   {
@@ -563,6 +703,146 @@ Tèt ansanm sa a egziste ak lòt non nan peyi Brezil tou, tankou « mutirão ».
 No interior do Haiti, quando uma lavoura é grande demais para uma única família, os vizinhos se reúnem em um konbit. Todos trabalham juntos ao ritmo de cantos alegres e depois compartilham uma grande refeição.
 
 Esse espírito solidário também existe no Brasil com o nome de mutirão, mostrando que a união torna mais leve até a tarefa mais difícil.`,
+  },
+  {
+    id: "interior-11",
+    theme: "Vida no interior",
+    suggestedSceneId: "interior-10",
+    estimatedSeconds: 60,
+    elementsCited: ["ruch", "kay", "epouvantay", "kochon"],
+    title: {
+      fr: "Pourquoi le miel récolté à la ferme ne périme-t-il presque jamais ?",
+      kreyol: "Poukisa siwo myèl ki soti nan fèm nan prèske pa janm gate ?",
+      pt: "Por que o mel colhido na fazenda quase nunca estraga?",
+    },
+    summaryPt: "O segredo químico do mel guardado na colmeia perto da casa de fazenda.",
+    fr: `Au lever du jour, devant la maison de ferme, l'épouvantail et le cochon qui fouille l'herbe, une ruche bourdonne tranquillement. Elle abrite l'un des aliments les plus étonnants de la planète : le miel !
+
+Des archéologues ont retrouvé des pots de miel vieux de plus de trois mille ans dans des tombes antiques... et ce miel était encore parfaitement comestible !
+
+Son secret ? Le miel contient très peu d'eau et reste naturellement acide, empêchant les bactéries de s'y développer. En plus, les abeilles battent des ailes dans la ruche pour évaporer l'humidité avant de fermer chaque alvéole.`,
+    kreyol: `Granmaten, devan kay fèm nan, epouvantay la ak kochon k ap fouye tè a, yon ruch ap boujonnen trankilman. Li kenbe yonn nan manje ki pi etonan sou latè : siwo myèl !
+
+Akeyològ yo jwenn vye po siwo myèl ki gen plis pase twa mil an nan kavo lontan... epi siwo myèl sa a te toujou bon pou manje !
+
+Ki sekrè li ? Siwo myèl gen tou piti dlo ladan l epi l gen yon asidite natirèl ki anpeche mikwòb grandi. Anplis, myèl yo bat zèl yo anndan ruch la pou seche imidite a anvan yo fèmen chak ti kaz.`,
+    pt: `Ao amanhecer, diante da casa de fazenda, do espantalho e do porco no quintal, uma colmeia zumbe tranquila. Ela guarda um dos alimentos mais surpreendentes da natureza: o mel!
+
+Arqueólogos já encontraram potes de mel com mais de três mil anos em tumbas antigas... e o mel ainda estava próprio para consumo!
+
+O segredo está na química: o mel tem pouquíssima água e acidez natural que impede a ação de microrganismos, além de ser ventilado pelas asas das abelhas antes de cada favo ser fechado.`,
+  },
+  {
+    id: "interior-12",
+    theme: "Vida no interior",
+    suggestedSceneId: "interior-12",
+    estimatedSeconds: 60,
+    elementsCited: ["sak ble", "grenye", "moulen", "panye ze"],
+    title: {
+      fr: "Comment le moulin de la ferme transformait le grain en farine sans moteur",
+      kreyol: "Kijan moulen fèm nan te moulen grenn fè l tounen farin san motè",
+      pt: "Como o moinho da fazenda transformava grãos em farinha sem motor",
+    },
+    summaryPt: "A engenharia simples dos antigos moinhos, celeiros e sacos de grãos no campo.",
+    fr: `En plein air, près du grenier, d'un panier d'œufs et des grands sacs de grains, le moulin à vent du village raconte des siècles d'ingéniosité rurale.
+
+À l'intérieur du moulin, la force du vent fait tourner deux grandes meules de pierre rondes : l'une reste fixe tandis que l'autre tourne doucement au-dessus, écrasant les grains en farine fine.
+
+Pour éviter que la farine ne chauffe trop et ne perde son goût, le meunier réglait avec soin l'écart entre les pierres selon la force du vent.`,
+    kreyol: `Deyò a, toupre grenye a, yon panye ze ak gwo sak ble yo, moulen van vilaj la rakonte plizyè syèk entèlijans nan kanpay.
+
+Anndan moulen an, fòs van an fè de gwo wòch won vire : yonn rete fiks pandan lòt la ap vire dousman anlè l pou kraze grenn yo fè yo tounen farin fen.
+
+Pou farin nan pa chofe twòp ni pèdi bon gou l, bòs moulen an te regle espas ant de wòch yo avèk swen selon fòs van an.`,
+    pt: `Ao ar livre, perto do celeiro, de uma cesta de ovos e de sacos de grãos, o moinho de vento da fazenda lembra séculos de engenhosidade rural.
+
+Por dentro, a força do vento movia engrenagens de madeira que giravam duas grandes pedras redondas: uma ficava parada enquanto a outra girava por cima, moendo os grãos aos poucos.
+
+Para a farinha não esquentar demais nem perder o sabor, o moleiro ajustava a distância entre as pedras conforme o vento do dia.`,
+  },
+  {
+    id: "interior-13",
+    theme: "Vida no interior",
+    suggestedSceneId: "interior-13",
+    estimatedSeconds: 60,
+    elementsCited: ["chwal", "poul", "pye mango", "kay"],
+    title: {
+      fr: "L'étonnante mémoire des chevaux et l'intelligence des poules",
+      kreyol: "Bèl memwa chwal yo ak entèlijans poul yo nan lakou a",
+      pt: "A memória surpreendente dos cavalos e a esperteza das galinhas",
+    },
+    summaryPt: "Curiosidades sobre animais do sítio perto da casa e da mangueira na neblina da manhã.",
+    fr: `Dans la brume douce du matin, entre la maison, un grand manguier et une poule qui picore, un cheval lève la tête dès qu'il entend des pas familiers.
+
+Savez-vous que les chevaux possèdent une mémoire extraordinaire ? Ils peuvent reconnaître des visages humains et des voix amicales même après plusieurs années de séparation ! De plus, leurs yeux placés sur les côtés leur offrent une vision presque complète tout autour d'eux.
+
+Et les poules ne sont pas en reste : elles reconnaissent plus de cent visages différents dans leur basse-cour et communiquent par une vingtaine de sons distincts.`,
+    kreyol: `Nan ti bwouya dous maten an, ant kay la, yon gwo pye mango ak yon poul k ap pike atè, yon chwal leve tèt li kou l tande pa moun li konnen.
+
+Èske ou te konnen chwal yo gen yon memwa ki estrawòdinè ? Yo kapab rekonèt figi moun ak vwa zanmi menm apre plizyè ane yo pa wè yo ! Anplis, je yo ki sou kote pèmèt yo wè prèske toutotou kò yo.
+
+Poul yo tou pa rete dèyè : yo rekonèt plis pase san figi diferan nan lakou a epi yo pale yonn ak lòt ak prèske ven ti son diferan.`,
+    pt: `Na névoa leve da manhã, entre a casa, uma grande mangueira e uma galinha ciscando, um cavalo ergue a cabeça assim que reconhece passos familiares.
+
+Você sabia que os cavalos têm memória extraordinária? Eles conseguem reconhecer rostos humanos e vozes amigas mesmo depois de anos de separação! Além disso, os olhos posicionados nas laterais garantem visão quase completa ao redor.
+
+E as galinhas também surpreendem: distinguem dezenas de rostos no terreiro e usam mais de vinte sons diferentes para avisar sobre alimento ou perigo.`,
+  },
+  {
+    id: "interior-14",
+    theme: "Vida no interior",
+    suggestedSceneId: "interior-15",
+    estimatedSeconds: 60,
+    elementsCited: ["jaden", "pyòch", "ruch", "rato"],
+    title: {
+      fr: "Le compostage : comment les feuilles mortes nourrissent le jardin",
+      kreyol: "Konpostaj : kijan fèy sèch yo nouri jaden an ankò",
+      pt: "Compostagem: como folhas secas voltam a alimentar a horta",
+    },
+    summaryPt: "O ciclo natural da fertilidade do solo usando enxada, rastelo e restos vegetais.",
+    fr: `Au petit matin, avec la houe et le râteau près du jardin potager et de la ruche, le jardinier rassemble les feuilles sèches et les épluchures de fruits. Dans la nature, rien ne se jette !
+
+Grâce au compostage, les vers de terre et des millions de micro-organismes transforment ces restes végétaux en un terreau sombre, souple et plein de nutriments.
+
+En quelques mois, ce compost rend la terre du jardin plus fertile, retient mieux l'eau de pluie et nourrit de nouvelles récoltes sans produits chimiques.`,
+    kreyol: `Granmaten, ak pyòch la ak rato a toupre jaden an ak ruch la, kiltivatè a ranmase fèy sèch ak po fwi yo. Nan lanati, anyen pa jete !
+
+Gras ak konpostaj la, ti vè tè yo ak plizyè milyon ti òganis transfòme rès plant sa yo an yon bon tè nwa ki rich anpil.
+
+Nan kèk mwa sèlman, bon tè sa a fè jaden an bay pi bèl rekòt, li kenbe dlo lapli pi byen epi l nouri plant yo san pwodui chimik.`,
+    pt: `Logo cedo, com a enxada e o rastelo perto da horta e da colmeia, o agricultor junta folhas secas e cascas de frutas. Na natureza, nada vira lixo!
+
+Por meio da compostagem, minhocas e milhões de microrganismos transformam esses restos vegetais em um adubo escuro, solto e rico em nutrientes.
+
+Em poucos meses, o composto deixa o solo da horta mais fértil, ajuda a reter a água da chuva e fortalece as novas plantações naturalmente.`,
+  },
+  {
+    id: "interior-15",
+    theme: "Vida no interior",
+    suggestedSceneId: "interior-16",
+    estimatedSeconds: 60,
+    elementsCited: ["kabrit", "pi", "grenye", "chwal"],
+    title: {
+      fr: "Comment fonctionne un puits rural pour puiser l'eau fraîche sous la terre ?",
+      kreyol: "Kijan yon pi nan kanpay fonksyone pou jwenn dlo fre anba tè a ?",
+      pt: "Como um poço rural busca água fresca escondida no subsolo?",
+    },
+    summaryPt: "A importância dos lençóis freáticos e da preservação das nascentes no campo.",
+    fr: `En fin d'après-midi, près du grenier, d'une chèvre curieuse et d'un cheval paisible, le vieux puits en pierre veille sur l'eau de la ferme. Mais d'où vient l'eau cachée si profondément sous la terre ?
+
+Chaque fois qu'il pleut, une grande partie de l'eau s'infiltre lentement à travers le sable, les racines et les roches poreuses jusqu'à former de vastes réserves souterraines appelées nappes phréatiques.
+
+En traversant ces couches naturelles comme un immense filtre, l'eau devient limpide et reste fraîche toute l'année, même pendant la saison sèche.`,
+    kreyol: `Nan fen aprèmidi, toupre grenye a, yon kabrit kirye ak yon chwal trankil, vye pi an wòch la ap veye dlo fèm nan. Men, ki kote dlo ki kache byen fon anba tè a soti ?
+
+Chak fwa lapli tonbe, yon gwo pati nan dlo a desann dousman nan sab la, rasin yo ak wòch yo jiskaske l fòme gwo rezèv dlo anba tè a.
+
+Pandan dlo a ap pase nan kouch sab ak wòch sa yo tankou yon gwo filtè natirèl, li vin pwòp anpil epi l rete fre tout ane a, menm lè sezon sèk la rive.`,
+    pt: `No fim da tarde, perto do celeiro, de uma cabra curiosa e de um cavalo tranquilo, o antigo poço de pedra guarda a água da fazenda. Mas de onde vem a água escondida tão fundo na terra?
+
+Sempre que chove, parte da água se infiltra devagar pela areia, pelas raízes e por rochas porosas até formar grandes reservatórios subterrâneos chamados lençóis freáticos.
+
+Ao atravessar essas camadas naturais como um imenso filtro, a água fica límpida e permanece fresca o ano inteiro, mesmo na estação seca.`,
   },
 
   // ==================== DANÇA (10) ====================
@@ -846,6 +1126,146 @@ No fim do século XVIII, dançar em par tão próximo e girar rápido pelo salã
 
 Ainda assim, a alegria do compasso em três tempos conquistou o mundo inteiro e virou sinônimo de elegância.`,
   },
+  {
+    id: "danca-11",
+    theme: "Dança",
+    suggestedSceneId: "danca-11",
+    estimatedSeconds: 60,
+    elementsCited: ["riban", "tapi", "kouwòn flè", "evantay"],
+    title: {
+      fr: "La danse des rubans et des fleurs : tresser la joie autour d'un mât",
+      kreyol: "Dans riban ak flè yo : trese lajwa toutotou yon poto",
+      pt: "A dança das fitas e das flores: trançando alegria nas festas populares",
+    },
+    summaryPt: "A tradição festiva das danças com fitas coloridas, tapete de dança, flores e leque.",
+    fr: `Dans une salle lumineuse, autour d'un tapis de danse, une couronne de fleurs, un éventail et de longs rubans colorés rappellent l'une des danses populaires les plus joyeuses au monde : la danse des rubans !
+
+Connue en Europe, en Amérique latine et dans les Caraïbes — comme dans le « dans riban » ou les fêtes rurales — elle rassemble les danseurs en cercle autour d'un mât. En croisant leurs pas avec précision, ils tressent puis détressent les rubans sans jamais les emmêler !
+
+Chaque couleur représente les saisons, les fleurs et la solidarité du groupe.`,
+    kreyol: `Nan yon sal ki klere, toutotou yon tapi dans, yon kouwòn flè, yon evantay ak long riban tout koulè fè nou sonje yonn nan dans popilè ki pi bèl nan mond lan : dans riban an !
+
+Yo konnen l an Ewòp, nan Amerik Latin ak nan Karayib la : dansè yo fòme yon sèk toutotou yon poto epi chak moun kenbe yon riban. Lè yo kwaze pa yo ak presizyon, yo trese epi yo detrese riban yo san yo pa janm mele yo !
+
+Chak koulè reprezante sezon yo, flè yo ak bèl tèt ansanm gwoup la.`,
+    pt: `Em uma sala iluminada, em torno de um tapete de dança, uma coroa de flores, um leque e longas fitas coloridas lembram uma das danças populares mais alegres do mundo: a dança das fitas!
+
+Conhecida na Europa, no Caribe e no Brasil — como o pau-de-fitas — ela reúne os participantes em círculo ao redor de um mastro. Cruzando os passos com sincronia, os dançarinos trançam e destrançam as fitas coloridas sem deixá-las embaraçar!
+
+Cada cor celebra as estações, as flores e a união da comunidade.`,
+  },
+  {
+    id: "danca-12",
+    theme: "Dança",
+    suggestedSceneId: "danca-12",
+    estimatedSeconds: 60,
+    elementsCited: ["barè", "kostim", "lanp", "plim"],
+    title: {
+      fr: "À quoi sert vraiment la barre d'entraînement dans un studio de danse ?",
+      kreyol: "Ki sa barè repetisyon an sèvi toutbonvre nan yon estidyo dans ?",
+      pt: "Para que serve de verdade a barra de apoio nos treinos de dança?",
+    },
+    summaryPt: "Por que a barra não serve para se apoiar com força, mas para educar o eixo e a leveza.",
+    fr: `Sous un ciel clair, près d'une lanterne, d'un costume de carnaval et d'un panache de plumes, se trouve un outil discret mais essentiel : la barre de danse.
+
+Beaucoup de débutants pensent que la barre sert à s'y accrocher fort pour ne pas tomber. En réalité, les professeurs conseillent d'y poser seulement le bout des doigts !
+
+La barre aide à trouver l'axe naturel du corps, à échauffer les chevilles et à préparer la posture élégante qui permettra ensuite de danser librement au centre de la scène.`,
+    kreyol: `Anba yon syèl klè, toupre yon lanp, yon kostim kanaval ak bèl plim, gen yon zouti senp men ki enpòtan anpil : barè dans la.
+
+Anpil moun ki fèk ap kòmanse panse barè a la pou kenbe l byen di pou yo pa tonbe. An reyalite, pwofesè yo rekòmande pou poze sèlman pwent dwèt yo sou li !
+
+Barè a ede kò a jwenn bon ekilib natirèl li, chofe cheviy yo epi prepare bèl pòsti ki pral pèmèt atis la danse lib nan mitan sèn nan apre.`,
+    pt: `Sob um céu limpo, perto de uma lanterna, de uma fantasia de carnaval e de um penacho de plumas, há um equipamento discreto e essencial: a barra de dança.
+
+Muita gente imagina que a barra serve para segurar com força e não cair. Na verdade, os professores orientam apoiar apenas a ponta dos dedos!
+
+A barra ajuda a alinhar o eixo do corpo, aquecer articulações e treinar a leveza que depois permite dançar livremente pelo centro do palco.`,
+  },
+  {
+    id: "danca-13",
+    theme: "Dança",
+    suggestedSceneId: "danca-14",
+    estimatedSeconds: 60,
+    elementsCited: ["trompèt", "tcha-tcha", "kastayèt", "plim"],
+    title: {
+      fr: "Quand les danseurs jouent eux-mêmes le rythme avec des castagnettes ou un tcha-tcha",
+      kreyol: "Lè dansè yo menm jwe ritm lan ak kastayèt oswa tcha-tcha nan men yo",
+      pt: "Quando os próprios dançarinos marcam o ritmo com castanholas ou maracás",
+    },
+    summaryPt: "A fusão entre música e dança quando o instrumento acompanha diretamente o movimento das mãos.",
+    fr: `Dans la lumière de l'aube, quand la trompette sonne près des plumes colorées, des castagnettes et du tcha-tcha, le danseur devient lui aussi musicien !
+
+En Espagne, les castagnettes claquent au bout des doigts pour souligner chaque geste des bras. En Haïti et dans les Caraïbes, le tcha-tcha — un maraca rempli de graines — accompagne le pas des danseurs pendant les cortèges et les fêtes populaires.
+
+Faire de la musique avec ses mains tout en dansant exige une merveilleuse coordination entre le souffle, les pieds et le rythme.`,
+    kreyol: `Nan bèl limyè granmaten an, lè twonpèt la sonnen toupre plim kolore yo, kastayèt yo ak tcha-tcha a, dansè a tounen mizisyen tou !
+
+Nan peyi Espay, kastayèt yo fè ti bri klè nan pwent dwèt yo pou swiv chak mouvman bra. Ann Ayiti ak nan Karayib la, tcha-tcha a — ki plen ti grenn anndan l — akonpaye pa dansè yo nan defile ak fèt popilè yo.
+
+Fè mizik ak men ou pandan w ap danse mande yon bèl kòdinasyon ant souf ou, pye ou ak ritm lan.`,
+    pt: `Na luz da manhã, quando o trompete soa perto de plumas coloridas, castanholas e do maracá tcha-tcha, o dançarino também se torna músico!
+
+Na Espanha, as castanholas estalam nas mãos acompanhando cada desenho dos braços. No Haiti e no Caribe, o tcha-tcha — chocalho cheio de sementes — marca os passos nos cortejos e festas populares.
+
+Produzir ritmo com as mãos enquanto se dança exige uma bela sintonia entre respiração, pés e compasso.`,
+  },
+  {
+    id: "danca-14",
+    theme: "Dança",
+    suggestedSceneId: "danca-15",
+    estimatedSeconds: 60,
+    elementsCited: ["kouwòn flè", "mirwa", "trompèt", "gita"],
+    title: {
+      fr: "Pourquoi la danse en cercle existe-t-elle dans presque toutes les cultures ?",
+      kreyol: "Poukisa dans an won egziste nan prèske tout kilti sou latè ?",
+      pt: "Por que a dança em roda existe em quase todas as culturas?",
+    },
+    summaryPt: "O significado igualitário e comunitário da roda de dança diante da música ao vivo.",
+    fr: `Dans une salle dorée, devant un grand miroir, une guitare, une trompette et une couronne de fleurs, imaginez un groupe qui forme un grand cercle pour danser.
+
+De l'Afrique à l'Europe, du Brésil à Haïti, la danse en rond est la plus ancienne forme de danse collective. Pourquoi le cercle plaît-il autant ? Parce que dans une ronde, personne n'est devant ni derrière : tout le monde se voit dans les yeux, partage le même rythme et se sent égal !
+
+Bouger ensemble en cercle renforce immédiatement le sentiment d'amitié et d'appartenance.`,
+    kreyol: `Nan yon sal dore, devan yon gwo mirwa, yon gita, yon twonpèt ak yon kouwòn flè, imajine yon gwoup moun ki fòme yon gwo won pou danse.
+
+Depi Afrik rive Ewòp, soti Brezil ale Ayiti, danse an won se pi ansyen fòm dans an gwoup. Poukisa tout moun renmen won nan konsa ? Paske nan yon won, pèsonn pa devan ni dèyè : tout moun gade youn lòt nan je, yo pataje menm ritm lan epi tout moun egal !
+
+Bouje ansanm an won kreye bèl santiman amitye ak fratènite touswit.`,
+    pt: `Em um salão dourado, diante de um espelho de ensaio, um violão, um trompete e uma coroa de flores, imagine um grupo formando uma grande roda para dançar.
+
+Da África à Europa, do Brasil ao Haiti, a dança circular é a forma mais antiga de dança coletiva. Por que a roda conquista tanta gente? Porque nela ninguém fica na frente nem atrás: todos se olham nos olhos, compartilham o mesmo ritmo e participam em igualdade!
+
+Mover-se em roda fortalece na hora o espírito de amizade e união.`,
+  },
+  {
+    id: "danca-15",
+    theme: "Dança",
+    suggestedSceneId: "danca-17",
+    estimatedSeconds: 60,
+    elementsCited: ["vyolon", "lanp", "tcha-tcha", "pwojektè"],
+    title: {
+      fr: "Les danses percussives : quand les pieds deviennent des tambours",
+      kreyol: "Dans pèkisyon yo : lè pye dansè yo tounen tanbou",
+      pt: "Danças percussivas: quando os pés viram tambores",
+    },
+    summaryPt: "Do sapateado às danças tradicionais com violino, tcha-tcha e iluminação de palco.",
+    fr: `Dans une salle éclairée par une lanterne et un projecteur, au son du violon et du tcha-tcha, certains danseurs n'ont même pas besoin de tambour pour marquer le tempo : ce sont leurs propres pas qui frappent le rythme !
+
+Dans les claquettes, le flamenco, les danses irlandaises ou certaines traditions caribéennes et brésiliennes, le talon et la pointe du pied créent de véritables mélodies sur le plancher en bois.
+
+Le danseur dialogue alors avec le violoniste comme un percussionniste à part entière, unissant le son et le mouvement en un seul art.`,
+    kreyol: `Nan yon sal ki klere ak yon lanp ak yon pwojektè, sou son vyolon an ak tcha-tcha a, gen dansè ki pa menm bezwen tanbou pou bat tan an : se pwòp pye yo ki fè ritm lan !
+
+Nan tap-dance, nan flamenko, nan dans ilandè oswa kèk tradisyon karayibeyen ak brezilyen, talon pye ak pwent pye yo kreye vrè melodi sou planche bwa a.
+
+Dansè a dyaloge ak jwè vyolon an tankou yon vrè pèkisyonis, ki mete son ak mouvman ansanm nan yon sèl atizay.`,
+    pt: `Em uma sala iluminada por lanterna e holofote, ao som do violino e do maracá tcha-tcha, alguns dançarinos nem precisam de tambor para marcar o compasso: os próprios pés criam o ritmo!
+
+No sapateado, no flamenco, nas danças irlandesas e em tradições populares afro-americanas, o calcanhar e a ponta do pé produzem batidas precisas sobre o piso de madeira.
+
+O bailarino conversa com o violinista como um percussionista completo, unindo som e movimento em uma só arte.`,
+  },
 
   // ==================== GEOGRAFIA (10) ====================
   {
@@ -1127,6 +1547,146 @@ Dlo n ap bwè jodi a ap vwayaje konsa sou latè depi plizyè milya ane.`,
 Todos os dias, o sol aquece mares, lagos e rios. A água sobe como vapor invisível e esfria em altitude — às vezes perto de montanhas nevadas — formando nuvens. Quando as gotículas ficam pesadas demais, caem em forma de chuva, alcançando até regiões onde crescem cactos.
 
 A água que bebemos hoje viaja assim pela Terra há bilhões de anos.`,
+  },
+  {
+    id: "geografia-11",
+    theme: "Geografia",
+    suggestedSceneId: "geografia-10",
+    estimatedSeconds: 60,
+    elementsCited: ["tèmomèt", "din", "ekla", "mòn"],
+    title: {
+      fr: "Pourquoi les nuits dans le désert sont-elles souvent glacées ?",
+      kreyol: "Poukisa nwit nan dezè yo konn frèt anpil konsa ?",
+      pt: "Por que as noites no deserto costumam ser tão frias?",
+    },
+    summaryPt: "A grande variação térmica entre o dia quente e a noite fria nas dunas e desertos.",
+    fr: `Dans un paysage de dunes de sable face aux montagnes lointaines, un thermomètre réserve toujours une grande surprise aux voyageurs !
+
+En plein après-midi sous le soleil, la chaleur du désert peut dépasser quarante degrés. Mais dès que le soleil se couche, la température chute brutalement et peut descendre près de zéro degré !
+
+Pourquoi ce contraste si fort ? Parce que l'air du désert est très sec et sans nuages. Sans humidité ni couverture nuageuse pour retenir la chaleur comme une couverture, la terre et le sable perdent presque toute leur chaleur dès la tombée de la nuit.`,
+    kreyol: `Nan yon peyizaj din sab devan gwo mòn ki lwen yo, yon tèmomèt toujou bay vwayajè yo yon gwo sipriz !
+
+Nan mitan aprèmidi anba solèy la, chalè nan dezè a ka depase karant degre. Men kou solèy la kouche, tanperati a desann bridsoukou epi l ka rive toupre zewo degre !
+
+Poukisa gen yon diferans konsa ? Paske lè dezè a sèch anpil epi l pa gen nyaj. San imidite ni nyaj pou kenbe chalè a tankou yon dra, tè a ak sab la pèdi prèske tout chalè yo kou lannwit rive.`,
+    pt: `Em uma paisagem de dunas de areia diante de montanhas distantes, o termômetro sempre reserva uma surpresa para quem viaja pelo deserto!
+
+Durante a tarde, sob o sol forte, o calor pode passar dos quarenta graus. Mas assim que o sol se põe, a temperatura despenca rapidamente e pode chegar perto de zero!
+
+O motivo é simples: o ar do deserto é muito seco e quase sem nuvens. Sem umidade nem nuvens para segurar o calor como um cobertor, a areia esfria quase na hora quando chega a noite.`,
+  },
+  {
+    id: "geografia-12",
+    theme: "Geografia",
+    suggestedSceneId: "geografia-12",
+    estimatedSeconds: 60,
+    elementsCited: ["glasye", "kanyon", "glòb", "kaskad"],
+    title: {
+      fr: "Où se trouve presque toute l'eau douce de notre planète ?",
+      kreyol: "Ki kote prèske tout dlo dous planèt nou an kache ?",
+      pt: "Onde está guardada quase toda a água doce do nosso planeta?",
+    },
+    summaryPt: "Como geleiras, rios, cânions e cachoeiras distribuem a água doce no globo terrestre.",
+    fr: `En regardant le globe terrestre, on voit surtout du bleu : les océans salés couvrent plus des deux tiers de la Terre. Mais où se cache l'eau douce qui alimente nos cascades et creuse les grands canyons ?
+
+Étonnamment, la majorité de l'eau douce de la planète n'est pas liquide ! Près de soixante-dix pour cent est gelée dans les grands glaciers et les calottes polaires. Le reste circule sous terre et dans les rivières, les lacs et les nuages.
+
+C'est pourquoi chaque goutte d'eau douce sur la terre ferme est un bien précieux à préserver.`,
+    kreyol: `Lè n ap gade glòb terès la, nou wè koulè ble toupatou : oseyan sale yo kouvri plis pase de tyè latè. Men ki kote dlo dous k ap nouri kaskad yo epi ki fouye gwo kanyon yo kache ?
+
+Sa etonan anpil, men pifò dlo dous sou planèt la pa likid ! Prèske swasanndis pousan ladan l jele anndan gwo glasye yo ak nan zòn polè yo. Rès la ap sikile anba tè, nan rivyè, nan lak ak nan nyaj yo.
+
+Se poutèt sa chak ti gout dlo dous sou tè a se yon gwo trezò pou nou pwoteje.`,
+    pt: `Ao olhar o globo terrestre, vemos azul por toda parte: os oceanos salgados cobrem mais de dois terços da Terra. Mas onde fica a água doce que forma cachoeiras e esculpe cânions?
+
+Surpreendentemente, a maior parte da água doce do planeta não está líquida! Cerca de setenta por cento está congelada nas geleiras e calotas polares. O restante circula no subsolo, em rios, lagos e nuvens.
+
+Por isso, cada gota de água doce disponível na superfície é um patrimônio precioso.`,
+  },
+  {
+    id: "geografia-13",
+    theme: "Geografia",
+    suggestedSceneId: "geografia-13",
+    estimatedSeconds: 60,
+    elementsCited: ["falèz", "kontinan", "plato", "glasye"],
+    title: {
+      fr: "Des hauts plateaux aux falaises côtières : comment les reliefs naissent-ils ?",
+      kreyol: "Depi gwo plato yo rive nan falèz bò lanmè : kijan relyèf yo fèt ?",
+      pt: "Dos altos planaltos às falésias: como nascem os grandes relevos da Terra?",
+    },
+    summaryPt: "A ação conjunta das placas continentais, dos ventos, das geleiras e das ondas.",
+    fr: `Sur tous les continents, la Terre offre des formes spectaculaires : des plateaux plats très élevés, des glaciers anciens et d'immenses falaises plongeant dans la mer.
+
+Deux grandes forces sculptent sans cesse notre planète. De l'intérieur, le mouvement lent des continents soulève des montagnes et des plateaux entiers. De l'extérieur, la pluie, le vent, la glace et les vagues taillent les roches en falaises abruptes et en vallées douces.
+
+Chaque paysage que nous admirons est une œuvre en cours depuis des millions d'années.`,
+    kreyol: `Sou tout kontinan yo, latè ofri fòm ki bèl anpil : gwo plato ki plat byen wo, vye glasye ak gwo falèz ki plonje nan lanmè.
+
+De gwo fòs ap desine planèt nou an san rete. Depi anndan latè, mouvman dousman kontinan yo leve mòn ak plato antye. Depi deyò, lapli, van, glas ak vag lanmè taye wòch yo pou fè falèz ak bèl vale.
+
+Chak peyizaj n ap gade jodi a se yon gwo zèv k ap fèt depi plizyè milyon ane.`,
+    pt: `Em todos os continentes, a Terra exibe formas impressionantes: planaltos elevados, geleiras antigas e falésias imensas diante do mar.
+
+Duas forças principais modelam o planeta sem parar. Por dentro, o movimento lento dos continentes ergue montanhas e planaltos inteiros. Por fora, a chuva, o vento, o gelo e as ondas esculpem rochas, penhascos e vales.
+
+Cada paisagem que admiramos é uma escultura natural em construção há milhões de anos.`,
+  },
+  {
+    id: "geografia-14",
+    theme: "Geografia",
+    suggestedSceneId: "geografia-14",
+    estimatedSeconds: 60,
+    elementsCited: ["pon", "nyaj lapli", "ekla", "lak"],
+    title: {
+      fr: "Pourquoi certains lacs ont-ils une eau turquoise, verte ou même rose ?",
+      kreyol: "Poukisa gen kèk lak ki gen dlo koulè ble klè, vèt oswa menm woz ?",
+      pt: "Por que alguns lagos têm águas azul-turquesa, verdes ou até cor-de-rosa?",
+    },
+    summaryPt: "Como minerais, algas e a luz sob nuvens de chuva mudam as cores dos lagos.",
+    fr: `Près d'un pont qui traverse un lac paisible sous les nuages de pluie et les éclairs d'orage, la couleur de l'eau change parfois d'une région à l'autre !
+
+Certains lacs de montagne paraissent d'un bleu laiteux ou turquoise à cause de minuscules poussières de roche en suspension qui reflètent la lumière du soleil. D'autres lacs salés deviennent roses grâce à des algues microscopiques qui produisent des pigments naturels pour se protéger du soleil.
+
+Ainsi, la chimie de la terre et la lumière du ciel peignent chaque lac d'une nuance unique.`,
+    kreyol: `Toupre yon pon ki travèse yon lak trankil anba nyaj lapli ak ekla loraj, koulè dlo a konn chanje soti nan yon rejyon ale nan yon lòt !
+
+Gen kèk lak nan mòn ki parèt ble klè poutèt ti pousyè wòch fen ki nan dlo a k ap reflete limyè solèy la. Gen lòt lak sale ki vin woz gras ak ti alg tou piti ki fè pigman natirèl pou pwoteje tèt yo kont solèy la.
+
+Konsa, chimi tè a ak limyè syèl la pentire chak lak ak pwòp koulè pa l.`,
+    pt: `Perto de uma ponte sobre um lago tranquilo, sob nuvens de chuva e raios ao longe, a cor da água muda de forma surpreendente de um lugar para outro!
+
+Alguns lagos de montanha parecem azul-turquesa por causa de partículas finíssimas de rocha suspensas na água, que refletem a luz solar. Já certos lagos salgados ficam cor-de-rosa graças a algas microscópicas que produzem pigmentos naturais.
+
+Assim, os minerais do solo e a luz do céu pintam cada lago com uma tonalidade única.`,
+  },
+  {
+    id: "geografia-15",
+    theme: "Geografia",
+    suggestedSceneId: "geografia-16",
+    estimatedSeconds: 60,
+    elementsCited: ["mòn", "kat monn", "vil", "glòb"],
+    title: {
+      fr: "Pourquoi existe-t-il des fuseaux horaires sur la carte du monde ?",
+      kreyol: "Poukisa gen diferans lè ant vil ak peyi sou kat mond lan ?",
+      pt: "Por que existem fusos horários diferentes no mapa-múndi?",
+    },
+    summaryPt: "Como a rotação da Terra e a expansão dos trens e cidades criaram os 24 fusos horários.",
+    fr: `Sur le globe terrestre et la carte du monde, quand le soleil éclaire les montagnes d'une ville le matin, il fait déjà nuit dans une autre ville à l'autre bout de la planète !
+
+Jusqu'au dix-neuvième siècle, chaque ville réglait son horloge uniquement sur le soleil de midi. Mais avec l'arrivée des trains et du télégraphe, avoir mille heures locales différentes devenait impossible à organiser !
+
+En mille huit cent quatre-vingt-quatre, les pays ont donc divisé le globe en vingt-quatre grands fuseaux horaires pour harmoniser les voyages et les communications.`,
+    kreyol: `Sou glòb terès la ak kat mond lan, lè solèy la klere mòn yon vil granmaten, li deja lannwit nan yon lòt vil lòt bò planèt la !
+
+Jis nan diznevyèm syèk la, chak vil te regle mont li sèlman sou solèy midi lakay li. Men lè tren yo ak telegraf la te rive, li te vin enposib pou òganize tout lè lokal diferan sa yo !
+
+Nan ane mil uit san katreven kat, peyi yo te separe glòb la an venkat gwo zòn lè pou mete lòd nan vwayaj ak kominikasyon toupatou.`,
+    pt: `No globo terrestre e no mapa-múndi, quando o sol ilumina as montanhas de uma cidade pela manhã, já é noite em outra cidade do outro lado do planeta!
+
+Até o século XIX, cada cidade acertava o relógio apenas pelo sol do meio-dia local. Mas com a chegada das ferrovias e do telégrafo, tantos horários diferentes causavam confusão nos transportes!
+
+Em 1884, uma convenção internacional organizou o globo em vinte e quatro fusos horários para coordenar viagens e comunicações.`,
   },
 
   // ==================== HISTÓRIA (10) ====================
@@ -1410,6 +1970,146 @@ Sua base afilada permitia encaixá-la com firmeza na areia ou no porão dos navi
 
 Arqueólogos frequentemente encontram nas alças o carimbo do oleiro e do porto de origem, como verdadeiras etiquetas da História.`,
   },
+  {
+    id: "historia-11",
+    theme: "História",
+    suggestedSceneId: "historia-11",
+    estimatedSeconds: 65,
+    elementsCited: ["ankre", "flanbo", "parchemen", "chandèl"],
+    title: {
+      fr: "18 mai 1803 à l'Arcahaie : la naissance du drapeau haïtien",
+      kreyol: "18 me 1803 nan Lakayè : nesans drapo peyi Ayiti",
+      pt: "18 de maio de 1803 em Arcahaie: o nascimento da bandeira do Haiti",
+    },
+    summaryPt: "A história emocionante do Congresso de Arcahaie e de Catherine Flon costurando o azul e o vermelho.",
+    fr: `Au petit matin sur la côte, près d'une ancre, d'un parchemin, de chandelles et d'un flambeau, souvenons-nous d'une date chère au cœur de tous les Haïtiens : le dix-huit mai mille huit cent trois.
+
+Lors du congrès historique de l'Arcahaie, au bord de la mer, les chefs de l'armée révolutionnaire décidèrent de créer un emblème propre pour unir le peuple dans sa lutte pour la liberté. Selon la tradition, Jean-Jacques Dessalines retira le blanc du drapeau colonial français, et Catherine Flon cousit ensemble les bandes bleue et rouge !
+
+Ce geste symbolisait l'union des fils et filles d'Haïti vers l'indépendance, célébrée chaque année lors de la Fête du Drapeau.`,
+    kreyol: `Granmaten bò lanmè a, toupre yon ankre, yon parchemen, chandèl ak yon flanbo, ann sonje yon dat ki chè nan kè tout Ayisyen : dizuit me mil uit san twa.
+
+Nan kongrè istorik Lakayè a, bò kòt la, chèf lame revolisyonè a te deside kreye yon drapo pa yo pou mete pèp la ansanm nan batay pou libète a. Dapre tradisyon an, Janjak Desalin te retire koulè blan nan drapo kolonyal franse a, epi Katrin Flon te koud moso ble a ak moso wouj la ansanm !
+
+Bèl jès sa a te senbolize inyon tout pitit peyi Ayiti sou wout endepandans lan, yon jou yo selebre chak ane nan Fèt Drapo.`,
+    pt: `Logo cedo na costa, perto de uma âncora, de um pergaminho, de velas e de uma tocha, recordamos uma data querida no coração de todo o Haiti: 18 de maio de 1803.
+
+Durante o congresso histórico de Arcahaie, à beira-mar, os líderes da luta revolucionária decidiram criar um emblema próprio para unir o povo pela liberdade. Segundo a tradição histórica, Jean-Jacques Dessalines retirou a faixa branca da bandeira colonial francesa, e Catherine Flon costurou juntas as faixas azul e vermelha!
+
+Esse gesto simbolizou a união nacional rumo à independência e é celebrado todos os anos no Dia da Bandeira.`,
+  },
+  {
+    id: "historia-12",
+    theme: "História",
+    suggestedSceneId: "historia-15",
+    estimatedSeconds: 65,
+    elementsCited: ["parchemen", "kat ansyen", "kloch", "kanon"],
+    title: {
+      fr: "La bataille de Vertières (1803) : le dernier pas vers la liberté d'Haïti",
+      kreyol: "Batay Vètyè (1803) : dènye gran pa sou wout libète peyi Ayiti",
+      pt: "A Batalha de Vertières (1803): o passo decisivo da independência do Haiti",
+    },
+    summaryPt: "O episódio heroico de 18 de novembro de 1803 perto de Cap-Haïtien e a coragem de François Capois.",
+    fr: `Dans les archives d'époque, entre vieilles cartes, parchemins, cloches et canons, la date du dix-huit novembre mille huit cent trois reste gravée comme l'un des moments les plus décisifs de l'Histoire d'Haïti : la bataille de Vertières.
+
+Aux portes du Cap-Haïtien, l'armée indigène menée par Jean-Jacques Dessalines affronta les troupes impériales pour conquérir définitivement la liberté. Au cœur du combat, sous les tirs de canons, le général François Capois — surnommé « Capois-la-Mort » — avança avec une telle bravoure que même l'armée adverse salua son courage !
+
+Quelques semaines plus tard, le premier janvier mille huit cent quatre, la liberté était proclamée.`,
+    kreyol: `Nan achiv epòk la, ant vye kat ansyen, parchemen, kloch ak kanon, dat dizuit novanm mil uit san twa a rete grave kòm yonn nan moman ki pi enpòtan nan listwa peyi Ayiti : batay Vètyè.
+
+Bò pòt vil Okap, lame endijèn Janjak Desalin t ap dirije a te batay pou pran libète l pou toutbon. Nan mitan dife kanon yo, jeneral Franswa Kapwa — yo te rele « Kapwa-la-Mò » — te avanse ak tèlman kouraj menm lènmi yo te salye bravou li !
+
+Kèk semèn apre, premye janvye mil uit san kat, endepandans Ayiti te pwoklame devan tout mond lan.`,
+    pt: `Nos registros históricos, entre mapas antigos, pergaminhos, sinos e canhões, a data de 18 de novembro de 1803 permanece marcada como decisiva para o Haiti: a Batalha de Vertières.
+
+Nos arredores de Cabo Haitiano, o exército liderado por Jean-Jacques Dessalines enfrentou as tropas coloniais em uma ofensiva definitiva pela liberdade. Sob intenso fogo de canhões, o general François Capois — conhecido como "Capois-la-Mort" — avançou com tamanha coragem que impressionou até os adversários!
+
+Poucas semanas depois, em 1º de janeiro de 1804, o Haiti proclamava sua independência.`,
+  },
+  {
+    id: "historia-13",
+    theme: "História",
+    suggestedSceneId: "historia-16",
+    estimatedSeconds: 65,
+    elementsCited: ["kòf trezò", "fò", "chandèl", "plim ak lank"],
+    title: {
+      fr: "Le Palais Sans-Souci de Milot : un joyau du patrimoine haïtien",
+      kreyol: "Palè San-Sousi nan Milo : yon gwo trezò patrimwàn ayisyen",
+      pt: "O Palácio de Sans-Souci em Milot: uma joia da história do Haiti",
+    },
+    summaryPt: "A história do palácio construído no século XIX aos pés da Citadelle, hoje Patrimônio da UNESCO.",
+    fr: `Sous une pluie légère, près d'une forteresse, de chandelles et de récits écrits à la plume et à l'encre, découvrons un véritable trésor de l'Histoire haïtienne : le Palais Sans-Souci, situé à Milot, au nord du pays.
+
+Bâti au début du dix-neuvième siècle par Henri Christophe, tout près de la Citadelle Laferrière, ce palais monumental possédait des escaliers majestueux, des jardins en terrasses, des fontaines rafraîchissantes et même un ingénieux système de conduites d'eau sous les planchers !
+
+Inscrit au patrimoine mondial de l'UNESCO depuis mille neuf cent quatre-vingt-deux, Sans-Souci témoigne de l'ambition culturelle et architecturale du jeune État haïtien.`,
+    kreyol: `Anba yon ti lapli dous, toupre yon fò, chandèl ak bèl istwa ki ekri ak plim ak lank, ann dekouvri yon vrè kòf trezò nan listwa peyi Ayiti : Palè San-Sousi nan Milo, nan nò peyi a.
+
+Anri Kristòf te bati gwo palè sa a nan kòmansman diznevyèm syèk la, pa lwen Sitadèl Laferyè. Li te gen bèl eskalye majeste, jaden an teras, fontèn dlo fre e menm yon sistèm tiyo dlo anba planche yo pou kenbe sal yo fre !
+
+Depi ane mil nèf san katreven de, UNESCO klase San-Sousi nan patrimwàn mondyal la kòm prèv gran vizyon kiltirèl jèn nasyon ayisyen an.`,
+    pt: `Sob chuva leve, perto de uma fortaleza, de velas acesas e de relatos escritos com pena e tinteiro, conhecemos um verdadeiro tesouro histórico do Haiti: o Palácio de Sans-Souci, em Milot, no norte do país.
+
+Construído no início do século XIX por Henri Christophe, aos pés da Citadelle Laferrière, o palácio reunia escadarias monumentais, jardins em terraços, fontes e até canais de água sob o piso para refrescar os salões!
+
+Reconhecido como Patrimônio Mundial da UNESCO desde 1982, Sans-Souci simboliza a ambição arquitetônica e cultural do jovem Estado haitiano.`,
+  },
+  {
+    id: "historia-14",
+    theme: "História",
+    suggestedSceneId: "historia-17",
+    estimatedSeconds: 65,
+    elementsCited: ["karavèl", "kouwòn", "twòn", "tou"],
+    title: {
+      fr: "Les Taïnos d'Ayiti et la reine Anacaona : les racines anciennes de l'île",
+      kreyol: "Pèp Tayino ann Ayiti ak rèn Anakawona : rasin ansyen zile a",
+      pt: "Os Taínos de Ayiti e a rainha Anacaona: as raízes antigas do Haiti",
+    },
+    summaryPt: "A história da ilha antes das caravelas de 1492 e da liderança poética da cacica Anacaona.",
+    fr: `Au crépuscule sur la baie, quand une caravelle apparaît à l'horizon près des anciennes terres de couronnes et de trônes, rappelons que l'Histoire d'Haïti a commencé bien avant mille quatre cent quatre-vingt-douze !
+
+Pendant des siècles, les peuples autochtones Taïnos appelaient l'île « Ayiti » ou « Quisqueya ». Ils cultivaient le manioc, sculptaient le bois et vivaient en communautés organisées en royaumes appelés cacicats.
+
+Parmi leurs figures les plus admirées brille la cacique et poétesse Anacaona, surnommée « Fleur d'Or », célèbre pour son intelligence, ses chants « areytos » et son courage face à la conquête coloniale.`,
+    kreyol: `Lè solèy ap kouche sou bè a, lè yon karavèl parèt nan orizon an toupre tè kote ansyen kouwòn ak twòn te egziste, ann sonje listwa peyi Ayiti te kòmanse byen lontan anvan mil kat san katrevendouz !
+
+Pandan plizyè syèk, premye pèp Tayino yo te rele zile a « Ayiti » oswa « Kiskeya ». Yo te kiltive manyòk, yo te taye bwa epi yo te òganize nan plizyè gwo kominote yo te rele kasika.
+
+Pami pi gran lidè yo, nou sonje rèn ak powèt Anakawona, ki vle di « Flè Lò », yon fanm ki te selèb pou sajès li, bèl chante li yo ak kouraj li devan envazyon kolonyal la.`,
+    pt: `Ao entardecer na baía, quando uma caravela surge no horizonte diante de terras antigas de coroas e tronos, lembramos que a história do Haiti começou muito antes de 1492!
+
+Durante séculos, os povos indígenas Taínos chamavam a ilha de "Ayiti" ou "Quisqueya". Eles cultivavam mandioca, navegavam em canoas e se organizavam em territórios chamados cacicados.
+
+Entre suas figuras mais admiradas destaca-se Anacaona — cujo nome significa "Flor de Ouro" —, poeta, líder do cacicado de Xaragua e símbolo de sabedoria e resistência.`,
+  },
+  {
+    id: "historia-15",
+    theme: "História",
+    suggestedSceneId: "historia-20",
+    estimatedSeconds: 65,
+    elementsCited: ["twòn", "parchemen", "epe", "plim ak lank"],
+    title: {
+      fr: "Comment Haïti a soutenu l'indépendance de l'Amérique latine",
+      kreyol: "Kijan peyi Ayiti te ede Amerik Latin pran endepandans li",
+      pt: "Como o Haiti apoiou a independência da América Latina",
+    },
+    summaryPt: "A solidariedade histórica de Alexandre Pétion com Simón Bolívar em 1815 e 1816.",
+    fr: `Sous le ciel étoilé, près des parchemins, de la plume et de l'encre qui écrivent les traités d'amitié, l'Histoire garde un geste de solidarité inoubliable d'Haïti envers ses voisins.
+
+En mille huit cent quinze et mille huit cent seize, alors que Simón Bolívar cherchait du soutien pour libérer l'Amérique du Sud, il fut accueilli chaleureusement à Jacmel et aux Cayes par le président haïtien Alexandre Pétion !
+
+Haïti offrit des navires, des vivres, des volontaires, des épées et même une imprimerie. En échange, Pétion ne demanda ni or ni terres, mais une seule promesse écrite : abolir l'esclavage dans tous les nouveaux pays libérés.`,
+    kreyol: `Anba syèl ki plen zetwal la, toupre parchemen, plim ak lank ki ekri gwo trete amitye yo, listwa kenbe yon bèl jès solidarite peyi Ayiti te fè pou vwazen l yo.
+
+Nan ane mil uit san kenz ak mil uit san sèz, lè Simón Bolívar t ap chèche sipò pou libere Amerik di Sid, prezidan ayisyen Alexandre Pétion te resevwa l ak bra louvri nan Jakmèl ak Okay !
+
+Ayiti te bay bato, manje, volontè, epe e menm yon enprimri. An retou, Pétion pa t mande ni lò ni tè, men yon sèl pwomès : pou tout nouvo peyi ki vin lib yo aboli esklavaj nèt.`,
+    pt: `Sob o céu estrelado, perto de pergaminhos, pena e tinteiro que registram grandes pactos, a História guarda um gesto inesquecível de solidariedade do Haiti com seus vizinhos.
+
+Entre 1815 e 1816, quando Simón Bolívar buscava apoio para libertar a América do Sul, foi acolhido em Jacmel e Les Cayes pelo presidente haitiano Alexandre Pétion!
+
+O Haiti ofereceu navios, mantimentos, voluntários, armas e até uma prensa tipográfica. Em troca, Pétion não pediu ouro nem territórios, mas apenas um compromisso: abolir a escravidão em todas as nações que conquistassem a liberdade.`,
+  },
 
   // ==================== CINEMA (10) ====================
   {
@@ -1691,5 +2391,145 @@ Bobin fim yo ap vire byen vit lè sa a, paske bèl kado syèl sa a pa dire lonta
 Durante esses poucos minutos preciosos, a luz natural fica suave, quente e envolvente, sem sombras duras nos rostos.
 
 Os rolos de filme giram depressa nesse momento, porque esse presente do céu dura pouco — mas dá aos filmes uma beleza inesquecível.`,
+  },
+  {
+    id: "cinema-11",
+    theme: "Cinema",
+    suggestedSceneId: "cinema-11",
+    estimatedSeconds: 60,
+    elementsCited: ["ekran sinema", "twofe", "megafòn", "lunèt 3D"],
+    title: {
+      fr: "Comment les lunettes 3D trompent-elles nos yeux devant l'écran ?",
+      kreyol: "Kijan lunèt 3D yo fè twonpe je nou devan ekran sinema a ?",
+      pt: "Como os óculos 3D criam profundidade diante da tela plana?",
+    },
+    summaryPt: "O truque óptico das duas imagens que dá sensação de relevo no cinema.",
+    fr: `Dans une salle dorée, devant un grand écran de cinéma, un mégaphone et un trophée doré, il suffit d'enfiler des lunettes 3D pour avoir l'impression qu'un personnage sort de l'écran ! Comment une toile toute plate peut-elle créer autant de profondeur ?
+
+Le secret imite simplement nos deux yeux ! Dans la vie réelle, votre œil gauche et votre œil droit voient le monde sous deux angles légèrement différents, et le cerveau fusionne ces deux images pour calculer les distances.
+
+Au cinéma 3D, le projecteur envoie deux images superposées sur l'écran, et les lunettes 3D filtrent chacune pour l'œil correspondant !`,
+    kreyol: `Nan yon sal dore, devan yon gwo ekran sinema, yon megafòn ak yon twofe dore, ou sèlman bezwen mete lunèt 3D pou w santi pèsonaj la ap soti nan ekran an ! Kijan yon ekran ki plat nèt ka fè nou wè pwofondè konsa ?
+
+Sekrè a senpleman imite de je nou yo ! Nan lavi toutbon, je gòch ou ak je dwat ou wè mond lan nan de ti ang ki yon ti jan diferan, epi sèvo a kole de imaj sa yo ansanm pou mezire distans.
+
+Nan sinema 3D, pwojektè a voye de imaj yonn sou lòt sou ekran an, epi lunèt 3D yo kite chak je wè sèlman imaj pa l !`,
+    pt: `Em uma sala dourada, diante de uma grande tela de cinema, de um megafone e de um troféu dourado, basta colocar óculos 3D para sentir que os objetos saltam da tela! Como uma superfície plana cria tanta profundidade?
+
+O truque simplesmente imita nossos dois olhos! No dia a dia, o olho esquerdo e o olho direito enxergam o mundo de ângulos ligeiramente diferentes, e o cérebro combina as duas imagens para calcular a distância.
+
+No cinema 3D, o projetor exibe duas imagens sobrepostas na tela, e os óculos filtram uma para cada olho!`,
+  },
+  {
+    id: "cinema-12",
+    theme: "Cinema",
+    suggestedSceneId: "cinema-13",
+    estimatedSeconds: 60,
+    elementsCited: ["megafòn", "bilyè sinema", "fotèy sinema", "kamera sinema"],
+    title: {
+      fr: "Pourquoi les fauteuils de cinéma sont-ils placés en pente ?",
+      kreyol: "Poukisa fotèy sinema yo plase an pant konsa ?",
+      pt: "Por que as poltronas do cinema ficam em fileiras inclinadas?",
+    },
+    summaryPt: "A história das primeiras salas planas até o design em degraus com ingresso marcado.",
+    fr: `Avec un billet de cinéma en main, près d'une caméra de cinéma et d'un mégaphone, on cherche sa place parmi les fauteuils rouges disposés en gradins. Mais saviez-vous que les toutes premières salles étaient complètement plates ?
+
+Au début du vingtième siècle, le public s'asseyait sur de simples chaises au même niveau, comme dans une salle de conférence. Résultat : si un spectateur très grand ou un grand chapeau s'installait devant vous, vous ne voyiez plus rien !
+
+Les architectes ont donc repris l'idée des anciens théâtres grecs en inclinant le sol pour offrir à chaque fauteuil une vue dégagée.`,
+    kreyol: `Avèk yon bilyè sinema nan men nou, toupre yon kamera sinema ak yon megafòn, n ap chèche plas nou nan mitan fotèy sinema ki monte an eskalye yo. Men, èske ou te konnen premye sal sinema yo te plat nèt ?
+
+Nan kòmansman ventyèm syèk la, espektatè yo te chita sou senp chèz nan menm nivo a. Rezilta : si yon moun ki wo anpil oswa yon gwo chapo te chita devan ou, ou pa t wè anyen sou ekran an !
+
+Se konsa achitèk yo te reprann lide ansyen teyat grèk yo pou fè planche a monte tikras pa tikras, konsa tout fotèy gen bon vizibilite.`,
+    pt: `Com o ingresso de cinema na mão, perto de uma câmera e de um megafone, procuramos nosso lugar entre as poltronas dispostas em degraus. Mas você sabia que as primeiras salas de cinema tinham o chão totalmente plano?
+
+No início do século XX, o público se sentava em fileiras no mesmo nível. O resultado era previsível: se uma pessoa alta ou de chapéu grande sentasse na frente, ninguém atrás enxergava a tela!
+
+Os arquitetos então resgataram o modelo dos teatros gregos antigos e inclinaram o piso para dar visão livre a todas as poltronas.`,
+  },
+  {
+    id: "cinema-13",
+    theme: "Cinema",
+    suggestedSceneId: "cinema-14",
+    estimatedSeconds: 60,
+    elementsCited: ["pwojektè sinema", "klakèt", "grèn kamera", "twofe"],
+    title: {
+      fr: "Le cinématographe Lumière : une machine qui filmait ET projetait",
+      kreyol: "Sinematograf frè Lumière yo : yon machin ki te filme EPI pwojete",
+      pt: "O cinematógrafo dos irmãos Lumière: uma câmera que também era projetor",
+    },
+    summaryPt: "A invenção engenhosa de 1895 que reunia filmadora e projetor em uma única caixa de madeira.",
+    fr: `Sous un ciel étoilé, entre un projeteur de cinéma, un clap, une grue de caméra et un trophée, rappelons l'invention géniale de mille huit cent quatre-vingt-quinze : le cinématographe !
+
+Créé par Auguste et Louis Lumière à Lyon, cet appareil léger pesait environ cinq kilos et pouvait fonctionner sans électricité, simplement en tournant une manivelle à la main !
+
+Le plus incroyable ? La même boîte en bois servait d'abord à filmer la scène dans la rue, puis, en ajoutant une lampe à l'arrière, à projeter le film sur un grand écran le soir même !`,
+    kreyol: `Anba yon syèl zetwal, ant yon pwojektè sinema, yon klakèt, yon grèn kamera ak yon twofe, ann sonje bèl envansyon ane mil uit san katreven kenz lan : sinematograf la !
+
+Auguste ak Louis Lumière te kreye ti aparèy lejè sa a an Frans : li te peze anviwon senk kilo sèlman epi l te mache san kouran elektrik, jis lè ou vire yon ti manch alamen !
+
+Sa k pi etonan an ? Menm ti bwat bwa sa a te sèvi pou filme sèn nan nan lari a lajounen, epi aswè, lè yo mete yon lanp dèyè l, menm bwat la te pwojete fim nan sou yon gwo ekran !`,
+    pt: `Sob um céu estrelado, entre um projetor de cinema, uma claquete, uma grua de câmera e um troféu, vale recordar a invenção genial de 1895: o cinematógrafo!
+
+Criado pelos irmãos Auguste e Louis Lumière na França, esse aparelho leve pesava cerca de cinco quilos e funcionava à manivela, sem eletricidade!
+
+O mais incrível? A mesma caixa de madeira servia primeiro como câmera para filmar cenas nas ruas e, à noite, bastava acoplar uma fonte de luz atrás para transformar o aparelho em projetor!`,
+  },
+  {
+    id: "cinema-14",
+    theme: "Cinema",
+    suggestedSceneId: "cinema-15",
+    estimatedSeconds: 60,
+    elementsCited: ["maske teyat", "afich fim", "lanp studyo", "bann fim"],
+    title: {
+      fr: "Du théâtre au septième art : pourquoi l'affiche de film est-elle devenue un art ?",
+      kreyol: "Soti nan teyat rive nan sinema : poukisa afich fim tounen yon vrè atizay ?",
+      pt: "Do teatro ao cinema: por que o pôster de filme virou uma obra de arte?",
+    },
+    summaryPt: "A ligação histórica entre teatro, iluminação de estúdio, película e cartazes ilustrados.",
+    fr: `Dans un couloir lumineux, à côté des masques de théâtre, d'une lampe de studio et d'une bande de film, une affiche de film attire immédiatement le regard.
+
+À ses débuts, le cinéma emprunta beaucoup au théâtre : les décors peints, les gestes expressifs et même les affiches illustrées collées dans les rues pour annoncer le spectacle !
+
+Avant les bandes-annonces sur Internet, l'affiche devait raconter en une seule image toute l'atmosphère du film — mystère, humour ou aventure — pour donner envie d'entrer dans la salle.`,
+    kreyol: `Nan yon koridò ki klere, bò kote mask teyat yo, yon lanp estidyo ak yon bann fim, yon afich fim rale je nou touswit.
+
+Okòmansman, sinema te prete anpil bagay nan men teyat : dekor ki pentire, jès eksprime yo e menm bèl afich ki te kole nan lari pou anonse espektak la !
+
+Anvan te gen ti videyo sou Entènèt, afich la te dwe rakonte nan yon sèl imaj tout anbyans fim nan — mistè, imè oswa avanti — pou bay moun anvi antre nan sal la.`,
+    pt: `Em um corredor iluminado, ao lado de máscaras de teatro, de uma luz de estúdio e de uma tira de filme, o pôster de cinema chama atenção imediatamente.
+
+No início, o cinema herdou muito do teatro: cenários pintados, gestos expressivos e os cartazes ilustrados colados nas ruas para anunciar a sessão!
+
+Muito antes dos trailers na internet, o pôster precisava resumir em uma única imagem o clima inteiro do filme — mistério, comédia ou aventura — para conquistar o público na calçada.`,
+  },
+  {
+    id: "cinema-15",
+    theme: "Cinema",
+    suggestedSceneId: "cinema-16",
+    estimatedSeconds: 60,
+    elementsCited: ["ekran sinema", "pòpkòn", "tapi wouj", "soda"],
+    title: {
+      fr: "Pourquoi les salles de cinéma ont-elles souvent des rideaux et des murs sombres ?",
+      kreyol: "Poukisa sal sinema yo souvan gen rido ak miray koulè fonse ?",
+      pt: "Por que as salas de cinema costumam ter cortinas e paredes escuras?",
+    },
+    summaryPt: "Como veludo, tapete vermelho e escuridão melhoram a imagem da tela e a acústica da sala.",
+    fr: `Sous la pluie légère dehors, alors que l'on entre avec son pop-corn et son soda sur le tapis rouge vers le grand écran de cinéma, avez-vous déjà remarqué que les murs de la salle sont toujours sombres et souvent recouverts de tissu épais ?
+
+Ce n'est pas seulement pour l'élégance ! Les couleurs sombres empêchent la lumière projetée sur l'écran de rebondir sur les murs, ce qui rend les couleurs du film bien plus intenses.
+
+Quant aux lourds rideaux et aux tapis, ils absorbent les échos indésirables pour offrir un son pur et enveloppant.`,
+    kreyol: `Anba ti lapli dous deyò a, pandan n ap antre ak pòp-kòn ak soda nou sou tapi wouj la nan direksyon gwo ekran sinema a, èske ou deja remake miray sal la toujou fonse epi souvan kouvri ak twal epè ?
+
+Sa pa fèt sèlman pou bote ! Koulè fonse yo anpeche limyè ekran an rebondi sou miray yo, sa ki fè koulè fim nan parèt pi klè e pi vivan.
+
+Kanta pou gwo rido epè yo ak tapi yo, yo vale eko ki pa nesesè yo pou son an ka rive klè nan zòrèy tout moun.`,
+    pt: `Enquanto lá fora cai uma chuva leve e entramos com pipoca e refrigerante pelo tapete vermelho rumo à grande tela de cinema, já reparou que as paredes da sala são sempre escuras e cobertas por tecido?
+
+Isso não é apenas estética! Cores escuras evitam que a luz refletida pela tela volte para as paredes, deixando o contraste e as cores do filme muito mais intensos.
+
+Já as cortinas pesadas e o carpete absorvem ecos indesejados, garantindo um som limpo e envolvente.`,
   },
 ];

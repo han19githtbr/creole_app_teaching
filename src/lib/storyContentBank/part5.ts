@@ -276,6 +276,140 @@ Kontrèman ak ti fig dous moun manje kri pou desè, bannann vèt la gen anpil la
 
 Diferente das bananas doces consumidas cruas na sobremesa, a banana-da-terra verde é rica em amido. Ela é cortada em rodelas, frita uma primeira vez, amassada suavemente — daí o nome "peze", apertada, em kreyòl — e dourada novamente para ficar crocante por fora e macia por dentro!`,
   },
+  {
+    id: "gastronomia-11",
+    theme: "Gastronomia",
+    suggestedSceneId: "gastronomia-11",
+    estimatedSeconds: 60,
+    elementsCited: ["chokola", "kiyè bwa", "diri ak pwa", "griyo"],
+    title: {
+      fr: "Le secret du « griyo » haïtien : pourquoi les agrumes attendrissent la viande ?",
+      kreyol: "Sekrè griyo ayisyen an : poukisa sitwon ak zoranj si fè vyann vin tann ?",
+      pt: "O segredo do “griot” haitiano: por que os cítricos deixam a carne tão macia?",
+    },
+    summaryPt: "A ciência por trás da marinada cítrica tradicional que acompanha arroz com feijão.",
+    fr: `Sous les arches d'une belle salle, entre du chocolat chaud, une cuillère en bois et une grande assiette de riz aux haricots « diri ak pwa », le griot haïtien — « griyo » — attire toujours les gourmands par sa croûte dorée et son intérieur fondant.
+
+Son secret vient d'une longue marinade à l'orange amère, au citron vert, à l'ail et aux herbes ! L'acidité naturelle des agrumes détend doucement les fibres de la viande avant la cuisson lente et le passage rapide à la poêle.
+
+C'est la chimie gourmande au service d'un grand classique populaire.`,
+    kreyol: `Anba gwo vout yon bèl sal, ant yon tas chokola cho, yon kiyè bwa ak yon bon plat diri ak pwa, griyo ayisyen an toujou rale tout moun paske l kwòkan deyò epi l mou anndan.
+
+Sekrè l la soti nan jan yo tranpe vyann nan lontan nan zoranj si, sitwon, lay ak bon ti epis ! Asid natirèl ki nan fwi sa yo fè vyann nan vin tann tou dousman anvan yo bouyi l epi yo fri l pou l dore.
+
+Se bèl syans nan kuizin ki kreye yonn nan pi gwo klasik peyi a.`,
+    pt: `Em um salão de arcos, entre chocolate quente, uma colher de pau e um belo prato de arroz com feijão ("diri ak pwa"), o famoso griot haitiano — "griyo" — conquista pelo exterior dourado e interior macio.
+
+O segredo está na marinada com laranja-azeda, limão, alho e ervas! A acidez natural dos cítricos amacia suavemente as fibras antes do cozimento lento e da fritura final até dourar.
+
+É a química culinária trabalhando a favor de um grande clássico popular.`,
+  },
+  {
+    id: "gastronomia-12",
+    theme: "Gastronomia",
+    suggestedSceneId: "gastronomia-12",
+    estimatedSeconds: 60,
+    elementsCited: ["akra", "ze", "kafe", "kouto ak fouchèt"],
+    title: {
+      fr: "Les « akra » dorés : comment une racine devient un beignet croustillant",
+      kreyol: "Bon ti akra dore yo : kijan yon rasin tounen yon ti gato kwòkan",
+      pt: "Os bolinhos “akra”: como uma raiz vira um petisco crocante nas ruas do Haiti",
+    },
+    summaryPt: "Conheça o akra de malanga, servido quentinho ao lado de café e ovos no cotidiano haitiano.",
+    fr: `Sur une place ensoleillée, près des œufs frais, des couverts et d'une tasse de café parfumé, une assiette de beignets appelés « akra » fait le bonheur des passants en Haïti.
+
+Contrairement à d'autres beignets préparés avec de la farine de blé, l'akra est fait à partir de malanga — une racine tropicale proche du taro — finement râpée puis assaisonnée d'ail, de persil et de piment doux ou fort.
+
+À la friture, l'amidon naturel de la racine forme une croûte légère et dorée irrésistible dès la première bouchée.`,
+    kreyol: `Sou yon plas ki gen solèy, toupre ze fre, kouto ak fouchèt ak yon tas kafe santi bon, yon asyèt akra cho toujou fè tout moun kontan ann Ayiti.
+
+Kontrèman ak lòt gato ki fèt ak farin ble, akra fèt ak malanga — yon bon rasin twopikal — yo graje byen fen epi yo melanje l ak lay, pèsi ak ti piman.
+
+Lè yo fri l, lanmidon natirèl ki nan rasin lan fè l tounen yon ti gato lejè e byen dore ki kwòkan depi premye mòde a.`,
+    pt: `Em uma praça ensolarada, perto de ovos frescos, talheres e uma xícara de café perfumado, um prato de bolinhos chamados "akra" faz sucesso pelas ruas do Haiti.
+
+Diferente de bolinhos feitos com farinha de trigo, o akra é preparado com malanga — uma raiz tropical parecida com o inhame ou a taioba — ralada bem fina e temperada com alho, salsa e pimenta.
+
+Ao fritar, o amido natural da raiz forma uma casquinha dourada, leve e crocante irresistível.`,
+  },
+  {
+    id: "gastronomia-13",
+    theme: "Gastronomia",
+    suggestedSceneId: "gastronomia-13",
+    estimatedSeconds: 60,
+    elementsCited: ["recho", "ji", "pen", "marmit"],
+    title: {
+      fr: "Le pain du matin : comment la croûte devient-elle dorée et parfumée ?",
+      kreyol: "Pen maten an : kijan kwout pen an fè vin dore epi santi bon konsa ?",
+      pt: "O pão da manhã: por que a casca fica dourada e tão perfumada?",
+    },
+    summaryPt: "A reação de Maillard que transforma massa simples em pão crocante junto ao suco e à panela.",
+    fr: `Dans une cuisine lumineuse, à côté d'une marmite, d'un verre de jus frais et d'un réchaud, l'odeur du pain chaud du matin réveille immédiatement l'appétit.
+
+Mais savez-vous pourquoi la croûte du pain devient brune et croustillante à la cuisson alors que la pâte était toute blanche ? À haute température, les sucres naturels et les protéines de la farine réagissent ensemble : c'est la célèbre « réaction de Maillard », qui crée à la fois la couleur dorée et des centaines d'arômes délicieux !`,
+    kreyol: `Nan yon kuizin ki klere, bò kote yon marmit, yon bon vè ji fre ak yon recho, bon odè pen cho maten an reveye apeti nou touswit.
+
+Men, èske ou konnen poukisa kwout pen an vin mawon epi l santi bon nan fou a alòske pat la te blan nèt ? Lè chalè a wo, ti sik natirèl yo ak pwoteyin ki nan farin nan reyaji ansanm : se sa syantifik yo rele « reyaksyon Maillard », ki bay ni koulè dore a ni tout bon odè nou renmen an !`,
+    pt: `Em uma cozinha clara, ao lado de uma panela de ferro, de um copo de suco fresco e do fogareiro, o cheiro de pão quentinho pela manhã desperta o apetite na hora.
+
+Mas você sabe por que a casca do pão fica dourada e crocante se a massa era branquinha? Em altas temperaturas, os açúcares e proteínas da farinha se combinam na famosa "reação de Maillard", responsável tanto pela cor dourada quanto pelo aroma irresistível!`,
+  },
+  {
+    id: "gastronomia-14",
+    theme: "Gastronomia",
+    suggestedSceneId: "gastronomia-14",
+    estimatedSeconds: 60,
+    elementsCited: ["labouyi", "planch", "fig", "kalbas"],
+    title: {
+      fr: "La « labouyi bannann » : un petit-déjeuner chaud plein d'énergie et d'épices",
+      kreyol: "Labouyi bannann : yon bèl manje maten cho ki plen fòs ak bon epis",
+      pt: "A “labouyi bannann”: um mingau matinal cheio de energia e especiarias",
+    },
+    summaryPt: "A tradição dos mingaus aromáticos de banana, canela e noz-moscada na mesa caribenha.",
+    fr: `Dans un champ fleuri, près d'une calebasse, d'une planche à découper et de bananes mûres, un bol fumant de bouillie « labouyi » rappelle les matins doux des foyers haïtiens.
+
+Préparée avec de la banane plantain verte mixée ou de la farine de maïs, du lait, de la cannelle, de l'anis étoilé et un zeste de citron vert, cette bouillie veloutée donne de l'énergie pour toute la matinée.
+
+Chaque famille garde sa propre touche d'épices, transmise avec tendresse de génération en génération.`,
+    kreyol: `Nan yon bèl jaden ki gen flè, toupre yon kalbas, yon planch ak yon rejim fig mi, yon bòl labouyi cho fè nou sonje dousè maten lakay ann Ayiti.
+
+Yo prepare bèl labouyi sa a ak bannann vèt oswa farin mayi, lèt, kanèl, anis etwale ak yon ti po sitwon vèt : li bay tout kò a fòs ak chalè pou tout maten an.
+
+Chak fanmi gen pwòp ti sekrè epis pa yo, ki pase ak anpil lanmou de granmoun rive nan timoun.`,
+    pt: `Em um campo florido, perto de uma cabaça, da tábua de cortar e de bananas maduras, uma tigela fumegante de mingau ("labouyi") lembra as manhãs acolhedoras das casas haitianas.
+
+Preparado com banana-da-terra verde batida ou farinha de milho, leite, canela, anis-estrelado e raspas de limão, esse creme aveludado fornece energia para toda a manhã.
+
+Cada família guarda seu toque especial de especiarias, passado com carinho de geração em geração.`,
+  },
+  {
+    id: "gastronomia-15",
+    theme: "Gastronomia",
+    suggestedSceneId: "gastronomia-15",
+    estimatedSeconds: 60,
+    elementsCited: ["lèt", "pen", "fig", "griyo"],
+    title: {
+      fr: "Pourquoi les épices tropicales étaient-elles si précieuses avant le réfrigérateur ?",
+      kreyol: "Poukisa epis twopikal yo te tèlman gen valè anvan te gen frijidè ?",
+      pt: "Por que as especiarias tropicais valiam tanto antes da geladeira?",
+    },
+    summaryPt: "Como cravo, canela e pimentas ajudavam a conservar alimentos e criaram receitas únicas.",
+    fr: `À côté du pain frais, du lait, des bananes douces et du griot doré, les épices — comme la cannelle, le clou de girofle et le piment — donnent aujourd'hui leur âme à nos recettes.
+
+Mais il y a plusieurs siècles, avant l'invention du réfrigérateur, ces épices avaient une mission encore plus vitale ! Leurs huiles naturelles ralentissent naturellement le développement des bactéries et aident à conserver les aliments plus longtemps dans les climats chauds.
+
+Voilà pourquoi elles étaient si recherchées dans le monde entier et restent reines de nos cuisines.`,
+    kreyol: `Bò kote pen fre, lèt, fig mi ak griyo byen dore, epis yo — tankou kanèl, jiwòf ak piman — bay manje nou yo tout bon gou yo jodi a.
+
+Men plizyè syèk de sa, anvan frijidè te egziste, epis sa yo te gen yon wòl ki pi enpòtan toujou ! Lwil natirèl ki ladan yo ralanti mikwòb yo natirèlman epi yo te ede konsève manje pi lontan nan peyi ki fè cho.
+
+Se poutèt sa yo te chèche epis toupatou sou latè e yo toujou wa nan kuizin nou yo.`,
+    pt: `Ao lado do pão fresco, do leite, das bananas maduras e do griot dourado, especiarias como canela, cravo e pimentas dão alma às receitas de hoje.
+
+Mas há alguns séculos, antes da invenção da geladeira, esses temperos tinham uma missão ainda mais importante! Seus óleos naturais ajudam a retardar microrganismos e conservar alimentos por mais tempo em climas quentes.
+
+É por isso que eram tão valiosas no comércio mundial e seguem essenciais nas cozinhas tropicais.`,
+  },
 
   // ==================== IDIOMAS (10) ====================
   {
@@ -557,5 +691,145 @@ Chak ti erè ou fè se prèv w ap eseye. Donk, louvri dyalòg la depi jodi a !`,
 A resposta dos poliglotas é animadora: não espere a perfeição para dizer suas primeiras frases! Com algumas centenas de palavras do cotidiano, você já consegue cumprimentar, fazer perguntas e contar uma pequena história.
 
 Cada pequeno erro é sinal de prática. Por isso, comece a conversar hoje mesmo!`,
+  },
+  {
+    id: "idiomas-11",
+    theme: "Idiomas",
+    suggestedSceneId: "idiomas-11",
+    estimatedSeconds: 65,
+    elementsCited: ["kib alfabè", "kreyon", "tablo nwa", "alfabè"],
+    title: {
+      fr: "Pourquoi l'orthographe du kreyòl ayisyen est-elle si logique et fidèle aux sons ?",
+      kreyol: "Poukisa òtograf kreyòl ayisyen an tèlman lojik epi fasil pou li ?",
+      pt: "Por que a ortografia do crioulo haitiano é tão lógica e fonética?",
+    },
+    summaryPt: "A regra de ouro da escrita oficial do kreyòl (1979): cada som tem sempre a mesma grafia.",
+    fr: `Devant le tableau noir, l'affiche de l'alphabet, les cubes de lettres et un crayon prêt à écrire, voici une bonne nouvelle pour ceux qui apprennent le kreyòl ayisyen : son orthographe officielle est d'une logique remarquable !
+
+Adopté officiellement à la fin des années mille neuf cent soixante-dix, l'alphabet du kreyòl suit un principe simple : un son correspond toujours au même signe, et chaque lettre écrite se prononce ! Il n'y a aucune lettre muette à la fin des mots.
+
+Dès que vous connaissez les sons de base comme « ou », « ch » ou « è », vous pouvez lire presque n'importe quel texte en kreyòl dès le premier jour.`,
+    kreyol: `Devan tablo nwa a, afich alfabè a, kib alfabè yo ak yon kreyon ki pare pou ekri, men yon bèl nouvèl pou moun k ap aprann kreyòl ayisyen : òtograf ofisyèl li a gen yon lojik ki klè anpil !
+
+Alfabè kreyòl la, yo te adopte ofisyèlman nan fen ane mil nèf san swasanndisnèf, suiv yon prensip senp : yon sèl son ekri menm jan tout tan, epi chak lèt ki ekri pwononse ! Pa gen okenn lèt bèbè nan fen mo yo.
+
+Kou ou fin konnen son debaz yo tankou « ou », « ch » oswa « è », ou deja ka li prèske tout tèks an kreyòl depi premye jou a.`,
+    pt: `Diante do quadro-negro, do cartaz do alfabeto, dos cubos de letras e de um lápis na mão, vai uma ótima notícia para quem estuda crioulo haitiano: sua ortografia oficial é extremamente lógica!
+
+Oficializado no fim da década de 1970, o alfabeto do kreyòl segue um princípio claro: cada som é representado sempre da mesma forma, e toda letra escrita é pronunciada! Não existem letras mudas no final das palavras.
+
+Assim que você aprende sons como "ou", "ch" ou "è", já consegue ler praticamente qualquer texto em kreyòl desde o primeiro dia.`,
+  },
+  {
+    id: "idiomas-12",
+    theme: "Idiomas",
+    suggestedSceneId: "idiomas-12",
+    estimatedSeconds: 60,
+    elementsCited: ["etajè liv", "gonm", "revèy", "plim ak lank"],
+    title: {
+      fr: "Comment naissent les nouveaux mots dans un dictionnaire vivant ?",
+      kreyol: "Kijan nouvo mo yo pran nesans nan yon lang ki vivan ?",
+      pt: "Como nascem as palavras novas em um idioma vivo?",
+    },
+    summaryPt: "A evolução natural das línguas através de metáforas, empréstimos e novas tecnologias.",
+    fr: `Entre une étagère de livres, une horloge, une plume et une gomme, les langues ne restent jamais figées : elles grandissent avec ceux qui les parlent !
+
+Chaque année, de nouveaux mots apparaissent pour nommer de nouvelles réalités. Parfois, on emprunte un mot à une langue voisine ; parfois, on combine deux mots anciens ou l'on donne un sens nouveau à une image du quotidien, comme la « souris » de l'ordinateur ou le « tap-tap » en Haïti.
+
+Un dictionnaire n'est donc pas un musée poussiéreux, mais le portrait vivant de notre imagination.`,
+    kreyol: `Ant yon etajè liv, yon revèy, plim ak lank ak yon gonm, lang yo pa janm rete bloke anplas : yo grandi ansanm ak moun k ap pale yo !
+
+Chak ane, nouvo mo parèt pou bay nouvo reyalite non yo. Pafwa, yon lang prete yon mo nan yon lòt lang vwazen ; pafwa, li kole de ansyen mo ansanm oswa li bay yon bèl imaj chak jou yon nouvo sans, tankou « sourit » òdinatè oswa « tap-tap » ann Ayiti.
+
+Kidonk, yon diksyonè pa yon vye mize ki fèmen, men yon pòtrè vivan imajinasyon nou.`,
+    pt: `Entre uma estante de livros, um relógio de parede, pena e tinteiro e uma borracha, os idiomas nunca ficam parados: eles crescem com quem os fala!
+
+Todos os anos surgem palavras novas para nomear invenções e costumes. Às vezes, o idioma adapta um termo vizinho; outras vezes, combina palavras antigas ou dá novo sentido a imagens do cotidiano, como o "mouse" do computador ou o "tap-tap" no Haiti.
+
+Por isso, o dicionário não é um museu parado, mas um retrato vivo da criatividade humana.`,
+  },
+  {
+    id: "idiomas-13",
+    theme: "Idiomas",
+    suggestedSceneId: "idiomas-13",
+    estimatedSeconds: 60,
+    elementsCited: ["kat vokabilè", "ekouteur", "tablo nwa", "kaye"],
+    title: {
+      fr: "À la naissance, l'oreille humaine peut distinguer les sons de toutes les langues",
+      kreyol: "Lè yon timoun fèk fèt, zòrèy li ka tande son tout lang sou latè",
+      pt: "Ao nascer, o ouvido humano distingue sons de qualquer idioma do mundo",
+    },
+    summaryPt: "Como o cérebro se especializa na infância e como podemos reativar essa escuta com prática.",
+    fr: `Avec des écouteurs, un cahier, des cartes de vocabulaire et un tableau noir, voici un fait fascinant découvert par les chercheurs sur le langage !
+
+À la naissance, les bébés sont de véritables citoyens universels : leur oreille distingue facilement tous les sons des sept mille langues du monde. Vers l'âge d'un an, le cerveau se spécialise naturellement dans les sons entendus à la maison.
+
+Mais cette capacité ne disparaît pas ! En écoutant régulièrement du français ou du kreyòl avec des écouteurs et en répétant à voix haute, l'adulte réveille cette souplesse auditive.`,
+    kreyol: `Avèk ekouteur, yon kaye, kat vokabilè ak yon tablo nwa, men yon bèl dekouvèt chèchè yo fè sou langaj !
+
+Lè yon ti bebe fèk fèt, li se yon vrè sitwayen tout mond lan : zòrèy li ka rekonèt fasilman tout son ki nan sèt mil lang sou latè. Bò yon an, sèvo a espesyalize l natirèlman nan son li tande lakay li yo.
+
+Men kapasite sa a pa janm disparèt nèt ! Lè yon granmoun koute franse oswa kreyòl souvan ak ekouteur epi l repete byen fò, li reveye bèl souplès zòrèy sa a.`,
+    pt: `Com fones de ouvido, um caderno, cartões de vocabulário e um quadro-negro, vale conhecer uma descoberta incrível da ciência sobre a linguagem!
+
+Ao nascer, os bebês conseguem distinguir facilmente todos os sons de qualquer idioma do mundo. Por volta de um ano de idade, o cérebro se especializa nos sons ouvidos em casa para ganhar agilidade.
+
+Mas essa habilidade pode ser despertada de novo! Ao ouvir francês ou kreyòl com atenção nos fones e repetir em voz alta, o adulto treina o ouvido para novos sons.`,
+  },
+  {
+    id: "idiomas-14",
+    theme: "Idiomas",
+    suggestedSceneId: "idiomas-15",
+    estimatedSeconds: 60,
+    elementsCited: ["kreyon", "drapo", "etajè liv", "règ"],
+    title: {
+      fr: "Les ponts surprenants entre le portugais, le français et le kreyòl ayisyen",
+      kreyol: "Bèl pon ki genyen ant pòtigè, franse ak kreyòl ayisyen",
+      pt: "As pontes surpreendentes entre o português, o francês e o crioulo haitiano",
+    },
+    summaryPt: "Palavras irmãs que facilitam para falantes de português aprenderem francês e kreyòl.",
+    fr: `Sur une étagère de livres ornée de drapeaux de différents pays, avec un crayon et une règle pour souligner les ressemblances, apprendre le français et le kreyòl quand on parle portugais réserve de belles surprises !
+
+Parce que le portugais et le français partagent des racines latines communes — et que le kreyòl ayisyen a transformé de nombreux mots français — des centaines de mots sont de véritables cousins : « muzika / mizik / musique », « istoria / istwa / histoire » ou encore « fanmi / família / famille ».
+
+Ces ponts donnent tout de suite confiance dès les premières lectures.`,
+    kreyol: `Sou yon etajè liv ki gen drapo plizyè peyi, avèk yon kreyon ak yon règ pou souliye mo ki sanble yo, aprann franse ak kreyòl lè ou deja pale pòtigè pote bèl sipriz !
+
+Paske pòtigè ak franse pataje menm rasin laten an — epi kreyòl ayisyen an transfòme anpil mo franse — plizyè santèn mo se vrè kouzen : « família / fanmi / famille », « música / mizik / musique » oswa « história / istwa / histoire ».
+
+Bèl pon sa yo bay elèv la konfyans touswit depi premye lekti yo.`,
+    pt: `Em uma estante de livros enfeitada com bandeiras de países, com lápis e régua para marcar semelhanças, aprender francês e crioulo haitiano a partir do português reserva ótimas surpresas!
+
+Como o português e o francês compartilham raízes latinas — e o kreyòl dialoga historicamente com o francês — centenas de palavras são parentes próximas: "família / fanmi / famille", "música / mizik / musique" e "história / istwa / histoire".
+
+Essas pontes aceleram a compreensão logo nas primeiras leituras.`,
+  },
+  {
+    id: "idiomas-15",
+    theme: "Idiomas",
+    suggestedSceneId: "idiomas-16",
+    estimatedSeconds: 60,
+    elementsCited: ["lanp biwo", "bul diskisyon", "kat vokabilè", "mikwo"],
+    title: {
+      fr: "Raconter une petite histoire dans la nouvelle langue fixe mieux les mots",
+      kreyol: "Rakonte yon ti istwa nan nouvo lang lan fè nou sonje mo yo pi lontan",
+      pt: "Contar pequenas histórias no novo idioma fixa o vocabulário na memória",
+    },
+    summaryPt: "Por que o contexto emocional das curiosidades funciona melhor do que listas isoladas.",
+    fr: `Sous une lampe de bureau, devant des cartes de vocabulaire, un microphone et des bulles de dialogue, pourquoi retient-on bien mieux un mot découvert dans une histoire que dans une liste froide ?
+
+Parce que notre mémoire fonctionne par associations ! Quand un mot en kreyòl ou en français est relié à une image vivante, à une curiosité étonnante ou à une émotion, le cerveau crée plusieurs chemins pour le retrouver.
+
+C'est exactement le secret de ces petites curiosités audio : apprendre chaque jour avec plaisir, curiosité et imagination.`,
+    kreyol: `Anba yon lanp biwo, devan kat vokabilè, yon mikwo ak bil diskisyon yo, poukisa nou sonje yon mo nou dekouvri nan yon ti istwa pi byen lontan pase yon mo nan yon lis sèk ?
+
+Paske memwa nou travay ak asosyasyon ! Lè yon mo an kreyòl oswa an franse mare ak yon bèl imaj, yon istwa enteresan oswa yon ti emosyon, sèvo a kreye plizyè chemen pou l jwenn li pi vit.
+
+Se egzakteman sekrè ti istwa odyo sa yo : aprann chak jou ak plezi, kiryozite ak imajinasyon.`,
+    pt: `Sob uma luminária de mesa, diante de cartões de vocabulário, de um microfone e de balões de diálogo, por que lembramos muito mais de uma palavra aprendida dentro de uma história do que em uma lista solta?
+
+Porque a memória funciona por associações! Quando uma palavra em kreyòl ou francês se conecta a uma cena visual, a uma curiosidade marcante ou a uma emoção, o cérebro cria vários caminhos para recuperá-la.
+
+É justamente esse o segredo de ouvir pequenas curiosidades todos os dias: aprender com prazer e contexto.`,
   },
 ];

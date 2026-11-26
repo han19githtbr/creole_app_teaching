@@ -282,6 +282,146 @@ O filósofo Zenão gostava de lembrar uma frase curta e cheia de bom senso: "A n
 
 Ouvir de verdade antes de responder talvez seja a chave mais simples para evitar mal-entendidos, aprender mais rápido e construir amizades sólidas.`,
   },
+  {
+    id: "estoicismo-11",
+    theme: "Estoicismo",
+    suggestedSceneId: "estoicismo-11",
+    estimatedSeconds: 60,
+    elementsCited: ["estati", "balans", "kouwòn lorye", "flanbo"],
+    title: {
+      fr: "Les quatre vertus cardinales : la boussole morale des stoïciens",
+      kreyol: "Kat gwo vèti yo : bousòl moral stoyisyen yo",
+      pt: "As quatro virtudes estoicas: uma bússola para as decisões diárias",
+    },
+    summaryPt: "Sabedoria, coragem, justiça e temperança explicadas com clareza através dos símbolos clássicos.",
+    fr: `Près d'une statue de marbre, d'un flambeau et d'une couronne de laurier posée à côté de la balance de la justice, les stoïciens résumaient toute leur philosophie en quatre qualités essentielles.
+
+La première est la sagesse : savoir distinguer ce qui est vraiment bien de ce qui est inutile. La deuxième est le courage d'agir malgré la peur. La troisième, symbolisée par la balance, est la justice envers tous. La quatrième est la modération, c'est-à-dire savoir garder la mesure.
+
+Pour eux, pratiquer ces quatre vertus chaque jour suffit pour mener une vie digne et sereine.`,
+    kreyol: `Toupre yon estati mab, yon flanbo ak yon kouwòn lorye ki poze bò kote balans lajistis la, stoyisyen yo te rezime tout filozofi yo nan kat bèl kalite prensipal.
+
+Premye a se sajès : konnen ki sa ki bon toutbon ak sa ki pa gen enpòtans. Dezyèm nan se kouraj pou aji menm lè gen laperèz. Twazyèm nan, ki reprezante pa balans lan, se lajistis pou tout moun. Katriyèm nan se moderasyon, sa vle di konn mezire aksyon nou.
+
+Pou yo menm, pratike kat vèti sa yo chak jou sifi pou mennen yon lavi ki gen diyite ak lapè.`,
+    pt: `Perto de uma estátua de mármore, uma tocha e uma coroa de louros ao lado da balança da justiça, os estoicos resumiam toda a sua filosofia em quatro qualidades fundamentais.
+
+A primeira é a sabedoria, para discernir o que realmente importa. A segunda é a coragem de agir apesar do medo. A terceira, representada pela balança, é a justiça no trato com os outros. A quarta é a temperança, ou seja, o equilíbrio nas escolhas.
+
+Para eles, praticar essas quatro virtudes no dia a dia basta para viver com dignidade e serenidade.`,
+  },
+  {
+    id: "estoicismo-12",
+    theme: "Estoicismo",
+    suggestedSceneId: "estoicismo-12",
+    estimatedSeconds: 60,
+    elementsCited: ["tanp", "sablye", "pòtay", "bist"],
+    title: {
+      fr: "Se préparer calmement aux imprévus : une astuce antique contre l'anxiété",
+      kreyol: "Prepare tèt ou ak kalm pou move sipriz : yon teknik lontan kont strès",
+      pt: "Preparar-se com calma para imprevistos: uma prática antiga contra a ansiedade",
+    },
+    summaryPt: "Como o exercício da 'premeditatio malorum' ajuda a encarar contratempos com serenidade.",
+    fr: `Sous la lumière du matin, près d'un portail de fer, d'un temple grec, d'un buste et d'un sablier, les stoïciens pratiquaient un exercice surprenant : imaginer tranquillement les petits contretemps avant qu'ils n'arrivent.
+
+Marc Aurèle se disait chaque matin qu'il pourrait rencontrer des retards, de la pluie ou des personnes impatientes dans la journée. Loin d'être pessimiste, cette méthode enlève l'effet de surprise !
+
+Quand un imprévu survient vraiment, l'esprit reste calme comme devant un sablier, parce qu'il s'est déjà préparé à répondre avec patience et clarté.`,
+    kreyol: `Anba limyè maten an, toupre yon pòtay fè, yon tanp grèk, yon bist ak yon sablye, stoyisyen yo te konn fè yon egzèsis etonan : imajine trankilman ti pwoblèm ki ka rive anvan menm yo rive.
+
+Mak Orèl te konn di tèt li chak maten li ka rankontre reta, lapli oswa moun ki pa gen pasyans nan jounen an. Olye sa fè l tris, metòd sa a retire sipriz la !
+
+Lè yon move kontretan rive toutbon, lespri a rete kalm tankou devan yon sablye, paske l te deja pare pou l reponn ak pasyans ak klète.`,
+    pt: `Sob a luz da manhã, perto de um portão de ferro, um templo grego, um busto e uma ampulheta, os estoicos praticavam um exercício curioso: imaginar com serenidade pequenos contratempos antes que acontecessem.
+
+Marco Aurélio lembrava a si mesmo ao acordar que poderia encontrar atrasos, chuva ou pessoas impacientes ao longo do dia. Longe de ser pessimismo, esse hábito reduz o susto diante dos problemas!
+
+Quando um imprevisto surge, a mente permanece serena porque já está pronta para responder com paciência e clareza.`,
+  },
+  {
+    id: "estoicismo-13",
+    theme: "Estoicismo",
+    suggestedSceneId: "estoicismo-13",
+    estimatedSeconds: 60,
+    elementsCited: ["mirwa men", "parchemen", "lanp lwil", "flanbo"],
+    title: {
+      fr: "Pourquoi tenir un journal calme-t-il les pensées ?",
+      kreyol: "Poukisa ekri nan yon jounal pèsonèl kalme panse nou yo ?",
+      pt: "Por que escrever um diário ajuda a acalmar os pensamentos?",
+    },
+    summaryPt: "O poder terapêutico da escrita reflexiva em pergaminhos e cadernos desde Roma Antiga.",
+    fr: `À la lueur d'une lampe à huile et d'un flambeau, poser ses idées sur un parchemin comme face à un miroir à main était une habitude quotidienne chez les stoïciens.
+
+Les psychologues modernes confirment aujourd'hui ce que Sénèque et Épictète avaient déjà remarqué : quand une inquiétude tourne en boucle dans notre tête, elle paraît immense. Mais dès qu'on l'écrit en phrases simples, on prend du recul et l'on voit plus clairement les solutions possibles.
+
+Quelques lignes écrites chaque jour suffisent pour éclaircir l'esprit.`,
+    kreyol: `Anba limyè yon lanp lwil ak yon flanbo, ekri lide ou sou yon parchemen tankou w ap gade nan yon ti mirwa men te yon abitid chak jou lakay stoyisyen yo.
+
+Sikològ modèn yo konfime jodi a sa Senèk ak Epiktèt te deja remake : lè yon enkyetid ap vire an won nan tèt nou, li parèt gwo anpil. Men kou ou ekri l an fraz senp sou papye, ou pran distans epi ou wè solisyon yo pi klè.
+
+Kèk ti liy ou ekri chak jou sifi pou mete klète nan lespri ou.`,
+    pt: `À luz de uma lamparina a óleo e de uma tocha, registrar pensamentos em um pergaminho como diante de um espelho de mão era prática diária entre os estoicos.
+
+A psicologia moderna confirma hoje o que Sêneca e Epicteto já observavam: quando uma preocupação fica girando apenas na cabeça, ela parece gigante. Ao colocá-la no papel em frases claras, ganhamos distanciamento e enxergamos soluções com mais lucidez.
+
+Algumas linhas por dia já ajudam a organizar e acalmar a mente.`,
+  },
+  {
+    id: "estoicismo-14",
+    theme: "Estoicismo",
+    suggestedSceneId: "estoicismo-15",
+    estimatedSeconds: 60,
+    elementsCited: ["ròch ekilib", "balans", "kle", "sablye"],
+    title: {
+      fr: "« Citoyens du monde » : la solidarité humaine dans le stoïcisme",
+      kreyol: "« Sitwayen tout mond lan » : solidarite imen nan filozofi stoyisyen",
+      pt: "“Cidadãos do mundo”: a ideia estoica de fraternidade humana",
+    },
+    summaryPt: "O conceito de cosmopolitismo e cooperação mútua no pensamento de Marco Aurélio e Hierócles.",
+    fr: `Dans une pièce tranquille, près d'une clé ancienne, d'un sablier, d'une balance et de pierres empilées en équilibre, rappelons une idée stoïcienne très moderne : nous sommes tous faits pour coopérer.
+
+Le philosophe Diogène puis les stoïciens ont popularisé le mot « cosmopolite », qui signifie « citoyen du monde ». Selon eux, quelle que soit notre ville ou notre langue, nous appartenons à une même famille humaine, reliée comme les deux rangées de dents ou les deux mains d'un même corps.
+
+Aider son prochain est donc aussi naturel que l'équilibre des pierres qui se soutiennent l'une l'autre.`,
+    kreyol: `Nan yon sal trankil, toupre yon vye kle, yon sablye, yon balans ak wòch ki anpile an ekilib, ann sonje yon bèl lide stoyisyen ki modèn anpil : nou tout fèt pou travay ansanm.
+
+Filozòf yo te popilarize mo « kosmopolit », ki vle di « sitwayen tout mond lan ». Selon yo, kèlkeswa vil nou oswa lang nou pale, nou tout fè pati yon sèl gwo fanmi imen, ki konekte tankou de men nan menm kò a.
+
+Ede pwochen nou se yon bagay ki natirèl menm jan ak wòch ki kenbe ekilib youn lòt.`,
+    pt: `Em uma sala silenciosa, perto de uma chave antiga, uma ampulheta, uma balança e pedras equilibradas, vale lembrar uma ideia estoica muito atual: fomos feitos para cooperar.
+
+Os estoicos difundiram o conceito de "cosmopolita", que significa "cidadão do mundo". Segundo eles, independentemente do país ou do idioma, pertencemos a uma mesma comunidade humana e funcionamos melhor quando agimos juntos, como as duas mãos de um mesmo corpo.
+
+Apoiar o próximo é tão natural quanto o equilíbrio de pedras que se sustentam mutuamente.`,
+  },
+  {
+    id: "estoicismo-15",
+    theme: "Estoicismo",
+    suggestedSceneId: "estoicismo-16",
+    estimatedSeconds: 60,
+    elementsCited: ["oliv", "pòtay", "estati", "parchemen"],
+    title: {
+      fr: "Musonius Rufus : le philosophe qui défendait l'éducation pour tous",
+      kreyol: "Musonius Rufus : filozòf ki te defann edikasyon pou tout moun san eksepsyon",
+      pt: "Musônio Rufo: o estoico que defendia educação igual para todos",
+    },
+    summaryPt: "Uma curiosidade pouco conhecida sobre o mestre de Epicteto e sua visão igualitária na Antiguidade.",
+    fr: `Sous un soleil apaisant, près d'un olivier, d'une statue, d'un portail et d'un vieux parchemin, se cache l'histoire de Musonius Rufus, le professeur qui a formé le grand Épictète.
+
+À Rome, au premier siècle, alors que beaucoup limitaient les études supérieures aux hommes fortunés, Musonius Rufus affirmait haut et fort sur ses parchemins que les femmes devaient recevoir exactement la même éducation philosophique que les hommes !
+
+Pour lui, le sens de la justice, la réflexion et le courage appartiennent à chaque être humain, sans distinction.`,
+    kreyol: `Anba yon bèl solèy kalm, toupre yon pye oliv, yon estati, yon pòtay ak yon vye parchemen, men istwa Musonius Rufus, pwofesè ki te fòme gran filozòf Epiktèt la.
+
+Nan Wòm, nan premye syèk la, pandan anpil moun te rezève gwo etid yo sèlman pou gason ki rich, Musonius Rufus te ekri klè sou parchemen l yo ke fanm yo dwe resevwa egzakteman menm edikasyon filozofi ak gason yo !
+
+Pou li menm, sans lajistis, refleksyon ak kouraj se byen tout moun san okenn diferans.`,
+    pt: `Sob um sol sereno, perto de uma oliveira, uma estátua, um portão e um pergaminho antigo, encontra-se a história de Musônio Rufo, o mestre que ensinou o famoso Epicteto.
+
+Na Roma do século I, quando muitos restringiam os estudos avançados a homens ricos, Musônio Rufo defendia abertamente em seus textos que as mulheres deveriam receber exatamente a mesma formação filosófica que os homens!
+
+Para ele, a razão, o senso de justiça e a coragem pertencem igualmente a todo ser humano.`,
+  },
 
   // ==================== RELIGIÃO (10) ====================
   {
@@ -563,5 +703,145 @@ Kèlkeswa diferans kilti oswa lapriyè, gwo prensip respè ak konpasyon sa a ret
 Ele é conhecido como a "Regra de Ouro": não faça aos outros o que não gostaria que fizessem a você, e trate o próximo como gostaria de ser tratado.
 
 Para além das diferenças culturais, esse princípio universal de respeito e compaixão é uma ponte sólida entre todas as pessoas.`,
+  },
+  {
+    id: "religiao-11",
+    theme: "Religião",
+    suggestedSceneId: "religiao-10",
+    estimatedSeconds: 60,
+    elementsCited: ["legliz", "kwa", "kalis", "kantik"],
+    title: {
+      fr: "Pourquoi les chants sacrés accompagnent-ils les cérémonies depuis des millénaires ?",
+      kreyol: "Poukisa kantik sakre yo akonpaye seremoni yo depi plizyè milye ane ?",
+      pt: "Por que os cânticos sagrados acompanham celebrações há milênios?",
+    },
+    summaryPt: "O papel da música e dos livros de cânticos na memória espiritual e na união comunitária.",
+    fr: `Dans la lumière dorée du soir, près d'une église, d'une croix et d'un calice, un recueil de cantiques rappelle un fait fascinant : presque toutes les traditions religieuses du monde utilisent le chant !
+
+Pourquoi la musique occupe-t-elle une place si grande dans la spiritualité ? Parce qu'une mélodie grave les textes importants dans la mémoire beaucoup plus facilement que de longues phrases lues en silence, tout en unissant les voix d'une assemblée entière.
+
+Chanter ensemble transforme une prière individuelle en un élan partagé d'espérance.`,
+    kreyol: `Nan bèl limyè dore aswè a, toupre yon legliz, yon kwa ak yon kalis, yon liv kantik fè nou sonje yon bèl verite : prèske tout tradisyon relijye nan mond lan sèvi ak chante !
+
+Poukisa mizik gen yon gwo plas konsa nan lavi espirityèl ? Paske yon bèl melodi grave pawòl enpòtan yo nan memwa moun pi fasil pase yon long diskou an silans, toutpandan li mete tout vwa nan asanble a ansanm.
+
+Chante ansanm transfòme yon lapriyè pèsonèl an yon gwo mouvman espwa tout moun pataje.`,
+    pt: `No entardecer dourado, perto de uma igreja, de uma cruz e de um cálice, um livro de cânticos lembra um fato marcante: quase todas as tradições religiosas do mundo usam o canto!
+
+Por que a música ocupa um lugar tão central na espiritualidade? Porque a melodia grava textos e ensinamentos na memória com muito mais facilidade do que leituras silenciosas, além de unir as vozes de toda a comunidade em um só ritmo.
+
+Cantar juntos transforma uma oração individual em esperança compartilhada.`,
+  },
+  {
+    id: "religiao-12",
+    theme: "Religião",
+    suggestedSceneId: "religiao-12",
+    estimatedSeconds: 60,
+    elementsCited: ["lakwa chemen", "kloch", "pòtay legliz", "chapèl"],
+    title: {
+      fr: "Le silence et le son de la cloche : l'art de prendre une pause intérieure",
+      kreyol: "Silans lan ak son kloch la : bèl atizay pran yon ti poz anndan kè nou",
+      pt: "O silêncio e o toque do sino: a arte da pausa interior",
+    },
+    summaryPt: "O sentido do recolhimento diante de capelas, portais e cruzeiros de caminho.",
+    fr: `Au coucher du soleil, devant une petite chapelle, un portail d'église et un calvaire au bord de la route, le tintement d'une cloche invite souvent les passants à marquer quelques secondes de silence.
+
+Dans de nombreuses traditions, passer d'un lieu bruyant à un espace de recueillement symbolisé par un portail aide à laisser de côté les soucis du jour. La cloche ne sert pas seulement à annoncer l'heure : son son clair marque le début d'un moment de paix et de gratitude.
+
+Même quelques instants de silence suffisent pour retrouver la sérénité.`,
+    kreyol: `Lè solèy ap kouche, devan yon ti chapèl, yon pòtay legliz ak yon lakwa chemen bò wout la, son yon kloch souvan envite moun k ap pase yo pran kèk segonn silans.
+
+Nan anpil tradisyon, pase soti nan yon kote ki gen anpil bri pou antre nan yon espas lapriyè ede nou mete traka jounen an sou kote. Kloch la pa sèlman la pou di lè a : son klè li a anonse yon moman lapè ak rekonesans.
+
+Menm kèk ti segonn silans sifi pou kè a jwenn trankilite l ankò.`,
+    pt: `Ao pôr do sol, diante de uma capela, de um portal de igreja e de um cruzeiro de caminho, o som de um sino costuma convidar quem passa a fazer alguns segundos de silêncio.
+
+Em muitas tradições, atravessar um portal rumo a um espaço de recolhimento simboliza deixar para trás a agitação do dia. O sino não marca apenas as horas: seu timbre claro abre um instante de paz e gratidão.
+
+Mesmo poucos momentos de silêncio ajudam a reencontrar serenidade interior.`,
+  },
+  {
+    id: "religiao-13",
+    theme: "Religião",
+    suggestedSceneId: "religiao-14",
+    estimatedSeconds: 65,
+    elementsCited: ["klòchè", "kantik", "chapèl", "òg"],
+    title: {
+      fr: "Les églises historiques d'Haïti : mémoire, foi et solidarité communautaire",
+      kreyol: "Gran legliz istorik ann Ayiti : memwa, lafwa ak solidarite kominote a",
+      pt: "As igrejas históricas do Haiti: fé, memória e força comunitária",
+    },
+    summaryPt: "A importância histórica e afetiva de templos e capelas haitianas, como em Cabo Haitiano e Porto Príncipe.",
+    fr: `À l'aube calme, quand le clocher se découpe dans le ciel au-dessus d'une chapelle où résonnent l'orgue et les cantiques, rappelons la place profonde des églises historiques dans la mémoire haïtienne.
+
+De la cathédrale du Cap-Haïtien à l'église historique de Milot ou aux chapelles rurales bâties pierre par pierre par les habitants, ces édifices ont traversé les siècles comme des lieux de prière, d'école et d'entraide.
+
+Même après les épreuves et les tempêtes, les communautés se mobilisent toujours ensemble pour relever leurs clochers et préserver ce patrimoine vivant.`,
+    kreyol: `Granmaten nan kalm lan, lè klòchè a kanpe byen wo anlè yon chapèl kote òg la ak kantik yo ap sonnen, ann sonje gwo plas legliz istorik yo genyen nan memwa peyi Ayiti.
+
+Depi katedral Okap la rive nan legliz istorik Milo a oswa ti chapèl kanpay moun yo te bati wòch pa wòch, batiman sa yo travèse syèk yo kòm kote lapriyè, lekòl ak solidarite.
+
+Menm apre gwo eprèv ak siklòn yo, kominote yo toujou mete men ansanm pou leve klòchè yo ankò epi pwoteje bèl eritaj vivan sa a.`,
+    pt: `Em um amanhecer calmo, quando o campanário se destaca no céu acima de uma capela onde soam o órgão e os cânticos, lembramos a importância das igrejas históricas no Haiti.
+
+Da catedral de Cabo Haitiano à igreja de Milot e às pequenas capelas rurais erguidas pedra por pedra pelos moradores, esses espaços atravessaram séculos como pontos de fé, ensino e apoio mútuo.
+
+Mesmo após grandes desafios e tempestades, as comunidades se unem para reconstruir seus templos e preservar essa memória viva.`,
+  },
+  {
+    id: "religiao-14",
+    theme: "Religião",
+    suggestedSceneId: "religiao-15",
+    estimatedSeconds: 60,
+    elementsCited: ["bib", "bouji", "chaple", "basen batèm"],
+    title: {
+      fr: "L'eau dans les traditions spirituelles : un symbole universel de renouveau",
+      kreyol: "Dlo nan tradisyon espirityèl yo : yon senbòl inivèsèl pou nouvo kòmansman",
+      pt: "A água nas tradições espirituais: um símbolo universal de renovação",
+    },
+    summaryPt: "Por que a água — representada na pia batismal e nos rituais — simboliza vida e purificação.",
+    fr: `Dans le calme du soir, près d'une Bible, d'un chapelet, de bougies allumées et d'une cuve baptismale, l'eau apparaît comme l'un des symboles les plus anciens de la spiritualité humaine.
+
+Dans le christianisme avec le baptême, dans le judaïsme, l'islam, l'hindouisme et de nombreuses traditions africaines et caribéennes, l'eau pure représente la vie nouvelle, le pardon et le soin intérieur.
+
+Sans eau, aucune plante ne pousse ; de la même manière, ces rites rappellent le désir humain de repartir avec un cœur apaisé et renouvelé.`,
+    kreyol: `Nan kalm aswè a, toupre yon Bib, yon chaple, bouji ki limen ak yon basen batèm, dlo a parèt kòm yonn nan pi ansyen senbòl nan lavi espirityèl lèzòm.
+
+Nan relijyon kretyèn nan ak batèm, nan jidayis, nan islam, nan endouyis ak nan anpil tradisyon afriken ak karayibeyen, dlo pwòp reprezante nouvo lavi, padon ak lapè anndan kè nou.
+
+San dlo, okenn plant pa pouse ; menm jan an tou, jès sakre sa yo fè nou sonje anvi tout moun genyen pou kòmanse chak etap ak yon kè pwòp.`,
+    pt: `Na tranquilidade da noite, perto de uma Bíblia, um terço, velas acesas e uma pia batismal, a água surge como um dos símbolos mais antigos da espiritualidade humana.
+
+No cristianismo com o batismo, no judaísmo, no islamismo, no hinduísmo e em diversas tradições africanas e caribenhas, a água límpida representa vida nova, purificação e recomeço.
+
+Assim como nenhuma semente brota sem água, esses ritos lembram o desejo de renovar o coração e seguir em paz.`,
+  },
+  {
+    id: "religiao-15",
+    theme: "Religião",
+    suggestedSceneId: "religiao-16",
+    estimatedSeconds: 60,
+    elementsCited: ["kandelab", "pijon", "lakwa chemen", "zanj"],
+    title: {
+      fr: "L'hospitalité sacrée : accueillir l'étranger comme un invité d'honneur",
+      kreyol: "Akèy sakre a : resevwa etranje a tankou yon envite donè",
+      pt: "A hospitalidade sagrada: acolher o viajante como convidado de honra",
+    },
+    summaryPt: "Um valor compartilhado por diversas religiões: estender a mão, oferecer abrigo e paz.",
+    fr: `Au crépuscule dans le village, près d'un candélabre lumineux, d'une colombe blanche et d'une statue d'ange au bord d'un calvaire, une tradition millénaire unit presque toutes les religions : l'hospitalité sacrée.
+
+Dans les textes bibliques comme dans les traditions de Méditerranée, d'Afrique, d'Orient et des Caraïbes, accueillir le voyageur fatigué et partager un repas avec celui qui passe est considéré comme un geste sacré !
+
+En Haïti comme au Brésil, ouvrir sa porte avec chaleur reste l'une des plus belles expressions vivantes de la foi et de l'humanité.`,
+    kreyol: `Lè solèy ap kouche nan vilaj la, toupre yon kandelab klere, yon pijon blan ak yon estati zanj bò yon lakwa chemen, yon gran tradisyon ki gen plizyè milye ane ini prèske tout relijyon yo : akèy sakre a.
+
+Nan tèks biblik yo tankou nan tradisyon bò lanmè Mediterane, ann Afrik, ann Oryan ak nan Karayib la, resevwa vwayajè ki fatige a epi pataje yon pla manje ak moun k ap pase a se yon jès ki sakre anpil !
+
+Ann Ayiti tankou nan peyi Brezil, louvri pòt lakay ou ak chalè rete yonn nan pi bèl fason pou viv lafwa ak limanite.`,
+    pt: `Ao entardecer na vila, perto de um candelabro iluminado, uma pomba branca e uma estátua de anjo junto a um cruzeiro de caminho, uma tradição milenar une quase todas as religiões: a hospitalidade sagrada.
+
+Tanto nos textos bíblicos quanto em tradições do Mediterrâneo, da África, do Oriente e do Caribe, acolher o viajante cansado e repartir a refeição com quem chega é visto como dever de amor e respeito!
+
+No Haiti e no Brasil, abrir a porta com calor humano segue sendo uma das expressões mais bonitas da fé e da fraternidade.`,
   },
 ];

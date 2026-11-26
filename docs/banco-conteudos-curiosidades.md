@@ -1,26 +1,26 @@
 # Banco de Conteúdos — Seção de Curiosidades
 
-Total de temas: **15** · Total de roteiros: **150** (10 por tema)
+Total de temas: **15** · Total de roteiros: **225** (15 por tema)
 
 Cada roteiro foi estruturado em parágrafos curtos e naturais para gravações de **até ~2 minutos** (média de 60 a 70 segundos), reunindo curiosidades culturais/gerais e os elementos das cenas de `src/lib/imageBank.ts` para ativar as animações do player.
 
 ## Índice de temas
 
-1. [Tecnologia](#tecnologia) (10 conteúdos)
-2. [Natureza](#natureza) (10 conteúdos)
-3. [Cultura](#cultura) (10 conteúdos)
-4. [Turismo](#turismo) (10 conteúdos)
-5. [Vida no interior](#vida-no-interior) (10 conteúdos)
-6. [Dança](#danca) (10 conteúdos)
-7. [Geografia](#geografia) (10 conteúdos)
-8. [História](#historia) (10 conteúdos)
-9. [Cinema](#cinema) (10 conteúdos)
-10. [Música](#musica) (10 conteúdos)
-11. [Lazeres](#lazeres) (10 conteúdos)
-12. [Estoicismo](#estoicismo) (10 conteúdos)
-13. [Religião](#religiao) (10 conteúdos)
-14. [Gastronomia](#gastronomia) (10 conteúdos)
-15. [Idiomas](#idiomas) (10 conteúdos)
+1. [Tecnologia](#tecnologia) (15 conteúdos)
+2. [Natureza](#natureza) (15 conteúdos)
+3. [Cultura](#cultura) (15 conteúdos)
+4. [Turismo](#turismo) (15 conteúdos)
+5. [Vida no interior](#vida-no-interior) (15 conteúdos)
+6. [Dança](#danca) (15 conteúdos)
+7. [Geografia](#geografia) (15 conteúdos)
+8. [História](#historia) (15 conteúdos)
+9. [Cinema](#cinema) (15 conteúdos)
+10. [Música](#musica) (15 conteúdos)
+11. [Lazeres](#lazeres) (15 conteúdos)
+12. [Estoicismo](#estoicismo) (15 conteúdos)
+13. [Religião](#religiao) (15 conteúdos)
+14. [Gastronomia](#gastronomia) (15 conteúdos)
+15. [Idiomas](#idiomas) (15 conteúdos)
 
 ---
 
@@ -326,6 +326,156 @@ Naquela época, o petróleo acabou ficando mais barato e fácil de transportar. 
 
 Dentro do carro, ouvimos o rádio sem o barulho do motor, enquanto engenheiros testam novos modelos usando óculos de realidade virtual.
 
+### 11. Por que as teclas do teclado ficam nessa ordem? (`tecnologia-11`)
+
+- **Cena sugerida:** `tecnologia-11` · **Duração estimada:** ~65 s
+- **Elementos citados:** bra robo, robo, klavye, òdinatè
+- **Resumo:** A história curiosa do padrão QWERTY, criado para evitar que as primeiras máquinas travassem.
+
+#### 🇫🇷 Francês — *Pourquoi les touches du clavier sont-elles placées dans cet ordre ?*
+
+Devant un ordinateur, alors qu'un robot et un bras robotique exécutent des gestes précis, nos doigts tapent chaque jour sur un clavier sans y penser. Mais pourquoi les lettres ne sont-elles pas rangées de A à Z ?
+
+Au dix-neuvième siècle, les premières machines à écrire possédaient de petits marteaux métalliques qui se coinçaient souvent quand on tapait trop vite des lettres voisines ! L'inventeur Christopher Sholes a donc séparé les lettres les plus fréquentes pour éviter ces blocages.
+
+Cette disposition appelée QWERTY est restée sur nos ordinateurs et téléphones, même à l'ère de l'intelligence artificielle.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa lèt sou klavye òdinatè yo plase nan lòd sa a ?*
+
+Devan yon òdinatè, pandan yon robo ak yon bra robo ap fè mouvman presi, dwèt nou tape chak jou sou yon klavye san nou pa menm reflechi. Men, poukisa lèt yo pa ranje depi A rive Z ?
+
+Nan diznevyèm syèk la, premye machin pou ekri yo te gen ti mato metal ki te konn kole ansanm lè moun tape twò vit lèt ki toupre youn lòt ! Envantè Christopher Sholes te separe lèt moun plis itilize yo pou anpeche machin nan bloke.
+
+Aranjman sa a yo rele QWERTY rete sou òdinatè ak telefòn nou yo jodi a, menm nan epòk entèlijans atifisyèl la.
+
+#### 🇧🇷 Português (apoio) — *Por que as teclas do teclado ficam nessa ordem?*
+
+Diante de um computador, enquanto um robô e um bra robótico executam movimentos precisos, nossos dedos digitam diariamente no teclado sem pensar. Mas por que as letras não seguem a ordem de A a Z?
+
+No século XIX, as primeiras máquinas de escrever tinham pequenas hastes de metal que travavam quando letras próximas eram pressionadas depressa demais! O inventor Christopher Sholes separou os pares mais comuns para evitar esses engasgos.
+
+Esse arranjo, chamado QWERTY, permaneceu nos computadores e celulares até hoje.
+
+### 12. Como a tela sensível ao toque reconhece o seu dedo? (`tecnologia-12`)
+
+- **Cena sugerida:** `tecnologia-13` · **Duração estimada:** ~65 s
+- **Elementos citados:** ekran, tablèt, teleskòp, òdinatè
+- **Resumo:** A física elétrica por trás das telas de tablets e celulares modernos.
+
+#### 🇫🇷 Francês — *Comment l'écran tactile reconnaît-il le toucher de votre doigt ?*
+
+Sur une tablette posée près d'un ordinateur et d'un télescope, il suffit d'effleurer l'écran pour zoomer sur une étoile ou tourner une page. Comment du simple verre peut-il sentir votre doigt ?
+
+La plupart des écrans modernes utilisent une couche transparente et invisible qui stocke une très légère charge électrique. Comme le corps humain conduit naturellement l'électricité, dès que votre doigt touche la surface, une minuscule variation électrique se produit à cet endroit précis !
+
+Des capteurs calculent instantanément la position du contact, transformant un geste léger en commande numérique.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan ekran taktil la fè rekonèt lè dwèt ou touche l ?*
+
+Sou yon tablèt ki poze toupre yon òdinatè ak yon teleskòp, ou sèlman bezwen pase dwèt ou sou ekran an pou agrandi yon zetwal oswa vire yon paj. Kijan senp vit ka santi dwèt ou ?
+
+Pifò ekran modèn yo gen yon kouch transparan nou pa wè ki kenbe yon ti kouran elektrik tou piti. Piske kò moun kite elektrisite pase natirèlman, kou dwèt ou touche vit la, yon ti chanjman elektrik fèt egzakteman kote sa a !
+
+Detektè yo kalkile pozisyon an touswit, sa ki transfòme yon ti jès lejè an kòmand nimerik.
+
+#### 🇧🇷 Português (apoio) — *Como a tela sensível ao toque reconhece o seu dedo?*
+
+Em um tablet apoiado perto de um computador e de um telescópio, basta tocar a tela para ampliar uma estrela ou virar uma página. Como um simples vidro consegue sentir o seu dedo?
+
+A maioria das telas modernas usa uma camada invisível que armazena uma carga elétrica muito leve. Como o corpo humano conduz eletricidade naturalmente, assim que o dedo encosta na superfície ocorre uma pequena variação elétrica naquele ponto exato!
+
+Sensores calculam a posição em milissegundos, transformando um toque suave em comando digital.
+
+### 13. Como o GPS sabe onde você está graças aos satélites e a Einstein (`tecnologia-13`)
+
+- **Cena sugerida:** `tecnologia-14` · **Duração estimada:** ~65 s
+- **Elementos citados:** antèn, satelit, mikwoskòp, sourit
+- **Resumo:** Por que os relógios atômicos dos satélites precisam corrigir o tempo para guiar você na Terra.
+
+#### 🇫🇷 Francês — *Comment le GPS sait où vous êtes grâce aux satellites et à Einstein*
+
+Sous un ciel calme, une antenne échange des signaux avec un satellite en orbite, tandis qu'au laboratoire un microscope et une souris d'ordinateur analysent des données précises.
+
+Pour indiquer votre position sur une carte à quelques mètres près, votre téléphone écoute simultanément au moins quatre satellites GPS équipés d'horloges atomiques ultra-précises. Mais il existe un détail fascinant : dans l'espace, le temps s'écoule légèrement plus vite que sur Terre, exactement comme l'avait prévu Albert Einstein !
+
+Sans cette correction mathématique de la relativité, les cartes GPS se tromperaient de plusieurs kilomètres chaque jour.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan GPS la konnen ki kote ou ye gras ak satelit ak Einstein*
+
+Anba yon syèl trankil, yon antèn ap echanje siyal ak yon satelit nan lespas, pandan nan laboratwa a yon mikwoskòp ak yon sourit òdinatè ap analize done presi.
+
+Pou l montre egzakteman kote ou ye sou yon kat, telefòn ou koute an menm tan omwen kat satelit GPS ki gen revèy atomik ki presi anpil. Men gen yon detay ki etonan : nan lespas, tan an pase yon ti jan pi vit pase sou latè, egzakteman jan Albert Einstein te prevwa sa !
+
+San koreksyon matematik relativite sa a, kat GPS yo t ap fè erè plizyè kilomèt chak jou.
+
+#### 🇧🇷 Português (apoio) — *Como o GPS sabe onde você está graças aos satélites e a Einstein*
+
+Sob um céu tranquilo, uma antena troca sinais com um satélite em órbita, enquanto no laboratório um microscópio e um mouse de computador analisam dados precisos.
+
+Para mostrar sua localização exata no mapa, o aparelho recebe ao mesmo tempo o sinal de pelo menos quatro satélites GPS equipados com relógios atômicos. Mas há um detalhe fascinante: no espaço, o tempo passa um pouquinho mais rápido do que na superfície da Terra, exatamente como previu Albert Einstein!
+
+Sem essa correção da relatividade, os mapas de GPS errariam por vários quilômetros todos os dias.
+
+### 14. Por que a lâmpada LED azul revolucionou a iluminação moderna? (`tecnologia-14`)
+
+- **Cena sugerida:** `tecnologia-15` · **Duração estimada:** ~65 s
+- **Elementos citados:** ampoul, enprimant 3D, kas VR, mikwoskòp
+- **Resumo:** A descoberta que tornou possível a luz branca econômica das casas, telas e impressoras 3D.
+
+#### 🇫🇷 Francês — *Pourquoi l'ampoule LED bleue a-t-elle révolutionné la lumière moderne ?*
+
+Dans un atelier éclairé par une ampoule brillante, près d'une imprimante 3D, d'un microscope et d'un casque de réalité virtuelle, la lumière LED semble aujourd'hui toute simple.
+
+Pourtant, pendant plus de trente ans, les chercheurs savaient fabriquer des LED rouges et vertes, mais n'arrivaient pas à créer la LED bleue ! Sans le bleu, impossible de produire une belle lumière blanche. Dans les années mille neuf cent quatre-vingt-dix, trois scientifiques japonais ont enfin réussi cet exploit, recevant plus tard le prix Nobel.
+
+Grâce à eux, l'ampoule LED consomme jusqu'à dix fois moins d'énergie que les anciennes lampes.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa ampoul LED ble a te chanje limyè modèn nan nèt ?*
+
+Nan yon atelye ki klere ak yon bèl ampoul, toupre yon enprimant 3D, yon mikwoskòp ak yon kas reyalite vityèl, limyè LED la sanble senp anpil jodi a.
+
+Poutan, pandan plis pase trant an, chèchè yo te konn fabrike LED wouj ak vèt, men yo pa t ka rive kreye LED ble a ! San koulè ble, li te enposib pou fè bon limyè blan. Nan ane mil nèf san katreven dis yo, twa syantifik japonè te reyisi bèl defi sa a, epi yo te resevwa pri Nobèl pita.
+
+Gras ak yo, ampoul LED la konsome jiska dis fwa mwens kouran pase ansyen lanp yo.
+
+#### 🇧🇷 Português (apoio) — *Por que a lâmpada LED azul revolucionou a iluminação moderna?*
+
+Em uma oficina iluminada por uma lâmpada brilhante, perto de uma impressora 3D, de um microscópio e de óculos de realidade virtual, a luz LED hoje parece simples.
+
+No entanto, por mais de trinta anos, os cientistas sabiam criar LEDs vermelhos e verdes, mas não conseguiam produzir o LED azul! Sem o azul, era impossível gerar luz branca eficiente. Nos anos 1990, três pesquisadores japoneses venceram esse desafio e depois receberam o Prêmio Nobel.
+
+Graças a eles, a lâmpada LED consome muito menos energia e dura anos.
+
+### 15. Por que o Bluetooth tem o nome de um rei do século X? (`tecnologia-15`)
+
+- **Cena sugerida:** `tecnologia-17` · **Duração estimada:** ~60 s
+- **Elementos citados:** telefòn, radyo, robo, kamera
+- **Resumo:** A origem histórica inesperada da tecnologia sem fio usada em celulares, rádios e câmeras.
+
+#### 🇫🇷 Francês — *Pourquoi le Bluetooth porte-t-il le nom d'un roi du dixième siècle ?*
+
+Entre un téléphone, une radio, une caméra sans fil et même un petit robot connecté, le Bluetooth relie nos appareils sans aucun câble. Mais d'où vient ce nom étrange qui signifie « dent bleue » ?
+
+En mille neuf cent quatre-vingt-seize, des ingénieurs cherchaient un nom pour une technologie capable d'unir différents appareils de marques diverses. L'un d'eux lisait l'histoire d'Harald « à la dent bleue », un roi scandinave du dixième siècle célèbre pour avoir unifié des tribus rivales !
+
+Le symbole du Bluetooth réunit même deux anciennes lettres runiques qui forment les initiales de ce roi.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa Bluetooth pote non yon wa ki te viv nan dizyèm syèk la ?*
+
+Ant yon telefòn, yon radyo, yon kamera san fil ak menm yon ti robo ki konekte, Bluetooth la marye aparèy nou yo san okenn kab. Men ki kote non etranj sa a ki vle di « dan ble » soti ?
+
+Nan ane mil nèf san katreven sèz, enjenyè yo t ap chèche yon non pou yon teknoloji ki ka konekte plizyè aparèy diferan ansanm. Yonn ladan yo t ap li istwa Harald « dan ble », yon wa nan dizyèm syèk la ki te selèb paske l te mete plizyè gwoup ki pa t antann yo ansanm !
+
+Menm senbòl Bluetooth la melanje de ansyen lèt ki fòme inisyal non wa sa a.
+
+#### 🇧🇷 Português (apoio) — *Por que o Bluetooth tem o nome de um rei do século X?*
+
+Entre um telefone, um rádio, uma câmera sem fio e até um robô conectado, o Bluetooth liga nossos aparelhos sem nenhum cabo. Mas de onde vem esse nome curioso que significa "dente azul"?
+
+Em 1996, engenheiros buscavam um nome provisório para um padrão capaz de unir equipamentos diferentes. Um deles lia sobre Harald "Dente-Azul", rei escandinavo do século X famoso por unificar regiões rivais!
+
+O símbolo do Bluetooth até hoje combina duas antigas letras rúnicas com as iniciais desse rei.
+
 ---
 
 ## Natureza
@@ -629,6 +779,156 @@ Sobre as rochas do litoral, perto de uma ilha cercada por corais, uma ave plana 
 As aves de rapina têm uma visão até oito vezes mais precisa que a dos seres humanos. Do alto do céu, esse pássaro consegue notar um pequeno movimento entre o capim ou nas pedras da costa.
 
 Ao controlar naturalmente a quantidade de pequenos animais, essas aves ajudam a manter o equilíbrio de todo o ecossistema litorâneo.
+
+### 11. Por que a chuva na floresta tropical tem um cheiro tão gostoso? (`natureza-11`)
+
+- **Cena sugerida:** `natureza-18` · **Duração estimada:** ~65 s
+- **Elementos citados:** bambou, pye bannann, fèy, foujè
+- **Resumo:** O fenômeno do petricor quando a chuva cai sobre bananeiras, bambus, folhas e samambaias.
+
+#### 🇫🇷 Francês — *Pourquoi la pluie dans la forêt tropicale a-t-elle une odeur si agréable ?*
+
+Quand une pluie douce tombe sur la forêt tropicale, les gouttes glissent sur les larges feuilles du bananier, font vibrer le bambou et rafraîchissent les fougères vertes. Aussitôt monte dans l'air un parfum familier et apaisant.
+
+Les scientifiques appellent cette odeur de pluie le « pétrichor » ! Pendant les journées sèches, les plantes libèrent sur les feuilles et sur la terre de fines huiles végétales. Lorsque la pluie arrive, l'impact des gouttes projette dans l'air ces huiles mêlées à des arômes naturels du sol humide.
+
+C'est ce parfum de la pluie qui annonce à toute la forêt le retour de l'eau et de la vie.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa lapli nan forè twopikal la gen yon bon odè konsa ?*
+
+Lè yon bèl lapli dous tonbe nan forè twopikal la, gout dlo yo glise sou gwo fèy pye bannann nan, yo fè bambou a balanse epi yo rafrechi foujè vèt yo. Touswit, yon bon odè fre ki kalme kè nou monte nan lè a.
+
+Syantifik yo rele bon odè lapli sa a « petrikò » ! Pandan jounen ki sèch yo, plant yo lage ti lwil natirèl sou fèy yo ak sou tè a. Kou lapli tonbe, gout yo fè ti lwil sa yo ak bon sant tè mouye a vole nan lè a.
+
+Se bèl odè lapli sa a ki anonse tout forè a dlo ak lavi tounen ankò.
+
+#### 🇧🇷 Português (apoio) — *Por que a chuva na floresta tropical tem um cheiro tão gostoso?*
+
+Quando uma chuva suave cai sobre a floresta tropical, as gotas escorregam pelas folhas largas da bananeira, balançam o bambuzal e refrescam as samambaias verdes. Logo sobe no ar aquele perfume inconfundível de terra molhada.
+
+Os cientistas chamam esse cheiro de chuva de "petricor"! Nos dias secos, as plantas liberam óleos naturais sobre as folhas e o solo. Quando a chuva começa, o impacto das gotas espalha no ar esses aromas misturados a compostos naturais da terra úmida.
+
+É o perfume da chuva avisando toda a floresta que a água voltou para renovar a vida.
+
+### 12. O milagre da chuva no deserto e a magia do arco-íris (`natureza-12`)
+
+- **Cena sugerida:** `natureza-19` · **Duração estimada:** ~65 s
+- **Elementos citados:** din, kaktis, lakansyèl, ròch
+- **Resumo:** Como uma chuva rara desperta o deserto entre dunas, rochas e cactos, formando arco-íris.
+
+#### 🇫🇷 Francês — *Le miracle de la pluie dans le désert et la magie de l'arc-en-ciel*
+
+Même au milieu des dunes de sable brûlantes et des roches sèches où pousse le cactus, la pluie finit parfois par tomber. Et ce qu'elle provoque ressemble à un enchantement !
+
+Des graines minuscules qui dormaient sous le sable depuis des années se réveillent d'un seul coup dès que l'eau de pluie pénètre le sol. En quelques jours, le désert aride se couvre d'un tapis de fleurs colorées avant que la chaleur ne revienne.
+
+Lorsque le soleil perce les derniers nuages de pluie, ses rayons traversent les gouttelettes suspendues et dessinent un grand arc-en-ciel lumineux au-dessus des dunes.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Mirak lapli nan dezè a ak maji bèl lakansyèl la*
+
+Menm nan mitan gwo din sab cho ak ròch sèch kote kaktis ap grandi, lapli konn tonbe pafwa. Epi sa l fè parèt tankou yon vrè maji !
+
+Ti grenn tou piti ki t ap dòmi anba sab la depi plizyè lane reveye bridsoukou kou dlo lapli a antre nan tè a. Nan kèk jou sèlman, dezè sèch la kouvri ak bèl flè tout koulè anvan chalè a tounen.
+
+Lè solèy la pèse dènye nyaj lapli yo, reyon l yo pase nan ti gout dlo ki nan lè a epi yo trase yon bèl lakansyèl anwo din yo.
+
+#### 🇧🇷 Português (apoio) — *O milagre da chuva no deserto e a magia do arco-íris*
+
+Mesmo em meio às dunas de areia quente e às rochas secas onde cresce o cacto, a chuva acaba caindo de tempos em tempos. E o que ela provoca parece um encanto!
+
+Sementes minúsculas que dormiam sob a areia há anos despertam de repente assim que a água da chuva molha o solo. Em poucos dias, o deserto árido se cobre de flores coloridas antes que o calor volte.
+
+Quando o sol atravessa as últimas gotas de chuva no ar, a luz se divide em cores e desenha um arco-íris luminoso sobre as dunas.
+
+### 13. Por que o mar é salgado e como a Lua move as marés? (`natureza-13`)
+
+- **Cena sugerida:** `natureza-07` · **Duração estimada:** ~65 s
+- **Elementos citados:** dòfen, koki, manglye, nenifa
+- **Resumo:** Dois grandes mistérios do mar explicados de forma simples perto da baía e do manguezal.
+
+#### 🇫🇷 Francês — *Pourquoi la mer est-elle salée et comment la Lune fait-elle danser les marées ?*
+
+Dans une baie calme, un dauphin glisse près des coquillages et des racines de la mangrove qui bordent la mer, non loin des nénuphars d'eau douce. Mais pourquoi l'eau de la mer est-elle salée ?
+
+Pendant des millions d'années, la pluie a dissous de minuscules quantités de sels minéraux dans les roches des montagnes. Les rivières les ont ensuite transportés jusqu'à la mer, où le sel s'est concentré peu à peu.
+
+Et si la mer monte et descend deux fois par jour sur les plages, c'est grâce à la Lune ! Son attraction attire doucement l'eau des océans comme un aimant invisible, créant la danse régulière des marées.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa dlo lanmè a sale epi kijan lalin nan fè mare yo monte desann ?*
+
+Nan yon bèl bè trankil, yon dòfen ap glise toupre koki yo ak rasin manglye ki bò lanmè a, pa lwen nenifa ki nan dlo dous. Men poukisa dlo lanmè a sale konsa ?
+
+Pandan plizyè milyon ane, lapli te fonn ti kras sèl mineral ki nan wòch mòn yo. Rivyè yo te pote sèl sa yo rive nan lanmè a, kote l vin konsantre tikras pa tikras.
+
+Epi si lanmè a monte epi l desann de fwa pa jou sou plaj yo, se gras ak lalin nan ! Fòs atraksyon lalin nan rale dlo oseyan yo dousman tankou yon leman envizib, sa ki kreye bèl mouvman mare yo.
+
+#### 🇧🇷 Português (apoio) — *Por que o mar é salgado e como a Lua move as marés?*
+
+Em uma baía tranquila, um golfinho desliza perto das conchas e das raízes do manguezal à beira-mar, não muito longe dos nenúfares da água doce. Mas por que a água do mar é salgada?
+
+Durante milhões de anos, a chuva dissolveu pequenas quantidades de sais minerais das rochas das montanhas. Os rios levaram esses sais até o mar, onde eles foram se acumulando aos poucos.
+
+Já o sobe e desce das águas na praia acontece por causa da Lua! Sua gravidade puxa suavemente as águas do mar como um ímã invisível, criando o ritmo diário das marés.
+
+### 14. Por que o mar parece azul e qual é o papel das correntes marítimas? (`natureza-14`)
+
+- **Cena sugerida:** `natureza-04` · **Duração estimada:** ~65 s
+- **Elementos citados:** koray, pwason, zetwal lanmè, balèn
+- **Resumo:** A cor do mar, a vida nos recifes de coral e os grandes rios invisíveis dentro dos oceanos.
+
+#### 🇫🇷 Francês — *Pourquoi la mer paraît-elle bleue et quel est le rôle des courants marins ?*
+
+Au-dessus des récifs de corail où nagent les poissons colorés près de l'étoile de mer et des baleines, la mer prend des nuances de bleu profond et de turquoise éclatant.
+
+L'eau pure de la mer n'est pourtant pas peinte en bleu ! La lumière du soleil contient toutes les couleurs de l'arc-en-ciel. Dès qu'elle entre dans la mer, l'eau absorbe très vite les rayons rouges et jaunes, mais laisse la lumière bleue voyager plus loin et rebondir vers nos yeux.
+
+Au large, d'immenses courants marins circulent dans les océans comme de grands fleuves invisibles, répartissant la chaleur autour de la planète.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa lanmè a parèt ble epi ki wòl gwo kouran lanmè yo jwe ?*
+
+Anwo resif koray yo kote pwason tout koulè ap naje toupre zetwal lanmè ak balèn yo, lanmè a pran bèl koulè ble fonse ak ble klè.
+
+Poutan, dlo lanmè a pa gen penti ble ladan l ! Limyè solèy la gen tout koulè lakansyèl la. Kou l antre nan lanmè a, dlo a vale reyon wouj ak jòn yo vit anpil, men li kite limyè ble a vwayaje pi lwen epi tounen nan je nou.
+
+Pi lwen nan gwo lanmè a, gwo kouran marin ap kouri tankou gwo rivyè envizib k ap pataje chalè toupatou sou latè.
+
+#### 🇧🇷 Português (apoio) — *Por que o mar parece azul e qual é o papel das correntes marítimas?*
+
+Sobre os recifes de coral onde peixes coloridos nadam perto da estrela-do-mar e das baleias, o mar ganha tons que vão do azul profundo ao turquesa brilhante.
+
+A água do mar não é azul por natureza! A luz do sol contém todas as cores do arco-íris, mas, ao entrar no mar, a água absorve rapidamente os tons vermelhos e amarelos, deixando a luz azul viajar mais fundo e voltar aos nossos olhos.
+
+Em alto-mar, imensas correntes marítimas circulam como rios invisíveis dentro dos oceanos, distribuindo calor e nutrientes pelo planeta.
+
+### 15. A chuva da neblina: como as florestas de pinheiros bebem as nuvens (`natureza-15`)
+
+- **Cena sugerida:** `natureza-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** chanpiyon, ekirèy, nich, pen
+- **Resumo:** Como a neblina e o chuvisco alimentam pinheiros, cogumelos, ninhos e esquilos nas montanhas.
+
+#### 🇫🇷 Francês — *La pluie du brouillard : comment les forêts de pins boivent les nuages*
+
+Dans une forêt de pins enveloppée de brume fraîche, un écureuil observe les branches près d'un nid tandis que des champignons poussent sur la mousse humide.
+
+Même lorsqu'il ne pleut pas fort, les arbres des montagnes savent capter l'eau du ciel grâce à la « pluie de brouillard » ! Les milliers d'aiguilles fines du pin attrapent les gouttelettes invisibles des nuages qui traversent la forêt.
+
+Ces gouttes se rassemblent peu à peu et tombent doucement sur le sol comme une pluie fine, nourrissant les champignons, les racines et toute la vie forestière.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Lapli bwouya a : kijan forè pen yo bwè dlo nyaj yo*
+
+Nan yon forè pye pen ki kouvri ak bwouya fre, yon ekirèy ap gade branch yo toupre yon nich pandan chanpiyon ap pouse sou tè imid la.
+
+Menm lè gwo lapli pa tonbe, pyebwa nan mòn yo konn ranmase dlo syèl la gras ak « lapli bwouya a » ! Plizyè milye ti zegwi fen pye pen an kenbe ti gout dlo ki nan nyaj k ap pase nan forè a.
+
+Ti gout sa yo rasanble tikras pa tikras epi yo tonbe dousman atè tankou yon ti lapli fen, ki nouri chanpiyon yo, rasin yo ak tout lavi nan bwa a.
+
+#### 🇧🇷 Português (apoio) — *A chuva da neblina: como as florestas de pinheiros bebem as nuvens*
+
+Em uma floresta de pinheiros envolta em neblina fresca, um esquilo observa os galhos perto de um ninho enquanto cogumelos crescem sobre o solo úmido.
+
+Mesmo quando não cai uma chuva forte, as árvores das montanhas conseguem colher água do céu por meio da chamada "chuva de neblina"! As milhares de agulhas finas do pinheiro capturam as gotículas das nuvens que passam entre os troncos.
+
+Essas gotas se juntam aos poucos e caem devagar no chão como uma garoa suave, hidratando cogumelos, raízes e animais da floresta.
 
 ---
 
@@ -934,6 +1234,156 @@ Na virada do século XX, arquitetos haitianos criaram o estilo "gingerbread", ad
 
 Essas construções contam a história das cidades com delicadeza e mostram como a arquitetura dialoga com o clima.
 
+### 11. As canoas tradicionais e os cantos de trabalho à beira-mar (`cultura-11`)
+
+- **Cena sugerida:** `cultura-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** evantay, kanòt, plim, chal
+- **Resumo:** O valor cultural das canoas de madeira esculpidas à mão e da vida comunitária costeira.
+
+#### 🇫🇷 Francês — *Les canots traditionnels et les chants des pêcheurs au bord de l'eau*
+
+Sur le sable paisible, près d'un éventail, d'un châle léger et de plumes colorées, une barque en bois appelée « kanòt » rappelle un savoir-faire ancestral des littoraux caribéens.
+
+Taillé autrefois dans un grand tronc d'arbre ou assemblé planche par planche, le canot accompagne les pêcheurs dès l'aube. Pendant qu'ils rament ensemble vers le large, leurs chants rythmés aident à garder la cadence et à rendre l'effort collectif plus léger.
+
+Au retour sur la plage, toute la communauté accueille les bateaux, prouvant que la mer nourrit autant les familles que la culture populaire.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kanòt tradisyonèl yo ak chante pechè bò lanmè yo*
+
+Sou sab trankil la, toupre yon evantay, yon chal lejè ak bèl plim kolore, yon bato an bwa yo rele « kanòt » fè nou sonje yon gran konesans zansèt nou yo bò lanmè.
+
+Lontan, yo te konn taye l nan yon sèl gwo kò pyebwa oswa rasanble l planch pa planch : kanòt la akonpaye pechè yo depi granmaten. Pandan y ap rame ansanm nan lanmè a, bèl chante ritme yo ede yo kenbe menm mouvman an.
+
+Lè yo tounen sou plaj la, tout katye a vin akeyi bato yo, sa ki montre lanmè a nouri ni fanmi yo ni kilti popilè a.
+
+#### 🇧🇷 Português (apoio) — *As canoas tradicionais e os cantos de trabalho à beira-mar*
+
+Na areia tranquila, perto de um leque, de um xale leve e de plumas coloridas, uma canoa de madeira chamada "kanòt" lembra um saber antigo das comunidades costeiras.
+
+Esculpida antigamente em um único tronco ou montada tábua por tábua, a canoa acompanha os pescadores desde o amanhecer. Enquanto remam juntos, os cantos ritmados mantêm o compasso e tornam o esforço coletivo mais leve.
+
+Na volta à praia, a vizinhança recebe as embarcações, mostrando que o mar alimenta tanto as famílias quanto a cultura popular.
+
+### 12. As festas noturnas de rua: quando o bairro vira uma grande família (`cultura-12`)
+
+- **Cena sugerida:** `cultura-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** lanp, tanbou, evantay, vaksin
+- **Resumo:** Como lanternas, tambores e trompetes de bambu criam encontros comunitários cheios de calor humano.
+
+#### 🇫🇷 Francês — *Les veillées festives du soir : quand le quartier devient une grande famille*
+
+Quand la nuit tombe sur la rue éclairée par les lanternes, le son joyeux du tambour et des trompettes en bambou « vaksin » invite petits et grands à sortir devant leurs portes, un éventail à la main pour profiter de la brise du soir.
+
+Dans la culture populaire d'Haïti comme du Brésil, la fête de rue est bien plus qu'un simple divertissement : c'est un espace d'hospitalité où l'on partage des nouvelles, de la musique et de la solidarité entre voisins.
+
+Sous la lueur douce des lampions, chacun trouve sa place dans le cercle de la joie collective.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Fèt lannwit nan katye a : lè tout vwazen vin tounen yon sèl fanmi*
+
+Lè lannwit tonbe nan lari a ki klere ak lanp yo, bèl son tanbou a ak vaksin nan envite granmoun kou timoun soti devan pòt yo, ak yon evantay nan men yo pou pran ti fre aswè a.
+
+Nan kilti popilè Ayiti tankou Brezil, fèt nan lari a pa sèlman pou amizman : se yon espas akèy kote vwazen yo pataje nouvèl, mizik ak solidarite.
+
+Anba limyè dous lanp yo, tout moun jwenn plas yo nan bèl sèk kè kontan kominote a.
+
+#### 🇧🇷 Português (apoio) — *As festas noturnas de rua: quando o bairro vira uma grande família*
+
+Quando a noite cai na rua iluminada pelas lanternas, o som alegre do tambor e dos trompetes de bambu vaksin convida jovens e idosos a sair às portas, com um leque na mão para aproveitar a brisa.
+
+Na cultura popular do Haiti e do Brasil, a festa de rua é muito mais do que diversão: é um espaço de convivência em que vizinhos compartilham histórias, música e apoio mútuo.
+
+Sob a luz suave das lanternas, todos encontram seu lugar na roda da alegria coletiva.
+
+### 13. A sabedoria das casas de palha: conforto térmico no clima tropical (`cultura-13`)
+
+- **Cena sugerida:** `cultura-14` · **Duração estimada:** ~60 s
+- **Elementos citados:** kay pay, chèz, kannari, kann
+- **Resumo:** A engenharia popular das casas cobertas de palha, potes de barro e sombra no quintal.
+
+#### 🇫🇷 Francês — *La sagesse des maisons en paille : rester au frais sous le soleil tropical*
+
+Devant une maison traditionnelle au toit de paille, près d'une chaise en bois, de canne à sucre fraîche et d'un pot en terre cuite « kannari », on découvre une architecture simple mais incroyablement intelligente !
+
+Les toits épais en palme ou en paille tressée agissent comme un isolant naturel : ils arrêtent la chaleur du soleil de midi tout en laissant l'air chaud s'échapper doucement. De la même façon, l'eau conservée dans le pot de terre cuite reste fraîche toute la journée grâce à l'évaporation naturelle à travers l'argile.
+
+Les savoirs populaires montrent souvent une grande harmonie avec le climat.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Sajès kay pay yo : kijan pou rete fre anba solèy twopikal la*
+
+Devan yon kay pay tradisyonèl, toupre yon chèz bwa, pye kann fre ak yon kannari an tè kwit, nou dekouvri yon achitekti senp men ki entèlijan anpil !
+
+Twati ki fèt ak pay ki byen trese yo fonksyone tankou yon pwoteksyon natirèl : yo bare gwo chalè solèy midi a toutpandan yo kite lè cho a soti dousman. Menm jan an tou, dlo ki sere anndan kannari a rete fre tout jounen an gras ak latè a ki kite l respire.
+
+Konesans popilè yo souvan montre yon bèl amoni ak klima peyi a.
+
+#### 🇧🇷 Português (apoio) — *A sabedoria das casas de palha: conforto térmico no clima tropical*
+
+Diante de uma casa tradicional de palha, perto de uma cadeira simples, cana-de-açúcar e de um pote de barro kannari, descobrimos uma arquitetura popular surpreendentemente inteligente!
+
+Os telhados espessos de palha trançada funcionam como isolantes térmicos naturais: bloqueiam o calor forte do meio-dia e deixam o ar quente escapar devagar. Da mesma forma, a água guardada no pote de barro permanece fresca o dia inteiro graças à porosidade da argila.
+
+Os saberes tradicionais revelam grande sintonia com a natureza local.
+
+### 14. Do fogo da forja às artes cênicas: quando o ofício vira poesia (`cultura-14`)
+
+- **Cena sugerida:** `cultura-18` · **Duração estimada:** ~60 s
+- **Elementos citados:** penti, teyat, dife, fòj
+- **Resumo:** Como a forja tradicional se transformou em esculturas, pinturas e teatro popular.
+
+#### 🇫🇷 Francês — *Du feu de la forge aux arts vivants : quand l'artisanat devient poésie*
+
+Autour de la forge rougeoyante et du feu vif, à côté d'une peinture colorée et de marionnettes de théâtre, le travail manuel et l'art se rejoignent depuis toujours.
+
+Pendant des générations, le forgeron du village fabriquait les outils des champs, les cloches et les charnières des maisons. En Haïti, ce savoir-faire du feu et du métal a donné naissance au célèbre art du fer découpé, où l'acier martelé raconte des scènes de fête, d'animaux fantastiques et d'histoires populaires.
+
+Qu'il s'agisse de peindre une toile, de jouer une scène ou de sculpter le métal, l'artisan met toujours son âme dans l'ouvrage.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Depi dife fòj la rive nan bèl atizay : lè travay men tounen pwezi*
+
+Toutotou fòj ki cho ak gwo dife a, bò kote yon bèl penti kolore ak marionèt teyat yo, travay alamen ak atizay toujou mache ansanm.
+
+Pandan plizyè jenerasyon, fòjwon vilaj la te konn fabrike zouti pou jaden, kloch ak pyès pou kay yo. Ann Ayiti, gwo konesans dife ak metal sa a bay nesans ak selèb atizay fè koupe a, kote metal ki bat la rakonte fèt, bèt imajinè ak bèl istwa pèp la.
+
+Kit se pentire yon tablo, jwe yon pyès teyat oswa taye metal, atizan an toujou mete nanm li nan travay la.
+
+#### 🇧🇷 Português (apoio) — *Do fogo da forja às artes cênicas: quando o ofício vira poesia*
+
+Ao redor da forja acesa e do fogo vivo, ao lado de uma pintura colorida e de fantoches de teatro, o trabalho manual e a arte caminham juntos há séculos.
+
+Por gerações, o ferreiro do vilarejo produzia ferramentas agrícolas, sinos e ferragens para as casas. No Haiti, esse domínio do fogo e do metal deu origem à famosa arte do ferro recortado, em que o aço batido retrata festas, animais e histórias populares.
+
+Seja pintando uma tela, encenando ou moldando o metal, o artesão coloca sua alma na criação.
+
+### 15. Colares de contas e sementes: adornos que contam histórias (`cultura-15`)
+
+- **Cena sugerida:** `cultura-20` · **Duração estimada:** ~60 s
+- **Elementos citados:** kolye, mòtye, fontèn, kanòt
+- **Resumo:** O significado simbólico das cores, sementes e contas artesanais nas culturas afro-diaspóricas.
+
+#### 🇫🇷 Francês — *Les colliers de perles et de graines : des parures qui racontent une histoire*
+
+Au clair de lune près de la fontaine et du canot en bois, entre un mortier sculpté et un collier de perles colorées, chaque objet artisanal porte une mémoire.
+
+Dans de nombreuses cultures d'Afrique, des Caraïbes et d'Amérique latine, un collier n'est jamais choisi par hasard : ses couleurs, ses perles en verre ou ses graines naturelles symbolisent la protection, la joie, l'amitié ou les liens familiaux.
+
+Aujourd'hui encore, les créateurs perpétuent cet art patient en assemblant graines tropicales et perles brillantes à la main.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kolye pèl ak grenn yo : bèl dekorasyon ki rakonte istwa*
+
+Anba klète lalin lan toupre fontèn nan ak kanòt bwa a, ant yon mòtye taye ak yon bèl kolye pèl kolore, chak objè atizanal pote yon memwa.
+
+Nan anpil kilti ann Afrik, nan Karayib la ak nan Amerik Latin, moun pa janm chwazi yon kolye pa aza : koulè l yo, pèl li yo oswa grenn natirèl ki ladan l yo senbolize pwoteksyon, lajwa, amitye oswa lyen fanmi.
+
+Menm jodi a, kreyatè yo kontinye bèl atizay sa a lè y ap file grenn twopikal ak pèl klere alamen.
+
+#### 🇧🇷 Português (apoio) — *Colares de contas e sementes: adornos que contam histórias*
+
+Ao luar perto da fonte e da canoa de madeira, entre um pilão esculpido e um colar de contas coloridas, cada peça artesanal carrega uma memória.
+
+Em muitas culturas da África, do Caribe e da América Latina, um colar nunca é escolhido por acaso: suas cores, contas ou sementes naturais simbolizam proteção, alegria, amizade ou laços familiares.
+
+Até hoje, artesãos preservam essa arte paciente unindo à mão sementes tropicais e contas brilhantes.
+
 ---
 
 ## Turismo
@@ -1237,6 +1687,156 @@ Durante muito tempo, viajar significava visitar dez monumentos por dia correndo 
 Depois de guardar o passaporte no hotel, vale se sentar em uma cadeira de praia sob um guarda-sol para conversar com os moradores, provar pratos locais e ouvir o idioma do país.
 
 Viajar sem pressa transforma férias comuns em memórias duradouras e encontros verdadeiros.
+
+### 11. Como a câmera portátil transformou a forma de viajar (`turismo-11`)
+
+- **Cena sugerida:** `turismo-09` · **Duração estimada:** ~65 s
+- **Elementos citados:** gid, bis touristik, aparèy foto, tant
+- **Resumo:** A história das primeiras câmeras para turistas e como os registros de viagem mudaram.
+
+#### 🇫🇷 Francês — *Comment l'appareil photo portable a transformé notre façon de voyager*
+
+Sur une place ensoleillée, devant un bus touristique et un guide prêt à expliquer l'histoire du quartier, presque tout le monde sort aujourd'hui son appareil photo. Mais avant la fin du dix-neuvième siècle, seuls des photographes professionnels voyageaient avec de lourdes plaques de verre !
+
+En mille huit cent quatre-vingt-huit, l'invention du premier appareil photo portable à pellicule a tout changé : les voyageurs — des groupes en excursion jusqu'aux campeurs sous la tente — ont pu rapporter leurs propres souvenirs visuels.
+
+Depuis ce jour, photographier un lieu est devenu une façon universelle de partager la beauté du monde.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan aparèy foto pòtab la te chanje fason moun vwayaje*
+
+Sou yon plas ki gen solèy, devan yon bis touristik ak yon gid ki pare pou esplike istwa katye a, prèske tout moun soti aparèy foto yo jodi a. Men anvan fen diznevyèm syèk la, se sèlman fotograf pwofesyonèl ki te ka vwayaje ak gwo ekipman lou an vè !
+
+Nan ane mil uit san katreven uit, envansyon premye aparèy foto pòtab ak woulo fim te chanje tout bagay : vwayajè yo — soti nan gwoup nan bis rive nan moun k ap dòmi anba tant — te kapab pote pwòp bèl souvni pa yo lakay yo.
+
+Depi jou sa a, pran foto yon kote tounen yon fason inivèsèl pou pataje bote mond lan.
+
+#### 🇧🇷 Português (apoio) — *Como a câmera portátil transformou a forma de viajar*
+
+Em uma praça ensolarada, diante de um ônibus de turismo e de um guia pronto para explicar o lugar, quase todos sacam a câmera. Mas até o fim do século XIX, apenas fotógrafos profissionais conseguiam viajar carregando pesadas chapas de vidro!
+
+Em 1888, a chegada da primeira câmera portátil com filme mudou tudo: turistas em excursão e viajantes em barraca passaram a registrar as próprias lembranças.
+
+Desde então, fotografar paisagens e encontros tornou-se uma forma universal de guardar e compartilhar o mundo.
+
+### 12. Por que gostamos tanto de subir ao topo de torres panorâmicas? (`turismo-12`)
+
+- **Cena sugerida:** `turismo-11` · **Duração estimada:** ~60 s
+- **Elementos citados:** tikè, teleferik, sak a do, tou
+- **Resumo:** O fascínio humano de ver cidades e montanhas do alto, de teleféricos a mirantes.
+
+#### 🇫🇷 Francês — *Pourquoi aimons-nous tant monter au sommet des tours panoramiques ?*
+
+Avec son sac à dos et son billet en main, on fait souvent la queue pour monter dans un téléphérique ou au sommet d'une grande tour d'observation. D'où vient ce plaisir universel de regarder le paysage d'en haut ?
+
+Les psychologues et géographes expliquent que voir une ville ou une côte dans son ensemble apaise l'esprit : les rues compliquées deviennent claires comme un dessin, et l'on comprend d'un seul regard comment la mer, les collines et les maisons se rejoignent.
+
+En mille huit cent quatre-vingt-neuf, la tour Eiffel elle-même devait n'être qu'un pavillon temporaire, mais son succès touristique l'a sauvée pour toujours !
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa nou renmen monte anwo gwo tou panoramik yo konsa ?*
+
+Avèk sak a do nou ak tikè nou nan men nou, nou souvan pran ran pou monte yon teleferik oswa tèt yon gwo tou pou gade peyizaj. Ki kote plezi sa a pou gade tè a depi byen wo soti ?
+
+Sikològ yo ak jeyograf yo esplike lè nou wè tout yon vil oswa tout yon kòt ansanm, sa kalme lespri nou : ti lari ki konplike yo vin klè kou yon desen, epi nou konprann nan yon sèl kout je kijan lanmè a, mòn yo ak kay yo konekte.
+
+Nan ane mil uit san katrevendiznèf, Tou Eiffel la menm te sipoze rete la pou yon ti tan sèlman, men siksè li ak touris yo te sove l pou toutan !
+
+#### 🇧🇷 Português (apoio) — *Por que gostamos tanto de subir ao topo de torres panorâmicas?*
+
+De mochila nas costas e bilhete na mão, muita gente pega fila para subir em um teleférico ou no alto de uma torre de observação. De onde vem esse encanto de ver a paisagem de cima?
+
+Psicólogos e geógrafos explicam que enxergar uma cidade ou costa por inteiro traz clareza e admiração: ruas que pareciam confusas viram um mapa vivo, mostrando como mar, morros e bairros se conectam.
+
+Em 1889, a própria Torre Eiffel deveria ser desmontada após a exposição, mas o entusiasmo dos visitantes garantiu sua permanência para sempre!
+
+### 13. Dos pesados baús às malas com rodinhas: uma invenção surpreendentemente recente (`turismo-13`)
+
+- **Cena sugerida:** `turismo-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** kat, fa, valiz, bousòl
+- **Resumo:** Como uma ideia simples nos anos 1970 facilitou carregar bagagens ao lado de mapas e bússolas.
+
+#### 🇫🇷 Francês — *Des lourds coffres en bois aux valises à roulettes : une révolution tardive*
+
+Sous un ciel étoilé, près du phare, d'une carte et d'une boussole, on prépare aujourd'hui sa valise sans même y penser. Pourtant, saviez-vous que la valise à roulettes n'a été inventée qu'en mille neuf cent soixante-dix ?
+
+Pendant des siècles, les voyageurs transportaient d'énormes malles en bois, puis des valises qu'il fallait porter à bout de bras. C'est un pilote américain nommé Bernard Sadow qui, fatigué de porter de lourds bagages dans un aéroport, a eu l'idée géniale de fixer quatre petites roues sous une valise rigide !
+
+Cette innovation toute simple a rendu les gares et les voyages bien plus accessibles à tous.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Soti nan gwo kòf bwa lou rive nan valiz ki gen wou : yon revolisyon ki fèt ta*
+
+Anba yon syèl ki plen zetwal, toupre fa a, yon kat ak yon bousòl, jodi a nou ranje valiz nou san nou pa menm reflechi. Poutan, èske ou te konnen valiz ki gen wou anba l la te fèk envante nan ane mil nèf san swasanndis ?
+
+Pandan plizyè syèk, vwayajè yo te pote gwo kòf an bwa, epi apre sa valiz yo te oblije pote nan men yo. Se yon pilòt ameriken ki rele Bernard Sadow ki te fatige pote gwo bagaj lou nan ayewopò, epi li te jwenn bèl lide pou l kole kat ti wou anba yon valiz !
+
+Ti envansyon senp sa a te rann vwayaj nan estasyon ak ayewopò pi fasil pou tout moun.
+
+#### 🇧🇷 Português (apoio) — *Dos pesados baús às malas com rodinhas: uma invenção surpreendentemente recente*
+
+Sob um céu estrelado, perto do farol, de um mapa e de uma bússola, hoje preparamos a mala sem esforço. Mas você sabia que a mala com rodinhas só foi inventada em 1970?
+
+Durante séculos, os viajantes usavam baús pesados de madeira ou malas carregadas inteiramente no braço. Foi um funcionário de aviação chamado Bernard Sadow que, cansado de carregar bagagens pesadas em aeroportos, teve a ideia simples de parafusar quatro rodinhas embaixo de uma mala!
+
+Essa inovação tardia tornou estações, viagens e caminhadas muito mais leves para todo mundo.
+
+### 14. Como o trem abriu o prazer de viajar para todo mundo (`turismo-14`)
+
+- **Cena sugerida:** `turismo-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** tren, fa, balon, tant
+- **Resumo:** A chegada das ferrovias que popularizou excursões para o mar, montanhas e acampamentos.
+
+#### 🇫🇷 Francês — *Comment le train a ouvert le plaisir du voyage à tout le monde*
+
+Au crépuscule doré, quand un train longe la côte vers un phare lointain pendant qu'une montgolfière flotte près d'une tente de camping, on oublie souvent que le tourisme moderne est né sur les rails !
+
+Avant le dix-neuvième siècle, voyager pour le plaisir coûtait très cher et prenait des semaines en diligence. Avec l'arrivée des premiers chemins de fer, des trajets qui duraient plusieurs jours ne prenaient plus que quelques heures.
+
+Des familles entières ont alors commencé à partir le week-end voir la mer ou la campagne, inventant les excursions accessibles à tous.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan tren an te louvri plezi vwayaje pou tout moun*
+
+Lè solèy ap kouche ak koulè lò, lè yon tren ap pase bò kòt la nan direksyon yon fa pandan yon balon ap flote toupre yon tant, nou souvan bliye touris modèn nan te fèt sou ray tren yo !
+
+Anvan diznevyèm syèk la, vwayaje pou plezi te koute chè anpil epi l te pran plizyè semèn nan charyo. Lè premye tren yo te rive, vwayaj ki te konn pran plizyè jou te vin pran kèk èdtan sèlman.
+
+Tout fanmi te kòmanse soti nan wikenn pou al wè lanmè a oswa kanpay la, sa ki te envante vwayaj pou tout moun.
+
+#### 🇧🇷 Português (apoio) — *Como o trem abriu o prazer de viajar para todo mundo*
+
+No entardecer dourado, quando um trem segue rumo a um farol distante enquanto um balão flutua perto de uma barraca de camping, quase esquecemos que o turismo popular nasceu sobre trilhos!
+
+Antes do século XIX, viajar por lazer era caro e levava semanas em carruagens. Com a chegada das primeiras ferrovias, trajetos que exigiam dias passaram a durar poucas horas.
+
+Famílias inteiras começaram então a fazer passeios de fim de semana para a praia ou para as serras, inaugurando o turismo acessível.
+
+### 15. Turismo responsável: explorar ilhas preservando a natureza e a cultura local (`turismo-15`)
+
+- **Cena sugerida:** `turismo-16` · **Duração estimada:** ~65 s
+- **Elementos citados:** chèz plaj, bato, kokoye, kat
+- **Resumo:** Pequenos gestos que tornam passeios de barco e dias de praia positivos para as comunidades.
+
+#### 🇫🇷 Francês — *Le tourisme responsable : découvrir les îles tout en protégeant la nature*
+
+Sur une plage ensoleillée, assis sur une chaise de plage avec une noix de coco fraîche en admirant un bateau et sa carte d'exploration, chaque visiteur peut devenir un voyageur attentif.
+
+Aujourd'hui, le tourisme durable encourage chacun à respecter les récifs coralliens, à ne laisser aucun déchet sur le sable, à privilégier les artisans locaux et à apprendre quelques mots de la langue du pays.
+
+Dire « bonjou » ou « mèsi » avec le sourire, c'est déjà voyager avec respect et laisser une belle trace derrière soi.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Touris responsab : dekouvri bèl zile yo toutpandan n ap pwoteje lanati*
+
+Sou yon bèl plaj ki gen solèy, chita sou yon chèz plaj ak yon kokoye fre pandan w ap gade yon bato ak kat vwayaj ou, chak vizitè ka vin tounen yon vwayajè ki gen konsyans.
+
+Jodi a, touris dirab ankouraje tout moun respekte resif koray yo, pa kite okenn fatra sou sab la, ankouraje atizan lokal yo epi aprann kèk mo nan lang peyi a.
+
+Di « bonjou » oswa « mèsi » ak yon bèl souri, se deja vwayaje ak respè epi kite yon bèl souvni dèyè nou.
+
+#### 🇧🇷 Português (apoio) — *Turismo responsável: explorar ilhas preservando a natureza e a cultura local*
+
+Em uma praia ensolarada, sentado em uma cadeira de praia com um coco fresco enquanto observa um barco e o mapa do passeio, todo visitante pode ser um viajante consciente.
+
+Hoje, o turismo sustentável incentiva proteger os recifes de coral, não deixar lixo na areia, valorizar artesãos e guias da região e aprender algumas palavras do idioma local.
+
+Dizer "bonjou" ou "mèsi" com um sorriso já é uma forma gentil de viajar com respeito.
 
 ---
 
@@ -1542,6 +2142,156 @@ No interior do Haiti, quando uma lavoura é grande demais para uma única famíl
 
 Esse espírito solidário também existe no Brasil com o nome de mutirão, mostrando que a união torna mais leve até a tarefa mais difícil.
 
+### 11. Por que o mel colhido na fazenda quase nunca estraga? (`interior-11`)
+
+- **Cena sugerida:** `interior-10` · **Duração estimada:** ~60 s
+- **Elementos citados:** ruch, kay, epouvantay, kochon
+- **Resumo:** O segredo químico do mel guardado na colmeia perto da casa de fazenda.
+
+#### 🇫🇷 Francês — *Pourquoi le miel récolté à la ferme ne périme-t-il presque jamais ?*
+
+Au lever du jour, devant la maison de ferme, l'épouvantail et le cochon qui fouille l'herbe, une ruche bourdonne tranquillement. Elle abrite l'un des aliments les plus étonnants de la planète : le miel !
+
+Des archéologues ont retrouvé des pots de miel vieux de plus de trois mille ans dans des tombes antiques... et ce miel était encore parfaitement comestible !
+
+Son secret ? Le miel contient très peu d'eau et reste naturellement acide, empêchant les bactéries de s'y développer. En plus, les abeilles battent des ailes dans la ruche pour évaporer l'humidité avant de fermer chaque alvéole.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa siwo myèl ki soti nan fèm nan prèske pa janm gate ?*
+
+Granmaten, devan kay fèm nan, epouvantay la ak kochon k ap fouye tè a, yon ruch ap boujonnen trankilman. Li kenbe yonn nan manje ki pi etonan sou latè : siwo myèl !
+
+Akeyològ yo jwenn vye po siwo myèl ki gen plis pase twa mil an nan kavo lontan... epi siwo myèl sa a te toujou bon pou manje !
+
+Ki sekrè li ? Siwo myèl gen tou piti dlo ladan l epi l gen yon asidite natirèl ki anpeche mikwòb grandi. Anplis, myèl yo bat zèl yo anndan ruch la pou seche imidite a anvan yo fèmen chak ti kaz.
+
+#### 🇧🇷 Português (apoio) — *Por que o mel colhido na fazenda quase nunca estraga?*
+
+Ao amanhecer, diante da casa de fazenda, do espantalho e do porco no quintal, uma colmeia zumbe tranquila. Ela guarda um dos alimentos mais surpreendentes da natureza: o mel!
+
+Arqueólogos já encontraram potes de mel com mais de três mil anos em tumbas antigas... e o mel ainda estava próprio para consumo!
+
+O segredo está na química: o mel tem pouquíssima água e acidez natural que impede a ação de microrganismos, além de ser ventilado pelas asas das abelhas antes de cada favo ser fechado.
+
+### 12. Como o moinho da fazenda transformava grãos em farinha sem motor (`interior-12`)
+
+- **Cena sugerida:** `interior-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** sak ble, grenye, moulen, panye ze
+- **Resumo:** A engenharia simples dos antigos moinhos, celeiros e sacos de grãos no campo.
+
+#### 🇫🇷 Francês — *Comment le moulin de la ferme transformait le grain en farine sans moteur*
+
+En plein air, près du grenier, d'un panier d'œufs et des grands sacs de grains, le moulin à vent du village raconte des siècles d'ingéniosité rurale.
+
+À l'intérieur du moulin, la force du vent fait tourner deux grandes meules de pierre rondes : l'une reste fixe tandis que l'autre tourne doucement au-dessus, écrasant les grains en farine fine.
+
+Pour éviter que la farine ne chauffe trop et ne perde son goût, le meunier réglait avec soin l'écart entre les pierres selon la force du vent.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan moulen fèm nan te moulen grenn fè l tounen farin san motè*
+
+Deyò a, toupre grenye a, yon panye ze ak gwo sak ble yo, moulen van vilaj la rakonte plizyè syèk entèlijans nan kanpay.
+
+Anndan moulen an, fòs van an fè de gwo wòch won vire : yonn rete fiks pandan lòt la ap vire dousman anlè l pou kraze grenn yo fè yo tounen farin fen.
+
+Pou farin nan pa chofe twòp ni pèdi bon gou l, bòs moulen an te regle espas ant de wòch yo avèk swen selon fòs van an.
+
+#### 🇧🇷 Português (apoio) — *Como o moinho da fazenda transformava grãos em farinha sem motor*
+
+Ao ar livre, perto do celeiro, de uma cesta de ovos e de sacos de grãos, o moinho de vento da fazenda lembra séculos de engenhosidade rural.
+
+Por dentro, a força do vento movia engrenagens de madeira que giravam duas grandes pedras redondas: uma ficava parada enquanto a outra girava por cima, moendo os grãos aos poucos.
+
+Para a farinha não esquentar demais nem perder o sabor, o moleiro ajustava a distância entre as pedras conforme o vento do dia.
+
+### 13. A memória surpreendente dos cavalos e a esperteza das galinhas (`interior-13`)
+
+- **Cena sugerida:** `interior-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** chwal, poul, pye mango, kay
+- **Resumo:** Curiosidades sobre animais do sítio perto da casa e da mangueira na neblina da manhã.
+
+#### 🇫🇷 Francês — *L'étonnante mémoire des chevaux et l'intelligence des poules*
+
+Dans la brume douce du matin, entre la maison, un grand manguier et une poule qui picore, un cheval lève la tête dès qu'il entend des pas familiers.
+
+Savez-vous que les chevaux possèdent une mémoire extraordinaire ? Ils peuvent reconnaître des visages humains et des voix amicales même après plusieurs années de séparation ! De plus, leurs yeux placés sur les côtés leur offrent une vision presque complète tout autour d'eux.
+
+Et les poules ne sont pas en reste : elles reconnaissent plus de cent visages différents dans leur basse-cour et communiquent par une vingtaine de sons distincts.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Bèl memwa chwal yo ak entèlijans poul yo nan lakou a*
+
+Nan ti bwouya dous maten an, ant kay la, yon gwo pye mango ak yon poul k ap pike atè, yon chwal leve tèt li kou l tande pa moun li konnen.
+
+Èske ou te konnen chwal yo gen yon memwa ki estrawòdinè ? Yo kapab rekonèt figi moun ak vwa zanmi menm apre plizyè ane yo pa wè yo ! Anplis, je yo ki sou kote pèmèt yo wè prèske toutotou kò yo.
+
+Poul yo tou pa rete dèyè : yo rekonèt plis pase san figi diferan nan lakou a epi yo pale yonn ak lòt ak prèske ven ti son diferan.
+
+#### 🇧🇷 Português (apoio) — *A memória surpreendente dos cavalos e a esperteza das galinhas*
+
+Na névoa leve da manhã, entre a casa, uma grande mangueira e uma galinha ciscando, um cavalo ergue a cabeça assim que reconhece passos familiares.
+
+Você sabia que os cavalos têm memória extraordinária? Eles conseguem reconhecer rostos humanos e vozes amigas mesmo depois de anos de separação! Além disso, os olhos posicionados nas laterais garantem visão quase completa ao redor.
+
+E as galinhas também surpreendem: distinguem dezenas de rostos no terreiro e usam mais de vinte sons diferentes para avisar sobre alimento ou perigo.
+
+### 14. Compostagem: como folhas secas voltam a alimentar a horta (`interior-14`)
+
+- **Cena sugerida:** `interior-15` · **Duração estimada:** ~60 s
+- **Elementos citados:** jaden, pyòch, ruch, rato
+- **Resumo:** O ciclo natural da fertilidade do solo usando enxada, rastelo e restos vegetais.
+
+#### 🇫🇷 Francês — *Le compostage : comment les feuilles mortes nourrissent le jardin*
+
+Au petit matin, avec la houe et le râteau près du jardin potager et de la ruche, le jardinier rassemble les feuilles sèches et les épluchures de fruits. Dans la nature, rien ne se jette !
+
+Grâce au compostage, les vers de terre et des millions de micro-organismes transforment ces restes végétaux en un terreau sombre, souple et plein de nutriments.
+
+En quelques mois, ce compost rend la terre du jardin plus fertile, retient mieux l'eau de pluie et nourrit de nouvelles récoltes sans produits chimiques.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Konpostaj : kijan fèy sèch yo nouri jaden an ankò*
+
+Granmaten, ak pyòch la ak rato a toupre jaden an ak ruch la, kiltivatè a ranmase fèy sèch ak po fwi yo. Nan lanati, anyen pa jete !
+
+Gras ak konpostaj la, ti vè tè yo ak plizyè milyon ti òganis transfòme rès plant sa yo an yon bon tè nwa ki rich anpil.
+
+Nan kèk mwa sèlman, bon tè sa a fè jaden an bay pi bèl rekòt, li kenbe dlo lapli pi byen epi l nouri plant yo san pwodui chimik.
+
+#### 🇧🇷 Português (apoio) — *Compostagem: como folhas secas voltam a alimentar a horta*
+
+Logo cedo, com a enxada e o rastelo perto da horta e da colmeia, o agricultor junta folhas secas e cascas de frutas. Na natureza, nada vira lixo!
+
+Por meio da compostagem, minhocas e milhões de microrganismos transformam esses restos vegetais em um adubo escuro, solto e rico em nutrientes.
+
+Em poucos meses, o composto deixa o solo da horta mais fértil, ajuda a reter a água da chuva e fortalece as novas plantações naturalmente.
+
+### 15. Como um poço rural busca água fresca escondida no subsolo? (`interior-15`)
+
+- **Cena sugerida:** `interior-16` · **Duração estimada:** ~60 s
+- **Elementos citados:** kabrit, pi, grenye, chwal
+- **Resumo:** A importância dos lençóis freáticos e da preservação das nascentes no campo.
+
+#### 🇫🇷 Francês — *Comment fonctionne un puits rural pour puiser l'eau fraîche sous la terre ?*
+
+En fin d'après-midi, près du grenier, d'une chèvre curieuse et d'un cheval paisible, le vieux puits en pierre veille sur l'eau de la ferme. Mais d'où vient l'eau cachée si profondément sous la terre ?
+
+Chaque fois qu'il pleut, une grande partie de l'eau s'infiltre lentement à travers le sable, les racines et les roches poreuses jusqu'à former de vastes réserves souterraines appelées nappes phréatiques.
+
+En traversant ces couches naturelles comme un immense filtre, l'eau devient limpide et reste fraîche toute l'année, même pendant la saison sèche.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan yon pi nan kanpay fonksyone pou jwenn dlo fre anba tè a ?*
+
+Nan fen aprèmidi, toupre grenye a, yon kabrit kirye ak yon chwal trankil, vye pi an wòch la ap veye dlo fèm nan. Men, ki kote dlo ki kache byen fon anba tè a soti ?
+
+Chak fwa lapli tonbe, yon gwo pati nan dlo a desann dousman nan sab la, rasin yo ak wòch yo jiskaske l fòme gwo rezèv dlo anba tè a.
+
+Pandan dlo a ap pase nan kouch sab ak wòch sa yo tankou yon gwo filtè natirèl, li vin pwòp anpil epi l rete fre tout ane a, menm lè sezon sèk la rive.
+
+#### 🇧🇷 Português (apoio) — *Como um poço rural busca água fresca escondida no subsolo?*
+
+No fim da tarde, perto do celeiro, de uma cabra curiosa e de um cavalo tranquilo, o antigo poço de pedra guarda a água da fazenda. Mas de onde vem a água escondida tão fundo na terra?
+
+Sempre que chove, parte da água se infiltra devagar pela areia, pelas raízes e por rochas porosas até formar grandes reservatórios subterrâneos chamados lençóis freáticos.
+
+Ao atravessar essas camadas naturais como um imenso filtro, a água fica límpida e permanece fresca o ano inteiro, mesmo na estação seca.
+
 ---
 
 ## Dança
@@ -1845,6 +2595,156 @@ Diante do espelho de uma sala tranquila, uma saia rodada acompanha a melodia do 
 No fim do século XVIII, dançar em par tão próximo e girar rápido pelo salão parecia ousado demais para os costumes da época. Alguns jornais até diziam que causava vertigem.
 
 Ainda assim, a alegria do compasso em três tempos conquistou o mundo inteiro e virou sinônimo de elegância.
+
+### 11. A dança das fitas e das flores: trançando alegria nas festas populares (`danca-11`)
+
+- **Cena sugerida:** `danca-11` · **Duração estimada:** ~60 s
+- **Elementos citados:** riban, tapi, kouwòn flè, evantay
+- **Resumo:** A tradição festiva das danças com fitas coloridas, tapete de dança, flores e leque.
+
+#### 🇫🇷 Francês — *La danse des rubans et des fleurs : tresser la joie autour d'un mât*
+
+Dans une salle lumineuse, autour d'un tapis de danse, une couronne de fleurs, un éventail et de longs rubans colorés rappellent l'une des danses populaires les plus joyeuses au monde : la danse des rubans !
+
+Connue en Europe, en Amérique latine et dans les Caraïbes — comme dans le « dans riban » ou les fêtes rurales — elle rassemble les danseurs en cercle autour d'un mât. En croisant leurs pas avec précision, ils tressent puis détressent les rubans sans jamais les emmêler !
+
+Chaque couleur représente les saisons, les fleurs et la solidarité du groupe.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Dans riban ak flè yo : trese lajwa toutotou yon poto*
+
+Nan yon sal ki klere, toutotou yon tapi dans, yon kouwòn flè, yon evantay ak long riban tout koulè fè nou sonje yonn nan dans popilè ki pi bèl nan mond lan : dans riban an !
+
+Yo konnen l an Ewòp, nan Amerik Latin ak nan Karayib la : dansè yo fòme yon sèk toutotou yon poto epi chak moun kenbe yon riban. Lè yo kwaze pa yo ak presizyon, yo trese epi yo detrese riban yo san yo pa janm mele yo !
+
+Chak koulè reprezante sezon yo, flè yo ak bèl tèt ansanm gwoup la.
+
+#### 🇧🇷 Português (apoio) — *A dança das fitas e das flores: trançando alegria nas festas populares*
+
+Em uma sala iluminada, em torno de um tapete de dança, uma coroa de flores, um leque e longas fitas coloridas lembram uma das danças populares mais alegres do mundo: a dança das fitas!
+
+Conhecida na Europa, no Caribe e no Brasil — como o pau-de-fitas — ela reúne os participantes em círculo ao redor de um mastro. Cruzando os passos com sincronia, os dançarinos trançam e destrançam as fitas coloridas sem deixá-las embaraçar!
+
+Cada cor celebra as estações, as flores e a união da comunidade.
+
+### 12. Para que serve de verdade a barra de apoio nos treinos de dança? (`danca-12`)
+
+- **Cena sugerida:** `danca-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** barè, kostim, lanp, plim
+- **Resumo:** Por que a barra não serve para se apoiar com força, mas para educar o eixo e a leveza.
+
+#### 🇫🇷 Francês — *À quoi sert vraiment la barre d'entraînement dans un studio de danse ?*
+
+Sous un ciel clair, près d'une lanterne, d'un costume de carnaval et d'un panache de plumes, se trouve un outil discret mais essentiel : la barre de danse.
+
+Beaucoup de débutants pensent que la barre sert à s'y accrocher fort pour ne pas tomber. En réalité, les professeurs conseillent d'y poser seulement le bout des doigts !
+
+La barre aide à trouver l'axe naturel du corps, à échauffer les chevilles et à préparer la posture élégante qui permettra ensuite de danser librement au centre de la scène.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Ki sa barè repetisyon an sèvi toutbonvre nan yon estidyo dans ?*
+
+Anba yon syèl klè, toupre yon lanp, yon kostim kanaval ak bèl plim, gen yon zouti senp men ki enpòtan anpil : barè dans la.
+
+Anpil moun ki fèk ap kòmanse panse barè a la pou kenbe l byen di pou yo pa tonbe. An reyalite, pwofesè yo rekòmande pou poze sèlman pwent dwèt yo sou li !
+
+Barè a ede kò a jwenn bon ekilib natirèl li, chofe cheviy yo epi prepare bèl pòsti ki pral pèmèt atis la danse lib nan mitan sèn nan apre.
+
+#### 🇧🇷 Português (apoio) — *Para que serve de verdade a barra de apoio nos treinos de dança?*
+
+Sob um céu limpo, perto de uma lanterna, de uma fantasia de carnaval e de um penacho de plumas, há um equipamento discreto e essencial: a barra de dança.
+
+Muita gente imagina que a barra serve para segurar com força e não cair. Na verdade, os professores orientam apoiar apenas a ponta dos dedos!
+
+A barra ajuda a alinhar o eixo do corpo, aquecer articulações e treinar a leveza que depois permite dançar livremente pelo centro do palco.
+
+### 13. Quando os próprios dançarinos marcam o ritmo com castanholas ou maracás (`danca-13`)
+
+- **Cena sugerida:** `danca-14` · **Duração estimada:** ~60 s
+- **Elementos citados:** trompèt, tcha-tcha, kastayèt, plim
+- **Resumo:** A fusão entre música e dança quando o instrumento acompanha diretamente o movimento das mãos.
+
+#### 🇫🇷 Francês — *Quand les danseurs jouent eux-mêmes le rythme avec des castagnettes ou un tcha-tcha*
+
+Dans la lumière de l'aube, quand la trompette sonne près des plumes colorées, des castagnettes et du tcha-tcha, le danseur devient lui aussi musicien !
+
+En Espagne, les castagnettes claquent au bout des doigts pour souligner chaque geste des bras. En Haïti et dans les Caraïbes, le tcha-tcha — un maraca rempli de graines — accompagne le pas des danseurs pendant les cortèges et les fêtes populaires.
+
+Faire de la musique avec ses mains tout en dansant exige une merveilleuse coordination entre le souffle, les pieds et le rythme.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Lè dansè yo menm jwe ritm lan ak kastayèt oswa tcha-tcha nan men yo*
+
+Nan bèl limyè granmaten an, lè twonpèt la sonnen toupre plim kolore yo, kastayèt yo ak tcha-tcha a, dansè a tounen mizisyen tou !
+
+Nan peyi Espay, kastayèt yo fè ti bri klè nan pwent dwèt yo pou swiv chak mouvman bra. Ann Ayiti ak nan Karayib la, tcha-tcha a — ki plen ti grenn anndan l — akonpaye pa dansè yo nan defile ak fèt popilè yo.
+
+Fè mizik ak men ou pandan w ap danse mande yon bèl kòdinasyon ant souf ou, pye ou ak ritm lan.
+
+#### 🇧🇷 Português (apoio) — *Quando os próprios dançarinos marcam o ritmo com castanholas ou maracás*
+
+Na luz da manhã, quando o trompete soa perto de plumas coloridas, castanholas e do maracá tcha-tcha, o dançarino também se torna músico!
+
+Na Espanha, as castanholas estalam nas mãos acompanhando cada desenho dos braços. No Haiti e no Caribe, o tcha-tcha — chocalho cheio de sementes — marca os passos nos cortejos e festas populares.
+
+Produzir ritmo com as mãos enquanto se dança exige uma bela sintonia entre respiração, pés e compasso.
+
+### 14. Por que a dança em roda existe em quase todas as culturas? (`danca-14`)
+
+- **Cena sugerida:** `danca-15` · **Duração estimada:** ~60 s
+- **Elementos citados:** kouwòn flè, mirwa, trompèt, gita
+- **Resumo:** O significado igualitário e comunitário da roda de dança diante da música ao vivo.
+
+#### 🇫🇷 Francês — *Pourquoi la danse en cercle existe-t-elle dans presque toutes les cultures ?*
+
+Dans une salle dorée, devant un grand miroir, une guitare, une trompette et une couronne de fleurs, imaginez un groupe qui forme un grand cercle pour danser.
+
+De l'Afrique à l'Europe, du Brésil à Haïti, la danse en rond est la plus ancienne forme de danse collective. Pourquoi le cercle plaît-il autant ? Parce que dans une ronde, personne n'est devant ni derrière : tout le monde se voit dans les yeux, partage le même rythme et se sent égal !
+
+Bouger ensemble en cercle renforce immédiatement le sentiment d'amitié et d'appartenance.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa dans an won egziste nan prèske tout kilti sou latè ?*
+
+Nan yon sal dore, devan yon gwo mirwa, yon gita, yon twonpèt ak yon kouwòn flè, imajine yon gwoup moun ki fòme yon gwo won pou danse.
+
+Depi Afrik rive Ewòp, soti Brezil ale Ayiti, danse an won se pi ansyen fòm dans an gwoup. Poukisa tout moun renmen won nan konsa ? Paske nan yon won, pèsonn pa devan ni dèyè : tout moun gade youn lòt nan je, yo pataje menm ritm lan epi tout moun egal !
+
+Bouje ansanm an won kreye bèl santiman amitye ak fratènite touswit.
+
+#### 🇧🇷 Português (apoio) — *Por que a dança em roda existe em quase todas as culturas?*
+
+Em um salão dourado, diante de um espelho de ensaio, um violão, um trompete e uma coroa de flores, imagine um grupo formando uma grande roda para dançar.
+
+Da África à Europa, do Brasil ao Haiti, a dança circular é a forma mais antiga de dança coletiva. Por que a roda conquista tanta gente? Porque nela ninguém fica na frente nem atrás: todos se olham nos olhos, compartilham o mesmo ritmo e participam em igualdade!
+
+Mover-se em roda fortalece na hora o espírito de amizade e união.
+
+### 15. Danças percussivas: quando os pés viram tambores (`danca-15`)
+
+- **Cena sugerida:** `danca-17` · **Duração estimada:** ~60 s
+- **Elementos citados:** vyolon, lanp, tcha-tcha, pwojektè
+- **Resumo:** Do sapateado às danças tradicionais com violino, tcha-tcha e iluminação de palco.
+
+#### 🇫🇷 Francês — *Les danses percussives : quand les pieds deviennent des tambours*
+
+Dans une salle éclairée par une lanterne et un projecteur, au son du violon et du tcha-tcha, certains danseurs n'ont même pas besoin de tambour pour marquer le tempo : ce sont leurs propres pas qui frappent le rythme !
+
+Dans les claquettes, le flamenco, les danses irlandaises ou certaines traditions caribéennes et brésiliennes, le talon et la pointe du pied créent de véritables mélodies sur le plancher en bois.
+
+Le danseur dialogue alors avec le violoniste comme un percussionniste à part entière, unissant le son et le mouvement en un seul art.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Dans pèkisyon yo : lè pye dansè yo tounen tanbou*
+
+Nan yon sal ki klere ak yon lanp ak yon pwojektè, sou son vyolon an ak tcha-tcha a, gen dansè ki pa menm bezwen tanbou pou bat tan an : se pwòp pye yo ki fè ritm lan !
+
+Nan tap-dance, nan flamenko, nan dans ilandè oswa kèk tradisyon karayibeyen ak brezilyen, talon pye ak pwent pye yo kreye vrè melodi sou planche bwa a.
+
+Dansè a dyaloge ak jwè vyolon an tankou yon vrè pèkisyonis, ki mete son ak mouvman ansanm nan yon sèl atizay.
+
+#### 🇧🇷 Português (apoio) — *Danças percussivas: quando os pés viram tambores*
+
+Em uma sala iluminada por lanterna e holofote, ao som do violino e do maracá tcha-tcha, alguns dançarinos nem precisam de tambor para marcar o compasso: os próprios pés criam o ritmo!
+
+No sapateado, no flamenco, nas danças irlandesas e em tradições populares afro-americanas, o calcanhar e a ponta do pé produzem batidas precisas sobre o piso de madeira.
+
+O bailarino conversa com o violinista como um percussionista completo, unindo som e movimento em uma só arte.
 
 ---
 
@@ -2150,6 +3050,156 @@ Todos os dias, o sol aquece mares, lagos e rios. A água sobe como vapor invisí
 
 A água que bebemos hoje viaja assim pela Terra há bilhões de anos.
 
+### 11. Por que as noites no deserto costumam ser tão frias? (`geografia-11`)
+
+- **Cena sugerida:** `geografia-10` · **Duração estimada:** ~60 s
+- **Elementos citados:** tèmomèt, din, ekla, mòn
+- **Resumo:** A grande variação térmica entre o dia quente e a noite fria nas dunas e desertos.
+
+#### 🇫🇷 Francês — *Pourquoi les nuits dans le désert sont-elles souvent glacées ?*
+
+Dans un paysage de dunes de sable face aux montagnes lointaines, un thermomètre réserve toujours une grande surprise aux voyageurs !
+
+En plein après-midi sous le soleil, la chaleur du désert peut dépasser quarante degrés. Mais dès que le soleil se couche, la température chute brutalement et peut descendre près de zéro degré !
+
+Pourquoi ce contraste si fort ? Parce que l'air du désert est très sec et sans nuages. Sans humidité ni couverture nuageuse pour retenir la chaleur comme une couverture, la terre et le sable perdent presque toute leur chaleur dès la tombée de la nuit.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa nwit nan dezè yo konn frèt anpil konsa ?*
+
+Nan yon peyizaj din sab devan gwo mòn ki lwen yo, yon tèmomèt toujou bay vwayajè yo yon gwo sipriz !
+
+Nan mitan aprèmidi anba solèy la, chalè nan dezè a ka depase karant degre. Men kou solèy la kouche, tanperati a desann bridsoukou epi l ka rive toupre zewo degre !
+
+Poukisa gen yon diferans konsa ? Paske lè dezè a sèch anpil epi l pa gen nyaj. San imidite ni nyaj pou kenbe chalè a tankou yon dra, tè a ak sab la pèdi prèske tout chalè yo kou lannwit rive.
+
+#### 🇧🇷 Português (apoio) — *Por que as noites no deserto costumam ser tão frias?*
+
+Em uma paisagem de dunas de areia diante de montanhas distantes, o termômetro sempre reserva uma surpresa para quem viaja pelo deserto!
+
+Durante a tarde, sob o sol forte, o calor pode passar dos quarenta graus. Mas assim que o sol se põe, a temperatura despenca rapidamente e pode chegar perto de zero!
+
+O motivo é simples: o ar do deserto é muito seco e quase sem nuvens. Sem umidade nem nuvens para segurar o calor como um cobertor, a areia esfria quase na hora quando chega a noite.
+
+### 12. Onde está guardada quase toda a água doce do nosso planeta? (`geografia-12`)
+
+- **Cena sugerida:** `geografia-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** glasye, kanyon, glòb, kaskad
+- **Resumo:** Como geleiras, rios, cânions e cachoeiras distribuem a água doce no globo terrestre.
+
+#### 🇫🇷 Francês — *Où se trouve presque toute l'eau douce de notre planète ?*
+
+En regardant le globe terrestre, on voit surtout du bleu : les océans salés couvrent plus des deux tiers de la Terre. Mais où se cache l'eau douce qui alimente nos cascades et creuse les grands canyons ?
+
+Étonnamment, la majorité de l'eau douce de la planète n'est pas liquide ! Près de soixante-dix pour cent est gelée dans les grands glaciers et les calottes polaires. Le reste circule sous terre et dans les rivières, les lacs et les nuages.
+
+C'est pourquoi chaque goutte d'eau douce sur la terre ferme est un bien précieux à préserver.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Ki kote prèske tout dlo dous planèt nou an kache ?*
+
+Lè n ap gade glòb terès la, nou wè koulè ble toupatou : oseyan sale yo kouvri plis pase de tyè latè. Men ki kote dlo dous k ap nouri kaskad yo epi ki fouye gwo kanyon yo kache ?
+
+Sa etonan anpil, men pifò dlo dous sou planèt la pa likid ! Prèske swasanndis pousan ladan l jele anndan gwo glasye yo ak nan zòn polè yo. Rès la ap sikile anba tè, nan rivyè, nan lak ak nan nyaj yo.
+
+Se poutèt sa chak ti gout dlo dous sou tè a se yon gwo trezò pou nou pwoteje.
+
+#### 🇧🇷 Português (apoio) — *Onde está guardada quase toda a água doce do nosso planeta?*
+
+Ao olhar o globo terrestre, vemos azul por toda parte: os oceanos salgados cobrem mais de dois terços da Terra. Mas onde fica a água doce que forma cachoeiras e esculpe cânions?
+
+Surpreendentemente, a maior parte da água doce do planeta não está líquida! Cerca de setenta por cento está congelada nas geleiras e calotas polares. O restante circula no subsolo, em rios, lagos e nuvens.
+
+Por isso, cada gota de água doce disponível na superfície é um patrimônio precioso.
+
+### 13. Dos altos planaltos às falésias: como nascem os grandes relevos da Terra? (`geografia-13`)
+
+- **Cena sugerida:** `geografia-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** falèz, kontinan, plato, glasye
+- **Resumo:** A ação conjunta das placas continentais, dos ventos, das geleiras e das ondas.
+
+#### 🇫🇷 Francês — *Des hauts plateaux aux falaises côtières : comment les reliefs naissent-ils ?*
+
+Sur tous les continents, la Terre offre des formes spectaculaires : des plateaux plats très élevés, des glaciers anciens et d'immenses falaises plongeant dans la mer.
+
+Deux grandes forces sculptent sans cesse notre planète. De l'intérieur, le mouvement lent des continents soulève des montagnes et des plateaux entiers. De l'extérieur, la pluie, le vent, la glace et les vagues taillent les roches en falaises abruptes et en vallées douces.
+
+Chaque paysage que nous admirons est une œuvre en cours depuis des millions d'années.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Depi gwo plato yo rive nan falèz bò lanmè : kijan relyèf yo fèt ?*
+
+Sou tout kontinan yo, latè ofri fòm ki bèl anpil : gwo plato ki plat byen wo, vye glasye ak gwo falèz ki plonje nan lanmè.
+
+De gwo fòs ap desine planèt nou an san rete. Depi anndan latè, mouvman dousman kontinan yo leve mòn ak plato antye. Depi deyò, lapli, van, glas ak vag lanmè taye wòch yo pou fè falèz ak bèl vale.
+
+Chak peyizaj n ap gade jodi a se yon gwo zèv k ap fèt depi plizyè milyon ane.
+
+#### 🇧🇷 Português (apoio) — *Dos altos planaltos às falésias: como nascem os grandes relevos da Terra?*
+
+Em todos os continentes, a Terra exibe formas impressionantes: planaltos elevados, geleiras antigas e falésias imensas diante do mar.
+
+Duas forças principais modelam o planeta sem parar. Por dentro, o movimento lento dos continentes ergue montanhas e planaltos inteiros. Por fora, a chuva, o vento, o gelo e as ondas esculpem rochas, penhascos e vales.
+
+Cada paisagem que admiramos é uma escultura natural em construção há milhões de anos.
+
+### 14. Por que alguns lagos têm águas azul-turquesa, verdes ou até cor-de-rosa? (`geografia-14`)
+
+- **Cena sugerida:** `geografia-14` · **Duração estimada:** ~60 s
+- **Elementos citados:** pon, nyaj lapli, ekla, lak
+- **Resumo:** Como minerais, algas e a luz sob nuvens de chuva mudam as cores dos lagos.
+
+#### 🇫🇷 Francês — *Pourquoi certains lacs ont-ils une eau turquoise, verte ou même rose ?*
+
+Près d'un pont qui traverse un lac paisible sous les nuages de pluie et les éclairs d'orage, la couleur de l'eau change parfois d'une région à l'autre !
+
+Certains lacs de montagne paraissent d'un bleu laiteux ou turquoise à cause de minuscules poussières de roche en suspension qui reflètent la lumière du soleil. D'autres lacs salés deviennent roses grâce à des algues microscopiques qui produisent des pigments naturels pour se protéger du soleil.
+
+Ainsi, la chimie de la terre et la lumière du ciel peignent chaque lac d'une nuance unique.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa gen kèk lak ki gen dlo koulè ble klè, vèt oswa menm woz ?*
+
+Toupre yon pon ki travèse yon lak trankil anba nyaj lapli ak ekla loraj, koulè dlo a konn chanje soti nan yon rejyon ale nan yon lòt !
+
+Gen kèk lak nan mòn ki parèt ble klè poutèt ti pousyè wòch fen ki nan dlo a k ap reflete limyè solèy la. Gen lòt lak sale ki vin woz gras ak ti alg tou piti ki fè pigman natirèl pou pwoteje tèt yo kont solèy la.
+
+Konsa, chimi tè a ak limyè syèl la pentire chak lak ak pwòp koulè pa l.
+
+#### 🇧🇷 Português (apoio) — *Por que alguns lagos têm águas azul-turquesa, verdes ou até cor-de-rosa?*
+
+Perto de uma ponte sobre um lago tranquilo, sob nuvens de chuva e raios ao longe, a cor da água muda de forma surpreendente de um lugar para outro!
+
+Alguns lagos de montanha parecem azul-turquesa por causa de partículas finíssimas de rocha suspensas na água, que refletem a luz solar. Já certos lagos salgados ficam cor-de-rosa graças a algas microscópicas que produzem pigmentos naturais.
+
+Assim, os minerais do solo e a luz do céu pintam cada lago com uma tonalidade única.
+
+### 15. Por que existem fusos horários diferentes no mapa-múndi? (`geografia-15`)
+
+- **Cena sugerida:** `geografia-16` · **Duração estimada:** ~60 s
+- **Elementos citados:** mòn, kat monn, vil, glòb
+- **Resumo:** Como a rotação da Terra e a expansão dos trens e cidades criaram os 24 fusos horários.
+
+#### 🇫🇷 Francês — *Pourquoi existe-t-il des fuseaux horaires sur la carte du monde ?*
+
+Sur le globe terrestre et la carte du monde, quand le soleil éclaire les montagnes d'une ville le matin, il fait déjà nuit dans une autre ville à l'autre bout de la planète !
+
+Jusqu'au dix-neuvième siècle, chaque ville réglait son horloge uniquement sur le soleil de midi. Mais avec l'arrivée des trains et du télégraphe, avoir mille heures locales différentes devenait impossible à organiser !
+
+En mille huit cent quatre-vingt-quatre, les pays ont donc divisé le globe en vingt-quatre grands fuseaux horaires pour harmoniser les voyages et les communications.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa gen diferans lè ant vil ak peyi sou kat mond lan ?*
+
+Sou glòb terès la ak kat mond lan, lè solèy la klere mòn yon vil granmaten, li deja lannwit nan yon lòt vil lòt bò planèt la !
+
+Jis nan diznevyèm syèk la, chak vil te regle mont li sèlman sou solèy midi lakay li. Men lè tren yo ak telegraf la te rive, li te vin enposib pou òganize tout lè lokal diferan sa yo !
+
+Nan ane mil uit san katreven kat, peyi yo te separe glòb la an venkat gwo zòn lè pou mete lòd nan vwayaj ak kominikasyon toupatou.
+
+#### 🇧🇷 Português (apoio) — *Por que existem fusos horários diferentes no mapa-múndi?*
+
+No globo terrestre e no mapa-múndi, quando o sol ilumina as montanhas de uma cidade pela manhã, já é noite em outra cidade do outro lado do planeta!
+
+Até o século XIX, cada cidade acertava o relógio apenas pelo sol do meio-dia local. Mas com a chegada das ferrovias e do telégrafo, tantos horários diferentes causavam confusão nos transportes!
+
+Em 1884, uma convenção internacional organizou o globo em vinte e quatro fusos horários para coordenar viagens e comunicações.
+
 ---
 
 ## História
@@ -2453,6 +3503,156 @@ Perto das muralhas de uma fortaleza, uma ânfora de barro pode parecer um simple
 Sua base afilada permitia encaixá-la com firmeza na areia ou no porão dos navios, enquanto as duas alças facilitavam o transporte de azeite, vinho, mel e grãos.
 
 Arqueólogos frequentemente encontram nas alças o carimbo do oleiro e do porto de origem, como verdadeiras etiquetas da História.
+
+### 11. 18 de maio de 1803 em Arcahaie: o nascimento da bandeira do Haiti (`historia-11`)
+
+- **Cena sugerida:** `historia-11` · **Duração estimada:** ~65 s
+- **Elementos citados:** ankre, flanbo, parchemen, chandèl
+- **Resumo:** A história emocionante do Congresso de Arcahaie e de Catherine Flon costurando o azul e o vermelho.
+
+#### 🇫🇷 Francês — *18 mai 1803 à l'Arcahaie : la naissance du drapeau haïtien*
+
+Au petit matin sur la côte, près d'une ancre, d'un parchemin, de chandelles et d'un flambeau, souvenons-nous d'une date chère au cœur de tous les Haïtiens : le dix-huit mai mille huit cent trois.
+
+Lors du congrès historique de l'Arcahaie, au bord de la mer, les chefs de l'armée révolutionnaire décidèrent de créer un emblème propre pour unir le peuple dans sa lutte pour la liberté. Selon la tradition, Jean-Jacques Dessalines retira le blanc du drapeau colonial français, et Catherine Flon cousit ensemble les bandes bleue et rouge !
+
+Ce geste symbolisait l'union des fils et filles d'Haïti vers l'indépendance, célébrée chaque année lors de la Fête du Drapeau.
+
+#### 🇭🇹 Kreyòl Ayisyen — *18 me 1803 nan Lakayè : nesans drapo peyi Ayiti*
+
+Granmaten bò lanmè a, toupre yon ankre, yon parchemen, chandèl ak yon flanbo, ann sonje yon dat ki chè nan kè tout Ayisyen : dizuit me mil uit san twa.
+
+Nan kongrè istorik Lakayè a, bò kòt la, chèf lame revolisyonè a te deside kreye yon drapo pa yo pou mete pèp la ansanm nan batay pou libète a. Dapre tradisyon an, Janjak Desalin te retire koulè blan nan drapo kolonyal franse a, epi Katrin Flon te koud moso ble a ak moso wouj la ansanm !
+
+Bèl jès sa a te senbolize inyon tout pitit peyi Ayiti sou wout endepandans lan, yon jou yo selebre chak ane nan Fèt Drapo.
+
+#### 🇧🇷 Português (apoio) — *18 de maio de 1803 em Arcahaie: o nascimento da bandeira do Haiti*
+
+Logo cedo na costa, perto de uma âncora, de um pergaminho, de velas e de uma tocha, recordamos uma data querida no coração de todo o Haiti: 18 de maio de 1803.
+
+Durante o congresso histórico de Arcahaie, à beira-mar, os líderes da luta revolucionária decidiram criar um emblema próprio para unir o povo pela liberdade. Segundo a tradição histórica, Jean-Jacques Dessalines retirou a faixa branca da bandeira colonial francesa, e Catherine Flon costurou juntas as faixas azul e vermelha!
+
+Esse gesto simbolizou a união nacional rumo à independência e é celebrado todos os anos no Dia da Bandeira.
+
+### 12. A Batalha de Vertières (1803): o passo decisivo da independência do Haiti (`historia-12`)
+
+- **Cena sugerida:** `historia-15` · **Duração estimada:** ~65 s
+- **Elementos citados:** parchemen, kat ansyen, kloch, kanon
+- **Resumo:** O episódio heroico de 18 de novembro de 1803 perto de Cap-Haïtien e a coragem de François Capois.
+
+#### 🇫🇷 Francês — *La bataille de Vertières (1803) : le dernier pas vers la liberté d'Haïti*
+
+Dans les archives d'époque, entre vieilles cartes, parchemins, cloches et canons, la date du dix-huit novembre mille huit cent trois reste gravée comme l'un des moments les plus décisifs de l'Histoire d'Haïti : la bataille de Vertières.
+
+Aux portes du Cap-Haïtien, l'armée indigène menée par Jean-Jacques Dessalines affronta les troupes impériales pour conquérir définitivement la liberté. Au cœur du combat, sous les tirs de canons, le général François Capois — surnommé « Capois-la-Mort » — avança avec une telle bravoure que même l'armée adverse salua son courage !
+
+Quelques semaines plus tard, le premier janvier mille huit cent quatre, la liberté était proclamée.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Batay Vètyè (1803) : dènye gran pa sou wout libète peyi Ayiti*
+
+Nan achiv epòk la, ant vye kat ansyen, parchemen, kloch ak kanon, dat dizuit novanm mil uit san twa a rete grave kòm yonn nan moman ki pi enpòtan nan listwa peyi Ayiti : batay Vètyè.
+
+Bò pòt vil Okap, lame endijèn Janjak Desalin t ap dirije a te batay pou pran libète l pou toutbon. Nan mitan dife kanon yo, jeneral Franswa Kapwa — yo te rele « Kapwa-la-Mò » — te avanse ak tèlman kouraj menm lènmi yo te salye bravou li !
+
+Kèk semèn apre, premye janvye mil uit san kat, endepandans Ayiti te pwoklame devan tout mond lan.
+
+#### 🇧🇷 Português (apoio) — *A Batalha de Vertières (1803): o passo decisivo da independência do Haiti*
+
+Nos registros históricos, entre mapas antigos, pergaminhos, sinos e canhões, a data de 18 de novembro de 1803 permanece marcada como decisiva para o Haiti: a Batalha de Vertières.
+
+Nos arredores de Cabo Haitiano, o exército liderado por Jean-Jacques Dessalines enfrentou as tropas coloniais em uma ofensiva definitiva pela liberdade. Sob intenso fogo de canhões, o general François Capois — conhecido como "Capois-la-Mort" — avançou com tamanha coragem que impressionou até os adversários!
+
+Poucas semanas depois, em 1º de janeiro de 1804, o Haiti proclamava sua independência.
+
+### 13. O Palácio de Sans-Souci em Milot: uma joia da história do Haiti (`historia-13`)
+
+- **Cena sugerida:** `historia-16` · **Duração estimada:** ~65 s
+- **Elementos citados:** kòf trezò, fò, chandèl, plim ak lank
+- **Resumo:** A história do palácio construído no século XIX aos pés da Citadelle, hoje Patrimônio da UNESCO.
+
+#### 🇫🇷 Francês — *Le Palais Sans-Souci de Milot : un joyau du patrimoine haïtien*
+
+Sous une pluie légère, près d'une forteresse, de chandelles et de récits écrits à la plume et à l'encre, découvrons un véritable trésor de l'Histoire haïtienne : le Palais Sans-Souci, situé à Milot, au nord du pays.
+
+Bâti au début du dix-neuvième siècle par Henri Christophe, tout près de la Citadelle Laferrière, ce palais monumental possédait des escaliers majestueux, des jardins en terrasses, des fontaines rafraîchissantes et même un ingénieux système de conduites d'eau sous les planchers !
+
+Inscrit au patrimoine mondial de l'UNESCO depuis mille neuf cent quatre-vingt-deux, Sans-Souci témoigne de l'ambition culturelle et architecturale du jeune État haïtien.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Palè San-Sousi nan Milo : yon gwo trezò patrimwàn ayisyen*
+
+Anba yon ti lapli dous, toupre yon fò, chandèl ak bèl istwa ki ekri ak plim ak lank, ann dekouvri yon vrè kòf trezò nan listwa peyi Ayiti : Palè San-Sousi nan Milo, nan nò peyi a.
+
+Anri Kristòf te bati gwo palè sa a nan kòmansman diznevyèm syèk la, pa lwen Sitadèl Laferyè. Li te gen bèl eskalye majeste, jaden an teras, fontèn dlo fre e menm yon sistèm tiyo dlo anba planche yo pou kenbe sal yo fre !
+
+Depi ane mil nèf san katreven de, UNESCO klase San-Sousi nan patrimwàn mondyal la kòm prèv gran vizyon kiltirèl jèn nasyon ayisyen an.
+
+#### 🇧🇷 Português (apoio) — *O Palácio de Sans-Souci em Milot: uma joia da história do Haiti*
+
+Sob chuva leve, perto de uma fortaleza, de velas acesas e de relatos escritos com pena e tinteiro, conhecemos um verdadeiro tesouro histórico do Haiti: o Palácio de Sans-Souci, em Milot, no norte do país.
+
+Construído no início do século XIX por Henri Christophe, aos pés da Citadelle Laferrière, o palácio reunia escadarias monumentais, jardins em terraços, fontes e até canais de água sob o piso para refrescar os salões!
+
+Reconhecido como Patrimônio Mundial da UNESCO desde 1982, Sans-Souci simboliza a ambição arquitetônica e cultural do jovem Estado haitiano.
+
+### 14. Os Taínos de Ayiti e a rainha Anacaona: as raízes antigas do Haiti (`historia-14`)
+
+- **Cena sugerida:** `historia-17` · **Duração estimada:** ~65 s
+- **Elementos citados:** karavèl, kouwòn, twòn, tou
+- **Resumo:** A história da ilha antes das caravelas de 1492 e da liderança poética da cacica Anacaona.
+
+#### 🇫🇷 Francês — *Les Taïnos d'Ayiti et la reine Anacaona : les racines anciennes de l'île*
+
+Au crépuscule sur la baie, quand une caravelle apparaît à l'horizon près des anciennes terres de couronnes et de trônes, rappelons que l'Histoire d'Haïti a commencé bien avant mille quatre cent quatre-vingt-douze !
+
+Pendant des siècles, les peuples autochtones Taïnos appelaient l'île « Ayiti » ou « Quisqueya ». Ils cultivaient le manioc, sculptaient le bois et vivaient en communautés organisées en royaumes appelés cacicats.
+
+Parmi leurs figures les plus admirées brille la cacique et poétesse Anacaona, surnommée « Fleur d'Or », célèbre pour son intelligence, ses chants « areytos » et son courage face à la conquête coloniale.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Pèp Tayino ann Ayiti ak rèn Anakawona : rasin ansyen zile a*
+
+Lè solèy ap kouche sou bè a, lè yon karavèl parèt nan orizon an toupre tè kote ansyen kouwòn ak twòn te egziste, ann sonje listwa peyi Ayiti te kòmanse byen lontan anvan mil kat san katrevendouz !
+
+Pandan plizyè syèk, premye pèp Tayino yo te rele zile a « Ayiti » oswa « Kiskeya ». Yo te kiltive manyòk, yo te taye bwa epi yo te òganize nan plizyè gwo kominote yo te rele kasika.
+
+Pami pi gran lidè yo, nou sonje rèn ak powèt Anakawona, ki vle di « Flè Lò », yon fanm ki te selèb pou sajès li, bèl chante li yo ak kouraj li devan envazyon kolonyal la.
+
+#### 🇧🇷 Português (apoio) — *Os Taínos de Ayiti e a rainha Anacaona: as raízes antigas do Haiti*
+
+Ao entardecer na baía, quando uma caravela surge no horizonte diante de terras antigas de coroas e tronos, lembramos que a história do Haiti começou muito antes de 1492!
+
+Durante séculos, os povos indígenas Taínos chamavam a ilha de "Ayiti" ou "Quisqueya". Eles cultivavam mandioca, navegavam em canoas e se organizavam em territórios chamados cacicados.
+
+Entre suas figuras mais admiradas destaca-se Anacaona — cujo nome significa "Flor de Ouro" —, poeta, líder do cacicado de Xaragua e símbolo de sabedoria e resistência.
+
+### 15. Como o Haiti apoiou a independência da América Latina (`historia-15`)
+
+- **Cena sugerida:** `historia-20` · **Duração estimada:** ~65 s
+- **Elementos citados:** twòn, parchemen, epe, plim ak lank
+- **Resumo:** A solidariedade histórica de Alexandre Pétion com Simón Bolívar em 1815 e 1816.
+
+#### 🇫🇷 Francês — *Comment Haïti a soutenu l'indépendance de l'Amérique latine*
+
+Sous le ciel étoilé, près des parchemins, de la plume et de l'encre qui écrivent les traités d'amitié, l'Histoire garde un geste de solidarité inoubliable d'Haïti envers ses voisins.
+
+En mille huit cent quinze et mille huit cent seize, alors que Simón Bolívar cherchait du soutien pour libérer l'Amérique du Sud, il fut accueilli chaleureusement à Jacmel et aux Cayes par le président haïtien Alexandre Pétion !
+
+Haïti offrit des navires, des vivres, des volontaires, des épées et même une imprimerie. En échange, Pétion ne demanda ni or ni terres, mais une seule promesse écrite : abolir l'esclavage dans tous les nouveaux pays libérés.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan peyi Ayiti te ede Amerik Latin pran endepandans li*
+
+Anba syèl ki plen zetwal la, toupre parchemen, plim ak lank ki ekri gwo trete amitye yo, listwa kenbe yon bèl jès solidarite peyi Ayiti te fè pou vwazen l yo.
+
+Nan ane mil uit san kenz ak mil uit san sèz, lè Simón Bolívar t ap chèche sipò pou libere Amerik di Sid, prezidan ayisyen Alexandre Pétion te resevwa l ak bra louvri nan Jakmèl ak Okay !
+
+Ayiti te bay bato, manje, volontè, epe e menm yon enprimri. An retou, Pétion pa t mande ni lò ni tè, men yon sèl pwomès : pou tout nouvo peyi ki vin lib yo aboli esklavaj nèt.
+
+#### 🇧🇷 Português (apoio) — *Como o Haiti apoiou a independência da América Latina*
+
+Sob o céu estrelado, perto de pergaminhos, pena e tinteiro que registram grandes pactos, a História guarda um gesto inesquecível de solidariedade do Haiti com seus vizinhos.
+
+Entre 1815 e 1816, quando Simón Bolívar buscava apoio para libertar a América do Sul, foi acolhido em Jacmel e Les Cayes pelo presidente haitiano Alexandre Pétion!
+
+O Haiti ofereceu navios, mantimentos, voluntários, armas e até uma prensa tipográfica. Em troca, Pétion não pediu ouro nem territórios, mas apenas um compromisso: abolir a escravidão em todas as nações que conquistassem a liberdade.
 
 ---
 
@@ -2758,6 +3958,156 @@ Durante esses poucos minutos preciosos, a luz natural fica suave, quente e envol
 
 Os rolos de filme giram depressa nesse momento, porque esse presente do céu dura pouco — mas dá aos filmes uma beleza inesquecível.
 
+### 11. Como os óculos 3D criam profundidade diante da tela plana? (`cinema-11`)
+
+- **Cena sugerida:** `cinema-11` · **Duração estimada:** ~60 s
+- **Elementos citados:** ekran sinema, twofe, megafòn, lunèt 3D
+- **Resumo:** O truque óptico das duas imagens que dá sensação de relevo no cinema.
+
+#### 🇫🇷 Francês — *Comment les lunettes 3D trompent-elles nos yeux devant l'écran ?*
+
+Dans une salle dorée, devant un grand écran de cinéma, un mégaphone et un trophée doré, il suffit d'enfiler des lunettes 3D pour avoir l'impression qu'un personnage sort de l'écran ! Comment une toile toute plate peut-elle créer autant de profondeur ?
+
+Le secret imite simplement nos deux yeux ! Dans la vie réelle, votre œil gauche et votre œil droit voient le monde sous deux angles légèrement différents, et le cerveau fusionne ces deux images pour calculer les distances.
+
+Au cinéma 3D, le projecteur envoie deux images superposées sur l'écran, et les lunettes 3D filtrent chacune pour l'œil correspondant !
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan lunèt 3D yo fè twonpe je nou devan ekran sinema a ?*
+
+Nan yon sal dore, devan yon gwo ekran sinema, yon megafòn ak yon twofe dore, ou sèlman bezwen mete lunèt 3D pou w santi pèsonaj la ap soti nan ekran an ! Kijan yon ekran ki plat nèt ka fè nou wè pwofondè konsa ?
+
+Sekrè a senpleman imite de je nou yo ! Nan lavi toutbon, je gòch ou ak je dwat ou wè mond lan nan de ti ang ki yon ti jan diferan, epi sèvo a kole de imaj sa yo ansanm pou mezire distans.
+
+Nan sinema 3D, pwojektè a voye de imaj yonn sou lòt sou ekran an, epi lunèt 3D yo kite chak je wè sèlman imaj pa l !
+
+#### 🇧🇷 Português (apoio) — *Como os óculos 3D criam profundidade diante da tela plana?*
+
+Em uma sala dourada, diante de uma grande tela de cinema, de um megafone e de um troféu dourado, basta colocar óculos 3D para sentir que os objetos saltam da tela! Como uma superfície plana cria tanta profundidade?
+
+O truque simplesmente imita nossos dois olhos! No dia a dia, o olho esquerdo e o olho direito enxergam o mundo de ângulos ligeiramente diferentes, e o cérebro combina as duas imagens para calcular a distância.
+
+No cinema 3D, o projetor exibe duas imagens sobrepostas na tela, e os óculos filtram uma para cada olho!
+
+### 12. Por que as poltronas do cinema ficam em fileiras inclinadas? (`cinema-12`)
+
+- **Cena sugerida:** `cinema-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** megafòn, bilyè sinema, fotèy sinema, kamera sinema
+- **Resumo:** A história das primeiras salas planas até o design em degraus com ingresso marcado.
+
+#### 🇫🇷 Francês — *Pourquoi les fauteuils de cinéma sont-ils placés en pente ?*
+
+Avec un billet de cinéma en main, près d'une caméra de cinéma et d'un mégaphone, on cherche sa place parmi les fauteuils rouges disposés en gradins. Mais saviez-vous que les toutes premières salles étaient complètement plates ?
+
+Au début du vingtième siècle, le public s'asseyait sur de simples chaises au même niveau, comme dans une salle de conférence. Résultat : si un spectateur très grand ou un grand chapeau s'installait devant vous, vous ne voyiez plus rien !
+
+Les architectes ont donc repris l'idée des anciens théâtres grecs en inclinant le sol pour offrir à chaque fauteuil une vue dégagée.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa fotèy sinema yo plase an pant konsa ?*
+
+Avèk yon bilyè sinema nan men nou, toupre yon kamera sinema ak yon megafòn, n ap chèche plas nou nan mitan fotèy sinema ki monte an eskalye yo. Men, èske ou te konnen premye sal sinema yo te plat nèt ?
+
+Nan kòmansman ventyèm syèk la, espektatè yo te chita sou senp chèz nan menm nivo a. Rezilta : si yon moun ki wo anpil oswa yon gwo chapo te chita devan ou, ou pa t wè anyen sou ekran an !
+
+Se konsa achitèk yo te reprann lide ansyen teyat grèk yo pou fè planche a monte tikras pa tikras, konsa tout fotèy gen bon vizibilite.
+
+#### 🇧🇷 Português (apoio) — *Por que as poltronas do cinema ficam em fileiras inclinadas?*
+
+Com o ingresso de cinema na mão, perto de uma câmera e de um megafone, procuramos nosso lugar entre as poltronas dispostas em degraus. Mas você sabia que as primeiras salas de cinema tinham o chão totalmente plano?
+
+No início do século XX, o público se sentava em fileiras no mesmo nível. O resultado era previsível: se uma pessoa alta ou de chapéu grande sentasse na frente, ninguém atrás enxergava a tela!
+
+Os arquitetos então resgataram o modelo dos teatros gregos antigos e inclinaram o piso para dar visão livre a todas as poltronas.
+
+### 13. O cinematógrafo dos irmãos Lumière: uma câmera que também era projetor (`cinema-13`)
+
+- **Cena sugerida:** `cinema-14` · **Duração estimada:** ~60 s
+- **Elementos citados:** pwojektè sinema, klakèt, grèn kamera, twofe
+- **Resumo:** A invenção engenhosa de 1895 que reunia filmadora e projetor em uma única caixa de madeira.
+
+#### 🇫🇷 Francês — *Le cinématographe Lumière : une machine qui filmait ET projetait*
+
+Sous un ciel étoilé, entre un projeteur de cinéma, un clap, une grue de caméra et un trophée, rappelons l'invention géniale de mille huit cent quatre-vingt-quinze : le cinématographe !
+
+Créé par Auguste et Louis Lumière à Lyon, cet appareil léger pesait environ cinq kilos et pouvait fonctionner sans électricité, simplement en tournant une manivelle à la main !
+
+Le plus incroyable ? La même boîte en bois servait d'abord à filmer la scène dans la rue, puis, en ajoutant une lampe à l'arrière, à projeter le film sur un grand écran le soir même !
+
+#### 🇭🇹 Kreyòl Ayisyen — *Sinematograf frè Lumière yo : yon machin ki te filme EPI pwojete*
+
+Anba yon syèl zetwal, ant yon pwojektè sinema, yon klakèt, yon grèn kamera ak yon twofe, ann sonje bèl envansyon ane mil uit san katreven kenz lan : sinematograf la !
+
+Auguste ak Louis Lumière te kreye ti aparèy lejè sa a an Frans : li te peze anviwon senk kilo sèlman epi l te mache san kouran elektrik, jis lè ou vire yon ti manch alamen !
+
+Sa k pi etonan an ? Menm ti bwat bwa sa a te sèvi pou filme sèn nan nan lari a lajounen, epi aswè, lè yo mete yon lanp dèyè l, menm bwat la te pwojete fim nan sou yon gwo ekran !
+
+#### 🇧🇷 Português (apoio) — *O cinematógrafo dos irmãos Lumière: uma câmera que também era projetor*
+
+Sob um céu estrelado, entre um projetor de cinema, uma claquete, uma grua de câmera e um troféu, vale recordar a invenção genial de 1895: o cinematógrafo!
+
+Criado pelos irmãos Auguste e Louis Lumière na França, esse aparelho leve pesava cerca de cinco quilos e funcionava à manivela, sem eletricidade!
+
+O mais incrível? A mesma caixa de madeira servia primeiro como câmera para filmar cenas nas ruas e, à noite, bastava acoplar uma fonte de luz atrás para transformar o aparelho em projetor!
+
+### 14. Do teatro ao cinema: por que o pôster de filme virou uma obra de arte? (`cinema-14`)
+
+- **Cena sugerida:** `cinema-15` · **Duração estimada:** ~60 s
+- **Elementos citados:** maske teyat, afich fim, lanp studyo, bann fim
+- **Resumo:** A ligação histórica entre teatro, iluminação de estúdio, película e cartazes ilustrados.
+
+#### 🇫🇷 Francês — *Du théâtre au septième art : pourquoi l'affiche de film est-elle devenue un art ?*
+
+Dans un couloir lumineux, à côté des masques de théâtre, d'une lampe de studio et d'une bande de film, une affiche de film attire immédiatement le regard.
+
+À ses débuts, le cinéma emprunta beaucoup au théâtre : les décors peints, les gestes expressifs et même les affiches illustrées collées dans les rues pour annoncer le spectacle !
+
+Avant les bandes-annonces sur Internet, l'affiche devait raconter en une seule image toute l'atmosphère du film — mystère, humour ou aventure — pour donner envie d'entrer dans la salle.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Soti nan teyat rive nan sinema : poukisa afich fim tounen yon vrè atizay ?*
+
+Nan yon koridò ki klere, bò kote mask teyat yo, yon lanp estidyo ak yon bann fim, yon afich fim rale je nou touswit.
+
+Okòmansman, sinema te prete anpil bagay nan men teyat : dekor ki pentire, jès eksprime yo e menm bèl afich ki te kole nan lari pou anonse espektak la !
+
+Anvan te gen ti videyo sou Entènèt, afich la te dwe rakonte nan yon sèl imaj tout anbyans fim nan — mistè, imè oswa avanti — pou bay moun anvi antre nan sal la.
+
+#### 🇧🇷 Português (apoio) — *Do teatro ao cinema: por que o pôster de filme virou uma obra de arte?*
+
+Em um corredor iluminado, ao lado de máscaras de teatro, de uma luz de estúdio e de uma tira de filme, o pôster de cinema chama atenção imediatamente.
+
+No início, o cinema herdou muito do teatro: cenários pintados, gestos expressivos e os cartazes ilustrados colados nas ruas para anunciar a sessão!
+
+Muito antes dos trailers na internet, o pôster precisava resumir em uma única imagem o clima inteiro do filme — mistério, comédia ou aventura — para conquistar o público na calçada.
+
+### 15. Por que as salas de cinema costumam ter cortinas e paredes escuras? (`cinema-15`)
+
+- **Cena sugerida:** `cinema-16` · **Duração estimada:** ~60 s
+- **Elementos citados:** ekran sinema, pòpkòn, tapi wouj, soda
+- **Resumo:** Como veludo, tapete vermelho e escuridão melhoram a imagem da tela e a acústica da sala.
+
+#### 🇫🇷 Francês — *Pourquoi les salles de cinéma ont-elles souvent des rideaux et des murs sombres ?*
+
+Sous la pluie légère dehors, alors que l'on entre avec son pop-corn et son soda sur le tapis rouge vers le grand écran de cinéma, avez-vous déjà remarqué que les murs de la salle sont toujours sombres et souvent recouverts de tissu épais ?
+
+Ce n'est pas seulement pour l'élégance ! Les couleurs sombres empêchent la lumière projetée sur l'écran de rebondir sur les murs, ce qui rend les couleurs du film bien plus intenses.
+
+Quant aux lourds rideaux et aux tapis, ils absorbent les échos indésirables pour offrir un son pur et enveloppant.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa sal sinema yo souvan gen rido ak miray koulè fonse ?*
+
+Anba ti lapli dous deyò a, pandan n ap antre ak pòp-kòn ak soda nou sou tapi wouj la nan direksyon gwo ekran sinema a, èske ou deja remake miray sal la toujou fonse epi souvan kouvri ak twal epè ?
+
+Sa pa fèt sèlman pou bote ! Koulè fonse yo anpeche limyè ekran an rebondi sou miray yo, sa ki fè koulè fim nan parèt pi klè e pi vivan.
+
+Kanta pou gwo rido epè yo ak tapi yo, yo vale eko ki pa nesesè yo pou son an ka rive klè nan zòrèy tout moun.
+
+#### 🇧🇷 Português (apoio) — *Por que as salas de cinema costumam ter cortinas e paredes escuras?*
+
+Enquanto lá fora cai uma chuva leve e entramos com pipoca e refrigerante pelo tapete vermelho rumo à grande tela de cinema, já reparou que as paredes da sala são sempre escuras e cobertas por tecido?
+
+Isso não é apenas estética! Cores escuras evitam que a luz refletida pela tela volte para as paredes, deixando o contraste e as cores do filme muito mais intensos.
+
+Já as cortinas pesadas e o carpete absorvem ecos indesejados, garantindo um som limpo e envolvente.
+
 ---
 
 ## Música
@@ -3061,6 +4411,156 @@ Sob um céu limpo, entre um microfone, fones de ouvido e uma harpa, o djembê ch
 Originário da África Ocidental, o djembê tem o nome ligado à expressão "Anke djé, anke bé", que significa "reunamo-nos em paz". Talhado em um único tronco e coberto com pele esticada, produz três sons principais — grave, médio e agudo — conforme onde a mão toca.
 
 Sua herança rítmica ecoa com força nos tambores do Haiti e do Brasil.
+
+### 11. Cordas e sopros: como duas famílias musicais conversam em harmonia (`musica-11`)
+
+- **Cena sugerida:** `musica-11` · **Duração estimada:** ~60 s
+- **Elementos citados:** vyolon, trompèt, klarinèt, saksofòn
+- **Resumo:** A combinação entre violino, trompete, clarinete e saxofone nas bandas e orquestras.
+
+#### 🇫🇷 Francês — *Cordes et vents : comment deux familles d'instruments dialoguent ensemble*
+
+Lorsqu'un violon joue aux côtés d'une trompette, d'une clarinette et d'un saxophone, deux grands mondes sonores se rencontrent !
+
+Les instruments à cordes comme le violon produisent un son doux et chantant grâce au frottement de l'archet, capable d'imiter la voix humaine. Les instruments à vent, eux, utilisent le souffle du musicien pour faire vibrer l'air dans un tube de bois ou de cuivre, offrant éclat et puissance.
+
+Dans le jazz, le konpa haïtien ou les fanfares, ce dialogue entre douceur et énergie crée une richesse musicale incomparable.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kòd ak van : kijan de fanmi enstriman mizik yo dyaloge ansanm*
+
+Lè yon vyolon jwe bò kote yon twonpèt, yon klarinèt ak yon saksofòn, de gran fanmi son rankontre ansanm !
+
+Enstriman ak kòd tankou vyolon an bay yon son dous ki sanble yon vwa k ap chante gras ak achèt k ap glise sou kòd yo. Enstriman ak van yo, bò kote pa yo, sèvi ak souf mizisyen an pou fè lè a vibre anndan tiyo bwa oswa kwiv, sa ki bay anpil fòs ak klète.
+
+Nan djaz, nan konpa ayisyen oswa nan fanfa yo, bèl dyalòg sa a bay mizik la yon richès san parèy.
+
+#### 🇧🇷 Português (apoio) — *Cordas e sopros: como duas famílias musicais conversam em harmonia*
+
+Quando um violino toca ao lado de um trompete, um clarinete e um saxofone, dois grandes universos sonoros se encontram!
+
+Os instrumentos de cordas, como o violino, produzem um som doce e contínuo com o arco, quase imitando a voz humana. Já os instrumentos de sopro usam o fôlego do músico para vibrar o ar dentro de tubos de madeira ou metal, trazendo brilho e potência.
+
+No jazz, no kompa haitiano ou nas fanfarras, essa conversa entre suavidade e energia cria uma riqueza musical única.
+
+### 12. Por que os instrumentos maiores produzem sons mais graves? (`musica-12`)
+
+- **Cena sugerida:** `musica-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** kontrebas, silofòn, akòdeyon, flit
+- **Resumo:** A física da ressonância explicada comparando o contrabaixo, a flauta, o acordeão e o xilofone.
+
+#### 🇫🇷 Francês — *Pourquoi les grands instruments jouent-ils des sons plus graves ?*
+
+À l'aube calme, imaginez une petite flûte à côté d'une immense contrebasse, d'un accordéon et d'un xylophone aux lames de différentes longueurs. Pourquoi la flûte sonne-t-elle si haut alors que la contrebasse gronde si bas ?
+
+Tout vient de la taille de l'espace où vibre l'air ! Les ondes sonores graves sont beaucoup plus longues et lentes : elles ont besoin d'une grande caisse en bois ou d'un long tube pour résonner pleinement.
+
+Sur le xylophone, c'est exactement la même règle : les lames les plus longues donnent les notes graves, et les plus courtes donnent les notes aiguës !
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa gwo enstriman mizik yo fè son ki pi ba ?*
+
+Granmaten nan kalm lan, imajine yon ti flit bò kote yon gwo kontrebas, yon akòdeyon ak yon silofòn ki gen ti lam bwa tout longè. Poukisa flit la sonnen wo konsa pandan kontrebas la bay yon gwo son ba ?
+
+Tout bagay depann de gwosè espas kote lè a vibre a ! Ond son ki ba yo pi long e pi dousman : yo bezwen yon gwo kès bwa oswa yon long tiyo pou sonnen byen fò.
+
+Sou silofòn nan, se egzakteman menm règ la : lam ki pi long yo bay nòt ki ba, epi sa ki pi kout yo bay nòt ki wo !
+
+#### 🇧🇷 Português (apoio) — *Por que os instrumentos maiores produzem sons mais graves?*
+
+Em um amanhecer calmo, imagine uma flauta pequena ao lado de um enorme contrabaixo, de um acordeão e de um xilofone com lâminas de tamanhos variados. Por que a flauta soa tão aguda enquanto o contrabaixo tem voz profunda?
+
+Tudo depende do tamanho do espaço onde o ar vibra! As ondas sonoras graves são mais longas e lentas, por isso precisam de uma grande caixa de madeira ou de tubos compridos para ressoar bem.
+
+No xilofone vale a mesma regra: as lâminas maiores dão notas graves, e as menores dão notas agudas!
+
+### 13. Por que batemos o pé automaticamente quando começa um ritmo marcante? (`musica-13`)
+
+- **Cena sugerida:** `musica-14` · **Duração estimada:** ~60 s
+- **Elementos citados:** patisyon, ansanm tanbou, anplifikatè, tanbourin
+- **Resumo:** A conexão natural entre o sistema motor do cérebro, a partitura e os tambores.
+
+#### 🇫🇷 Francês — *Pourquoi battons-nous du pied sans y penser quand un rythme démarre ?*
+
+Sous le clair de lune, dès que la batterie et le tambourin lancent une cadence régulière devant les partitions et l'amplificateur, il est presque impossible de garder les pieds immobiles !
+
+Les scientifiques ont découvert que notre cerveau relie directement les zones de l'audition aux zones du mouvement. Dès qu'il entend une pulsation régulière, le cerveau se synchronise automatiquement avec elle — bien plus vite que nous ne pouvons l'analyser consciemment.
+
+C'est ce lien instinctif qui permet à tout un public d'applaudir en rythme lors d'un concert.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa nou bat pye nou san nou pa menm reflechi lè yon bon ritm kòmanse ?*
+
+Anba klète lalin lan, kou ansanm tanbou a ak tanbourin nan lanse yon bon ritm devan patisyon yo ak anplifikatè a, li prèske enposib pou kenbe pye nou san bouje !
+
+Syantifik yo dekouvri sèvo nou konekte dirèkteman zòn ki tande son an ak zòn ki kòmande mouvman kò a. Kou l tande yon batay ki regilye, sèvo a mete tèt li nan menm ritm lan otomatikman — pi vit pase nou ka menm reflechi sou sa.
+
+Se lyen natirèl sa a ki fè tout yon piblik ka bat men nan menm ritm lan nan yon konsè.
+
+#### 🇧🇷 Português (apoio) — *Por que batemos o pé automaticamente quando começa um ritmo marcante?*
+
+Sob o luar tranquilo, assim que a bateria e o pandeiro começam uma batida firme diante das partituras e do amplificador, fica quase impossível deixar os pés parados!
+
+Cientistas descobriram que o cérebro conecta diretamente a área da audição às áreas motoras do movimento. Ao ouvir uma pulsação constante, o corpo se sincroniza automaticamente — antes mesmo de pensarmos nisso.
+
+É essa conexão natural que permite a uma plateia inteira bater palmas no mesmo compasso.
+
+### 14. O que faz de verdade um maestro diante de tantos músicos? (`musica-14`)
+
+- **Cena sugerida:** `musica-15` · **Duração estimada:** ~60 s
+- **Elementos citados:** dirijan, gramofòn, patisyon, arp
+- **Resumo:** Como pequenos gestos guiam dezenas de instrumentos, da harpa aos sopros, sem dizer uma palavra.
+
+#### 🇫🇷 Francês — *Que fait vraiment un chef d'orchestre devant tant de musiciens ?*
+
+Dans une salle élégante, devant une grande partition ouverte, une harpe et un vieux gramophone, un chef d'orchestre lève doucement les mains. Mais si chaque musicien sait déjà lire sa partition, à quoi sert le chef d'orchestre ?
+
+Sans lui, cinquante musiciens joueraient chacun à une vitesse légèrement différente ! De la main droite, le chef indique le tempo exact ; de la main gauche, il sculpte l'émotion, demandant à la harpe de jouer plus doux ou aux cuivres d'entrer avec force.
+
+Par le regard et le geste, il transforme des dizaines d'individus en une seule voix unie.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Ki sa yon dirijan òkès fè toutbonvre devan tout mizisyen sa yo ?*
+
+Nan yon bèl sal, devan yon gwo patisyon ki louvri, yon arp ak yon vye gramofòn, yon dirijan òkès leve men l dousman. Men si chak mizisyen deja konn li patisyon pa l, poukisa yo bezwen yon dirijan ?
+
+San li menm, senkant mizisyen ta jwe chak nan yon vitès ki yon ti jan diferan ! Ak men dwat li, dirijan an montre ritm egzak la ; ak men gòch li, li gide emosyon an, pou l mande arp la jwe pi dous oswa lòt enstriman yo antre pi fò.
+
+Ak kout je ak jès men l, li fè plizyè dizèn mizisyen sonnen tankou yon sèl vwa.
+
+#### 🇧🇷 Português (apoio) — *O que faz de verdade um maestro diante de tantos músicos?*
+
+Em uma sala elegante, diante de uma partitura aberta, uma harpa e um antigo gramofone, o maestro ergue as mãos. Mas se cada músico já sabe ler sua parte, qual é o papel do maestro?
+
+Sem ele, cinquenta músicos tocariam em velocidades ligeiramente diferentes! Com uma das mãos, o maestro marca o tempo exato; com a outra, molda a expressividade, pedindo mais suavidade à harpa ou mais força aos metais.
+
+Com gestos e olhares, ele transforma dezenas de pessoas em uma única voz afinada.
+
+### 15. O saxofone: um instrumento de metal que pertence à família das madeiras (`musica-15`)
+
+- **Cena sugerida:** `musica-17` · **Duração estimada:** ~60 s
+- **Elementos citados:** saksofòn, silofòn, dirijan, gita
+- **Resumo:** A invenção surpreendente de Adolphe Sax e sua presença marcante no jazz e na música caribenha.
+
+#### 🇫🇷 Francês — *Le saxophone : un instrument en métal qui appartient à la famille des bois*
+
+En fin d'après-midi, près d'une guitare, d'un xylophone et d'un chef d'orchestre, un saxophone brille de tous ses reflets dorés. Pourtant, savez-vous à quelle famille d'instruments appartient le saxophone ?
+
+Même s'il est entièrement fabriqué en laiton métallique, il fait partie de la famille des bois ! Pourquoi ? Parce qu'il produit son son grâce à une fine lamelle de roseau — appelée anche — fixée sur le bec, exactement comme la clarinette.
+
+Inventé vers mille huit cent quarante par le Belge Adolphe Sax pour réunir la puissance des cuivres et la souplesse des bois, il est devenu une icône du jazz et du konpa haïtien.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Saksofòn nan : yon enstriman an metal ki fè pati fanmi bwa yo*
+
+Lè solèy ap kouche, toupre yon gita, yon silofòn ak yon dirijan, yon saksofòn ap klere ak bèl koulè lò li. Poutan, èske ou konnen nan ki fanmi enstriman saksofòn nan ye ?
+
+Menm si yo fabrike l nèt ak metal dore, li fè pati fanmi enstriman bwa yo ! Poukisa ? Paske li fè son li soti gras ak yon ti lam wozo fen — yo rele anch — ki kole nan bouch li, menm jan ak klarinèt la.
+
+Yon Bèlj ki rele Adolphe Sax te envante l bò ane mil uit san karant pou melanje fòs enstriman kwiv yo ak dousè bwa yo, epi li vin yon gwo zetwal nan djaz ak nan konpa ayisyen.
+
+#### 🇧🇷 Português (apoio) — *O saxofone: um instrumento de metal que pertence à família das madeiras*
+
+Ao entardecer, perto de um violão, de um xilofone e de um maestro, um saxofone brilha com seu corpo dourado. Mas você sabe a qual família de instrumentos o saxofone pertence?
+
+Embora seja feito inteiramente de metal, ele faz parte da família das madeiras! O motivo é que seu som nasce da vibração de uma fina palheta de bambu na boquilha, exatamente como no clarinete.
+
+Inventado por volta de 1840 pelo belga Adolphe Sax para unir a potência dos metais à agilidade das madeiras, o saxofone conquistou o jazz e o kompa haitiano.
 
 ---
 
@@ -3366,6 +4866,156 @@ Pesquisas médicas mostram que passar apenas vinte minutos ao ar livre, moviment
 
 Rir com amigos, nadar ou jogar bola não é tempo perdido: é cuidado natural com o corpo e a mente.
 
+### 11. Por que as bolas de tênis são amarelas e cobertas de feltro? (`lazeres-11`)
+
+- **Cena sugerida:** `lazeres-11` · **Duração estimada:** ~60 s
+- **Elementos citados:** planch a woulèt, rakèt tenis, panye piknik, kòd sote
+- **Resumo:** Uma curiosidade esportiva sobre aerodinâmica e televisão perto de raquetes, skate e corda de pular.
+
+#### 🇫🇷 Francês — *Pourquoi les balles de tennis sont-elles jaunes et couvertes de feutre ?*
+
+Sur une place ensoleillée, près d'un panier de pique-nique, d'un skateboard et d'une corde à sauter, une raquette de tennis rappelle une petite énigme sportive : pourquoi les balles de tennis ne sont-elles ni lisses ni blanches ?
+
+Jusqu'en mille neuf cent soixante-douze, les balles étaient blanches ou noires ! Mais avec l'arrivée de la télévision en couleur, les spectateurs peinaient à suivre cette petite balle rapide à l'écran. On choisit alors le jaune vif fluorescent.
+
+Quant au feutre duveteux, il freine légèrement l'air pour offrir au joueur un meilleur contrôle après le rebond.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa boul tenis yo gen koulè jòn epi yo kouvri ak ti pwal ?*
+
+Sou yon plas ki gen solèy, toupre yon panye piknik, yon planch a woulèt ak yon kòd sote, yon rakèt tenis fè nou sonje yon ti sekrè espò : poukisa boul tenis yo pa lis ni blan ?
+
+Jis nan ane mil nèf san swasanndouz, boul yo te blan oswa nwa ! Men lè televizyon an koulè te rive, espektatè yo te gen pwoblèm pou wè ti boul rapid sa a sou ekran an. Se konsa yo te chwazi koulè jòn klere a.
+
+Kanta pou ti pwal mou ki sou li a, li ede kontwole vitès la nan lè a pou jwè a ka dirije boul la pi byen.
+
+#### 🇧🇷 Português (apoio) — *Por que as bolas de tênis são amarelas e cobertas de feltro?*
+
+Em uma praça ensolarada, perto de uma cesta de piquenique, de um skate e de uma corda de pular, a raquete de tênis lembra uma curiosidade esportiva: por que as bolas de tênis são amarelas e peludas?
+
+Até 1972, as bolas oficiais costumavam ser brancas ou pretas! Com a chegada das transmissões de televisão em cores, ficava difícil enxergar a bolinha rápida na tela, então adotou-se o amarelo vibrante.
+
+Já o feltro macio cria leve atrito no ar, dando mais controle e precisão aos golpes.
+
+### 12. Por que os jogos em equipe e a natação descansam tanto a mente? (`lazeres-12`)
+
+- **Cena sugerida:** `lazeres-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** panye baskèt, boul foutbòl, panye piknik, pisin
+- **Resumo:** O chamado 'descanso ativo' entre piscina, basquete, futebol e piquenique.
+
+#### 🇫🇷 Francês — *Pourquoi les jeux d'équipe et la natation reposent-ils si bien l'esprit ?*
+
+Au coucher du soleil, entre une piscine calme, un panier de pique-nique, un ballon de football et un panier de basket-ball, on s'étonne parfois de se sentir plus en forme après avoir bougé que si l'on était resté assis toute la journée !
+
+Les chercheurs appellent cela le « repos actif ». Lorsque vous nagez dans la piscine ou faites une passe à un coéquipier, votre attention quitte les soucis du quotidien pour se concentrer sur l'instant présent.
+
+Le corps libère alors sa tension et l'esprit retrouve sa fraîcheur naturelle.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa jwe an ekip ak naje nan pisin repoze lespri nou byen konsa ?*
+
+Lè solèy ap kouche, ant yon pisin trankil, yon panye piknik, yon boul foutbòl ak yon panye baskèt, nou konn sezi santi nou gen plis fòs apre nou fin bouje pase si nou te rete chita tout jounen !
+
+Chèchè yo rele sa « repo aktif ». Lè ou naje nan pisin nan oswa ou pase boul la bay yon zanmi nan ekip la, tèt ou kite tout traka chak jou yo pou l konsantre sou moman prezan an.
+
+Kò a lage tout tansyon l epi lespri a jwenn tout frechè natirèl li.
+
+#### 🇧🇷 Português (apoio) — *Por que os jogos em equipe e a natação descansam tanto a mente?*
+
+Ao pôr do sol, entre uma piscina tranquila, uma cesta de piquenique, uma bola de futebol e uma cesta de basquete, às vezes nos surpreendemos por nos sentirmos mais descansados depois de jogar do que após horas parados!
+
+Os especialistas chamam isso de "descanso ativo". Quando você nada ou troca passes em equipe, a atenção sai das preocupações repetitivas e se volta totalmente ao momento presente.
+
+Assim, o corpo libera a tensão acumulada e a mente recupera o frescor.
+
+### 13. O caiaque: uma embarcação criada há mais de quatro mil anos (`lazeres-13`)
+
+- **Cena sugerida:** `lazeres-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** kayak, glisad, kat jwe, rakèt tenis
+- **Resumo:** A origem ártica do caiaque e sua popularidade atual nas praias ensolaradas.
+
+#### 🇫🇷 Francês — *Le kayak : une embarcation vieille de plus de quatre mille ans*
+
+Sur une plage ensoleillée, près d'une raquette de tennis, d'un jeu de cartes et d'un toboggan coloré, un kayak prêt à prendre la mer porte une histoire millénaire.
+
+Bien avant de devenir un loisir d'été sur les baies tropicales, le kayak a été inventé il y a plus de quatre mille ans par les peuples inuits et aléoutes des régions arctiques ! Leur mot « qajaq » signifiait « bateau de l'homme ».
+
+Construit autrefois avec une charpente légère en bois flotté, il glissait en silence sur l'eau sans faire de vagues — une merveille d'équilibre restée presque inchangée.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kayak la : yon ti bato ki gen plis pase kat mil an istwa*
+
+Sou yon plaj ki plen solèy, toupre yon rakèt tenis, kat jwe ak yon glisad kolore, yon ti kayak ki pare pou antre nan dlo a pote yon istwa ki gen plizyè milye ane.
+
+Byen lontan anvan l te tounen yon bèl lwazi ete sou plaj twopikal yo, pèp Inwit yo nan zòn Aktik la te envante kayak la sa gen plis pase kat mil an ! Mo « qajaq » la te vle di « ti bato ».
+
+Yo te konn fabrike l ak bwa lejè ki flote, epi l te glise an silans sou dlo a san fè gwo bri — yon mèvèy ekilib ki rete prèske menm jan jodi a.
+
+#### 🇧🇷 Português (apoio) — *O caiaque: uma embarcação criada há mais de quatro mil anos*
+
+Em uma praia ensolarada, perto de uma raquete de tênis, um baralho e um escorregador colorido, um caiaque pronto para entrar na água carrega uma história milenar.
+
+Muito antes de virar lazer de verão em baías tropicais, o caiaque foi inventado há mais de quatro mil anos pelos povos inuítes e aleútes das regiões árticas! A palavra "qajaq" significava "barco ligeiro".
+
+Construído originalmente com armação leve de madeira, deslizava em silêncio sobre a água — uma obra de equilíbrio que quase não mudou até hoje.
+
+### 14. Como o vôlei começou com uma rede de tênis levantada a dois metros (`lazeres-14`)
+
+- **Cena sugerida:** `lazeres-16` · **Duração estimada:** ~60 s
+- **Elementos citados:** tablo echèk, balanswa, patin, filè volebòl
+- **Resumo:** A criação do vôlei em 1895 por William Morgan como um jogo leve sem contato físico.
+
+#### 🇫🇷 Francês — *Comment le volley-ball a commencé avec un filet de tennis surélevé*
+
+Sous un ciel dégagé, près d'une balançoire, d'un échiquier et d'une paire de patins, un filet de volley-ball rappelle une invention née juste après le basket-ball !
+
+En mille huit cent quatre-vingt-quinze, aux États-Unis, le directeur sportif William Morgan cherchait un jeu amusant mais moins fatigant et sans chocs entre joueurs. Il eut alors l'idée d'emprunter un filet de tennis et de le tendre à près de deux mètres du sol !
+
+Appelé d'abord « mintonette », ce sport prit vite le nom de « volley-ball », car le ballon devait rester toujours en vol sans toucher la terre.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan volebòl la te kòmanse ak yon filè tenis yo te monte pi wo*
+
+Anba yon syèl klè, toupre yon balanswa, yon tablo echèk ak yon pè patin, yon filè volebòl fè nou sonje yon espò ki te fèt touswit apre baskètbòl la !
+
+Nan ane mil uit san katreven kenz, Ozetazini, yon direktè espò ki rele William Morgan t ap chèche yon jwèt ki amizan men ki pa twò fatigan e ki pa gen gwo chòk ant jwè yo. Li te gen lide pran yon filè tenis epi monte l prèske de mèt anlè tè a !
+
+Okòmansman yo te rele l « mintonette », epi vit vit li pran non « volebòl », paske boul la dwe rete anlè nan lè a san l pa touche tè.
+
+#### 🇧🇷 Português (apoio) — *Como o vôlei começou com uma rede de tênis levantada a dois metros*
+
+Sob um céu limpo, perto de um balanço, de um tabuleiro de xadrez e de um par de patins, uma rede de vôlei lembra uma invenção surgida logo após o basquete!
+
+Em 1895, nos Estados Unidos, o professor William Morgan buscava um esporte coletivo divertido, sem choques físicos e acessível a todas as idades. Ele teve então a ideia de esticar uma rede de tênis a quase dois metros do chão!
+
+Chamado inicialmente de "mintonette", o jogo logo ganhou o nome de voleibol porque a bola devia seguir sempre no ar sem tocar o solo.
+
+### 15. A pesca recreativa: a arte de observar a água com paciência (`lazeres-15`)
+
+- **Cena sugerida:** `lazeres-17` · **Duração estimada:** ~60 s
+- **Elementos citados:** kann lapèch, planch a woulèt, filè volebòl, panye baskèt
+- **Resumo:** Por que atividades calmas com vara de pescar equilibram o ritmo agitado dos esportes.
+
+#### 🇫🇷 Francês — *La pêche de loisir : l'art d'observer l'eau avec patience*
+
+À la tombée du jour, entre l'agitation d'un terrain de volley-ball, un panier de basket-ball et un skateboard qui passe, quelqu'un s'assoit tranquillement avec une canne à pêche au bord de l'eau.
+
+Contrairement aux sports de vitesse, la pêche de loisir invite à ralentir. Regarder les petites ondulations de l'eau, écouter le vent et attendre patiemment offre au cerveau une pause rare dans nos journées pleines d'écrans.
+
+Un bon moment de calme au bord de l'eau apprend souvent autant que la plus grande aventure.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Lapèch pou lwazi : bèl atizay gade dlo a ak pasyans*
+
+Lè solèy ap kouche, ant anbyans yon teren volebòl, yon panye baskèt ak yon planch a woulèt k ap pase, yon moun chita trankil ak yon kann lapèch bò dlo a.
+
+Kontrèman ak espò vitès yo, lapèch pou lwazi envite nou ralanti. Gade ti vag dlo yo, koute van an epi tann ak pasyans bay sèvo a yon bèl poz nan mitan jounen ki plen ekran yo.
+
+Yon ti moman kalm bò dlo a souvan aprann nou anpil bagay menm jan ak yon gwo avanti.
+
+#### 🇧🇷 Português (apoio) — *A pesca recreativa: a arte de observar a água com paciência*
+
+Ao entardecer na vila, entre a agitação de uma quadra de vôlei, uma cesta de basquete e um skate passando, alguém se senta tranquilo com uma vara de pescar à beira da água.
+
+Diferente dos esportes de velocidade, a pesca recreativa convida a desacelerar. Observar as ondulações da água, ouvir o vento e esperar com calma oferece à mente uma pausa rara na rotina cheia de telas.
+
+Um momento sereno diante da natureza ensina tanto quanto qualquer grande aventura.
+
 ---
 
 ## Estoicismo
@@ -3669,6 +5319,156 @@ Em um salão dourado entre colunas e um pergaminho antigo, uma coruja — símbo
 O filósofo Zenão gostava de lembrar uma frase curta e cheia de bom senso: "A natureza nos deu dois ouvidos e uma só boca para que ouçamos duas vezes mais do que falamos."
 
 Ouvir de verdade antes de responder talvez seja a chave mais simples para evitar mal-entendidos, aprender mais rápido e construir amizades sólidas.
+
+### 11. As quatro virtudes estoicas: uma bússola para as decisões diárias (`estoicismo-11`)
+
+- **Cena sugerida:** `estoicismo-11` · **Duração estimada:** ~60 s
+- **Elementos citados:** estati, balans, kouwòn lorye, flanbo
+- **Resumo:** Sabedoria, coragem, justiça e temperança explicadas com clareza através dos símbolos clássicos.
+
+#### 🇫🇷 Francês — *Les quatre vertus cardinales : la boussole morale des stoïciens*
+
+Près d'une statue de marbre, d'un flambeau et d'une couronne de laurier posée à côté de la balance de la justice, les stoïciens résumaient toute leur philosophie en quatre qualités essentielles.
+
+La première est la sagesse : savoir distinguer ce qui est vraiment bien de ce qui est inutile. La deuxième est le courage d'agir malgré la peur. La troisième, symbolisée par la balance, est la justice envers tous. La quatrième est la modération, c'est-à-dire savoir garder la mesure.
+
+Pour eux, pratiquer ces quatre vertus chaque jour suffit pour mener une vie digne et sereine.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kat gwo vèti yo : bousòl moral stoyisyen yo*
+
+Toupre yon estati mab, yon flanbo ak yon kouwòn lorye ki poze bò kote balans lajistis la, stoyisyen yo te rezime tout filozofi yo nan kat bèl kalite prensipal.
+
+Premye a se sajès : konnen ki sa ki bon toutbon ak sa ki pa gen enpòtans. Dezyèm nan se kouraj pou aji menm lè gen laperèz. Twazyèm nan, ki reprezante pa balans lan, se lajistis pou tout moun. Katriyèm nan se moderasyon, sa vle di konn mezire aksyon nou.
+
+Pou yo menm, pratike kat vèti sa yo chak jou sifi pou mennen yon lavi ki gen diyite ak lapè.
+
+#### 🇧🇷 Português (apoio) — *As quatro virtudes estoicas: uma bússola para as decisões diárias*
+
+Perto de uma estátua de mármore, uma tocha e uma coroa de louros ao lado da balança da justiça, os estoicos resumiam toda a sua filosofia em quatro qualidades fundamentais.
+
+A primeira é a sabedoria, para discernir o que realmente importa. A segunda é a coragem de agir apesar do medo. A terceira, representada pela balança, é a justiça no trato com os outros. A quarta é a temperança, ou seja, o equilíbrio nas escolhas.
+
+Para eles, praticar essas quatro virtudes no dia a dia basta para viver com dignidade e serenidade.
+
+### 12. Preparar-se com calma para imprevistos: uma prática antiga contra a ansiedade (`estoicismo-12`)
+
+- **Cena sugerida:** `estoicismo-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** tanp, sablye, pòtay, bist
+- **Resumo:** Como o exercício da 'premeditatio malorum' ajuda a encarar contratempos com serenidade.
+
+#### 🇫🇷 Francês — *Se préparer calmement aux imprévus : une astuce antique contre l'anxiété*
+
+Sous la lumière du matin, près d'un portail de fer, d'un temple grec, d'un buste et d'un sablier, les stoïciens pratiquaient un exercice surprenant : imaginer tranquillement les petits contretemps avant qu'ils n'arrivent.
+
+Marc Aurèle se disait chaque matin qu'il pourrait rencontrer des retards, de la pluie ou des personnes impatientes dans la journée. Loin d'être pessimiste, cette méthode enlève l'effet de surprise !
+
+Quand un imprévu survient vraiment, l'esprit reste calme comme devant un sablier, parce qu'il s'est déjà préparé à répondre avec patience et clarté.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Prepare tèt ou ak kalm pou move sipriz : yon teknik lontan kont strès*
+
+Anba limyè maten an, toupre yon pòtay fè, yon tanp grèk, yon bist ak yon sablye, stoyisyen yo te konn fè yon egzèsis etonan : imajine trankilman ti pwoblèm ki ka rive anvan menm yo rive.
+
+Mak Orèl te konn di tèt li chak maten li ka rankontre reta, lapli oswa moun ki pa gen pasyans nan jounen an. Olye sa fè l tris, metòd sa a retire sipriz la !
+
+Lè yon move kontretan rive toutbon, lespri a rete kalm tankou devan yon sablye, paske l te deja pare pou l reponn ak pasyans ak klète.
+
+#### 🇧🇷 Português (apoio) — *Preparar-se com calma para imprevistos: uma prática antiga contra a ansiedade*
+
+Sob a luz da manhã, perto de um portão de ferro, um templo grego, um busto e uma ampulheta, os estoicos praticavam um exercício curioso: imaginar com serenidade pequenos contratempos antes que acontecessem.
+
+Marco Aurélio lembrava a si mesmo ao acordar que poderia encontrar atrasos, chuva ou pessoas impacientes ao longo do dia. Longe de ser pessimismo, esse hábito reduz o susto diante dos problemas!
+
+Quando um imprevisto surge, a mente permanece serena porque já está pronta para responder com paciência e clareza.
+
+### 13. Por que escrever um diário ajuda a acalmar os pensamentos? (`estoicismo-13`)
+
+- **Cena sugerida:** `estoicismo-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** mirwa men, parchemen, lanp lwil, flanbo
+- **Resumo:** O poder terapêutico da escrita reflexiva em pergaminhos e cadernos desde Roma Antiga.
+
+#### 🇫🇷 Francês — *Pourquoi tenir un journal calme-t-il les pensées ?*
+
+À la lueur d'une lampe à huile et d'un flambeau, poser ses idées sur un parchemin comme face à un miroir à main était une habitude quotidienne chez les stoïciens.
+
+Les psychologues modernes confirment aujourd'hui ce que Sénèque et Épictète avaient déjà remarqué : quand une inquiétude tourne en boucle dans notre tête, elle paraît immense. Mais dès qu'on l'écrit en phrases simples, on prend du recul et l'on voit plus clairement les solutions possibles.
+
+Quelques lignes écrites chaque jour suffisent pour éclaircir l'esprit.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa ekri nan yon jounal pèsonèl kalme panse nou yo ?*
+
+Anba limyè yon lanp lwil ak yon flanbo, ekri lide ou sou yon parchemen tankou w ap gade nan yon ti mirwa men te yon abitid chak jou lakay stoyisyen yo.
+
+Sikològ modèn yo konfime jodi a sa Senèk ak Epiktèt te deja remake : lè yon enkyetid ap vire an won nan tèt nou, li parèt gwo anpil. Men kou ou ekri l an fraz senp sou papye, ou pran distans epi ou wè solisyon yo pi klè.
+
+Kèk ti liy ou ekri chak jou sifi pou mete klète nan lespri ou.
+
+#### 🇧🇷 Português (apoio) — *Por que escrever um diário ajuda a acalmar os pensamentos?*
+
+À luz de uma lamparina a óleo e de uma tocha, registrar pensamentos em um pergaminho como diante de um espelho de mão era prática diária entre os estoicos.
+
+A psicologia moderna confirma hoje o que Sêneca e Epicteto já observavam: quando uma preocupação fica girando apenas na cabeça, ela parece gigante. Ao colocá-la no papel em frases claras, ganhamos distanciamento e enxergamos soluções com mais lucidez.
+
+Algumas linhas por dia já ajudam a organizar e acalmar a mente.
+
+### 14. “Cidadãos do mundo”: a ideia estoica de fraternidade humana (`estoicismo-14`)
+
+- **Cena sugerida:** `estoicismo-15` · **Duração estimada:** ~60 s
+- **Elementos citados:** ròch ekilib, balans, kle, sablye
+- **Resumo:** O conceito de cosmopolitismo e cooperação mútua no pensamento de Marco Aurélio e Hierócles.
+
+#### 🇫🇷 Francês — *« Citoyens du monde » : la solidarité humaine dans le stoïcisme*
+
+Dans une pièce tranquille, près d'une clé ancienne, d'un sablier, d'une balance et de pierres empilées en équilibre, rappelons une idée stoïcienne très moderne : nous sommes tous faits pour coopérer.
+
+Le philosophe Diogène puis les stoïciens ont popularisé le mot « cosmopolite », qui signifie « citoyen du monde ». Selon eux, quelle que soit notre ville ou notre langue, nous appartenons à une même famille humaine, reliée comme les deux rangées de dents ou les deux mains d'un même corps.
+
+Aider son prochain est donc aussi naturel que l'équilibre des pierres qui se soutiennent l'une l'autre.
+
+#### 🇭🇹 Kreyòl Ayisyen — *« Sitwayen tout mond lan » : solidarite imen nan filozofi stoyisyen*
+
+Nan yon sal trankil, toupre yon vye kle, yon sablye, yon balans ak wòch ki anpile an ekilib, ann sonje yon bèl lide stoyisyen ki modèn anpil : nou tout fèt pou travay ansanm.
+
+Filozòf yo te popilarize mo « kosmopolit », ki vle di « sitwayen tout mond lan ». Selon yo, kèlkeswa vil nou oswa lang nou pale, nou tout fè pati yon sèl gwo fanmi imen, ki konekte tankou de men nan menm kò a.
+
+Ede pwochen nou se yon bagay ki natirèl menm jan ak wòch ki kenbe ekilib youn lòt.
+
+#### 🇧🇷 Português (apoio) — *“Cidadãos do mundo”: a ideia estoica de fraternidade humana*
+
+Em uma sala silenciosa, perto de uma chave antiga, uma ampulheta, uma balança e pedras equilibradas, vale lembrar uma ideia estoica muito atual: fomos feitos para cooperar.
+
+Os estoicos difundiram o conceito de "cosmopolita", que significa "cidadão do mundo". Segundo eles, independentemente do país ou do idioma, pertencemos a uma mesma comunidade humana e funcionamos melhor quando agimos juntos, como as duas mãos de um mesmo corpo.
+
+Apoiar o próximo é tão natural quanto o equilíbrio de pedras que se sustentam mutuamente.
+
+### 15. Musônio Rufo: o estoico que defendia educação igual para todos (`estoicismo-15`)
+
+- **Cena sugerida:** `estoicismo-16` · **Duração estimada:** ~60 s
+- **Elementos citados:** oliv, pòtay, estati, parchemen
+- **Resumo:** Uma curiosidade pouco conhecida sobre o mestre de Epicteto e sua visão igualitária na Antiguidade.
+
+#### 🇫🇷 Francês — *Musonius Rufus : le philosophe qui défendait l'éducation pour tous*
+
+Sous un soleil apaisant, près d'un olivier, d'une statue, d'un portail et d'un vieux parchemin, se cache l'histoire de Musonius Rufus, le professeur qui a formé le grand Épictète.
+
+À Rome, au premier siècle, alors que beaucoup limitaient les études supérieures aux hommes fortunés, Musonius Rufus affirmait haut et fort sur ses parchemins que les femmes devaient recevoir exactement la même éducation philosophique que les hommes !
+
+Pour lui, le sens de la justice, la réflexion et le courage appartiennent à chaque être humain, sans distinction.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Musonius Rufus : filozòf ki te defann edikasyon pou tout moun san eksepsyon*
+
+Anba yon bèl solèy kalm, toupre yon pye oliv, yon estati, yon pòtay ak yon vye parchemen, men istwa Musonius Rufus, pwofesè ki te fòme gran filozòf Epiktèt la.
+
+Nan Wòm, nan premye syèk la, pandan anpil moun te rezève gwo etid yo sèlman pou gason ki rich, Musonius Rufus te ekri klè sou parchemen l yo ke fanm yo dwe resevwa egzakteman menm edikasyon filozofi ak gason yo !
+
+Pou li menm, sans lajistis, refleksyon ak kouraj se byen tout moun san okenn diferans.
+
+#### 🇧🇷 Português (apoio) — *Musônio Rufo: o estoico que defendia educação igual para todos*
+
+Sob um sol sereno, perto de uma oliveira, uma estátua, um portão e um pergaminho antigo, encontra-se a história de Musônio Rufo, o mestre que ensinou o famoso Epicteto.
+
+Na Roma do século I, quando muitos restringiam os estudos avançados a homens ricos, Musônio Rufo defendia abertamente em seus textos que as mulheres deveriam receber exatamente a mesma formação filosófica que os homens!
+
+Para ele, a razão, o senso de justiça e a coragem pertencem igualmente a todo ser humano.
 
 ---
 
@@ -3974,6 +5774,156 @@ Ele é conhecido como a "Regra de Ouro": não faça aos outros o que não gostar
 
 Para além das diferenças culturais, esse princípio universal de respeito e compaixão é uma ponte sólida entre todas as pessoas.
 
+### 11. Por que os cânticos sagrados acompanham celebrações há milênios? (`religiao-11`)
+
+- **Cena sugerida:** `religiao-10` · **Duração estimada:** ~60 s
+- **Elementos citados:** legliz, kwa, kalis, kantik
+- **Resumo:** O papel da música e dos livros de cânticos na memória espiritual e na união comunitária.
+
+#### 🇫🇷 Francês — *Pourquoi les chants sacrés accompagnent-ils les cérémonies depuis des millénaires ?*
+
+Dans la lumière dorée du soir, près d'une église, d'une croix et d'un calice, un recueil de cantiques rappelle un fait fascinant : presque toutes les traditions religieuses du monde utilisent le chant !
+
+Pourquoi la musique occupe-t-elle une place si grande dans la spiritualité ? Parce qu'une mélodie grave les textes importants dans la mémoire beaucoup plus facilement que de longues phrases lues en silence, tout en unissant les voix d'une assemblée entière.
+
+Chanter ensemble transforme une prière individuelle en un élan partagé d'espérance.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa kantik sakre yo akonpaye seremoni yo depi plizyè milye ane ?*
+
+Nan bèl limyè dore aswè a, toupre yon legliz, yon kwa ak yon kalis, yon liv kantik fè nou sonje yon bèl verite : prèske tout tradisyon relijye nan mond lan sèvi ak chante !
+
+Poukisa mizik gen yon gwo plas konsa nan lavi espirityèl ? Paske yon bèl melodi grave pawòl enpòtan yo nan memwa moun pi fasil pase yon long diskou an silans, toutpandan li mete tout vwa nan asanble a ansanm.
+
+Chante ansanm transfòme yon lapriyè pèsonèl an yon gwo mouvman espwa tout moun pataje.
+
+#### 🇧🇷 Português (apoio) — *Por que os cânticos sagrados acompanham celebrações há milênios?*
+
+No entardecer dourado, perto de uma igreja, de uma cruz e de um cálice, um livro de cânticos lembra um fato marcante: quase todas as tradições religiosas do mundo usam o canto!
+
+Por que a música ocupa um lugar tão central na espiritualidade? Porque a melodia grava textos e ensinamentos na memória com muito mais facilidade do que leituras silenciosas, além de unir as vozes de toda a comunidade em um só ritmo.
+
+Cantar juntos transforma uma oração individual em esperança compartilhada.
+
+### 12. O silêncio e o toque do sino: a arte da pausa interior (`religiao-12`)
+
+- **Cena sugerida:** `religiao-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** lakwa chemen, kloch, pòtay legliz, chapèl
+- **Resumo:** O sentido do recolhimento diante de capelas, portais e cruzeiros de caminho.
+
+#### 🇫🇷 Francês — *Le silence et le son de la cloche : l'art de prendre une pause intérieure*
+
+Au coucher du soleil, devant une petite chapelle, un portail d'église et un calvaire au bord de la route, le tintement d'une cloche invite souvent les passants à marquer quelques secondes de silence.
+
+Dans de nombreuses traditions, passer d'un lieu bruyant à un espace de recueillement symbolisé par un portail aide à laisser de côté les soucis du jour. La cloche ne sert pas seulement à annoncer l'heure : son son clair marque le début d'un moment de paix et de gratitude.
+
+Même quelques instants de silence suffisent pour retrouver la sérénité.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Silans lan ak son kloch la : bèl atizay pran yon ti poz anndan kè nou*
+
+Lè solèy ap kouche, devan yon ti chapèl, yon pòtay legliz ak yon lakwa chemen bò wout la, son yon kloch souvan envite moun k ap pase yo pran kèk segonn silans.
+
+Nan anpil tradisyon, pase soti nan yon kote ki gen anpil bri pou antre nan yon espas lapriyè ede nou mete traka jounen an sou kote. Kloch la pa sèlman la pou di lè a : son klè li a anonse yon moman lapè ak rekonesans.
+
+Menm kèk ti segonn silans sifi pou kè a jwenn trankilite l ankò.
+
+#### 🇧🇷 Português (apoio) — *O silêncio e o toque do sino: a arte da pausa interior*
+
+Ao pôr do sol, diante de uma capela, de um portal de igreja e de um cruzeiro de caminho, o som de um sino costuma convidar quem passa a fazer alguns segundos de silêncio.
+
+Em muitas tradições, atravessar um portal rumo a um espaço de recolhimento simboliza deixar para trás a agitação do dia. O sino não marca apenas as horas: seu timbre claro abre um instante de paz e gratidão.
+
+Mesmo poucos momentos de silêncio ajudam a reencontrar serenidade interior.
+
+### 13. As igrejas históricas do Haiti: fé, memória e força comunitária (`religiao-13`)
+
+- **Cena sugerida:** `religiao-14` · **Duração estimada:** ~65 s
+- **Elementos citados:** klòchè, kantik, chapèl, òg
+- **Resumo:** A importância histórica e afetiva de templos e capelas haitianas, como em Cabo Haitiano e Porto Príncipe.
+
+#### 🇫🇷 Francês — *Les églises historiques d'Haïti : mémoire, foi et solidarité communautaire*
+
+À l'aube calme, quand le clocher se découpe dans le ciel au-dessus d'une chapelle où résonnent l'orgue et les cantiques, rappelons la place profonde des églises historiques dans la mémoire haïtienne.
+
+De la cathédrale du Cap-Haïtien à l'église historique de Milot ou aux chapelles rurales bâties pierre par pierre par les habitants, ces édifices ont traversé les siècles comme des lieux de prière, d'école et d'entraide.
+
+Même après les épreuves et les tempêtes, les communautés se mobilisent toujours ensemble pour relever leurs clochers et préserver ce patrimoine vivant.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Gran legliz istorik ann Ayiti : memwa, lafwa ak solidarite kominote a*
+
+Granmaten nan kalm lan, lè klòchè a kanpe byen wo anlè yon chapèl kote òg la ak kantik yo ap sonnen, ann sonje gwo plas legliz istorik yo genyen nan memwa peyi Ayiti.
+
+Depi katedral Okap la rive nan legliz istorik Milo a oswa ti chapèl kanpay moun yo te bati wòch pa wòch, batiman sa yo travèse syèk yo kòm kote lapriyè, lekòl ak solidarite.
+
+Menm apre gwo eprèv ak siklòn yo, kominote yo toujou mete men ansanm pou leve klòchè yo ankò epi pwoteje bèl eritaj vivan sa a.
+
+#### 🇧🇷 Português (apoio) — *As igrejas históricas do Haiti: fé, memória e força comunitária*
+
+Em um amanhecer calmo, quando o campanário se destaca no céu acima de uma capela onde soam o órgão e os cânticos, lembramos a importância das igrejas históricas no Haiti.
+
+Da catedral de Cabo Haitiano à igreja de Milot e às pequenas capelas rurais erguidas pedra por pedra pelos moradores, esses espaços atravessaram séculos como pontos de fé, ensino e apoio mútuo.
+
+Mesmo após grandes desafios e tempestades, as comunidades se unem para reconstruir seus templos e preservar essa memória viva.
+
+### 14. A água nas tradições espirituais: um símbolo universal de renovação (`religiao-14`)
+
+- **Cena sugerida:** `religiao-15` · **Duração estimada:** ~60 s
+- **Elementos citados:** bib, bouji, chaple, basen batèm
+- **Resumo:** Por que a água — representada na pia batismal e nos rituais — simboliza vida e purificação.
+
+#### 🇫🇷 Francês — *L'eau dans les traditions spirituelles : un symbole universel de renouveau*
+
+Dans le calme du soir, près d'une Bible, d'un chapelet, de bougies allumées et d'une cuve baptismale, l'eau apparaît comme l'un des symboles les plus anciens de la spiritualité humaine.
+
+Dans le christianisme avec le baptême, dans le judaïsme, l'islam, l'hindouisme et de nombreuses traditions africaines et caribéennes, l'eau pure représente la vie nouvelle, le pardon et le soin intérieur.
+
+Sans eau, aucune plante ne pousse ; de la même manière, ces rites rappellent le désir humain de repartir avec un cœur apaisé et renouvelé.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Dlo nan tradisyon espirityèl yo : yon senbòl inivèsèl pou nouvo kòmansman*
+
+Nan kalm aswè a, toupre yon Bib, yon chaple, bouji ki limen ak yon basen batèm, dlo a parèt kòm yonn nan pi ansyen senbòl nan lavi espirityèl lèzòm.
+
+Nan relijyon kretyèn nan ak batèm, nan jidayis, nan islam, nan endouyis ak nan anpil tradisyon afriken ak karayibeyen, dlo pwòp reprezante nouvo lavi, padon ak lapè anndan kè nou.
+
+San dlo, okenn plant pa pouse ; menm jan an tou, jès sakre sa yo fè nou sonje anvi tout moun genyen pou kòmanse chak etap ak yon kè pwòp.
+
+#### 🇧🇷 Português (apoio) — *A água nas tradições espirituais: um símbolo universal de renovação*
+
+Na tranquilidade da noite, perto de uma Bíblia, um terço, velas acesas e uma pia batismal, a água surge como um dos símbolos mais antigos da espiritualidade humana.
+
+No cristianismo com o batismo, no judaísmo, no islamismo, no hinduísmo e em diversas tradições africanas e caribenhas, a água límpida representa vida nova, purificação e recomeço.
+
+Assim como nenhuma semente brota sem água, esses ritos lembram o desejo de renovar o coração e seguir em paz.
+
+### 15. A hospitalidade sagrada: acolher o viajante como convidado de honra (`religiao-15`)
+
+- **Cena sugerida:** `religiao-16` · **Duração estimada:** ~60 s
+- **Elementos citados:** kandelab, pijon, lakwa chemen, zanj
+- **Resumo:** Um valor compartilhado por diversas religiões: estender a mão, oferecer abrigo e paz.
+
+#### 🇫🇷 Francês — *L'hospitalité sacrée : accueillir l'étranger comme un invité d'honneur*
+
+Au crépuscule dans le village, près d'un candélabre lumineux, d'une colombe blanche et d'une statue d'ange au bord d'un calvaire, une tradition millénaire unit presque toutes les religions : l'hospitalité sacrée.
+
+Dans les textes bibliques comme dans les traditions de Méditerranée, d'Afrique, d'Orient et des Caraïbes, accueillir le voyageur fatigué et partager un repas avec celui qui passe est considéré comme un geste sacré !
+
+En Haïti comme au Brésil, ouvrir sa porte avec chaleur reste l'une des plus belles expressions vivantes de la foi et de l'humanité.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Akèy sakre a : resevwa etranje a tankou yon envite donè*
+
+Lè solèy ap kouche nan vilaj la, toupre yon kandelab klere, yon pijon blan ak yon estati zanj bò yon lakwa chemen, yon gran tradisyon ki gen plizyè milye ane ini prèske tout relijyon yo : akèy sakre a.
+
+Nan tèks biblik yo tankou nan tradisyon bò lanmè Mediterane, ann Afrik, ann Oryan ak nan Karayib la, resevwa vwayajè ki fatige a epi pataje yon pla manje ak moun k ap pase a se yon jès ki sakre anpil !
+
+Ann Ayiti tankou nan peyi Brezil, louvri pòt lakay ou ak chalè rete yonn nan pi bèl fason pou viv lafwa ak limanite.
+
+#### 🇧🇷 Português (apoio) — *A hospitalidade sagrada: acolher o viajante como convidado de honra*
+
+Ao entardecer na vila, perto de um candelabro iluminado, uma pomba branca e uma estátua de anjo junto a um cruzeiro de caminho, uma tradição milenar une quase todas as religiões: a hospitalidade sagrada.
+
+Tanto nos textos bíblicos quanto em tradições do Mediterrâneo, da África, do Oriente e do Caribe, acolher o viajante cansado e repartir a refeição com quem chega é visto como dever de amor e respeito!
+
+No Haiti e no Brasil, abrir a porta com calor humano segue sendo uma das expressões mais bonitas da fé e da fraternidade.
+
 ---
 
 ## Gastronomia
@@ -4271,6 +6221,150 @@ Kontrèman ak ti fig dous moun manje kri pou desè, bannann vèt la gen anpil la
 Ao ar livre, ao lado de uma garrafa de leite, uma cabaça e um abacaxi, um prato de "bannann peze" douradas lembra um dos ingredientes mais versáteis das cozinhas tropicais.
 
 Diferente das bananas doces consumidas cruas na sobremesa, a banana-da-terra verde é rica em amido. Ela é cortada em rodelas, frita uma primeira vez, amassada suavemente — daí o nome "peze", apertada, em kreyòl — e dourada novamente para ficar crocante por fora e macia por dentro!
+
+### 11. O segredo do “griot” haitiano: por que os cítricos deixam a carne tão macia? (`gastronomia-11`)
+
+- **Cena sugerida:** `gastronomia-11` · **Duração estimada:** ~60 s
+- **Elementos citados:** chokola, kiyè bwa, diri ak pwa, griyo
+- **Resumo:** A ciência por trás da marinada cítrica tradicional que acompanha arroz com feijão.
+
+#### 🇫🇷 Francês — *Le secret du « griyo » haïtien : pourquoi les agrumes attendrissent la viande ?*
+
+Sous les arches d'une belle salle, entre du chocolat chaud, une cuillère en bois et une grande assiette de riz aux haricots « diri ak pwa », le griot haïtien — « griyo » — attire toujours les gourmands par sa croûte dorée et son intérieur fondant.
+
+Son secret vient d'une longue marinade à l'orange amère, au citron vert, à l'ail et aux herbes ! L'acidité naturelle des agrumes détend doucement les fibres de la viande avant la cuisson lente et le passage rapide à la poêle.
+
+C'est la chimie gourmande au service d'un grand classique populaire.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Sekrè griyo ayisyen an : poukisa sitwon ak zoranj si fè vyann vin tann ?*
+
+Anba gwo vout yon bèl sal, ant yon tas chokola cho, yon kiyè bwa ak yon bon plat diri ak pwa, griyo ayisyen an toujou rale tout moun paske l kwòkan deyò epi l mou anndan.
+
+Sekrè l la soti nan jan yo tranpe vyann nan lontan nan zoranj si, sitwon, lay ak bon ti epis ! Asid natirèl ki nan fwi sa yo fè vyann nan vin tann tou dousman anvan yo bouyi l epi yo fri l pou l dore.
+
+Se bèl syans nan kuizin ki kreye yonn nan pi gwo klasik peyi a.
+
+#### 🇧🇷 Português (apoio) — *O segredo do “griot” haitiano: por que os cítricos deixam a carne tão macia?*
+
+Em um salão de arcos, entre chocolate quente, uma colher de pau e um belo prato de arroz com feijão ("diri ak pwa"), o famoso griot haitiano — "griyo" — conquista pelo exterior dourado e interior macio.
+
+O segredo está na marinada com laranja-azeda, limão, alho e ervas! A acidez natural dos cítricos amacia suavemente as fibras antes do cozimento lento e da fritura final até dourar.
+
+É a química culinária trabalhando a favor de um grande clássico popular.
+
+### 12. Os bolinhos “akra”: como uma raiz vira um petisco crocante nas ruas do Haiti (`gastronomia-12`)
+
+- **Cena sugerida:** `gastronomia-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** akra, ze, kafe, kouto ak fouchèt
+- **Resumo:** Conheça o akra de malanga, servido quentinho ao lado de café e ovos no cotidiano haitiano.
+
+#### 🇫🇷 Francês — *Les « akra » dorés : comment une racine devient un beignet croustillant*
+
+Sur une place ensoleillée, près des œufs frais, des couverts et d'une tasse de café parfumé, une assiette de beignets appelés « akra » fait le bonheur des passants en Haïti.
+
+Contrairement à d'autres beignets préparés avec de la farine de blé, l'akra est fait à partir de malanga — une racine tropicale proche du taro — finement râpée puis assaisonnée d'ail, de persil et de piment doux ou fort.
+
+À la friture, l'amidon naturel de la racine forme une croûte légère et dorée irrésistible dès la première bouchée.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Bon ti akra dore yo : kijan yon rasin tounen yon ti gato kwòkan*
+
+Sou yon plas ki gen solèy, toupre ze fre, kouto ak fouchèt ak yon tas kafe santi bon, yon asyèt akra cho toujou fè tout moun kontan ann Ayiti.
+
+Kontrèman ak lòt gato ki fèt ak farin ble, akra fèt ak malanga — yon bon rasin twopikal — yo graje byen fen epi yo melanje l ak lay, pèsi ak ti piman.
+
+Lè yo fri l, lanmidon natirèl ki nan rasin lan fè l tounen yon ti gato lejè e byen dore ki kwòkan depi premye mòde a.
+
+#### 🇧🇷 Português (apoio) — *Os bolinhos “akra”: como uma raiz vira um petisco crocante nas ruas do Haiti*
+
+Em uma praça ensolarada, perto de ovos frescos, talheres e uma xícara de café perfumado, um prato de bolinhos chamados "akra" faz sucesso pelas ruas do Haiti.
+
+Diferente de bolinhos feitos com farinha de trigo, o akra é preparado com malanga — uma raiz tropical parecida com o inhame ou a taioba — ralada bem fina e temperada com alho, salsa e pimenta.
+
+Ao fritar, o amido natural da raiz forma uma casquinha dourada, leve e crocante irresistível.
+
+### 13. O pão da manhã: por que a casca fica dourada e tão perfumada? (`gastronomia-13`)
+
+- **Cena sugerida:** `gastronomia-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** recho, ji, pen, marmit
+- **Resumo:** A reação de Maillard que transforma massa simples em pão crocante junto ao suco e à panela.
+
+#### 🇫🇷 Francês — *Le pain du matin : comment la croûte devient-elle dorée et parfumée ?*
+
+Dans une cuisine lumineuse, à côté d'une marmite, d'un verre de jus frais et d'un réchaud, l'odeur du pain chaud du matin réveille immédiatement l'appétit.
+
+Mais savez-vous pourquoi la croûte du pain devient brune et croustillante à la cuisson alors que la pâte était toute blanche ? À haute température, les sucres naturels et les protéines de la farine réagissent ensemble : c'est la célèbre « réaction de Maillard », qui crée à la fois la couleur dorée et des centaines d'arômes délicieux !
+
+#### 🇭🇹 Kreyòl Ayisyen — *Pen maten an : kijan kwout pen an fè vin dore epi santi bon konsa ?*
+
+Nan yon kuizin ki klere, bò kote yon marmit, yon bon vè ji fre ak yon recho, bon odè pen cho maten an reveye apeti nou touswit.
+
+Men, èske ou konnen poukisa kwout pen an vin mawon epi l santi bon nan fou a alòske pat la te blan nèt ? Lè chalè a wo, ti sik natirèl yo ak pwoteyin ki nan farin nan reyaji ansanm : se sa syantifik yo rele « reyaksyon Maillard », ki bay ni koulè dore a ni tout bon odè nou renmen an !
+
+#### 🇧🇷 Português (apoio) — *O pão da manhã: por que a casca fica dourada e tão perfumada?*
+
+Em uma cozinha clara, ao lado de uma panela de ferro, de um copo de suco fresco e do fogareiro, o cheiro de pão quentinho pela manhã desperta o apetite na hora.
+
+Mas você sabe por que a casca do pão fica dourada e crocante se a massa era branquinha? Em altas temperaturas, os açúcares e proteínas da farinha se combinam na famosa "reação de Maillard", responsável tanto pela cor dourada quanto pelo aroma irresistível!
+
+### 14. A “labouyi bannann”: um mingau matinal cheio de energia e especiarias (`gastronomia-14`)
+
+- **Cena sugerida:** `gastronomia-14` · **Duração estimada:** ~60 s
+- **Elementos citados:** labouyi, planch, fig, kalbas
+- **Resumo:** A tradição dos mingaus aromáticos de banana, canela e noz-moscada na mesa caribenha.
+
+#### 🇫🇷 Francês — *La « labouyi bannann » : un petit-déjeuner chaud plein d'énergie et d'épices*
+
+Dans un champ fleuri, près d'une calebasse, d'une planche à découper et de bananes mûres, un bol fumant de bouillie « labouyi » rappelle les matins doux des foyers haïtiens.
+
+Préparée avec de la banane plantain verte mixée ou de la farine de maïs, du lait, de la cannelle, de l'anis étoilé et un zeste de citron vert, cette bouillie veloutée donne de l'énergie pour toute la matinée.
+
+Chaque famille garde sa propre touche d'épices, transmise avec tendresse de génération en génération.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Labouyi bannann : yon bèl manje maten cho ki plen fòs ak bon epis*
+
+Nan yon bèl jaden ki gen flè, toupre yon kalbas, yon planch ak yon rejim fig mi, yon bòl labouyi cho fè nou sonje dousè maten lakay ann Ayiti.
+
+Yo prepare bèl labouyi sa a ak bannann vèt oswa farin mayi, lèt, kanèl, anis etwale ak yon ti po sitwon vèt : li bay tout kò a fòs ak chalè pou tout maten an.
+
+Chak fanmi gen pwòp ti sekrè epis pa yo, ki pase ak anpil lanmou de granmoun rive nan timoun.
+
+#### 🇧🇷 Português (apoio) — *A “labouyi bannann”: um mingau matinal cheio de energia e especiarias*
+
+Em um campo florido, perto de uma cabaça, da tábua de cortar e de bananas maduras, uma tigela fumegante de mingau ("labouyi") lembra as manhãs acolhedoras das casas haitianas.
+
+Preparado com banana-da-terra verde batida ou farinha de milho, leite, canela, anis-estrelado e raspas de limão, esse creme aveludado fornece energia para toda a manhã.
+
+Cada família guarda seu toque especial de especiarias, passado com carinho de geração em geração.
+
+### 15. Por que as especiarias tropicais valiam tanto antes da geladeira? (`gastronomia-15`)
+
+- **Cena sugerida:** `gastronomia-15` · **Duração estimada:** ~60 s
+- **Elementos citados:** lèt, pen, fig, griyo
+- **Resumo:** Como cravo, canela e pimentas ajudavam a conservar alimentos e criaram receitas únicas.
+
+#### 🇫🇷 Francês — *Pourquoi les épices tropicales étaient-elles si précieuses avant le réfrigérateur ?*
+
+À côté du pain frais, du lait, des bananes douces et du griot doré, les épices — comme la cannelle, le clou de girofle et le piment — donnent aujourd'hui leur âme à nos recettes.
+
+Mais il y a plusieurs siècles, avant l'invention du réfrigérateur, ces épices avaient une mission encore plus vitale ! Leurs huiles naturelles ralentissent naturellement le développement des bactéries et aident à conserver les aliments plus longtemps dans les climats chauds.
+
+Voilà pourquoi elles étaient si recherchées dans le monde entier et restent reines de nos cuisines.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa epis twopikal yo te tèlman gen valè anvan te gen frijidè ?*
+
+Bò kote pen fre, lèt, fig mi ak griyo byen dore, epis yo — tankou kanèl, jiwòf ak piman — bay manje nou yo tout bon gou yo jodi a.
+
+Men plizyè syèk de sa, anvan frijidè te egziste, epis sa yo te gen yon wòl ki pi enpòtan toujou ! Lwil natirèl ki ladan yo ralanti mikwòb yo natirèlman epi yo te ede konsève manje pi lontan nan peyi ki fè cho.
+
+Se poutèt sa yo te chèche epis toupatou sou latè e yo toujou wa nan kuizin nou yo.
+
+#### 🇧🇷 Português (apoio) — *Por que as especiarias tropicais valiam tanto antes da geladeira?*
+
+Ao lado do pão fresco, do leite, das bananas maduras e do griot dourado, especiarias como canela, cravo e pimentas dão alma às receitas de hoje.
+
+Mas há alguns séculos, antes da invenção da geladeira, esses temperos tinham uma missão ainda mais importante! Seus óleos naturais ajudam a retardar microrganismos e conservar alimentos por mais tempo em climas quentes.
+
+É por isso que eram tão valiosas no comércio mundial e seguem essenciais nas cozinhas tropicais.
 
 ---
 
@@ -4575,3 +6669,153 @@ Diante de um livro aberto, uma régua, fones de ouvido e balões de conversa, mu
 A resposta dos poliglotas é animadora: não espere a perfeição para dizer suas primeiras frases! Com algumas centenas de palavras do cotidiano, você já consegue cumprimentar, fazer perguntas e contar uma pequena história.
 
 Cada pequeno erro é sinal de prática. Por isso, comece a conversar hoje mesmo!
+
+### 11. Por que a ortografia do crioulo haitiano é tão lógica e fonética? (`idiomas-11`)
+
+- **Cena sugerida:** `idiomas-11` · **Duração estimada:** ~65 s
+- **Elementos citados:** kib alfabè, kreyon, tablo nwa, alfabè
+- **Resumo:** A regra de ouro da escrita oficial do kreyòl (1979): cada som tem sempre a mesma grafia.
+
+#### 🇫🇷 Francês — *Pourquoi l'orthographe du kreyòl ayisyen est-elle si logique et fidèle aux sons ?*
+
+Devant le tableau noir, l'affiche de l'alphabet, les cubes de lettres et un crayon prêt à écrire, voici une bonne nouvelle pour ceux qui apprennent le kreyòl ayisyen : son orthographe officielle est d'une logique remarquable !
+
+Adopté officiellement à la fin des années mille neuf cent soixante-dix, l'alphabet du kreyòl suit un principe simple : un son correspond toujours au même signe, et chaque lettre écrite se prononce ! Il n'y a aucune lettre muette à la fin des mots.
+
+Dès que vous connaissez les sons de base comme « ou », « ch » ou « è », vous pouvez lire presque n'importe quel texte en kreyòl dès le premier jour.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Poukisa òtograf kreyòl ayisyen an tèlman lojik epi fasil pou li ?*
+
+Devan tablo nwa a, afich alfabè a, kib alfabè yo ak yon kreyon ki pare pou ekri, men yon bèl nouvèl pou moun k ap aprann kreyòl ayisyen : òtograf ofisyèl li a gen yon lojik ki klè anpil !
+
+Alfabè kreyòl la, yo te adopte ofisyèlman nan fen ane mil nèf san swasanndisnèf, suiv yon prensip senp : yon sèl son ekri menm jan tout tan, epi chak lèt ki ekri pwononse ! Pa gen okenn lèt bèbè nan fen mo yo.
+
+Kou ou fin konnen son debaz yo tankou « ou », « ch » oswa « è », ou deja ka li prèske tout tèks an kreyòl depi premye jou a.
+
+#### 🇧🇷 Português (apoio) — *Por que a ortografia do crioulo haitiano é tão lógica e fonética?*
+
+Diante do quadro-negro, do cartaz do alfabeto, dos cubos de letras e de um lápis na mão, vai uma ótima notícia para quem estuda crioulo haitiano: sua ortografia oficial é extremamente lógica!
+
+Oficializado no fim da década de 1970, o alfabeto do kreyòl segue um princípio claro: cada som é representado sempre da mesma forma, e toda letra escrita é pronunciada! Não existem letras mudas no final das palavras.
+
+Assim que você aprende sons como "ou", "ch" ou "è", já consegue ler praticamente qualquer texto em kreyòl desde o primeiro dia.
+
+### 12. Como nascem as palavras novas em um idioma vivo? (`idiomas-12`)
+
+- **Cena sugerida:** `idiomas-12` · **Duração estimada:** ~60 s
+- **Elementos citados:** etajè liv, gonm, revèy, plim ak lank
+- **Resumo:** A evolução natural das línguas através de metáforas, empréstimos e novas tecnologias.
+
+#### 🇫🇷 Francês — *Comment naissent les nouveaux mots dans un dictionnaire vivant ?*
+
+Entre une étagère de livres, une horloge, une plume et une gomme, les langues ne restent jamais figées : elles grandissent avec ceux qui les parlent !
+
+Chaque année, de nouveaux mots apparaissent pour nommer de nouvelles réalités. Parfois, on emprunte un mot à une langue voisine ; parfois, on combine deux mots anciens ou l'on donne un sens nouveau à une image du quotidien, comme la « souris » de l'ordinateur ou le « tap-tap » en Haïti.
+
+Un dictionnaire n'est donc pas un musée poussiéreux, mais le portrait vivant de notre imagination.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Kijan nouvo mo yo pran nesans nan yon lang ki vivan ?*
+
+Ant yon etajè liv, yon revèy, plim ak lank ak yon gonm, lang yo pa janm rete bloke anplas : yo grandi ansanm ak moun k ap pale yo !
+
+Chak ane, nouvo mo parèt pou bay nouvo reyalite non yo. Pafwa, yon lang prete yon mo nan yon lòt lang vwazen ; pafwa, li kole de ansyen mo ansanm oswa li bay yon bèl imaj chak jou yon nouvo sans, tankou « sourit » òdinatè oswa « tap-tap » ann Ayiti.
+
+Kidonk, yon diksyonè pa yon vye mize ki fèmen, men yon pòtrè vivan imajinasyon nou.
+
+#### 🇧🇷 Português (apoio) — *Como nascem as palavras novas em um idioma vivo?*
+
+Entre uma estante de livros, um relógio de parede, pena e tinteiro e uma borracha, os idiomas nunca ficam parados: eles crescem com quem os fala!
+
+Todos os anos surgem palavras novas para nomear invenções e costumes. Às vezes, o idioma adapta um termo vizinho; outras vezes, combina palavras antigas ou dá novo sentido a imagens do cotidiano, como o "mouse" do computador ou o "tap-tap" no Haiti.
+
+Por isso, o dicionário não é um museu parado, mas um retrato vivo da criatividade humana.
+
+### 13. Ao nascer, o ouvido humano distingue sons de qualquer idioma do mundo (`idiomas-13`)
+
+- **Cena sugerida:** `idiomas-13` · **Duração estimada:** ~60 s
+- **Elementos citados:** kat vokabilè, ekouteur, tablo nwa, kaye
+- **Resumo:** Como o cérebro se especializa na infância e como podemos reativar essa escuta com prática.
+
+#### 🇫🇷 Francês — *À la naissance, l'oreille humaine peut distinguer les sons de toutes les langues*
+
+Avec des écouteurs, un cahier, des cartes de vocabulaire et un tableau noir, voici un fait fascinant découvert par les chercheurs sur le langage !
+
+À la naissance, les bébés sont de véritables citoyens universels : leur oreille distingue facilement tous les sons des sept mille langues du monde. Vers l'âge d'un an, le cerveau se spécialise naturellement dans les sons entendus à la maison.
+
+Mais cette capacité ne disparaît pas ! En écoutant régulièrement du français ou du kreyòl avec des écouteurs et en répétant à voix haute, l'adulte réveille cette souplesse auditive.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Lè yon timoun fèk fèt, zòrèy li ka tande son tout lang sou latè*
+
+Avèk ekouteur, yon kaye, kat vokabilè ak yon tablo nwa, men yon bèl dekouvèt chèchè yo fè sou langaj !
+
+Lè yon ti bebe fèk fèt, li se yon vrè sitwayen tout mond lan : zòrèy li ka rekonèt fasilman tout son ki nan sèt mil lang sou latè. Bò yon an, sèvo a espesyalize l natirèlman nan son li tande lakay li yo.
+
+Men kapasite sa a pa janm disparèt nèt ! Lè yon granmoun koute franse oswa kreyòl souvan ak ekouteur epi l repete byen fò, li reveye bèl souplès zòrèy sa a.
+
+#### 🇧🇷 Português (apoio) — *Ao nascer, o ouvido humano distingue sons de qualquer idioma do mundo*
+
+Com fones de ouvido, um caderno, cartões de vocabulário e um quadro-negro, vale conhecer uma descoberta incrível da ciência sobre a linguagem!
+
+Ao nascer, os bebês conseguem distinguir facilmente todos os sons de qualquer idioma do mundo. Por volta de um ano de idade, o cérebro se especializa nos sons ouvidos em casa para ganhar agilidade.
+
+Mas essa habilidade pode ser despertada de novo! Ao ouvir francês ou kreyòl com atenção nos fones e repetir em voz alta, o adulto treina o ouvido para novos sons.
+
+### 14. As pontes surpreendentes entre o português, o francês e o crioulo haitiano (`idiomas-14`)
+
+- **Cena sugerida:** `idiomas-15` · **Duração estimada:** ~60 s
+- **Elementos citados:** kreyon, drapo, etajè liv, règ
+- **Resumo:** Palavras irmãs que facilitam para falantes de português aprenderem francês e kreyòl.
+
+#### 🇫🇷 Francês — *Les ponts surprenants entre le portugais, le français et le kreyòl ayisyen*
+
+Sur une étagère de livres ornée de drapeaux de différents pays, avec un crayon et une règle pour souligner les ressemblances, apprendre le français et le kreyòl quand on parle portugais réserve de belles surprises !
+
+Parce que le portugais et le français partagent des racines latines communes — et que le kreyòl ayisyen a transformé de nombreux mots français — des centaines de mots sont de véritables cousins : « muzika / mizik / musique », « istoria / istwa / histoire » ou encore « fanmi / família / famille ».
+
+Ces ponts donnent tout de suite confiance dès les premières lectures.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Bèl pon ki genyen ant pòtigè, franse ak kreyòl ayisyen*
+
+Sou yon etajè liv ki gen drapo plizyè peyi, avèk yon kreyon ak yon règ pou souliye mo ki sanble yo, aprann franse ak kreyòl lè ou deja pale pòtigè pote bèl sipriz !
+
+Paske pòtigè ak franse pataje menm rasin laten an — epi kreyòl ayisyen an transfòme anpil mo franse — plizyè santèn mo se vrè kouzen : « família / fanmi / famille », « música / mizik / musique » oswa « história / istwa / histoire ».
+
+Bèl pon sa yo bay elèv la konfyans touswit depi premye lekti yo.
+
+#### 🇧🇷 Português (apoio) — *As pontes surpreendentes entre o português, o francês e o crioulo haitiano*
+
+Em uma estante de livros enfeitada com bandeiras de países, com lápis e régua para marcar semelhanças, aprender francês e crioulo haitiano a partir do português reserva ótimas surpresas!
+
+Como o português e o francês compartilham raízes latinas — e o kreyòl dialoga historicamente com o francês — centenas de palavras são parentes próximas: "família / fanmi / famille", "música / mizik / musique" e "história / istwa / histoire".
+
+Essas pontes aceleram a compreensão logo nas primeiras leituras.
+
+### 15. Contar pequenas histórias no novo idioma fixa o vocabulário na memória (`idiomas-15`)
+
+- **Cena sugerida:** `idiomas-16` · **Duração estimada:** ~60 s
+- **Elementos citados:** lanp biwo, bul diskisyon, kat vokabilè, mikwo
+- **Resumo:** Por que o contexto emocional das curiosidades funciona melhor do que listas isoladas.
+
+#### 🇫🇷 Francês — *Raconter une petite histoire dans la nouvelle langue fixe mieux les mots*
+
+Sous une lampe de bureau, devant des cartes de vocabulaire, un microphone et des bulles de dialogue, pourquoi retient-on bien mieux un mot découvert dans une histoire que dans une liste froide ?
+
+Parce que notre mémoire fonctionne par associations ! Quand un mot en kreyòl ou en français est relié à une image vivante, à une curiosité étonnante ou à une émotion, le cerveau crée plusieurs chemins pour le retrouver.
+
+C'est exactement le secret de ces petites curiosités audio : apprendre chaque jour avec plaisir, curiosité et imagination.
+
+#### 🇭🇹 Kreyòl Ayisyen — *Rakonte yon ti istwa nan nouvo lang lan fè nou sonje mo yo pi lontan*
+
+Anba yon lanp biwo, devan kat vokabilè, yon mikwo ak bil diskisyon yo, poukisa nou sonje yon mo nou dekouvri nan yon ti istwa pi byen lontan pase yon mo nan yon lis sèk ?
+
+Paske memwa nou travay ak asosyasyon ! Lè yon mo an kreyòl oswa an franse mare ak yon bèl imaj, yon istwa enteresan oswa yon ti emosyon, sèvo a kreye plizyè chemen pou l jwenn li pi vit.
+
+Se egzakteman sekrè ti istwa odyo sa yo : aprann chak jou ak plezi, kiryozite ak imajinasyon.
+
+#### 🇧🇷 Português (apoio) — *Contar pequenas histórias no novo idioma fixa o vocabulário na memória*
+
+Sob uma luminária de mesa, diante de cartões de vocabulário, de um microfone e de balões de diálogo, por que lembramos muito mais de uma palavra aprendida dentro de uma história do que em uma lista solta?
+
+Porque a memória funciona por associações! Quando uma palavra em kreyòl ou francês se conecta a uma cena visual, a uma curiosidade marcante ou a uma emoção, o cérebro cria vários caminhos para recuperá-la.
+
+É justamente esse o segredo de ouvir pequenas curiosidades todos os dias: aprender com prazer e contexto.

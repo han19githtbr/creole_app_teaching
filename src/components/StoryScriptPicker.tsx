@@ -101,7 +101,7 @@ export function StoryScriptPicker({ language, activeTheme, onApplyMetadata }: St
               Banco de roteiros prontos para gravar ({STORY_CONTENT_BANK.length} conteúdos)
             </p>
             <p className="text-xs text-[var(--text-muted)]">
-              10 curiosidades por tema em Francês e Kreyòl (com apoio em Português), dimensionadas para até 2 minutos de áudio.
+              15 curiosidades por tema em Francês e Kreyòl (com apoio em Português), dimensionadas para até 2 minutos de áudio.
             </p>
           </div>
         </div>

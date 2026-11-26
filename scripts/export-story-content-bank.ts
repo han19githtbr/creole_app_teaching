@@ -45,8 +45,8 @@ for (const item of STORY_CONTENT_BANK) {
 
 for (const theme of new Set(IMAGE_THEMES)) {
   const count = countsByTheme.get(theme) ?? 0;
-  if (count !== 10) {
-    errors.push(`Tema "${theme}" tem ${count} conteúdos (esperado: 10)`);
+  if (count !== 15) {
+    errors.push(`Tema "${theme}" tem ${count} conteúdos (esperado: 15)`);
   }
 }
 
@@ -59,7 +59,7 @@ const uniqueThemes = Array.from(new Set(IMAGE_THEMES));
 const lines: string[] = [
   "# Banco de Conteúdos — Seção de Curiosidades",
   "",
-  `Total de temas: **${uniqueThemes.length}** · Total de roteiros: **${STORY_CONTENT_BANK.length}** (10 por tema)`,
+  `Total de temas: **${uniqueThemes.length}** · Total de roteiros: **${STORY_CONTENT_BANK.length}** (15 por tema)`,
   "",
   "Cada roteiro foi estruturado em parágrafos curtos e naturais para gravações de **até ~2 minutos** (média de 60 a 70 segundos), reunindo curiosidades culturais/gerais e os elementos das cenas de `src/lib/imageBank.ts` para ativar as animações do player.",
   "",
@@ -71,7 +71,8 @@ const lines: string[] = [
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-");
-    return `${idx + 1}. [${t}](#${anchor}) (10 conteúdos)`;
+    const themeCount = countsByTheme.get(t) ?? 0;
+    return `${idx + 1}. [${t}](#${anchor}) (${themeCount} conteúdos)`;
   }),
   "",
 ];

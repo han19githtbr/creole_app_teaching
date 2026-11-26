@@ -282,6 +282,146 @@ Naquela época, o petróleo acabou ficando mais barato e fácil de transportar. 
 
 Dentro do carro, ouvimos o rádio sem o barulho do motor, enquanto engenheiros testam novos modelos usando óculos de realidade virtual.`,
   },
+  {
+    id: "tecnologia-11",
+    theme: "Tecnologia",
+    suggestedSceneId: "tecnologia-11",
+    estimatedSeconds: 65,
+    elementsCited: ["bra robo", "robo", "klavye", "òdinatè"],
+    title: {
+      fr: "Pourquoi les touches du clavier sont-elles placées dans cet ordre ?",
+      kreyol: "Poukisa lèt sou klavye òdinatè yo plase nan lòd sa a ?",
+      pt: "Por que as teclas do teclado ficam nessa ordem?",
+    },
+    summaryPt: "A história curiosa do padrão QWERTY, criado para evitar que as primeiras máquinas travassem.",
+    fr: `Devant un ordinateur, alors qu'un robot et un bras robotique exécutent des gestes précis, nos doigts tapent chaque jour sur un clavier sans y penser. Mais pourquoi les lettres ne sont-elles pas rangées de A à Z ?
+
+Au dix-neuvième siècle, les premières machines à écrire possédaient de petits marteaux métalliques qui se coinçaient souvent quand on tapait trop vite des lettres voisines ! L'inventeur Christopher Sholes a donc séparé les lettres les plus fréquentes pour éviter ces blocages.
+
+Cette disposition appelée QWERTY est restée sur nos ordinateurs et téléphones, même à l'ère de l'intelligence artificielle.`,
+    kreyol: `Devan yon òdinatè, pandan yon robo ak yon bra robo ap fè mouvman presi, dwèt nou tape chak jou sou yon klavye san nou pa menm reflechi. Men, poukisa lèt yo pa ranje depi A rive Z ?
+
+Nan diznevyèm syèk la, premye machin pou ekri yo te gen ti mato metal ki te konn kole ansanm lè moun tape twò vit lèt ki toupre youn lòt ! Envantè Christopher Sholes te separe lèt moun plis itilize yo pou anpeche machin nan bloke.
+
+Aranjman sa a yo rele QWERTY rete sou òdinatè ak telefòn nou yo jodi a, menm nan epòk entèlijans atifisyèl la.`,
+    pt: `Diante de um computador, enquanto um robô e um bra robótico executam movimentos precisos, nossos dedos digitam diariamente no teclado sem pensar. Mas por que as letras não seguem a ordem de A a Z?
+
+No século XIX, as primeiras máquinas de escrever tinham pequenas hastes de metal que travavam quando letras próximas eram pressionadas depressa demais! O inventor Christopher Sholes separou os pares mais comuns para evitar esses engasgos.
+
+Esse arranjo, chamado QWERTY, permaneceu nos computadores e celulares até hoje.`,
+  },
+  {
+    id: "tecnologia-12",
+    theme: "Tecnologia",
+    suggestedSceneId: "tecnologia-13",
+    estimatedSeconds: 65,
+    elementsCited: ["ekran", "tablèt", "teleskòp", "òdinatè"],
+    title: {
+      fr: "Comment l'écran tactile reconnaît-il le toucher de votre doigt ?",
+      kreyol: "Kijan ekran taktil la fè rekonèt lè dwèt ou touche l ?",
+      pt: "Como a tela sensível ao toque reconhece o seu dedo?",
+    },
+    summaryPt: "A física elétrica por trás das telas de tablets e celulares modernos.",
+    fr: `Sur une tablette posée près d'un ordinateur et d'un télescope, il suffit d'effleurer l'écran pour zoomer sur une étoile ou tourner une page. Comment du simple verre peut-il sentir votre doigt ?
+
+La plupart des écrans modernes utilisent une couche transparente et invisible qui stocke une très légère charge électrique. Comme le corps humain conduit naturellement l'électricité, dès que votre doigt touche la surface, une minuscule variation électrique se produit à cet endroit précis !
+
+Des capteurs calculent instantanément la position du contact, transformant un geste léger en commande numérique.`,
+    kreyol: `Sou yon tablèt ki poze toupre yon òdinatè ak yon teleskòp, ou sèlman bezwen pase dwèt ou sou ekran an pou agrandi yon zetwal oswa vire yon paj. Kijan senp vit ka santi dwèt ou ?
+
+Pifò ekran modèn yo gen yon kouch transparan nou pa wè ki kenbe yon ti kouran elektrik tou piti. Piske kò moun kite elektrisite pase natirèlman, kou dwèt ou touche vit la, yon ti chanjman elektrik fèt egzakteman kote sa a !
+
+Detektè yo kalkile pozisyon an touswit, sa ki transfòme yon ti jès lejè an kòmand nimerik.`,
+    pt: `Em um tablet apoiado perto de um computador e de um telescópio, basta tocar a tela para ampliar uma estrela ou virar uma página. Como um simples vidro consegue sentir o seu dedo?
+
+A maioria das telas modernas usa uma camada invisível que armazena uma carga elétrica muito leve. Como o corpo humano conduz eletricidade naturalmente, assim que o dedo encosta na superfície ocorre uma pequena variação elétrica naquele ponto exato!
+
+Sensores calculam a posição em milissegundos, transformando um toque suave em comando digital.`,
+  },
+  {
+    id: "tecnologia-13",
+    theme: "Tecnologia",
+    suggestedSceneId: "tecnologia-14",
+    estimatedSeconds: 65,
+    elementsCited: ["antèn", "satelit", "mikwoskòp", "sourit"],
+    title: {
+      fr: "Comment le GPS sait où vous êtes grâce aux satellites et à Einstein",
+      kreyol: "Kijan GPS la konnen ki kote ou ye gras ak satelit ak Einstein",
+      pt: "Como o GPS sabe onde você está graças aos satélites e a Einstein",
+    },
+    summaryPt: "Por que os relógios atômicos dos satélites precisam corrigir o tempo para guiar você na Terra.",
+    fr: `Sous un ciel calme, une antenne échange des signaux avec un satellite en orbite, tandis qu'au laboratoire un microscope et une souris d'ordinateur analysent des données précises.
+
+Pour indiquer votre position sur une carte à quelques mètres près, votre téléphone écoute simultanément au moins quatre satellites GPS équipés d'horloges atomiques ultra-précises. Mais il existe un détail fascinant : dans l'espace, le temps s'écoule légèrement plus vite que sur Terre, exactement comme l'avait prévu Albert Einstein !
+
+Sans cette correction mathématique de la relativité, les cartes GPS se tromperaient de plusieurs kilomètres chaque jour.`,
+    kreyol: `Anba yon syèl trankil, yon antèn ap echanje siyal ak yon satelit nan lespas, pandan nan laboratwa a yon mikwoskòp ak yon sourit òdinatè ap analize done presi.
+
+Pou l montre egzakteman kote ou ye sou yon kat, telefòn ou koute an menm tan omwen kat satelit GPS ki gen revèy atomik ki presi anpil. Men gen yon detay ki etonan : nan lespas, tan an pase yon ti jan pi vit pase sou latè, egzakteman jan Albert Einstein te prevwa sa !
+
+San koreksyon matematik relativite sa a, kat GPS yo t ap fè erè plizyè kilomèt chak jou.`,
+    pt: `Sob um céu tranquilo, uma antena troca sinais com um satélite em órbita, enquanto no laboratório um microscópio e um mouse de computador analisam dados precisos.
+
+Para mostrar sua localização exata no mapa, o aparelho recebe ao mesmo tempo o sinal de pelo menos quatro satélites GPS equipados com relógios atômicos. Mas há um detalhe fascinante: no espaço, o tempo passa um pouquinho mais rápido do que na superfície da Terra, exatamente como previu Albert Einstein!
+
+Sem essa correção da relatividade, os mapas de GPS errariam por vários quilômetros todos os dias.`,
+  },
+  {
+    id: "tecnologia-14",
+    theme: "Tecnologia",
+    suggestedSceneId: "tecnologia-15",
+    estimatedSeconds: 65,
+    elementsCited: ["ampoul", "enprimant 3D", "kas VR", "mikwoskòp"],
+    title: {
+      fr: "Pourquoi l'ampoule LED bleue a-t-elle révolutionné la lumière moderne ?",
+      kreyol: "Poukisa ampoul LED ble a te chanje limyè modèn nan nèt ?",
+      pt: "Por que a lâmpada LED azul revolucionou a iluminação moderna?",
+    },
+    summaryPt: "A descoberta que tornou possível a luz branca econômica das casas, telas e impressoras 3D.",
+    fr: `Dans un atelier éclairé par une ampoule brillante, près d'une imprimante 3D, d'un microscope et d'un casque de réalité virtuelle, la lumière LED semble aujourd'hui toute simple.
+
+Pourtant, pendant plus de trente ans, les chercheurs savaient fabriquer des LED rouges et vertes, mais n'arrivaient pas à créer la LED bleue ! Sans le bleu, impossible de produire une belle lumière blanche. Dans les années mille neuf cent quatre-vingt-dix, trois scientifiques japonais ont enfin réussi cet exploit, recevant plus tard le prix Nobel.
+
+Grâce à eux, l'ampoule LED consomme jusqu'à dix fois moins d'énergie que les anciennes lampes.`,
+    kreyol: `Nan yon atelye ki klere ak yon bèl ampoul, toupre yon enprimant 3D, yon mikwoskòp ak yon kas reyalite vityèl, limyè LED la sanble senp anpil jodi a.
+
+Poutan, pandan plis pase trant an, chèchè yo te konn fabrike LED wouj ak vèt, men yo pa t ka rive kreye LED ble a ! San koulè ble, li te enposib pou fè bon limyè blan. Nan ane mil nèf san katreven dis yo, twa syantifik japonè te reyisi bèl defi sa a, epi yo te resevwa pri Nobèl pita.
+
+Gras ak yo, ampoul LED la konsome jiska dis fwa mwens kouran pase ansyen lanp yo.`,
+    pt: `Em uma oficina iluminada por uma lâmpada brilhante, perto de uma impressora 3D, de um microscópio e de óculos de realidade virtual, a luz LED hoje parece simples.
+
+No entanto, por mais de trinta anos, os cientistas sabiam criar LEDs vermelhos e verdes, mas não conseguiam produzir o LED azul! Sem o azul, era impossível gerar luz branca eficiente. Nos anos 1990, três pesquisadores japoneses venceram esse desafio e depois receberam o Prêmio Nobel.
+
+Graças a eles, a lâmpada LED consome muito menos energia e dura anos.`,
+  },
+  {
+    id: "tecnologia-15",
+    theme: "Tecnologia",
+    suggestedSceneId: "tecnologia-17",
+    estimatedSeconds: 60,
+    elementsCited: ["telefòn", "radyo", "robo", "kamera"],
+    title: {
+      fr: "Pourquoi le Bluetooth porte-t-il le nom d'un roi du dixième siècle ?",
+      kreyol: "Poukisa Bluetooth pote non yon wa ki te viv nan dizyèm syèk la ?",
+      pt: "Por que o Bluetooth tem o nome de um rei do século X?",
+    },
+    summaryPt: "A origem histórica inesperada da tecnologia sem fio usada em celulares, rádios e câmeras.",
+    fr: `Entre un téléphone, une radio, une caméra sans fil et même un petit robot connecté, le Bluetooth relie nos appareils sans aucun câble. Mais d'où vient ce nom étrange qui signifie « dent bleue » ?
+
+En mille neuf cent quatre-vingt-seize, des ingénieurs cherchaient un nom pour une technologie capable d'unir différents appareils de marques diverses. L'un d'eux lisait l'histoire d'Harald « à la dent bleue », un roi scandinave du dixième siècle célèbre pour avoir unifié des tribus rivales !
+
+Le symbole du Bluetooth réunit même deux anciennes lettres runiques qui forment les initiales de ce roi.`,
+    kreyol: `Ant yon telefòn, yon radyo, yon kamera san fil ak menm yon ti robo ki konekte, Bluetooth la marye aparèy nou yo san okenn kab. Men ki kote non etranj sa a ki vle di « dan ble » soti ?
+
+Nan ane mil nèf san katreven sèz, enjenyè yo t ap chèche yon non pou yon teknoloji ki ka konekte plizyè aparèy diferan ansanm. Yonn ladan yo t ap li istwa Harald « dan ble », yon wa nan dizyèm syèk la ki te selèb paske l te mete plizyè gwoup ki pa t antann yo ansanm !
+
+Menm senbòl Bluetooth la melanje de ansyen lèt ki fòme inisyal non wa sa a.`,
+    pt: `Entre um telefone, um rádio, uma câmera sem fio e até um robô conectado, o Bluetooth liga nossos aparelhos sem nenhum cabo. Mas de onde vem esse nome curioso que significa "dente azul"?
+
+Em 1996, engenheiros buscavam um nome provisório para um padrão capaz de unir equipamentos diferentes. Um deles lia sobre Harald "Dente-Azul", rei escandinavo do século X famoso por unificar regiões rivais!
+
+O símbolo do Bluetooth até hoje combina duas antigas letras rúnicas com as iniciais desse rei.`,
+  },
 
   // ==================== NATUREZA (10) ====================
   {
@@ -564,6 +704,146 @@ As aves de rapina têm uma visão até oito vezes mais precisa que a dos seres h
 
 Ao controlar naturalmente a quantidade de pequenos animais, essas aves ajudam a manter o equilíbrio de todo o ecossistema litorâneo.`,
   },
+  {
+    id: "natureza-11",
+    theme: "Natureza",
+    suggestedSceneId: "natureza-18",
+    estimatedSeconds: 65,
+    elementsCited: ["bambou", "pye bannann", "fèy", "foujè"],
+    title: {
+      fr: "Pourquoi la pluie dans la forêt tropicale a-t-elle une odeur si agréable ?",
+      kreyol: "Poukisa lapli nan forè twopikal la gen yon bon odè konsa ?",
+      pt: "Por que a chuva na floresta tropical tem um cheiro tão gostoso?",
+    },
+    summaryPt: "O fenômeno do petricor quando a chuva cai sobre bananeiras, bambus, folhas e samambaias.",
+    fr: `Quand une pluie douce tombe sur la forêt tropicale, les gouttes glissent sur les larges feuilles du bananier, font vibrer le bambou et rafraîchissent les fougères vertes. Aussitôt monte dans l'air un parfum familier et apaisant.
+
+Les scientifiques appellent cette odeur de pluie le « pétrichor » ! Pendant les journées sèches, les plantes libèrent sur les feuilles et sur la terre de fines huiles végétales. Lorsque la pluie arrive, l'impact des gouttes projette dans l'air ces huiles mêlées à des arômes naturels du sol humide.
+
+C'est ce parfum de la pluie qui annonce à toute la forêt le retour de l'eau et de la vie.`,
+    kreyol: `Lè yon bèl lapli dous tonbe nan forè twopikal la, gout dlo yo glise sou gwo fèy pye bannann nan, yo fè bambou a balanse epi yo rafrechi foujè vèt yo. Touswit, yon bon odè fre ki kalme kè nou monte nan lè a.
+
+Syantifik yo rele bon odè lapli sa a « petrikò » ! Pandan jounen ki sèch yo, plant yo lage ti lwil natirèl sou fèy yo ak sou tè a. Kou lapli tonbe, gout yo fè ti lwil sa yo ak bon sant tè mouye a vole nan lè a.
+
+Se bèl odè lapli sa a ki anonse tout forè a dlo ak lavi tounen ankò.`,
+    pt: `Quando uma chuva suave cai sobre a floresta tropical, as gotas escorregam pelas folhas largas da bananeira, balançam o bambuzal e refrescam as samambaias verdes. Logo sobe no ar aquele perfume inconfundível de terra molhada.
+
+Os cientistas chamam esse cheiro de chuva de "petricor"! Nos dias secos, as plantas liberam óleos naturais sobre as folhas e o solo. Quando a chuva começa, o impacto das gotas espalha no ar esses aromas misturados a compostos naturais da terra úmida.
+
+É o perfume da chuva avisando toda a floresta que a água voltou para renovar a vida.`,
+  },
+  {
+    id: "natureza-12",
+    theme: "Natureza",
+    suggestedSceneId: "natureza-19",
+    estimatedSeconds: 65,
+    elementsCited: ["din", "kaktis", "lakansyèl", "ròch"],
+    title: {
+      fr: "Le miracle de la pluie dans le désert et la magie de l'arc-en-ciel",
+      kreyol: "Mirak lapli nan dezè a ak maji bèl lakansyèl la",
+      pt: "O milagre da chuva no deserto e a magia do arco-íris",
+    },
+    summaryPt: "Como uma chuva rara desperta o deserto entre dunas, rochas e cactos, formando arco-íris.",
+    fr: `Même au milieu des dunes de sable brûlantes et des roches sèches où pousse le cactus, la pluie finit parfois par tomber. Et ce qu'elle provoque ressemble à un enchantement !
+
+Des graines minuscules qui dormaient sous le sable depuis des années se réveillent d'un seul coup dès que l'eau de pluie pénètre le sol. En quelques jours, le désert aride se couvre d'un tapis de fleurs colorées avant que la chaleur ne revienne.
+
+Lorsque le soleil perce les derniers nuages de pluie, ses rayons traversent les gouttelettes suspendues et dessinent un grand arc-en-ciel lumineux au-dessus des dunes.`,
+    kreyol: `Menm nan mitan gwo din sab cho ak ròch sèch kote kaktis ap grandi, lapli konn tonbe pafwa. Epi sa l fè parèt tankou yon vrè maji !
+
+Ti grenn tou piti ki t ap dòmi anba sab la depi plizyè lane reveye bridsoukou kou dlo lapli a antre nan tè a. Nan kèk jou sèlman, dezè sèch la kouvri ak bèl flè tout koulè anvan chalè a tounen.
+
+Lè solèy la pèse dènye nyaj lapli yo, reyon l yo pase nan ti gout dlo ki nan lè a epi yo trase yon bèl lakansyèl anwo din yo.`,
+    pt: `Mesmo em meio às dunas de areia quente e às rochas secas onde cresce o cacto, a chuva acaba caindo de tempos em tempos. E o que ela provoca parece um encanto!
+
+Sementes minúsculas que dormiam sob a areia há anos despertam de repente assim que a água da chuva molha o solo. Em poucos dias, o deserto árido se cobre de flores coloridas antes que o calor volte.
+
+Quando o sol atravessa as últimas gotas de chuva no ar, a luz se divide em cores e desenha um arco-íris luminoso sobre as dunas.`,
+  },
+  {
+    id: "natureza-13",
+    theme: "Natureza",
+    suggestedSceneId: "natureza-07",
+    estimatedSeconds: 65,
+    elementsCited: ["dòfen", "koki", "manglye", "nenifa"],
+    title: {
+      fr: "Pourquoi la mer est-elle salée et comment la Lune fait-elle danser les marées ?",
+      kreyol: "Poukisa dlo lanmè a sale epi kijan lalin nan fè mare yo monte desann ?",
+      pt: "Por que o mar é salgado e como a Lua move as marés?",
+    },
+    summaryPt: "Dois grandes mistérios do mar explicados de forma simples perto da baía e do manguezal.",
+    fr: `Dans une baie calme, un dauphin glisse près des coquillages et des racines de la mangrove qui bordent la mer, non loin des nénuphars d'eau douce. Mais pourquoi l'eau de la mer est-elle salée ?
+
+Pendant des millions d'années, la pluie a dissous de minuscules quantités de sels minéraux dans les roches des montagnes. Les rivières les ont ensuite transportés jusqu'à la mer, où le sel s'est concentré peu à peu.
+
+Et si la mer monte et descend deux fois par jour sur les plages, c'est grâce à la Lune ! Son attraction attire doucement l'eau des océans comme un aimant invisible, créant la danse régulière des marées.`,
+    kreyol: `Nan yon bèl bè trankil, yon dòfen ap glise toupre koki yo ak rasin manglye ki bò lanmè a, pa lwen nenifa ki nan dlo dous. Men poukisa dlo lanmè a sale konsa ?
+
+Pandan plizyè milyon ane, lapli te fonn ti kras sèl mineral ki nan wòch mòn yo. Rivyè yo te pote sèl sa yo rive nan lanmè a, kote l vin konsantre tikras pa tikras.
+
+Epi si lanmè a monte epi l desann de fwa pa jou sou plaj yo, se gras ak lalin nan ! Fòs atraksyon lalin nan rale dlo oseyan yo dousman tankou yon leman envizib, sa ki kreye bèl mouvman mare yo.`,
+    pt: `Em uma baía tranquila, um golfinho desliza perto das conchas e das raízes do manguezal à beira-mar, não muito longe dos nenúfares da água doce. Mas por que a água do mar é salgada?
+
+Durante milhões de anos, a chuva dissolveu pequenas quantidades de sais minerais das rochas das montanhas. Os rios levaram esses sais até o mar, onde eles foram se acumulando aos poucos.
+
+Já o sobe e desce das águas na praia acontece por causa da Lua! Sua gravidade puxa suavemente as águas do mar como um ímã invisível, criando o ritmo diário das marés.`,
+  },
+  {
+    id: "natureza-14",
+    theme: "Natureza",
+    suggestedSceneId: "natureza-04",
+    estimatedSeconds: 65,
+    elementsCited: ["koray", "pwason", "zetwal lanmè", "balèn"],
+    title: {
+      fr: "Pourquoi la mer paraît-elle bleue et quel est le rôle des courants marins ?",
+      kreyol: "Poukisa lanmè a parèt ble epi ki wòl gwo kouran lanmè yo jwe ?",
+      pt: "Por que o mar parece azul e qual é o papel das correntes marítimas?",
+    },
+    summaryPt: "A cor do mar, a vida nos recifes de coral e os grandes rios invisíveis dentro dos oceanos.",
+    fr: `Au-dessus des récifs de corail où nagent les poissons colorés près de l'étoile de mer et des baleines, la mer prend des nuances de bleu profond et de turquoise éclatant.
+
+L'eau pure de la mer n'est pourtant pas peinte en bleu ! La lumière du soleil contient toutes les couleurs de l'arc-en-ciel. Dès qu'elle entre dans la mer, l'eau absorbe très vite les rayons rouges et jaunes, mais laisse la lumière bleue voyager plus loin et rebondir vers nos yeux.
+
+Au large, d'immenses courants marins circulent dans les océans comme de grands fleuves invisibles, répartissant la chaleur autour de la planète.`,
+    kreyol: `Anwo resif koray yo kote pwason tout koulè ap naje toupre zetwal lanmè ak balèn yo, lanmè a pran bèl koulè ble fonse ak ble klè.
+
+Poutan, dlo lanmè a pa gen penti ble ladan l ! Limyè solèy la gen tout koulè lakansyèl la. Kou l antre nan lanmè a, dlo a vale reyon wouj ak jòn yo vit anpil, men li kite limyè ble a vwayaje pi lwen epi tounen nan je nou.
+
+Pi lwen nan gwo lanmè a, gwo kouran marin ap kouri tankou gwo rivyè envizib k ap pataje chalè toupatou sou latè.`,
+    pt: `Sobre os recifes de coral onde peixes coloridos nadam perto da estrela-do-mar e das baleias, o mar ganha tons que vão do azul profundo ao turquesa brilhante.
+
+A água do mar não é azul por natureza! A luz do sol contém todas as cores do arco-íris, mas, ao entrar no mar, a água absorve rapidamente os tons vermelhos e amarelos, deixando a luz azul viajar mais fundo e voltar aos nossos olhos.
+
+Em alto-mar, imensas correntes marítimas circulam como rios invisíveis dentro dos oceanos, distribuindo calor e nutrientes pelo planeta.`,
+  },
+  {
+    id: "natureza-15",
+    theme: "Natureza",
+    suggestedSceneId: "natureza-12",
+    estimatedSeconds: 60,
+    elementsCited: ["chanpiyon", "ekirèy", "nich", "pen"],
+    title: {
+      fr: "La pluie du brouillard : comment les forêts de pins boivent les nuages",
+      kreyol: "Lapli bwouya a : kijan forè pen yo bwè dlo nyaj yo",
+      pt: "A chuva da neblina: como as florestas de pinheiros bebem as nuvens",
+    },
+    summaryPt: "Como a neblina e o chuvisco alimentam pinheiros, cogumelos, ninhos e esquilos nas montanhas.",
+    fr: `Dans une forêt de pins enveloppée de brume fraîche, un écureuil observe les branches près d'un nid tandis que des champignons poussent sur la mousse humide.
+
+Même lorsqu'il ne pleut pas fort, les arbres des montagnes savent capter l'eau du ciel grâce à la « pluie de brouillard » ! Les milliers d'aiguilles fines du pin attrapent les gouttelettes invisibles des nuages qui traversent la forêt.
+
+Ces gouttes se rassemblent peu à peu et tombent doucement sur le sol comme une pluie fine, nourrissant les champignons, les racines et toute la vie forestière.`,
+    kreyol: `Nan yon forè pye pen ki kouvri ak bwouya fre, yon ekirèy ap gade branch yo toupre yon nich pandan chanpiyon ap pouse sou tè imid la.
+
+Menm lè gwo lapli pa tonbe, pyebwa nan mòn yo konn ranmase dlo syèl la gras ak « lapli bwouya a » ! Plizyè milye ti zegwi fen pye pen an kenbe ti gout dlo ki nan nyaj k ap pase nan forè a.
+
+Ti gout sa yo rasanble tikras pa tikras epi yo tonbe dousman atè tankou yon ti lapli fen, ki nouri chanpiyon yo, rasin yo ak tout lavi nan bwa a.`,
+    pt: `Em uma floresta de pinheiros envolta em neblina fresca, um esquilo observa os galhos perto de um ninho enquanto cogumelos crescem sobre o solo úmido.
+
+Mesmo quando não cai uma chuva forte, as árvores das montanhas conseguem colher água do céu por meio da chamada "chuva de neblina"! As milhares de agulhas finas do pinheiro capturam as gotículas das nuvens que passam entre os troncos.
+
+Essas gotas se juntam aos poucos e caem devagar no chão como uma garoa suave, hidratando cogumelos, raízes e animais da floresta.`,
+  },
 
   // ==================== CULTURA (10) ====================
   {
@@ -845,5 +1125,145 @@ Kay sa yo rakonte istwa vil yo ak anpil elegans epi yo montre kijan achitekti ma
 Na virada do século XX, arquitetos haitianos criaram o estilo "gingerbread", adaptado ao clima tropical. Os tetos altos, as janelas amplas e as varandas abertas deixam a brisa circular naturalmente sem precisar de ar-condicionado.
 
 Essas construções contam a história das cidades com delicadeza e mostram como a arquitetura dialoga com o clima.`,
+  },
+  {
+    id: "cultura-11",
+    theme: "Cultura",
+    suggestedSceneId: "cultura-12",
+    estimatedSeconds: 60,
+    elementsCited: ["evantay", "kanòt", "plim", "chal"],
+    title: {
+      fr: "Les canots traditionnels et les chants des pêcheurs au bord de l'eau",
+      kreyol: "Kanòt tradisyonèl yo ak chante pechè bò lanmè yo",
+      pt: "As canoas tradicionais e os cantos de trabalho à beira-mar",
+    },
+    summaryPt: "O valor cultural das canoas de madeira esculpidas à mão e da vida comunitária costeira.",
+    fr: `Sur le sable paisible, près d'un éventail, d'un châle léger et de plumes colorées, une barque en bois appelée « kanòt » rappelle un savoir-faire ancestral des littoraux caribéens.
+
+Taillé autrefois dans un grand tronc d'arbre ou assemblé planche par planche, le canot accompagne les pêcheurs dès l'aube. Pendant qu'ils rament ensemble vers le large, leurs chants rythmés aident à garder la cadence et à rendre l'effort collectif plus léger.
+
+Au retour sur la plage, toute la communauté accueille les bateaux, prouvant que la mer nourrit autant les familles que la culture populaire.`,
+    kreyol: `Sou sab trankil la, toupre yon evantay, yon chal lejè ak bèl plim kolore, yon bato an bwa yo rele « kanòt » fè nou sonje yon gran konesans zansèt nou yo bò lanmè.
+
+Lontan, yo te konn taye l nan yon sèl gwo kò pyebwa oswa rasanble l planch pa planch : kanòt la akonpaye pechè yo depi granmaten. Pandan y ap rame ansanm nan lanmè a, bèl chante ritme yo ede yo kenbe menm mouvman an.
+
+Lè yo tounen sou plaj la, tout katye a vin akeyi bato yo, sa ki montre lanmè a nouri ni fanmi yo ni kilti popilè a.`,
+    pt: `Na areia tranquila, perto de um leque, de um xale leve e de plumas coloridas, uma canoa de madeira chamada "kanòt" lembra um saber antigo das comunidades costeiras.
+
+Esculpida antigamente em um único tronco ou montada tábua por tábua, a canoa acompanha os pescadores desde o amanhecer. Enquanto remam juntos, os cantos ritmados mantêm o compasso e tornam o esforço coletivo mais leve.
+
+Na volta à praia, a vizinhança recebe as embarcações, mostrando que o mar alimenta tanto as famílias quanto a cultura popular.`,
+  },
+  {
+    id: "cultura-12",
+    theme: "Cultura",
+    suggestedSceneId: "cultura-13",
+    estimatedSeconds: 60,
+    elementsCited: ["lanp", "tanbou", "evantay", "vaksin"],
+    title: {
+      fr: "Les veillées festives du soir : quand le quartier devient une grande famille",
+      kreyol: "Fèt lannwit nan katye a : lè tout vwazen vin tounen yon sèl fanmi",
+      pt: "As festas noturnas de rua: quando o bairro vira uma grande família",
+    },
+    summaryPt: "Como lanternas, tambores e trompetes de bambu criam encontros comunitários cheios de calor humano.",
+    fr: `Quand la nuit tombe sur la rue éclairée par les lanternes, le son joyeux du tambour et des trompettes en bambou « vaksin » invite petits et grands à sortir devant leurs portes, un éventail à la main pour profiter de la brise du soir.
+
+Dans la culture populaire d'Haïti comme du Brésil, la fête de rue est bien plus qu'un simple divertissement : c'est un espace d'hospitalité où l'on partage des nouvelles, de la musique et de la solidarité entre voisins.
+
+Sous la lueur douce des lampions, chacun trouve sa place dans le cercle de la joie collective.`,
+    kreyol: `Lè lannwit tonbe nan lari a ki klere ak lanp yo, bèl son tanbou a ak vaksin nan envite granmoun kou timoun soti devan pòt yo, ak yon evantay nan men yo pou pran ti fre aswè a.
+
+Nan kilti popilè Ayiti tankou Brezil, fèt nan lari a pa sèlman pou amizman : se yon espas akèy kote vwazen yo pataje nouvèl, mizik ak solidarite.
+
+Anba limyè dous lanp yo, tout moun jwenn plas yo nan bèl sèk kè kontan kominote a.`,
+    pt: `Quando a noite cai na rua iluminada pelas lanternas, o som alegre do tambor e dos trompetes de bambu vaksin convida jovens e idosos a sair às portas, com um leque na mão para aproveitar a brisa.
+
+Na cultura popular do Haiti e do Brasil, a festa de rua é muito mais do que diversão: é um espaço de convivência em que vizinhos compartilham histórias, música e apoio mútuo.
+
+Sob a luz suave das lanternas, todos encontram seu lugar na roda da alegria coletiva.`,
+  },
+  {
+    id: "cultura-13",
+    theme: "Cultura",
+    suggestedSceneId: "cultura-14",
+    estimatedSeconds: 60,
+    elementsCited: ["kay pay", "chèz", "kannari", "kann"],
+    title: {
+      fr: "La sagesse des maisons en paille : rester au frais sous le soleil tropical",
+      kreyol: "Sajès kay pay yo : kijan pou rete fre anba solèy twopikal la",
+      pt: "A sabedoria das casas de palha: conforto térmico no clima tropical",
+    },
+    summaryPt: "A engenharia popular das casas cobertas de palha, potes de barro e sombra no quintal.",
+    fr: `Devant une maison traditionnelle au toit de paille, près d'une chaise en bois, de canne à sucre fraîche et d'un pot en terre cuite « kannari », on découvre une architecture simple mais incroyablement intelligente !
+
+Les toits épais en palme ou en paille tressée agissent comme un isolant naturel : ils arrêtent la chaleur du soleil de midi tout en laissant l'air chaud s'échapper doucement. De la même façon, l'eau conservée dans le pot de terre cuite reste fraîche toute la journée grâce à l'évaporation naturelle à travers l'argile.
+
+Les savoirs populaires montrent souvent une grande harmonie avec le climat.`,
+    kreyol: `Devan yon kay pay tradisyonèl, toupre yon chèz bwa, pye kann fre ak yon kannari an tè kwit, nou dekouvri yon achitekti senp men ki entèlijan anpil !
+
+Twati ki fèt ak pay ki byen trese yo fonksyone tankou yon pwoteksyon natirèl : yo bare gwo chalè solèy midi a toutpandan yo kite lè cho a soti dousman. Menm jan an tou, dlo ki sere anndan kannari a rete fre tout jounen an gras ak latè a ki kite l respire.
+
+Konesans popilè yo souvan montre yon bèl amoni ak klima peyi a.`,
+    pt: `Diante de uma casa tradicional de palha, perto de uma cadeira simples, cana-de-açúcar e de um pote de barro kannari, descobrimos uma arquitetura popular surpreendentemente inteligente!
+
+Os telhados espessos de palha trançada funcionam como isolantes térmicos naturais: bloqueiam o calor forte do meio-dia e deixam o ar quente escapar devagar. Da mesma forma, a água guardada no pote de barro permanece fresca o dia inteiro graças à porosidade da argila.
+
+Os saberes tradicionais revelam grande sintonia com a natureza local.`,
+  },
+  {
+    id: "cultura-14",
+    theme: "Cultura",
+    suggestedSceneId: "cultura-18",
+    estimatedSeconds: 60,
+    elementsCited: ["penti", "teyat", "dife", "fòj"],
+    title: {
+      fr: "Du feu de la forge aux arts vivants : quand l'artisanat devient poésie",
+      kreyol: "Depi dife fòj la rive nan bèl atizay : lè travay men tounen pwezi",
+      pt: "Do fogo da forja às artes cênicas: quando o ofício vira poesia",
+    },
+    summaryPt: "Como a forja tradicional se transformou em esculturas, pinturas e teatro popular.",
+    fr: `Autour de la forge rougeoyante et du feu vif, à côté d'une peinture colorée et de marionnettes de théâtre, le travail manuel et l'art se rejoignent depuis toujours.
+
+Pendant des générations, le forgeron du village fabriquait les outils des champs, les cloches et les charnières des maisons. En Haïti, ce savoir-faire du feu et du métal a donné naissance au célèbre art du fer découpé, où l'acier martelé raconte des scènes de fête, d'animaux fantastiques et d'histoires populaires.
+
+Qu'il s'agisse de peindre une toile, de jouer une scène ou de sculpter le métal, l'artisan met toujours son âme dans l'ouvrage.`,
+    kreyol: `Toutotou fòj ki cho ak gwo dife a, bò kote yon bèl penti kolore ak marionèt teyat yo, travay alamen ak atizay toujou mache ansanm.
+
+Pandan plizyè jenerasyon, fòjwon vilaj la te konn fabrike zouti pou jaden, kloch ak pyès pou kay yo. Ann Ayiti, gwo konesans dife ak metal sa a bay nesans ak selèb atizay fè koupe a, kote metal ki bat la rakonte fèt, bèt imajinè ak bèl istwa pèp la.
+
+Kit se pentire yon tablo, jwe yon pyès teyat oswa taye metal, atizan an toujou mete nanm li nan travay la.`,
+    pt: `Ao redor da forja acesa e do fogo vivo, ao lado de uma pintura colorida e de fantoches de teatro, o trabalho manual e a arte caminham juntos há séculos.
+
+Por gerações, o ferreiro do vilarejo produzia ferramentas agrícolas, sinos e ferragens para as casas. No Haiti, esse domínio do fogo e do metal deu origem à famosa arte do ferro recortado, em que o aço batido retrata festas, animais e histórias populares.
+
+Seja pintando uma tela, encenando ou moldando o metal, o artesão coloca sua alma na criação.`,
+  },
+  {
+    id: "cultura-15",
+    theme: "Cultura",
+    suggestedSceneId: "cultura-20",
+    estimatedSeconds: 60,
+    elementsCited: ["kolye", "mòtye", "fontèn", "kanòt"],
+    title: {
+      fr: "Les colliers de perles et de graines : des parures qui racontent une histoire",
+      kreyol: "Kolye pèl ak grenn yo : bèl dekorasyon ki rakonte istwa",
+      pt: "Colares de contas e sementes: adornos que contam histórias",
+    },
+    summaryPt: "O significado simbólico das cores, sementes e contas artesanais nas culturas afro-diaspóricas.",
+    fr: `Au clair de lune près de la fontaine et du canot en bois, entre un mortier sculpté et un collier de perles colorées, chaque objet artisanal porte une mémoire.
+
+Dans de nombreuses cultures d'Afrique, des Caraïbes et d'Amérique latine, un collier n'est jamais choisi par hasard : ses couleurs, ses perles en verre ou ses graines naturelles symbolisent la protection, la joie, l'amitié ou les liens familiaux.
+
+Aujourd'hui encore, les créateurs perpétuent cet art patient en assemblant graines tropicales et perles brillantes à la main.`,
+    kreyol: `Anba klète lalin lan toupre fontèn nan ak kanòt bwa a, ant yon mòtye taye ak yon bèl kolye pèl kolore, chak objè atizanal pote yon memwa.
+
+Nan anpil kilti ann Afrik, nan Karayib la ak nan Amerik Latin, moun pa janm chwazi yon kolye pa aza : koulè l yo, pèl li yo oswa grenn natirèl ki ladan l yo senbolize pwoteksyon, lajwa, amitye oswa lyen fanmi.
+
+Menm jodi a, kreyatè yo kontinye bèl atizay sa a lè y ap file grenn twopikal ak pèl klere alamen.`,
+    pt: `Ao luar perto da fonte e da canoa de madeira, entre um pilão esculpido e um colar de contas coloridas, cada peça artesanal carrega uma memória.
+
+Em muitas culturas da África, do Caribe e da América Latina, um colar nunca é escolhido por acaso: suas cores, contas ou sementes naturais simbolizam proteção, alegria, amizade ou laços familiares.
+
+Até hoje, artesãos preservam essa arte paciente unindo à mão sementes tropicais e contas brilhantes.`,
   },
 ];

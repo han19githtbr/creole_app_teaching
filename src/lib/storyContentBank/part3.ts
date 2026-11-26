@@ -282,6 +282,146 @@ Originário da África Ocidental, o djembê tem o nome ligado à expressão "Ank
 
 Sua herança rítmica ecoa com força nos tambores do Haiti e do Brasil.`,
   },
+  {
+    id: "musica-11",
+    theme: "Música",
+    suggestedSceneId: "musica-11",
+    estimatedSeconds: 60,
+    elementsCited: ["vyolon", "trompèt", "klarinèt", "saksofòn"],
+    title: {
+      fr: "Cordes et vents : comment deux familles d'instruments dialoguent ensemble",
+      kreyol: "Kòd ak van : kijan de fanmi enstriman mizik yo dyaloge ansanm",
+      pt: "Cordas e sopros: como duas famílias musicais conversam em harmonia",
+    },
+    summaryPt: "A combinação entre violino, trompete, clarinete e saxofone nas bandas e orquestras.",
+    fr: `Lorsqu'un violon joue aux côtés d'une trompette, d'une clarinette et d'un saxophone, deux grands mondes sonores se rencontrent !
+
+Les instruments à cordes comme le violon produisent un son doux et chantant grâce au frottement de l'archet, capable d'imiter la voix humaine. Les instruments à vent, eux, utilisent le souffle du musicien pour faire vibrer l'air dans un tube de bois ou de cuivre, offrant éclat et puissance.
+
+Dans le jazz, le konpa haïtien ou les fanfares, ce dialogue entre douceur et énergie crée une richesse musicale incomparable.`,
+    kreyol: `Lè yon vyolon jwe bò kote yon twonpèt, yon klarinèt ak yon saksofòn, de gran fanmi son rankontre ansanm !
+
+Enstriman ak kòd tankou vyolon an bay yon son dous ki sanble yon vwa k ap chante gras ak achèt k ap glise sou kòd yo. Enstriman ak van yo, bò kote pa yo, sèvi ak souf mizisyen an pou fè lè a vibre anndan tiyo bwa oswa kwiv, sa ki bay anpil fòs ak klète.
+
+Nan djaz, nan konpa ayisyen oswa nan fanfa yo, bèl dyalòg sa a bay mizik la yon richès san parèy.`,
+    pt: `Quando um violino toca ao lado de um trompete, um clarinete e um saxofone, dois grandes universos sonoros se encontram!
+
+Os instrumentos de cordas, como o violino, produzem um som doce e contínuo com o arco, quase imitando a voz humana. Já os instrumentos de sopro usam o fôlego do músico para vibrar o ar dentro de tubos de madeira ou metal, trazendo brilho e potência.
+
+No jazz, no kompa haitiano ou nas fanfarras, essa conversa entre suavidade e energia cria uma riqueza musical única.`,
+  },
+  {
+    id: "musica-12",
+    theme: "Música",
+    suggestedSceneId: "musica-12",
+    estimatedSeconds: 60,
+    elementsCited: ["kontrebas", "silofòn", "akòdeyon", "flit"],
+    title: {
+      fr: "Pourquoi les grands instruments jouent-ils des sons plus graves ?",
+      kreyol: "Poukisa gwo enstriman mizik yo fè son ki pi ba ?",
+      pt: "Por que os instrumentos maiores produzem sons mais graves?",
+    },
+    summaryPt: "A física da ressonância explicada comparando o contrabaixo, a flauta, o acordeão e o xilofone.",
+    fr: `À l'aube calme, imaginez une petite flûte à côté d'une immense contrebasse, d'un accordéon et d'un xylophone aux lames de différentes longueurs. Pourquoi la flûte sonne-t-elle si haut alors que la contrebasse gronde si bas ?
+
+Tout vient de la taille de l'espace où vibre l'air ! Les ondes sonores graves sont beaucoup plus longues et lentes : elles ont besoin d'une grande caisse en bois ou d'un long tube pour résonner pleinement.
+
+Sur le xylophone, c'est exactement la même règle : les lames les plus longues donnent les notes graves, et les plus courtes donnent les notes aiguës !`,
+    kreyol: `Granmaten nan kalm lan, imajine yon ti flit bò kote yon gwo kontrebas, yon akòdeyon ak yon silofòn ki gen ti lam bwa tout longè. Poukisa flit la sonnen wo konsa pandan kontrebas la bay yon gwo son ba ?
+
+Tout bagay depann de gwosè espas kote lè a vibre a ! Ond son ki ba yo pi long e pi dousman : yo bezwen yon gwo kès bwa oswa yon long tiyo pou sonnen byen fò.
+
+Sou silofòn nan, se egzakteman menm règ la : lam ki pi long yo bay nòt ki ba, epi sa ki pi kout yo bay nòt ki wo !`,
+    pt: `Em um amanhecer calmo, imagine uma flauta pequena ao lado de um enorme contrabaixo, de um acordeão e de um xilofone com lâminas de tamanhos variados. Por que a flauta soa tão aguda enquanto o contrabaixo tem voz profunda?
+
+Tudo depende do tamanho do espaço onde o ar vibra! As ondas sonoras graves são mais longas e lentas, por isso precisam de uma grande caixa de madeira ou de tubos compridos para ressoar bem.
+
+No xilofone vale a mesma regra: as lâminas maiores dão notas graves, e as menores dão notas agudas!`,
+  },
+  {
+    id: "musica-13",
+    theme: "Música",
+    suggestedSceneId: "musica-14",
+    estimatedSeconds: 60,
+    elementsCited: ["patisyon", "ansanm tanbou", "anplifikatè", "tanbourin"],
+    title: {
+      fr: "Pourquoi battons-nous du pied sans y penser quand un rythme démarre ?",
+      kreyol: "Poukisa nou bat pye nou san nou pa menm reflechi lè yon bon ritm kòmanse ?",
+      pt: "Por que batemos o pé automaticamente quando começa um ritmo marcante?",
+    },
+    summaryPt: "A conexão natural entre o sistema motor do cérebro, a partitura e os tambores.",
+    fr: `Sous le clair de lune, dès que la batterie et le tambourin lancent une cadence régulière devant les partitions et l'amplificateur, il est presque impossible de garder les pieds immobiles !
+
+Les scientifiques ont découvert que notre cerveau relie directement les zones de l'audition aux zones du mouvement. Dès qu'il entend une pulsation régulière, le cerveau se synchronise automatiquement avec elle — bien plus vite que nous ne pouvons l'analyser consciemment.
+
+C'est ce lien instinctif qui permet à tout un public d'applaudir en rythme lors d'un concert.`,
+    kreyol: `Anba klète lalin lan, kou ansanm tanbou a ak tanbourin nan lanse yon bon ritm devan patisyon yo ak anplifikatè a, li prèske enposib pou kenbe pye nou san bouje !
+
+Syantifik yo dekouvri sèvo nou konekte dirèkteman zòn ki tande son an ak zòn ki kòmande mouvman kò a. Kou l tande yon batay ki regilye, sèvo a mete tèt li nan menm ritm lan otomatikman — pi vit pase nou ka menm reflechi sou sa.
+
+Se lyen natirèl sa a ki fè tout yon piblik ka bat men nan menm ritm lan nan yon konsè.`,
+    pt: `Sob o luar tranquilo, assim que a bateria e o pandeiro começam uma batida firme diante das partituras e do amplificador, fica quase impossível deixar os pés parados!
+
+Cientistas descobriram que o cérebro conecta diretamente a área da audição às áreas motoras do movimento. Ao ouvir uma pulsação constante, o corpo se sincroniza automaticamente — antes mesmo de pensarmos nisso.
+
+É essa conexão natural que permite a uma plateia inteira bater palmas no mesmo compasso.`,
+  },
+  {
+    id: "musica-14",
+    theme: "Música",
+    suggestedSceneId: "musica-15",
+    estimatedSeconds: 60,
+    elementsCited: ["dirijan", "gramofòn", "patisyon", "arp"],
+    title: {
+      fr: "Que fait vraiment un chef d'orchestre devant tant de musiciens ?",
+      kreyol: "Ki sa yon dirijan òkès fè toutbonvre devan tout mizisyen sa yo ?",
+      pt: "O que faz de verdade um maestro diante de tantos músicos?",
+    },
+    summaryPt: "Como pequenos gestos guiam dezenas de instrumentos, da harpa aos sopros, sem dizer uma palavra.",
+    fr: `Dans une salle élégante, devant une grande partition ouverte, une harpe et un vieux gramophone, un chef d'orchestre lève doucement les mains. Mais si chaque musicien sait déjà lire sa partition, à quoi sert le chef d'orchestre ?
+
+Sans lui, cinquante musiciens joueraient chacun à une vitesse légèrement différente ! De la main droite, le chef indique le tempo exact ; de la main gauche, il sculpte l'émotion, demandant à la harpe de jouer plus doux ou aux cuivres d'entrer avec force.
+
+Par le regard et le geste, il transforme des dizaines d'individus en une seule voix unie.`,
+    kreyol: `Nan yon bèl sal, devan yon gwo patisyon ki louvri, yon arp ak yon vye gramofòn, yon dirijan òkès leve men l dousman. Men si chak mizisyen deja konn li patisyon pa l, poukisa yo bezwen yon dirijan ?
+
+San li menm, senkant mizisyen ta jwe chak nan yon vitès ki yon ti jan diferan ! Ak men dwat li, dirijan an montre ritm egzak la ; ak men gòch li, li gide emosyon an, pou l mande arp la jwe pi dous oswa lòt enstriman yo antre pi fò.
+
+Ak kout je ak jès men l, li fè plizyè dizèn mizisyen sonnen tankou yon sèl vwa.`,
+    pt: `Em uma sala elegante, diante de uma partitura aberta, uma harpa e um antigo gramofone, o maestro ergue as mãos. Mas se cada músico já sabe ler sua parte, qual é o papel do maestro?
+
+Sem ele, cinquenta músicos tocariam em velocidades ligeiramente diferentes! Com uma das mãos, o maestro marca o tempo exato; com a outra, molda a expressividade, pedindo mais suavidade à harpa ou mais força aos metais.
+
+Com gestos e olhares, ele transforma dezenas de pessoas em uma única voz afinada.`,
+  },
+  {
+    id: "musica-15",
+    theme: "Música",
+    suggestedSceneId: "musica-17",
+    estimatedSeconds: 60,
+    elementsCited: ["saksofòn", "silofòn", "dirijan", "gita"],
+    title: {
+      fr: "Le saxophone : un instrument en métal qui appartient à la famille des bois",
+      kreyol: "Saksofòn nan : yon enstriman an metal ki fè pati fanmi bwa yo",
+      pt: "O saxofone: um instrumento de metal que pertence à família das madeiras",
+    },
+    summaryPt: "A invenção surpreendente de Adolphe Sax e sua presença marcante no jazz e na música caribenha.",
+    fr: `En fin d'après-midi, près d'une guitare, d'un xylophone et d'un chef d'orchestre, un saxophone brille de tous ses reflets dorés. Pourtant, savez-vous à quelle famille d'instruments appartient le saxophone ?
+
+Même s'il est entièrement fabriqué en laiton métallique, il fait partie de la famille des bois ! Pourquoi ? Parce qu'il produit son son grâce à une fine lamelle de roseau — appelée anche — fixée sur le bec, exactement comme la clarinette.
+
+Inventé vers mille huit cent quarante par le Belge Adolphe Sax pour réunir la puissance des cuivres et la souplesse des bois, il est devenu une icône du jazz et du konpa haïtien.`,
+    kreyol: `Lè solèy ap kouche, toupre yon gita, yon silofòn ak yon dirijan, yon saksofòn ap klere ak bèl koulè lò li. Poutan, èske ou konnen nan ki fanmi enstriman saksofòn nan ye ?
+
+Menm si yo fabrike l nèt ak metal dore, li fè pati fanmi enstriman bwa yo ! Poukisa ? Paske li fè son li soti gras ak yon ti lam wozo fen — yo rele anch — ki kole nan bouch li, menm jan ak klarinèt la.
+
+Yon Bèlj ki rele Adolphe Sax te envante l bò ane mil uit san karant pou melanje fòs enstriman kwiv yo ak dousè bwa yo, epi li vin yon gwo zetwal nan djaz ak nan konpa ayisyen.`,
+    pt: `Ao entardecer, perto de um violão, de um xilofone e de um maestro, um saxofone brilha com seu corpo dourado. Mas você sabe a qual família de instrumentos o saxofone pertence?
+
+Embora seja feito inteiramente de metal, ele faz parte da família das madeiras! O motivo é que seu som nasce da vibração de uma fina palheta de bambu na boquilha, exatamente como no clarinete.
+
+Inventado por volta de 1840 pelo belga Adolphe Sax para unir a potência dos metais à agilidade das madeiras, o saxofone conquistou o jazz e o kompa haitiano.`,
+  },
 
   // ==================== LAZERES (10) ====================
   {
@@ -563,5 +703,145 @@ Ri ak zanmi, naje oswa jwe boul pa janm tan pèdi : se vrè remèd natirèl pou 
 Pesquisas médicas mostram que passar apenas vinte minutos ao ar livre, movimentando-se com leveza ou respirando ar fresco, reduz claramente os níveis de estresse no corpo.
 
 Rir com amigos, nadar ou jogar bola não é tempo perdido: é cuidado natural com o corpo e a mente.`,
+  },
+  {
+    id: "lazeres-11",
+    theme: "Lazeres",
+    suggestedSceneId: "lazeres-11",
+    estimatedSeconds: 60,
+    elementsCited: ["planch a woulèt", "rakèt tenis", "panye piknik", "kòd sote"],
+    title: {
+      fr: "Pourquoi les balles de tennis sont-elles jaunes et couvertes de feutre ?",
+      kreyol: "Poukisa boul tenis yo gen koulè jòn epi yo kouvri ak ti pwal ?",
+      pt: "Por que as bolas de tênis são amarelas e cobertas de feltro?",
+    },
+    summaryPt: "Uma curiosidade esportiva sobre aerodinâmica e televisão perto de raquetes, skate e corda de pular.",
+    fr: `Sur une place ensoleillée, près d'un panier de pique-nique, d'un skateboard et d'une corde à sauter, une raquette de tennis rappelle une petite énigme sportive : pourquoi les balles de tennis ne sont-elles ni lisses ni blanches ?
+
+Jusqu'en mille neuf cent soixante-douze, les balles étaient blanches ou noires ! Mais avec l'arrivée de la télévision en couleur, les spectateurs peinaient à suivre cette petite balle rapide à l'écran. On choisit alors le jaune vif fluorescent.
+
+Quant au feutre duveteux, il freine légèrement l'air pour offrir au joueur un meilleur contrôle après le rebond.`,
+    kreyol: `Sou yon plas ki gen solèy, toupre yon panye piknik, yon planch a woulèt ak yon kòd sote, yon rakèt tenis fè nou sonje yon ti sekrè espò : poukisa boul tenis yo pa lis ni blan ?
+
+Jis nan ane mil nèf san swasanndouz, boul yo te blan oswa nwa ! Men lè televizyon an koulè te rive, espektatè yo te gen pwoblèm pou wè ti boul rapid sa a sou ekran an. Se konsa yo te chwazi koulè jòn klere a.
+
+Kanta pou ti pwal mou ki sou li a, li ede kontwole vitès la nan lè a pou jwè a ka dirije boul la pi byen.`,
+    pt: `Em uma praça ensolarada, perto de uma cesta de piquenique, de um skate e de uma corda de pular, a raquete de tênis lembra uma curiosidade esportiva: por que as bolas de tênis são amarelas e peludas?
+
+Até 1972, as bolas oficiais costumavam ser brancas ou pretas! Com a chegada das transmissões de televisão em cores, ficava difícil enxergar a bolinha rápida na tela, então adotou-se o amarelo vibrante.
+
+Já o feltro macio cria leve atrito no ar, dando mais controle e precisão aos golpes.`,
+  },
+  {
+    id: "lazeres-12",
+    theme: "Lazeres",
+    suggestedSceneId: "lazeres-12",
+    estimatedSeconds: 60,
+    elementsCited: ["panye baskèt", "boul foutbòl", "panye piknik", "pisin"],
+    title: {
+      fr: "Pourquoi les jeux d'équipe et la natation reposent-ils si bien l'esprit ?",
+      kreyol: "Poukisa jwe an ekip ak naje nan pisin repoze lespri nou byen konsa ?",
+      pt: "Por que os jogos em equipe e a natação descansam tanto a mente?",
+    },
+    summaryPt: "O chamado 'descanso ativo' entre piscina, basquete, futebol e piquenique.",
+    fr: `Au coucher du soleil, entre une piscine calme, un panier de pique-nique, un ballon de football et un panier de basket-ball, on s'étonne parfois de se sentir plus en forme après avoir bougé que si l'on était resté assis toute la journée !
+
+Les chercheurs appellent cela le « repos actif ». Lorsque vous nagez dans la piscine ou faites une passe à un coéquipier, votre attention quitte les soucis du quotidien pour se concentrer sur l'instant présent.
+
+Le corps libère alors sa tension et l'esprit retrouve sa fraîcheur naturelle.`,
+    kreyol: `Lè solèy ap kouche, ant yon pisin trankil, yon panye piknik, yon boul foutbòl ak yon panye baskèt, nou konn sezi santi nou gen plis fòs apre nou fin bouje pase si nou te rete chita tout jounen !
+
+Chèchè yo rele sa « repo aktif ». Lè ou naje nan pisin nan oswa ou pase boul la bay yon zanmi nan ekip la, tèt ou kite tout traka chak jou yo pou l konsantre sou moman prezan an.
+
+Kò a lage tout tansyon l epi lespri a jwenn tout frechè natirèl li.`,
+    pt: `Ao pôr do sol, entre uma piscina tranquila, uma cesta de piquenique, uma bola de futebol e uma cesta de basquete, às vezes nos surpreendemos por nos sentirmos mais descansados depois de jogar do que após horas parados!
+
+Os especialistas chamam isso de "descanso ativo". Quando você nada ou troca passes em equipe, a atenção sai das preocupações repetitivas e se volta totalmente ao momento presente.
+
+Assim, o corpo libera a tensão acumulada e a mente recupera o frescor.`,
+  },
+  {
+    id: "lazeres-13",
+    theme: "Lazeres",
+    suggestedSceneId: "lazeres-13",
+    estimatedSeconds: 60,
+    elementsCited: ["kayak", "glisad", "kat jwe", "rakèt tenis"],
+    title: {
+      fr: "Le kayak : une embarcation vieille de plus de quatre mille ans",
+      kreyol: "Kayak la : yon ti bato ki gen plis pase kat mil an istwa",
+      pt: "O caiaque: uma embarcação criada há mais de quatro mil anos",
+    },
+    summaryPt: "A origem ártica do caiaque e sua popularidade atual nas praias ensolaradas.",
+    fr: `Sur une plage ensoleillée, près d'une raquette de tennis, d'un jeu de cartes et d'un toboggan coloré, un kayak prêt à prendre la mer porte une histoire millénaire.
+
+Bien avant de devenir un loisir d'été sur les baies tropicales, le kayak a été inventé il y a plus de quatre mille ans par les peuples inuits et aléoutes des régions arctiques ! Leur mot « qajaq » signifiait « bateau de l'homme ».
+
+Construit autrefois avec une charpente légère en bois flotté, il glissait en silence sur l'eau sans faire de vagues — une merveille d'équilibre restée presque inchangée.`,
+    kreyol: `Sou yon plaj ki plen solèy, toupre yon rakèt tenis, kat jwe ak yon glisad kolore, yon ti kayak ki pare pou antre nan dlo a pote yon istwa ki gen plizyè milye ane.
+
+Byen lontan anvan l te tounen yon bèl lwazi ete sou plaj twopikal yo, pèp Inwit yo nan zòn Aktik la te envante kayak la sa gen plis pase kat mil an ! Mo « qajaq » la te vle di « ti bato ».
+
+Yo te konn fabrike l ak bwa lejè ki flote, epi l te glise an silans sou dlo a san fè gwo bri — yon mèvèy ekilib ki rete prèske menm jan jodi a.`,
+    pt: `Em uma praia ensolarada, perto de uma raquete de tênis, um baralho e um escorregador colorido, um caiaque pronto para entrar na água carrega uma história milenar.
+
+Muito antes de virar lazer de verão em baías tropicais, o caiaque foi inventado há mais de quatro mil anos pelos povos inuítes e aleútes das regiões árticas! A palavra "qajaq" significava "barco ligeiro".
+
+Construído originalmente com armação leve de madeira, deslizava em silêncio sobre a água — uma obra de equilíbrio que quase não mudou até hoje.`,
+  },
+  {
+    id: "lazeres-14",
+    theme: "Lazeres",
+    suggestedSceneId: "lazeres-16",
+    estimatedSeconds: 60,
+    elementsCited: ["tablo echèk", "balanswa", "patin", "filè volebòl"],
+    title: {
+      fr: "Comment le volley-ball a commencé avec un filet de tennis surélevé",
+      kreyol: "Kijan volebòl la te kòmanse ak yon filè tenis yo te monte pi wo",
+      pt: "Como o vôlei começou com uma rede de tênis levantada a dois metros",
+    },
+    summaryPt: "A criação do vôlei em 1895 por William Morgan como um jogo leve sem contato físico.",
+    fr: `Sous un ciel dégagé, près d'une balançoire, d'un échiquier et d'une paire de patins, un filet de volley-ball rappelle une invention née juste après le basket-ball !
+
+En mille huit cent quatre-vingt-quinze, aux États-Unis, le directeur sportif William Morgan cherchait un jeu amusant mais moins fatigant et sans chocs entre joueurs. Il eut alors l'idée d'emprunter un filet de tennis et de le tendre à près de deux mètres du sol !
+
+Appelé d'abord « mintonette », ce sport prit vite le nom de « volley-ball », car le ballon devait rester toujours en vol sans toucher la terre.`,
+    kreyol: `Anba yon syèl klè, toupre yon balanswa, yon tablo echèk ak yon pè patin, yon filè volebòl fè nou sonje yon espò ki te fèt touswit apre baskètbòl la !
+
+Nan ane mil uit san katreven kenz, Ozetazini, yon direktè espò ki rele William Morgan t ap chèche yon jwèt ki amizan men ki pa twò fatigan e ki pa gen gwo chòk ant jwè yo. Li te gen lide pran yon filè tenis epi monte l prèske de mèt anlè tè a !
+
+Okòmansman yo te rele l « mintonette », epi vit vit li pran non « volebòl », paske boul la dwe rete anlè nan lè a san l pa touche tè.`,
+    pt: `Sob um céu limpo, perto de um balanço, de um tabuleiro de xadrez e de um par de patins, uma rede de vôlei lembra uma invenção surgida logo após o basquete!
+
+Em 1895, nos Estados Unidos, o professor William Morgan buscava um esporte coletivo divertido, sem choques físicos e acessível a todas as idades. Ele teve então a ideia de esticar uma rede de tênis a quase dois metros do chão!
+
+Chamado inicialmente de "mintonette", o jogo logo ganhou o nome de voleibol porque a bola devia seguir sempre no ar sem tocar o solo.`,
+  },
+  {
+    id: "lazeres-15",
+    theme: "Lazeres",
+    suggestedSceneId: "lazeres-17",
+    estimatedSeconds: 60,
+    elementsCited: ["kann lapèch", "planch a woulèt", "filè volebòl", "panye baskèt"],
+    title: {
+      fr: "La pêche de loisir : l'art d'observer l'eau avec patience",
+      kreyol: "Lapèch pou lwazi : bèl atizay gade dlo a ak pasyans",
+      pt: "A pesca recreativa: a arte de observar a água com paciência",
+    },
+    summaryPt: "Por que atividades calmas com vara de pescar equilibram o ritmo agitado dos esportes.",
+    fr: `À la tombée du jour, entre l'agitation d'un terrain de volley-ball, un panier de basket-ball et un skateboard qui passe, quelqu'un s'assoit tranquillement avec une canne à pêche au bord de l'eau.
+
+Contrairement aux sports de vitesse, la pêche de loisir invite à ralentir. Regarder les petites ondulations de l'eau, écouter le vent et attendre patiemment offre au cerveau une pause rare dans nos journées pleines d'écrans.
+
+Un bon moment de calme au bord de l'eau apprend souvent autant que la plus grande aventure.`,
+    kreyol: `Lè solèy ap kouche, ant anbyans yon teren volebòl, yon panye baskèt ak yon planch a woulèt k ap pase, yon moun chita trankil ak yon kann lapèch bò dlo a.
+
+Kontrèman ak espò vitès yo, lapèch pou lwazi envite nou ralanti. Gade ti vag dlo yo, koute van an epi tann ak pasyans bay sèvo a yon bèl poz nan mitan jounen ki plen ekran yo.
+
+Yon ti moman kalm bò dlo a souvan aprann nou anpil bagay menm jan ak yon gwo avanti.`,
+    pt: `Ao entardecer na vila, entre a agitação de uma quadra de vôlei, uma cesta de basquete e um skate passando, alguém se senta tranquilo com uma vara de pescar à beira da água.
+
+Diferente dos esportes de velocidade, a pesca recreativa convida a desacelerar. Observar as ondulações da água, ouvir o vento e esperar com calma oferece à mente uma pausa rara na rotina cheia de telas.
+
+Um momento sereno diante da natureza ensina tanto quanto qualquer grande aventura.`,
   },
 ];

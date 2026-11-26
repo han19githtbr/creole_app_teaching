@@ -30,7 +30,9 @@ import { BookOpen, Calendar, CheckCircle2, Download, Film, Image as ImageIcon, L
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { identifyEntityType, detectActionFromCaption, ACTION_METAS } from "@/lib/storyLifeEngine";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
-import { getElementLabel, getLanguageImageSrc } from "@/lib/imageBank";
+import { getBankImage, getElementLabel, getLanguageImageSrc } from "@/lib/imageBank";
+import { StoryScriptPicker } from "@/components/StoryScriptPicker";
+import type { StoryScriptItem } from "@/lib/storyContentBank";
 
 
 type Caption = { start: number; end: number; kreyol: string; portuguese: string };
@@ -108,6 +110,20 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
       const slots = evenCaptionSlots(items.length, duration);
       return items.map((item, index) => ({ ...item, ...slots[index] }));
     });
+  }
+
+  function applyScriptMetadata(script: StoryScriptItem, scriptLanguage: "kreyol" | "francais") {
+    const localizedTitle = scriptLanguage === "francais" ? script.title.fr : script.title.kreyol;
+    setTitle(localizedTitle);
+    setDescription(script.summaryPt);
+    const bankMatch = getBankImage(script.suggestedSceneId);
+    if (bankMatch) {
+      setImageSrc(bankMatch.src);
+      setTheme(bankMatch.theme);
+      setCueOverrides({});
+    } else {
+      setTheme(script.theme);
+    }
   }
 
   function handleLiveTranscript(text: string, isFinal: boolean) {
@@ -346,6 +362,7 @@ export function StoryForm({ initial }: { initial?: InitialStory }) {
 
       <section className="space-y-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <div><h2 className="font-semibold text-[var(--text)]">Narração em {targetLangLabel}</h2><p className="mt-1 text-xs text-[var(--text-muted)]">Grave, envie ou converta uma narração de {describeStoryDuration(STORY_AUDIO_MIN_SECONDS)} a {describeStoryDuration(STORY_AUDIO_MAX_SECONDS)}. O roteiro e as legendas são preenchidos automaticamente conforme o áudio.</p></div>
+        <StoryScriptPicker language={language} activeTheme={theme} onApplyMetadata={applyScriptMetadata} />
         <div className="grid gap-2 sm:grid-cols-3" role="tablist" aria-label="Como adicionar a narração">
           {modes.map(([value, label, Icon]) => <button key={value} type="button" role="tab" aria-selected={mode === value} onClick={() => setMode(value)} className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium ${mode === value ? "border-[var(--accent)] bg-[var(--accent-soft)] text-white" : "border-[var(--border)] text-[var(--text-secondary)]"}`}><Icon className="h-4 w-4" />{label}</button>)}
         </div>

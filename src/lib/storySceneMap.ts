@@ -22,6 +22,12 @@ export interface SceneGrid {
   indoor: boolean;
   /** céu noturno */
   night?: boolean;
+  /** cena subaquática (fundo do mar): sem chão seco caminhável */
+  underwater?: boolean;
+  /** a própria ilustração já traz chuva */
+  hasRain?: boolean;
+  /** a própria ilustração já traz arco-íris */
+  hasRainbow?: boolean;
   /** topo do chão/da água em px (1200x800) */
   groundTop: number;
   cells: Uint8Array;
@@ -53,12 +59,12 @@ export function sceneIdFromSrc(src: string): string {
 export function getSceneGrid(srcOrId: string): SceneGrid | null {
   const id = sceneIdFromSrc(srcOrId);
   if (cache.has(id)) return cache.get(id) ?? null;
-  const entry = (sceneMapData as unknown as Record<string, { i: number; n?: number; gt: number; rows: string[] }>)[id];
+  const entry = (sceneMapData as unknown as Record<string, { i: number; n?: number; u?: number; r?: number; rb?: number; gt: number; rows: string[] }>)[id];
   let grid: SceneGrid | null = null;
   if (entry && entry.rows?.length === GRID_H) {
     const cells = new Uint8Array(GRID_W * GRID_H);
     entry.rows.forEach((row, y) => decodeRow(row).forEach((v, x) => { cells[y * GRID_W + x] = v; }));
-    grid = { indoor: entry.i === 1, night: entry.n === 1, groundTop: entry.gt, cells, source: "map" };
+    grid = { indoor: entry.i === 1, night: entry.n === 1, underwater: entry.u === 1, hasRain: entry.r === 1, hasRainbow: entry.rb === 1, groundTop: entry.gt, cells, source: "map" };
   }
   cache.set(id, grid);
   return grid;
@@ -82,7 +88,8 @@ export function gridFromZones(zones: { water: { y0: number; y1: number } | null;
       cells[gy * GRID_W + gx] = k;
     }
   }
-  return { indoor: false, groundTop: w ? w.y1 : gt, cells, source: "pixels" };
+  const underwater = Boolean(w && w.y1 - w.y0 >= 320 && w.y1 >= 720);
+  return { indoor: false, underwater, groundTop: w ? w.y1 : gt, cells, source: "pixels" };
 }
 
 export const cellAt = (g: SceneGrid, x: number, y: number): number => {

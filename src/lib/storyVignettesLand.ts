@@ -83,7 +83,7 @@ const drummer: VignetteDef = {
     return {
       id: "tamborileiro", z: p.y,
       draw: (t) => drum(t) + person(t, { x: p.x - p.dir * 8 * p.s, y: p.y, s: p.s, face: p.dir, pose: "drum", shirt, skin: "#a86f45" }) + notes(t, p.x + dx, p.y - 100 * p.s, p.seed + "d", 3),
-      labels: () => [{ key: "tamborileiro", x: p.x - p.dir * 8 * p.s, y: p.y - 100 * p.s }, { key: "tambor", x: p.x + dx, y: p.y - 40 * p.s }],
+      labels: () => [{ key: "tamborileiro", x: p.x - p.dir * 8 * p.s, y: p.y - 100 * p.s }, { key: "tambor", x: p.x + dx, y: p.y - 26 * p.s, prefer: p.dir > 0 ? "right" : "left" }],
     };
   },
 };
@@ -134,7 +134,7 @@ const picnic: VignetteDef = {
           person(t, { x: p.x + 58 * s, y: p.y - 8 * s, s: s * 0.95, face: -1, pose: "sit-talk", shirt: "#e86aa6", skin: "#c68a5c", ph: 1.3 }) +
           butterfly(t, { cx: p.x + 20, cy: p.y - 90 * s, r: 60, ph: p.x * 0.01, color: "#f5d04a" });
       },
-      labels: () => [{ key: "piquenique", x: p.x, y: p.y - 70 * s }, { key: "cesta", x: p.x + 2 * s, y: p.y - 34 * s }],
+      labels: () => [{ key: "piquenique", x: p.x, y: p.y - 70 * s }, { key: "cesta", x: p.x + 2 * s, y: p.y - 6 * s, prefer: "below" }],
     };
   },
 };

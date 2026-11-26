@@ -24,6 +24,7 @@ import {
 import { Muxer, ArrayBufferTarget } from "mp4-muxer";
 import { getElementIcon } from "@/lib/storyElementIcon";
 import { buildSvgLayerKit, loadSvgImage, rasterizeLayer, releaseSvgImage } from "@/lib/storySvgLayers";
+import { animateDiverseSvg } from "@/lib/storySvgMotion";
 import { analyzeSceneZones, lifeSvgDocument, type SceneZones } from "@/lib/storySceneLife";
 import { createSceneLife } from "@/lib/storySceneDirector";
 import { WATER, getSceneGrid } from "@/lib/storySceneMap";
@@ -236,8 +237,9 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     };
   }, [displaySrc]);
 
-  // Divide o SVG em camadas: o fundo vira imagem estática (rasterizada uma vez) e só os elementos animados são redesenhados.
-  const layerKit = useMemo(() => (svgContent ? buildSvgLayerKit(svgContent) : null), [svgContent]);
+  // Divide o SVG em camadas: injeta animações em SVGs estáticos do banco, transforma o fundo em imagem estática e anima o meio.
+  const animatedSvg = useMemo(() => (svgContent ? animateDiverseSvg(svgContent) : null), [svgContent]);
+  const layerKit = useMemo(() => (animatedSvg ? buildSvgLayerKit(animatedSvg) : null), [animatedSvg]);
   const [layerUrls, setLayerUrls] = useState<{ kit: typeof layerKit; below: string | null; above: string | null }>({ kit: null, below: null, above: null });
   useEffect(() => {
     if (!layerKit) {
@@ -1200,6 +1202,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
     const wasMuted = audio.muted;
     let failure: Error | null = null;
     let producing = false;
+    let exportActive = false;
 
     const onVisibility = () => {
       if (document.hidden) {
@@ -1299,18 +1302,19 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType }));
       });
       recorder.start(1000);
+      exportActive = true;
       await audio.play();
 
       if (producing && layerKit) {
         const kit = layerKit;
         void (async () => {
           const interval = 1000 / 30;
-          while (producing) {
+          while (exportActive && producing) {
             const started = performance.now();
             // loadSvgImage nunca fica pendurada (tem tempo limite): se um quadro falhar, o loop segue para o próximo.
             const frame = await loadSvgImage(kit.frozen(audio.currentTime + 0.03), 1200);
             const layers = exportLayersRef.current;
-            if (frame && producing && layers) {
+            if (frame && exportActive && producing && layers) {
               const previous = layers.mid;
               layers.mid = frame;
               releaseSvgImage(previous);
@@ -1322,14 +1326,14 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         })();
       }
 
-      if (producing && lifeScene.actors.length) {
+      if (lifeScene.actors.length) {
         const lifeSource = lifeScene;
         void (async () => {
           const interval = 1000 / 30;
-          while (producing) {
+          while (exportActive) {
             const started = performance.now();
             const lifeImage = await loadSvgImage(lifeSvgDocument(lifeSource.render(audio.currentTime + 0.03)), 1200);
-            if (lifeImage && producing) {
+            if (lifeImage && exportActive) {
               const previousLife = lifeImageRef.current;
               lifeImageRef.current = lifeImage;
               releaseSvgImage(previousLife);
@@ -1355,6 +1359,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
         animationRef.current = requestAnimationFrame(draw);
       });
       const completed = audio.ended;
+      exportActive = false;
       producing = false;
       if (completed) {
         drawExportFrame(context, image, duration, exportW, exportH);
@@ -1373,6 +1378,7 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
       setExportError(error instanceof Error ? error.message : "Não foi possível exportar o vídeo.");
     } finally {
       document.removeEventListener("visibilitychange", onVisibility);
+      exportActive = false;
       producing = false;
       releaseSvgImage(exportLayersRef.current?.mid);
       exportLayersRef.current = null;
@@ -1434,12 +1440,12 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
                   <img src={layerUrls.above} alt="" draggable={false} className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover" />
                 )}
               </div>
-            ) : svgContent ? (
+            ) : animatedSvg ? (
               <div
                 className={`h-full w-full [&>svg]:h-full [&>svg]:w-full [&>svg]:object-cover ${
                   playing ? "" : "[&_*]:[animation-play-state:paused!important]"
                 }`}
-                dangerouslySetInnerHTML={{ __html: svgContent }}
+                dangerouslySetInnerHTML={{ __html: animatedSvg }}
               />
             ) : (
               <NextImage src={displaySrc} alt={story.title} fill unoptimized className="object-cover" />

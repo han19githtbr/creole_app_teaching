@@ -14,11 +14,11 @@ const dir = path.resolve(here, "../../../public/ghibli");
 const OUT = path.resolve(here, "../../../src/lib/storySceneMap.json");
 const GW = 48, GH = 32, CELL = 25, RW = 300, RH = 200;
 
-const FX = /sun ray|\bray|cloud|glow|light beam|spotlight|shadow|sparkle|twinkl|starry|firefl|vignette|overlay|reflection|texture|bokeh|dust|haze|fog|mist/i;
-const WATER = /ocean|river|\blake|waters\b|\bpond|tranquil distant sea|crater lake|waterfall pool|\brio\b|rivy[eè]|lanm[eè]|\bmar\b|oceano|\blago\b/i;
-const NOT_WATER = /sea cliff|seagull|shell|starfish|sand|sunset path/i;
-const GROUND = /meadow|terrace|floor|shoreline|cobblestone|pavement|sidewalk|courtyard|\bground\b|tiles|gathering|plaza|lawn|grass|pasture|field/i;
-const BG = /mountain|peaks|hilltop|\bhills?\b|skyline|horizon|island|distant/i;
+const FX = /sun ray|\bray|cloud|glow|light beam|spotlight|shadow|sombra|sparkle|twinkl|starry|firefl|vignette|overlay|reflection|reflexos|texture|bokeh|dust|haze|fog|mist/i;
+const WATER = /ocean|river|\blake|waters\b|\bpond|tranquil distant sea|crater lake|waterfall pool|\brio\b|rivy[eè]|lanm[eè]|\bmar\b|camada de mar|oceano|\blago\b|\bobj\s+(letan|lak)\b/i;
+const NOT_WATER = /sea cliff|seagull|shell|starfish|sand|sunset path|sombra/i;
+const GROUND = /meadow|terrace|floor|shoreline|cobblestone|pavement|sidewalk|courtyard|\bground\b|tiles|gathering|plaza|lawn|grass|pasture|field|cal[cç]ad[aã]o|areia|praia|faixa verde/i;
+const BG = /mountain|peaks|hilltop|\bhills?\b|skyline|horizon|island|distant|silhueta|serra|perfil/i;
 
 function render(openTag, defs, markup) {
   const m = markup.replace(/\sfilter="url\(#[^)]*\)"/g, "");
@@ -67,6 +67,9 @@ for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".svg") && (!ONLY.l
   const styles = nodes.filter((n) => n.tag === "style").map((n) => n.markup).join("");
   const defs = (defsNode ? defsNode.markup : "") + styles;
   const owner = new Array(GW * GH).fill("S");
+  const isUnderwater = /recife de corais|light beam underwater rays|subaqu[aá]tic|fundo do mar/i.test(svg);
+  const hasRain = /<!--\s*rain overlay\s*-->/i.test(svg);
+  const hasRainbow = /<!--\s*light beam rainbow/i.test(svg);
   let indoor = false, night = false, skyFound = false, gt = 800;
   for (const n of nodes) {
     if (["defs", "title", "desc", "style"].includes(n.tag)) continue;
@@ -87,6 +90,8 @@ for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".svg") && (!ONLY.l
       continue;
     }
     if (FX.test(text)) continue;
+    // Elementos posicionados no rodapé só via CSS @keyframes (ex.: flores em tecnologia.svg) não devem marcar chão no topo
+    if (/foreground-flowers-sway/i.test(n.attrs || "")) continue;
     if (n.tag === "line" || (n.tag === "ellipse" && !n.comment)) continue; // riscos de piso e reflexos finos não são objetos
     const r = render(openTag, defs, n.markup);
     const c = cover(r);
@@ -96,23 +101,26 @@ for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".svg") && (!ONLY.l
     const wide = bb.x1 - bb.x0 >= 1000;
     if (WATER.test(text) && !NOT_WATER.test(text)) cls = "W";
     else if (GROUND.test(text) && wide) cls = "G";
-    else if (BG.test(text)) cls = "B";
+    else if (BG.test(text) && !(wide && bb.y1 >= 780 && bb.y0 >= 480 && !/distant|silhueta|serra|perfil/i.test(text))) cls = "B";
     else if (wide && bb.y1 >= 780 && bb.y0 >= 350) cls = "G"; // faixa larga que chega à base do quadro = chão
     else if (!n.comment && /^(polygon|path)$/.test(n.tag) && bb.y1 <= 560 && bb.x1 - bb.x0 >= 300) cls = "B"; // montanhas sem nome
     // faixa "de chão" azul/turquesa não é chão: são camadas de água sem nome (raso, fundo, espuma)
     if (cls === "G") { const [R, Gc, B] = meanColor(r); if (B >= R + 30 && (B + Gc) / 2 > 130 && B >= Gc - 25) cls = "W"; }
-    if (cls === "G" || cls === "W") gt = Math.min(gt, bb.y0);
+    // em cena subaquática (fundo do mar), areia do leito marinho não é chão seco caminhável
+    if (isUnderwater && cls === "G") cls = "O";
+    // gt representa apenas o topo do CHÃO seco caminhável (nunca o topo da água)
+    if (cls === "G") gt = Math.min(gt, bb.y0);
     for (let k = 0; k < c.length; k++) if (c[k]) owner[k] = cls;
   }
   // em cenas internas o "chão" é o piso desenhado; nas externas, o que sobrou sem dono (S) abaixo do chão vira céu mesmo
   // cena externa sem chão desenhado nem água (ex.: vila noturna sobre fundo liso): a faixa vazia da base funciona como chão
-  if (!indoor && !owner.includes("G") && !owner.includes("W")) {
+  if (!indoor && !isUnderwater && !owner.includes("G") && !owner.includes("W")) {
     for (let gy = 22; gy < GH - 1; gy++) for (let gx = 0; gx < GW; gx++) if (owner[gy * GW + gx] === "S") owner[gy * GW + gx] = "G";
     gt = 550;
   }
   const rows = [];
   for (let gy = 0; gy < GH; gy++) rows.push(rle(owner.slice(gy * GW, (gy + 1) * GW).join("")));
-  map[id] = { i: indoor ? 1 : 0, n: night ? 1 : 0, gt: Math.round(Math.min(gt, 800)), rows };
+  map[id] = { i: indoor ? 1 : 0, n: night ? 1 : 0, ...(isUnderwater ? { u: 1 } : {}), ...(hasRain ? { r: 1 } : {}), ...(hasRainbow ? { rb: 1 } : {}), gt: Math.round(Math.min(gt, 800)), rows };
 }
 fs.writeFileSync(OUT, JSON.stringify(map));
 console.log("cenas:", Object.keys(map).length, "bytes:", fs.statSync(OUT).size);

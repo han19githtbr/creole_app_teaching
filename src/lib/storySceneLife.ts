@@ -113,6 +113,8 @@ export type Pose =
 export interface PersonOpt {
   x: number; y: number; s?: number; face?: 1 | -1; pose: Pose; ph?: number; speed?: number;
   skin?: string; shirt?: string; pants?: string; hair?: string; hat?: string; robe?: boolean;
+  /** Cor do guarda-chuva segurado na mão (só em caminhada externa na chuva). */
+  umbrella?: string;
 }
 
 export function person(t: number, o: PersonOpt): string {
@@ -122,7 +124,7 @@ export function person(t: number, o: PersonOpt): string {
   const seated = o.pose === "sit-eat" || o.pose === "sit-talk" || o.pose === "row" || o.pose === "ride";
   let lL = 0, lR = 0, aL = 0.1, aR = 0.1, bob = 0, lean = 0, nod = 0, sx = 1;
   switch (o.pose) {
-    case "walk": { const k = sin(w * 6); lL = k * 0.55; lR = -k * 0.55; aL = -k * 0.5 * 0.9 - 0.04; aR = k * 0.5 * 0.9 + 0.04; bob = -Math.abs(cos(w * 6)) * 2.5; lean = 3 + sin(w * 6) * 1.4; nod = sin(w * 12) * 1.1; break; }
+    case "walk": { const k = sin(w * 6); lL = k * 0.55; lR = -k * 0.55; aL = -k * 0.5 * 0.9 - 0.04; aR = o.umbrella ? 0.72 + sin(w * 6) * 0.05 : k * 0.5 * 0.9 + 0.04; bob = -Math.abs(cos(w * 6)) * 2.5; lean = 3 + sin(w * 6) * 1.4; nod = sin(w * 12) * 1.1; break; }
     case "talk": aR = -1.0 + sin(w * 2.4) * 0.45; aL = 0.1 + sin(w * 1.7) * 0.15; nod = sin(w * 3) * 2; break;
     case "wave": aR = -2.7 + sin(w * 7) * 0.4; break;
     case "point": aR = -1.45 + sin(w * 1.5) * 0.08; aL = 0.15; nod = sin(w * 1.2) * 1.5; break;
@@ -193,6 +195,17 @@ export function person(t: number, o: PersonOpt): string {
     const [rx, ry] = end(0, hipY, 40, lR);
     legs = limb(0, hipY, 40, lR, 9, pants) + ell(rx + 3, ry, 6, 3.4, "#2a1c14") + limb(0, hipY, 40, lL, 9, pants) + ell(lx + 3, ly, 6, 3.4, "#2a1c14");
   }
+  const [handRX, handRY] = end(0, shY + 4, 28, aR);
+  const heldUmbrella = o.umbrella && o.pose === "walk"
+    ? G(handRX, handRY, -lean, 1, 1,
+      line(0, -76, 0, 8, 3, "#3a2c20") +
+      `<path d="M0 8 q0 8 7 6" stroke="#3a2c20" stroke-width="3" fill="none" stroke-linecap="round"/>` +
+      G(0, -76, 0, 1.05, 1.05,
+        `<path d="M-36 0 Q-32 -34 0 -38 Q32 -34 36 0 Q24 -6 12 0 Q0 -6 -12 0 Q-24 -6 -36 0 Z" fill="${o.umbrella}"/>` +
+        line(0, -38, 0, -44, 3, "#333"),
+      ),
+    )
+    : "";
   const torso = `<g transform="rotate(${f(lean)} 0 ${hipY})">` +
     limb(0, shY + 4, 28, aL, 7, shirt) + circ(...end(0, shY + 4, 28, aL), 4, skin) +
     `<rect x="-10" y="${shY - 2}" width="20" height="40" rx="9" fill="${shirt}"/>` +
@@ -200,7 +213,8 @@ export function person(t: number, o: PersonOpt): string {
     `<g transform="rotate(${f(nod)} 0 ${shY})">${circ(2, shY - 15, 12, skin)}<path d="M-10 ${shY - 18} Q2 ${shY - 34} 14 ${shY - 18} Q4 ${shY - 24} -10 ${shY - 18} Z" fill="${hair}"/>` +
     (o.hat ? `<ellipse cx="2" cy="${shY - 26}" rx="15" ry="4" fill="${o.hat}"/><rect x="-8" y="${shY - 36}" width="20" height="11" rx="5" fill="${o.hat}"/>` : "") +
     (blinking ? line(5, shY - 14, 9, shY - 14, 1.4, "#2a1c14") : circ(7, shY - 14, 1.6, "#2a1c14")) + `</g>` +
-    limb(0, shY + 4, 28, aR, 7, shirt) + circ(...end(0, shY + 4, 28, aR), 4, skin) + `</g>`;
+    heldUmbrella +
+    limb(0, shY + 4, 28, aR, 7, shirt) + circ(handRX, handRY, 4, skin) + `</g>`;
   let prop = "";
   if (o.pose === "guitar") { const [hx, hy] = end(0, shY + 4, 28, aL); prop = line(-12, shY + 30, hx + 6, hy - 4, 4, "#7a4a22") + ell(-8, shY + 32, 11, 8, "#c0792f"); }
   if (o.pose === "read") { const [hx, hy] = end(0, shY + 4, 28, aL); prop = `<rect x="${f(hx - 2)}" y="${f(hy - 8)}" width="14" height="12" rx="1" fill="#f6efe0" stroke="#8a6b3a" stroke-width="1.5"/>`; }

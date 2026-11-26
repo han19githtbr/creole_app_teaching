@@ -83,6 +83,8 @@ export interface LabelSpec {
   x: number; y: number;
   /** 0..1: se o objeto some (ex.: avião fora de cena) o rótulo some junto */
   alpha?: number;
+  /** preferência de posicionamento do rótulo em relação à âncora */
+  prefer?: "above" | "below" | "left" | "right";
 }
 export interface SoundCue { t: number; kind: string; gain: number }
 export interface VignetteInst {
@@ -193,7 +195,7 @@ const hotAir: VignetteDef = {
     return {
       id: "balao", z: 0,
       draw: (t) => { const q = pos(t); return balloon(t, { x: q.x, y: q.y, s: 1.15 * p.s, ph }); },
-      labels: (t) => { const q = pos(t); return [{ key: "balao", x: q.x, y: q.y - 80 * p.s }]; },
+      labels: (t) => { const q = pos(t); return [{ key: "balao", x: q.x, y: q.y - 68 * p.s, prefer: q.y < 235 ? (q.x > 600 ? "left" : "right") : "above" }]; },
     };
   },
 };

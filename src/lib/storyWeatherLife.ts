@@ -17,7 +17,7 @@ export const WEATHER_PERIOD = 46;
 
 export interface WeatherPhase { u: number; veil: number; rain: number; cover: number; rainbow: number; flash: number }
 
-export function weatherPhase(t: number, t0: number): WeatherPhase {
+export function weatherPhase(t: number, t0: number, allowRoom = true): WeatherPhase {
   const u = (((t - t0) % WEATHER_PERIOD) + WEATHER_PERIOD) % WEATHER_PERIOD;
   const flashAt = [19.2, 26.4, 30.1];
   const flash = Math.max(...flashAt.map((a) => (u > a && u < a + 0.45 ? (1 - (u - a) / 0.45) * (Math.floor((u - a) * 12) % 2 === 0 ? 1 : 0.35) : 0)));
@@ -25,7 +25,7 @@ export function weatherPhase(t: number, t0: number): WeatherPhase {
     u,
     veil: sm(11, 15.5, u) * (1 - sm(33, 38, u)),
     rain: sm(14, 16.5, u) * (1 - sm(34, 36.5, u)),
-    cover: sm(22, 23.4, u) * (1 - sm(31, 32.4, u)),
+    cover: allowRoom ? sm(22, 23.4, u) * (1 - sm(31, 32.4, u)) : 0,
     rainbow: sm(36.5, 39, u) * (1 - sm(43, 45.5, u)),
     flash,
   };
@@ -70,12 +70,6 @@ function rainbow(k: number, gt: number): string {
     cols.map((c, i) => `<path d="M${cx - 360 + i * 12} ${cy} A${360 - i * 12} ${360 - i * 12} 0 0 1 ${cx + 360 - i * 12} ${cy}" stroke="${c}"/>`).join("") + `</g>`;
 }
 
-/* ------------------------------------------------------------------ guarda-chuvas */
-
-function umbrella(x: number, y: number, s: number, col: string): string {
-  return G(x, y, 0, s, s, `<path d="M-34 0 Q-30 -34 0 -38 Q30 -34 34 0 Q22 -6 11 0 Q0 -6 -11 0 Q-22 -6 -34 0 Z" fill="${col}"/>` + line(0, -38, 0, -44, 3, "#333") + line(0, 0, 0, 62, 3, "#3a2c20") + `<path d="M0 62 q0 8 8 6" stroke="#3a2c20" stroke-width="3" fill="none" stroke-linecap="round"/>`);
-}
-
 /* ------------------------------------------------------------------ interior da casa */
 
 interface RoomLayout { door: { x: number; y: number; w: number; h: number }; win: { x: number; y: number; w: number; h: number } }
@@ -116,15 +110,17 @@ function room(t: number, p: WeatherPhase, personSeed: { skin: string; shirt: str
     `<rect x="840" y="410" width="280" height="62" rx="14" fill="#f4f1ea"/><rect x="842" y="404" width="76" height="44" rx="14" fill="#fff"/>` +
     `<path d="M890 442 H1120 V500 H890 Z" fill="#4f86c6"/><path d="M890 442 H1120 V458 H890 Z" fill="#7aa6dc"/>` +
     `<rect x="846" y="552" width="14" height="30" fill="#5a3418"/><rect x="1100" y="552" width="14" height="30" fill="#5a3418"/>`;
-  // mesa + abajur
-  s += `<ellipse cx="300" cy="508" rx="96" ry="14" fill="#7d4c26"/><rect x="290" y="508" width="20" height="62" fill="#6a3f20"/><ellipse cx="300" cy="574" rx="56" ry="8" fill="#6a3f20"/>` +
-    `<ellipse cx="300" cy="440" rx="${f(90 * lamp)}" ry="${f(70 * lamp)}" fill="#ffe29a" opacity=".22"/>` +
-    `<rect x="296" y="462" width="8" height="42" fill="#a07a4a"/><path d="M270 466 L282 424 H318 L330 466 Z" fill="#ffd36e"/>`;
-  // quem estava lá fora entra, sacode o guarda-chuva e acena
+  // mesa + abajur (deslocados à esquerda para não colidir com o personagem nem com os rótulos da janela)
+  const tx = 175;
+  s += `<ellipse cx="${tx}" cy="508" rx="86" ry="14" fill="#7d4c26"/><rect x="${tx - 10}" y="508" width="20" height="62" fill="#6a3f20"/><ellipse cx="${tx}" cy="574" rx="52" ry="8" fill="#6a3f20"/>` +
+    `<ellipse cx="${tx}" cy="440" rx="${f(86 * lamp)}" ry="${f(66 * lamp)}" fill="#ffe29a" opacity=".22"/>` +
+    `<rect x="${tx - 4}" y="462" width="8" height="42" fill="#a07a4a"/><path d="M${tx - 30} 466 L${tx - 18} 424 H${tx + 18} L${tx + 30} 466 Z" fill="#ffd36e"/>`;
+  // dentro de casa o personagem entra sem guarda-chuva (natural e abrigado) e acena
   const walkIn = clamp((lt - 1.0) / 3.6, 0, 1);
-  const px = door.x + door.w / 2 + 10 - walkIn * 150, py = 606;
+  const enterAlpha = clamp((lt - 1.0) / 0.4, 0, 1);
+  const px = door.x + door.w / 2 + 10 - walkIn * 150, py = 574 + walkIn * 32;
   const pose = walkIn < 1 ? "walk" : "wave";
-  s += fade(lt > 1 ? 1 : 0, person(t, { x: px, y: py, s: 3.6, face: -1, pose, speed: 0.55, skin: personSeed.skin, shirt: personSeed.shirt }) + (walkIn < 1 ? umbrella(px + 70, py - 270, 2.9, "#e0493a") : ""));
+  s += fade(enterAlpha, person(t, { x: px, y: py, s: 3.6, face: -1, pose, speed: 0.55, skin: personSeed.skin, shirt: personSeed.shirt }));
   return `<g opacity="${f(c)}">${s}</g>`;
 }
 
@@ -139,48 +135,70 @@ function rainLayerClip(t: number, door: { x: number; y: number; w: number; h: nu
 
 /* ------------------------------------------------------------------ vinheta */
 
-export interface WeatherOpts { sceneId: string; gt: number }
+export interface DryLaneSpan { y: number; x0: number; x1: number }
+export interface WeatherOpts { sceneId: string; gt: number; dryLanes?: Array<number | DryLaneSpan>; allowRoom?: boolean }
 
 export function buildWeather(o: WeatherOpts): VignetteInst {
   const r = rngFrom(`${o.sceneId}|clima`);
   const t0 = 3 + r() * 9;
   const skins = ["#f3c9a5", "#c68a5c", "#a86f45", "#7a4a2c"], shirts = ["#e8564a", "#3c7dd9", "#f2b632", "#4aa96c"];
   const seed = { skin: skins[Math.floor(r() * skins.length)], shirt: shirts[Math.floor(r() * shirts.length)] };
-  const gt = clamp(o.gt, 430, 650);
-  const lane = [gt + 90, gt + 150, gt + 70];
+  const gt = clamp(o.gt, 430, 680);
+  const rawLanes = o.dryLanes ?? [clamp(gt + 90, 460, 712), clamp(gt + 150, 460, 712), clamp(gt + 70, 460, 712)];
+  const lanes: DryLaneSpan[] = rawLanes.map((ln) => (typeof ln === "number" ? { y: ln, x0: -90, x1: 1290 } : ln));
+  const allowRoom = o.allowRoom ?? true;
+  const maxSpan = lanes.reduce((m, l) => Math.max(m, l.x1 - l.x0), 0);
+  const walkerCount = lanes.length === 0 ? 0 : Math.min(maxSpan < 760 ? 2 : 3, lanes.length);
   const cols = ["#e0493a", "#3c7dd9", "#f2b632"];
   const walkerX = (t: number, k: number) => {
-    const p = weatherPhase(t, t0), a = (p.u - 14 - k * 2.2) / 13; // cruzam a cena enquanto chove, antes de a casa aparecer
-    return { x: -90 + 1380 * clamp(a, 0, 1), vis: a > 0 && a < 1 && p.cover < 0.3 };
+    if (k >= walkerCount) return { x: -200, vis: false, alpha: 0 };
+    const ln = lanes[k];
+    const span = Math.max(120, ln.x1 - ln.x0);
+    const dur = clamp((span / 1380) * 13, 6.5, 13);
+    const p = weatherPhase(t, t0, allowRoom), a = (p.u - 14 - k * 2.2) / dur; // cruzam o corredor livre enquanto chove
+    const fullWidth = ln.x0 <= -40 && ln.x1 >= 1240;
+    const edgeAlpha = fullWidth ? 1 : clamp(a / 0.14, 0, 1) * clamp((1 - a) / 0.14, 0, 1);
+    // quando a cena vai entrar em casa (`p.u >= 22`), os pedestres com guarda-chuva saem ANTES da transição
+    const beforeRoom = !allowRoom || p.u < 21.9 ? clamp((21.9 - p.u) / 0.55, 0, 1) : 0;
+    const afterRoom = allowRoom && p.u > 32.5 ? clamp((p.u - 32.5) / 0.55, 0, 1) : 0;
+    const roomMask = allowRoom ? Math.max(beforeRoom, afterRoom) : 1;
+    const alpha = edgeAlpha * roomMask;
+    return { x: ln.x0 + span * clamp(a, 0, 1), vis: a > 0 && a < 1 && alpha > 0.02, alpha };
   };
   return {
     id: "clima",
     z: 9999,
     draw: (t) => {
-      const p = weatherPhase(t, t0);
+      const p = weatherPhase(t, t0, allowRoom);
       let out = stormClouds(t, p.veil, gt) + rainbow(p.rainbow, gt);
-      for (let k = 0; k < 3; k++) {
+      for (let k = 0; k < walkerCount; k++) {
         const q = walkerX(t, k);
         if (!q.vis) continue;
-        const y = lane[k], s = 0.62 + (y - gt) / 900;
-        out += person(t, { x: q.x, y, s, face: 1, pose: "walk", speed: 1.15, shirt: shirts[(k + 1) % 4], skin: skins[k % 4] }) + umbrella(q.x + 6 * s, y - 128 * s, 0.9 * s, cols[k]);
+        const y = lanes[k].y, s = clamp(0.62 + (y - gt) / 900, 0.58, 0.92);
+        out += fade(q.alpha, person(t, { x: q.x, y, s, face: 1, pose: "walk", speed: 1.15, shirt: shirts[(k + 1) % 4], skin: skins[k % 4], umbrella: cols[k % cols.length] }));
       }
       out += rainLayer(t, p.rain, gt);
-      out += room(t, p, seed);
+      if (allowRoom) out += room(t, p, seed);
       return out;
     },
     labels: (t) => {
-      const p = weatherPhase(t, t0), L: LabelSpec[] = [];
+      const p = weatherPhase(t, t0, allowRoom), L: LabelSpec[] = [];
       const outdoor = 1 - p.cover;
-      if (p.rain > 0.5 && outdoor > 0.5) L.push({ key: "chuva", x: 880, y: 150, alpha: p.rain * outdoor });
-      const q = walkerX(t, 0);
-      if (q.vis && p.rain > 0.5) L.push({ key: "guardaChuva", x: q.x + 6, y: lane[0] - 150, alpha: p.rain });
-      if (p.rainbow > 0.4) L.push({ key: "arcoIris", x: 640, y: o.gt + 20 - 345, alpha: p.rainbow });
-      if (p.cover > 0.6) {
+      if (p.rain > 0.5 && outdoor > 0.5) L.push({ key: "chuva", x: 880, y: 265, alpha: p.rain * outdoor, prefer: "above" });
+      if (walkerCount > 0) {
+        const q = walkerX(t, 0);
+        const s0 = clamp(0.62 + (lanes[0].y - gt) / 900, 0.58, 0.92);
+        if (q.vis && p.rain > 0.5) L.push({ key: "guardaChuva", x: q.x + 18 * s0, y: lanes[0].y - 138 * s0, alpha: p.rain * q.alpha, prefer: "above" });
+      }
+      if (p.rainbow > 0.4) L.push({ key: "arcoIris", x: 640, y: Math.max(210, gt + 20 - 345), alpha: p.rainbow });
+      if (allowRoom && p.cover > 0.6) {
         const a = p.cover;
         L.push(
-          { key: "janela", x: 270, y: 200, alpha: a }, { key: "porta", x: 630, y: 250, alpha: a }, { key: "cama", x: 980, y: 420, alpha: a },
-          { key: "abajur", x: 300, y: 430, alpha: a }, { key: "mesa", x: 300, y: 512, alpha: a },
+          { key: "janela", x: 270, y: 295, alpha: a, prefer: "above" },
+          { key: "porta", x: 630, y: 295, alpha: a, prefer: "above" },
+          { key: "cama", x: 980, y: 408, alpha: a, prefer: "above" },
+          { key: "abajur", x: 205, y: 444, alpha: a, prefer: "right" },
+          { key: "mesa", x: 175, y: 536, alpha: a, prefer: "below" },
         );
       }
       return L;
@@ -197,7 +215,7 @@ export function buildWeather(o: WeatherOpts): VignetteInst {
       }
       return out.filter((e) => e.t < duration);
     },
-    cover: (t) => weatherPhase(t, t0).cover,
+    cover: (t) => weatherPhase(t, t0, allowRoom).cover,
   };
 }
 

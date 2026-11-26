@@ -8,12 +8,13 @@
  */
 import { LIFE_W, LIFE_H, clamp, depth, f, norm, rngFrom, type LifeInput, type LifeScene } from "@/lib/storySceneLife";
 import {
-  GROUND, SKY, FAR, WATER, getSceneGrid, gridFromZones, overlaps, rectIs, rectShare, type Rect, type SceneGrid,
+  CELL, GRID_H, GRID_W, GROUND, SKY, FAR, WATER, SOLID, getSceneGrid, gridFromZones, overlaps, rectIs, rectShare,
+  type Rect, type SceneGrid,
 } from "@/lib/storySceneMap";
 import { NAMES, SKY_DEFS, STRIP_DEFS, type LabelSpec, type Name, type VignetteDef, type VignetteInst } from "@/lib/storyVignettes";
 import { GROUND_DEFS, WATER_DEFS } from "@/lib/storyVignettesLand";
 import { buildWindowViews, getSceneWindows } from "@/lib/storyWindowLife";
-import { buildWeather } from "@/lib/storyWeatherLife";
+import { buildWeather, type DryLaneSpan } from "@/lib/storyWeatherLife";
 import { CABIN_DEFS, NIGHT_GROUND_DEFS, NIGHT_SKY_DEFS } from "@/lib/storyVignettesExtra";
 
 const THEME_KEYS: Array<[RegExp, string]> = [
@@ -30,11 +31,11 @@ const PLAN: Record<string, { ground: string[]; sky: string[]; water: string[]; s
   tecnologia: { ground: ["robots", "classroom", "cyclist", "talkers", "cat"], sky: ["helicopter", "airplane", "flock"], water: ["fishSchool"], strip: ["airport"] },
   natureza: { ground: ["critters", "turtleLand", "cat", "picnic", "couple"], sky: ["flock", "balloon"], water: ["ducks", "fishSchool", "turtleSwim"], strip: [] },
   cultura: { ground: ["drummer", "dancers", "guitarist", "picnic", "talkers"], sky: ["flock", "balloon"], water: ["ducks"], strip: [] },
-  turismo: { ground: ["couple", "picnic", "cyclist", "turtleLand", "guitarist"], sky: ["balloon", "airplane", "cabin", "flock"], water: ["sailing", "dolphin", "fishSchool", "turtleSwim"], strip: ["airport"] },
+  turismo: { ground: ["couple", "picnic", "cyclist", "turtleLand", "guitarist"], sky: ["balloon", "airplane", "flock"], water: ["sailing", "dolphin", "fishSchool", "turtleSwim"], strip: ["airport"] },
   interior: { ground: ["farm", "petsPlay", "cat", "cyclist", "picnic"], sky: ["flock", "balloon"], water: ["ducks", "fishSchool"], strip: [] },
   danca: { ground: ["dancers", "guitarist", "drummer", "picnic", "cat"], sky: ["flock"], water: [], strip: [] },
-  geografia: { ground: ["classroom", "cyclist", "picnic", "talkers", "cat"], sky: ["airplane", "cabin", "balloon", "helicopter", "flock"], water: ["sailing", "dolphin", "fishSchool"], strip: ["airport"] },
-  historia: { ground: ["rider", "classroom", "talkers", "cat"], sky: ["flock", "airplane"], water: ["sailing", "fishSchool"], strip: [] },
+  geografia: { ground: ["classroom", "cyclist", "picnic", "talkers", "cat"], sky: ["airplane", "balloon", "helicopter", "flock"], water: ["sailing", "dolphin", "fishSchool"], strip: ["airport"] },
+  historia: { ground: ["rider", "classroom", "talkers", "cat"], sky: ["flock"], water: ["sailing", "fishSchool"], strip: [] },
   cinema: { ground: ["talkers", "cat", "couple"], sky: ["airplane", "helicopter"], water: [], strip: [] },
   musica: { ground: ["guitarist", "drummer", "dancers", "cat"], sky: ["flock", "balloon"], water: [], strip: [] },
   lazeres: { ground: ["soccer", "picnic", "cyclist", "petsPlay", "guitarist"], sky: ["balloon", "flock", "airplane"], water: ["ducks", "fishSchool"], strip: [] },
@@ -55,8 +56,8 @@ const BOOST: Array<[RegExp, string]> = [
   [/aviao|aeroporto|voo|avyon|avion/, "airport"], [/aviao|voo|avyon|avion|passageir/, "cabin"], [/helicopt|elikopte/, "helicopter"], [/violao|guitarra|gita|guitare/, "guitarist"],
   [/tambor|tanbou|tambour/, "drummer"], [/professor|aula|escola|pwofese|ecole|quadro/, "classroom"], [/piquenique|pikniks/, "picnic"],
   [/vaca|galinha|fazenda|vach|poul|ferme/, "farm"], [/bicicleta|bisiklet|velo/, "cyclist"], [/cavalo|chwal|cheval/, "rider"],
-  [/barco|veleiro|bato|voilier|navio/, "sailing"], [/golfinho|dofen|dauphin/, "dolphin"], [/tartaruga|toti|tortue/, "turtleLand"],
-  [/futebol|foutbol|football/, "soccer"], [/pato|kanna|canard/, "ducks"], [/peixe|pwason|poisson/, "fishSchool"],
+  [/barco|veleiro|bato|voilier|navio/, "sailing"], [/golfinho|dofen|dauphin/, "dolphin"], [/tartaruga|toti|tortue/, "turtleSwim"], [/tartaruga|toti|tortue/, "turtleLand"],
+  [/futebol|foutbol|football/, "soccer"], [/pato|kanna|canard/, "ducks"], [/peixe|pwason|poisson|baleia|balen|baleine/, "fishSchool"],
 ];
 
 export interface DirectorInput extends LifeInput {
@@ -80,13 +81,30 @@ export function createSceneLife(input: DirectorInput): LifeScene {
   const grid: SceneGrid = getSceneGrid(input.sceneId) ?? gridFromZones(input.zones ?? null);
   // Cena interna (cozinha, sala de aula, cinema...): nada de chão aberto, mas as JANELAS ganham vida
   // (pássaros, gente passando, noite com coruja e morcegos). Sem janela desenhada, a cena fica como está.
-  const indoor = grid.indoor || theme === "idiomas" || idBase.startsWith("idiomas");
+  const indoor = grid.indoor || idBase === "idiomas";
   const sceneWindows = indoor ? getSceneWindows(input.sceneId) : null;
   if (indoor && !sceneWindows) return { actors: [], render: () => "" };
   const night = Boolean(grid.night);
+  const underwater = Boolean(grid.underwater);
+  const isSaltOrCoast = /\b(mar|oceano|ocea|praia|plaj|plage|baia|be|costa|kot|recife|resif|ilha|zil|farol|faro|mangue|manglye|porto|po)\b/.test(text);
+  const isFreshwater = /\b(lago|lagoa|letan|lak|etang|lac|rio|rivye|riviere|riacho|cachoeira|kaskad|cascade|pantano|fazenda|fem|ferme|jardim|jaden|jardin)\b/.test(text);
+  const isColdOrBarren = /\b(geleira|glacier|glasye|neve|nej|neige|gelo|glas|glace|vulcao|volkan|volcan|deserto|deze|desert|caverna|gwot|grotte|espaco|espas|espace)\b/.test(text);
   const lang = input.lang ?? "kreyol";
   const r = rngFrom(`${input.sceneId}|${theme}|vida`);
-  const gt = clamp(grid.groundTop, 430, 650);
+  let waterCells = 0, groundCells = 0, waterTop = LIFE_H, waterBot = 0;
+  for (let gy = 0; gy < GRID_H; gy++) {
+    for (let gx = 0; gx < GRID_W; gx++) {
+      const k = grid.cells[gy * GRID_W + gx];
+      if (k === WATER) {
+        waterCells++;
+        waterTop = Math.min(waterTop, gy * CELL);
+        waterBot = Math.max(waterBot, (gy + 1) * CELL);
+      } else if (k === GROUND) {
+        groundCells++;
+      }
+    }
+  }
+  const gt = clamp(grid.groundTop, 430, 680);
   const anchors = input.anchors ?? [];
   const noGo: Rect[] = anchors.map(pillRectOf);
   const anchorPad = grid.source === "pixels" ? 90 : 20; // sem mapa exato, mais folga em volta dos nomes existentes
@@ -116,6 +134,7 @@ export function createSceneLife(input: DirectorInput): LifeScene {
 
   /* ---- procura de lugar, por tipo ---- */
   const tryGround = (def: VignetteDef, strip: boolean): { p: Parameters<VignetteDef["build"]>[0]; rect: Rect } | null => {
+    if (underwater || groundCells < 40) return null;
     for (let k = 0; k < 140; k++) {
       const y = strip ? gt + 50 + r() * Math.max(10, 690 - gt - 50) : gt + 36 + r() * Math.max(20, 728 - gt - 36);
       const s = strip ? 1 : sOf(y);
@@ -132,8 +151,10 @@ export function createSceneLife(input: DirectorInput): LifeScene {
   };
   const trySky = (def: VignetteDef): { p: Parameters<VignetteDef["build"]>[0]; rect: Rect } | null => {
     const lane = def.w >= 1000;
+    const skyLimit = Math.min(gt - 130, waterCells > 0 ? waterTop - 50 : 360, 360);
+    if (skyLimit < 140) return null;
     for (let k = 0; k < 60; k++) {
-      const y = 120 + r() * Math.max(30, Math.min(gt - 130, 360) - 120);
+      const y = 120 + r() * Math.max(20, skyLimit - 120);
       const s = 0.85 + r() * 0.3;
       const rect: Rect = lane ? { x0: 0, y0: y - 60, x1: LIFE_W, y1: y + 36 } : { x0: 100 + r() * (LIFE_W - 340), y0: y - 100, x1: 0, y1: y + 130 };
       if (!lane) { rect.x1 = rect.x0 + def.w; }
@@ -141,19 +162,45 @@ export function createSceneLife(input: DirectorInput): LifeScene {
       if (rect.y1 > gt - 40 && !lane) continue;
       if ((!lane && noGo.some((n) => overlaps(rect, n, 10))) || taken.some((t) => overlaps(rect, t, lane ? 0 : 18))) continue;
       const x = (rect.x0 + rect.x1) / 2;
-      return { p: { x, y: lane ? y : y, s, w: def.w, h: def.h, dir: r() > 0.5 ? 1 : -1, seed: input.sceneId, night, gt }, rect };
+      return { p: { x, y, s, w: def.w, h: def.h, dir: r() > 0.5 ? 1 : -1, seed: input.sceneId, night, gt }, rect };
     }
     return null;
   };
   const tryWater = (def: VignetteDef): { p: Parameters<VignetteDef["build"]>[0]; rect: Rect } | null => {
+    if (waterCells < 24) return null;
+    const isSurface = def.id === "ducks" || def.id === "sailing" || def.id === "dolphin";
+    // patos e veleiro ficam na superfície da água, nunca submersos no fundo do mar; em cenas subaquáticas não entram
+    if (underwater && (def.id === "ducks" || def.id === "sailing")) return null;
+    const wSpan = Math.max(25, waterBot - waterTop);
+    // patos pertencem a lagos/rios/baías calmas, não a mar aberto profundo
+    if (def.id === "ducks" && (waterCells >= 320 || wSpan >= 220)) return null;
+    const yMin = isSurface ? Math.max(150, waterTop + 8) : Math.max(150, waterTop + (wSpan > 110 ? 36 : 16));
+    const yMax = isSurface ? Math.min(waterBot - 16, waterTop + Math.min(82, wSpan * 0.65)) : Math.max(yMin + 10, waterBot - 24);
+    if (yMax < yMin) return null;
+
     // rios estreitos: se a vinheta inteira não cabe, tenta uma versão menor (peixes/barco percorrem menos espaço)
     for (const k0 of [1, 0.7, 0.5]) {
       const w = def.w * k0, h = def.h * (k0 === 1 ? 1 : 0.85);
       for (let k = 0; k < 70; k++) {
-        const x = w / 2 + 30 + r() * Math.max(1, LIFE_W - w - 60), y = 150 + r() * 560;
-        const rect: Rect = def.id === "dolphin" ? { x0: x - w / 2, y0: y - 60, x1: x + w / 2, y1: y + 34 } : { x0: x - w / 2, y0: y - h / 2, x1: x + w / 2, y1: y + h / 2 };
-        if (def.id === "dolphin") { if (rectShare(grid, rect, [WATER]) < 0.72 || !rectIs(grid, { x0: rect.x0, y0: y + 6, x1: rect.x1, y1: y + 34 }, [WATER])) continue; }
-        else if (!rectIs(grid, rect, [WATER], 4)) continue;
+        const x = w / 2 + 30 + r() * Math.max(1, LIFE_W - w - 60);
+        const y = yMin + r() * Math.max(1, yMax - yMin);
+        const rect: Rect = def.id === "dolphin"
+          ? { x0: x - w / 2, y0: y - 60, x1: x + w / 2, y1: y + 34 }
+          : def.id === "sailing"
+            ? { x0: x - w / 2, y0: y - 68, x1: x + w / 2, y1: y + 26 }
+            : { x0: x - w / 2, y0: y - h / 2, x1: x + w / 2, y1: y + h / 2 };
+
+        if (def.id === "dolphin") {
+          const baseWater: Rect = { x0: rect.x0, y0: y + 4, x1: rect.x1, y1: y + 34 };
+          const arcZone: Rect = { x0: rect.x0, y0: y - 62, x1: rect.x1, y1: y + 4 };
+          if (!rectIs(grid, baseWater, [WATER]) || rectShare(grid, arcZone, [SKY, FAR, WATER]) < 0.88) continue;
+        } else if (def.id === "sailing") {
+          const hullWater: Rect = { x0: rect.x0, y0: y - 4, x1: rect.x1, y1: y + 26 };
+          const sailZone: Rect = { x0: rect.x0, y0: y - 68, x1: rect.x1, y1: y };
+          if (!rectIs(grid, hullWater, [WATER]) || rectShare(grid, sailZone, [SKY, FAR, WATER]) < 0.88) continue;
+        } else {
+          if (!rectIs(grid, rect, [WATER], 4)) continue;
+        }
         if (!free(rect, 10)) continue;
         return { p: { x, y, s: 1, w, h, dir: r() > 0.5 ? 1 : -1, seed: input.sceneId, night, gt }, rect };
       }
@@ -208,10 +255,58 @@ export function createSceneLife(input: DirectorInput): LifeScene {
       used[kind]++;
     }
   }
-  // clima: chuva, guarda-chuvas, interior da casa e arco-íris (só em cena externa, de dia, com céu aberto)
+  // clima: chuva, guarda-chuvas, interior da casa e arco-íris (só em cena externa, de dia, com céu aberto e chão seco — nunca subaquática ou mar aberto)
   const skyShare = rectShare(grid, { x0: 0, y0: 0, x1: LIFE_W, y1: LIFE_H }, [SKY, FAR]);
-  if (!indoor && !night && skyShare > 0.12 && rngFrom(`${input.sceneId}|clima-on`)() < (WEATHER_CHANCE[theme] ?? 0.5)) {
-    const inst = buildWeather({ sceneId: input.sceneId, gt });
+  const dryLanes: DryLaneSpan[] = [];
+  if (!indoor && !underwater && groundCells >= 60) {
+    const startGy = Math.max(18, Math.floor((gt + 24) / CELL));
+    const endGy = Math.min(GRID_H - 3, 28); // y <= 712 para os pés não serem cortados pelo crop 16:9 do player
+    const candidates: Array<DryLaneSpan & { span: number }> = [];
+    for (let gy = startGy; gy <= endGy; gy++) {
+      let run = 0, runStart = 2, bestRun = 0, bestX0 = 0, bestX1 = 0;
+      for (let gx = 2; gx < GRID_W - 2; gx++) {
+        const footGround = grid.cells[gy * GRID_W + gx] === GROUND;
+        // Sem água sob os pés ou na altura do corpo (3 células acima) e sem obstáculos sólidos (O) no caminho
+        let waterBlock = false;
+        for (let dy = -3; dy <= 1; dy++) {
+          const rIdx = clamp(gy + dy, 0, GRID_H - 1);
+          if (grid.cells[rIdx * GRID_W + gx] === WATER) { waterBlock = true; break; }
+        }
+        let solidBlock = false;
+        for (let dy = -2; dy <= 0; dy++) {
+          const rIdx = clamp(gy + dy, 0, GRID_H - 1);
+          if (grid.cells[rIdx * GRID_W + gx] === SOLID) { solidBlock = true; break; }
+        }
+        if (footGround && !waterBlock && !solidBlock) {
+          if (run === 0) runStart = gx;
+          run++;
+          if (run > bestRun) { bestRun = run; bestX0 = runStart; bestX1 = gx; }
+        } else {
+          run = 0;
+        }
+      }
+      // Precisa de pelo menos 16 células contíguas (400 px) totalmente livres de água e de objetos sólidos
+      if (bestRun >= 16) {
+        candidates.push({
+          y: gy * CELL + 12,
+          x0: bestX0 <= 2 ? -90 : bestX0 * CELL,
+          x1: bestX1 >= GRID_W - 3 ? LIFE_W + 90 : (bestX1 + 1) * CELL,
+          span: bestRun,
+        });
+      }
+    }
+    if (candidates.length > 0) {
+      const bySpan = [...candidates].sort((a, b) => b.span - a.span || a.y - b.y);
+      dryLanes.push({ y: bySpan[0].y, x0: bySpan[0].x0, x1: bySpan[0].x1 });
+      for (const c of bySpan.slice(1)) {
+        if (dryLanes.length >= 3) break;
+        if (dryLanes.every((d) => Math.abs(d.y - c.y) >= 34)) dryLanes.push({ y: c.y, x0: c.x0, x1: c.x1 });
+      }
+    }
+  }
+  const hasWalkableGround = dryLanes.length > 0 && groundCells >= 60;
+  if (!indoor && !night && !underwater && hasWalkableGround && skyShare > 0.12 && rngFrom(`${input.sceneId}|clima-on`)() < (WEATHER_CHANCE[theme] ?? 0.5)) {
+    const inst = buildWeather({ sceneId: input.sceneId, gt, dryLanes, allowRoom: groundCells >= 80 });
     planned.push({ def: { id: "weather", need: "sky", w: 0, h: 0, build: () => inst }, inst, rect: { x0: -9, y0: -9, x1: -8, y1: -8 }, order: planned.length, moving: new Set<string>() });
   }
   // rótulos que mudam de lugar ao longo do tempo (janela/clima): os parados são colocados primeiro
@@ -249,23 +344,40 @@ export function createSceneLife(input: DirectorInput): LifeScene {
         items.push({ id: `${vi}:${li}`, spec, vi, li, moving: pl.moving.has(String(spec.key)), main: nm.main, pt: nm.pt, w, h: fs * 1.6 });
       });
     });
-    const statics = planned.map((pl, vi) => ({ vi, rect: pl.rect, moving: pl.moving.size > 0 })).filter((x) => !x.moving);
+    const statics = planned
+      .map((pl, vi) => ({ vi, rect: pl.rect, keepFootprint: pl.moving.size === 0 || (pl.def.w > 0 && pl.def.w < 1000 && pl.def.id !== "weather") }))
+      .filter((x) => x.keepFootprint);
+    const segHitsRect = (x0: number, y0: number, x1: number, y1: number, r: Rect) => {
+      for (const u of [0.25, 0.5, 0.75]) {
+        const px = x0 + (x1 - x0) * u, py = y0 + (y1 - y0) * u;
+        if (px >= r.x0 - 4 && px <= r.x1 + 4 && py >= r.y0 - 4 && py <= r.y1 + 4) return true;
+      }
+      return false;
+    };
     items.sort((a, b) => Number(a.moving) - Number(b.moving) || a.vi - b.vi || a.li - b.li);
     const placed: Rect[] = [];
     let out = "";
     for (const it of items) {
       const ax = it.spec.x, ay = it.spec.y, hw = it.w / 2, hh = it.h / 2;
-      const cands: Array<[number, number]> = [
-        [0, -(fs * 2.4 + hh)], [0, -(fs * 4.0 + hh)], [-(hw * 0.7), -(fs * 2.4 + hh)], [hw * 0.7, -(fs * 2.4 + hh)], [-(hw + fs * 1.2), -(fs * 1.6)], [hw + fs * 1.2, -(fs * 1.6)],
-        [0, -(fs * 5.8 + hh)], [-(hw * 0.7), -(fs * 4.0 + hh)], [hw * 0.7, -(fs * 4.0 + hh)], [0, hh + fs * 1.8],
+      const aboveCands: Array<[number, number]> = [
+        [0, -(fs * 2.4 + hh)], [0, -(fs * 4.0 + hh)], [-(hw * 0.7), -(fs * 2.4 + hh)], [hw * 0.7, -(fs * 2.4 + hh)], [-(hw + fs * 1.4), -(fs * 0.6)], [hw + fs * 1.4, -(fs * 0.6)],
+        [0, -(fs * 5.8 + hh)], [-(hw * 0.7), -(fs * 4.0 + hh)], [hw * 0.7, -(fs * 4.0 + hh)],
       ];
+      const cands: Array<[number, number]> =
+        it.spec.prefer === "below"
+          ? [[0, hh + fs * 1.8], [-(hw * 0.6), hh + fs * 1.8], [hw * 0.6, hh + fs * 1.8], ...aboveCands]
+          : it.spec.prefer === "above"
+            ? aboveCands
+            : [...aboveCands.slice(0, 6), [0, hh + fs * 1.8], ...aboveCands.slice(6)];
       let best: { cx: number; cy: number; hit: number } | null = null;
       for (const [dx, dy] of cands) {
-        const cx = clamp(ax + dx, hw + 22, LIFE_W - hw - 22), cy = clamp(ay + dy, 100 + hh, 716 - hh);
+        // mantém rótulos dinâmicos abaixo dos badges do topo (y>=152) e acima da faixa da legenda (y<=680)
+        const cx = clamp(ax + dx, hw + 22, LIFE_W - hw - 22), cy = clamp(ay + dy, 152 + hh, 680 - hh);
         const rect: Rect = { x0: cx - hw, y0: cy - hh, x1: cx + hw, y1: cy + hh };
+        const arrowCross = placed.filter((p) => segHitsRect(cx, cy, ax, ay, p)).length * 2;
         // o nome não pode cobrir outros nomes, os rótulos que já existem NEM os bonecos/bichos parados de outras vinhetas
         const hit = placed.filter((p) => overlaps(rect, p, 8)).length * 2 + noGo.filter((n) => overlaps(rect, n, 0)).length +
-          statics.filter((st) => st.vi !== it.vi && overlaps(rect, st.rect, 2)).length * 2;
+          statics.filter((st) => st.vi !== it.vi && overlaps(rect, st.rect, 2)).length * 2 + arrowCross;
         if (!best || hit < best.hit) best = { cx, cy, hit };
         if (hit === 0) break;
       }

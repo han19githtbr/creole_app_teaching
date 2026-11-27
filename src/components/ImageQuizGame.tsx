@@ -31,6 +31,7 @@ import { RewardUnlockModal } from "@/components/RewardUnlockModal";
 import { AchievementsModal } from "@/components/AchievementsModal";
 import { cn } from "@/lib/utils";
 import type { AppLanguage } from "@/lib/languageShared";
+import { getLanguageImageSrc } from "@/lib/imageBank";
 
 export interface ImageQuizChallenge {
   id: string;
@@ -319,7 +320,7 @@ export function ImageQuizGame({
           <div className="relative max-h-[92vh] max-w-5xl overflow-hidden rounded-3xl border border-white/20 bg-black shadow-2xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={challenge.src}
+              src={getLanguageImageSrc(challenge.src, language)}
               alt={challenge.alt}
               className="h-auto max-h-[85vh] w-auto max-w-full object-contain"
             />
@@ -455,7 +456,7 @@ export function ImageQuizGame({
           <div className="relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={challenge.src}
+              src={getLanguageImageSrc(challenge.src, language)}
               alt={challenge.alt}
               className="aspect-[3/2] w-full bg-[var(--surface-2)] object-cover transition-transform duration-300 group-hover:scale-[1.01]"
             />

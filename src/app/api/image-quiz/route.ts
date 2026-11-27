@@ -6,6 +6,7 @@ import { IMAGE_BANK } from "@/lib/imageBank";
 import { findAnyBankImage, listApprovedGenerated } from "@/lib/generatedImages";
 import { getQuizForImage } from "@/lib/imageQuiz";
 import Post from "@/models/Post";
+import { getAppLanguage } from "@/lib/language";
 
 async function pickRandomImage(excludeId?: string) {
   const pool = [...IMAGE_BANK, ...(await listApprovedGenerated("posts"))].filter((image) => image.id !== excludeId);
@@ -13,13 +14,14 @@ async function pickRandomImage(excludeId?: string) {
 }
 
 async function getQuiz(postId?: string, imageId?: string, isAdmin = false, exclude?: string) {
+  const language = await getAppLanguage();
   if (postId) {
     await connectDB();
     const post = await Post.findById(postId).lean();
     if (!post?.imageUrl) return null;
     if (!isAdmin && (!post.isPublished || (!post.isPermanent && post.expiresAt && post.expiresAt < new Date()))) return null;
     const image = await findAnyBankImage(post.imageUrl, { includeUnapproved: isAdmin });
-    const quiz = post.imageQuiz ?? (image ? getQuizForImage(image) : undefined);
+    const quiz = post.imageQuiz ?? (image ? getQuizForImage(image, language) : undefined);
     if (!quiz) return null;
     return {
       id: String(post._id),
@@ -35,7 +37,7 @@ async function getQuiz(postId?: string, imageId?: string, isAdmin = false, exclu
 
   const image = imageId === "random" ? await pickRandomImage(exclude) : await findAnyBankImage(imageId);
   if (!image) return null;
-  const quiz = getQuizForImage(image);
+  const quiz = getQuizForImage(image, language);
   if (!quiz) return null;
   return {
     id: image.id,
@@ -65,6 +67,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Seleção inválida." }, { status: 400 });
   }
 
+  const language = await getAppLanguage();
   if (body.postId) {
     await connectDB();
     const post = await Post.findById(body.postId).lean();
@@ -73,7 +76,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Desafio não encontrado." }, { status: 404 });
     }
     const image = await findAnyBankImage(post.imageUrl, { includeUnapproved: true });
-    const quiz = post.imageQuiz ?? (image ? getQuizForImage(image) : undefined);
+    const quiz = post.imageQuiz ?? (image ? getQuizForImage(image, language) : undefined);
     if (!quiz) return NextResponse.json({ error: "Este desafio ainda não foi configurado." }, { status: 404 });
     const expected = new Set<string>((quiz.answers as string[]).map((word) => word.toLocaleLowerCase()));
     const selectedWords = body.selected as string[];
@@ -82,7 +85,7 @@ export async function POST(req: NextRequest) {
   }
 
   const image = await findAnyBankImage(body.imageId);
-  const quiz = image ? getQuizForImage(image) : undefined;
+  const quiz = image ? getQuizForImage(image, language) : undefined;
   if (!quiz) return NextResponse.json({ error: "Desafio não encontrado." }, { status: 404 });
   const expected = new Set(quiz.answers.map((word) => word.toLocaleLowerCase()));
   const selected = new Set((body.selected as string[]).map((word) => word.toLocaleLowerCase()));

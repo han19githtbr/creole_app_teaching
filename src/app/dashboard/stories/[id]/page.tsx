@@ -54,7 +54,7 @@ export default async function WatchStoryPage({ params }: { params: Promise<{ id:
         <h1 className="mt-1 text-2xl font-bold text-[var(--text)]">{record.title}</h1>
         {record.description && <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">{record.description}</p>}
       </header>
-      <StoryMonetizationWrapper story={story} />
+      <StoryMonetizationWrapper story={story} canExport={isAdmin} />
     </main>
   );
 }

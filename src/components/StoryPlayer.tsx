@@ -137,7 +137,7 @@ function arrowHeadPoints(ax: number, ay: number, fx: number, fy: number, size: n
   return [[ax, ay], [bx + px, by + py], [bx - px, by - py]];
 }
 
-export function StoryPlayer({ story }: { story: StoryPlayerData }) {
+export function StoryPlayer({ story, canExport = false }: { story: StoryPlayerData; canExport?: boolean }) {
   const { language: currentAppLanguage } = useAppLanguage();
   const storyLang = story.language || currentAppLanguage;
   const isFr = storyLang === "francais";
@@ -1774,145 +1774,147 @@ export function StoryPlayer({ story }: { story: StoryPlayerData }) {
           </div>
         </div>
 
-        {/* Publicar e Baixar nas Redes Sociais */}
-        <div className="rounded-xl border border-[#d6b45b]/40 bg-[#f5cf72]/10 p-5">
-          <div className="flex items-center justify-between">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9d7622]">
-              Leve a aventura
+        {/* Publicar e Baixar nas Redes Sociais — somente o administrador exporta vídeos */}
+        {canExport && (
+          <div className="rounded-xl border border-[#d6b45b]/40 bg-[#f5cf72]/10 p-5">
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9d7622]">
+                Leve a aventura
+              </p>
+              <span className="flex items-center gap-1 rounded-full bg-[#f5cf72]/20 px-2 py-0.5 text-[10px] font-semibold text-[#8a6316]">
+                <Share2 className="h-3 w-3" /> Redes Sociais
+              </span>
+            </div>
+
+            <h2 className="mt-1 text-lg font-bold text-[var(--text)]">
+              Publicar e Baixar
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+              Exporte o vídeo com legendas e animações sincronizadas no formato ideal para Feed ou Stories e publique no Instagram, WhatsApp ou Facebook.
             </p>
-            <span className="flex items-center gap-1 rounded-full bg-[#f5cf72]/20 px-2 py-0.5 text-[10px] font-semibold text-[#8a6316]">
-              <Share2 className="h-3 w-3" /> Redes Sociais
-            </span>
-          </div>
 
-          <h2 className="mt-1 text-lg font-bold text-[var(--text)]">
-            Publicar e Baixar
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
-            Exporte o vídeo com legendas e animações sincronizadas no formato ideal para Feed ou Stories e publique no Instagram, WhatsApp ou Facebook.
-          </p>
+            {/* Seletor de Formato: Stories (9:16) ou Feed (1:1) */}
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setExportFormat("stories")}
+                disabled={exporting}
+                className={`flex items-center justify-center gap-1.5 rounded-lg border p-2 text-xs font-semibold transition-all ${
+                  exportFormat === "stories"
+                    ? "border-[#f5cf72] bg-[#1d3028] text-[#f5cf72] shadow-sm"
+                    : "border-black/10 bg-white/40 text-[var(--text-muted)] hover:bg-white/70 dark:bg-black/20"
+                }`}
+              >
+                <Film className="h-3.5 w-3.5" />
+                <span>📱 Stories (9:16)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setExportFormat("feed")}
+                disabled={exporting}
+                className={`flex items-center justify-center gap-1.5 rounded-lg border p-2 text-xs font-semibold transition-all ${
+                  exportFormat === "feed"
+                    ? "border-[#f5cf72] bg-[#1d3028] text-[#f5cf72] shadow-sm"
+                    : "border-black/10 bg-white/40 text-[var(--text-muted)] hover:bg-white/70 dark:bg-black/20"
+                }`}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>🖼️ Feed (1:1)</span>
+              </button>
+            </div>
 
-          {/* Seletor de Formato: Stories (9:16) ou Feed (1:1) */}
-          <div className="mt-4 grid grid-cols-2 gap-2">
+            {/* Botão Baixar Vídeo */}
             <button
               type="button"
-              onClick={() => setExportFormat("stories")}
-              disabled={exporting}
-              className={`flex items-center justify-center gap-1.5 rounded-lg border p-2 text-xs font-semibold transition-all ${
-                exportFormat === "stories"
-                  ? "border-[#f5cf72] bg-[#1d3028] text-[#f5cf72] shadow-sm"
-                  : "border-black/10 bg-white/40 text-[var(--text-muted)] hover:bg-white/70 dark:bg-black/20"
-              }`}
-            >
-              <Film className="h-3.5 w-3.5" />
-              <span>📱 Stories (9:16)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setExportFormat("feed")}
-              disabled={exporting}
-              className={`flex items-center justify-center gap-1.5 rounded-lg border p-2 text-xs font-semibold transition-all ${
-                exportFormat === "feed"
-                  ? "border-[#f5cf72] bg-[#1d3028] text-[#f5cf72] shadow-sm"
-                  : "border-black/10 bg-white/40 text-[var(--text-muted)] hover:bg-white/70 dark:bg-black/20"
-              }`}
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>🖼️ Feed (1:1)</span>
-            </button>
-          </div>
-
-          {/* Botão Baixar Vídeo */}
-          <button
-            type="button"
-            onClick={() => void exportVideo(exportFormat, "download")}
-            disabled={exporting || !(duration > 0)}
-            className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#1d3028] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#29463a] disabled:cursor-wait disabled:opacity-60 shadow-sm"
-          >
-            <Download className="h-4 w-4" />
-            {exporting
-              ? exportMode === "offline" && exportProgress !== null
-                ? `Renderizando ${exportProgress}%…`
-                : `Gravando ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`
-              : `Baixar Vídeo (${exportFormat === "stories" ? "Stories 9:16" : "Feed 1:1"})`}
-          </button>
-
-          {/* Botões de Redes Sociais */}
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              title="Publicar no WhatsApp (Status e Grupos)"
-              onClick={() => void exportVideo(exportFormat, "whatsapp")}
+              onClick={() => void exportVideo(exportFormat, "download")}
               disabled={exporting || !(duration > 0)}
-              className="flex flex-col items-center justify-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-600/10 hover:bg-emerald-600/20 py-2 px-1 text-emerald-800 dark:text-emerald-300 transition-colors disabled:opacity-50"
+              className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#1d3028] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#29463a] disabled:cursor-wait disabled:opacity-60 shadow-sm"
             >
-              <MessageCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-[10px] font-bold">WhatsApp</span>
+              <Download className="h-4 w-4" />
+              {exporting
+                ? exportMode === "offline" && exportProgress !== null
+                  ? `Renderizando ${exportProgress}%…`
+                  : `Gravando ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`
+                : `Baixar Vídeo (${exportFormat === "stories" ? "Stories 9:16" : "Feed 1:1"})`}
             </button>
 
+            {/* Botões de Redes Sociais */}
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                title="Publicar no WhatsApp (Status e Grupos)"
+                onClick={() => void exportVideo(exportFormat, "whatsapp")}
+                disabled={exporting || !(duration > 0)}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-600/10 hover:bg-emerald-600/20 py-2 px-1 text-emerald-800 dark:text-emerald-300 transition-colors disabled:opacity-50"
+              >
+                <MessageCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-[10px] font-bold">WhatsApp</span>
+              </button>
+
+              <button
+                type="button"
+                title="Publicar no Instagram (Stories e Feed)"
+                onClick={() => void exportVideo(exportFormat, "instagram")}
+                disabled={exporting || !(duration > 0)}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg border border-pink-500/30 bg-gradient-to-br from-pink-500/10 to-purple-500/10 hover:from-pink-500/20 hover:to-purple-500/20 py-2 px-1 text-pink-900 dark:text-pink-300 transition-colors disabled:opacity-50"
+              >
+                <Share2 className="h-4 w-4 text-pink-600 dark:text-pink-400" />
+                <span className="text-[10px] font-bold">Instagram</span>
+              </button>
+
+              <button
+                type="button"
+                title="Publicar no Facebook (Feed e Stories)"
+                onClick={() => void exportVideo(exportFormat, "facebook")}
+                disabled={exporting || !(duration > 0)}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg border border-blue-500/30 bg-blue-600/10 hover:bg-blue-600/20 py-2 px-1 text-blue-800 dark:text-blue-300 transition-colors disabled:opacity-50"
+              >
+                <ExternalLink className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <span className="text-[10px] font-bold">Facebook</span>
+              </button>
+            </div>
+
+            {/* Copiar Legenda Formatada */}
             <button
               type="button"
-              title="Publicar no Instagram (Stories e Feed)"
-              onClick={() => void exportVideo(exportFormat, "instagram")}
-              disabled={exporting || !(duration > 0)}
-              className="flex flex-col items-center justify-center gap-1 rounded-lg border border-pink-500/30 bg-gradient-to-br from-pink-500/10 to-purple-500/10 hover:from-pink-500/20 hover:to-purple-500/20 py-2 px-1 text-pink-900 dark:text-pink-300 transition-colors disabled:opacity-50"
+              onClick={copySocialCaption}
+              className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md border border-[#d6b45b]/50 bg-white/60 dark:bg-black/20 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-white transition-colors"
             >
-              <Share2 className="h-4 w-4 text-pink-600 dark:text-pink-400" />
-              <span className="text-[10px] font-bold">Instagram</span>
+              {copiedCaption ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+              <span>{copiedCaption ? "Legenda copiada!" : "Copiar texto da postagem (hashtags e tradução)"}</span>
             </button>
 
-            <button
-              type="button"
-              title="Publicar no Facebook (Feed e Stories)"
-              onClick={() => void exportVideo(exportFormat, "facebook")}
-              disabled={exporting || !(duration > 0)}
-              className="flex flex-col items-center justify-center gap-1 rounded-lg border border-blue-500/30 bg-blue-600/10 hover:bg-blue-600/20 py-2 px-1 text-blue-800 dark:text-blue-300 transition-colors disabled:opacity-50"
-            >
-              <ExternalLink className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <span className="text-[10px] font-bold">Facebook</span>
-            </button>
+            {exporting && (
+              <LoadingSpinner
+                layout="inline"
+                size="sm"
+                label={`${exportMode === "offline" ? "Renderizando" : "Gravando"} o vídeo ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`}
+                progress={exportMode === "offline" && exportProgress !== null ? exportProgress : duration > 0 ? (currentTime / duration) * 100 : undefined}
+                className="mt-3"
+              />
+            )}
+
+            {exporting && (
+              <p className="mt-2 text-center text-[11px] text-[var(--text-muted)]">
+                {exportMode === "offline"
+                  ? "O vídeo é renderizado quadro a quadro, com qualidade total. Pode levar um ou dois minutos: mantenha esta aba aberta."
+                  : `A gravação acontece em tempo real acompanhando o áudio (${describeStoryDuration(duration)}). Mantenha a aba aberta.`}
+              </p>
+            )}
+
+            {exportNotice && (
+              <p role="status" className="mt-2 rounded-md bg-emerald-500/15 border border-emerald-500/30 p-2 text-center text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                {exportNotice}
+              </p>
+            )}
+
+            {exportError && (
+              <p role="alert" className="mt-3 text-xs leading-relaxed text-[#a23c31]">
+                {exportError}
+              </p>
+            )}
           </div>
-
-          {/* Copiar Legenda Formatada */}
-          <button
-            type="button"
-            onClick={copySocialCaption}
-            className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md border border-[#d6b45b]/50 bg-white/60 dark:bg-black/20 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-white transition-colors"
-          >
-            {copiedCaption ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-            <span>{copiedCaption ? "Legenda copiada!" : "Copiar texto da postagem (hashtags e tradução)"}</span>
-          </button>
-
-          {exporting && (
-            <LoadingSpinner
-              layout="inline"
-              size="sm"
-              label={`${exportMode === "offline" ? "Renderizando" : "Gravando"} o vídeo ${exportFormat === "stories" ? "Stories (9:16)" : "Feed (1:1)"}…`}
-              progress={exportMode === "offline" && exportProgress !== null ? exportProgress : duration > 0 ? (currentTime / duration) * 100 : undefined}
-              className="mt-3"
-            />
-          )}
-
-          {exporting && (
-            <p className="mt-2 text-center text-[11px] text-[var(--text-muted)]">
-              {exportMode === "offline"
-                ? "O vídeo é renderizado quadro a quadro, com qualidade total. Pode levar um ou dois minutos: mantenha esta aba aberta."
-                : `A gravação acontece em tempo real acompanhando o áudio (${describeStoryDuration(duration)}). Mantenha a aba aberta.`}
-            </p>
-          )}
-
-          {exportNotice && (
-            <p role="status" className="mt-2 rounded-md bg-emerald-500/15 border border-emerald-500/30 p-2 text-center text-xs font-semibold text-emerald-800 dark:text-emerald-300">
-              {exportNotice}
-            </p>
-          )}
-
-          {exportError && (
-            <p role="alert" className="mt-3 text-xs leading-relaxed text-[#a23c31]">
-              {exportError}
-            </p>
-          )}
-        </div>
+        )}
       </aside>
       <audio ref={audioRef} src={story.audioUrl} crossOrigin={audioCors} onError={handleAudioError} preload="auto" className="hidden" />
       <canvas ref={canvasRef} width={EXPORT_WIDTH} height={EXPORT_HEIGHT} className="hidden" aria-hidden="true" />

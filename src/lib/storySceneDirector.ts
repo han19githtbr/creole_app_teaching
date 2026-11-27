@@ -71,6 +71,67 @@ export interface RenderOpts { labelPx?: number }
 const LABEL_FONT = 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 const pillRectOf = (a: { x: number; y: number }): Rect => ({ x0: a.x - 115, y0: a.y - 104, x1: a.x + 115, y1: a.y - 34 });
 
+/** Faixas de chão seco (sem água sob os pés nem no corpo, sem objetos sólidos) onde pedestres podem andar. */
+export function findDryLanes(grid: SceneGrid, gt: number, blocked: Rect[] = []): DryLaneSpan[] {
+  const dryLanes: DryLaneSpan[] = [];
+  {
+    const startGy = Math.max(18, Math.floor((gt + 24) / CELL));
+    const endGy = Math.min(GRID_H - 3, 28); // y <= 712 para os pés não serem cortados pelo crop 16:9 do player
+    const candidates: Array<DryLaneSpan & { span: number }> = [];
+    for (let gy = startGy; gy <= endGy; gy++) {
+      let run = 0, runStart = 2, bestRun = 0, bestX0 = 0, bestX1 = 0;
+      for (let gx = 2; gx < GRID_W - 2; gx++) {
+        const footGround = grid.cells[gy * GRID_W + gx] === GROUND;
+        // Sem água sob os pés, ao lado deles ou na altura do corpo (3 células acima), e sem obstáculos sólidos
+        // (objetos desenhados) no corpo nem ao lado: o boneco nunca pisa na beira de lagoa/mar nem atravessa objetos.
+        let waterBlock = false, solidBlock = false;
+        for (let dx = -1; dx <= 1 && !waterBlock; dx++) {
+          const cx = clamp(gx + dx, 0, GRID_W - 1);
+          for (let dy = -3; dy <= 2; dy++) {
+            if (grid.cells[clamp(gy + dy, 0, GRID_H - 1) * GRID_W + cx] === WATER) { waterBlock = true; break; }
+          }
+        }
+        for (let dx = -1; dx <= 1 && !solidBlock; dx++) {
+          const cx = clamp(gx + dx, 0, GRID_W - 1);
+          for (let dy = -3; dy <= 0; dy++) {
+            if (grid.cells[clamp(gy + dy, 0, GRID_H - 1) * GRID_W + cx] === SOLID) { solidBlock = true; break; }
+          }
+        }
+        // vinhetas já colocadas (piquenique, gato, bicicleta...) também são obstáculos
+        if (!solidBlock && blocked.length) {
+          const body: Rect = { x0: gx * CELL, y0: gy * CELL - 90, x1: (gx + 1) * CELL, y1: gy * CELL + CELL };
+          solidBlock = blocked.some((b) => overlaps(body, b, 10));
+        }
+        if (footGround && !waterBlock && !solidBlock) {
+          if (run === 0) runStart = gx;
+          run++;
+          if (run > bestRun) { bestRun = run; bestX0 = runStart; bestX1 = gx; }
+        } else {
+          run = 0;
+        }
+      }
+      // Precisa de pelo menos 12 células contíguas (300 px) totalmente livres de água e de objetos sólidos
+      if (bestRun >= 12) {
+        candidates.push({
+          y: gy * CELL + 12,
+          x0: bestX0 <= 2 ? -90 : bestX0 * CELL,
+          x1: bestX1 >= GRID_W - 3 ? LIFE_W + 90 : (bestX1 + 1) * CELL,
+          span: bestRun,
+        });
+      }
+    }
+    if (candidates.length > 0) {
+      const bySpan = [...candidates].sort((a, b) => b.span - a.span || a.y - b.y);
+      dryLanes.push({ y: bySpan[0].y, x0: bySpan[0].x0, x1: bySpan[0].x1 });
+      for (const c of bySpan.slice(1)) {
+        if (dryLanes.length >= 3) break;
+        if (dryLanes.every((d) => Math.abs(d.y - c.y) >= 34)) dryLanes.push({ y: c.y, x0: c.x0, x1: c.x1 });
+      }
+    }
+  }
+  return dryLanes;
+}
+
 interface Planned { def: VignetteDef; inst: VignetteInst; rect: Rect; order: number; moving: Set<string> }
 
 export function createSceneLife(input: DirectorInput): LifeScene {
@@ -257,53 +318,7 @@ export function createSceneLife(input: DirectorInput): LifeScene {
   }
   // clima: chuva, guarda-chuvas, interior da casa e arco-íris (só em cena externa, de dia, com céu aberto e chão seco — nunca subaquática ou mar aberto)
   const skyShare = rectShare(grid, { x0: 0, y0: 0, x1: LIFE_W, y1: LIFE_H }, [SKY, FAR]);
-  const dryLanes: DryLaneSpan[] = [];
-  if (!indoor && !underwater && groundCells >= 60) {
-    const startGy = Math.max(18, Math.floor((gt + 24) / CELL));
-    const endGy = Math.min(GRID_H - 3, 28); // y <= 712 para os pés não serem cortados pelo crop 16:9 do player
-    const candidates: Array<DryLaneSpan & { span: number }> = [];
-    for (let gy = startGy; gy <= endGy; gy++) {
-      let run = 0, runStart = 2, bestRun = 0, bestX0 = 0, bestX1 = 0;
-      for (let gx = 2; gx < GRID_W - 2; gx++) {
-        const footGround = grid.cells[gy * GRID_W + gx] === GROUND;
-        // Sem água sob os pés ou na altura do corpo (3 células acima) e sem obstáculos sólidos (O) no caminho
-        let waterBlock = false;
-        for (let dy = -3; dy <= 1; dy++) {
-          const rIdx = clamp(gy + dy, 0, GRID_H - 1);
-          if (grid.cells[rIdx * GRID_W + gx] === WATER) { waterBlock = true; break; }
-        }
-        let solidBlock = false;
-        for (let dy = -2; dy <= 0; dy++) {
-          const rIdx = clamp(gy + dy, 0, GRID_H - 1);
-          if (grid.cells[rIdx * GRID_W + gx] === SOLID) { solidBlock = true; break; }
-        }
-        if (footGround && !waterBlock && !solidBlock) {
-          if (run === 0) runStart = gx;
-          run++;
-          if (run > bestRun) { bestRun = run; bestX0 = runStart; bestX1 = gx; }
-        } else {
-          run = 0;
-        }
-      }
-      // Precisa de pelo menos 16 células contíguas (400 px) totalmente livres de água e de objetos sólidos
-      if (bestRun >= 16) {
-        candidates.push({
-          y: gy * CELL + 12,
-          x0: bestX0 <= 2 ? -90 : bestX0 * CELL,
-          x1: bestX1 >= GRID_W - 3 ? LIFE_W + 90 : (bestX1 + 1) * CELL,
-          span: bestRun,
-        });
-      }
-    }
-    if (candidates.length > 0) {
-      const bySpan = [...candidates].sort((a, b) => b.span - a.span || a.y - b.y);
-      dryLanes.push({ y: bySpan[0].y, x0: bySpan[0].x0, x1: bySpan[0].x1 });
-      for (const c of bySpan.slice(1)) {
-        if (dryLanes.length >= 3) break;
-        if (dryLanes.every((d) => Math.abs(d.y - c.y) >= 34)) dryLanes.push({ y: c.y, x0: c.x0, x1: c.x1 });
-      }
-    }
-  }
+  const dryLanes: DryLaneSpan[] = !indoor && !underwater && groundCells >= 60 ? findDryLanes(grid, gt, taken) : [];
   const hasWalkableGround = dryLanes.length > 0 && groundCells >= 60;
   if (!indoor && !night && !underwater && hasWalkableGround && skyShare > 0.12 && rngFrom(`${input.sceneId}|clima-on`)() < (WEATHER_CHANCE[theme] ?? 0.5)) {
     const inst = buildWeather({ sceneId: input.sceneId, gt, dryLanes, allowRoom: groundCells >= 80 });

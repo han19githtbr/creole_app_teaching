@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { BookOpen, Gamepad2, LayoutDashboard, Sparkles, Video } from "lucide-react";
+import { BookOpen, Gamepad2, LayoutDashboard, Megaphone, Sparkles, Video } from "lucide-react";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 
 const NAV_ITEMS = [
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/jogo", label: "Jogos", icon: Gamepad2 },
   { href: "/dashboard/videos", label: "Vídeos", icon: Video },
   { href: "/dashboard/stories", label: "Curiosidades", icon: Sparkles },
+  { href: "/dashboard/posts", label: "Postagens", icon: Megaphone },
 ];
 
 export function BottomNav() {
@@ -47,7 +48,7 @@ export function BottomNav() {
       className="fixed bottom-0 inset-x-0 z-40 border-t border-[var(--border)] bg-[var(--surface)]/95 backdrop-blur-lg transition-transform md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.35)]"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
-      <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2">
+      <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-0.5">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           const itemLabel = getLabel(href, label);
@@ -56,7 +57,7 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
-              className={`group relative flex flex-1 flex-col items-center justify-center py-1 transition-all duration-200 active:scale-95 ${
+              className={`group relative flex min-w-0 flex-1 flex-col items-center justify-center py-1 transition-all duration-200 active:scale-95 ${
                 active
                   ? "text-[var(--accent)] font-bold"
                   : "text-[var(--text-muted)] hover:text-[var(--text)]"
@@ -82,7 +83,7 @@ export function BottomNav() {
               </div>
 
               <span
-                className={`mt-0.5 text-[10px] leading-tight transition-colors ${
+                className={`mt-0.5 max-w-full truncate text-[10px] leading-tight transition-colors ${
                   active ? "font-bold text-[var(--accent)]" : "font-medium"
                 }`}
               >

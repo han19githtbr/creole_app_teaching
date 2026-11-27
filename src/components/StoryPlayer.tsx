@@ -24,6 +24,7 @@ import {
 import { Muxer, ArrayBufferTarget } from "mp4-muxer";
 import { getElementIcon } from "@/lib/storyElementIcon";
 import { buildSvgLayerKit, loadSvgImage, rasterizeLayer, releaseSvgImage } from "@/lib/storySvgLayers";
+import { placeLabels } from "@/lib/storyLabelLayout";
 import { animateDiverseSvg } from "@/lib/storySvgMotion";
 import { analyzeSceneZones, lifeSvgDocument, type SceneZones } from "@/lib/storySceneLife";
 import { createSceneLife } from "@/lib/storySceneDirector";
@@ -273,7 +274,7 @@ export function StoryPlayer({ story, canExport = false }: { story: StoryPlayerDa
     return () => observer.disconnect();
   }, []);
 
-  const pillFontPx = Math.max(8, Math.min(12, stageSize.w * 0.0125));
+  const pillFontPx = Math.max(9, Math.min(14, stageSize.w * 0.0145));
   const bankImage = useBankImage(story.imageSrc);
   const sceneElements = useMemo(() => bankImage?.storyElements ?? bankImage?.elements ?? [], [bankImage]);
   const sceneLayout = useMemo(() => bankImage?.labelLayout ?? getStoryLabelLayout(story.imageSrc), [bankImage, story.imageSrc]);
@@ -607,14 +608,21 @@ export function StoryPlayer({ story, canExport = false }: { story: StoryPlayerDa
       ? rawAnchors
       : [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }];
 
-    const items = timeline.map((element, index) => {
+    const baseItems = timeline.map((element, index) => {
       const anchor = anchors[index % anchors.length];
       const label = getElementLabel(element, storyLang);
       const size = measureLivingPill(context, label, element.pt, activeFont);
       const ax = scene.x + scene.width * (anchor.left / 100);
       const ay = scene.y + scene.height * (anchor.top / 100);
-      return { element, label, ax, ay, cx: ax, cy: ay - lift - size.height / 2, w: size.width * 1.06, h: size.height * 1.06 };
+      return { element, label, ax, ay, w: size.width * 1.06, h: size.height * 1.06 };
     });
+    // Mesma regra do player: rótulos sem sobreposição, sem cobrir outros objetos e sem setas cruzadas.
+    const exportOffsets = placeLabels(
+      baseItems.map((b) => ({ ax: b.ax, ay: b.ay, w: b.w + 12, h: b.h + 12 })),
+      { x: scene.x + 10, y: scene.y + scene.height * 0.1, w: scene.width - 20, h: scene.height * 0.72 },
+      { lift }
+    );
+    const items = baseItems.map((b, i) => ({ ...b, cx: b.ax + exportOffsets[i].dx, cy: b.ay + exportOffsets[i].dy }));
     for (const item of items) {
       const visualRaw = elementVisual(item.element, seconds);
       const coverNow = lifeScene.cover?.(seconds) ?? 0;
@@ -673,6 +681,22 @@ export function StoryPlayer({ story, canExport = false }: { story: StoryPlayerDa
       context.lineTo(tip[2][0], tip[2][1]);
       context.closePath();
       context.stroke();
+      context.fill();
+      // Alvo no ponto exato do objeto
+      const ringR = (isActive ? 15 : 12) * (isSquare ? 0.8 : 1.15);
+      context.strokeStyle = "rgba(18, 32, 26, .9)";
+      context.lineWidth = 5;
+      context.beginPath();
+      context.arc(item.ax, item.ay, ringR, 0, Math.PI * 2);
+      context.stroke();
+      context.strokeStyle = "#f5cf72";
+      context.lineWidth = 2.6;
+      context.beginPath();
+      context.arc(item.ax, item.ay, ringR, 0, Math.PI * 2);
+      context.stroke();
+      context.fillStyle = "#f5cf72";
+      context.beginPath();
+      context.arc(item.ax, item.ay, 3.4, 0, Math.PI * 2);
       context.fill();
       context.restore();
 
@@ -1416,6 +1440,35 @@ export function StoryPlayer({ story, canExport = false }: { story: StoryPlayerDa
     });
   };
 
+  // Posição FIXA de cada rótulo em relação ao seu objeto (calculada sem a câmera): nenhum rótulo cobre outro rótulo
+  // ou outro objeto, e nenhuma seta atravessa outro rótulo. Só a câmera da cena move o conjunto.
+  const labelOffsets = useMemo(() => {
+    if (stageSize.w < 50 || stageSize.h < 50) return [] as { dx: number; dy: number }[];
+    const rawAnchors = sceneLayout?.anchors;
+    const anchors = rawAnchors && rawAnchors.length > 0
+      ? rawAnchors
+      : [{ left: 25, top: 30 }, { left: 75, top: 30 }, { left: 25, top: 70 }, { left: 75, top: 70 }];
+    const crop = 16 / 9 / (1200 / 800);
+    const topSafeStatic = stageSize.h >= 300 ? 58 : 42;
+    const items = timeline.map((element, index) => {
+      const anchor = anchors[index % anchors.length];
+      const label = getElementLabel(element, storyLang);
+      const measured = labelSizes[index];
+      const chars = label.length + element.pt.length + 3;
+      return {
+        ax: ((50 + (anchor.left - 50) * 1.03) / 100) * stageSize.w,
+        ay: ((50 + (anchor.top - 50) * crop * 1.03) / 100) * stageSize.h,
+        w: (measured?.w ?? pillFontPx * (0.62 * chars + 4.5)) * 1.06 + 8,
+        h: (measured?.h ?? pillFontPx * 2.3) * 1.06 + 8,
+      };
+    });
+    return placeLabels(
+      items,
+      { x: 6, y: topSafeStatic, w: stageSize.w - 12, h: stageSize.h * 0.8 - topSafeStatic },
+      { lift: Math.max(14, stageSize.h * 0.05) }
+    );
+  }, [timeline, sceneLayout, stageSize.w, stageSize.h, labelSizes, pillFontPx, storyLang]);
+
   const durationLabel = formatStoryTime(duration);
 
   return (
@@ -1488,8 +1541,11 @@ export function StoryPlayer({ story, canExport = false }: { story: StoryPlayerDa
 
             const elementTargetLabel = getElementLabel(element, storyLang);
             // Rótulo ESTÁVEL (igual ao vídeo baixado): o texto não balança, não gira e não pula; só a câmera da cena o move.
-            const rawLeft = 50 + (anchor.left - 50) * imageScale + frame.driftX;
-            const rawTop = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY - labelLift;
+            const anchorLeftPct0 = 50 + (anchor.left - 50) * imageScale + frame.driftX;
+            const anchorTopPct0 = 50 + (anchor.top - 50) * imageCrop * imageScale + frame.driftY;
+            const off = labelOffsets[index];
+            const rawLeft = anchorLeftPct0 + (off ? (off.dx / Math.max(1, stageSize.w)) * 100 : 0);
+            const rawTop = anchorTopPct0 + (off ? (off.dy / Math.max(1, stageSize.h)) * 100 : -labelLift);
 
             // Mantém a pílula INTEIRA dentro do palco (nada cortado nas bordas) e abaixo da faixa de títulos do topo.
             const labelScale = visual.scale * (active ? 1.05 : 1);
@@ -1498,7 +1554,7 @@ export function StoryPlayer({ story, canExport = false }: { story: StoryPlayerDa
             const labelW = (measured?.w ?? pillFontPx * (0.62 * labelChars + 4.5)) * labelScale + 8;
             const labelH = (measured?.h ?? pillFontPx * 2.3) * labelScale + 8;
             const edgePad = 6;
-            const topSafe = stageSize.h >= 300 ? 52 : 38;
+            const topSafe = stageSize.h >= 300 ? 58 : 42;
             const clampPx = (value: number, min: number, max: number) => (min > max ? (min + max) / 2 : Math.min(max, Math.max(min, value)));
             const leftPx = clampPx((rawLeft / 100) * stageSize.w, edgePad + labelW / 2, stageSize.w - edgePad - labelW / 2);
             const topPx = clampPx((rawTop / 100) * stageSize.h, topSafe + labelH / 2, stageSize.h - edgePad - labelH / 2);
@@ -1531,6 +1587,10 @@ export function StoryPlayer({ story, canExport = false }: { story: StoryPlayerDa
                         <line x1={lx} y1={ly} x2={bx} y2={by} stroke="rgba(18,32,26,.85)" strokeWidth={active ? 4.4 : 3.8} strokeLinecap="round" />
                         <line x1={lx} y1={ly} x2={bx} y2={by} stroke="#f5cf72" strokeWidth={active ? 2.2 : 1.8} strokeLinecap="round" />
                         <polygon points={pts} fill="#f5cf72" stroke="rgba(18,32,26,.9)" strokeWidth={1.4} strokeLinejoin="round" />
+                        {/* Alvo no ponto exato do objeto: anel + ponto, para não haver dúvida sobre o que o rótulo nomeia */}
+                        <circle cx={ax} cy={ay} r={active ? 11 : 8.5} fill="none" stroke="rgba(18,32,26,.9)" strokeWidth={4} />
+                        <circle cx={ax} cy={ay} r={active ? 11 : 8.5} fill="none" stroke="#f5cf72" strokeWidth={2} />
+                        <circle cx={ax} cy={ay} r={2.4} fill="#f5cf72" stroke="rgba(18,32,26,.9)" strokeWidth={1} />
                       </>
                     );
                   })()}

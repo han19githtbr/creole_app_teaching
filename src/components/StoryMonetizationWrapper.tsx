@@ -11,9 +11,10 @@ import Link from "next/link";
 
 interface StoryMonetizationWrapperProps {
   story: StoryPlayerData;
+  canExport?: boolean;
 }
 
-export function StoryMonetizationWrapper({ story }: StoryMonetizationWrapperProps) {
+export function StoryMonetizationWrapper({ story, canExport = false }: StoryMonetizationWrapperProps) {
   const { status, isActive, isBlocked, refreshStatus, consume } = useUsageTracker({
     feature: "stories",
     enabled: true,
@@ -91,7 +92,7 @@ export function StoryMonetizationWrapper({ story }: StoryMonetizationWrapperProp
         </div>
       ) : (
         /* Player da História com Acesso Liberado */
-        <StoryPlayer story={story} />
+        <StoryPlayer story={story} canExport={canExport} />
       )}
     </div>
   );

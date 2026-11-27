@@ -8,10 +8,10 @@
  */
 
 const MOTION_CSS = `
-.sm-whale{transform-box:fill-box;transform-origin:center bottom;animation:smWhale 7.2s ease-in-out infinite}
-@keyframes smWhale{0%,100%{transform:translate(-14px,3px) rotate(-1deg)}50%{transform:translate(16px,0px) rotate(1.1deg)}}
+.sm-whale{transform-box:fill-box;transform-origin:center center;animation:smWhale 16s ease-in-out infinite}
+@keyframes smWhale{0%{transform:translate(70px,6px) rotate(1.5deg) scaleX(1)}24%{transform:translate(0px,-8px) rotate(-1.5deg) scaleX(1)}47%{transform:translate(-70px,4px) rotate(1.5deg) scaleX(1)}49%{transform:translate(-72px,4px) rotate(0deg) scaleX(1)}50%{transform:translate(-72px,4px) rotate(0deg) scaleX(-1)}51%{transform:translate(-70px,4px) rotate(-1.5deg) scaleX(-1)}74%{transform:translate(0px,-8px) rotate(1.5deg) scaleX(-1)}97%{transform:translate(70px,6px) rotate(-1.5deg) scaleX(-1)}99%{transform:translate(72px,6px) rotate(0deg) scaleX(-1)}100%{transform:translate(72px,6px) rotate(0deg) scaleX(1)}}
 .sm-dolphin{transform-box:fill-box;transform-origin:center;animation:smDolphin 4.8s ease-in-out infinite}
-@keyframes smDolphin{0%,100%{transform:translate(-5px,3px) rotate(1.8deg)}45%{transform:translate(8px,-10px) rotate(-3.5deg)}}
+@keyframes smDolphin{0%,100%{transform:translate(-14px,5px) rotate(2.5deg)}45%{transform:translate(18px,-16px) rotate(-5deg)}}
 .sm-spin{transform-origin:0px 0px;animation:smSpin 14s linear infinite}
 @keyframes smSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 .sm-swing-cab{transform-origin:0px -134px;animation:smSwingCab 4.6s ease-in-out infinite}
@@ -22,12 +22,12 @@ const MOTION_CSS = `
 @keyframes smSwingBal{0%,100%{transform:rotate(-2.4deg)}50%{transform:rotate(2.4deg)}}
 .sm-lightning{animation:smLightning 5.5s ease-in-out infinite}
 @keyframes smLightning{0%,72%,84%,100%{opacity:0.45}76%{opacity:1}80%{opacity:0.25}}
-.sm-fish-0{transform-box:fill-box;transform-origin:center;animation:smFishA 3.8s ease-in-out infinite}
-.sm-fish-1{transform-box:fill-box;transform-origin:center;animation:smFishB 4.5s ease-in-out infinite}
-.sm-fish-2{transform-box:fill-box;transform-origin:center;animation:smFishC 5.2s ease-in-out infinite}
-@keyframes smFishA{0%,100%{transform:translate(-14px,3px) rotate(-2.5deg)}50%{transform:translate(16px,-6px) rotate(2.5deg)}}
-@keyframes smFishB{0%,100%{transform:translate(12px,-4px) rotate(2deg)}50%{transform:translate(-16px,5px) rotate(-2.5deg)}}
-@keyframes smFishC{0%,100%{transform:translate(-10px,-5px) rotate(1.8deg)}50%{transform:translate(14px,4px) rotate(-2.2deg)}}
+.sm-fish-0{transform-box:fill-box;transform-origin:center;animation:smFish0 9s ease-in-out infinite}
+@keyframes smFish0{0%{transform:translate(48px,-8px) scaleX(1)}47%{transform:translate(-48px,8px) scaleX(1)}50%{transform:translate(-48px,8px) scaleX(-1)}97%{transform:translate(48px,-8px) scaleX(-1)}100%{transform:translate(48px,-8px) scaleX(1)}}
+.sm-fish-1{transform-box:fill-box;transform-origin:center;animation:smFish1 11s ease-in-out infinite}
+@keyframes smFish1{0%{transform:translate(42px,10px) scaleX(1)}47%{transform:translate(-42px,-10px) scaleX(1)}50%{transform:translate(-42px,-10px) scaleX(-1)}97%{transform:translate(42px,10px) scaleX(-1)}100%{transform:translate(42px,10px) scaleX(1)}}
+.sm-fish-2{transform-box:fill-box;transform-origin:center;animation:smFish2 13s ease-in-out infinite}
+@keyframes smFish2{0%{transform:translate(38px,-12px) scaleX(1)}47%{transform:translate(-38px,12px) scaleX(1)}50%{transform:translate(-38px,12px) scaleX(-1)}97%{transform:translate(38px,-12px) scaleX(-1)}100%{transform:translate(38px,-12px) scaleX(1)}}
 .sm-bubbles{animation:smBubbles 4.2s ease-in-out infinite}
 @keyframes smBubbles{0%,100%{transform:translateY(4px);opacity:.55}50%{transform:translateY(-14px);opacity:.95}}
 .sm-coral{transform-origin:0px 0px;animation:smCoral 5.4s ease-in-out infinite}
